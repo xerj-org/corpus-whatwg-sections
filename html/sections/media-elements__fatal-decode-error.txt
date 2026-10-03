@@ -1,0 +1,72 @@
+WHATWG HTML — section media-elements/fatal-decode-error — If the <span>media data</span> is corrupted
+
+     <dt id="fatal-decode-error">If the <span>media data</span> is corrupted</dt>
+
+     <dd>
+      <p>Fatal errors in decoding the <span>media data</span> that occur after the user agent has
+      established whether the <var>current media resource</var> is usable (i.e. once the <span>media element</span>'s
+      <code data-x="dom-media-readyState">readyState</code> attribute is no longer <code
+      data-x="dom-media-HAVE_NOTHING">HAVE_NOTHING</code>) must cause the
+      user agent to execute the following steps:</p>
+
+      <ol>
+       <li><p>The user agent should cancel the fetching process.</p></li>
+
+       <li><p>Set the <code data-x="dom-media-error">error</code> attribute to the result of
+       <span>creating a <code>MediaError</code></span> with <code
+       data-x="dom-MediaError-MEDIA_ERR_DECODE">MEDIA_ERR_DECODE</code>.</p></li>
+
+       <li><p>Set the element's <code data-x="dom-media-networkState">networkState</code> attribute
+       to the <code data-x="dom-media-NETWORK_IDLE">NETWORK_IDLE</code> value.</p></li>
+
+       <li><p>Set the element's <span>delaying-the-load-event flag</span> to false. This stops <span
+       data-x="delay the load event">delaying the load event</span>.</p></li>
+
+       <li><p><span data-x="concept-event-fire">Fire an event</span> named <code
+       data-x="event-media-error">error</code> at the <span>media element</span>.</p></li>
+
+       <li><p>Abort the overall <span data-x="concept-media-load-algorithm">resource selection
+       algorithm</span>.</p></li>
+      </ol>
+     </dd>
+
+
+     <dt>If the <span>media data</span> fetching process is aborted by the user</dt>
+
+     <dd>
+      <p>The fetching process is aborted by the user, e.g. because the user
+      pressed a "stop" button, the user agent must execute the following steps. These steps are not
+      followed if the <code data-x="dom-media-load">load()</code> method itself is invoked while
+      these steps are running, as the steps above handle that particular kind of abort.</p>
+
+      <ol>
+       <li><p>The user agent should cancel the fetching process.</p></li>
+
+       <li><p>Set the <code data-x="dom-media-error">error</code> attribute to the result of
+       <span>creating a <code>MediaError</code></span> with <code
+       data-x="dom-MediaError-MEDIA_ERR_ABORTED">MEDIA_ERR_ABORTED</code>.</p></li>
+
+       <li><p><span data-x="concept-event-fire">Fire an event</span> named <code
+       data-x="event-media-abort">abort</code> at the <span>media element</span>.</p></li>
+
+       <li>
+        <p>If the <span>media element</span>'s <code data-x="dom-media-readyState">readyState</code>
+        attribute has a value equal to <code data-x="dom-media-HAVE_NOTHING">HAVE_NOTHING</code>, set
+        the element's <code data-x="dom-media-networkState">networkState</code> attribute to the
+        <code data-x="dom-media-NETWORK_EMPTY">NETWORK_EMPTY</code> value, set the element's
+        <span>show poster flag</span> to true, and <span data-x="concept-event-fire">fire an
+        event</span> named <code data-x="event-media-emptied">emptied</code> at the element.</p>
+
+        <p>Otherwise, set the element's <code data-x="dom-media-networkState">networkState</code>
+        attribute to the <code data-x="dom-media-NETWORK_IDLE">NETWORK_IDLE</code> value.</p>
+       </li>
+
+       <li><p>Set the element's <span>delaying-the-load-event flag</span> to false. This stops <span
+       data-x="delay the load event">delaying the load event</span>.</p></li>
+
+       <li><p>Abort the overall <span data-x="concept-media-load-algorithm">resource selection
+       algorithm</span>.</p></li>
+      </ol>
+     </dd>
+
+

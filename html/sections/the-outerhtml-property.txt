@@ -1,0 +1,80 @@
+WHATWG HTML — section the-outerhtml-property — The <code data-x="dom-element-outerHTML">outerHTML</code> property
+
+  <h4>The <code data-x="dom-element-outerHTML">outerHTML</code> property</h4>
+
+  <p class="XXX">The <code data-x="dom-element-outerHTML">outerHTML</code> property has a number of outstanding issues
+  in the <cite>DOM Parsing and Serialization</cite> <a href="https://github.com/w3c/DOM-Parsing/issues">issue
+  tracker</a>, documenting various problems with its specification.</p>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>element</var>.<span subdfn data-x="dom-Element-outerHTML">outerHTML</span></code></dt>
+   <dd>
+    <p>Returns a fragment of HTML or XML that represents the element and its contents.</p>
+
+    <p>In the case of an XML document, throws an <span>"<code>InvalidStateError</code>"</span>
+    <code>DOMException</code> if the element cannot be serialized to XML.</p>
+   </dd>
+
+   <dt><code data-x=""><var>element</var>.<span data-x="dom-Element-outerHTML">outerHTML</span> = <var>value</var></code></dt>
+   <dd>
+    <p>Replaces the element with nodes parsed from the given string.</p>
+
+    <p>In the case of an XML document, throws a <span>"<code>SyntaxError</code>"</span>
+    <code>DOMException</code> if the given string is not well-formed.</p>
+
+    <p>Throws a <span>"<code>NoModificationAllowedError</code>"</span> <code>DOMException</code> if
+    the parent of the element is a <span><code>Document</code></span>.</p>
+   </dd>
+  </dl>
+
+  <p class="warning">This property's setter performs no sanitization to remove potentially-dangerous
+  elements and attributes like <code>script</code> or <span>event handler content
+  attributes</span>.</p>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p><code>Element</code>'s <dfn attribute for="Element"><code
+  data-x="dom-Element-outerHTML">outerHTML</code></dfn> getter steps are:</p>
+
+  <ol>
+   <li><p>Let <var>element</var> be a fictional node whose only child is <span>this</span>.</p></li>
+   <li><p>Return the result of running <span>fragment serializing algorithm steps</span> with
+   <var>element</var> and true.
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p><code>Element</code>'s <code data-x="dom-Element-outerHTML">outerHTML</code> setter steps
+  are:</p>
+
+  <ol>
+    <li><p>Let <var>compliantString</var> be the result of invoking the <span
+    data-x="tt-getcompliantstring">get trusted type compliant string</span> algorithm with <code
+    data-x="tt-trustedhtml">TrustedHTML</code>, <span>this</span>'s <span>relevant global
+    object</span>, the given value, "<code data-x="">Element outerHTML</code>", and "<code
+    data-x="">script</code>".</p></li>
+
+    <li><p>Let <var>parent</var> be <span>this</span>'s <span>parent</span>.</p></li>
+
+    <li><p>If <var>parent</var> is null, return. There would be no way to obtain a
+    reference to the nodes created even if the remaining steps were run.</p></li>
+
+    <li><p>If <var>parent</var> is a <code>Document</code>, throw a
+    <span>"<code>NoModificationAllowedError</code>"</span> <code>DOMException</code>.</p></li>
+
+    <li><p>If <var>parent</var> is a <code>DocumentFragment</code>, set <var>parent</var> to the
+    result of <span data-x="create an element">creating an element</span> given <span>this</span>'s
+    <span>node document</span>, "<code data-x="">body</code>", and the <span>HTML
+    namespace</span>.</p></li>
+
+    <li><p>Let <var>fragment</var> be the result of invoking the <span>fragment parsing algorithm
+    steps</span> given <var>parent</var> and <var>compliantString</var>.</p></li>
+
+    <li><p><span data-x="concept-node-replace">Replace</span> <span>this</span> with
+    <var>fragment</var> within <span>this</span>'s <span>parent</span>.</p></li>
+  </ol>
+  </div>
+
+  </div>
+

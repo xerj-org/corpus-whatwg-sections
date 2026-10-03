@@ -1,0 +1,270 @@
+WHATWG HTML — section the-worker-s-lifetime — The worker's lifetime
+
+  <h4>The worker's lifetime</h4>
+
+  <p>Workers communicate with other workers and with <code>Window</code>s through <span
+  data-x="channel messaging">message channels</span> and their <code>MessagePort</code>
+  objects.</p>
+
+  <div algorithm>
+  <p>Each <code>WorkerGlobalScope</code> object <var>worker global scope</var> has a list of
+  <dfn export>the worker's ports</dfn>, which consists of all the <code>MessagePort</code> objects
+  that are entangled with another port and that have one (but only one) port owned by <var>worker
+  global scope</var>. This list includes the implicit <code>MessagePort</code> in the case of <span
+  data-x="DedicatedWorkerGlobalScope">dedicated workers</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p id="list-of-relevant-document-objects-to-add">Given an <span>environment settings
+  object</span> <var>o</var> when creating or obtaining a worker, the <dfn>relevant owner to
+  add</dfn> depends on the type of <span data-x="concept-settings-object-global">global
+  object</span> specified by <var>o</var>. If <var>o</var>'s <span
+  data-x="concept-settings-object-global">global object</span> is a <code>WorkerGlobalScope</code>
+  object (i.e., if we are creating a nested dedicated worker), then the relevant owner is that
+  global object. Otherwise, <var>o</var>'s <span data-x="concept-settings-object-global">global
+  object</span> is a <code>Window</code> object, and the relevant owner is that
+  <code>Window</code>'s <span data-x="concept-document-window">associated
+  <code>Document</code></span>.</p>
+  </div>
+
+  <hr>
+
+  <p>A user agent has an <span>implementation-defined</span> value, the <dfn>between-loads shared
+  worker timeout</dfn>, which is some small amount of time. This represents how long the user agent
+  allows shared workers to survive while a page is loading, in case that page is going to contact
+  the shared worker again. Setting this value to greater than zero lets user agents avoid the cost
+  of restarting a shared worker used by a site when the user is navigating from page to page within
+  that site.</p>
+
+  <p class="note">A typical value for the <span>between-loads shared worker timeout</span> might be
+  5 seconds.</p>
+
+  <p>A user agent has an <span>implementation-defined</span> value, the <dfn>extended lifetime
+  shared worker timeout</dfn>, which is some amount of time. This represents how long the user agent
+  allows shared workers which the web developer has requested be given an extended lifetime, to
+  survive and perform work after all of their <span data-x="owner set">owners</span> have
+  disappeared. User agents should choose a value that is equal to the longest lifetime that a
+  service worker can stay alive without any <span data-x="service worker client">clients</span>, and
+  must not choose a value that is longer than that amount of time.</p>
+
+  <p class="note">A typical value for the <span>extended lifetime shared worker timeout</span> could
+  be anywhere from 10 seconds to 5 minutes, depending on the implementation's individual policies
+  regarding background work being performed by an origin without a user-visible representation.</p>
+
+  <hr>
+
+  <div algorithm>
+  <p>A <code>WorkerGlobalScope</code> <var>global</var> is <dfn data-x="in extended lifetime
+  worker">in extended lifetime</dfn> if the following algorithm returns true:</p>
+
+  <ol>
+   <li><p>If <var>global</var> is not a <code>SharedWorkerGlobalScope</code>, then return
+   false.</p></li>
+
+   <li><p>If <var>global</var>'s <span
+   data-x="concept-SharedWorkerGlobalScope-extended-lifetime">extended lifetime</span> is false,
+   then return false.</p></li>
+
+   <li><p>If <var>global</var>'s <span>owner set</span> <span data-x="list is empty">is
+   empty</span>, but has been empty for less than the user agent's <span>extended lifetime shared
+   worker timeout</span>, then return true.</p></li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>owner</var> of <var>global</var>'s
+    <span>owner set</span>:</p>
+
+    <ol>
+     <li>
+      <p>If <var>owner</var> is a <code>Document</code> that is <span>fully active</span>, then
+      return false.</p>
+
+      <p class="note">In this case <var>global</var> will be <span data-x="active needed
+      worker">actively needed</span>, but it's not in extended lifetime.</p>
+     </li>
+    </ol>
+   </li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>owner</var> of <var>global</var>'s
+    <span>owner set</span>:</p>
+
+    <ol>
+     <li><p>If <var>owner</var> is a <code>Document</code> and the amount of time that
+     <var>owner</var> has been non-<span>fully active</span> is less than the user agent's
+     <span>extended lifetime shared worker timeout</span>, then return true.</p></li>
+
+     <li><p>If <var>owner</var> is a <code>WorkerGlobalScope</code> that is <span data-x="in
+     extended lifetime worker">in extended lifetime</span>, then return true.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Return false.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>A <code>WorkerGlobalScope</code> <var>global</var> is <dfn data-x="active needed
+  worker">actively needed</dfn> if the following algorithm returns true:</p>
+
+  <ol>
+   <li><p>If <var>global</var> is <span data-x="in extended lifetime worker">in extended
+   lifetime</span>, then return true.</p></li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>owner</var> of <var>global</var>'s
+    <span>owner set</span>:</p>
+
+    <ol>
+     <li><p>If <var>owner</var> is a <code>Document</code>, and <var>owner</var> is <span>fully
+     active</span>, then return true.</p></li>
+
+     <li><p>If <var>owner</var> is a <code>WorkerGlobalScope</code> that is <span data-x="active
+     needed worker">actively needed</span>, then return true.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Return false.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>A <code>WorkerGlobalScope</code> <var>global</var> is <dfn data-x="protected
+  worker">protected</dfn> if the following algorithm returns true:</p>
+
+  <ol>
+   <li><p>If <var>global</var> is not <span data-x="active needed worker">actively needed</span>,
+   then return false.</p></li>
+
+   <li><p>If <var>global</var> is <span data-x="in extended lifetime worker">in extended
+   lifetime</span>, then return true.</p></li>
+
+   <li><p>If <var>global</var> is a <code>SharedWorkerGlobalScope</code>, then return true.</p></li>
+
+   <li><p>If <var>global</var>'s <span>the worker's ports</span> is not <span data-x="list is
+   empty">empty</span>, then return true.</p></li>
+
+   <li><p>If <var>global</var> has outstanding timers, database transactions, or network
+   connections, then return true.</p></li>
+   <!-- TODO: would be nice to make the above rigorous. -->
+
+   <li><p>Return false.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>A <code>WorkerGlobalScope</code> <var>global</var> is <dfn data-x="permissible
+  worker">permissible</dfn> if the following algorithm returns true:</p>
+
+  <ol>
+   <li><p>If <var>global</var>'s <span>owner set</span> is not <span data-x="list is
+   empty">empty</span>, then return true.</p></li>
+
+   <li><p>If <var>global</var> is <span data-x="in extended lifetime worker">in extended
+   lifetime</span>, then return true.</p></li>
+
+   <li>
+    <p>If all of the following are true:</p>
+
+    <ul>
+     <li><p><var>global</var> is a <code>SharedWorkerGlobalScope</code>;</p></li>
+
+     <li><p><var>global</var>'s <span>owner set</span> has been <span data-x="list is
+     empty">empty</span> for no more than the user agent's <span>between-loads shared worker
+     timeout</span>; and</p>
+
+     <li><p>the user agent has a <span>navigable</span> whose <span data-x="nav-document">active
+     document</span> is not <span>completely loaded</span>,</p></li>
+    </ul>
+
+    <p>then return true.</p>
+   </li>
+
+   <li><p>Return false.</p></li>
+  </ol>
+  </div>
+
+  <div class="note" id="note-worker-lifetime-terminology-relationships">
+   <p>The following relationships hold between these terms:</p>
+
+   <ul>
+    <li><p>Every <code>WorkerGlobalScope</code> that is <span data-x="in extended lifetime
+    worker">in extended lifetime</span> is <span data-x="active needed worker">actively
+    needed</span>, <span data-x="protected worker">protected</span>, and <span data-x="permissible
+    worker">permissible</span>.</p></li>
+
+    <li><p>Every <code>WorkerGlobalScope</code> that is <span data-x="active needed worker">actively
+    needed</span> or <span data-x="protected worker">protected</span> is <span data-x="permissible
+    worker">permissible</span>.</p></li>
+
+    <li><p>Every <code>WorkerGlobalScope</code> that is <span data-x="protected
+    worker">protected</span> is <span data-x="active needed worker">actively needed</span>.</p></li>
+   </ul>
+
+   <p>However, the converses do not always hold:</p>
+
+   <ul>
+    <li><p>A <code>WorkerGlobalScope</code> can be <span data-x="active needed worker">actively
+    needed</span> but not <span data-x="protected worker">protected</span>, if it's a dedicated
+    worker with no outstanding async work that is still performing computation on behalf of a fully
+    active owner, but whose corresponding <code>Worker</code> object has been garbage collected. <a
+    href="#ports-and-garbage-collection">Because of the garbage collection</a>, the <span
+    data-x="the worker's ports">ports</span> collection is empty, so it is no longer protected.
+    However, its event loop has not yet yielded to <a
+    href="#step-empty-worker-global-scope-owner-set">empty its owner set</a>, so it is still
+    actively needed.</p></li>
+
+    <li><p>A <code>WorkerGlobalScope</code> can be <span data-x="permissible
+    worker">permissible</span> but not <span data-x="protected worker">protected</span> or <span
+    data-x="active needed worker">actively needed</span>, if all the <code>Document</code>s in its
+    transitive set of owners are in <a href="#note-bfcache">bfcache</a>, or if it's a
+    <code>SharedWorkerGlobalScope</code> with no current owners being kept alive for the duration of
+    the <span>between-loads shared worker timeout</span>.</p></li>
+   </ul>
+  </div>
+
+  <div class="note" id="note-between-loads-shared-worker-timeout-lifetime">
+   <p>The <span>between-loads shared worker timeout</span> only influences the definition of <span
+   data-x="permissible worker">permissible</span>, not <span data-x="protected
+   worker">protected</span>, and so implementations are not required to keep shared workers alive
+   for that duration. Rather, they are required to close shared workers after the timeout is
+   reached.</p>
+
+   <p>In contrast, the <span>extended lifetime shared worker timeout</span> does influence the
+   definition of <span data-x="protected worker">protected</span>, so implementations are required
+   to keep shared workers alive (and not suspended) for that duration.</p>
+  </div>
+
+  <div algorithm>
+  <p>A <code>WorkerGlobalScope</code> <var>global</var> is <dfn data-x="suspendable
+  worker">suspendable</dfn> if the following algorithm returns true:</p>
+
+  <ol>
+   <li><p>If <var>global</var> is <span data-x="active needed worker">actively needed</span>, then
+   return false.</p></li>
+
+   <li><p>If <var>global</var> is <span data-x="permissible worker">permissible</span>, then return
+   true.</p></li>
+
+   <li><p>Return false.</p></li>
+  </ol>
+  </div>
+
+  <div class="note" id="note-worker-lifetime-terminology">
+   <p>These concepts are used elsewhere in the specification's normative requirements as
+   follows:</p>
+
+   <ul>
+    <li><p>Workers get <a href="#step-closing-orphan-workers">closed as orphans</a> between when
+    they stop being <span data-x="protected worker">protected</span> and when they stop being <span
+    data-x="permissible worker">permissible</span>.</p></li>
+
+    <li><p>Workers that have been closed, but keep executing, <a
+    href="#terminate-rampant-workers">can be terminated</a> at the user agent's discretion, once
+    they stop being <span data-x="active needed worker">actively needed</span>.</p></li>
+
+    <li><p>Workers get <a href="#step-suspending-workers">suspended or un-suspended</a> based on
+    whether they are <span data-x="suspendable worker">suspendable</span>.</p></li>
+   </ul>
+  </div>
+
+

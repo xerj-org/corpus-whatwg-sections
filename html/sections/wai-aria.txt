@@ -1,0 +1,75 @@
+WHATWG HTML — section wai-aria — Requirements related to ARIA and to platform accessibility APIs (+semantics) (+the-root-element)
+
+  <h4 id="wai-aria">Requirements related to ARIA and to platform accessibility APIs</h4>
+
+  <div algorithm>
+  <p>User agent requirements for implementing Accessibility API semantics on <span>HTML
+  elements</span> are defined in <cite>HTML Accessibility API Mappings</cite>. In addition to the
+  rules there, for a <span>custom element</span> <var>element</var>, the default ARIA role semantics
+  are determined as follows: <ref>HTMLAAM</ref></p>
+
+  <ol>
+   <li><p>Let <var>map</var> be <var>element</var>'s <span>internal content attribute
+   map</span>.</p></li>
+
+   <li><p>If <var>map</var>["<code data-x="">role</code>"] <span data-x="map exists">exists</span>,
+   then return it.</p></li>
+
+   <li><p>Return no role.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>Similarly, for a <span>custom element</span> <var>element</var>, the default ARIA state and
+  property semantics, for a state or property named <var>stateOrProperty</var>, are determined as
+  follows:</p>
+
+  <ol>
+   <li>
+    <p>If <var>element</var>'s <span>attached internals</span> is non-null:</p>
+
+    <ol>
+     <li><p>If <var>element</var>'s <span>attached internals</span>'s <span data-x="get the
+     attr-associated element">get the <var>stateOrProperty</var>-associated element</span> exists,
+     then return the result of running it.</p></li>
+
+     <li><p>If <var>element</var>'s <span>attached internals</span>'s <span data-x="get the
+     attr-associated elements">get the <var>stateOrProperty</var>-associated elements</span> exists,
+     then return the result of running it.</p></li>
+    </ol>
+    <!-- We check these first as they end up being redundantly stored in element's internal content
+         attribute map with an empty string value. -->
+
+   <li><p>If <var>element</var>'s <span>internal content attribute
+   map</span>[<var>stateOrProperty</var>] <span data-x="map exists">exists</span>, then return
+   it.</p></li>
+
+   <li><p>Return the default value for <var>stateOrProperty</var>.</p></li>
+  </ol>
+  </div>
+
+  <p class="note">The "default semantics" referred to here are sometimes also called "native",
+  "implicit", or "host language" semantics in <cite>ARIA</cite>. <ref>ARIA</ref></p>
+
+  <p class="note">One implication of these definitions is that the default semantics can change over
+  time. This allows custom elements the same expressivity as built-in elements; e.g., compare to how
+  the default ARIA role semantics of an <code>a</code> element change as the <code
+  data-x="attr-hyperlink-href">href</code> attribute is added or removed.</p>
+
+  <p>For an example of this in action, see <a href="#custom-elements-accessibility-example">the
+  custom elements section</a>.</p>
+
+  <hr>
+
+  <p>Conformance checker requirements for checking use of ARIA <code
+  data-x="attr-aria-role">role</code> and <code data-x="attr-aria-*">aria-*</code> attributes on
+  <span>HTML elements</span> are defined in <cite>ARIA in HTML</cite>. <ref>ARIAHTML</ref></p>
+
+  </div>
+
+
+
+  <h2 split-filename="semantics" id="semantics">The elements of HTML</h2>
+
+  <h3 id="the-root-element">The document element</h3>
+

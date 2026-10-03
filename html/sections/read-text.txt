@@ -1,0 +1,67 @@
+WHATWG HTML — section read-text — Loading text documents
+
+  <h4 id="read-text">Loading text documents</h4>
+
+  <div algorithm>
+  <p>To <dfn data-x="navigate-text">load a text document</dfn>, given a <span>navigation
+  params</span> <var>navigationParams</var> and a string <var>type</var>:</p>
+
+  <ol>
+   <li><p>Let <var>document</var> be the result of <span
+   data-x="create-the-document-object">creating and initializing a <code>Document</code>
+   object</span> given "<code data-x="">html</code>", <var>type</var>, and
+   <var>navigationParams</var>.</p></li>
+
+   <li><p>Set <var>document</var>'s <span>parser cannot change the mode flag</span> to
+   true.</p></li>
+
+   <li><p>Set <var>document</var>'s <span data-x="concept-document-mode">mode</span>
+   to "<code data-x="">no-quirks</code>".</p></li>
+
+   <li>
+    <p>Create an <span>HTML parser</span> and associate it with the <var>document</var>. Act as
+    if the tokenizer had emitted a start tag token with the tag name "pre" followed by a single
+    U+000A LINE FEED (LF) character<!-- to get eaten, so that a leading LF in the text/plain stream
+    doesn't get eaten itself-->, and switch the <span>HTML parser</span>'s tokenizer to the
+    <span>PLAINTEXT state</span>. Each <span data-x="concept-task">task</span> that the
+    <span>networking task source</span> places on the <span>task queue</span> while fetching runs
+    must then fill the parser's <span>input byte stream</span> with the fetched bytes and cause the
+    <span>HTML parser</span> to perform the appropriate processing of the input stream.</p>
+
+    <p><var>document</var>'s <span data-x="document's character encoding">encoding</span> must be
+    set to the character encoding used to decode the document during parsing.</p>
+
+    <p>The first <span data-x="concept-task">task</span> that the <span>networking task
+    source</span> places on the <span>task queue</span> while fetching runs must <span>process link
+    headers</span> given <var>document</var>, <var>navigationParams</var>'s <span
+    data-x="navigation-params-response">response</span>, and "<code data-x="">media</code>", after
+    the task has been processed by the <span>HTML parser</span>.</p>
+
+    <p>Before any script execution occurs, the user agent must wait for <span>scripts may run for
+    the newly-created document</span> to be true for <var>document</var>.</p>
+
+    <p>When no more bytes are available, the user agent must <span>queue a global task</span> on
+    the <span>networking task source</span> given <var>document</var>'s <span>relevant global
+    object</span> to have the parser process the implied EOF character, which eventually causes
+    a <code data-x="event-load">load</code> event to be fired.</p>
+   </li>
+
+   <li>
+    <p>User agents may add content to the <code>head</code> element of <var>document</var>, e.g.,
+    linking to a style sheet, providing script, or giving the document a <code>title</code>.</p>
+
+    <p class="note">In particular, if the user agent supports the <code
+    data-x="">Format=Flowed</code> feature of RFC 3676 then the user agent would need to apply
+    extra styling to cause the text to wrap correctly and to handle the quoting feature. This could
+    be performed using, e.g., a CSS extension.</p>
+   </li>
+
+   <li><p>Return <var>document</var>.</p></li>
+  </ol>
+
+  <p>The rules for how to convert the bytes of the plain text document into actual characters, and
+  the rules for actually rendering the text to the user, are defined by the specifications for the
+  <span data-x="Content-Type sniffing">computed MIME type</span> of the resource (i.e.,
+  <var>type</var>).</p>
+  </div>
+

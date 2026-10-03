@@ -1,0 +1,367 @@
+WHATWG HTML — section the-canvas-element/pixel-manipulation — <dfn>Pixel manipulation</dfn>
+
+  <h6><dfn>Pixel manipulation</dfn></h6>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>imageData</var> = <var>context</var>.<span subdfn data-x="dom-context-2d-createImageData-imagedata">createImageData</span>(<var>imageData</var>)</code></dt>
+   <dd><p>Returns an <code>ImageData</code> object with the same dimensions and color space as the
+   argument. All the pixels in the returned object are <span>transparent black</span>.</p></dd>
+
+   <dt><code data-x=""><var>imageData</var> = <var>context</var>.<span subdfn data-x="dom-context-2d-createImageData">createImageData</span>(<var>sw</var>, <var>sh</var> [, <var>settings</var>])</code></dt>
+   <dd>
+    <p>Returns an <code>ImageData</code> object with the given dimensions. The color space of the
+    returned object is the <span data-x="concept-canvas-color-space">color space</span> of
+    <var>context</var> unless overridden by <var>settings</var>. All the pixels in the returned
+    object are <span>transparent black</span>.</p>
+
+    <p>Throws an <span>"<code>IndexSizeError</code>"</span> <code>DOMException</code> if either of
+    the width or height arguments are zero.</p>
+   </dd>
+
+   <dt><code data-x=""><var>imageData</var> = <var>context</var>.<span subdfn data-x="dom-context-2d-getImageData">getImageData</span>(<var>sx</var>, <var>sy</var>, <var>sw</var>, <var>sh</var> [, <var>settings</var>])</code></dt>
+   <dd>
+    <p>Returns an <code>ImageData</code> object containing the image data for the given rectangle of
+    the bitmap. The color space of the returned object is the <span
+    data-x="concept-canvas-color-space">color space</span> of <var>context</var> unless overridden
+    by <var>settings</var>.</p>
+
+    <p>Throws an <span>"<code>IndexSizeError</code>"</span> <code>DOMException</code> if the either
+    of the width or height arguments are zero.</p>
+   </dd>
+
+   <dt><code data-x=""><var>context</var>.<span subdfn data-x="dom-context-2d-putImageData">putImageData</span>(<var>imageData</var>, <var>dx</var>, <var>dy</var> [, <var>dirtyX</var>, <var>dirtyY</var>, <var>dirtyWidth</var>, <var>dirtyHeight</var> ])</code></dt>
+   <dd>
+    <p>Paints the data from the given <code>ImageData</code> object onto the bitmap. If a dirty
+    rectangle is provided, only the pixels from that rectangle are painted.</p>
+
+    <p>The <code data-x="dom-context-2d-globalAlpha">globalAlpha</code> and <code
+    data-x="dom-context-2d-globalCompositeOperation">globalCompositeOperation</code> properties, as
+    well as the <span data-x="shadows">shadow attributes</span>, are ignored for the purposes of
+    this method call; pixels in the canvas are replaced wholesale, with no composition, alpha
+    blending, no shadows, etc.</p>
+
+    <p>Throws an <span>"<code>InvalidStateError</code>"</span> <code>DOMException</code> if the
+    <var>imageData</var> object's <code data-x="dom-imagedata-data">data</code> attribute value's
+    [[ViewedArrayBuffer]] internal slot is detached.</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <p>Objects that implement the <code>CanvasImageData</code> interface provide the following methods
+  for reading and writing pixel data to the bitmap.</p>
+
+  <div algorithm>
+  <p>The <dfn method for="CanvasImageData"><code
+  data-x="dom-context-2d-createimagedata">createImageData(<var>sw</var>, <var>sh</var>,
+  <var>settings</var>)</code></dfn> method steps are:</p>
+
+  <ol>
+   <li><p>If one or both of <var>sw</var> and <var>sh</var> are zero, then throw an
+   <span>"<code>IndexSizeError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>Let <var>newImageData</var> be a <span>new</span> <code>ImageData</code> object.</p></li>
+
+   <li><p><span data-x="Initialize an ImageData object">Initialize</span> <var>newImageData</var>
+   given the absolute magnitude of <var>sw</var>, the absolute magnitude of <var>sh</var>,
+   <var>settings</var>, and
+   <i><span data-x="initialize-imagedata-defaultcolorspace">defaultColorSpace</span></i> set to
+   <span>this</span>'s <span data-x="concept-canvas-color-space">color space</span>.</p></li>
+
+   <li><p>Initialize the image data of <var>newImageData</var> to <span>transparent
+   black</span>.</p></li>
+
+   <li><p>Return <var>newImageData</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="CanvasImageData"><code
+  data-x="dom-context-2d-createimagedata-imagedata">createImageData(<var>imageData</var>)</code></dfn>
+  method steps are:</p>
+
+  <ol>
+   <li><p>Let <var>newImageData</var> be a <span>new</span> <code>ImageData</code> object.</p></li>
+
+   <li><p>Let <var>settings</var> be the <code>ImageDataSettings</code> object «[
+   "<code data-x="dom-ImageDataSettings-colorSpace">colorSpace</code>" →
+   <span>this</span>'s <span data-x="dom-imagedata-colorSpace">colorSpace</span>,
+   "<code data-x="dom-ImageDataSettings-pixelFormat">pixelFormat</code>" →
+   <span>this</span>'s <span data-x="dom-imagedata-pixelFormat">pixelFormat</span> ]».</p></li>
+
+   <li><p><span data-x="Initialize an ImageData object">Initialize</span> <var>newImageData</var>
+   given the value of <var>imageData</var>'s <code data-x="dom-imagedata-width">width</code>
+   attribute, the value of <var>imageData</var>'s <code data-x="dom-imagedata-height">height</code>
+   attribute, and <var>settings</var>.</p></li>
+
+   <li><p>Initialize the image data of <var>newImageData</var> to <span>transparent
+   black</span>.</p></li>
+
+   <li><p>Return <var>newImageData</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="CanvasImageData"><code
+  data-x="dom-context-2d-getImageData">getImageData(<var>sx</var>, <var>sy</var>, <var>sw</var>,
+  <var>sh</var>, <var>settings</var>)</code></dfn> method steps are:</p>
+
+  <ol>
+   <li><p>If either the <var>sw</var> or <var>sh</var> arguments are zero, then throw an
+   <span>"<code>IndexSizeError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>If the <code>CanvasRenderingContext2D</code>'s <span
+   data-x="concept-canvas-origin-clean">origin-clean</span> flag is set to false, then throw a
+   <span>"<code>SecurityError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>Let <var>imageData</var> be a <span>new</span> <code>ImageData</code> object.</p></li>
+
+   <li><p><span data-x="Initialize an ImageData object">Initialize</span> <var>imageData</var> given
+   <var>sw</var>, <var>sh</var>, <var>settings</var>, and
+   <i><span data-x="initialize-imagedata-defaultcolorspace">defaultColorSpace</span></i> set to
+   <span>this</span>'s <span data-x="concept-canvas-color-space">color space</span>.</p></li>
+
+   <li><p>Let the source rectangle be the rectangle whose corners are the four points
+   (<var>sx</var>, <var>sy</var>), (<span data-x=""><var>sx</var>+<var>sw</var></span>,
+   <var>sy</var>), (<span data-x=""><var>sx</var>+<var>sw</var></span>, <span
+   data-x=""><var>sy</var>+<var>sh</var></span>), (<var>sx</var>,
+   <var>sy</var>+<var>sh</var>).</p></li>
+
+   <li><p>Set the pixel values of <var>imageData</var> to be the pixels of <span>this</span>'s
+   <span>output bitmap</span> in the area specified by the source rectangle in the bitmap's
+   coordinate space units, converted from <span>this</span>'s <span
+   data-x="concept-canvas-color-space">color space</span> to <var>imageData</var>'s <code
+   data-x="dom-imagedata-colorSpace">colorSpace</code> using <span>'relative-colorimetric'</span>
+   rendering intent.</p></li>
+
+   <li><p>Set the pixels values of <var>imageData</var> for areas of the source rectangle that are
+   outside of the <span>output bitmap</span> to <span>transparent black</span>.</p></li>
+
+   <li><p>Return <var>imageData</var>.</p></li>
+  </ol>
+  </div>
+
+
+  <div algorithm>
+  <p>The <dfn method for="CanvasImageData"><code
+  data-x="dom-context-2d-putImageData-short">putImageData(<var>imageData</var>,
+  <var>dx</var>, <var>dy</var>)</code></dfn> method steps are to
+  <span data-x="dom-context2d-putImageData-common">put pixels from an
+  <code>ImageData</code> onto a bitmap</span>, given
+  <var>imageData</var>, <span>this</span>'s <span>output bitmap</span>,
+  <var>dx</var>, <var>dy</var>, 0, 0,
+  <var>imageData</var>'s <code data-x="dom-imagedata-width">width</code>, and
+  <var>imageData</var>'s <code data-x="dom-imagedata-height">height</code>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="CanvasImageData"><code
+  data-x="dom-context-2d-putImageData">putImageData(<var>imageData</var>,
+  <var>dx</var>, <var>dy</var>, <var>dirtyX</var>, <var>dirtyY</var>,
+  <var>dirtyWidth</var>, <var>dirtyHeight</var>)</code></dfn> method steps are to
+  <span data-x="dom-context2d-putImageData-common">put pixels from an
+  <code>ImageData</code> onto a bitmap</span>, given
+  <var>imageData</var>, <span>this</span>'s <span>output bitmap</span>,
+  <var>dx</var>, <var>dy</var>, <var>dirtyX</var>, <var>dirtyY</var>,
+  <var>dirtyWidth</var>, and <var>dirtyHeight</var>.</p>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="dom-context2d-putImageData-common">put pixels from an <code>ImageData</code>
+  onto a bitmap</dfn>, given an <code>ImageData</code> <var>imageData</var>,
+  an <span>output bitmap</span> <var>bitmap</var>, and numbers <var>dx</var>, <var>dy</var>,
+  <var>dirtyX</var>, <var>dirtyY</var>, <var>dirtyWidth</var>, and <var>dirtyHeight</var>:</p>
+
+  <ol>
+   <li><p>Let <var>buffer</var> be <var>imageData</var>'s <code
+   data-x="dom-imagedata-data">data</code> attribute value's [[ViewedArrayBuffer]] internal
+   slot.</p></li>
+
+   <li><p>If <span>IsDetachedBuffer</span>(<var>buffer</var>) is true, then throw an
+   <span>"<code>InvalidStateError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li>
+    <p>If <var>dirtyWidth</var> is negative, then let <var>dirtyX</var> be <span
+    data-x=""><var>dirtyX</var>+<var>dirtyWidth</var></span>, and let <var>dirtyWidth</var> be equal
+    to the absolute magnitude of <var>dirtyWidth</var>.</p>
+
+    <p>If <var>dirtyHeight</var> is negative, then let <var>dirtyY</var> be <span
+    data-x=""><var>dirtyY</var>+<var>dirtyHeight</var></span>, and let <var>dirtyHeight</var> be
+    equal to the absolute magnitude of <var>dirtyHeight</var>.</p>
+   </li>
+
+   <li>
+    <p>If <var>dirtyX</var> is negative, then let <var>dirtyWidth</var> be <span
+    data-x=""><var>dirtyWidth</var>+<var>dirtyX</var></span>, and let <var>dirtyX</var> be 0.</p>
+
+    <p>If <var>dirtyY</var> is negative, then let <var>dirtyHeight</var> be <span
+    data-x=""><var>dirtyHeight</var>+<var>dirtyY</var></span>, and let <var>dirtyY</var> be 0.</p>
+   </li>
+
+   <li>
+    <p>If <var>dirtyX</var>+<var>dirtyWidth</var> is greater than the <code
+    data-x="dom-imagedata-width">width</code> attribute of the <var>imageData</var> argument, then
+    let <var>dirtyWidth</var> be the value of that <code data-x="dom-imagedata-width">width</code>
+    attribute, minus the value of <var>dirtyX</var>.</p>
+
+    <p>If <var>dirtyY</var>+<var>dirtyHeight</var> is greater than the <code
+    data-x="dom-imagedata-height">height</code> attribute of the <var>imageData</var> argument, then
+    let <var>dirtyHeight</var> be the value of that <code
+    data-x="dom-imagedata-height">height</code> attribute, minus the value of <var>dirtyY</var>.</p>
+   </li>
+
+   <li>
+    <p>If, after those changes, either <var>dirtyWidth</var> or <var>dirtyHeight</var> are negative
+    or zero, then return without affecting any bitmaps.</p>
+   </li>
+
+   <li><p>For all integer values of <var>x</var> and <var>y</var> where <span
+   data-x=""><var>dirtyX</var>&nbsp;&le;&nbsp;<var>x</var>&nbsp;&lt;&nbsp;<span
+   data-x=""><var>dirtyX</var>+<var>dirtyWidth</var></span></span> and <span
+   data-x=""><var>dirtyY</var>&nbsp;&le;&nbsp;<var>y</var>&nbsp;&lt;&nbsp;<span
+   data-x=""><var>dirtyY</var>+<var>dirtyHeight</var></span></span>,
+   set the pixel with coordinate (<span data-x=""><var>dx</var>+<var>x</var></span>,
+   <var>dy</var>+<var>y</var>) in <var>bitmap</var> to the color of the pixel at coordinate
+   (<var>x</var>, <var>y</var>) in the <var>imageData</var> data structure's
+   <span data-x="concept-imagedata-bitmap-representation">bitmap</span>,
+   converted from <var>imageData</var>'s <code data-x="dom-imagedata-colorSpace">colorSpace</code>
+   to the <span data-x="concept-canvas-color-space">color space</span> of <var>bitmap</var>
+   using <span>'relative-colorimetric'</span> rendering intent.</p></li>
+  </ol>
+  </div>
+
+  <p class="note">Due to the lossy nature of converting between color spaces and converting to and
+  from <span data-x="concept-premultiplied-alpha">premultiplied alpha</span> color values, pixels
+  that have just been set using <code data-x="dom-context-2d-putImageData">putImageData()</code>,
+  and are not completely opaque, might be returned to an equivalent <code
+  data-x="dom-context-2d-getImageData">getImageData()</code> as different values.</p>
+
+  <p>The current path, <span data-x="dom-context-2d-transformation">transformation matrix</span>,
+  <span data-x="shadows">shadow attributes</span>, <span data-x="concept-canvas-global-alpha">global
+  alpha</span>, the <span>clipping region</span>, and <span>current compositing and blending
+  operator</span> must not affect the methods described in this section.</p>
+
+  </div>
+
+  <div class="example">
+   <p>In the following example, the script generates an <code>ImageData</code> object so that it can
+   draw onto it.</p>
+
+   <pre><code class="js">// canvas is a reference to a &lt;canvas> element
+var context = canvas.getContext('2d');
+
+// create a blank slate
+var data = context.createImageData(canvas.width, canvas.height);
+
+// create some plasma
+FillPlasma(data, 'green'); // green plasma
+
+// add a cloud to the plasma
+AddCloud(data, data.width/2, data.height/2); // put a cloud in the middle
+
+// paint the plasma+cloud on the canvas
+context.putImageData(data, 0, 0);
+
+// support methods
+function FillPlasma(data, color) { ... }
+function AddCloud(data, x, y) { ... }</code></pre>
+  </div>
+
+  <div class="example">
+   <p>Here is an example of using <code
+   data-x="dom-context-2d-getImageData">getImageData()</code> and <code
+   data-x="dom-context-2d-putImageData">putImageData()</code> to implement an edge detection
+   filter.</p>
+
+   <pre><code class="html">&lt;!DOCTYPE HTML>
+&lt;html lang="en">
+ &lt;head>
+  &lt;title>Edge detection demo&lt;/title>
+  &lt;script>
+   var image = new Image();
+   function init() {
+     image.onload = demo;
+     image.src = "image.jpeg";
+   }
+   function demo() {
+     var canvas = document.getElementsByTagName('canvas')[0];
+     var context = canvas.getContext('2d');
+
+     // draw the image onto the canvas
+     context.drawImage(image, 0, 0);
+
+     // get the image data to manipulate
+     var input = context.getImageData(0, 0, canvas.width, canvas.height);
+
+     // get an empty slate to put the data into
+     var output = context.createImageData(canvas.width, canvas.height);
+
+     // alias some variables for convenience
+     // In this case input.width and input.height
+     // match canvas.width and canvas.height
+     // but we'll use the former to keep the code generic.
+     var w = input.width, h = input.height;
+     var inputData = input.data;
+     var outputData = output.data;
+
+     // edge detection
+     for (var y = 1; y &lt; h-1; y += 1) {
+       for (var x = 1; x &lt; w-1; x += 1) {
+         for (var c = 0; c &lt; 3; c += 1) {
+           var i = (y*w + x)*4 + c;
+           outputData[i] = 127 + -inputData[i - w*4 - 4] -   inputData[i - w*4] - inputData[i - w*4 + 4] +
+                                 -inputData[i - 4]       + 8*inputData[i]       - inputData[i + 4] +
+                                 -inputData[i + w*4 - 4] -   inputData[i + w*4] - inputData[i + w*4 + 4];
+         }
+         outputData[(y*w + x)*4 + 3] = 255; // alpha
+       }
+     }
+
+     // put the image data back after manipulation
+     context.putImageData(output, 0, 0);
+   }
+  &lt;/script>
+ &lt;/head>
+ &lt;body onload="init()">
+  &lt;canvas>&lt;/canvas>
+ &lt;/body>
+&lt;/html></code></pre>
+  </div>
+
+  <div class="example">
+   <p>Here is an example of color space conversion applied when drawing a solid color and
+   reading the result back using and <code data-x=
+   "dom-context-2d-getImageData">getImageData()</code>.</p>
+
+   <pre><code class="html">&lt;!DOCTYPE HTML>
+&lt;html lang="en">
+&lt;title>Color space image data demo&lt;/title>
+
+&lt;canvas>&lt;/canvas>
+
+&lt;script>
+const canvas = document.querySelector('canvas');
+const context = canvas.getContext('2d', {colorSpace:'display-p3'});
+
+// Draw a red rectangle. Note that the hex color notation
+// specifies sRGB colors.
+context.fillStyle = "#FF0000";
+context.fillRect(0, 0, 64, 64);
+
+// Get the image data.
+const pixels = context.getImageData(0, 0, 1, 1);
+
+// This will print 'display-p3', reflecting the default behavior
+// of returning image data in the canvas's color space.
+console.log(pixels.colorSpace);
+
+// This will print the values 234, 51, and 35, reflecting the
+// red fill color, converted to 'display-p3'.
+console.log(pixels.data[0]);
+console.log(pixels.data[1]);
+console.log(pixels.data[2]);
+&lt;/script></code></pre>
+  </div>
+
+
+

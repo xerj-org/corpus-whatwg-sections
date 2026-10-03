@@ -1,0 +1,267 @@
+WHATWG HTML — section custom-elements-core-concepts — Core concepts
+
+  <h4 id="custom-elements-core-concepts">Core concepts</h4>
+
+  <p>A <dfn export>custom element</dfn> is an element that is <span
+  data-x="concept-element-custom">custom</span>. Informally, this means that its constructor and
+  prototype are defined by the author, instead of by the user agent. This author-supplied
+  constructor function is called the <dfn export>custom element constructor</dfn>.</p>
+
+  <p>Two distinct types of <span data-x="custom element">custom elements</span> can be defined:</p>
+
+  <ul>
+   <li><p>An <dfn export>autonomous custom element</dfn>, which is defined with no <code
+   data-x="dom-ElementDefinitionOptions-extends">extends</code> option. These types of custom
+   elements have a local name equal to their <span
+   data-x="concept-custom-element-definition-name">defined name</span>.</p></li>
+
+   <li><p>A <dfn export>customized built-in element</dfn>, which is defined with an <code
+   data-x="dom-ElementDefinitionOptions-extends">extends</code> option. These types of custom
+   elements have a local name equal to the value passed in their <code
+   data-x="dom-ElementDefinitionOptions-extends">extends</code> option, and their <span
+   data-x="concept-custom-element-definition-name">defined name</span> is used as the value of the
+   <dfn element-attr for="html-global"><code data-x="attr-is">is</code></dfn> attribute, which
+   therefore must be a <span>valid custom element name</span>.</p></li>
+  </ul>
+
+  <p>After a <span>custom element</span> is <span data-x="create an element">created</span>,
+  changing the value of the <code data-x="attr-is">is</code> attribute does not
+  change the element's behavior<span w-nodev>, as it is saved on the element as its <span
+  data-x="concept-element-is-value"><code data-x="">is</code> value</span></span>.</p>
+
+  <p><span data-x="autonomous custom element">Autonomous custom elements</span> have the following
+  element definition:</p>
+
+  <dl class="element">
+   <dt><span data-x="concept-element-categories">Categories</span>:</dt>
+   <dd><span>Flow content</span>.</dd>
+   <dd><span>Phrasing content</span>.</dd>
+   <dd><span>Palpable content</span>.</dd>
+   <dd>For <span data-x="form-associated custom element">form-associated custom elements</span>: <span data-x="category-listed">Listed</span>, <span data-x="category-label">labelable</span>, <span data-x="category-submit">submittable</span>, and <span data-x="category-reset">resettable</span> <span>form-associated element</span>.</dd>
+   <dt><span data-x="concept-element-contexts">Contexts in which this element can be used</span>:</dt>
+   <dd>Where <span>phrasing content</span> is expected.</dd>
+   <dt><span data-x="concept-element-content-model">Content model</span>:</dt>
+   <dd><span>Transparent</span>.</dd>
+   <dt><span data-x="concept-element-attributes">Content attributes</span>:</dt>
+   <dd><span>Global attributes</span>, except the <code data-x="attr-is">is</code> attribute<!-- no-annotate --></dd>
+   <dd><code data-x="attr-fae-form">form</code>, for <span data-x="form-associated custom element">form-associated custom elements</span></dd>
+   <dd><code data-x="attr-fe-disabled">disabled</code>, for <span data-x="form-associated custom element">form-associated custom elements</span></dd>
+   <dd><code data-x="attr-face-readonly">readonly</code>, for <span data-x="form-associated custom element">form-associated custom elements</span></dd>
+   <dd><code data-x="attr-fe-name">name</code>, for <span data-x="form-associated custom element">form-associated custom elements</span></dd>
+   <dd>Any other attribute that has no namespace (see prose).</dd>
+   <dt><span
+   data-x="concept-element-accessibility-considerations">Accessibility considerations</span>:</dt>
+   <dd>For <span data-x="form-associated custom element">form-associated custom elements</span>: <a
+   href="https://w3c.github.io/html-aria/#el-form-associated-custom-element">for authors</a>; <a
+   href="https://w3c.github.io/html-aam/#el-form-associated-custom-element">for implementers</a>.</dd>
+   <dd>Otherwise: <a
+   href="https://w3c.github.io/html-aria/#el-autonomous-custom-element">for authors</a>; <a
+   href="https://w3c.github.io/html-aam/#el-autonomous-custom-element">for implementers</a>.</dd>
+   <dt><span data-x="concept-element-sanitization">Sanitization</span>:</dt>
+   <dd><span data-x="sanitizer-uncategorized">Uncategorized</span>.</dd>
+   <dt><span data-x="concept-element-dom">DOM interface</span>:</dt>
+   <dd>Supplied by the element's author (inherits from <code>HTMLElement</code>)</dd>
+  </dl>
+
+
+  <p>An <span>autonomous custom element</span> does not have any special meaning: it
+  <span>represents</span> its children. A <span>customized built-in element</span> inherits the
+  semantics of the element that it extends.</p>
+
+  <p>Any namespace-less attribute that is relevant to the element's functioning, as determined by
+  the element's author, may be specified on an <span>autonomous custom element</span>, so long as
+  the attribute name is a <span>valid attribute local name</span> and contains no <span
+  data-x="ASCII upper alpha">ASCII upper alphas</span>. The exception is the <code
+  data-x="attr-is">is</code> attribute, which must not be specified on an <span>autonomous custom
+  element</span> (and which will have no effect if it is).</p>
+
+  <p><span data-x="customized built-in element">Customized built-in elements</span> follow the
+  normal requirements for attributes, based on the elements they extend. To add custom
+  attribute-based behavior, use <code data-x="attr-data-*">data-*</code> attributes.</p>
+
+  <hr>
+
+  <div algorithm>
+  <p>An <span>autonomous custom element</span> is called a <dfn export>form-associated custom
+  element</dfn> if the element is associated with a <span>custom element definition</span> whose
+  <span data-x="concept-custom-element-definition-form-associated">form-associated</span> field is
+  set to true.</p>
+  </div>
+
+  <p>The <code data-x="attr-fe-name">name</code> attribute represents the <span>form-associated
+  custom element</span>'s name. The <code data-x="attr-fe-disabled">disabled</code> attribute is
+  used to make the <span>form-associated custom element</span> non-interactive and to prevent its
+  <span data-x="face-submission-value">submission value</span> from being submitted. The <code
+  data-x="attr-fae-form">form</code> attribute is used to explicitly associate the
+  <span>form-associated custom element</span> with its <span>form owner</span>.</p>
+
+  <p>The <dfn element-attr for="form-associated custom elements"
+  data-x="attr-face-readonly"><code>readonly</code></dfn> attribute of <span data-x="form-associated
+  custom element">form-associated custom elements</span> specifies that the element is <span>barred
+  from constraint validation</span>. User agents don't provide any other behavior for the attribute,
+  but custom element authors should, where possible, use its presence to make their control
+  non-editable in some appropriate fashion, similar to the behavior for the <span
+  data-x="attr-input-readonly">readonly</span> attribute on built-in form controls.</p>
+
+  <div algorithm>
+  <p><strong>Constraint validation</strong>: If the <code
+  data-x="attr-face-readonly">readonly</code> attribute is specified on a <span>form-associated
+  custom element</span>, the element is <span>barred from constraint validation</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <span data-x="concept-form-reset-control">reset algorithm</span> for <span
+  data-x="form-associated custom element">form-associated custom elements</span> is to <span>enqueue
+  a custom element callback reaction</span> with the element, callback name "<code
+  data-x="">formResetCallback</code>", and « ».</p>
+  </div>
+
+  <hr>
+
+  <div algorithm>
+  <p>A string <var>name</var> is a <dfn export>valid custom element name</dfn> if all of the
+  following are true:</p>
+
+  <ul>
+   <li>
+    <p><var>name</var> is a <span>valid element local name</span>;</p>
+
+    <p class="note">This ensures the custom element can be created with <code
+    data-x="dom-Document-createElement">createElement()</code>.</p>
+   </li>
+
+   <li>
+    <p><var>name</var>'s 0th <span>code point</span> is an <span>ASCII lower alpha</span>;</p>
+
+    <p class="note">This ensures the HTML parser will treat the name as a tag name instead of as
+    text.</p>
+   </li>
+
+   <li>
+    <p><var>name</var> does not contain any <span data-x="ASCII upper alpha">ASCII upper
+    alphas</span>;</p>
+
+    <p class="note">This ensures the user agent can always treat HTML elements
+    ASCII-case-insensitively.</p>
+   </li>
+
+   <li>
+    <p><var>name</var> contains a U+002D (-); and</p>
+
+    <p class="note">This is used for namespacing and to ensure forward compatibility (since no
+    elements will be added to HTML, SVG, or MathML with hyphen-containing local names going
+    forward).</p>
+   </li>
+
+   <li>
+    <p><var>name</var> is not one of the following:</p>
+
+    <ul class="brief">
+     <li>"<code data-x="">annotation-xml</code>"</li>
+     <li>"<code data-x="">color-profile</code>"</li>
+     <li>"<code data-x="">font-face</code>"</li>
+     <li>"<code data-x="">font-face-src</code>"</li>
+     <li>"<code data-x="">font-face-uri</code>"</li>
+     <li>"<code data-x="">font-face-format</code>"</li>
+     <li>"<code data-x="">font-face-name</code>"</li>
+     <li>"<code data-x="">missing-glyph</code>"</li>
+    </ul>
+
+    <p class="note">The list of names above is the summary of all hyphen-containing element names
+    from the <span data-x="other applicable specifications">applicable specifications</span>, namely
+    <cite>SVG 2</cite> and <cite>MathML</cite>. <ref>SVG</ref> <ref>MATHML</ref></p>
+   </li>
+  </ul>
+  </div>
+
+  <p>Apart from these restrictions, a large variety of names is allowed, to give maximum
+  flexibility for use cases like <code data-x="">&lt;math-α></code> or <code
+  data-x="">&lt;emotion-😍></code>.</p>
+
+  <div w-nodev>
+
+  <hr>
+
+  <p>A <dfn export>custom element definition</dfn> describes a <span>custom element</span> and
+  consists of:</p>
+
+  <dl>
+   <dt>A <dfn data-x="concept-custom-element-definition-name" export
+   for="custom element definition">name</dfn></dt>
+   <dd>A <span>valid custom element name</span></dd>
+
+   <dt>A <dfn data-x="concept-custom-element-definition-local-name" export
+   for="custom element definition">local name</dfn></dt>
+   <dd>A local name</dd>
+
+   <dt>A <dfn data-x="concept-custom-element-definition-constructor" export
+   for="custom element definition">constructor</dfn></dt>
+   <dd>A Web IDL <code>CustomElementConstructor</code> callback function type value wrapping
+   the <span>custom element constructor</span></dd>
+
+   <dt>A list of <dfn data-x="concept-custom-element-definition-observed-attributes">observed
+   attributes</dfn></dt>
+   <dd>A <code data-x="">sequence&lt;DOMString></code></dd>
+
+   <dt>A collection of <dfn
+   data-x="concept-custom-element-definition-lifecycle-callbacks">lifecycle callbacks</dfn></dt>
+   <dd>A map, whose keys are the strings "<code data-x="">connectedCallback</code>", "<code
+   data-x="">disconnectedCallback</code>", "<code data-x="">connectedMoveCallback</code>", "<code
+   data-x="">adoptedCallback</code>", "<code data-x="">attributeChangedCallback</code>", "<code
+   data-x="">formAssociatedCallback</code>", "<code data-x="">formDisabledCallback</code>", "<code
+   data-x="">formResetCallback</code>", and "<code data-x="">formStateRestoreCallback</code>". The
+   corresponding values are either a Web IDL <code data-x="idl-Function">Function</code> callback
+   function type value, or null. By default the value of each entry is null.</dd>
+
+   <dt>A <dfn data-x="concept-custom-element-definition-construction-stack">construction
+   stack</dfn></dt>
+   <dd>A list, initially empty, that is manipulated by the <span
+   data-x="concept-upgrade-an-element">upgrade an element</span> algorithm and the <a
+   href="#html-element-constructors">HTML element constructors</a>. Each entry in the list will be
+   either an element or an <dfn data-x="concept-already-constructed-marker"><i>already
+   constructed</i> marker</dfn>.</dd>
+
+   <dt>A <dfn data-x="concept-custom-element-definition-form-associated">form-associated</dfn>
+   boolean</dt>
+   <dd>If this is true, user agent treats elements associated to this
+   <span>custom element definition</span> as <span data-x="form-associated custom
+   element">form-associated custom elements</span>.</dd>
+
+   <dt>A <dfn data-x="concept-custom-element-definition-disable-internals">disable
+   internals</dfn> boolean</dt>
+   <dd>Controls <code data-x="dom-attachInternals">attachInternals()</code>.
+
+   <dt>A <dfn data-x="concept-custom-element-definition-disable-shadow" export
+   for="custom element definition">disable shadow</dfn> boolean</dt>
+   <dd>Controls <code data-x="dom-Element-attachShadow">attachShadow()</code>.
+  </dl>
+
+  <div algorithm>
+  <p>To <dfn export>look up a custom element definition</dfn>, given null or a
+  <code>CustomElementRegistry</code> object <var>registry</var>, string-or-null
+  <var>namespace</var>, string <var>localName</var>, and string-or-null <var>is</var>, perform the
+  following steps. They will return either a <span>custom element definition</span> or null:</p>
+
+  <ol>
+   <li><p>If <var>registry</var> is null, then return null.</p></li>
+
+   <li><p>If <var>namespace</var> is not the <span>HTML namespace</span>, then return null.</p></li>
+
+   <li><p>If <var>registry</var>'s <span>custom element definition set</span> <span data-x="list
+   contains">contains</span> an item with <span
+   data-x="concept-custom-element-definition-name">name</span> and <span
+   data-x="concept-custom-element-definition-local-name">local name</span> both equal to
+   <var>localName</var>, then return that item.</p></li>
+
+   <li><p>If <var>registry</var>'s <span>custom element definition set</span> <span data-x="list
+   contains">contains</span> an item with <span
+   data-x="concept-custom-element-definition-name">name</span> equal to <var>is</var> and <span
+   data-x="concept-custom-element-definition-local-name">local name</span> equal to
+   <var>localName</var>, then return that item.</p></li>
+
+   <li><p>Return null.</p></li>
+  </ol>
+  </div>
+
+  </div>
+

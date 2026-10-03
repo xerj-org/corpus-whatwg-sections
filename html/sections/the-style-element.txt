@@ -1,0 +1,342 @@
+WHATWG HTML — section the-style-element — The <dfn element><code>style</code></dfn> element
+
+  <h4>The <dfn element><code>style</code></dfn> element</h4>
+
+  <dl class="element">
+   <dt><span data-x="concept-element-categories">Categories</span>:</dt>
+   <dd><span>Metadata content</span>.</dd>
+   <dt><span data-x="concept-element-contexts">Contexts in which this element can be used</span>:</dt>
+   <dd>Where <span>metadata content</span> is expected.</dd>
+   <dd>In a <code>noscript</code> element that is a child of a <code>head</code> element.</dd>
+   <dt><span data-x="concept-element-content-model">Content model</span>:</dt>
+   <dd><span data-x="text content">Text</span> that gives a <span>conformant style sheet</span>.</dd>
+   <dt><span data-x="concept-element-attributes">Content attributes</span>:</dt>
+   <dd><span>Global attributes</span></dd>
+   <dd><code data-x="attr-style-media">media</code></dd>
+   <dd><code data-x="attr-style-blocking">blocking</code></dd>
+   <dd>Also, the <code data-x="attr-style-title">title</code> attribute <span data-x="attr-style-title">has special semantics</span> on this element.</dd>
+   <dt><span
+   data-x="concept-element-accessibility-considerations">Accessibility considerations</span>:</dt>
+   <dd><a href="https://w3c.github.io/html-aria/#el-style">For authors</a>.</dd>
+   <dd><a href="https://w3c.github.io/html-aam/#el-style">For implementers</a>.</dd>
+   <dt><span data-x="concept-element-sanitization">Sanitization</span>:</dt>
+   <dd><span data-x="sanitizer-uncategorized">Uncategorized</span>.</dd>
+   <dt><span data-x="concept-element-dom">DOM interface</span>:</dt>
+   <dd w-nodev>
+    <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>HTMLStyleElement</dfn> : <span>HTMLElement</span> {
+  [<span>HTMLConstructor</span>] constructor();
+
+  attribute boolean <span data-x="dom-style-disabled">disabled</span>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute DOMString <dfn attribute for="HTMLStyleElement" data-x="dom-style-media">media</dfn>;
+  [SameObject, PutForwards=<span data-x="dom-DOMTokenList-value">value</span>, <span data-x="xattr-Reflect">Reflect</span>] readonly attribute <span>DOMTokenList</span> <dfn attribute for="HTMLStyleElement" data-x="dom-style-blocking">blocking</dfn>;
+
+  // <a href="#HTMLStyleElement-partial">also has obsolete members</a>
+};
+<span>HTMLStyleElement</span> includes <span>LinkStyle</span>;</code></pre>
+   </dd>
+   <dd w-dev>Uses <code>HTMLStyleElement</code>.</dd>
+  </dl>
+
+  <p>The <code>style</code> element allows authors to embed CSS style sheets in their documents.
+  The <code>style</code> element is one of several inputs to the styling processing
+  model. The element does not <span data-x="represents">represent</span> content for the
+  user.</p>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLStyleElement"><code
+  data-x="dom-style-disabled">disabled</code></dfn> getter steps are:</p>
+
+  <ol>
+   <li><p>If <span>this</span> does not have an <span>associated CSS style sheet</span>, return
+   false.</p></li>
+
+   <li><p>If <span>this</span>'s <span>associated CSS style sheet</span>'s <span
+   data-x="concept-css-style-sheet-disabled-flag">disabled flag</span> is set, return true.</p></li>
+
+   <li><p>Return false.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <code data-x="dom-style-disabled">disabled</code> setter steps are:</p>
+
+  <ol>
+   <li><p>If <span>this</span> does not have an <span>associated CSS style sheet</span>,
+   return.</p></li>
+
+   <li><p>If the given value is true, set <span>this</span>'s <span>associated CSS style
+   sheet</span>'s <span data-x="concept-css-style-sheet-disabled-flag">disabled flag</span>.
+   Otherwise, unset <span>this</span>'s <span>associated CSS style sheet</span>'s <span
+   data-x="concept-css-style-sheet-disabled-flag">disabled flag</span>.</p></li>
+  </ol>
+  </div>
+
+  <div class="example">
+   <p>Importantly, <code data-x="dom-style-disabled">disabled</code> attribute assignments only take
+   effect when the <code>style</code> element has an <span>associated CSS style sheet</span>:</p>
+
+   <pre><code class="js">const style = document.createElement('style');
+style.disabled = true;
+style.textContent = 'body { background-color: red; }';
+document.body.append(style);
+console.log(style.disabled); // false</code></pre>
+  </div>
+
+  <p>The <dfn element-attr for="style"><code data-x="attr-style-media">media</code></dfn> attribute
+  says which media the styles apply to. The value must be a <span>valid media query list</span>.
+  <span w-nodev>The user agent must apply the styles when the <code
+  data-x="attr-style-media">media</code> attribute's value <span>matches the environment</span> and
+  the other relevant conditions apply, and must not apply them otherwise.</span></p><!-- note
+  similar text in <link> element section -->
+
+  <div w-nodev>
+
+  <p class="note">The styles might be further limited in scope, e.g. in CSS with the use of <code
+  data-x="">@media</code> blocks. This specification does not override such further restrictions or
+  requirements.</p><!-- note similar text in <link> element section -->
+
+  </div>
+
+  <p id="style-default-media">The default, if the <code data-x="attr-style-media">media</code>
+  attribute is omitted, is "<code data-x="">all</code>", meaning that by default styles apply to all
+  media.</p>
+
+  <p>The <dfn element-attr for="style"><code data-x="attr-style-blocking">blocking</code></dfn>
+  attribute is a <span>blocking attribute</span>.</p>
+
+  <p id="title-on-style">The <dfn element-attr for="style"><code
+  data-x="attr-style-title">title</code></dfn> attribute on <code>style</code> elements defines
+  <span data-x="CSS style sheet set">CSS style sheet sets</span>. If the <code>style</code> element
+  has no <code data-x="attr-style-title">title</code> attribute, then it has no title; the <code
+  data-x="attr-title">title</code> attribute of ancestors does not apply to the <code>style</code>
+  element. If the <code>style</code> element is not <span>in a document tree</span>, then the <code
+  data-x="attr-style-title">title</code> attribute is ignored. <ref>CSSOM</ref></p>
+
+  <p class="note">The <code data-x="attr-style-title">title</code> attribute on <code>style</code>
+  elements, like the <code data-x="attr-link-title">title</code> attribute on <code>link</code>
+  elements, differs from the global <code data-x="attr-title">title</code> attribute in that a
+  <code>style</code> block without a title does not inherit the title of the parent element: it
+  merely has no title.</p>
+
+  <p>The <span>child text content</span> of a <code>style</code> element must be that of a
+  <span>conformant style sheet</span>.</p>
+
+  <div algorithm>
+  <p>A <code>style</code> element is <span>implicitly potentially render-blocking</span> if the
+  element was created by its <span>node document</span>'s parser.</p>
+  </div>
+
+  <hr>
+
+  <div w-nodev>
+
+  <p>The user agent must run the <span>update a <code>style</code> block</span> algorithm whenever
+  any of the following conditions occur:</p>
+  <!-- note that a browsing context isn't needed:
+       https://software.hixie.ch/utilities/js/live-dom-viewer/?saved=2739 -->
+
+  <ul>
+   <li><p>The element is popped off the <span>stack of open elements</span> of an <span>HTML
+   parser</span> or <span>XML parser</span>.</p></li>
+
+   <li><p>The element is not on the <span>stack of open elements</span> of an <span>HTML
+   parser</span> or <span>XML parser</span>, and it <span>becomes connected</span> or <span
+   data-x="becomes disconnected">disconnected</span>.</p></li>
+
+   <li><p>The element is not on the <span>stack of open elements</span> of an <span>HTML
+   parser</span> or <span>XML parser</span>, and its <span>children changed steps</span>
+   run.</p></li>
+  </ul>
+
+  <div algorithm>
+  <p>The <dfn export>update a <code>style</code> block</dfn> algorithm is as follows:</p>
+
+  <ol>
+   <li><p>Let <var>element</var> be the <code>style</code> element.</p></li>
+
+   <li><p>If <var>element</var> has an <span>associated CSS style sheet</span>, <span
+   data-x="remove a CSS style sheet">remove the CSS style sheet</span> in question.</p></li>
+
+   <li><p>If <var>element</var> is not <span>connected</span>, then return.</p></li>
+   <!-- See:
+          https://software.hixie.ch/utilities/js/live-dom-viewer/?saved=2740
+          https://github.com/w3c/csswg-drafts/issues/3096 -->
+
+   <li>
+    <p>If <var>element</var>'s <code data-x="attr-style-type">type</code> attribute is present and
+    its value is neither the empty string nor an <span>ASCII case-insensitive</span> match for
+    "<code>text/css</code>", then return.</p>
+
+    <p class="note">In particular, a <code data-x="attr-style-type">type</code> value with
+    parameters, such as "<code data-x="">text/css; charset=utf-8</code>", will cause this algorithm
+    to return early.</p>
+   </li>
+
+   <li><p>If the <span>Should element's inline behavior be blocked by Content Security
+   Policy?</span> algorithm returns "<code data-x="">Blocked</code>" when executed upon
+   <var>element</var>, "<code data-x="">style</code>", and <var>element</var>'s
+   <span>child text content</span>, then return. <ref>CSP</ref></p></li>
+
+   <li>
+    <p><span>Create a CSS style sheet</span> with the following properties:</p>
+
+    <dl>
+     <dt><span data-x="concept-css-style-sheet-type">type</span></dt>
+     <dd><p><code>text/css</code></p></dd>
+
+     <dt><span data-x="concept-css-style-sheet-owner-node">owner node</span></dt>
+     <dd><p><var>element</var></p></dd>
+
+     <dt><span data-x="concept-css-style-sheet-media">media</span></dt>
+
+     <dd>
+      <p>The <code data-x="attr-style-media">media</code> attribute of <var>element</var>.</p>
+
+      <p class="note">This is a reference to the (possibly absent at this time) attribute, rather
+      than a copy of the attribute's current value. <cite>CSSOM</cite> defines what happens
+      when the attribute is dynamically set, changed, or removed.</p>
+     </dd>
+
+     <dt><span data-x="concept-css-style-sheet-title">title</span></dt>
+
+     <dd>
+      <p>The <code data-x="attr-style-title">title</code> attribute of <var>element</var>, if
+      <var>element</var> is <span>in a document tree</span>, or the empty string otherwise.</p>
+
+      <p class="note">Again, this is a <em>reference</em> to the attribute.</p>
+     </dd>
+
+     <dt><span data-x="concept-css-style-sheet-alternate-flag">alternate flag</span></dt>
+     <dd><p>Unset.</p></dd>
+
+     <dt><span data-x="concept-css-style-sheet-origin-clean-flag">origin-clean flag</span></dt>
+     <dd><p>Set.</p></dd>
+
+     <dt><span data-x="concept-css-style-sheet-location">location</span></dt>
+     <dt><span data-x="concept-css-style-sheet-parent-CSS-style-sheet">parent CSS style sheet</span></dt>
+     <dt><span data-x="concept-css-style-sheet-owner-CSS-rule">owner CSS rule</span></dt>
+     <dd><p>null</p></dd>
+
+     <dt><span data-x="concept-css-style-sheet-disabled-flag">disabled flag</span></dt>
+     <dd><p>Left at its default value.</p></dd>
+
+     <dt><span data-x="concept-css-style-sheet-CSS-rules">CSS rules</span></dt>
+     <dd>
+      <p>Left uninitialized.</p>
+
+      <p class="XXX">This doesn't seem right. Presumably we should be using the element's
+      <span>child text content</span>? Tracked as <a
+      href="https://github.com/whatwg/html/issues/2997">issue #2997</a>.</p>
+     </dd>
+    </dl>
+   </li>
+
+   <li><p>If <var>element</var> <span>contributes a script-blocking style sheet</span>, <span
+   data-x="set append">append</span> <var>element</var> to its <span>node document</span>'s
+   <span>script-blocking style sheet set</span>.</p></li>
+
+   <li><p>If <var>element</var>'s <code data-x="attr-style-media">media</code> attribute's value
+   <span>matches the environment</span> and <var>element</var> is
+   <span>potentially render-blocking</span>, then <span>block rendering</span> on
+   <var>element</var>.</p></li>
+  </ol>
+  </div>
+
+  <!-- the following steps are similar to the text in the <link> element's default process the
+  linked resource algorithm -->
+  <div algorithm>
+  <p>Once the attempts to obtain the style sheet's <span>critical subresources</span>, if any, are
+  complete, or, if the style sheet has no <span>critical subresources</span>, once the style sheet
+  has been parsed and processed, the user agent must run these steps:</p>
+
+  <p class="XXX">Fetching the <span>critical subresources</span> is not well-defined; probably <a
+  href="https://github.com/whatwg/html/issues/968">issue #968</a> is the best resolution for that.
+  In the meantime, any <span data-x="critical subresources">critical subresource</span> <span
+  data-x="concept-request">request</span> should have its <span
+  data-x="concept-request-render-blocking">render-blocking</span> set to whether or not the
+  <code>style</code> element is currently <span>render-blocking</span>.</p>
+
+  <ol>
+   <li><p>Let <var>element</var> be the <code>style</code> element associated with the style sheet
+   in question.</p></li>
+
+   <li><p>Let <var>success</var> be true.</p></li>
+
+   <li>
+    <p>If the attempts to obtain any of the style sheet's <span>critical subresources</span> failed
+    for any reason (e.g., DNS error, HTTP 404 response, a connection being prematurely closed,
+    unsupported Content-Type), set <var>success</var> to false.</p>
+
+    <p class="note">Note that content-specific errors, e.g., CSS parse errors or PNG decoding
+    errors, do not affect <var>success</var>.</p>
+   </li>
+
+   <li>
+    <p><span>Queue an element task</span> on the <span>networking task source</span> given
+    <var>element</var> and the following steps:</p>
+
+    <ol>
+     <li><p>If <var>success</var> is true, <span data-x="concept-event-fire">fire an event</span>
+     named <code data-x="event-load">load</code> at <var>element</var>.</p></li>
+
+     <li><p>Otherwise, <span data-x="concept-event-fire">fire an event</span> named <code
+     data-x="event-error">error</code> at <var>element</var>.</p></li>
+
+     <li>
+      <p>If <var>element</var> <span>contributes a script-blocking style sheet</span>:</p>
+
+      <ol>
+       <li><p><span>Assert</span>: <var>element</var>'s <span>node document</span>'s
+       <span>script-blocking style sheet set</span> <span data-x="list contains">contains</span>
+       <var>element</var>.</p></li>
+
+       <li><p><span data-x="list remove">Remove</span> <var>element</var> from its <span>node
+       document</span>'s <span>script-blocking style sheet set</span>.</p></li>
+      </ol>
+     </li>
+
+     <li><p><span>Unblock rendering</span> on <var>element</var>.</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <p>The element must <span>delay the load event</span> of the element's <span>node document</span> until all the
+  attempts to obtain the style sheet's <span>critical subresources</span>, if any, are complete.</p>
+
+  </div>
+
+  <p class="note">This specification does not specify a style system, but CSS is expected to be
+  supported by most web browsers. <ref>CSS</ref></p>
+
+  <p>The <code>LinkStyle</code> interface is also implemented by this element. <ref>CSSOM</ref></p>
+
+  <div class="example">
+
+   <p>The following document has its stress emphasis styled as bright red text rather than italics
+   text, while leaving titles of works and Latin words in their default italics. It shows how using
+   appropriate elements enables easier restyling of documents.</p>
+
+   <pre><code class="html">&lt;!DOCTYPE html>
+&lt;html lang="en-US">
+ &lt;head>
+  &lt;title>My favorite book&lt;/title>
+  &lt;style>
+   body { color: black; background: white; }
+   em { font-style: normal; color: red; }
+  &lt;/style>
+ &lt;/head>
+ &lt;body>
+  &lt;p>My &lt;em>favorite&lt;/em> book of all time has &lt;em>got&lt;/em> to be
+  &lt;cite>A Cat's Life&lt;/cite>. It is a book by P. Rahmel that talks
+  about the &lt;i lang="la">Felis catus&lt;/i> in modern human society.&lt;/p>
+ &lt;/body>
+&lt;/html></code></pre>
+
+  </div>
+
+
+
+  <div w-nodev>
+

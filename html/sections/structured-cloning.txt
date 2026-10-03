@@ -1,0 +1,42 @@
+WHATWG HTML — section structured-cloning — Structured cloning API (+dom)
+
+  <h4 id="structured-cloning">Structured cloning API</h4>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>result</var> = self.<span subdfn data-x="dom-structuredClone">structuredClone</span>(<var>value</var>[, { <span data-x="dom-StructuredSerializeOptions-transfer">transfer</span> }])</code></dt>
+   <dd>
+    <p>Takes the input value and returns a deep copy by performing the structured clone algorithm.
+    <span>Transferable objects</span> listed in the <code
+    data-x="dom-StructuredSerializeOptions-transfer">transfer</code> array are transferred, not
+    just cloned, meaning that they are no longer usable in the input value.</p>
+
+    <p>Throws a <span>"<code>DataCloneError</code>"</span> <code>DOMException</code> if any part of
+    the input value is not <span data-x="serializable objects">serializable</span>.</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn method for="WindowOrWorkerGlobalScope"
+  data-x="dom-structuredClone"><code>structuredClone(<var>value</var>,
+  <var>options</var>)</code></dfn> method steps are:</p>
+
+  <ol>
+   <li><p>Let <var>serialized</var> be ?
+   <span>StructuredSerializeWithTransfer</span>(<var>value</var>, <var>options</var>["<code
+   data-x="dom-StructuredSerializeOptions-transfer">transfer</code>"]).</p></li>
+
+   <li><p>Let <var>deserializeRecord</var> be ?
+   <span>StructuredDeserializeWithTransfer</span>(<var>serialized</var>, <span>this</span>'s
+   <span data-x="concept-relevant-realm">relevant realm</span>).</p></li>
+
+   <li><p>Return <var>deserializeRecord</var>.[[Deserialized]].</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+
+  <h2 split-filename="dom" id="dom">Semantics, structure, and APIs of HTML documents</h2>
+

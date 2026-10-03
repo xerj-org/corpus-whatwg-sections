@@ -1,0 +1,44 @@
+WHATWG URL — section urlencoded-serializing — <code>application/x-www-form-urlencoded</code> serializing
+
+<h3 id=urlencoded-serializing><code>application/x-www-form-urlencoded</code> serializing</h3>
+
+<div algorithm>
+<p>The
+<dfn export id=concept-urlencoded-serializer lt="urlencoded serializer"><code>application/x-www-form-urlencoded</code> serializer</dfn>
+takes a list of name-value tuples <var>tuples</var>, with an optional <a for=/>encoding</a>
+<var>encoding</var> (default <a>UTF-8</a>), and then runs these steps. They return an
+<a>ASCII string</a>.
+
+<ol>
+ <li><p>Set <var>encoding</var> to the result of <a>getting an output encoding</a> from
+ <var>encoding</var>.
+
+ <li><p>Let <var>output</var> be the empty string.
+
+ <li>
+  <p><a for=list>For each</a> <var>tuple</var> of <var>tuples</var>:
+
+  <ol>
+   <li><p><a for=/>Assert</a>: <var>tuple</var>'s name and <var>tuple</var>'s value are
+   <a for=/>scalar value strings</a>.
+
+   <li><p>Let <var>name</var> be the result of running
+   <a for=string>percent-encode after encoding</a> with <var>encoding</var>, <var>tuple</var>'s
+   name, and the <a><code>application/x-www-form-urlencoded</code> percent-encode set</a>.
+
+   <li><p>Let <var>value</var> be the result of running
+   <a for=string>percent-encode after encoding</a> with <var>encoding</var>, <var>tuple</var>'s
+   value, and the <a><code>application/x-www-form-urlencoded</code> percent-encode set</a>.
+
+   <li><p>If <var>output</var> is not the empty string, then append U+0026 (&amp;) to
+   <var>output</var>.
+
+   <li>Append <var>name</var>, followed by U+003D (=), followed by <var>value</var>, to
+   <var>output</var>.
+  </ol>
+
+ <li>Return <var>output</var>.
+</ol>
+</div>
+
+

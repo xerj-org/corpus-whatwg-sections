@@ -1,0 +1,73 @@
+WHATWG HTML — section the-summary-element — The <dfn element><code>summary</code></dfn> element
+
+  <h4>The <dfn element><code>summary</code></dfn> element</h4>
+
+  <dl class="element">
+   <dt><span data-x="concept-element-categories">Categories</span>:</dt>
+   <dd>None.</dd>
+   <dt><span data-x="concept-element-contexts">Contexts in which this element can be used</span>:</dt>
+   <dd>As the <span>first child</span> of a <code>details</code> element.</dd>
+   <dt><span data-x="concept-element-content-model">Content model</span>:</dt>
+   <dd><span>Phrasing content</span>, optionally intermixed with <span>heading content</span>.</dd>
+   <dt><span data-x="concept-element-attributes">Content attributes</span>:</dt>
+   <dd><span>Global attributes</span></dd>
+   <dt><span
+   data-x="concept-element-accessibility-considerations">Accessibility considerations</span>:</dt>
+   <dd><a href="https://w3c.github.io/html-aria/#el-summary">For authors</a>.</dd>
+   <dd><a href="https://w3c.github.io/html-aam/#el-summary">For implementers</a>.</dd>
+   <dt><span data-x="concept-element-sanitization">Sanitization</span>:</dt>
+   <dd><span data-x="sanitizer-uncategorized">Uncategorized</span>.</dd>
+   <dt><span data-x="concept-element-dom">DOM interface</span>:</dt>
+   <dd>Uses <code>HTMLElement</code>.</dd>
+  </dl>
+
+  <p>The <code>summary</code> element <span>represents</span> a summary, caption, or legend for the
+  rest of the contents of the <code>summary</code> element's parent <code>details</code>
+  element<span w-nodev>, if any</span>.</p>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>A <code>summary</code> element is a <dfn>summary for its parent details</dfn> if the following
+  algorithm returns true:</p>
+
+  <ol>
+   <li><p>If this <code>summary</code> element has no parent, then return false.</p></li>
+
+   <li><p>Let <var>parent</var> be this <code>summary</code> element's parent.</p></li>
+
+   <li><p>If <var>parent</var> is not a <code>details</code> element, then return false.</p></li>
+
+   <li><p>If <var>parent</var>'s first <code>summary</code> element child is not this
+   <code>summary</code> element, then return false.</p></li>
+
+   <li><p>Return true.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <span>activation behavior</span> of <code>summary</code> elements is to run the following
+  steps:</p>
+
+  <ol>
+   <li><p>If this <code>summary</code> element is not the <span>summary for its parent
+   details</span>, then return.</p></li>
+
+   <li><p>Let <var>parent</var> be this <code>summary</code> element's parent.</p></li>
+
+   <li>
+    <p>If the <code data-x="attr-details-open">open</code> attribute is present on
+    <var>parent</var>, then <span data-x="concept-element-attributes-remove">remove</span> it.
+    Otherwise, <span data-x="concept-element-attributes-set-value">set</span> <var>parent</var>'s
+    <code data-x="attr-details-open">open</code> attribute to the empty string.</p>
+
+    <p class="note">This will then run the <span>details notification task steps</span>.</p>
+   </li>
+  </ol>
+  </div>
+
+  </div>
+
+
+
+

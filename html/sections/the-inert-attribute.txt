@@ -1,0 +1,85 @@
+WHATWG HTML — section the-inert-attribute — The <dfn data-x="attr-inert"><code>inert</code></dfn> attribute
+
+  <h4>The <dfn data-x="attr-inert"><code>inert</code></dfn> attribute</h4>
+
+  <p>The <code data-x="attr-inert">inert</code> attribute is a <span>boolean attribute</span> that
+  indicates, by its presence, that the element and all its <span>flat tree</span> descendants which
+  don't otherwise escape inertness (such as modal dialogs) are to be made <span>inert</span> by the
+  user agent.</p>
+
+  <p>An inert subtree should not contain any content or controls which are critical to
+  understanding or using aspects of the page which are not in the inert state. Content in an inert
+  subtree will not be perceivable by all users, or interactive. Authors should not specify elements
+  as inert unless the content they represent are also visually obscured in some way. In most cases,
+  authors should not specify the <code>inert</code> attribute on individual form controls. In these
+  instances, the <code data-x="attr-fe-disabled">disabled</code> attribute is probably more
+  appropriate.</p>
+
+  <div class="example">
+   <p>The following example shows how to mark partially loaded content, visually obscured by a
+   "loading" message, as inert.</p>
+
+   <pre><code class="html">&lt;section aria-labelledby=s1>
+  &lt;h3 id=s1>Population by City&lt;/h3>
+  &lt;div class=container>
+    &lt;div class=loading>&lt;p>Loading...&lt;/p>&lt;/div>
+    &lt;div inert>
+      &lt;form>
+        &lt;fieldset>
+          &lt;legend>Date range&lt;/legend>
+          &lt;div>
+            &lt;label for=start>Start&lt;/label>
+            &lt;input type=date id=start>
+          &lt;/div>
+          &lt;div>
+            &lt;label for=end>End&lt;/label>
+            &lt;input type=date id=end>
+          &lt;/div>
+          &lt;div>
+            &lt;button>Apply&lt;/button>
+          &lt;/div>
+        &lt;/fieldset>
+      &lt;/form>
+      &lt;table>
+        &lt;caption>From 20-- to 20--&lt;/caption>
+        &lt;thead>
+          &lt;tr>
+            &lt;th>City&lt;/th>
+            &lt;th>State&lt;/th>
+            &lt;th>20-- Population&lt;/th>
+            &lt;th>20-- Population&lt;/th>
+            &lt;th>Percentage change&lt;/th>
+          &lt;/tr>
+        &lt;/thead>
+        &lt;tbody>
+          &lt;!-- ... -->
+        &lt;/tbody>
+      &lt;/table>
+    &lt;/div>
+  &lt;/div>
+&lt;/section></code></pre>
+
+   <img loading="lazy" src="/images/inert-example-loading-section.png" width="947" height="243" alt="Screenshot of Population by City content with an overlaid loading message which visually obscures the form controls and data table which have not fully rendered, and thus are in the inert state.">
+
+   <p>The "loading" overlay obscures the inert content, making it visually apparent that the inert
+   content is not presently accessible. Notice that the heading and "loading" text are not
+   descendants of the element with the <code>inert</code> attribute. This will ensure this text is
+   accessible to all users, while the inert content cannot be interacted with by anyone.</p>
+  </div>
+
+  <div class="note">
+   <p>By default, there is no persistent visual indication of an element or its subtree being
+   inert. Appropriate visual styles for such content is often context-dependent. For instance, an
+   inert off-screen navigation panel would not require a default style, as its off-screen position
+   visually obscures the content. Similarly, a modal <code>dialog</code> element's backdrop will
+   serve as the means to visually obscure the inert content of the web page, rather than styling
+   the inert content specifically.</p>
+
+   <p>However, for many other situations authors are strongly encouraged to clearly mark what parts
+   of their document are active and which are inert, to avoid user confusion. In particular, it is
+   worth remembering that not all users can see all parts of a page at once; for example, users of
+   screen readers, users on small devices or with magnifiers, and even users using particularly
+   small windows might not be able to see the active part of a page and might get frustrated if
+   inert sections are not obviously inert.</p>
+  </div>
+

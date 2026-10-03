@@ -1,0 +1,50 @@
+WHATWG HTML — section interaction-with-details-and-hidden-until-found — Interaction with <code>details</code> and <code data-x="attr-hidden-until-found-state">hidden=until-found</code>
+
+  <h4>Interaction with <code>details</code> and <code
+  data-x="attr-hidden-until-found-state">hidden=until-found</code></h4>
+
+  <div algorithm>
+  <p>When find-in-page begins searching for matches, all <code>details</code> elements in the page
+  which do not have their <code data-x="attr-details-open">open</code> attribute set should have the
+  <span data-x="skips its contents">skipped contents</span> of their second slot become accessible,
+  without modifying the <code data-x="attr-details-open">open</code> attribute, in order to make
+  find-in-page able to search through it. Similarly, all HTML elements with the <code
+  data-x="attr-hidden">hidden</code> attribute in the <span
+  data-x="attr-hidden-until-found-state">Hidden Until Found</span> state should have their <span
+  data-x="skips its contents">skipped contents</span> become accessible without modifying the <code
+  data-x="attr-hidden">hidden</code> attribute in order to make find-in-page able to search through
+  them. After find-in-page finishes searching for matches, the <code>details</code> elements and the
+  elements with the <code data-x="attr-hidden">hidden</code> attribute in the <span
+  data-x="attr-hidden-until-found-state">Hidden Until Found</span> state should have their contents
+  become skipped again. This entire process must happen synchronously (and so is not observable to
+  users or to author code). <ref>CSSCONTAIN</ref></p>
+  </div>
+
+  <div algorithm>
+  <p>When find-in-page chooses a new <span data-x="fip-active-match">active match</span>, perform
+  the following steps:</p>
+
+  <ol>
+   <li><p>Let <var>node</var> be the first node in the <span data-x="fip-active-match">active
+   match</span>.</p></li>
+
+   <li><p><span>Queue a global task</span> on the <span>user interaction task source</span> given
+   <var>node</var>'s <span>relevant global object</span> to run the <span>ancestor revealing
+   algorithm</span> on <var>node</var>.</p></li>
+  </ol>
+  </div>
+
+  <p class="warning">
+  <!--INSERT TRACKING-->
+  When find-in-page auto-expands a <code>details</code> element like this, it will fire a <code
+  data-x="event-toggle">toggle</code> event. As with the separate <code
+  data-x="event-scroll">scroll</code> event that find-in-page fires, this event could be used by the
+  page to discover what the user is typing into the find-in-page dialog. If the page creates a tiny
+  scrollable area with the current search term and every possible next character the user could type
+  separated by a gap, and observes which one the browser scrolls to, it can add that character to
+  the search term and update the scrollable area to incrementally build the search term. By wrapping
+  each possible next match in a closed <code>details</code> element, the page could listen to <code
+  data-x="event-toggle">toggle</code> events instead of <code data-x="event-scroll">scroll</code>
+  events. This attack could be addressed for both events by not acting on every character the user
+  types into the find-in-page dialog.</p>
+

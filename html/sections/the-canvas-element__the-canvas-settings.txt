@@ -1,0 +1,125 @@
+WHATWG HTML — section the-canvas-element/the-canvas-settings — The canvas settings
+
+  <h6>The canvas settings</h6>
+
+  <p>A <code>CanvasSettings</code> object has an <dfn>output bitmap</dfn> that is initialized when
+  the object is created.</p>
+
+  <p>The <span>output bitmap</span> has an <span
+  data-x="concept-canvas-origin-clean">origin-clean</span> flag, which can be set to true or false.
+  Initially, when one of these bitmaps is created, its <span
+  data-x="concept-canvas-origin-clean">origin-clean</span> flag must be set to true.</p>
+
+  <p>The <code>CanvasSettings</code> object also has an <dfn
+  data-x="concept-canvas-alpha">alpha</dfn> boolean. When a <code>CanvasSettings</code> object's
+  <span data-x="concept-canvas-alpha">alpha</span> is false, then its alpha component must be fixed
+  to 1.0 (fully opaque) for all pixels, and attempts to change the alpha component of any pixel must
+  be silently ignored.</p>
+
+  <p class="note">Thus, the bitmap of such a context starts off as <span>opaque black</span> instead
+  of <span>transparent black</span>; <code data-x="dom-context-2d-clearRect">clearRect()</code>
+  always results in <span>opaque black</span> pixels, every fourth byte from <code
+  data-x="dom-context-2d-getImageData">getImageData()</code> is always 255, the <code
+  data-x="dom-context-2d-putImageData">putImageData()</code> method effectively ignores every fourth
+  byte in its input, and so on. However, the alpha component of styles and images drawn onto the
+  canvas are still honoured up to the point where they would impact the <span>output bitmap</span>'s
+  alpha component; for instance, drawing a 50% transparent white square on a freshly created
+  <span>output bitmap</span> with its <span data-x="concept-canvas-alpha">alpha</span> set to false
+  will result in a fully-opaque gray square.</p>
+
+  <p>The <code>CanvasSettings</code> object also has a <dfn
+  data-x="concept-canvas-desynchronized">desynchronized</dfn> boolean. When a
+  <code>CanvasSettings</code> object's <span
+  data-x="concept-canvas-desynchronized">desynchronized</span> is true, then the user agent may
+  optimize the rendering of the canvas to reduce the latency, as measured from input events to
+  rasterization, by desynchronizing the canvas paint cycle from the event loop, bypassing the
+  ordinary user agent rendering algorithm, or both. Insofar as this mode involves bypassing the
+  usual paint mechanisms, rasterization, or both, it might introduce visible tearing artifacts.</p>
+
+  <p class="note">The user agent usually renders on a buffer which is not being displayed, quickly
+  swapping it and the one being scanned out for presentation; the former buffer is called back
+  buffer and the latter <i>front buffer</i>. A popular technique for reducing latency is called
+  front buffer rendering, also known as <i>single buffer</i> rendering, where rendering happens in
+  parallel and racily with the scanning out process. This technique reduces the latency at the price
+  of potentially introducing tearing artifacts and can be used to implement in total or part of the
+  <span data-x="concept-canvas-desynchronized">desynchronized</span> boolean.
+  <ref>MULTIPLEBUFFERING</ref></p>
+
+  <p class="note">The <span data-x="concept-canvas-desynchronized">desynchronized</span> boolean can
+  be useful when implementing certain kinds of applications, such as drawing applications, where the
+  latency between input and rasterization is critical.</p>
+
+  <p>The <code>CanvasSettings</code> object also has a <dfn
+  data-x="concept-canvas-will-read-frequently">will read frequently</dfn> boolean. When a
+  <code>CanvasSettings</code> object's <span data-x="concept-canvas-will-read-frequently">will read
+  frequently</span> is true, the user agent may optimize the canvas for readback operations.</p>
+
+  <p class="note">On most devices the user agent needs to decide whether to store the canvas's
+  <span>output bitmap</span> on the GPU (this is also called "hardware accelerated"), or on the CPU
+  (also called "software"). Most rendering operations are more performant for accelerated canvases,
+  with the major exception being readback with <code
+  data-x="dom-context-2d-getImageData">getImageData()</code>, <code
+  data-x="dom-canvas-toDataURL">toDataURL()</code>, or <code
+  data-x="dom-canvas-toBlob">toBlob()</code>. <code>CanvasSettings</code> objects with <span
+  data-x="concept-canvas-will-read-frequently">will read frequently</span> equal to true tell the
+  user agent that the webpage is likely to perform many readback operations and that it is
+  advantageous to use a software canvas.</p>
+
+  <p>The <code>CanvasSettings</code> object also has a <dfn
+  data-x="concept-canvas-color-space">color space</dfn> setting of type
+  <code>PredefinedColorSpace</code>. The <code>CanvasSettings</code> object's <span
+  data-x="concept-canvas-color-space">color space</span> indicates the color space for the
+  <span>output bitmap</span>.</p>
+
+  <p>The <code>CanvasSettings</code> object also has a <dfn
+  data-x="concept-canvas-color-type">color type</dfn> setting of type
+  <code>CanvasColorType</code>. The <code>CanvasSettings</code> object's <span
+  data-x="concept-canvas-color-type">color type</span> indicates the data type of the
+  color and alpha components of the pixels of the <span>output bitmap</span>.</p>
+
+  <div algorithm>
+  <p>To <dfn data-x="canvas-setting-init-bitmap">initialize a <code>CanvasSettings</code> output
+  bitmap</dfn>, given a <code>CanvasSettings</code> <var>context</var> and a
+  <code>CanvasRenderingContext2DSettings</code> <var>settings</var>:</p>
+
+  <ol>
+   <li><p>Set <var>context</var>'s <span data-x="concept-canvas-alpha">alpha</span> to
+   <var>settings</var>["<dfn dict-member for="CanvasRenderingContext2DSettings"><code
+   data-x="dom-CanvasRenderingContext2DSettings-alpha">alpha</code></dfn>"].</p></li>
+
+   <li><p>Set <var>context</var>'s <span
+   data-x="concept-canvas-desynchronized">desynchronized</span> to <var>settings</var>["<dfn
+   dict-member for="CanvasRenderingContext2DSettings"><code
+   data-x="dom-CanvasRenderingContext2DSettings-desynchronized">desynchronized</code></dfn>"].</p></li>
+
+   <li><p>Set <var>context</var>'s <span data-x="concept-canvas-color-space">color space</span> to
+   <var>settings</var>["<dfn dict-member for="CanvasRenderingContext2DSettings"><code
+   data-x="dom-CanvasRenderingContext2DSettings-colorSpace">colorSpace</code></dfn>"].</p></li>
+
+   <li><p>Set <var>context</var>'s <span data-x="concept-canvas-color-type">color type</span> to
+   <var>settings</var>["<dfn dict-member for="CanvasRenderingContext2DSettings"><code
+   data-x="dom-CanvasRenderingContext2DSettings-colorType">colorType</code></dfn>"].</p></li>
+
+   <li><p>Set <var>context</var>'s <span data-x="concept-canvas-will-read-frequently">will read
+   frequently</span> to <var>settings</var>["<dfn dict-member
+   for="CanvasRenderingContext2DSettings"><code
+   data-x="dom-CanvasRenderingContext2DSettings-willReadFrequently">willReadFrequently</code></dfn>"].</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="CanvasSettings"><code
+  data-x="dom-context-2d-canvas-getcontextattributes">getContextAttributes()</code></dfn> method
+  steps are to return «[ "<code data-x="dom-CanvasRenderingContext2DSettings-alpha">alpha</code>" →
+  <span>this</span>'s <span data-x="concept-canvas-alpha">alpha</span>, "<code
+  data-x="dom-CanvasRenderingContext2DSettings-desynchronized">desynchronized</code>" →
+  <span>this</span>'s <span data-x="concept-canvas-desynchronized">desynchronized</span>, "<code
+  data-x="dom-CanvasRenderingContext2DSettings-colorSpace">colorSpace</code>" → <span>this</span>'s
+  <span data-x="concept-canvas-color-space">color space</span>, "<code
+  data-x="dom-CanvasRenderingContext2DSettings-colorType">colorType</code>" → <span>this</span>'s
+  <span data-x="concept-canvas-color-type">color type</span>, "<code
+  data-x="dom-CanvasRenderingContext2DSettings-willReadFrequently">willReadFrequently</code>" →
+  <span>this</span>'s <span data-x="concept-canvas-will-read-frequently">will read frequently</span>
+  ]».</p>
+  </div>
+

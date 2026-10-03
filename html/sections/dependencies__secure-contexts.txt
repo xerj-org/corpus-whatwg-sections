@@ -1,0 +1,13 @@
+WHATWG HTML — section dependencies/secure-contexts — Secure Contexts
+
+   <dt>Secure Contexts</dt>
+
+   <dd>
+    <p>The following algorithms are defined in <cite>Secure Contexts</cite>:
+    <ref>SECURE-CONTEXTS</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://w3c.github.io/webappsec-secure-contexts/#potentially-trustworthy-url">Is url potentially trustworthy?</dfn></li>
+    </ul>
+   </dd>
+

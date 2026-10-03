@@ -1,0 +1,54 @@
+WHATWG URL — section urlencoded-parsing — <code>application/x-www-form-urlencoded</code> parsing
+
+<h3 id=urlencoded-parsing><code>application/x-www-form-urlencoded</code> parsing</h3>
+
+<p class=note>A legacy server-oriented implementation might have to support <a for=/>encodings</a>
+other than <a>UTF-8</a> as well as have special logic for tuples of which the name is
+`<code>_charset</code>`. Such logic is not described here as only <a>UTF-8</a> is conforming.
+
+<div algorithm>
+<p>The
+<dfn export id=concept-urlencoded-parser lt="urlencoded parser"><code>application/x-www-form-urlencoded</code> parser</dfn>
+takes a byte sequence <var>input</var>, and then runs these steps:
+
+<ol>
+ <li><p>Let <var>sequences</var> be the result of splitting <var>input</var> on
+ 0x26 (&amp;).
+ <!-- XXX either define strictly splitting for byte sequences in Infra, or investigate whether
+      UTF-8 decoding can be done before this step rather than after. -->
+
+ <li><p>Let <var>output</var> be an initially empty <a for=/>list</a> of name-value tuples where
+ both name and value hold a string.
+
+ <li>
+  <p><a for=list>For each</a> byte sequence <var>bytes</var> in <var>sequences</var>:
+
+  <ol>
+   <li><p>If <var>bytes</var> is the empty byte sequence, then <a for=iteration>continue</a>.
+
+   <li><p>If <var>bytes</var> contains a 0x3D (=), then let
+   <var>name</var> be the bytes from the start of <var>bytes</var> up to but
+   excluding its first 0x3D (=), and let <var>value</var> be the
+   bytes, if any, after the first 0x3D (=) up to the end of
+   <var>bytes</var>. If 0x3D (=) is the first byte, then
+   <var>name</var> will be the empty byte sequence. If it is the last, then
+   <var>value</var> will be the empty byte sequence.
+
+   <li><p>Otherwise, let <var>name</var> have the value of <var>bytes</var>
+   and let <var>value</var> be the empty byte sequence.
+
+   <li><p>Replace any 0x2B (+) in <var>name</var> and <var>value</var> with 0x20 (SP).
+
+   <li><p>Let <var>nameString</var> and <var>valueString</var> be the result of running <a>UTF-8
+   decode without BOM</a> on the <a lt=percent-decode for="byte sequence">percent-decoding</a> of
+   <var>name</var> and <var>value</var>, respectively.
+
+   <li><p><a for=list>Append</a> (<var>nameString</var>, <var>valueString</var>) to
+   <var>output</var>.
+  </ol>
+
+ <li><p>Return <var>output</var>.
+</ol>
+</div>
+
+

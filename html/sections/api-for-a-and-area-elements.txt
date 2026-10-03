@@ -1,0 +1,126 @@
+WHATWG HTML — section api-for-a-and-area-elements — API for <code>a</code> and <code>area</code> elements
+
+  <h4>API for <code>a</code> and <code>area</code> elements</h4>
+
+<pre><code class="idl">interface mixin <dfn interface>HTMLHyperlinkElementUtils</dfn> {
+  [<span>CEReactions</span>, <span data-x="xattr-ReflectSetter">ReflectSetter</span>] stringifier attribute USVString <span data-x="dom-hyperlink-href">href</span>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute DOMString <dfn id="dom-a-target" attribute for="HTMLHyperlinkElementUtils" data-x="dom-hyperlink-target">target</dfn>;
+};</code></pre>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>hyperlink</var>.<span data-x="">toString()</span></code></dt>
+   <dt><code data-x=""><var>hyperlink</var>.<span subdfn data-x="dom-hyperlink-href">href</span></code></dt>
+   <dd>
+    <p>Returns the hyperlink's URL.</p>
+
+    <p>Can be set, to change the URL.</p>
+   </dd>
+  </dl>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLHyperlinkElementUtils"><code
+  data-x="dom-hyperlink-href">href</code></dfn> getter steps are:</p>
+
+  <ol>
+   <li><p><span>Reinitialize url</span>.</p></li>
+
+   <li><p>Let <var>url</var> be <span>this</span>'s <span
+   data-x="concept-hyperlink-url">url</span>.</p></li>
+
+   <li><p>If <var>url</var> is null and <span>this</span> has no <code
+   data-x="attr-hyperlink-href">href</code> content attribute, return the empty string.
+
+   <li><p>Otherwise, if <var>url</var> is null, return <span>this</span>'s <code
+   data-x="attr-hyperlink-href">href</code> content attribute's value.</p></li>
+
+   <li><p>Return <var>url</var>, <span data-x="concept-url-serializer">serialized</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <span>HTML element insertion steps</span> for <code>a</code> and <code>area</code>
+  elements, given <var>insertedNode</var>, are:</p>
+
+  <ol>
+   <li><p>If <var>insertedNode</var> is not <span>connected</span>, then return.</p></li>
+
+   <li><p><span>Consider speculative loads</span> given <var>insertedNode</var>'s <span>node
+   document</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <span>HTML element removing steps</span> for <code>a</code> and <code>area</code> elements,
+  given <var>removedNode</var>, <var>isSubtreeRoot</var>, and <var>oldAncestor</var> are:</p>
+
+  <ol>
+   <li><p>If <var>oldAncestor</var> is not <span>connected</span>, then return.</p></li>
+
+   <li><p><span>Consider speculative loads</span> given <var>oldAncestor</var>'s <span>node
+   document</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <span>HTML element moving steps</span> for <code>a</code> and <code>area</code> elements,
+  given <var>movedNode</var>, are:</p>
+
+  <ol>
+   <li><p><span>Consider speculative loads</span> given <var>movedNode</var>'s <span>node
+   document</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The following <span data-x="concept-element-attributes-change-ext">attribute change
+  steps</span>, given <var>element</var>, <var>localName</var>, <var>oldValue</var>,
+  <var>value</var>, and <var>namespace</var>, are used for all <code>a</code> and <code>area</code>
+  elements:</p>
+
+  <ol>
+   <li><p>If <var>namespace</var> is not null, then return.</p></li>
+
+   <li><p>If <var>oldValue</var> equals <var>value</var>, then return.</p></li>
+
+   <li>
+    <p>If <var>localName</var> is <code data-x="attr-hyperlink-href">href</code>, then <span
+    data-x="concept-hyperlink-url-set">set the url</span> given <var>element</var>.</p>
+
+    <p class="note">This is only observable for <code data-x="blob protocol">blob:</code> URLs as
+    <span data-x="url parser">parsing</span> them involves a <span>Blob URL Store</span> lookup.</p>
+   </li>
+
+   <li><p>If <var>localName</var> is <code data-x="attr-hyperlink-href">href</code>, <code
+   data-x="attr-hyperlink-referrerpolicy">referrerpolicy</code>, or <code
+   data-x="attr-hyperlink-rel">rel</code>, then <span>consider speculative loads</span> given
+   <var>element</var>'s <span>node document</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <span>update <code>href</code></span> for an <code>HTMLAnchorElement</code> or
+  <code>HTMLAreaElement</code> element, set the element's <code data-x="attr-hyperlink-href">href</code>
+  content attribute's value to the element's <span data-x="concept-hyperlink-url">url</span>, <span
+  data-x="concept-url-serializer">serialized</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <span data-x="concept-hyperlink-url-set">set the url</span> algorithm for
+  <code>HTMLAnchorElement</code> and <code>HTMLAreaElement</code> elements is as follows:</p>
+
+  <ol>
+   <li><p>Set this element's <span data-x="concept-hyperlink-url">url</span> to null.</p></li>
+
+   <li><p>If this element's <code data-x="attr-hyperlink-href">href</code> content attribute is
+   absent, then return.</p></li>
+
+   <li><p>Let <var>url</var> be the result of <span>encoding-parsing a URL</span> given this
+   element's <code data-x="attr-hyperlink-href">href</code> content attribute's value, relative to
+   this element's <span>node document</span>.</p></li>
+
+   <li><p>If <var>url</var> is not failure, then set this element's <span
+   data-x="concept-hyperlink-url">url</span> to <var>url</var>.</p></li>
+  </ol>
+  </div>
+
+

@@ -1,0 +1,39 @@
+WHATWG HTML — section document-writeln — <code data-x="dom-document-writeln">document.writeln()</code>
+
+  <h4><code data-x="dom-document-writeln">document.writeln()</code></h4>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>document</var>.<span subdfn data-x="dom-document-writeln">writeln</span>(...<var>text</var>)</code></dt>
+
+   <dd>
+    <p>Adds the given string(s) to the <code>Document</code>'s input stream, followed by a newline
+    character. If necessary, calls the <code data-x="dom-document-open">open()</code> method
+    implicitly first.</p>
+
+    <p class="warning">This method has very idiosyncratic behavior. <strong>Use of this
+    method is strongly discouraged, for the same reasons as <code
+    data-x="dom-document-write">document.write()</code>.</strong></p>
+
+    <p>Throws an <span>"<code>InvalidStateError</code>"</span> <code>DOMException</code> when
+    invoked on <span>XML documents</span>.</p>
+
+    <p>Throws an <span>"<code>InvalidStateError</code>"</span> <code>DOMException</code> if the
+    parser is currently executing a <span>custom element constructor</span>.</p>
+   </dd>
+  </dl>
+
+  <p class="warning">This method performs no sanitization to remove potentially-dangerous elements
+  and attributes like <code>script</code> or <span>event handler content attributes</span>.</p>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn method for="Document"><code
+  data-x="dom-document-writeln">document.writeln(...<var>text</var>)</code></dfn> method steps are
+  to run the <span>document write steps</span> with <span>this</span>, <var>text</var>, true, and
+  "<code data-x="">Document writeln</code>".</p>
+  </div>
+
+  </div>
+
+

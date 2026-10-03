@@ -1,0 +1,454 @@
+WHATWG HTML — section the-select-element — The <code>select</code> element
+
+  <h4>The <code>select</code> element</h4>
+
+  <p>The <code>select</code> element is an <span>element with default preferred size</span>, and
+  user agents are <span>expected</span> to apply the <span>'field-sizing'</span> CSS property to
+  <code>select</code> elements.
+
+  <p>A <code>select</code> element is either a <dfn export for="select">list box</dfn> or a <dfn
+  export for="select">drop-down box</dfn>, depending on its attributes.</p>
+
+  <p>A <code>select</code> element whose <code data-x="attr-select-multiple">multiple</code>
+  attribute is present is <span>expected</span> to render as a multi-select <span>list
+  box</span> if its <span data-x="concept-select-size">display size</span> is greater than 1. If the
+  <code>select</code> element has the <code data-x="attr-select-multiple">multiple</code> attribute
+  and a <span data-x="concept-select-size">display size</span> of 1, then it may render as a
+  multi-select <span>drop-down box</span> if the platform supports it; otherwise as a multi-select
+  <span>list box</span>.</p>
+
+  <p>A <code>select</code> element whose <code data-x="attr-select-multiple">multiple</code>
+  attribute is absent is <span>expected</span> to render as a single-select <span>drop-down
+  box</span> if its <span data-x="concept-select-size">display size</span> is 1, or as a
+  single-select <span>list box</span> if its <span data-x="concept-select-size">display size</span>
+  is greater than 1.</p>
+
+  <div algorithm>
+  <p>When the element renders as a <span>list box</span>, it is a <span>devolvable widget</span>
+  <span>expected</span> to render as an <span>'inline-block'</span> box. The <span>inline
+  size</span> of its <span>intrinsic size</span> is the <span>width of the <code>select</code>'s
+  labels</span> plus the width of a scrollbar. The <span>block size</span> of its <span>intrinsic
+  size</span> is determined by the following steps:</p>
+
+  <ol>
+   <li>
+    <p>If the <span>'field-sizing'</span> property on the element has a <span>computed value</span>
+    of <span data-x="field-sizing-content">'content'</span>, return the height necessary to contain
+    all rows for items.</p>
+   </li>
+
+   <li>
+    <p>If the <code data-x="attr-select-size">size</code> attribute is absent or it has no valid
+    value, return the height necessary to contain four rows.</p>
+   </li>
+
+   <li>
+    <p>Otherwise, return the height necessary to contain as many rows for items as given by the
+    element's <span data-x="concept-select-size">display size</span>.</p>
+   </li>
+  </ol>
+  </div>
+
+  <p>A <code>select</code> element which is being rendered as a <span>drop-down box</span> is
+  <span>expected</span> to render as an <span>'inline-block'</span> box. The <span>inline
+  size</span> of its <span>intrinsic size</span> is the <span>width of the <code>select</code>'s
+  labels</span>. If the <span>'field-sizing'</span> property on the element has a <span>computed
+  value</span> of <span data-x="field-sizing-content">'content'</span>, the <span>inline size</span>
+  of the <span>intrinsic size</span> depends on the shown text. The shown text is typically the
+  label of an <code>option</code> of which <span
+  data-x="concept-option-selectedness">selectedness</span> is set to true.</p>
+
+  <div algorithm>
+  <p>When the element renders as a <span>drop-down box</span>, it is a <span>devolvable
+  widget</span>. Its appearance in the devolved state, as well as its appearance when the
+  <span>computed value</span> of the element's <span>'appearance'</span> property is
+  <code>'menulist-button'</code>, is that of a drop-down box, including a "drop-down button",
+  but not necessarily rendered using a native control of the host operating system. In such a state,
+  CSS properties such as <span>'color'</span>, <span>'background-color'</span>, and 'border' should
+  not be disregarded (as is generally permissible when rendering an element according to its
+  <span>native appearance</span>).</p>
+  </div>
+
+  <p>In either case (<span>list box</span> or <span>drop-down box</span>), the element's items are
+  <span>expected</span> to be the element's <span data-x="concept-select-option-list">list of
+  options</span>, with the element's <code>optgroup</code> element <span
+  data-x="concept-tree-child">children</span> providing headers for groups of options where
+  applicable.</p>
+
+  <p><code>select</code> elements which render as a <span>drop-down box</span> support a <span>base
+  appearance</span> in addition to <span>native appearance</span> and <span>primitive
+  appearance</span>.</p>
+
+  <p><code>select</code> elements which render as a <span>drop-down box</span> without the <code
+  data-x="attr-select-multiple">multiple</code> attribute or as a <span>list box</span> support a
+  <span>base appearance</span> in addition to <span>native appearance</span> and <span>primitive
+  appearance</span>.</p>
+
+  <p>The <code>select</code> element's <span>select popover</span> supports a <span>base
+  appearance</span> and a <span>native appearance</span>. The <span>select popover</span> can only
+  be rendered with <span>base appearance</span> if its associated <code>select</code> is being
+  rendered with <span>base appearance</span>.</p>
+
+  <div algorithm>
+  <p>When a <code>select</code> is being rendered as a <span>drop-down box</span> with <span>base
+  appearance</span>, it is <span>expected</span> to render with a <span>shadow tree</span> that
+  contains the following elements:</p>
+
+  <ol>
+   <li><p>A <dfn>select button slot</dfn>, which is a <code>slot</code> element. It is appended to
+   the <code>select</code>'s <span>shadow root</span> as the first child. It is
+   <span>expected</span> to take the first child element of the <code>select</code> if the first
+   child element is a <code>button</code>.</p></li>
+
+   <li><p>A <dfn>select fallback button text</dfn>, which is a <code>div</code> element. It is
+   appended to the <span>select button slot</span>.</p></li>
+
+   <li><p>A <dfn>select popover</dfn>, which is a <code>div</code> element. It is appended to the
+   <code>select</code>'s <span>shadow root</span> as the second child, after the <span>select button
+   slot</span>. The <code>select</code> element's <span>'::picker'</span> pseudo-element is the
+   <span>select popover</span> if the <span data-x="picker form control identifier">provided
+   argument</span> is <code data-x="">select</code>.</p></li>
+
+   <li><p>A <dfn>select popover slot</dfn>, which is a <code>slot</code> element. It is appended to
+   the <span>select popover</span>. It is <span>expected</span> to take all child nodes of the
+   <code>select</code> except for the first child <code>button</code>, which is taken by the
+   <span>select button slot</span>.</p></li>
+  </ol>
+  </div>
+
+  <p class="note">Since <span>base appearance</span> is determined by computing style, it isn't
+  possible to swap this DOM structure when switching appearance. Implementations can always include
+  the DOM structure for <span>base appearance</span> when the <code>select</code> is rendered as a
+  <span>drop-down box</span> and then choose to include or exclude it from the layout tree in order
+  to control whether it gets rendered or not.</p>
+
+  <p class="note">The <span>select popover</span> is only rendered when it is opted in to <span>base
+  appearance</span> separately from the <code>select</code> element. Otherwise, a native picker is
+  used.</p>
+
+  <p>When a <code>select</code> is being rendered as a <span>list box</span> with <span>base
+  appearance</span>, it is expected to render with a <span>shadow tree</span> that contains a
+  <dfn>select list box slot</dfn>, which is a <code>slot</code> element. The <span>select list box
+  slot</span> is appended to the <code>select</code>'s <span>shadow root</span> as the first child.
+  The <span>select list box slot</span> is expected to take all children of the <code>select</code>
+  element.</p>
+
+  <p>The <span>select popover</span>'s <span>implicit anchor element</span> is its associated
+  <code>select</code> element.</p>
+
+  <p>When a <code>select</code> element is being rendered with <span>native appearance</span> or
+  <span>primitive appearance</span>, or the <code>select</code> element is being rendered as a
+  <span>list box</span>, the <span>'::picker'</span> pseudo-element and the
+  <span>'::picker-icon'</span> pseudo-element do not apply.</p>
+
+  <p>The <span>'::picker'</span> pseudo-element is not rendered when it has <span>native
+  appearance</span> or <span>primitive appearance</span>.</p>
+
+  <p>The <span>'::checkmark'</span> pseudo-element only applies to <code>option</code> elements
+  which are <span data-x="option-base-appearance">being rendered with base appearance</span>.</p>
+
+  <p>An <code>optgroup</code> element has an internal <span>shadow tree</span> with at least one
+  <code>slot</code> element.</p>
+
+  <p>An <code>optgroup</code> element is <dfn data-x="optgroup-base-appearance">rendered with base
+  appearance</dfn> if it has a <span data-x="option element nearest ancestor select">nearest
+  ancestor <code>select</code></span> whose <span data-x="select's options are being rendered with
+  base appearance">contents are being rendered with base appearance</span>.</p>
+
+  <p>If an <code>optgroup</code> element is not being <span
+  data-x="optgroup-base-appearance">rendered with base appearance</span>, then it is
+  <span>expected</span> to be rendered by displaying the element's <span
+  data-x="concept-optgroup-label">label</span> and children.</p>
+
+  <p>If an <code>optgroup</code> element is being <span data-x="optgroup-base-appearance">rendered
+  with base appearance</span>, then it is <span>expected</span> to render with a <span>shadow
+  tree</span> that contains the following elements:</p>
+
+  <ol>
+   <li><p>An <dfn>optgroup legend slot</dfn>, which is a <code>slot</code> element. It is appended
+   to the <code>optgroup</code>'s <span>shadow root</span> as the first child. It is
+   <span>expected</span> to take the first child element of the <code>optgroup</code> if the first
+   child element is a <code>legend</code> element.</p></li>
+
+   <li><p>An <dfn>optgroup label element</dfn>, which is a <code>div</code> element. It is appended
+   to the <span>optgroup legend slot</span>. It is <span>expected</span> to contain a
+   <code>Text</code> node whose <span data-x="concept-cd-data">data</span> is the result of <span
+   data-x="concept-optgroup-label">getting an <code>optgroup</code> element's label</span> given the
+   <code>optgroup</code> element.</p></li>
+
+   <li><p>An <dfn>optgroup contents slot</dfn>, which is a <code>slot</code> element. It is appended
+   to the <code>optgroup</code>'s <span>shadow root</span> after the <span>optgroup legend
+   slot</span>. It is <span>expected</span> to take all remaining child nodes of the
+   <code>optgroup</code> element.</p></li>
+  </ol>
+
+  <div algorithm>
+  <p>To determine if a <dfn data-x="select's options are being rendered with base
+  appearance"><code>select</code>'s contents are being rendered with base appearance</dfn>, given a
+  <code>select</code> element <var>select</var>:</p>
+
+  <ol>
+   <li><p>If <var>select</var> is being rendered as a <span>list box</span> with <span>base
+   appearance</span>, then return true.</p></li>
+
+   <li><p>If <var>select</var> is being rendered as a <span>drop-down box</span> with <span>base
+   appearance</span>, and its <span>select popover</span> is being rendered with <span>base
+   appearance</span>, and <var>select</var> does not have the <code
+   data-x="attr-select-multiple">multiple</code> attribute set, then return true.</p></li>
+
+   <li><p>Return false.</p></li>
+  </ol>
+  </div>
+
+  <p>An <code>option</code> element has an internal <span>shadow tree</span> with a
+  <code>slot</code> element.</p>
+
+  <p>An <code>option</code> element is <dfn data-x="option-base-appearance">rendered with base
+  appearance</dfn> if it has a <span data-x="option element nearest ancestor select">nearest
+  ancestor <code>select</code></span> and the <span data-x="select's options are being rendered
+  with base appearance"><code>select</code>'s contents are being rendered with base
+  appearance</span>.</p>
+
+  <p>If an <code>option</code> does not have a <span data-x="option element nearest ancestor
+  select">nearest ancestor <code>select</code></span>, then it is <span>expected</span> to render
+  its children.</p>
+
+  <p>Otherwise, if an <code>option</code> element is not being <span
+  data-x="option-base-appearance">rendered with base appearance</span>, then it is
+  <span>expected</span> to be rendered by displaying the result of <span
+  data-x="concept-option-label">getting an <code>option</code> element's label</span> given the
+  <code>option</code> and true.</p>
+
+  <p>Otherwise, it is <span>expected</span> to render with a <span>shadow tree</span>
+  that contains the following elements:</p>
+
+  <ol>
+   <li>
+    <p>An <dfn>option contents slot</dfn>, which is a <code>slot</code> element. It is appended to
+    the <code>option</code>'s <span>shadow root</span> as the first child.
+    If the <code>option</code> element has a <code data-x="attr-option-label">label</code>
+    attribute whose value is not the empty string, then the <span>option contents slot</span> is
+    <span>expected</span> to not take any nodes. Otherwise, it is <span>expected</span> to take all
+    child nodes of the <code>option</code> element.</p>
+
+    <p class="note">When the <span>option contents slot</span> does not take any elements, the
+    <span>option label element</span> is rendered as fallback content.</p>
+   </li>
+
+   <li><p>An <dfn>option label element</dfn>, which is a <code>span</code> element. It is appended
+   to the <span>option contents slot</span>. It is <span>expected</span> to contain a
+   <code>Text</code> node whose <span data-x="concept-cd-data">data</span> is the value of the
+   <code>option</code>'s <code data-x="attr-option-label">label</code> attribute.</p></li>
+  </ol>
+
+  <p>Each sequence of one or more child <code>hr</code> element siblings may be rendered as a single
+  separator.</p>
+
+  <div algorithm>
+  <p>The <dfn>width of the <code>select</code>'s labels</dfn> is the wider of the width necessary to
+  render the widest <code>optgroup</code>, and the width necessary to render the widest
+  <code>option</code> element in the element's <span data-x="concept-select-option-list">list of
+  options</span> (including its indent, if any). If the <code>select</code> has the <code
+  data-x="attr-select-multiple">multiple</code> attribute and is being rendered as a
+  <span>drop-down box</span>, then the width should also be wide enough to accomodate the text
+  rendered in the <code>select</code> with any combination of <code>option</code>s selected.</p>
+
+  <p class="note">The <span>width of the <code>select</code>'s labels</span> has an accomodation for
+  <code data-x="attr-select-multiple">multiple</code> because some implementations use special text
+  to represent multiple options being selected, such as "2 selected." In this case, the select needs
+  to be wide enough to render "2 selected" in addition to the individual <code>option</code>s.</p>
+  </div>
+
+  <p>If a <code>select</code> element contains a <span>placeholder label option</span>, the user
+  agent is <span>expected</span> to render that <code>option</code> in a manner that conveys that
+  it is a label, rather than a valid option of the control. This can include preventing the
+  <span>placeholder label option</span> from being explicitly selected by the user. When the
+  <span>placeholder label option</span>'s <span
+  data-x="concept-option-selectedness">selectedness</span> is true, the control is
+  <span>expected</span> to be displayed in a fashion that indicates that no valid option is
+  currently selected.</p>
+
+  <p>User agents are <span>expected</span> to render the labels in a <code>select</code> in such a
+  manner that any alignment remains consistent whether the label is being displayed as part of the
+  page or in a menu control.</p>
+
+  <p class="XXX">Need to detail the <span>native appearance</span> and <span>primitive
+  appearance</span>.</p>
+
+  </div>
+
+  <pre><code class="css">@namespace "http://www.w3.org/1999/xhtml";
+
+option {
+  display: block;
+}
+
+optgroup {
+  display: block;
+  font-weight: bolder;
+}</code></pre>
+
+  <p>The following styles are <span>expected</span> to apply to <code>select</code> elements when
+  they are being rendered as a <span>drop-down box</span>:</p>
+
+  <pre><code class="css">@namespace "http://www.w3.org/1999/xhtml";
+
+select {
+  align-content: center;
+}</code></pre>
+
+  <p>The following styles are <span>expected</span> to apply to <code>select</code> elements when
+  they are being rendered with <span>native appearance</span> or <span>primitive
+  appearance</span>:</p>
+
+  <pre><code class="css">@namespace "http://www.w3.org/1999/xhtml";
+
+select {
+  letter-spacing: initial;
+  word-spacing: initial;
+  line-height: initial;
+}</code></pre>
+
+  <p>The following styles are <span>expected</span> to apply to <code>select</code> elements when
+  they are being rendered as a <span>drop-down box</span> with <span>native appearance</span> or
+  <span>primitive appearance</span>:</p>
+
+  <pre><code class="css">@namespace "http://www.w3.org/1999/xhtml";
+
+select {
+  display: inline-block;
+}</code></pre>
+
+  <p>The following styles are <span>expected</span> to apply to <code>select</code> elements when
+  they are being rendered with <span>base appearance</span>:</p>
+
+  <pre><code class="css">@namespace "http://www.w3.org/1999/xhtml";
+
+select {
+  background-color: transparent;
+  border: 1px solid currentColor;
+  user-select: none;
+  box-sizing: border-box;
+}
+
+select option:enabled:hover {
+  background-color: color-mix(currentColor 10%, transparent);
+}
+select option:enabled:active {
+  background-color: color-mix(currentColor 20%, transparent);
+}
+select option:disabled {
+  color: color-mix(currentColor 50%, transparent);
+}
+
+select option {
+  min-inline-size: 24px;
+  min-block-size: max(24px, 1lh);
+  padding-inline: 0.5em;
+  padding-block-end: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  white-space: nowrap;
+}
+
+select option::checkmark {
+  content: '\2713' / '';
+}
+select option:not(:checked)::checkmark {
+  visibility: hidden;
+}
+
+select optgroup {
+  display: block;
+  font-weight: bolder;
+}
+
+select optgroup option {
+  font-weight: normal;
+}
+
+select optgroup legend {
+  padding-inline: 0.5em;
+  min-block-size: 1lh;
+}</code></pre>
+
+  <p>The following styles are <span>expected</span> to apply to <code>select</code> elements when
+  they are being rendered as a <span>drop-down box</span> with <span>base appearance</span>:</p>
+
+  <pre><code class="css">@namespace "http://www.w3.org/1999/xhtml";
+
+select {
+  border-radius: 0.5em;
+  padding-block: 0.25em;
+  padding-inline: 0.5em;
+  min-block-size: calc-size(auto, max(size, 24px, 1lh));
+  min-inline-size: calc-size(auto, max(size, 24px));
+  display: inline-flex;
+  gap: 0.5em;
+  border-radius: 0.5em;
+  field-sizing: content !important;
+}
+
+select > button:first-child {
+  all: unset;
+  display: contents;
+}
+
+select:enabled:hover {
+  background-color: color-mix(currentColor 10%, transparent);
+}
+select:enabled:active {
+  background-color: color-mix(currentColor 20%, transparent);
+}
+select:disabled {
+  color: color-mix(currentColor 50%, transparent);
+}
+
+::picker(select) {
+  box-sizing: border-box;
+  border: 1px solid;
+  padding: 0;
+  color: CanvasText;
+  background-color: Canvas;
+  margin: 0;
+  inset: auto;
+  min-inline-size: anchor-size(self-inline);
+  max-block-size: stretch;
+  overflow: auto;
+  position-area: self-block-end span-self-inline-end;
+  position-try-order: most-block-size;
+  position-try-fallbacks:
+    self-block-start span-self-inline-end,
+    self-block-end span-self-inline-start,
+    self-block-start span-self-inline-start;
+}
+
+select::picker-icon {
+  content: counter(fake-counter-name, disclosure-open);
+  display: block;
+  margin-inline-start: auto;
+}</code></pre>
+
+  <p>The following styles are <span>expected</span> to apply to <code>select</code> elements when
+  they are being rendered as a <span>list box</span> with <span>base appearance</span>:</p>
+
+  <pre><code class="css">@namespace "http://www.w3.org/1999/xhtml";
+
+select {
+  overflow: auto;
+  display: inline-block;
+  block-size: calc(max(24px, 1lh) * attr(size type(&lt;integer>), 4));
+}</code></pre>
+
+  <p>The following styles are <span>expected</span> to apply to the <span>optgroup label
+  element</span>:</p>
+
+  <ul>
+   <li><p><code data-x="" class="css">padding-inline: 0.5em</code></p></li>
+
+   <li><p><code data-x="" class="css">min-block-size: 1lh</code></p></li>
+  </ul>
+
+  <div w-nodev>
+

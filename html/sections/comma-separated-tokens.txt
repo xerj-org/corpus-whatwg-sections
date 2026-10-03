@@ -1,0 +1,24 @@
+WHATWG HTML — section comma-separated-tokens — Comma-separated tokens
+
+  <h4>Comma-separated tokens</h4>
+
+  <div algorithm>
+  <p>A <dfn>set of comma-separated tokens</dfn> is a string containing zero or more tokens each
+  separated from the next by a single U+002C COMMA character (,), where tokens consist of any string
+  of zero or more characters, neither beginning nor ending with <span>ASCII whitespace</span>, nor
+  containing any U+002C COMMA characters (,), and optionally surrounded by <span>ASCII
+  whitespace</span>.</p>
+  </div>
+
+  <p class="example">For instance, the string "<code
+  data-x="">&nbsp;a&nbsp;,b,,d&nbsp;d&nbsp;</code>" consists of four tokens: "a", "b", the empty
+  string, and "d&nbsp;d". Leading and trailing whitespace around each token doesn't count as part of
+  the token, and the empty string can be a token.</p>
+
+  <p><span data-x="set of comma-separated tokens">Sets of comma-separated tokens</span> sometimes
+  have further restrictions on what consists a valid token. When such restrictions are defined, the
+  tokens must all fit within those restrictions; other values are non-conforming. If no such
+  restrictions are specified, then all values are conforming.</p>
+
+
+

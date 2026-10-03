@@ -1,0 +1,61 @@
+WHATWG HTML — section the-canvas-element/drawing-model — <dfn>Drawing model</dfn>
+
+  <h6><dfn>Drawing model</dfn></h6>
+
+  <div algorithm>
+  <p>When a shape or image is painted, user agents must follow these steps, in the order given (or
+  act as if they do):</p>
+
+  <ol>
+   <li><p>Render the shape or image onto an infinite <span>transparent black</span> bitmap, creating
+   image <var>A</var>, as described in the previous sections. For shapes, the current fill, stroke,
+   and line styles must be honored, and the stroke must itself also be subjected to the current
+   transformation matrix.</p></li>
+
+   <li>
+    <p>Convert the image <var>A</var> to the context's <span
+    data-x="concept-canvas-color-space">color space</span>.</p>
+
+    <p class="note">There do not exist any inputs to a 2D context for which the color space is
+    undefined. The color space for CSS colors is defined in <cite>CSS Color</cite>. The color space
+    for images that specify no color profile information is <span>'srgb'</span>, as
+    specified in the <a href="https://drafts.csswg.org/css-color/#untagged">Color Spaces of Untagged
+    Colors</a> section of <cite>CSS Color</cite>. <ref>CSSCOLOR</ref></p>
+   </li>
+
+   <li><p>Multiply the alpha component of every pixel in <var>A</var> by <code
+   data-x="concept-canvas-global-alpha">global alpha</code>.</p></li>
+
+   <li>
+    <p>When the <span data-x="concept-canvas-current-filter">current filter</span> is set to a
+    value other than "<code data-x="">none</code>" and all the externally-defined filters it
+    references, if any, are in documents that are currently loaded, then use image <var>A</var> as
+    the input to the <span data-x="concept-canvas-current-filter">current filter</span>, creating
+    image <var>B</var>. If the <span data-x="concept-canvas-current-filter">current filter</span>
+    is a string parseable as a <span>&lt;filter-value-list&gt;</span>, then draw using the <span
+    data-x="concept-canvas-current-filter">current filter</span> in the same manner as SVG.</p>
+
+    <p>Otherwise, let <var>B</var> be an alias for <var>A</var>.</p>
+   </li>
+
+   <li><p><span>When shadows are drawn</span>, render the shadow from image <var>B</var>,
+   using the current shadow styles, creating image <var>C</var>.</p></li>
+
+   <li><p><span>When shadows are drawn</span>, composite <var>C</var> within the
+   <span>clipping region</span> over the current <span>output bitmap</span> using the <span>current
+   compositing and blending operator</span>.</p></li>
+
+   <li><p>Composite <var>B</var> within the <span>clipping region</span> over the current
+   <span>output bitmap</span> using the <span>current compositing and blending
+   operator</span>.</p></li>
+  </ol>
+  </div>
+
+  <p>When compositing onto the <span>output bitmap</span>, pixels that would fall outside of the
+  <span>output bitmap</span> must be discarded.</p>
+
+  </div>
+
+
+
+

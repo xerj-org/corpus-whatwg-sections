@@ -1,0 +1,1389 @@
+WHATWG HTML — section cross-origin-opener-policies — Cross-origin opener policies
+
+  <h4>Cross-origin opener policies</h4>
+
+  <p>An <dfn id="cross-origin-opener-policy-value">opener policy value</dfn> allows a document which
+  is navigated to in a <span>top-level browsing context</span> to force the creation of a new
+  <span>top-level browsing context</span>, and a corresponding <span data-x="tlbc
+  group">group</span>. The possible values are:</p>
+
+  <dl>
+   <dt>"<dfn><code data-x="coop-unsafe-none">unsafe-none</code></dfn>"</dt>
+   <dd><p>This is the (current) default and means that the document will occupy the same
+   <span>top-level browsing context</span> as its predecessor, unless that document specified a
+   different <span>opener policy</span>.</p></dd>
+
+   <dt>"<dfn><code data-x="coop-same-origin-allow-popups">same-origin-allow-popups</code></dfn>"</dt>
+   <dd><p>This forces the creation of a new <span>top-level browsing context</span> for the
+   document, unless its predecessor specified the same <span>opener policy</span> and they are
+   <span>same origin</span>.</p></dd>
+
+   <dt>"<dfn><code data-x="coop-same-origin">same-origin</code></dfn>"</dt>
+   <dd><p>This behaves the same as "<code
+   data-x="coop-same-origin-allow-popups">same-origin-allow-popups</code>", with the addition that
+   any <span>auxiliary browsing context</span> created needs to contain <span>same origin</span>
+   documents that also have the same <span>opener policy</span> or it will appear closed to the
+   opener.</p></dd>
+
+   <dt>"<dfn><code data-x="coop-same-origin-plus-COEP">same-origin-plus-COEP</code></dfn>"</dt>
+   <dd>
+    <p>This behaves the same as "<code data-x="coop-same-origin">same-origin</code>", with the
+    addition that it sets the (new) <span>top-level browsing context</span>'s <span data-x="tlbc
+    group">group</span>'s <span data-x="bcg-cross-origin-isolation">cross-origin isolation
+    mode</span> to one of "<code data-x="cross-origin-isolation-logical">logical</code>" or "<code
+    data-x="cross-origin-isolation-concrete">concrete</code>".</p>
+
+    <p class="note">"<code data-x="coop-same-origin-plus-COEP">same-origin-plus-COEP</code>" cannot
+    be directly set via the `<code>Cross-Origin-Opener-Policy</code>` header, but results from a
+    combination of setting both `<code data-x=""><span>Cross-Origin-Opener-Policy</span>: <span
+    data-x="coop-same-origin">same-origin</span></code>` and a
+    `<code>Cross-Origin-Embedder-Policy</code>` header whose value is <span>compatible with
+    cross-origin isolation</span> together.</p>
+   </dd>
+
+   <dt>"<dfn><code data-x="coop-noopener-allow-popups">noopener-allow-popups</code></dfn>"</dt>
+   <dd>
+    <p>This forces the creation of a new <span>top-level browsing context</span> for the document,
+    regardless of its predecessor.</p>
+
+    <div class="note">
+     <p>While including a <code
+     data-x="coop-noopener-allow-popups">noopener-allow-popups</code> value severs the opener
+     relationship between the document on which it is applied and its opener, it does not create a
+     robust security boundary between those same-origin documents.</p>
+
+     <p>Other risks from same-origin applications include:</p>
+
+     <ul>
+      <li><p>Same-origin requests fetching the document's content — could be mitigated through
+      Fetch Metadata filtering. <ref>FETCHMETADATA</ref></p></li>
+      <li><p>Same-origin framing - could be mitigated through <code>X-Frame-Options</code> or CSP
+      <code data-x="frame-ancestors directive">frame-ancestors</code>.</p></li>
+      <li><p>JavaScript accessible cookies - can be mitigated by ensuring all cookies are <code
+      data-x="">httponly</code>.</p></li>
+      <li><p><code data-x="dom-localStorage">localStorage</code> access to sensitive data.</p></li>
+      <li><p>Service worker installation.</p></li>
+      <li><p><a href="https://w3c.github.io/ServiceWorker/#cache">Cache API</a> manipulation or
+      access to sensitive data. <ref>SW</ref></p></li>
+      <li><p><code data-x="">postMessage</code> or <code>BroadcastChannel</code> messaging that
+      exposes sensitive information.</p></li>
+      <li><p>Autofill which may not require user interaction for same-origin documents.</p></li>
+     </ul>
+
+     <p>Developers using <code data-x="coop-noopener-allow-popups">noopener-allow-popups</code>
+     need to make sure that their sensitive applications don't rely on client-side features
+     accessible to other same-origin documents, e.g., <code
+     data-x="dom-localStorage">localStorage</code> and other client-side storage APIs,
+     <code>BroadcastChannel</code> and related same-origin communication mechanisms. They also need
+     to make sure that their server-side endpoints don't return sensitive data to non-navigation
+     requests, whose response content is accessible to same-origin
+     documents.</p>
+    </div>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <p>An <dfn id="cross-origin-opener-policy">opener policy</dfn> consists of:</p>
+
+  <ul>
+   <li><p>A <dfn data-x="coop-struct-value">value</dfn>, which is an <span data-x="opener policy
+   value">opener policy value</span>, initially "<code
+   data-x="coop-unsafe-none">unsafe-none</code>".</p></li>
+
+   <li><p>A <dfn data-x="coop-struct-report-endpoint">reporting endpoint</dfn>, which is string or
+   null, initially null.</p></li>
+
+   <li><p>A <dfn data-x="coop-struct-report-only-value">report-only value</dfn>, which is an <span
+   data-x="opener policy value">opener policy value</span>, initially "<code
+   data-x="coop-unsafe-none">unsafe-none</code>".</p></li>
+
+   <li><p>A <dfn data-x="coop-struct-report-only-endpoint">report-only reporting endpoint</dfn>,
+   which is a string or null, initially null.</p></li>
+  </ul>
+
+  <div algorithm>
+  <p>To <dfn data-x="matching-coop">match opener policy values</dfn>, given an <span>opener policy
+  value</span> <var>documentCOOP</var>, an <span>origin</span> <var>documentOrigin</var>, an
+  <span>opener policy value</span> <var>responseCOOP</var>, and an <span>origin</span>
+  <var>responseOrigin</var>:</p>
+
+  <ol>
+   <li><p>If <var>documentCOOP</var> is "<code data-x="coop-unsafe-none">unsafe-none</code>" and
+   <var>responseCOOP</var> is "<code data-x="coop-unsafe-none">unsafe-none</code>", then return
+   true.</p></li>
+
+   <li><p>If <var>documentCOOP</var> is "<code data-x="coop-unsafe-none">unsafe-none</code>" or
+   <var>responseCOOP</var> is "<code data-x="coop-unsafe-none">unsafe-none</code>", then return
+   false.</p></li>
+
+   <li><p>If <var>documentCOOP</var> is <var>responseCOOP</var> and <var>documentOrigin</var> is
+   <span>same origin</span> with <var>responseOrigin</var>, then return true.</p></li>
+
+   <li><p>Return false.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+
+  <h5 id="the-coop-headers">The headers</h5>
+
+  <p>A <code>Document</code>'s <span data-x="concept-document-coop">cross-origin opener
+  policy</span> is derived from the `<dfn http-header
+  id="cross-origin-opener-policy-2"><code>Cross-Origin-Opener-Policy</code></dfn>` and `<dfn
+  http-header><code>Cross-Origin-Opener-Policy-Report-Only</code></dfn>` HTTP response headers.
+  These headers are <span data-x="http-structured-header">structured headers</span> whose value must
+  be a <span data-x="http-structured-header-token">token</span>. <ref>STRUCTURED-FIELDS</ref></p>
+
+  <p>The valid <span data-x="http-structured-header-token">token</span> values are the <span
+  data-x="opener policy value">opener policy values</span>. The token may also have
+  attached <span data-x="http-structured-header-parameters">parameters</span>; of these, the "<dfn
+  data-x="coop-report-to"><code>report-to</code></dfn>" parameter can have a <span>valid URL
+  string</span> identifying an appropriate reporting endpoint. <ref>REPORTING</ref></p>
+
+  <p class="note"><span w-nodev>Per the processing model described below, user</span><span
+  w-dev>User</span> agents will ignore this header if it contains an invalid value. Likewise, user
+  agents will ignore this header if the value cannot be parsed as a <span
+  data-x="http-structured-header-token">token</span>.</p>
+
+  <div w-nodev>
+
+  <hr>
+
+  <div algorithm>
+  <p>To <dfn data-x="obtain-coop">obtain an opener policy</dfn> given a <span
+  data-x="concept-response">response</span> <var>response</var> and an <span>environment</span>
+  <var>reservedEnvironment</var>:</p>
+
+  <ol>
+   <li><p>Let <var>policy</var> be a new <span>opener policy</span>.</p></li>
+
+   <li><p>If <var>reservedEnvironment</var> is a <span>non-secure context</span>, then return
+   <var>policy</var>.</p></li>
+
+   <li><p>Let <var>parsedItem</var> be the result of <span>getting a structured field value</span>
+   given `<code>Cross-Origin-Opener-Policy</code>` and "<code data-x="">item</code>" from
+   <var>response</var>'s <span data-x="concept-response-header-list">header list</span>.</p></li>
+
+   <li>
+    <p>If <var>parsedItem</var> is not null:</p>
+
+    <ol>
+     <li>
+      <p>If <var>parsedItem</var>[0] is "<code data-x="coop-same-origin">same-origin</code>":</p>
+
+      <ol>
+       <li><p>Let <var>coep</var> be the result of <span data-x="obtain an embedder
+       policy">obtaining a cross-origin embedder policy</span> from <var>response</var> and
+       <var>reservedEnvironment</var>.</p></li>
+
+       <li><p>If <var>coep</var>'s <span data-x="embedder-policy-value">value</span> is
+       <span>compatible with cross-origin isolation</span>, then set <var>policy</var>'s <span
+       data-x="coop-struct-value">value</span> to "<code
+       data-x="coop-same-origin-plus-COEP">same-origin-plus-COEP</code>".</p></li>
+
+       <li><p>Otherwise, set <var>policy</var>'s <span data-x="coop-struct-value">value</span> to
+       "<code data-x="coop-same-origin">same-origin</code>".</p></li>
+      </ol>
+     </li>
+
+     <li><p>If <var>parsedItem</var>[0] is "<code
+     data-x="coop-same-origin-allow-popups">same-origin-allow-popups</code>", then set
+     <var>policy</var>'s <span data-x="coop-struct-value">value</span> to "<code
+     data-x="coop-same-origin-allow-popups">same-origin-allow-popups</code>".</p></li>
+
+     <li><p>If <var>parsedItem</var>[0] is "<code
+     data-x="coop-noopener-allow-popups">noopener-allow-popups</code>", then set
+     <var>policy</var>'s <span data-x="coop-struct-value">value</span> to "<code
+     data-x="coop-noopener-allow-popups">noopener-allow-popups</code>".</p></li>
+
+     <li><p>If <var>parsedItem</var>[1]["<code data-x="coop-report-to">report-to</code>"] <span
+     data-x="map exists">exists</span> and it is a string, then set <var>policy</var>'s <span
+     data-x="coop-struct-report-endpoint">reporting endpoint</span> to
+     <var>parsedItem</var>[1]["<code data-x="coop-report-to">report-to</code>"].</p></li>
+    </ol>
+   </li>
+
+   <li><p>Set <var>parsedItem</var> to the result of <span>getting a structured field value</span>
+   given `<code>Cross-Origin-Opener-Policy-Report-Only</code>` and "<code data-x="">item</code>"
+   from <var>response</var>'s <span data-x="concept-response-header-list">header
+   list</span>.</p></li>
+
+   <li>
+    <p>If <var>parsedItem</var> is not null:</p>
+
+    <ol>
+     <li>
+      <p>If <var>parsedItem</var>[0] is "<code data-x="coop-same-origin">same-origin</code>":</p>
+
+      <ol>
+       <li><p>Let <var>coep</var> be the result of <span data-x="obtain an embedder
+       policy">obtaining a cross-origin embedder policy</span> from <var>response</var> and
+       <var>reservedEnvironment</var>.</p></li>
+
+       <li>
+        <p>If <var>coep</var>'s <span data-x="embedder-policy-value">value</span> is
+        <span>compatible with cross-origin isolation</span> or <var>coep</var>'s <span
+        data-x="embedder-policy-report-only-value">report-only value</span> is <span>compatible
+        with cross-origin isolation</span>, then set <var>policy</var>'s <span
+        data-x="coop-struct-report-only-value">report-only value</span> to "<code
+        data-x="coop-same-origin-plus-COEP">same-origin-plus-COEP</code>".</p>
+
+        <p class="note">Report only COOP also considers report-only COEP to assign the special
+        "<code data-x="coop-same-origin-plus-COEP">same-origin-plus-COEP</code>" value. This allows
+        developers more freedom in the order of deployment of COOP and COEP.</p>
+       </li>
+
+       <li><p>Otherwise, set <var>policy</var>'s <span
+       data-x="coop-struct-report-only-value">report-only value</span> to "<code
+       data-x="coop-same-origin">same-origin</code>".</p></li>
+      </ol>
+     </li>
+
+     <li><p>If <var>parsedItem</var>[0] is "<code
+     data-x="coop-same-origin-allow-popups">same-origin-allow-popups</code>", then set
+     <var>policy</var>'s <span data-x="coop-struct-report-only-value">report-only value</span> to
+     "<code data-x="coop-same-origin-allow-popups">same-origin-allow-popups</code>".</p></li>
+
+     <li><p>If <var>parsedItem</var>[1]["<code data-x="coop-report-to">report-to</code>"] <span
+     data-x="map exists">exists</span> and it is a string, then set <var>policy</var>'s <span
+     data-x="coop-struct-report-only-endpoint">report-only reporting endpoint</span> to
+     <var>parsedItem</var>[1]["<code data-x="coop-report-to">report-to</code>"].</p></li>
+    </ol>
+   </li>
+
+   <li><p>Return <var>policy</var>.</p></li>
+  </ol>
+  </div>
+
+
+  <h5 id="browsing-context-group-switches-due-to-cross-origin-opener-policy">Browsing context group
+  switches due to opener policy</h5>
+
+  <div algorithm>
+  <p>To <dfn data-x="check-browsing-context-group-switch-coop-value-popup">check if popup COOP
+  values require a browsing context group switch</dfn>, given two <span
+  data-x="origin">origins</span> <var>responseOrigin</var> and
+  <var>activeDocumentNavigationOrigin</var>, and two <span data-x="coop-struct-value">opener policy
+  values</span> <var>responseCOOPValue</var> and <var>activeDocumentCOOPValue</var>:</p>
+  <ol>
+   <li><p>If <var>responseCOOPValue</var> is "<code
+   data-x="coop-noopener-allow-popups">noopener-allow-popups</code>", then return true.</p></li>
+
+   <li>
+    <p>If all of the following are true:</p>
+
+    <ul>
+     <li><p><var>activeDocumentCOOPValue</var>'s <span data-x="coop-struct-value">value</span> is
+     "<code data-x="coop-same-origin-allow-popups">same-origin-allow-popups</code>" or
+     "<code data-x="coop-noopener-allow-popups">noopener-allow-popups</code>"; and</p></li>
+
+     <li><p><var>responseCOOPValue</var> is "<code
+     data-x="coop-unsafe-none">unsafe-none</code>",</p></li>
+    </ul>
+
+    <p>then return false.</p>
+   </li>
+
+   <li><p>If the result of <span data-x="matching-coop">matching</span>
+   <var>activeDocumentCOOPValue</var>, <var>activeDocumentNavigationOrigin</var>,
+   <var>responseCOOPValue</var>, and <var>responseOrigin</var> is true, then return false.</p></li>
+
+   <li><p>Return true.</p>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="check-browsing-context-group-switch-coop-value">check if COOP values require a
+  browsing context group switch</dfn>, given a boolean <var>isInitialAboutBlank</var>, two <span
+  data-x="origin">origins</span> <var>responseOrigin</var> and
+  <var>activeDocumentNavigationOrigin</var>, and two <span data-x="coop-struct-value">opener policy
+  values</span> <var>responseCOOPValue</var> and <var>activeDocumentCOOPValue</var>:</p>
+
+  <ol>
+   <li><p>If <var>isInitialAboutBlank</var> is true, then return the result of <span
+   data-x="check-browsing-context-group-switch-coop-value-popup">checking if popup COOP values
+   requires a browsing context group switch</span> with <var>responseOrigin</var>,
+   <var>activeDocumentNavigationOrigin</var>, <var>responseCOOPValue</var>, and
+   <var>activeDocumentCOOPValue</var>.</p></li>
+
+   <li>
+    <p class="note">Here we are dealing with a non-popup navigation.</p>
+
+    <p>If the result of <span data-x="matching-coop">matching</span>
+    <var>activeDocumentCOOPValue</var>, <var>activeDocumentNavigationOrigin</var>,
+    <var>responseCOOPValue</var>, and <var>responseOrigin</var> is true, then return false.</p>
+   </li>
+
+   <li><p>Return true.</p>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="check-bcg-switch-navigation-report-only">check if enforcing report-only COOP
+  would require a browsing context group switch</dfn>, given a boolean
+  <var>isInitialAboutBlank</var>, two <span data-x="origin">origins</span>
+  <var>responseOrigin</var>, <var>activeDocumentNavigationOrigin</var>, and two <span data-x="opener
+  policy">opener policies</span> <var>responseCOOP</var> and <var>activeDocumentCOOP</var>:</p>
+
+  <ol>
+   <li>
+    <p>If the result of <span data-x="check-browsing-context-group-switch-coop-value">checking if
+    COOP values require a browsing context group switch</span> given
+    <var>isInitialAboutBlank</var>, <var>responseOrigin</var>,
+    <var>activeDocumentNavigationOrigin</var>, <var>responseCOOP</var>'s <span
+    data-x="coop-struct-report-only-value">report-only value</span>, and
+    <var>activeDocumentCOOPReportOnly</var>'s <span
+    data-x="coop-struct-report-only-value">report-only value</span> is false, then return
+    false.</p>
+
+    <p class="note">Matching report-only policies allows a website to specify the same report-only
+    opener policy on all its pages and not receive violation reports for navigations between these
+    pages.</p>
+   </li>
+
+   <li><p>If the result of <span data-x="check-browsing-context-group-switch-coop-value">checking
+   if COOP values require a browsing context group switch</span> given
+   <var>isInitialAboutBlank</var>, <var>responseOrigin</var>,
+   <var>activeDocumentNavigationOrigin</var>, <var>responseCOOP</var>'s <span
+   data-x="coop-struct-value">value</span>, and <var>activeDocumentCOOPReportOnly</var>'s <span
+   data-x="coop-struct-report-only-value">report-only value</span> is true, then return
+   true.</p></li>
+
+   <li><p>If the result of <span data-x="check-browsing-context-group-switch-coop-value">checking
+   if COOP values require a browsing context group switch</span> given
+   <var>isInitialAboutBlank</var>, <var>responseOrigin</var>,
+   <var>activeDocumentNavigationOrigin</var>, <var>responseCOOP</var>'s <span
+   data-x="coop-struct-report-only-value">report-only value</span>, and
+   <var>activeDocumentCOOPReportOnly</var>'s <span data-x="coop-struct-value">value</span> is true,
+   then return true.</p></li>
+
+   <li><p>Return false.</p></li>
+  </ol>
+  </div>
+
+  <p>An <dfn data-x="coop-enforcement-result">opener policy enforcement result</dfn> is a
+  <span>struct</span> with the following <span data-x="struct item">items</span>:</p>
+
+  <ul>
+   <li><p>A boolean <dfn data-x="coop-enforcement-bcg-switch" for="opener policy enforcement
+    result">needs a browsing context group switch</dfn>, initially false.</p></li>
+
+   <li><p>A boolean <dfn data-x="coop-enforcement-bcg-switch-report-only" for="opener policy
+   enforcement result">would need a browsing context group switch due to report-only</dfn>,
+   initially false.</p></li>
+
+   <li><p>A <span>URL</span> <dfn data-x="coop-enforcement-url" for="opener policy enforcement
+   result">url</dfn>.</p></li>
+
+   <li><p>An <span>origin</span> <dfn data-x="coop-enforcement-origin" for="opener policy
+   enforcement result">origin</dfn>.</p></li>
+
+   <li><p>An <span>opener policy</span> <dfn data-x="coop-enforcement-coop" for="opener policy
+   enforcement result">opener policy</dfn>.</p></li>
+
+   <li><p>A boolean <dfn data-x="coop-enforcement-source" for="opener policy enforcement
+   result">current context is navigation source</dfn>, initially false.</p></li>
+  </ul>
+
+  <div algorithm>
+  <p>To <dfn data-x="coop-enforce">enforce a response's opener policy</dfn>, given a <span>browsing
+  context</span> <var>browsingContext</var>, a <span>URL</span> <var>responseURL</var>, an
+  <span>origin</span> <var>responseOrigin</var>, an <span>opener policy</span>
+  <var>responseCOOP</var>, an <span data-x="coop-enforcement-result">opener policy enforcement
+  result</span> <var>currentCOOPEnforcementResult</var>, and a <span
+  data-x="concept-request-referrer">referrer</span> <var>referrer</var>:</p>
+
+  <ol>
+   <li>
+    <p>Let <var>newCOOPEnforcementResult</var> be a new <span
+    data-x="coop-enforcement-result">opener policy enforcement result</span> with</p>
+
+    <dl class="props">
+     <dt><span data-x="coop-enforcement-bcg-switch">needs a browsing context group switch</span></dt>
+     <dd><var>currentCOOPEnforcementResult</var>'s <span data-x="coop-enforcement-bcg-switch">needs
+     a browsing context group switch</span></dd>
+
+     <dt><span data-x="coop-enforcement-bcg-switch-report-only">would need a browsing context group switch due to report-only</span></dt>
+     <dd><var>currentCOOPEnforcementResult</var>'s <span
+     data-x="coop-enforcement-bcg-switch-report-only">would need a browsing context group switch
+     due to report-only</span></dd>
+
+     <dt><span data-x="coop-enforcement-url">url</span></dt>
+     <dd><var>responseURL</var></dd>
+
+     <dt><span data-x="coop-enforcement-origin">origin</span></dt>
+     <dd><var>responseOrigin</var></dd>
+
+     <dt><span data-x="coop-enforcement-coop">opener policy</span></dt>
+     <dd><var>responseCOOP</var></dd>
+
+     <dt><span data-x="coop-enforcement-source">current context is navigation source</span></dt>
+     <dd>true</dd>
+    </dl>
+   </li>
+
+   <li><p>Let <var>isInitialAboutBlank</var> be <var>browsingContext</var>'s <span>active
+   document</span>'s <span>is initial <code>about:blank</code></span>.</p></li>
+
+   <li><p>If <var>isInitialAboutBlank</var> is true and <var>browsingContext</var>'s <span
+   data-x="browsing-context-initial-url">initial URL</span> is null, set
+   <var>browsingContext</var>'s <span data-x="browsing-context-initial-url">initial URL</span> to
+   <var>responseURL</var>.</p></li>
+
+   <li>
+    <p>If the result of <span data-x="check-browsing-context-group-switch-coop-value">checking if
+    COOP values require a browsing context group switch</span> given
+    <var>isInitialAboutBlank</var>, <var>currentCOOPEnforcementResult</var>'s <span
+    data-x="coop-enforcement-coop">opener policy</span>'s <span
+    data-x="coop-struct-value">value</span>, <var>currentCOOPEnforcementResult</var>'s <span
+    data-x="coop-enforcement-origin">origin</span>, <var>responseCOOP</var>'s <span
+    data-x="coop-struct-value">value</span>, and <var>responseOrigin</var> is true:</p>
+
+    <ol>
+     <li><p>Set <var>newCOOPEnforcementResult</var>'s <span
+     data-x="coop-enforcement-bcg-switch">needs a browsing context group switch</span> to
+     true.</p></li>
+
+     <li>
+      <p>If <var>browsingContext</var>'s <span data-x="tlbc group">group</span>'s <span>browsing
+      context set</span>'s <span data-x="list size">size</span> is greater than 1:</p>
+
+      <ol>
+       <li><p><span data-x="coop-violation-navigation-to">Queue a violation report for browsing
+       context group switch when navigating to a COOP response</span> with <var>responseCOOP</var>,
+       "<code data-x="">enforce</code>", <var>responseURL</var>,
+       <var>currentCOOPEnforcementResult</var>'s <span data-x="coop-enforcement-url">url</span>,
+       <var>currentCOOPEnforcementResult</var>'s <span
+       data-x="coop-enforcement-origin">origin</span>, <var>responseOrigin</var>, and
+       <var>referrer</var>.</p></li>
+
+       <li><p><span data-x="coop-violation-navigation-from">Queue a violation report for browsing
+       context group switch when navigating away from a COOP response</span> with
+       <var>currentCOOPEnforcementResult</var>'s <span data-x="coop-enforcement-coop">opener
+       policy</span>, "<code data-x="">enforce</code>", <var>currentCOOPEnforcementResult</var>'s
+       <span data-x="coop-enforcement-url">url</span>, <var>responseURL</var>,
+       <var>currentCOOPEnforcementResult</var>'s <span
+       data-x="coop-enforcement-origin">origin</span>, <var>responseOrigin</var>, and
+       <var>currentCOOPEnforcementResult</var>'s <span data-x="coop-enforcement-source">current
+       context is navigation source</span>.</p></li>
+      </ol>
+     </li>
+    </ol>
+   </li>
+
+   <li>
+    <p>If the result of <span data-x="check-bcg-switch-navigation-report-only">checking if
+    enforcing report-only COOP would require a browsing context group switch</span> given
+    <var>isInitialAboutBlank</var>, <var>responseOrigin</var>,
+    <var>currentCOOPEnforcementResult</var>'s <span data-x="coop-enforcement-origin">origin</span>,
+    <var>responseCOOP</var>, and <var>currentCOOPEnforcementResult</var>'s <span
+    data-x="coop-enforcement-coop">opener policy</span>, is true:</p>
+
+    <ol>
+     <li><p>Set <var>newCOOPEnforcementResult</var>'s <span data-x="coop-enforcement-bcg-switch-report-only">would
+     need a browsing context group switch due to report-only</span> to true.</p></li>
+
+     <li>
+      <p>If <var>browsingContext</var>'s <span data-x="tlbc group">group</span>'s <span>browsing
+      context set</span>'s <span data-x="list size">size</span> is greater than 1:</p>
+
+      <ol>
+       <li><p><span data-x="coop-violation-navigation-to">Queue a violation report for browsing
+       context group switch when navigating to a COOP response</span> with <var>responseCOOP</var>,
+       "<code data-x="">reporting</code>", <var>responseURL</var>,
+       <var>currentCOOPEnforcementResult</var>'s <span data-x="coop-enforcement-url">url</span>,
+       <var>currentCOOPEnforcementResult</var>'s <span
+       data-x="coop-enforcement-origin">origin</span>, <var>responseOrigin</var>, and
+       <var>referrer</var>.</p></li>
+
+       <li><p><span data-x="coop-violation-navigation-from">Queue a violation report for browsing
+       context group switch when navigating away from a COOP response</span> with
+       <var>currentCOOPEnforcementResult</var>'s <span data-x="coop-enforcement-coop">opener
+       policy</span>, "<code data-x="">reporting</code>",
+       <var>currentCOOPEnforcementResult</var>'s <span data-x="coop-enforcement-url">url</span>,
+       <var>responseURL</var>, <var>currentCOOPEnforcementResult</var>'s <span
+       data-x="coop-enforcement-origin">origin</span>, <var>responseOrigin</var>, and
+       <var>currentCOOPEnforcementResult</var>'s <span data-x="coop-enforcement-source">current
+       context is navigation source</span>.</p></li>
+      </ol>
+     </li>
+    </ol>
+   </li>
+
+   <li><p>Return <var>newCOOPEnforcementResult</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="obtain-browsing-context-navigation">obtain a browsing context to use for a
+  navigation response</dfn>, given <span>navigation params</span> <var>navigationParams</var>:</p>
+
+  <ol>
+   <li><p>Let <var>browsingContext</var> be <var>navigationParams</var>'s <span
+   data-x="navigation-params-navigable">navigable</span>'s <span data-x="nav-bc">active browsing
+   context</span>.</p></li>
+
+   <li><p>If <var>browsingContext</var> is not a <span>top-level browsing context</span>, then
+   return <var>browsingContext</var>.</p></li>
+
+   <li><p>Let <var>coopEnforcementResult</var> be <var>navigationParams</var>'s <span
+   data-x="navigation-params-coop-enforcement-result">COOP enforcement result</span>.</p></li>
+
+   <li><p>Let <var>swapGroup</var> be <var>coopEnforcementResult</var>'s <span
+   data-x="coop-enforcement-bcg-switch">needs a browsing context group switch</span>.</p></li>
+
+   <li><p>Let <var>sourceOrigin</var> be <var>browsingContext</var>'s
+   <span>active document</span>'s <span data-x="concept-document-origin">origin</span>.</p></li>
+
+   <li><p>Let <var>destinationOrigin</var> be <var>navigationParams</var>'s <span
+   data-x="navigation-params-origin">origin</span>.</p></li>
+
+   <li>
+    <p>If <var>sourceOrigin</var> is not <span>same site</span> with
+    <var>destinationOrigin</var>:</p>
+
+    <ol>
+     <li>
+      <p>If either of <var>sourceOrigin</var> or <var>destinationOrigin</var> have a <span
+      data-x="concept-origin-scheme">scheme</span> that is not an <span>HTTP(S) scheme</span> and
+      the user agent considers it necessary for <var>sourceOrigin</var> and
+      <var>destinationOrigin</var> to be isolated from each other (for
+      <span>implementation-defined</span> reasons), optionally set <var>swapGroup</var> to true.</p>
+
+      <p class="note">For example, if a user navigates from <code data-x="">about:settings</code> to
+      <code data-x="">https://example.com</code>, the user agent could force a swap.</p>
+
+      <p class="XXX"><a href="https://github.com/whatwg/html/issues/10842">Issue #10842</a> tracks
+      settling on an interoperable behavior here, instead of letting this be optional.</p>
+     </li>
+
+     <li>
+      <p>If <var>navigationParams</var>'s <span data-x="navigation-params-user-involvement">user
+      involvement</span> is "<code data-x="uni-browser-ui">browser UI</code>", optionally set
+      <var>swapGroup</var> to true.</p>
+
+      <p class="XXX"><a href="https://github.com/whatwg/html/issues/6356">Issue #6356</a> tracks
+      settling on an interoperable behavior here, instead of letting this be optional.</p>
+     </li>
+    </ol>
+   </li>
+
+   <li>
+    <p>If <var>browsingContext</var>'s <span data-x="tlbc group">group</span>'s <span>browsing
+    context set</span>'s <span data-x="list size">size</span> is 1, optionally set
+    <var>swapGroup</var> to true.</p>
+
+    <p class="note">Some implementations swap browsing context groups here for performance
+    reasons.</p>
+
+    <p class="note">The check for other contexts that could script this one is not sufficient to
+    prevent differences in behavior that could affect a web page. Even if there are currently no
+    other contexts, the destination page could open a window, then if the user navigates back, the
+    previous page could expect to be able to script the opened window. Doing a swap here would break
+    that use case.</p>
+   </li>
+
+   <li>
+    <p>If <var>swapGroup</var> is false:</p>
+
+    <ol>
+     <li><p>If <var>coopEnforcementResult</var>'s <span
+     data-x="coop-enforcement-bcg-switch-report-only">would need a browsing context group switch
+     due to report-only</span> is true, set <var>browsingContext</var>'s <span
+     data-x="virtual-browsing-context-group-id">virtual browsing context group ID</span> to a new
+     unique identifier.</p></li>
+
+     <li><p>Return <var>browsingContext</var>.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p>Let <var>newBrowsingContext</var> be the first return value of <span>creating a new
+    top-level browsing context and document</span>.</p>
+
+    <p class="note">In this case we are going to perform a browsing context group swap.
+    <var>browsingContext</var> will not be used by the new <code>Document</code> that we are about
+    to <span data-x="create-the-document-object">create</span>. If it is not used by other
+    <code>Document</code>s either (such as ones in the back/forward cache), then the user agent
+    might <a href="#a-browsing-context-is-discarded">destroy it</a> at this point.</p>
+   </li>
+
+   <li><p>Let <var>navigationCOOP</var> be <var>navigationParams</var>'s <span
+   data-x="navigation-params-coop">cross-origin opener policy</span>.</p></li>
+
+   <li>
+    <p>If <var>navigationCOOP</var>'s <span data-x="coop-struct-value">value</span> is "<code
+    data-x="coop-same-origin-plus-COEP">same-origin-plus-COEP</code>", then set
+    <var>newBrowsingContext</var>'s <span data-x="tlbc group">group</span>'s <span
+    data-x="bcg-cross-origin-isolation">cross-origin isolation mode</span> to either "<code
+    data-x="cross-origin-isolation-logical">logical</code>" or "<code
+    data-x="cross-origin-isolation-concrete">concrete</code>". The choice of which is
+    <span>implementation-defined</span>.</p>
+
+    <p class="note">It is difficult on some platforms to provide the security properties required
+    by the <span data-x="concept-settings-object-cross-origin-isolated-capability">cross-origin
+    isolated capability</span>. "<code data-x="cross-origin-isolation-concrete">concrete</code>"
+    grants access to it and "<code data-x="cross-origin-isolation-logical">logical</code>" does
+    not.</p>
+   </li>
+
+   <li><p>Let <var>sandboxFlags</var> be a <span data-x="list clone">clone</span> of
+   <var>navigationParams</var>'s <span
+   data-x="navigation-params-sandboxing">final sandboxing flag set</span>.</p></li>
+
+   <li>
+    <p>If <var>sandboxFlags</var> is not empty:</p>
+    <ol>
+     <li><p><span>Assert</span>: <var>navigationCOOP</var>'s <span data-x="coop-struct-value">value</span> is
+     "<code data-x="coop-unsafe-none">unsafe-none</code>".</p></li>
+
+     <li><p><span>Assert</span>: <var>newBrowsingContext</var>'s <span>popup sandboxing flag
+     set</span> <span data-x="list is empty">is empty</span>.</p></li>
+
+     <li><p>Set <var>newBrowsingContext</var>'s <span>popup sandboxing flag set</span> to
+     <var>sandboxFlags</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Return <var>newBrowsingContext</var>.</p></li>
+  </ol>
+  </div>
+
+
+  <h5 id="coop-reporting"><span id="reporting"></span>Reporting</h5>
+
+  <p>An <dfn>accessor-accessed relationship</dfn> is an enum that describes the relationship
+  between two <span data-x="browsing context">browsing contexts</span> between which an access
+  happened. It can take the following values:</p>
+
+  <dl>
+   <dt><dfn data-x="accessor-accessed-opener">accessor is opener</dfn></dt>
+   <dd><p>The accessor <span>browsing context</span> or one of its <span data-x="ancestor browsing
+   context">ancestors</span> is the <span>opener browsing context</span> of the accessed
+   <span>browsing context</span>'s <span data-x="bc-tlbc">top-level browsing
+   context</span>.</p></dd>
+
+   <dt><dfn data-x="accessor-accessed-openee">accessor is openee</dfn></dt>
+   <dd><p>The accessed <span>browsing context</span> or one of its <span data-x="ancestor browsing
+   context">ancestors</span> is the <span>opener browsing context</span> of the accessor
+   <span>browsing context</span>'s <span data-x="bc-tlbc">top-level browsing
+   context</span>.</p></dd>
+
+   <dt><dfn data-x="accessor-accessed-none">none</dfn></dt>
+   <dd><p>There is no opener relationship between the accessor <span>browsing context</span>, the
+   accessor <span>browsing context</span>, or any of their <span data-x="ancestor browsing
+   context">ancestors</span>.</p></dd>
+  </dl>
+
+  <div algorithm>
+  <p>To <dfn data-x="coop-check-access-report">check if an access between two browsing contexts
+  should be reported</dfn>, given two <span data-x="browsing context">browsing contexts</span>
+  <var>accessor</var> and <var>accessed</var>, a JavaScript property name <var>P</var>, and an
+  <span>environment settings object</span> <var>environment</var>:</p>
+
+  <ol>
+   <li><p>If <var>P</var> is not a <span>cross-origin accessible window property name</span>, then
+   return.</p></li>
+
+   <li><p><span>Assert</span>: <var>accessor</var>'s <span>active document</span> and
+   <var>accessed</var>'s <span>active document</span> are both <span>fully active</span>.</p></li>
+
+   <li><p>Let <var>accessorTopDocument</var> be <var>accessor</var>'s <span
+   data-x="bc-tlbc">top-level browsing context</span>'s <span>active document</span>.</p></li>
+
+   <li><p>Let <var>accessorInclusiveAncestorOrigins</var> be the list obtained by taking the <span
+   data-x="concept-document-origin">origin</span> of the <span data-x="nav-document">active
+   document</span> of each of <var>accessor</var>'s <span>active document</span>'s <span>inclusive
+   ancestor navigables</span>.</p></li>
+
+   <li><p>Let <var>accessedTopDocument</var> be <var>accessed</var>'s <span
+   data-x="bc-tlbc">top-level browsing context</span>'s <span>active document</span>.</p></li>
+
+   <li><p>Let <var>accessedInclusiveAncestorOrigins</var> be the list obtained by taking the <span
+   data-x="concept-document-origin">origin</span> of the <span data-x="nav-document">active
+   document</span> of each of <var>accessed</var>'s <span>active document</span>'s <span>inclusive
+   ancestor navigables</span>.</p></li>
+
+   <li>
+    <p>If any of <var>accessorInclusiveAncestorOrigins</var> are not <span>same origin</span> with
+    <var>accessorTopDocument</var>'s <span data-x="concept-document-origin">origin</span>, or if
+    any of <var>accessedInclusiveAncestorOrigins</var> are not <span>same origin</span> with
+    <var>accessedTopDocument</var>'s <span data-x="concept-document-origin">origin</span>, then
+    return.</p>
+
+    <p class="note">This avoids leaking information about cross-origin iframes to a top level frame
+    with opener policy reporting.</p>
+   </li>
+
+   <li><p>If <var>accessor</var>'s <span data-x="bc-tlbc">top-level browsing context</span>'s <span
+   data-x="virtual-browsing-context-group-id">virtual browsing context group ID</span> is
+   <var>accessed</var>'s <span data-x="bc-tlbc">top-level browsing context</span>'s <span
+   data-x="virtual-browsing-context-group-id">virtual browsing context group ID</span>, then
+   return.</p></li>
+
+   <li><p>Let <var>accessorAccessedRelationship</var> be a new <span>accessor-accessed
+   relationship</span> with value <span data-x="accessor-accessed-none">none</span>.</p></li>
+
+   <li><p>If <var>accessed</var>'s <span data-x="bc-tlbc">top-level browsing context</span>'s
+   <span>opener browsing context</span> is <var>accessor</var> or is an <span data-x="ancestor
+   browsing context">ancestor</span> of <var>accessor</var>, then set
+   <var>accessorAccessedRelationship</var> to <span data-x="accessor-accessed-opener">accessor is
+   opener</span>.</p></li>
+
+   <li><p>If <var>accessor</var>'s <span data-x="bc-tlbc">top-level browsing context</span>'s
+   <span>opener browsing context</span> is <var>accessed</var> or is an <span data-x="ancestor
+   browsing context">ancestor</span> of <var>accessed</var>, then set
+   <var>accessorAccessedRelationship</var> to <span data-x="accessor-accessed-openee">accessor is
+   openee</span>.</p></li>
+
+   <li><p><span data-x="coop-violation-access">Queue violation reports for accesses</span>, given
+   <var>accessorAccessedRelationship</var>, <var>accessorTopDocument</var>'s <span
+   data-x="concept-document-coop">opener policy</span>, <var>accessedTopDocument</var>'s <span
+   data-x="concept-document-coop">opener policy</span>, <var>accessor</var>'s <span>active
+   document</span>'s <span data-x="concept-document-url">URL</span>, <var>accessed</var>'s
+   <span>active document</span>'s <span data-x="concept-document-url">URL</span>,
+   <var>accessor</var>'s <span data-x="bc-tlbc">top-level browsing context</span>'s <span
+   data-x="browsing-context-initial-url">initial URL</span>, <var>accessed</var>'s <span
+   data-x="bc-tlbc">top-level browsing context</span>'s <span
+   data-x="browsing-context-initial-url">initial URL</span>, <var>accessor</var>'s <span>active
+   document</span>'s <span data-x="concept-document-origin">origin</span>, <var>accessed</var>'s
+   <span>active document</span>'s <span data-x="concept-document-origin">origin</span>,
+   <var>accessor</var>'s <span data-x="bc-tlbc">top-level browsing context</span>'s <span
+   data-x="opener-origin-at-creation">opener origin at creation</span>, <var>accessed</var>'s <span
+   data-x="bc-tlbc">top-level browsing context</span>'s <span
+   data-x="opener-origin-at-creation">opener origin at creation</span>,
+   <var>accessorTopDocument</var>'s <span data-x="dom-document-referrer">referrer</span>,
+   <var>accessedTopDocument</var>'s <span data-x="dom-document-referrer">referrer</span>,
+   <var>P</var>, and <var>environment</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="sanitize-url-report">sanitize a URL to send in a report</dfn> given a
+  <span>URL</span> <var>url</var>:</p>
+
+  <ol>
+   <li><p>Let <var>sanitizedURL</var> be a copy of <var>url</var>.</p></li>
+
+   <li><p><span data-x="set the username">Set the username</span> given <var>sanitizedURL</var> and
+   the empty string.
+
+   <li><p><span data-x="set the password">Set the password</span> given <var>sanitizedURL</var> and
+   the empty string.
+
+   <li><p>Return the <span data-x="concept-url-serializer">serialization</span> of
+   <var>sanitizedURL</var> with <span data-x="url serializer exclude fragment"><i>exclude
+   fragment</i></span> set to true.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="coop-violation-navigation-to">queue a violation report for browsing context
+  group switch when navigating to a COOP response</dfn> given an <span data-x="opener policy">opener
+  policy</span> <var>coop</var>, a string <var>disposition</var>, a <span>URL</span>
+  <var>coopURL</var>, a <span>URL</span> <var>previousResponseURL</var>, two <span
+  data-x="origin">origins</span> <var>coopOrigin</var> and <var>previousResponseOrigin</var>, and a
+  <span data-x="concept-request-referrer">referrer</span> <var>referrer</var>:</p>
+
+  <ol>
+   <li><p>If <var>coop</var>'s <span data-x="coop-struct-report-endpoint">reporting endpoint</span>
+   is null, return.</p></li>
+
+   <li><p>Let <var>coopValue</var> be <var>coop</var>'s <span
+   data-x="coop-struct-value">value</span>.</p></li>
+
+   <li><p>If <var>disposition</var> is "<code data-x="">reporting</code>", then set
+   <var>coopValue</var> to <var>coop</var>'s <span
+   data-x="coop-struct-report-only-value">report-only value</span>.</p></li>
+
+   <li><p>Let <var>serializedReferrer</var> be an empty string.</p></li>
+
+   <li><p>If <var>referrer</var> is a <span>URL</span>, set <var>serializedReferrer</var> to the
+   <span data-x="concept-url-serializer">serialization</span> of <var>referrer</var>.
+
+   <li>
+    <p>Let <var>body</var> be a new object containing the following properties:</p>
+
+    <table class="data">
+     <thead>
+      <tr>
+       <th>key</th>
+       <th>value</th>
+      </tr>
+     </thead>
+     <tbody>
+      <tr>
+       <td>disposition</td>
+       <td><var>disposition</var></td>
+      </tr>
+      <tr>
+       <td>effectivePolicy</td>
+       <td><var>coopValue</var></td>
+      </tr>
+      <tr>
+       <td>previousResponseURL</td>
+       <td>If <var>coopOrigin</var> and <var>previousResponseOrigin</var> are <span>same origin</span> this is the <span data-x="sanitize-url-report">sanitization</span> of <var>previousResponseURL</var>, null otherwise.</td>
+      </tr>
+      <tr>
+       <td>referrer</td>
+       <td><var>serializedReferrer</var></td>
+      </tr>
+      <tr>
+       <td>type</td>
+       <td>"<code data-x="">navigation-to-response</code>"</td>
+      </tr>
+     </tbody>
+    </table>
+   </li>
+
+   <li><p><span data-x="queue a report">Queue</span> <var>body</var> as "<code
+   data-x="">coop</code>" for <var>coop</var>'s <span
+   data-x="coop-struct-report-endpoint">reporting endpoint</span> with <var>coopURL</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="coop-violation-navigation-from">queue a violation report for browsing context
+  group switch when navigating away from a COOP response</dfn> given an <span data-x="opener
+  policy">opener policy</span> <var>coop</var>, a string <var>disposition</var>, a <span>URL</span>
+  <var>coopURL</var>, a <span>URL</span> <var>nextResponseURL</var>, two <span
+  data-x="origin">origins</span> <var>coopOrigin</var> and <var>nextResponseOrigin</var>, and a
+  boolean <var>isCOOPResponseNavigationSource</var>:</p>
+
+  <ol>
+   <li><p>If <var>coop</var>'s <span data-x="coop-struct-report-endpoint">reporting endpoint</span>
+   is null, return.</p></li>
+
+   <li><p>Let <var>coopValue</var> be <var>coop</var>'s <span
+   data-x="coop-struct-value">value</span>.</p></li>
+
+   <li><p>If <var>disposition</var> is "<code data-x="">reporting</code>", then set
+   <var>coopValue</var> to <var>coop</var>'s <span
+   data-x="coop-struct-report-only-value">report-only value</span>.</p></li>
+
+   <li>
+    <p>Let <var>body</var> be a new object containing the following properties:</p>
+
+    <table class="data">
+     <thead>
+      <tr>
+       <th>key</th>
+       <th>value</th>
+      </tr>
+     </thead>
+     <tbody>
+      <tr>
+       <td>disposition</td>
+       <td><var>disposition</var></td>
+      </tr>
+      <tr>
+       <td>effectivePolicy</td>
+       <td><var>coopValue</var></td>
+      </tr>
+      <tr>
+       <td>nextResponseURL</td>
+       <td>If <var>coopOrigin</var> and <var>nextResponseOrigin</var> are <span>same origin</span>
+       or <var>isCOOPResponseNavigationSource</var> is true, this is the <span
+       data-x="sanitize-url-report">sanitization</span> of <var>nextResponseURL</var>, null otherwise.</td>
+      </tr>
+      <tr>
+       <td>type</td>
+       <td>"<code data-x="">navigation-from-response</code>"</td>
+      </tr>
+     </tbody>
+    </table>
+   </li>
+
+   <li><p><span data-x="queue a report">Queue</span> <var>body</var> as "<code
+   data-x="">coop</code>" for <var>coop</var>'s <span
+   data-x="coop-struct-report-endpoint">reporting endpoint</span> with <var>coopURL</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="coop-violation-access">queue violation reports for accesses</dfn>, given an
+  <span>accessor-accessed relationship</span> <var>accessorAccessedRelationship</var>, two <span
+  data-x="opener policy">opener policies</span> <var>accessorCOOP</var> and <var>accessedCOOP</var>,
+  four <span data-x="url">URLs</span> <var>accessorURL</var>, <var>accessedURL</var>,
+  <var>accessorInitialURL</var>, <var>accessedInitialURL</var>, four <span
+  data-x="origin">origins</span> <var>accessorOrigin</var>, <var>accessedOrigin</var>,
+  <var>accessorCreatorOrigin</var> and <var>accessedCreatorOrigin</var>, two <span
+  data-x="dom-document-referrer">referrers</span> <var>accessorReferrer</var> and
+  <var>accessedReferrer</var>, a string <var>propertyName</var>, and an <span>environment settings
+  object</span> <var>environment</var>:</p>
+
+  <ol>
+   <li><p>If <var>coop</var>'s <span data-x="coop-struct-report-endpoint">reporting endpoint</span>
+   is null, return.</p></li>
+
+   <li><p>Let <var>coopValue</var> be <var>coop</var>'s <span
+   data-x="coop-struct-value">value</span>.</p></li>
+
+   <li><p>If <var>disposition</var> is "<code data-x="">reporting</code>", then set
+   <var>coopValue</var> to <var>coop</var>'s <span
+   data-x="coop-struct-report-only-value">report-only value</span>.</p></li>
+
+   <li>
+    <p>If <var>accessorAccessedRelationship</var> is <span
+    data-x="accessor-accessed-opener">accessor is opener</span>:</p>
+
+    <ol>
+     <li><p><span data-x="coop-violation-access-to-opened">Queue a violation report
+     for access to an opened window</span>, given <var>accessorCOOP</var>, <var>accessorURL</var>,
+     <var>accessedURL</var>, <var>accessedInitialURL</var>, <var>accessorOrigin</var>,
+     <var>accessedOrigin</var>, <var>accessedCreatorOrigin</var>, <var>propertyName</var>,
+     and <var>environment</var>.</p></li>
+
+     <li><p><span data-x="coop-violation-access-from-opener">Queue a violation report for access
+     from the opener</span>, given <var>accessedCOOP</var>, <var>accessedURL</var>,
+     <var>accessorURL</var>, <var>accessedOrigin</var>, <var>accessorOrigin</var>,
+     <var>propertyName</var>, and <var>accessedReferrer</var>.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p>Otherwise, if <var>accessorAccessedRelationship</var> is <span
+    data-x="accessor-accessed-openee">accessor is openee</span>:</p>
+
+    <ol>
+     <li><p><span data-x="coop-violation-access-to-opener">Queue a violation report for access to
+     the opener</span>, given <var>accessorCOOP</var>, <var>accessorURL</var>,
+     <var>accessedURL</var>, <var>accessorOrigin</var>, <var>accessedOrigin</var>,
+     <var>propertyName</var>, <var>accessorReferrer</var>, and <var>environment</var>.</p></li>
+
+     <li><p><span data-x="coop-violation-access-from-opened">Queue a violation report for access
+     from an opened window</span>, given <var>accessedCOOP</var>, <var>accessedURL</var>,
+     <var>accessorURL</var>, <var>accessorInitialURL</var>, <var>accessedOrigin</var>,
+     <var>accessorOrigin</var>, <var>accessorCreatorOrigin</var>, and
+     <var>propertyName</var>.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p>Otherwise:</p>
+
+    <ol>
+     <li><p><span data-x="coop-violation-access-to-opened">Queue a violation report for
+     access to another window</span>, given <var>accessorCOOP</var>, <var>accessorURL</var>,
+     <var>accessedURL</var>, <var>accessorOrigin</var>, <var>accessedOrigin</var>,
+     <var>propertyName</var>, and <var>environment</var>.</p></li>
+
+     <li><p><span data-x="coop-violation-access-from-other">Queue a violation report for
+     access from another window</span>, given <var>accessedCOOP</var>, <var>accessedURL</var>,
+     <var>accessorURL</var>, <var>accessedOrigin</var>, <var>accessorOrigin</var>, and
+     <var>propertyName</var>.</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="coop-violation-access-to-opener">queue a violation report for access to the
+  opener</dfn>, given an <span data-x="opener policy">opener policy</span> <var>coop</var>, two
+  <span data-x="URL">URLs</span> <var>coopURL</var> and <var>openerURL</var>, two <span
+  data-x="origin">origins</span> <var>coopOrigin</var> and <var>openerOrigin</var>, a string
+  <var>propertyName</var>, a <span data-x="concept-request-referrer">referrer</span>
+  <var>referrer</var>, and an <span>environment settings object</span> <var>environment</var>:</p>
+
+  <ol>
+   <li><p>Let <var>sourceFile</var>, <var>lineNumber</var>, and <var>columnNumber</var> be the
+   relevant script URL and problematic position which triggered this report.</p></li>
+
+   <li><p>Let <var>serializedReferrer</var> be an empty string.</p></li>
+
+   <li><p>If <var>referrer</var> is a <span>URL</span>, set <var>serializedReferrer</var> to the
+   <span data-x="concept-url-serializer">serialization</span> of <var>referrer</var>.
+
+   <li>
+    <p>Let <var>body</var> be a new object containing the following properties:</p>
+
+    <table class="data">
+     <thead>
+      <tr>
+       <th>key</th>
+       <th>value</th>
+      </tr>
+     </thead>
+     <tbody>
+      <tr>
+       <td>disposition</td>
+       <td>"<code data-x="">reporting</code>"</td>
+      </tr>
+      <tr>
+       <td>effectivePolicy</td>
+       <td><var>coop</var>'s <span data-x="coop-struct-report-only-value">report-only
+       value</span></td>
+      </tr>
+      <tr>
+       <td>property</td>
+       <td><var>propertyName</var></td>
+      </tr>
+      <tr>
+       <td>openerURL</td>
+       <td>If <var>coopOrigin</var> and <var>openerOrigin</var> are <span>same origin</span>, this
+       is the <span data-x="sanitize-url-report">sanitization</span> of <var>openerURL</var>, null
+       otherwise.</td>
+      </tr>
+      <tr>
+       <td>referrer</td>
+       <td><var>serializedReferrer</var></td>
+      </tr>
+      <tr>
+       <td>sourceFile</td>
+       <td><var>sourceFile</var></td>
+      </tr>
+      <tr>
+       <td>lineNumber</td>
+       <td><var>lineNumber</var></td>
+      </tr>
+      <tr>
+       <td>columnNumber</td>
+       <td><var>columnNumber</var></td>
+      </tr>
+      <tr>
+       <td>type</td>
+       <td>"<code data-x="">access-to-opener</code>"</td>
+      </tr>
+     </tbody>
+    </table>
+   </li>
+
+   <li><p><span data-x="queue a report">Queue</span> <var>body</var> as "<code
+   data-x="">coop</code>" for <var>coop</var>'s <span
+   data-x="coop-struct-report-endpoint">reporting endpoint</span> with <var>coopURL</var> and
+   <var>environment</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="coop-violation-access-to-opened">queue a violation report for access to an
+  opened window</dfn>, given an <span data-x="opener policy">opener policy</span> <var>coop</var>,
+  three <span data-x="URL">URLs</span> <var>coopURL</var>, <var>openedWindowURL</var> and
+  <var>initialWindowURL</var>, three <span data-x="origin">origins</span> <var>coopOrigin</var>,
+  <var>openedWindowOrigin</var>, and <var>openerInitialOrigin</var>, a string
+  <var>propertyName</var>, and an <span>environment settings object</span>
+  <var>environment</var>:</p>
+
+  <ol>
+   <li><p>Let <var>sourceFile</var>, <var>lineNumber</var>, and <var>columnNumber</var> be the
+   relevant script URL and problematic position which triggered this report.</p></li>
+
+   <li>
+    <p>Let <var>body</var> be a new object containing the following properties:</p>
+
+    <table class="data">
+     <thead>
+      <tr>
+       <th>key</th>
+       <th>value</th>
+      </tr>
+     </thead>
+     <tbody>
+      <tr>
+       <td>disposition</td>
+       <td>"<code data-x="">reporting</code>"</td>
+      </tr>
+      <tr>
+       <td>effectivePolicy</td>
+       <td><var>coop</var>'s <span data-x="coop-struct-report-only-value">report-only
+       value</span></td>
+      </tr>
+      <tr>
+       <td>property</td>
+       <td><var>propertyName</var></td>
+      </tr>
+      <tr>
+       <td>openedWindowURL</td>
+       <td>If <var>coopOrigin</var> and <var>openedWindowOrigin</var> are <span>same origin</span>, this
+       is the <span data-x="sanitize-url-report">sanitization</span> of <var>openedWindowURL</var>,
+       null otherwise.</td>
+      </tr>
+      <tr>
+       <td>openedWindowInitialURL</td>
+       <td>If <var>coopOrigin</var> and <var>openerInitialOrigin</var> are <span>same origin</span>,
+       this is the <span data-x="sanitize-url-report">sanitization</span> of
+       <var>initialWindowURL</var>, null otherwise.</td>
+      </tr>
+      <tr>
+       <td>sourceFile</td>
+       <td><var>sourceFile</var></td>
+      </tr>
+      <tr>
+       <td>lineNumber</td>
+       <td><var>lineNumber</var></td>
+      </tr>
+      <tr>
+       <td>columnNumber</td>
+       <td><var>columnNumber</var></td>
+      </tr>
+      <tr>
+       <td>type</td>
+       <td>"<code data-x="">access-to-opener</code>"</td>
+      </tr>
+     </tbody>
+    </table>
+   </li>
+
+   <li><p><span data-x="queue a report">Queue</span> <var>body</var> as "<code data-x="">coop</code>"
+   for <var>coop</var>'s <span data-x="coop-struct-report-endpoint">reporting endpoint</span> with
+   <var>coopURL</var> and <var>environment</var>.</p></li>
+  </ol>
+  </div>
+
+
+  <div algorithm>
+  <p>To <dfn data-x="coop-violation-access-to-other">queue a violation report for access to another
+  window</dfn>, given an <span data-x="opener policy">opener policy</span> <var>coop</var>, two
+  <span data-x="URL">URLs</span> <var>coopURL</var> and <var>otherURL</var>, two <span
+  data-x="origin">origins</span> <var>coopOrigin</var> and <var>otherOrigin</var>, a string
+  <var>propertyName</var>, and an <span>environment settings object</span>
+  <var>environment</var>:</p>
+
+  <ol>
+   <li><p>Let <var>sourceFile</var>, <var>lineNumber</var>, and <var>columnNumber</var> be the
+   relevant script URL and problematic position which triggered this report.</p></li>
+
+   <li>
+    <p>Let <var>body</var> be a new object containing the following properties:</p>
+
+    <table class="data">
+     <thead>
+      <tr>
+       <th>key</th>
+       <th>value</th>
+      </tr>
+     </thead>
+     <tbody>
+      <tr>
+       <td>disposition</td>
+       <td>"<code data-x="">reporting</code>"</td>
+      </tr>
+      <tr>
+       <td>effectivePolicy</td>
+       <td><var>coop</var>'s <span data-x="coop-struct-report-only-value">report-only
+       value</span></td>
+      </tr>
+      <tr>
+       <td>property</td>
+       <td><var>propertyName</var></td>
+      </tr>
+      <tr>
+       <td>otherURL</td>
+       <td>If <var>coopOrigin</var> and <var>otherOrigin</var> are <span>same origin</span>, this
+       is the <span data-x="sanitize-url-report">sanitization</span> of <var>otherURL</var>, null
+       otherwise.</td>
+      </tr>
+      <tr>
+       <td>sourceFile</td>
+       <td><var>sourceFile</var></td>
+      </tr>
+      <tr>
+       <td>lineNumber</td>
+       <td><var>lineNumber</var></td>
+      </tr>
+      <tr>
+       <td>columnNumber</td>
+       <td><var>columnNumber</var></td>
+      </tr>
+      <tr>
+       <td>type</td>
+       <td>"<code data-x="">access-to-opener</code>"</td>
+      </tr>
+     </tbody>
+    </table>
+   </li>
+
+   <li><p><span data-x="queue a report">Queue</span> <var>body</var> as "<code data-x="">coop</code>"
+   for <var>coop</var>'s <span data-x="coop-struct-report-endpoint">reporting endpoint</span> with
+   <var>coopURL</var> and <var>environment</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="coop-violation-access-from-opener">queue a violation report for access from the
+  opener</dfn>, given an <span data-x="opener policy">opener policy</span> <var>coop</var>, two
+  <span data-x="URL">URLs</span> <var>coopURL</var> and <var>openerURL</var>, two <span
+  data-x="origin">origins</span> <var>coopOrigin</var> and <var>openerOrigin</var>, a string
+  <var>propertyName</var>, and a <span data-x="concept-request-referrer">referrer</span>
+  <var>referrer</var>:</p>
+
+  <ol>
+   <li><p>If <var>coop</var>'s <span data-x="coop-struct-report-endpoint">reporting endpoint</span>
+   is null, return.</p></li>
+
+   <li><p>Let <var>serializedReferrer</var> be an empty string.</p></li>
+
+   <li><p>If <var>referrer</var> is a <span>URL</span>, set <var>serializedReferrer</var> to the
+   <span data-x="concept-url-serializer">serialization</span> of <var>referrer</var>.
+
+   <li>
+    <p>Let <var>body</var> be a new object containing the following properties:</p>
+
+    <table class="data">
+     <thead>
+      <tr>
+       <th>key</th>
+       <th>value</th>
+      </tr>
+     </thead>
+     <tbody>
+      <tr>
+       <td>disposition</td>
+       <td>"<code data-x="">reporting</code>"</td>
+      </tr>
+      <tr>
+       <td>effectivePolicy</td>
+       <td><var>coop</var>'s <span data-x="coop-struct-report-only-value">report-only
+       value</span></td>
+      </tr>
+      <tr>
+       <td>property</td>
+       <td><var>propertyName</var></td>
+      </tr>
+      <tr>
+       <td>openerURL</td>
+       <td>If <var>coopOrigin</var> and <var>openerOrigin</var> are <span>same origin</span>, this
+       is the <span data-x="sanitize-url-report">sanitization</span> of <var>openerURL</var>, null
+       otherwise.</td>
+      </tr>
+      <tr>
+       <td>referrer</td>
+       <td><var>serializedReferrer</var></td>
+      </tr>
+      <tr>
+       <td>type</td>
+       <td>"<code data-x="">access-to-opener</code>"</td>
+      </tr>
+     </tbody>
+    </table>
+   </li>
+
+   <li><p><span data-x="queue a report">Queue</span> <var>body</var> as "<code data-x="">coop</code>"
+   for <var>coop</var>'s <span data-x="coop-struct-report-endpoint">reporting endpoint</span> with
+   <var>coopURL</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="coop-violation-access-from-opened">queue a violation report for access from an
+  opened window</dfn>, given an <span data-x="opener policy">opener policy</span> <var>coop</var>,
+  three <span data-x="URL">URLs</span> <var>coopURL</var>, <var>openedWindowURL</var> and
+  <var>initialWindowURL</var>, three <span data-x="origin">origins</span> <var>coopOrigin</var>,
+  <var>openedWindowOrigin</var>, and <var>openerInitialOrigin</var>, and a string
+  <var>propertyName</var>:</p>
+
+  <ol>
+   <li><p>If <var>coop</var>'s <span data-x="coop-struct-report-endpoint">reporting endpoint</span>
+   is null, return.</p></li>
+
+   <li>
+    <p>Let <var>body</var> be a new object containing the following properties:</p>
+
+    <table class="data">
+     <thead>
+      <tr>
+       <th>key</th>
+       <th>value</th>
+      </tr>
+     </thead>
+     <tbody>
+      <tr>
+       <td>disposition</td>
+       <td>"<code data-x="">reporting</code>"</td>
+      </tr>
+      <tr>
+       <td>effectivePolicy</td>
+       <td><var>coopValue</var></td>
+      </tr>
+      <tr>
+       <td>property</td>
+       <td><var>coop</var>'s <span data-x="coop-struct-report-only-value">report-only
+       value</span></td>
+      </tr>
+      <tr>
+       <td>openedWindowURL</td>
+       <td>If <var>coopOrigin</var> and <var>openedWindowOrigin</var> are <span>same origin</span>, this
+       is the <span data-x="sanitize-url-report">sanitization</span> of <var>openedWindowURL</var>,
+       null otherwise.</td>
+      </tr>
+      <tr>
+       <td>openedWindowInitialURL</td>
+       <td>If <var>coopOrigin</var> and <var>openerInitialOrigin</var> are <span>same origin</span>,
+       this is the <span data-x="sanitize-url-report">sanitization</span> of
+       <var>initialWindowURL</var>, null otherwise.</td>
+      </tr>
+      <tr>
+       <td>type</td>
+       <td>"<code data-x="">access-to-opener</code>"</td>
+      </tr>
+     </tbody>
+    </table>
+   </li>
+
+   <li><p><span data-x="queue a report">Queue</span> <var>body</var> as "<code data-x="">coop</code>"
+   for <var>coop</var>'s <span data-x="coop-struct-report-endpoint">reporting endpoint</span> with
+   <var>coopURL</var>.</p></li>
+  </ol>
+  </div>
+
+
+  <div algorithm>
+  <p>To <dfn data-x="coop-violation-access-from-other">queue a violation report for access from
+  another window</dfn>, given an <span data-x="opener policy">opener policy</span> <var>coop</var>,
+  two <span data-x="URL">URLs</span> <var>coopURL</var> and <var>otherURL</var>, two <span
+  data-x="origin">origins</span> <var>coopOrigin</var> and <var>otherOrigin</var>, and a string
+  <var>propertyName</var>:</p>
+
+  <ol>
+   <li><p>If <var>coop</var>'s <span data-x="coop-struct-report-endpoint">reporting endpoint</span>
+   is null, return.</p></li>
+
+   <li>
+    <p>Let <var>body</var> be a new object containing the following properties:</p>
+
+    <table class="data">
+     <thead>
+      <tr>
+       <th>key</th>
+       <th>value</th>
+      </tr>
+     </thead>
+     <tbody>
+      <tr>
+       <td>disposition</td>
+       <td>"<code data-x="">reporting</code>"</td>
+      </tr>
+      <tr>
+       <td>effectivePolicy</td>
+       <td><var>coop</var>'s <span data-x="coop-struct-report-only-value">report-only
+       value</span></td>
+      </tr>
+      <tr>
+       <td>property</td>
+       <td><var>propertyName</var></td>
+      </tr>
+      <tr>
+       <td>otherURL</td>
+       <td>If <var>coopOrigin</var> and <var>otherOrigin</var> are <span>same origin</span>, this
+       is the <span data-x="sanitize-url-report">sanitization</span> of <var>otherURL</var>, null
+       otherwise.</td>
+      </tr>
+      <tr>
+       <td>type</td>
+       <td><code data-x="">access-to-opener</code></td>
+      </tr>
+     </tbody>
+    </table>
+   </li>
+
+   <li><p><span data-x="queue a report">Queue</span> <var>body</var> as "<code data-x="">coop</code>"
+   for <var>coop</var>'s <span data-x="coop-struct-report-endpoint">reporting endpoint</span> with
+   <var>coopURL</var>.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+

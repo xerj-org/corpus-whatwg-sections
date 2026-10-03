@@ -1,0 +1,13 @@
+WHATWG HTML — section dependencies/web-background-synchronization — Web Background Synchronization
+
+  <dt>Web Background Synchronization</dt>
+
+  <dd>
+   <p>The following terms are defined in <cite>Web Background Synchronization</cite>:</p>
+
+   <ul class="brief">
+    <li><dfn data-x-href="https://wicg.github.io/background-sync/spec/#syncmanager"><code>SyncManager</code></dfn></li>
+    <li><dfn data-x-href="https://wicg.github.io/background-sync/spec/#dom-syncmanager-register" data-x="dom-SyncManager-register"><code>register()</code></dfn></li>
+   </ul>
+  </dd>
+

@@ -1,0 +1,15 @@
+WHATWG HTML — section dependencies/reporting — Reporting
+
+   <dt>Reporting</dt>
+
+   <dd>
+    <p>The following terms are defined in <cite>Reporting</cite>: <ref>REPORTING</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://w3c.github.io/reporting/#queue-report">Queue a report</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/reporting/#report-type">report type</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/reporting/#visible-to-reportingobservers">visible to <code>ReportingObserver</code>s</dfn></li>
+    </ul>
+   </dd>
+
+

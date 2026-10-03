@@ -1,0 +1,757 @@
+WHATWG HTML — section session-history-infrastructure — <span id="the-session-history-of-browsing-contexts"></span>Session history
+
+  <h4 id="session-history-infrastructure"><span id="the-session-history-of-browsing-contexts"></span>Session history</h4>
+
+  <h5>Session history entries</h5>
+
+  <p>A <dfn>session history entry</dfn> is a <span>struct</span> with the following <span
+  data-x="struct item">items</span>:</p>
+
+  <ul>
+   <li><p><dfn data-x="she-step">step</dfn>, a non-negative integer or "<code
+   data-x="">pending</code>", initially "<code data-x="">pending</code>".</p></li>
+
+   <li><p><dfn data-x="she-url">URL</dfn>, a <span>URL</span></p></li>
+
+   <li><p><dfn data-x="she-document-state">document state</dfn>, a <span>document
+   state</span>.</p></li>
+
+   <li><p id="she-serialized-state"><dfn data-x="she-classic-history-api-state">classic history API
+   state</dfn>, which is <span>serialized state</span>, initially
+   <span>StructuredSerializeForStorage</span>(null).</p></li>
+
+   <li><p><dfn data-x="she-navigation-api-state">navigation API state</dfn>, which is a
+   <span>serialized state</span>, initially
+   <span>StructuredSerializeForStorage</span>(undefined).</p></li>
+
+   <li><p><dfn data-x="she-navigation-api-key">navigation API key</dfn>, which is a string,
+   initially set to the result of <span>generating a random UUID</span>.</p></li>
+
+   <li><p><dfn data-x="she-navigation-api-id">navigation API ID</dfn>, which is a string, initially
+   set to the result of <span>generating a random UUID</span>.</p></li>
+
+   <li><p><dfn data-x="she-scroll-restoration-mode">scroll restoration mode</dfn>, a <span>scroll
+   restoration mode</span>, initially "<code
+   data-x="dom-ScrollRestoration-auto">auto</code>".</p></li>
+
+   <li><p><dfn data-x="she-scroll-position">scroll position data</dfn>, which is scroll position
+   data for the <span data-x="she-document">document</span>'s <span>restorable scrollable
+   regions</span>.</p></li>
+
+   <li>
+    <p id="an-entry-with-persisted-user-state"><dfn data-x="she-other">persisted user state</dfn>,
+    which is <span>implementation-defined</span>, initially null</p>
+
+    <p class="example">For example, some user agents might want to persist the values of form
+    controls.</p>
+
+    <p class="note">User agents that persist the value of form controls are encouraged to also
+    persist their directionality (the value of the element's <code data-x="attr-dir">dir</code>
+    attribute). This prevents values from being displayed incorrectly after a history traversal
+    when the user had originally entered the values with an explicit, non-default
+    directionality.</p>
+   </li>
+  </ul>
+
+  <div algorithm>
+  <p>To get a <span>session history entry</span>'s <dfn data-x="she-document">document</dfn>,
+  return its <span data-x="she-document-state">document state</span>'s <span
+  data-x="document-state-document">document</span>.</p>
+  </div>
+
+  <hr>
+
+  <p id="state-object"><dfn>Serialized state</dfn> is a serialization (via
+  <span>StructuredSerializeForStorage</span>) of an object representing a user interface state. We
+  sometimes informally refer to "state objects", which are the objects representing user interface
+  state supplied by the author, or alternately the objects created by deserializing (via
+  <span>StructuredDeserialize</span>) serialized state.</p>
+
+  <p>Pages can <span data-x="dom-history-pushState">add</span> <span>serialized state</span> to the
+  session history. These are then <span data-x="StructuredDeserialize">deserialized</span> and <span
+  data-x="event-popstate">returned to the script</span> when the user (or script) goes back in the
+  history, thus enabling authors to use the "navigation" metaphor even in one-page applications.</p>
+
+  <div class="note">
+   <p><span>Serialized state</span> is intended to be used for two main purposes: first, storing a
+   preparsed description of the state in the <span>URL</span> so that in the simple case an author
+   doesn't have to do the parsing (though one would still need the parsing for handling <span
+   data-x="URL">URLs</span> passed around by users, so it's only a minor optimization). Second, so
+   that the author can store state that one wouldn't store in the URL because it only applies to the
+   current <code>Document</code> instance and it would have to be reconstructed if a new
+   <code>Document</code> were opened.</p>
+
+   <p>An example of the latter would be something like keeping track of the precise coordinate from
+   which a popup <code>div</code> was made to animate, so that if the user goes back, it can be made
+   to animate to the same location. Or alternatively, it could be used to keep a pointer into a
+   cache of data that would be fetched from the server based on the information in the
+   <span>URL</span>, so that when going back and forward, the information doesn't have to be fetched
+   again.</p>
+  </div>
+
+  <hr>
+
+  <p>A <dfn>scroll restoration mode</dfn> indicates whether the user agent should restore the
+  persisted scroll position (if any) when traversing to an <span data-x="session history
+  entry">entry</span>. A scroll restoration mode is one of the following:</p>
+
+  <dl>
+   <dt>"<dfn enum-value for="ScrollRestoration"><code subdfn
+   data-x="dom-ScrollRestoration-auto">auto</code></dfn>"</dt>
+   <dd>The user agent is responsible for restoring the scroll position upon navigation.</dd>
+   <dt>"<dfn enum-value for="ScrollRestoration"><code subdfn
+   data-x="dom-ScrollRestoration-manual">manual</code></dfn>"</dt>
+   <dd>The page is responsible for restoring the scroll position and the user agent does not
+   attempt to do so automatically</dd>
+  </dl>
+
+
+  <h5>Document state</h5>
+
+  <p><dfn>Document state</dfn> holds state inside a <span>session history entry</span> regarding
+  how to present and, if necessary, recreate, a <code>Document</code>. It has:</p>
+
+  <ul>
+   <li>
+    <p>A <dfn data-x="document-state-document" for="document state">document</dfn>, a
+    <code>Document</code> or null, initially null.</p>
+
+    <div class="note" id="note-bfcache">
+     <p>When a history entry is <span data-x="nav-active-history-entry">active</span>, it has a
+     <code>Document</code> in its <span data-x="she-document-state">document state</span>. However,
+     when a <code>Document</code> is not <span>fully active</span>, it's possible for it to be
+     <span data-x="destroy a Document">destroyed</span> to free resources. In such cases, this
+     <span data-x="document-state-document">document</span> item will be nulled out. The <span
+     data-x="she-url">URL</span> and other data in the <span>session history entry</span> and <span
+     data-x="she-document-state">document state</span> is then used to bring a new
+     <code>Document</code> into being to take the place of the original, in the case where the user
+     agent finds itself having to traverse to the entry.</p>
+
+     <p>If the <code>Document</code> is <em>not</em> <span data-x="destroy a
+     Document">destroyed</span>, then during <span data-x="traverse the history by a delta">history
+     traversal</span>, it can be <span data-x="reactivate a document">reactivated</span>. The cache
+     in which browsers store such <code>Document</code>s is often called a <em>back-forward
+     cache</em>, or <em>bfcache</em> (or perhaps <a
+     href="https://bugzilla.mozilla.org/show_bug.cgi?id=274784">"blazingly fast"</a> cache).</p>
+    </div>
+   </li>
+
+   <li><p id="she-policy-container">A <dfn data-x="document-state-history-policy-container"
+   for="document state">history policy container</dfn>, a <span>policy container</span> or
+   null, initially null.</p></li>
+
+   <li><p>A <dfn data-x="document-state-request-referrer" for="document state">request
+   referrer</dfn>, which is "<code data-x="">no-referrer</code>", "<code data-x="">client</code>",
+   or a <span>URL</span>, initially "<code data-x="">client</code>".</p></li>
+
+   <li>
+    <p>A <dfn data-x="document-state-request-referrer-policy" for="document state">request
+    referrer policy</dfn>, which is a <span>referrer policy</span>, initially the <span>default
+    referrer policy</span>.</p>
+
+    <p class="note">The <span data-x="document-state-request-referrer-policy">request referrer
+    policy</span> is distinct from the <span
+    data-x="document-state-history-policy-container">history policy container</span>'s <span
+    data-x="policy-container-referrer-policy">referrer policy</span>. The former is used for
+    fetches <em>of</em> this document, whereas the latter controls fetches <em>by</em> this
+    document.</p>
+   </li>
+
+   <li>
+    <p>An <dfn data-x="document-state-initiator-origin" for="document state">initiator origin</dfn>,
+    which is an <span>origin</span> or null, initially null.</p>
+   </li>
+
+   <li>
+    <p>An <dfn data-x="document-state-origin" for="document state">origin</dfn>, which is an
+    <span>origin</span> or null, initially null.</p>
+
+    <p class="note">This is the origin that we set "<code data-x="">about:</code>"-schemed
+    <code>Document</code>s' <span data-x="concept-document-origin">origin</span> to. We store it
+    here because it is also used when restoring these <code>Document</code>s during traversal,
+    since they are reconstructed locally without visiting the network. It is also used to compare
+    the origin before and after the <span>session history entry</span> is <span data-x="attempt to
+    populate the history entry's document">repopulated</span>. If the origins change, the <span
+    data-x="document-state-nav-target-name">navigable target name</span> is cleared.</p>
+   </li>
+
+   <li>
+    <p>An <dfn data-x="document-state-about-base-url" for="document state">about base URL</dfn>,
+    which is a <span>URL</span> or null, initially null.</p>
+
+    <p class="note">This will be populated only for "<code data-x="">about:</code>"-schemed
+    <code>Document</code>s and will be the <span>fallback base URL</span> for those
+    <code>Document</code>s. It is a snapshot of the initiator <code>Document</code>'s <span>document
+    base URL</span>.</p>
+   </li>
+
+   <li><p><dfn data-x="document-state-nested-histories" for="document state">Nested histories</dfn>,
+   a <span>list</span> of <span data-x="nested history">nested histories</span>, initially an empty
+   <span>list</span>.</p></li>
+
+   <li>
+    <p>A <dfn data-x="document-state-resource" for="document state">resource</dfn>, a string,
+    <span>POST resource</span> or null, initially null.</p>
+
+    <p class="note">A string is treated as HTML. It's used to store the source of an <span
+    data-x="an iframe srcdoc document"><code>iframe</code> <code
+    data-x="attr-iframe-srcdoc">srcdoc</code> document</span>.</p>
+   </li>
+
+   <li><p>A <dfn data-x="document-state-reload-pending" for="document state">reload pending</dfn>
+   boolean, initially false.</p></li>
+
+   <li><p>An <dfn data-x="document-state-ever-populated" for="document state">ever populated</dfn>
+   boolean, initially false.</p></li>
+
+   <li><p id="she-bc-name">A <dfn data-x="document-state-nav-target-name" for="document
+   state">navigable target name</dfn> string, initially the empty string.</p></li>
+
+   <li><p>A <dfn data-x="document-state-not-restored-reasons" for="document state">not restored
+   reasons</dfn>, a <span data-x="nrr-struct">not restored reasons</span> or null, initially
+   null.</p></li>
+  </ul>
+
+  <p>User agents may <span>destroy a document and its descendants</span> given the <span
+  data-x="document-state-document">documents</span> of <span data-x="document state">document
+  states</span> with non-null <span data-x="document-state-document">documents</span>, as long as
+  the <code>Document</code> is not <span>fully active</span>.</p>
+
+  <p>Apart from that restriction, this standard does not specify when user agents should destroy
+  the <span data-x="document-state-document">document</span> stored in a <span>document
+  state</span>, versus keeping it cached.</p>
+
+  <hr>
+
+  <p>A <dfn export>POST resource</dfn> has:</p>
+
+  <ul>
+   <li>
+    <p>A <dfn export for="POST resource" data-x="post-resource-request-body">request body</dfn>, a
+    <span>byte sequence</span> or failure.</p>
+
+    <p>This is only ever accessed <span>in parallel</span>, so it doesn't need to be stored in
+    memory. However, it must return the same <span>byte sequence</span> each time. If this isn't
+    possible due to resources changing on disk, or if resources can no longer be accessed, then
+    this must be set to failure.</p>
+   </li>
+
+   <li><p>A <dfn export for="POST resource" data-x="post-resource-request-content-type">request
+   content-type</dfn>, which is `<code>application/x-www-form-urlencoded</code>`,
+   `<code>multipart/form-data</code>`, or `<code>text/plain</code>`.</p></li>
+  </ul>
+
+  <hr>
+
+  <p>A <dfn>nested history</dfn> has:</p>
+
+  <ul>
+   <li>
+    <p>An <dfn data-x="nested-history-id">id</dfn>, a <span>unique internal value</span>.</p>
+
+    <p class="note">This is used to associate the <span>nested history</span> with a
+    <span>navigable</span>.</p>
+   </li>
+
+   <li><p><dfn data-x="nested-history-entries">Entries</dfn>, a <span>list</span> of <span
+   data-x="session history entry">session history entries</span>.</p></li>
+  </ul>
+
+  <p class="XXX">This will later contain ways to identify a child navigable across reloads.</p>
+
+  <hr>
+
+  <hr>
+
+  <p>Several contiguous entries in a session history can share the same <span
+  data-x="she-document-state">document state</span>. This can occur when the initial entry is
+  reached via normal <span data-x="navigate">navigation</span>, and the following entry is added
+  via <code data-x="dom-history-pushState">history.pushState()</code>. Or it can occur via <span
+  data-x="navigate-fragid">navigation to a fragment</span>.</p>
+
+  <p class="note">All entries that share the same <span data-x="she-document-state">document
+  state</span> (and that are therefore merely different states of one particular document) are
+  contiguous by construction.</p>
+
+  <hr>
+
+  <p>A <code>Document</code> has a <dfn>latest entry</dfn>, a <span>session history entry</span> or
+  null.</p>
+
+  <p class="note">This is the entry that was most recently represented by a given
+  <code>Document</code>. A single <code>Document</code> can represent many <span data-x="session
+  history entry">session history entries</span> over time, as many contiguous <span data-x="session
+  history entry">session history entries</span> can share the same <span
+  data-x="she-document-state">document state</span> as explained above.</p>
+
+
+  <h5>Centralized modifications of session history</h5>
+
+  <p>To maintain a single source of truth, all modifications to a <span>traversable
+  navigable</span>'s <span data-x="tn-session-history-entries">session history entries</span> need
+  to be synchronized. This is especially important due to how session history is influenced by all
+  of the descendant <span data-x="navigable">navigables</span>, and thus by multiple <span
+  data-x="event loop">event loops</span>. To accomplish this, we use the <span>session history
+  traversal parallel queue</span> structure.</p>
+
+  <p id="session-history-traversal-queue">A <dfn>session history traversal parallel queue</dfn> is
+  very similar to a <span>parallel queue</span>. It has an <dfn
+  data-x="session-history-traversal-parallel-queue-algorithm-set">algorithm set</dfn>, an <span
+  data-x="set">ordered set</span>.</p>
+
+  <p>The <span data-x="list item">items</span> in a <span>session history traversal parallel
+  queue</span>'s <span data-x="session-history-traversal-parallel-queue-algorithm-set">algorithm
+  set</span> are either algorithm steps, or <dfn
+  data-x="session-history-traversal-parallel-queue-sync-nav-steps">synchronous navigation
+  steps</dfn>, which are a particular brand of algorithm steps involving a <dfn
+  data-x="session-history-traversal-parallel-queue-sync-nav-steps-target-nav">target
+  navigable</dfn> (a <span>navigable</span>).</p>
+
+  <div algorithm>
+  <p>To <dfn data-x="tn-append-session-history-traversal-steps">append session history traversal
+  steps</dfn> to a <span>traversable navigable</span> <var>traversable</var> given algorithm steps
+  <var>steps</var>, <span data-x="list append">append</span> <var>steps</var> to
+  <var>traversable</var>'s <span data-x="tn-session-history-traversal-queue">session history
+  traversal queue</span>'s <span
+  data-x="session-history-traversal-parallel-queue-algorithm-set">algorithm set</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="tn-append-session-history-sync-nav-steps">append session history synchronous
+  navigation steps</dfn> involving a <span>navigable</span> <var>targetNavigable</var> to a
+  <span>traversable navigable</span> <var>traversable</var> given algorithm steps <var>steps</var>,
+  <span data-x="list append">append</span> <var>steps</var> as <span
+  data-x="session-history-traversal-parallel-queue-sync-nav-steps">synchronous navigation
+  steps</span> targeting <span
+  data-x="session-history-traversal-parallel-queue-sync-nav-steps-target-nav">target
+  navigable</span> <var>targetNavigable</var> to <var>traversable</var>'s <span
+  data-x="tn-session-history-traversal-queue">session history traversal queue</span>'s <span
+  data-x="session-history-traversal-parallel-queue-algorithm-set">algorithm set</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p id="session-history-event-loop">To <dfn data-x="starting a new session history traversal
+  parallel queue">start a new session history traversal parallel queue</dfn>:</p>
+
+  <ol>
+   <li><p>Let <var>sessionHistoryTraversalQueue</var> be a new <span>session history traversal
+   parallel queue</span>.</p></li>
+
+   <li>
+    <p>Run the following steps <span>in parallel</span>:</p>
+
+    <ol>
+     <li>
+      <p>While true:</p>
+
+      <ol>
+       <li><p>If <var>sessionHistoryTraversalQueue</var>'s <span
+       data-x="session-history-traversal-parallel-queue-algorithm-set">algorithm set</span> is
+       empty, then <span>continue</span>.</p></li>
+
+       <li><p>Let <var>steps</var> be the result of <span data-x="dequeue">dequeuing</span> from
+       <var>sessionHistoryTraversalQueue</var>'s <span
+       data-x="session-history-traversal-parallel-queue-algorithm-set">algorithm
+       set</span>.</p></li>
+
+       <li><p>Run <var>steps</var>.</p></li>
+      </ol>
+     </li>
+    </ol>
+   </li>
+
+   <li><p>Return <var>sessionHistoryTraversalQueue</var>.</p></li>
+  </ol>
+  </div>
+
+  <p id="sync-navigation-steps-queue-jumping-examples"><span
+  data-x="session-history-traversal-parallel-queue-sync-nav-steps">Synchronous navigation
+  steps</span> are tagged in the <span
+  data-x="session-history-traversal-parallel-queue-algorithm-set">algorithm set</span> to allow
+  them to conditionally "jump the queue". This is handled <a
+  href="#sync-navigations-jump-queue">within apply the history step</a>.</p>
+
+  <div class="example" id="example-sync-navigation-steps-queue-jumping-basic">
+   <p>Imagine the joint session history depicted by this <span>Jake diagram</span>:</p>
+
+   <!--https://domenic.github.io/jake-diagram-generator/#IWN1cnJlbnQgPSAxCnRvcAogIDA6IC9hCiAgMTogL2I= -->
+   <table class="jake-diagram"><thead><tr><td></td><th class="step">0</th><th class="step current">1</th></tr></thead><tbody><tr><th><code data-x="">top</code></th><td colspan="1" class="doc-0">/a</td><td colspan="1" class="doc-1 current">/b</td></tr></tbody></table>
+
+   <p>And the following code runs at the top level:</p>
+
+   <pre><code class="js">history.back();
+location.href = '#foo';</code></pre>
+
+   <p>The desired result is:</p>
+
+   <!--https://domenic.github.io/jake-diagram-generator/#IWN1cnJlbnQgPSAwCnRvcAogIDA6IC9hCiAgMTogL2IgfCBkb2MxCiAgMjogL2IjZm9vIHwgZG9jMQ== -->
+   <table class="jake-diagram"><thead><tr><td></td><th class="step current">0</th><th class="step">1</th><th class="step">2</th></tr></thead><tbody><tr><th><code data-x="">top</code></th><td colspan="1" class="doc-0 current">/a</td><td colspan="1" class="doc-1 next-is-same-doc">/b</td><td colspan="1" class="doc-1 prev-is-same-doc">/b#foo</td></tr></tbody></table>
+
+   <p>This isn't straightforward, as the sync navigation wins the race in terms of being
+   observable, whereas the traversal wins the race in terms of queuing steps on the <span>session
+   history traversal parallel queue</span>. To achieve this result, the following happens:</p>
+
+   <ol>
+    <li><p><code data-x="dom-history-back">history.back()</code> <span
+    data-x="tn-append-session-history-traversal-steps">appends steps</span> intended to traverse by
+    a delta of &minus;1.</p></li>
+
+    <li><p><code data-x="dom-location-href">location.href = '#foo'</code> synchronously changes the
+    <span data-x="nav-active-history-entry">active session history entry</span> entry to a
+    newly-created one, with the URL <code data-x="">/b#foo</code>, and <span
+    data-x="tn-append-session-history-sync-nav-steps">appends synchronous steps</span> to notify
+    the central source of truth about that new entry. Note that this does <em>not</em> yet update
+    the <span data-x="nav-current-history-entry">current session history entry</span>, <span
+    data-x="tn-current-session-history-step">current session history step</span>, or the <span
+    data-x="tn-session-history-entries">session history entries</span> list; those updates cannot
+    be done synchronously, and instead must be done as part of the queued steps.</p></li>
+
+    <li>
+     <p>On the <span>session history traversal parallel queue</span>, the steps queued by <code
+     data-x="dom-history-back">history.back()</code> run:</p>
+
+     <ol>
+      <li><p>The target history step is determined to be 0: the <span
+      data-x="tn-current-session-history-step">current session history step</span> (i.e., 1) plus
+      the intended delta of &minus;1.</p></li>
+
+      <li>
+       <p>We enter the main <span>apply the history step</span> algorithm.</p>
+
+       <p>The entry at step 0, for the <code data-x="">/a</code> URL, has its <span
+       data-x="she-document">document</span> <span data-x="attempt to populate the history entry's
+       document">populated</span>.</p>
+
+       <p>Meanwhile, the queue is checked for <span
+       data-x="session-history-traversal-parallel-queue-sync-nav-steps">synchronous navigation
+       steps</span>. The steps queued by the <code data-x="dom-location-href">location.href</code>
+       setter now run, and block the traversal from performing effects beyond document population
+       (such as, unloading documents and switching active history entries) until they are finished.
+       Those steps cause the following to happen:</p>
+
+       <ol>
+        <li><p>The entry with URL <code data-x="">/b#foo</code> is added, with its <span
+        data-x="she-step">step</span> determined to be 2: the <span
+        data-x="tn-current-session-history-step">current session history step</span> (i.e., 1) plus
+        1.</p></li>
+
+        <li><p>We fully switch to that newly added entry, including a nested call to <span>apply
+        the history step</span>. This ultimately results in <span data-x="update document for
+        history step application">updating the document</span> by dispatching events like <code
+        data-x="event-hashchange">hashchange</code>.</p></li>
+       </ol>
+
+       <p>Only once that is all complete, and the <code data-x="">/a</code> history entry has been
+       fully populated with a <span data-x="she-document">document</span>, do we move on with
+       applying the history step given the target step of 0.</p>
+
+       <p>At this point, the <code>Document</code> with URL <code data-x="">/b#foo</code> <span
+       data-x="unload a document">unloads</span>, and we finish moving to our target history step
+       0, which makes the entry with URL <code data-x="">/a</code> become the <span
+       data-x="nav-active-history-entry">active session history entry</span> and 0 become the <span
+       data-x="tn-current-session-history-step">current session history step</span>.</p>
+      </li>
+     </ol>
+    </li>
+   </ol>
+  </div>
+
+  <div class="example" id="example-sync-navigation-steps-queue-jumping-complex">
+   <p>Here is another more complex example, involving races between populating two different
+   <code>iframe</code>s, and a synchronous navigation once one of those iframes loads. We start
+   with this setup:</p>
+
+   <!--https://domenic.github.io/jake-diagram-generator/#IWN1cnJlbnQgPSAyCnRvcAogIDAtMjogL3QKZnJhbWVzWzBdCiAgMDogL2ktMC1hCiAgMS0yOiAvaS0wLWIKZnJhbWVzWzFdCiAgMC0xOiAvaS0xLWEKICAyOiAvaS0xLWIK -->
+   <table class="jake-diagram"><thead><tr><td></td><th class="step">0</th><th class="step">1</th><th class="step current">2</th></tr></thead><tbody><tr><th><code data-x="">top</code></th><td colspan="3" class="doc-0 current">/t</td></tr><tr><th><code data-x="">frames[0]</code></th><td colspan="1" class="doc-1">/i-0-a</td><td colspan="2" class="doc-2 current">/i-0-b</td></tr><tr><th><code data-x="">frames[1]</code></th><td colspan="2" class="doc-3">/i-1-a</td><td colspan="1" class="doc-4 current">/i-1-b</td></tr></tbody></table>
+
+   <p>and then call <code data-x="dom-history-go">history.go(-2)</code>. The following then
+   occurs:</p>
+
+   <ol>
+    <li>
+     <p><code data-x="dom-history-go">history.go(-2)</code> <span
+     data-x="tn-append-session-history-traversal-steps">appends steps</span> intended to traverse
+     by a delta of &minus;2. Once those steps run:</p>
+
+     <ol>
+      <li><p>The target step is determined to be 2 + (&minus;2) = 0.</p></li>
+
+      <li>
+       <p>In parallel, the fetches are made to <span data-x="attempt to populate the history
+       entry's document">populate</span> the two iframes, fetching <code data-x="">/i-0-a</code>
+       and <code data-x="">/i-1-a</code> respectively.</p>
+
+       <p>Meanwhile, the queue is checked for <span
+       data-x="session-history-traversal-parallel-queue-sync-nav-steps">synchronous navigation
+       steps</span>. There aren't any right now.</p>
+      </li>
+
+      <li><p>In the fetch race, the fetch for <code data-x="">/i-0-a</code> wins. We proceed onward
+      to finish all of <span>apply the history step</span>'s work for how the traversal impacts the
+      <code data-x="">frames[0]</code> <span>navigable</span>, including updating its <span
+      data-x="nav-active-history-entry">active session history entry</span> to the entry with URL
+      <code data-x="">/i-0-a</code>.</p></li>
+
+      <li>
+       <p>Before the fetch for <code data-x="">/i-1-a</code> finishes, we reach the point where
+       <span>scripts may run for the newly-created document</span> in the <code
+       data-x="">frames[0]</code> <span>navigable</span>'s <span data-x="nav-document">active
+       document</span>. Some such script does run:</p>
+
+       <pre><code class="js">location.href = '#foo'</code></pre>
+
+       <p>This synchronously changes the <code data-x="">frames[0]</code> navigable's <span
+       data-x="nav-active-history-entry">active session history entry</span> entry to a
+       newly-created one, with the URL <code data-x="">/i-0-a#foo</code>, and <span
+       data-x="tn-append-session-history-sync-nav-steps">appends synchronous steps</span> to notify
+       the central source of truth about that new entry.</p>
+
+       <p>Unlike in the <a href="#example-sync-navigation-steps-queue-jumping-basic">previous
+       example</a>, these synchronous steps do <em>not</em> "jump the queue" and update the <span
+       data-x="traversable navigable">traversable</span> before we finish the fetch for <code
+       data-x="">/i-1-a</code>. This is because the navigable in question, <code
+       data-x="">frames[0]</code>, has already been altered as part of the traversal, so we know
+       that with the <span data-x="tn-current-session-history-step">current session history
+       step</span> being 2, adding the new entry as a step 3 doesn't make sense.</p>
+      </li>
+
+      <li><p>Once the fetch for <code data-x="">/i-1-a</code> finally finishes, we proceed to finish
+      updating the <code data-x="">frames[1]</code> <span>navigable</span> for the traversal,
+      including updating its <span data-x="nav-active-history-entry">active session history
+      entry</span> to the entry with URL <code data-x="">/i-1-a</code>.</p></li>
+
+      <li><p>Now that both navigables have finished processing the traversal, we update the <span
+      data-x="tn-current-session-history-step">current session history step</span> to the target
+      step of 0.</p></li>
+     </ol>
+    </li>
+
+    <li>
+     <p>Now we can process the steps that were queued for the synchronous navigation:</p>
+
+     <ol>
+      <li><p>The <code data-x="">/i-0-a#foo</code> entry is added, with its <span
+      data-x="she-step">step</span> determined to be 1: the <span
+      data-x="tn-current-session-history-step">current session history step</span> (i.e., 0) plus
+      1. This also <span data-x="clear the forward session history">clears existing forward
+      history</span>.</p></li>
+
+      <li><p>We fully switch to that newly added entry, including calling <span>apply the history
+      step</span>. This ultimately results in <span data-x="update document for history step
+      application">updating the document</span> by dispatching events like <code
+      data-x="event-hashchange">hashchange</code>, as well as updating the <span
+      data-x="tn-current-session-history-step">current session history step</span> to the target
+      step of 1.</p></li>
+     </ol>
+    </li>
+   </ol>
+
+   <p>The end result is:</p>
+
+   <!--https://domenic.github.io/jake-diagram-generator/#IWN1cnJlbnQgPSAxCiFza2lwRG9jQ29sb3JzID0gMgoKdG9wCiAgMC0xOiAvdApmcmFtZXNbMF0KICAwOiAvaS0wLWEgfCBkb2MxCiAgMTogL2ktMC1hI2ZvbyB8IGRvYzEKZnJhbWVzWzFdCiAgMC0xOiAvaS0xLWEK -->
+   <table class="jake-diagram"><thead><tr><td></td><th class="step">0</th><th class="step current">1</th></tr></thead><tbody><tr><th><code data-x="">top</code></th><td colspan="2" class="doc-0 current">/t</td></tr><tr><th><code data-x="">frames[0]</code></th><td colspan="1" class="doc-1 next-is-same-doc">/i-0-a</td><td colspan="1" class="doc-1 current prev-is-same-doc">/i-0-a#foo</td></tr><tr><th><code data-x="">frames[1]</code></th><td colspan="2" class="doc-3 current">/i-1-a</td></tr></tbody></table>
+  </div>
+
+
+  <h5>Low-level operations on session history</h5>
+
+  <p>This section contains a miscellaneous grab-bag of operations that we perform throughout the
+  standard when manipulating session history. The best way to get a sense of what they do is to
+  look at their call sites.</p>
+
+  <div algorithm>
+  <p>To <dfn data-x="getting session history entries">get session history entries</dfn> of a
+  <span>navigable</span> <var>navigable</var>:</p>
+
+  <ol>
+   <li><p>Let <var>traversable</var> be <var>navigable</var>'s <span
+   data-x="nav-traversable">traversable navigable</span>.</p></li>
+
+   <li><p><span>Assert</span>: this is running within <var>traversable</var>'s <span
+   data-x="tn-session-history-traversal-queue">session history traversal queue</span>.</p></li>
+
+   <li><p>If <var>navigable</var> is <var>traversable</var>, return <var>traversable</var>'s <span
+   data-x="tn-session-history-entries">session history entries</span>.</p></li>
+
+   <li><p>Let <var>docStates</var> be an empty <span data-x="set">ordered set</span> of <span
+   data-x="document state">document states</span>.</p></li>
+
+   <li><p>For each <var>entry</var> of <var>traversable</var>'s <span
+   data-x="tn-session-history-entries">session history entries</span>, <span data-x="set
+   append">append</span> <var>entry</var>'s <span data-x="she-document-state">document state</span>
+   to <var>docStates</var>.</p></li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>docState</var> of <var>docStates</var>:</p>
+
+    <ol>
+     <li>
+      <p><span data-x="list iterate">For each</span> <var>nestedHistory</var> of
+      <var>docState</var>'s <span data-x="document-state-nested-histories">nested
+      histories</span>:</p>
+
+      <ol>
+       <li><p>If <var>nestedHistory</var>'s <span data-x="nested-history-id">id</span> equals
+       <var>navigable</var>'s <span data-x="nav-id">id</span>, return <var>nestedHistory</var>'s
+       <span data-x="nested-history-entries">entries</span>.</p></li>
+
+       <li><p>For each <var>entry</var> of <var>nestedHistory</var>'s <span
+       data-x="nested-history-entries">entries</span>, <span data-x="set append">append</span>
+       <var>entry</var>'s <span data-x="she-document-state">document state</span> to
+       <var>docStates</var>.</p></li>
+      </ol>
+     </li>
+    </ol>
+   </li>
+
+   <li><p><span>Assert</span>: this step is not reached.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="getting session history entries for the navigation API">get session history
+  entries for the navigation API</dfn> of a <span>navigable</span> <var>navigable</var> given an
+  integer <var>targetStep</var>:</p>
+
+  <ol>
+   <li><p>Let <var>rawEntries</var> be the result of <span>getting session history entries</span>
+   for <var>navigable</var>.</p></li>
+
+   <li><p>Let <var>entriesForNavigationAPI</var> be a new empty <span>list</span>.</p></li>
+
+   <li>
+    <p>Let <var>startingIndex</var> be the index of the <span>session history entry</span> in
+    <var>rawEntries</var> who has the greatest <span data-x="she-step">step</span> less than or
+    equal to <var>targetStep</var>.</p>
+
+    <p class="note">See <a href="#example-getting-the-target-history-entry">this example</a> to
+    understand why it's the greatest step less than or equal to <var>targetStep</var>.</p>
+   </li>
+
+   <li><p><span data-x="list append">Append</span> <var>rawEntries</var>[<var>startingIndex</var>]
+   to <var>entriesForNavigationAPI</var>.</p></li>
+
+   <li><p>Let <var>startingOrigin</var> be <var>rawEntries</var>[<var>startingIndex</var>]'s <span
+   data-x="she-document-state">document state</span>'s <span
+   data-x="document-state-origin">origin</span>.</p></li>
+
+   <li><p>Let <var>i</var> be <var>startingIndex</var> &minus; 1.</p></li>
+
+   <li>
+    <p>While <var>i</var> &gt; 0:</p>
+
+    <ol>
+     <li><p>If <var>rawEntries</var>[<var>i</var>]'s <span data-x="she-document-state">document
+     state</span>'s <span data-x="document-state-origin">origin</span> is not <span>same
+     origin</span> with <var>startingOrigin</var>, then <span>break</span>.</p></li>
+
+     <li><p><span data-x="list prepend">Prepend</span> <var>rawEntries</var>[<var>i</var>] to
+     <var>entriesForNavigationAPI</var>.</p></li>
+
+     <li><p>Set <var>i</var> to <var>i</var> &minus; 1.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Set <var>i</var> to <var>startingIndex</var> + 1.</p></li>
+
+   <li>
+    <p>While <var>i</var> &lt; <var>rawEntries</var>'s <span data-x="list size">size</span>:</p>
+
+    <ol>
+     <li><p>If <var>rawEntries</var>[<var>i</var>]'s <span data-x="she-document-state">document
+     state</span>'s <span data-x="document-state-origin">origin</span> is not <span>same
+     origin</span> with <var>startingOrigin</var>, then <span>break</span>.</p></li>
+
+     <li><p><span data-x="list append">Append</span> <var>rawEntries</var>[<var>i</var>] to
+     <var>entriesForNavigationAPI</var>.</p></li>
+
+     <li><p>Set <var>i</var> to <var>i</var> + 1.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Return <var>entriesForNavigationAPI</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>clear the forward session history</dfn> of a <span>traversable navigable</span>
+  <var>navigable</var>:</p>
+
+  <ol>
+   <li><p><span>Assert</span>: this is running within <var>navigable</var>'s <span
+   data-x="tn-session-history-traversal-queue">session history traversal queue</span>.</p></li>
+
+   <li><p>Let <var>step</var> be the <var>navigable</var>'s <span
+   data-x="tn-current-session-history-step">current session history step</span>.</p></li>
+
+   <li><p>Let <var>entryLists</var> be the <span data-x="set">ordered set</span> «
+   <var>navigable</var>'s <span data-x="tn-session-history-entries">session history entries</span>
+   ».</p></li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>entryList</var> of
+    <var>entryLists</var>:</p>
+
+    <ol>
+     <li><p><span data-x="list remove">Remove</span> every <span>session history entry</span> from
+     <var>entryList</var> that has a <span data-x="she-step">step</span> greater than
+     <var>step</var>.</p></li>
+
+     <li>
+      <p><span data-x="list iterate">For each</span> <var>entry</var> of <var>entryList</var>:</p>
+
+      <ol>
+       <li><p><span data-x="list iterate">For each</span> <var>nestedHistory</var> of
+       <var>entry</var>'s <span data-x="she-document-state">document state</span>'s <span
+       data-x="document-state-nested-histories">nested histories</span>, <span data-x="set
+       append">append</span> <var>nestedHistory</var>'s <span
+       data-x="nested-history-entries">entries list</span> to <var>entryLists</var>.</p></li>
+      </ol>
+     </li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="getting all used history steps">get all used history steps</dfn> that are part
+  of <span>traversable navigable</span> <var>traversable</var>:</p>
+
+  <ol>
+   <li><p><span>Assert</span>: this is running within <var>traversable</var>'s <span
+   data-x="tn-session-history-traversal-queue">session history traversal queue</span>.</p></li>
+
+   <li><p>Let <var>steps</var> be an empty <span data-x="set">ordered set</span> of non-negative
+   integers.</p></li>
+
+   <li><p>Let <var>entryLists</var> be the <span data-x="set">ordered set</span> «
+   <var>traversable</var>'s <span data-x="tn-session-history-entries">session history
+   entries</span> ».</p></li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>entryList</var> of
+    <var>entryLists</var>:</p>
+
+    <ol>
+     <li>
+      <p><span data-x="list iterate">For each</span> <var>entry</var> of <var>entryList</var>:</p>
+
+      <ol>
+       <li><p><span data-x="set append">Append</span> <var>entry</var>'s <span
+       data-x="she-step">step</span> to <var>steps</var>.</p></li>
+
+       <li><p><span data-x="list iterate">For each</span> <var>nestedHistory</var> of
+       <var>entry</var>'s <span data-x="she-document-state">document state</span>'s <span
+       data-x="document-state-nested-histories">nested histories</span>, <span data-x="set
+       append">append</span> <var>nestedHistory</var>'s <span
+       data-x="nested-history-entries">entries list</span> to <var>entryLists</var>.</p></li>
+      </ol>
+     </li>
+    </ol>
+   </li>
+
+   <li><p>Return <var>steps</var>, <span data-x="list sort">sorted</span>.</p></li>
+  </ol>
+  </div>
+
+

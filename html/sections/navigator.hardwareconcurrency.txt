@@ -1,0 +1,36 @@
+WHATWG HTML — section navigator.hardwareconcurrency — Concurrent hardware capabilities (+apis-available-to-workers)
+
+  <h4 id="navigator.hardwareconcurrency">Concurrent hardware capabilities</h4>
+
+  <pre><code class="idl">interface mixin <dfn interface>NavigatorConcurrentHardware</dfn> {
+  readonly attribute unsigned long long <span data-x="dom-navigator-hardwareConcurrency">hardwareConcurrency</span>;
+};</code></pre>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>self</var>.<span data-x="dom-navigator">navigator</span>.<span subdfn data-x="dom-navigator-hardwareConcurrency">hardwareConcurrency</span></code></dt>
+
+   <dd><p>Returns the number of logical processors potentially available to the user agent.</p></dd>
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>
+  <!--INSERT TRACKING-->
+  The <dfn attribute for="NavigatorConcurrentHardware"><code
+  data-x="dom-navigator-hardwareConcurrency">navigator.hardwareConcurrency</code></dfn> attribute's
+  getter must return a number between 1 and the number of logical processors potentially available
+  to the user agent. If this cannot be determined, the getter must return 1.</p>
+  </div>
+
+  <p>User agents should err toward exposing the number of logical processors available, using lower
+  values only in cases where there are user-agent specific limits in place (such as a limitation
+  on the number of <span data-x="Worker">workers</span> that can be created) or when the user agent
+  desires to limit fingerprinting possibilities.</p>
+
+  </div>
+
+  <h3>APIs available to workers</h3>
+
+  <div w-nodev>
+

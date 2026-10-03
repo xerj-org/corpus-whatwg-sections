@@ -1,0 +1,11 @@
+WHATWG HTML — section comms — Communication
+
+  <h2 split-filename="comms" id="comms">Communication</h2>
+
+  <p class="note" id="network"><span id="network-intro"></span><span
+  id="the-websocket-interface"></span><span id="feedback-from-the-protocol"></span><span
+  id="ping-and-pong-frames"></span><span id="the-closeevent-interface"></span><span
+  id="garbage-collection-2"></span><span id="websocket"></span><span id="binarytype"></span><span
+  id="closeevent"></span><span id="closeeventinit"></span>The <code>WebSocket</code> interface used
+  to be defined here. It is now defined in <cite>WebSockets</cite>. <ref>WEBSOCKETS</ref></p>
+

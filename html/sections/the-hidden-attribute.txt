@@ -1,0 +1,298 @@
+WHATWG HTML — section the-hidden-attribute — The <code data-x="attr-hidden">hidden</code> attribute
+
+  <h3>The <code data-x="attr-hidden">hidden</code> attribute</h3>
+
+  <p>All <span>HTML elements</span> may have the <dfn element-attr for="html-global"><code
+  data-x="attr-hidden">hidden</code></dfn> content attribute set. The <code
+  data-x="attr-hidden">hidden</code> attribute is an <span>enumerated attribute</span> with the
+  following keywords and states:</p>
+
+  <table>
+   <thead>
+    <tr>
+     <th>Keyword
+     <th>State
+     <th>Brief description
+   <tbody>
+    <tr>
+     <td><dfn attr-value for="html-global/hidden"><code data-x="attr-hidden-hidden">hidden</code></dfn>
+     <td><dfn data-x="attr-hidden-hidden-state">Hidden</dfn>
+     <td>Will not be rendered.
+    <tr>
+     <td><dfn attr-value for="html-global/hidden"><code data-x="attr-hidden-until-found">until-found</code></dfn>
+     <td><dfn data-x="attr-hidden-until-found-state">Hidden Until Found</dfn>
+     <td>Will not be rendered, but content inside will be accessible to <span>find-in-page</span>
+     and <span data-x="navigate-fragid">fragment navigation</span>.
+  </table>
+
+  <div algorithm>
+  <p>The attribute's <i data-x="missing value default">missing value default</i> is the <dfn
+  data-x="attr-hidden-not-hidden-state">Not Hidden</dfn> state, and its <i data-x="invalid value
+  default">invalid value default</i> and <i data-x="empty value default">empty value default</i> are
+  both the <span data-x="attr-hidden-hidden-state">Hidden</span> state.</p>
+  </div>
+
+  <p>When an element has the <code data-x="attr-hidden">hidden</code> attribute in the <span
+  data-x="attr-hidden-hidden-state">Hidden</span> state, it indicates that the element is not yet, or
+  is no longer, directly relevant to the page's current state, or that it is being used to declare
+  content to be reused by other parts of the page as opposed to being directly accessed by the user.
+  User agents should not render elements that are in the <span
+  data-x="attr-hidden-hidden-state">Hidden</span> state.</p>
+
+  <div w-nodev>
+
+  <p class="note">The requirement for user agents not to render elements that are in the <span
+  data-x="attr-hidden-hidden-state">Hidden</span> state can be implemented indirectly through the
+  style layer. For example, a web browser could implement these requirements <a
+  href="#hiddenCSS">using the rules suggested in the Rendering section</a>.</p>
+
+  </div>
+
+  <p>When an element has the <code data-x="attr-hidden">hidden</code> attribute in the <span
+  data-x="attr-hidden-until-found-state">Hidden Until Found</span> state, it indicates that the
+  element is hidden like the <span data-x="attr-hidden-hidden-state">Hidden</span> state but the
+  content inside the element will be accessible to <span>find-in-page</span> and <span
+  data-x="navigate-fragid">fragment navigation</span>. When these features attempt to scroll to a
+  target which is in the element's subtree, the user agent will remove the <code
+  data-x="attr-hidden">hidden</code> attribute in order to reveal the content before scrolling to
+  it by running the <span>ancestor revealing algorithm</span> on the target node.</p>
+
+  <div w-nodev>
+
+  <p class="note">Web browsers will use 'content-visibility: hidden' instead of 'display: none'
+  when the <code data-x="attr-hidden">hidden</code> attribute is in the <span
+  data-x="attr-hidden-until-found-state">Hidden Until Found</span> state, as specified in the <a
+  href="#hiddenCSS">Rendering section</a>.</p>
+
+  </div>
+
+
+  <div class="note">
+   <p>Because this attribute is typically implemented using CSS, it's also possible to override it
+   using CSS. For instance, a rule that applies 'display: block' to all elements will cancel the
+   effects of the <span data-x="attr-hidden-hidden-state">Hidden</span> state. Authors therefore
+   have to take care when writing their style sheets to make sure that the attribute is still styled
+   as expected. In addition, legacy user agents which don't support the <span
+   data-x="attr-hidden-until-found-state">Hidden Until Found</span> state will have 'display: none'
+   instead of 'content-visibility: hidden', so authors are encouraged to make sure that their style
+   sheets don't change the 'display' or 'content-visibility' properties of <span
+   data-x="attr-hidden-until-found-state">Hidden Until Found</span> elements.</p>
+
+   <p>Since elements with the <code data-x="attr-hidden">hidden</code> attribute in the <span
+   data-x="attr-hidden-until-found-state">Hidden Until Found</span> state use 'content-visibility:
+   hidden' instead of 'display: none', there are two caveats of the <span
+   data-x="attr-hidden-until-found-state">Hidden Until Found</span> state that make it different
+   from the <span data-x="attr-hidden-hidden-state">Hidden</span> state:</p>
+
+   <ol>
+    <li><p>The element needs to be affected by <span>layout containment</span> in order to be
+    revealed by find-in-page. This means that if the element in the <span
+    data-x="attr-hidden-until-found-state">Hidden Until Found</span> state has a 'display' value of
+    'none', 'contents', or 'inline', then the element will not be revealed by find-in-page.</p></li>
+
+    <li><p>The element will still have a <span data-x="'visibility'">generated box</span> when in
+    the <span data-x="attr-hidden-until-found-state">Hidden Until Found</span> state, which means
+    that borders, margin, and padding will still be rendered around the element.</p></li>
+   </ol>
+  </div>
+
+  <div class="example">
+
+   <p>In the following skeletal example, the attribute is used to hide the web game's main screen
+   until the user logs in:</p>
+
+   <pre><code class="html">  &lt;h1>The Example Game&lt;/h1>
+  &lt;section id="login">
+   &lt;h2>Login&lt;/h2>
+   &lt;form>
+    ...
+    &lt;!-- calls login() once the user's credentials have been checked -->
+   &lt;/form>
+   &lt;script>
+    function login() {
+      // switch screens
+      document.getElementById('login').hidden = true;
+      document.getElementById('game').hidden = false;
+    }
+   &lt;/script>
+  &lt;/section>
+  &lt;section id="game" hidden>
+   ...
+  &lt;/section></code></pre>
+
+  </div>
+
+  <p>The <code data-x="attr-hidden">hidden</code> attribute must not be used to hide content that
+  could legitimately be shown in another presentation. For example, it is incorrect to use <code
+  data-x="attr-hidden">hidden</code> to hide panels in a tabbed dialog, because the tabbed interface
+  is merely a kind of overflow presentation &mdash; one could equally well just show all the form
+  controls in one big page with a scrollbar. It is similarly incorrect to use this attribute to hide
+  content just from one presentation &mdash; if something is marked <code
+  data-x="attr-hidden">hidden</code>, it is hidden from all presentations, including, for instance,
+  screen readers.</p>
+
+  <!-- for example, "<a hidden href=#content>Skip to content</a>" would be inappropriate. -->
+  <!-- (but only add that example if you first add some more good valid examples -->
+
+  <p>Elements that are not themselves <code data-x="attr-hidden">hidden</code> must not
+  <span>hyperlink</span> to elements that are <code data-x="attr-hidden">hidden</code>. The <code
+  data-x="">for</code> attributes of <code>label</code> and <code>output</code> elements that are not
+  themselves <code data-x="attr-hidden">hidden</code> must similarly not refer to elements that are
+  <code data-x="attr-hidden">hidden</code>. In both cases, such references would cause user
+  confusion.</p>
+
+  <p>Elements and scripts may, however, refer to elements that are <code
+  data-x="attr-hidden">hidden</code> in other contexts.</p>
+
+  <div class="example">
+
+   <p>For example, it would be incorrect to use the <code data-x="attr-hyperlink-href">href</code>
+   attribute to link to a section marked with the <code data-x="attr-hidden">hidden</code> attribute.
+   If the content is not applicable or relevant, then there is no reason to link to it.</p>
+
+   <p>It would be fine, however, to use the ARIA <code
+   data-x="attr-aria-describedby">aria-describedby</code> attribute to refer to descriptions that are
+   themselves <code data-x="attr-hidden">hidden</code>. While hiding the descriptions implies that
+   they are not useful alone, they could be written in such a way that they are useful in the
+   specific context of being referenced from the elements that they describe.</p>
+
+   <p>Similarly, a <code>canvas</code> element with the <code data-x="attr-hidden">hidden</code>
+   attribute could be used by a scripted graphics engine as an off-screen buffer, and a form control
+   could refer to a hidden <code>form</code> element using its <code
+   data-x="attr-fae-form">form</code> attribute.</p>
+
+  </div>
+
+  <p>Elements in a section hidden by the <code data-x="attr-hidden">hidden</code> attribute are still
+  active, e.g. scripts and form controls in such sections still execute and submit respectively.
+  Only their presentation to the user changes.</p>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLElement"><code data-x="dom-hidden">hidden</code></dfn> getter steps
+  are:</p>
+
+  <ol>
+   <li><p>If the <code data-x="attr-hidden">hidden</code> attribute is in the <span
+   data-x="attr-hidden-until-found-state">Hidden Until Found</span> state, then return "<code
+   data-x="attr-hidden-until-found">until-found</code>".</p></li>
+
+   <li><p>If the <code data-x="attr-hidden">hidden</code> attribute is set, then return
+   true.</p></li>
+
+   <li><p>Return false.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <code data-x="dom-hidden">hidden</code> setter steps are:</p>
+
+  <ol>
+   <li><p>If the given value is a string that is an <span>ASCII case-insensitive</span> match for
+   "<code data-x="attr-hidden-until-found">until-found</code>", then set the <code
+   data-x="attr-hidden">hidden</code> attribute to "<code
+   data-x="attr-hidden-until-found">until-found</code>".</p></li>
+
+   <li><p>Otherwise, if the given value is false, then remove the <code
+   data-x="attr-hidden">hidden</code> attribute.</p></li>
+
+   <li><p>Otherwise, if the given value is the empty string, then remove the <code
+   data-x="attr-hidden">hidden</code> attribute.</p></li>
+
+   <li><p>Otherwise, if the given value is null, then remove the <code
+   data-x="attr-hidden">hidden</code> attribute.</p></li>
+
+   <li><p>Otherwise, if the given value is 0, then remove the <code
+   data-x="attr-hidden">hidden</code> attribute.</p></li>
+
+   <li><p>Otherwise, if the given value is NaN, then remove the <code
+   data-x="attr-hidden">hidden</code> attribute.</p></li>
+
+   <li><p>Otherwise, set the <code data-x="attr-hidden">hidden</code> attribute to the empty
+   string.</p></li>
+  </ol>
+  </div>
+
+  <p>An <dfn>ancestor reveal pair</dfn> is a <span>tuple</span> consisting of a <dfn
+  data-x="ancestor-reveal-pair-node">node</dfn> and a <dfn
+  data-x="ancestor-reveal-pair-string">string</dfn>.</p>
+
+  <div algorithm>
+  <p>The <dfn>ancestor revealing algorithm</dfn> given a node <var>target</var> is:</p>
+
+  <ol>
+   <li><p>Let <var>ancestorsToReveal</var> be « ».</p></li>
+
+   <li><p>Let <var>ancestor</var> be <var>target</var>.</p></li>
+
+   <li>
+    <p>While <var>ancestor</var> has a parent node within the <span>flat tree</span>:</p>
+
+    <ol>
+     <li><p>If <var>ancestor</var> has a <code data-x="attr-hidden">hidden</code> attribute in the
+     <span data-x="attr-hidden-until-found-state">Hidden Until Found</span> state, then <span
+     data-x="list append">append</span> (<var>ancestor</var>, "<code data-x="">until-found</code>")
+     to <var>ancestorsToReveal</var>.</p></li>
+
+     <li><p>If <var>ancestor</var> is slotted into the second slot of a <code>details</code>
+     element which does not have an <code data-x="attr-details-open">open</code> attribute, then
+     <span data-x="list append">append</span> (<var>ancestor</var>'s parent node, "<code
+     data-x="">details</code>") to <var>ancestorsToReveal</var>.</p></li>
+
+     <li><p>Set <var>ancestor</var> to the parent node of <var>ancestor</var> within the
+     <span>flat tree</span>.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p>For each (<var>ancestorToReveal</var>, <var>revealType</var>) of
+    <var>ancestorsToReveal</var>:</p>
+
+    <ol>
+     <li><p>If <var>ancestorToReveal</var> is not <span>connected</span>, then return.</p></li>
+
+     <li>
+      <p>If <var>revealType</var> is "<code data-x="">until-found</code>":</p>
+
+      <ol>
+       <li><p>If <var>ancestorToReveal</var>'s <code data-x="attr-hidden">hidden</code> attribute is
+       not in the <span data-x="attr-hidden-until-found-state">Hidden Until Found</span> state, then
+       return.</p></li>
+
+       <li><p><span data-x="concept-event-fire">Fire an event</span> named <code
+       data-x="event-beforematch">beforematch</code> at <var>ancestorToReveal</var> with the <code
+       data-x="dom-Event-bubbles">bubbles</code> attribute initialized to true.</p></li>
+
+       <li><p>If <var>ancestorToReveal</var> is not <span>connected</span>, then return.</p></li>
+
+       <li><p>If <var>ancestorToReveal</var>'s <code data-x="attr-hidden">hidden</code> attribute is
+       not in the <span data-x="attr-hidden-until-found-state">Hidden Until Found</span> state, then
+       return.</p></li>
+
+       <li><p>Remove the <code data-x="attr-hidden">hidden</code> attribute from
+       <var>ancestorToReveal</var>.</p></li>
+      </ol>
+     </li>
+
+     <li>
+      <p>Otherwise:</p>
+
+      <ol>
+       <li><p><span>Assert</span>: <var>revealType</var> is "<code
+       data-x="">details</code>".</p></li>
+
+       <li><p>If <var>ancestorToReveal</var> has an <code data-x="attr-details-open">open</code>
+       attribute, then return.</p></li>
+
+       <li><p>Set <var>ancestorToReveal</var>'s <code data-x="attr-details-open">open</code>
+       attribute to the empty string.</p></li>
+      </ol>
+     </li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  </div>
+

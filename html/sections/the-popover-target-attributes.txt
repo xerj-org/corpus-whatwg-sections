@@ -1,0 +1,168 @@
+WHATWG HTML — section the-popover-target-attributes — The popover target attributes
+
+  <h4>The popover target attributes</h4>
+
+  <p><span data-x="concept-button">Buttons</span> may have the following content attributes:</p>
+
+  <ul>
+   <li><p><dfn element-attr for="html-global"><code
+   data-x="attr-popovertarget">popovertarget</code></dfn></p></li>
+
+   <li><p><dfn element-attr for="html-global"><code
+   data-x="attr-popovertargetaction">popovertargetaction</code></dfn></p></li>
+  </ul>
+
+  <p>If specified, the <code data-x="attr-popovertarget">popovertarget</code> attribute value must
+  be the <span data-x="concept-ID">ID</span> of an element with a <code
+  data-x="attr-popover">popover</code> attribute in the same <span>tree</span> as the <span
+  data-x="concept-button">button</span> with the <code
+  data-x="attr-popovertarget">popovertarget</code> attribute.</p>
+
+  <p>The <code data-x="attr-popovertargetaction">popovertargetaction</code> attribute is an
+  <span>enumerated attribute</span> with the following keywords and states:</p>
+
+  <table>
+   <thead>
+    <tr>
+     <th>Keyword
+     <th>State
+     <th>Brief description
+   <tbody>
+    <tr>
+     <td><dfn attr-value for="html-global/popovertargetaction"
+     data-x="attr-popovertargetaction-toggle"><code>toggle</code></dfn>
+     <td><dfn data-x="attr-popovertargetaction-toggle-state">Toggle</dfn>
+     <td>Shows or hides the targeted popover element.
+    <tr>
+     <td><dfn attr-value for="html-global/popovertargetaction"
+     data-x="attr-popovertargetaction-show"><code>show</code></dfn>
+     <td><dfn data-x="attr-popovertargetaction-show-state">Show</dfn>
+     <td>Shows the targeted popover element.
+    <tr>
+     <td><dfn attr-value for="html-global/popovertargetaction"
+     data-x="attr-popovertargetaction-hide"><code>hide</code></dfn>
+     <td><dfn data-x="attr-popovertargetaction-hide-state">Hide</dfn>
+     <td>Hides the targeted popover element.
+  </table>
+
+  <div algorithm>
+  <p>The attribute's <i data-x="missing value default">missing value default</i> and <i
+  data-x="invalid value default">invalid value default</i> are both the <span
+  data-x="attr-popovertargetaction-toggle-state">Toggle</span> state.</p>
+  </div>
+
+  <p class="note">Whenever possible ensure the popover element is placed immediately after its
+  triggering element in the DOM. Doing so will help ensure that the popover is exposed in a logical
+  programmatic reading order for users of assistive technology, such as screen readers.</p>
+
+  <div class="example">
+   <p>The following shows how the <code data-x="attr-popovertarget">popovertarget</code> attribute
+   in combination with the <code data-x="attr-popovertargetaction">popovertargetaction</code>
+   attribute can be used to show and close a popover:</p>
+
+   <pre><code class="html">&lt;button popovertarget="foo" popovertargetaction="show">
+  Show a popover
+&lt;/button>
+
+&lt;article popover="auto" id="foo">
+  This is a popover article!
+  &lt;button popovertarget="foo" popovertargetaction="hide">Close&lt;/button>
+&lt;/article></code></pre>
+
+   <p>If a <code data-x="attr-popovertargetaction">popovertargetaction</code> attribute is not
+   specified, the default action will be to toggle the associated popover. The following shows
+   how only specifying the <code data-x="attr-popovertarget">popovertarget</code> attribute on its
+   invoking button can toggle a manual popover between its opened and closed states. A manual
+   popover will not respond to <span data-x="popover light dismiss">light dismiss</span> or <span
+   data-x="close request">close requests</span>:</p>
+
+   <pre><code class="html">&lt;input type="button" popovertarget="foo" value="Toggle the popover">
+
+&lt;div popover=manual id="foo">
+  This is a popover!
+&lt;/div></code></pre>
+  </div>
+
+  <span data-x="concept-element-dom">DOM interface</span>:
+  <pre><code class="idl">interface mixin <dfn interface>PopoverTargetAttributes</dfn> {
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>="<span data-x="attr-popovertarget">popovertarget</span>"] attribute Element? <dfn attribute for="HTMLElement" data-x="dom-popoverTargetElement">popoverTargetElement</dfn>;
+  [<span>CEReactions</span>] attribute DOMString <span data-x="dom-popoverTargetAction">popoverTargetAction</span>;
+};</code></pre>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLElement"><code
+  data-x="dom-popoverTargetAction">popoverTargetAction</code></dfn> IDL attribute must
+  <span>reflect</span> the <code data-x="attr-popovertargetaction">popovertargetaction</code>
+  attribute, <span>limited to only known values</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>To run the <dfn>popover target attribute activation behavior</dfn> given a <code>Node</code>
+  <var>node</var> and a <code>Node</code> <var>eventTarget</var>:</p>
+
+  <ol>
+   <li><p>Let <var>popover</var> be <var>node</var>'s <span>popover target element</span>.</p></li>
+
+   <li><p>If <var>popover</var> is null, then return.</p></li>
+
+   <li><p>If <var>eventTarget</var> is a <span>shadow-including inclusive descendant</span> of
+   <var>popover</var> and <var>popover</var> is a
+   <span data-x="shadow-including descendant">shadow-including descendant</span> of <var>node</var>,
+   then return.</p></li>
+
+   <li><p>If <var>node</var>'s <code data-x="attr-popovertargetaction">popovertargetaction</code>
+   attribute is in the <span data-x="attr-popovertargetaction-show">show</span> state and
+   <var>popover</var>'s <span>popover visibility state</span> is <span
+   data-x="popover-showing-state">showing</span>, then return.</p></li>
+
+   <li><p>If <var>node</var>'s <code data-x="attr-popovertargetaction">popovertargetaction</code>
+   attribute is in the <span data-x="attr-popovertargetaction-hide">hide</span> state and
+   <var>popover</var>'s <span>popover visibility state</span> is <span
+   data-x="popover-hidden-state">hidden</span>, then return.</p></li>
+
+   <li><p>If <var>popover</var>'s <span>popover visibility state</span> is <span
+   data-x="popover-showing-state">showing</span>, then run the <span>hide popover algorithm</span>
+   given <var>popover</var>, true, true, false, and <var>node</var>.</p></li>
+
+   <li>
+    <p>Otherwise:</p>
+
+    <ol>
+     <li><p>Let <var>validity</var> be the result of running <span>check popover validity</span>
+     given <var>popover</var>, false, and null. If this throws an exception, catch it, and let
+     <var>validity</var> be false.</p></li>
+
+     <li><p>If <var>validity</var> is true, then run <span>show popover</span> given
+     <var>popover</var>, false, and <var>node</var>.</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To get the <dfn>popover target element</dfn> given a <code>Node</code> <var>node</var>, perform
+  the following steps. They return an <span data-x="HTML elements">HTML element</span> or null.</p>
+
+  <ol>
+   <li><p>If <var>node</var> is not a <span data-x="concept-button">button</span>, then return
+   null.</p></li>
+
+   <li><p>If <var>node</var> is <span data-x="concept-fe-disabled">disabled</span>, then return
+   null.</p></li>
+
+   <li><p>If <var>node</var> has a <span>form owner</span> and <var>node</var> is a <span
+   data-x="concept-submit-button">submit button</span>, then return null.</p></li>
+
+   <li><p>Let <var>popoverElement</var> be the result of running <var>node</var>'s <span data-x="get
+   the attr-associated element">get the <code data-x="">popovertarget</code>-associated
+   element</span>.</p></li>
+
+   <li><p>If <var>popoverElement</var> is null, then return null.</p></li>
+
+   <li><p>If <var>popoverElement</var>'s <code data-x="attr-popover">popover</code> attribute is in
+   the <span data-x="attr-popover-none-state">No Popover</span> state, then return null.</p></li>
+
+   <li><p>Return <var>popoverElement</var>.</p></li>
+  </ol>
+  </div>
+

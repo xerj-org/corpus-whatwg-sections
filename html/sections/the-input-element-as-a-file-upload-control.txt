@@ -1,0 +1,30 @@
+WHATWG HTML — section the-input-element-as-a-file-upload-control — The <code>input</code> element as a file upload control
+
+  <h4>The <code>input</code> element as a file upload control</h4>
+
+  <p>An <code>input</code> element whose <code data-x="attr-input-type">type</code> attribute is in
+  the <span data-x="attr-input-type-file">File Upload</span> state, when it generates a <span>CSS
+  box</span>, is <span>expected</span> to render as an <span>'inline-block'</span> box containing a
+  span of text giving the filename(s) of the <span
+  data-x="concept-input-type-file-selected">selected files</span>, if any, followed by a button
+  that, when activated, provides the user with a file picker from which the selection can be
+  changed. The button is <span>expected</span> to use <span>button layout</span> and match the
+  <span>'::file-selector-button'</span> pseudo-element. Its contents are <span>expected</span>
+  to be <span>implementation-defined</span> (and possibly locale-specific) text, for example
+  "Choose file".</p>
+
+  <p>User agents may handle an <code>input</code> element whose
+  <code data-x="attr-input-type">type</code> attribute is in the
+  <span data-x="attr-input-type-file">File Upload</span> state as an
+  <span>element with default preferred size</span>, and user agents may apply the
+  <span>'field-sizing'</span> CSS property to the element. If the <span>'field-sizing'</span>
+  property on the element has a <span>computed value</span> of
+  <span data-x="field-sizing-content">'content'</span>, the <span>intrinsic size</span> of the
+  element is <span>expected</span> to depend on its content such as the
+  <span>'::file-selector-button'</span> pseudo-element and chosen file names.</p>
+
+  </div>
+
+
+  <div w-nodev>
+

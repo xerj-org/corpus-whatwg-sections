@@ -1,0 +1,36 @@
+WHATWG HTML — section media-elements/handling-first-frame-available/the-trackevent-interface — The <code>TrackEvent</code> interface
+
+  <h5>The <code>TrackEvent</code> interface</h5>
+
+  <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>TrackEvent</dfn> : <span>Event</span> {
+  constructor(DOMString type, optional <span>TrackEventInit</span> eventInitDict = {});
+
+  readonly attribute (<span>VideoTrack</span> or <span>AudioTrack</span> or <span>TextTrack</span>)? <span data-x="dom-TrackEvent-track">track</span>;
+};
+
+dictionary <dfn dictionary>TrackEventInit</dfn> : <span>EventInit</span> {
+  (<span>VideoTrack</span> or <span>AudioTrack</span> or <span>TextTrack</span>)? track = null;
+};</code></pre>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>event</var>.<span subdfn data-x="dom-TrackEvent-track">track</span></code></dt>
+
+   <dd>
+    <p>Returns the track object (<code>TextTrack</code>, <code>AudioTrack</code>, or
+    <code>VideoTrack</code>) to which the event relates.</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn attribute for="TrackEvent"><code data-x="dom-TrackEvent-track">track</code></dfn>
+  attribute must return the value it was initialized to. It represents the context information for
+  the event.</p>
+  </div>
+
+  </div>
+
+
+

@@ -1,0 +1,1282 @@
+WHATWG HTML — section dates-and-times — Dates and times
+
+  <h4>Dates and times</h4>
+
+  <div algorithm>
+  <p>In the algorithms below, the <dfn>number of days in month <var>month</var> of year
+  <var>year</var></dfn> is: <em>31</em> if <var>month</var> is 1, 3, 5, 7, 8,
+  10, or 12; <em>30</em> if <var>month</var> is 4, 6, 9, or 11; <em>29</em> if <var>month</var> is 2
+  and <var>year</var> is a number divisible by 400, or if <var>year</var> is a number divisible by 4
+  but not by 100; and <em>28</em> otherwise. This takes into account leap years in the Gregorian
+  calendar. <ref>GREGORIAN</ref></p>
+  </div>
+
+  <p>When <span>ASCII digits</span> are used in the date and time syntaxes defined in this section,
+  they express numbers in base ten.</p>
+
+  <div w-nodev>
+
+  <p class="note">While the formats described here are intended to be subsets of the corresponding
+  ISO8601 formats, this specification defines parsing rules in much more detail than ISO8601.
+  Implementers are therefore encouraged to carefully examine any date parsing libraries before using
+  them to implement the parsing rules described below; ISO8601 libraries might not parse dates and
+  times in exactly the same manner. <ref>ISO8601</ref></p>
+
+  </div>
+
+  <p>Where this specification refers to the <dfn>proleptic Gregorian calendar</dfn>, it means the
+  modern Gregorian calendar, extrapolated backwards to year 1. A date in the <span>proleptic
+  Gregorian calendar</span>, sometimes explicitly referred to as a <dfn>proleptic-Gregorian
+  date</dfn>, is one that is described using that calendar even if that calendar was not in use at
+  the time (or place) in question. <ref>GREGORIAN</ref></p>
+
+  <p class="note">The use of the Gregorian calendar as the wire format in this specification is an
+  arbitrary choice resulting from the cultural biases of those involved in the decision. See also
+  the section discussing <a href="#input-author-notes">date, time, and number formats</a> in forms
+  <span w-nodev>(for authors), <a href="#input-impl-notes">implementation notes regarding
+  localization of form controls</a>,</span> and the <code>time</code> element.</p>
+
+
+  <h5>Months</h5>
+
+  <p>A <dfn data-x="concept-month">month</dfn> consists of a specific <span>proleptic-Gregorian
+  date</span> with no time-zone information and no date information beyond a year and a month.
+  <ref>GREGORIAN</ref></p>
+
+  <div algorithm>
+  <p>A string is a <dfn>valid month string</dfn> representing a year <var>year</var> and
+  month <var>month</var> if it consists of the following components in the given order:</p>
+
+  <ol>
+   <li>Four or more <span>ASCII digits</span>, representing <var>year</var>, where <var>year</var>&nbsp;&gt;&nbsp;0</li>
+
+   <li>A U+002D HYPHEN-MINUS character (-)</li>
+
+   <li>Two <span>ASCII digits</span>, representing the month <var>month</var>, in the range
+   1&nbsp;&le;&nbsp;<var>month</var>&nbsp;&le;&nbsp;12</li>
+  </ol>
+  </div>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The rules to <dfn>parse a month string</dfn> are as follows. This will return either a year and
+  month, or nothing. If at any point the algorithm says that it "fails", this means that it is
+  aborted at that point and returns nothing.</p>
+
+  <ol>
+   <li><p>Let <var>input</var> be the string being parsed.</p></li>
+
+   <li><p>Let <var>position</var> be a pointer into <var>input</var>, initially
+   pointing at the start of the string.</p></li>
+
+   <li><p><span>Parse a month component</span> to obtain <var>year</var> and <var>month</var>. If this returns nothing, then fail.</p>
+
+   <li><p>If <var>position</var> is <em>not</em> beyond the
+   end of <var>input</var>, then fail.</p></li>
+
+   <li><p>Return <var>year</var> and <var>month</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The rules to <dfn>parse a month component</dfn>, given an <var>input</var> string and
+  a <var>position</var>, are as follows. This will return either a year and a month, or
+  nothing. If at any point the algorithm says that it "fails", this means that it is aborted at that
+  point and returns nothing.</p>
+
+  <ol>
+   <li><p><span>Collect a sequence of code points</span> that are <span>ASCII digits</span> from
+   <var>input</var> given <var>position</var>. If the collected sequence is not at least four
+   characters long, then fail. Otherwise, interpret the resulting sequence as a base-ten integer.
+   Let <var>year</var> be that number.</p></li>
+
+   <li><p>If <var>year</var> is not a number greater than zero, then fail.</p></li>
+
+   <li><p>If <var>position</var> is beyond the end of <var>input</var> or if the
+   character at <var>position</var> is not a U+002D HYPHEN-MINUS character, then fail.
+   Otherwise, move <var>position</var> forwards one character.</p></li>
+
+   <li><p><span>Collect a sequence of code points</span> that are <span>ASCII digits</span> from
+   <var>input</var> given <var>position</var>. If the collected sequence is not exactly two
+   characters long, then fail. Otherwise, interpret the resulting sequence as a base-ten integer.
+   Let <var>month</var> be that number.</p></li>
+
+   <li><p>If <var>month</var> is not a number in the range 1&nbsp;&le;&nbsp;<var>month</var>&nbsp;&le;&nbsp;12, then fail.</p></li>
+
+   <li><p>Return <var>year</var> and <var>month</var>.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+
+  <h5>Dates</h5>
+
+  <p>A <dfn data-x="concept-date">date</dfn> consists of a specific <span>proleptic-Gregorian
+  date</span> with no time-zone information, consisting of a year, a month, and a day.
+  <ref>GREGORIAN</ref></p>
+
+  <div algorithm>
+  <p>A string is a <dfn>valid date string</dfn> representing a year <var>year</var>, month
+  <var>month</var>, and day <var>day</var> if it consists of the following
+  components in the given order:</p>
+
+  <ol>
+   <li>A <span>valid month string</span>, representing <var>year</var> and <var>month</var></li>
+
+   <li>A U+002D HYPHEN-MINUS character (-)</li>
+
+   <li>Two <span>ASCII digits</span>, representing <var>day</var>, in the range
+   1&nbsp;&le;&nbsp;<var>day</var>&nbsp;&le;&nbsp;<var>maxday</var> where <var>maxday</var> is the <span data-x="number of days in month month of year year">number of
+   days in the month <var>month</var> and year <var>year</var></span></li>
+  </ol>
+  </div>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The rules to <dfn>parse a date string</dfn> are as follows. This will return either a date, or
+  nothing. If at any point the algorithm says that it "fails", this means that it is aborted at that
+  point and returns nothing.</p>
+
+  <ol>
+   <li><p>Let <var>input</var> be the string being parsed.</p></li>
+
+   <li><p>Let <var>position</var> be a pointer into <var>input</var>, initially
+   pointing at the start of the string.</p></li>
+
+   <li><p><span>Parse a date component</span> to obtain <var>year</var>, <var>month</var>, and <var>day</var>. If this returns nothing, then fail.</p>
+
+   <li><p>If <var>position</var> is <em>not</em> beyond the end of <var>input</var>, then fail.</p></li>
+
+   <li><p>Let <var>date</var> be the date with year <var>year</var>, month <var>month</var>, and day <var>day</var>.</p></li>
+
+   <li><p>Return <var>date</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The rules to <dfn>parse a date component</dfn>, given an <var>input</var> string and a
+  <var>position</var>, are as follows. This will return either a year, a month, and a day,
+  or nothing. If at any point the algorithm says that it "fails", this means that it is aborted at
+  that point and returns nothing.</p>
+
+  <ol>
+   <li><p><span>Parse a month component</span> to obtain <var>year</var> and <var>month</var>. If this returns nothing, then fail.</li>
+
+   <li><p>Let <var>maxday</var> be the <span>number of days in month <var>month</var> of year <var>year</var></span>.</p></li>
+
+   <li><p>If <var>position</var> is beyond the end of <var>input</var> or if the
+   character at <var>position</var> is not a U+002D HYPHEN-MINUS character, then fail.
+   Otherwise, move <var>position</var> forwards one character.</p></li>
+
+   <li><p><span>Collect a sequence of code points</span> that are <span>ASCII digits</span> from
+   <var>input</var> given <var>position</var>. If the collected sequence is not exactly two
+   characters long, then fail. Otherwise, interpret the resulting sequence as a base-ten integer.
+   Let <var>day</var> be that number.</p></li>
+
+   <li><p>If <var>day</var> is not a number in the range 1&nbsp;&le;&nbsp;<var>day</var>&nbsp;&le;&nbsp;<var>maxday</var>, then fail.</li>
+
+   <li><p>Return <var>year</var>, <var>month</var>, and <var>day</var>.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+
+  <h5>Yearless dates</h5>
+
+  <p>A <dfn data-x="concept-yearless-date">yearless date</dfn> consists of a Gregorian month and a
+  day within that month, but with no associated year. <ref>GREGORIAN</ref></p>
+
+  <div algorithm>
+  <p>A string is a <dfn>valid yearless date string</dfn> representing a month <var>month</var> and a day <var>day</var> if it consists of the following components
+  in the given order:</p>
+
+  <ol>
+   <li>Optionally, two U+002D HYPHEN-MINUS characters (-)</li>
+
+   <li>Two <span>ASCII digits</span>, representing the month <var>month</var>, in the range
+   1&nbsp;&le;&nbsp;<var>month</var>&nbsp;&le;&nbsp;12</li>
+
+   <li>A U+002D HYPHEN-MINUS character (-)</li>
+
+   <li>Two <span>ASCII digits</span>, representing <var>day</var>, in the range
+   1&nbsp;&le;&nbsp;<var>day</var>&nbsp;&le;&nbsp;<var>maxday</var> where <var>maxday</var> is the <span data-x="number of days in month month of year year">number of
+   days</span> in the month <var>month</var> and any arbitrary leap year (e.g. 4 or
+   2000)</li>
+  </ol>
+
+  <p class="note">In other words, if the <var>month</var> is "<code data-x="">02</code>",
+  meaning February, then the day can be 29, as if the year was a leap year.</p>
+  </div>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The rules to <dfn>parse a yearless date string</dfn> are as follows. This will return either a
+  month and a day, or nothing. If at any point the algorithm says that it "fails", this means that
+  it is aborted at that point and returns nothing.</p>
+
+  <ol>
+   <li><p>Let <var>input</var> be the string being parsed.</p></li>
+
+   <li><p>Let <var>position</var> be a pointer into <var>input</var>, initially
+   pointing at the start of the string.</p></li>
+
+   <li><p><span>Parse a yearless date component</span> to obtain <var>month</var> and <var>day</var>. If this returns nothing, then fail.</p>
+
+   <li><p>If <var>position</var> is <em>not</em> beyond the end of <var>input</var>, then fail.</p></li>
+
+   <li><p>Return <var>month</var> and <var>day</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The rules to <dfn>parse a yearless date component</dfn>, given an <var>input</var>
+  string and a <var>position</var>, are as follows. This will return either a month and a
+  day, or nothing. If at any point the algorithm says that it "fails", this means that it is aborted
+  at that point and returns nothing.</p>
+
+  <ol>
+   <li><p><span>Collect a sequence of code points</span> that are U+002D HYPHEN-MINUS characters (-)
+   from <var>input</var> given <var>position</var>. If the collected sequence is not exactly zero or
+   two characters long, then fail.</p></li>
+
+   <li><p><span>Collect a sequence of code points</span> that are <span>ASCII digits</span> from
+   <var>input</var> given <var>position</var>. If the collected sequence is not exactly two
+   characters long, then fail. Otherwise, interpret the resulting sequence as a base-ten integer.
+   Let <var>month</var> be that number.</p></li>
+
+   <li><p>If <var>month</var> is not a number in the range 1&nbsp;&le;&nbsp;<var>month</var>&nbsp;&le;&nbsp;12, then fail.</p></li>
+
+   <li><p>Let <var>maxday</var> be the <span data-x="number of days in month month of year
+   year">number of days</span> in month <var>month</var> of any arbitrary leap year (e.g. 4
+   or 2000).</p></li>
+
+   <li><p>If <var>position</var> is beyond the end of <var>input</var> or if the
+   character at <var>position</var> is not a U+002D HYPHEN-MINUS character, then fail.
+   Otherwise, move <var>position</var> forwards one character.</p></li>
+
+   <li><p><span>Collect a sequence of code points</span> that are <span>ASCII digits</span> from
+   <var>input</var> given <var>position</var>. If the collected sequence is not exactly two
+   characters long, then fail. Otherwise, interpret the resulting sequence as a base-ten integer.
+   Let <var>day</var> be that number.</p></li>
+
+   <li><p>If <var>day</var> is not a number in the range 1&nbsp;&le;&nbsp;<var>day</var>&nbsp;&le;&nbsp;<var>maxday</var>, then fail.</li>
+
+   <li><p>Return <var>month</var> and <var>day</var>.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+
+  <h5>Times</h5>
+
+  <p>A <dfn data-x="concept-time">time</dfn> consists of a specific time with no time-zone
+  information, consisting of an hour, a minute, a second, and a fraction of a second.</p>
+
+  <div algorithm>
+  <p>A string is a <dfn>valid time string</dfn> representing an hour <var>hour</var>, a
+  minute <var>minute</var>, and a second <var>second</var> if it consists of the
+  following components in the given order:</p>
+
+  <ol>
+   <li>Two <span>ASCII digits</span>, representing <var>hour</var>, in the range
+   0&nbsp;&le;&nbsp;<var>hour</var>&nbsp;&le;&nbsp;23</li>
+
+   <li>A U+003A COLON character (:)</li>
+
+   <li>Two <span>ASCII digits</span>, representing <var>minute</var>, in the range
+   0&nbsp;&le;&nbsp;<var>minute</var>&nbsp;&le;&nbsp;59</li>
+
+   <li>If <var>second</var> is nonzero, or optionally if <var>second</var> is
+   zero:
+
+    <ol>
+     <li>A U+003A COLON character (:)</li>
+
+     <li>Two <span>ASCII digits</span>, representing the integer part of <var>second</var>,
+     in the range 0&nbsp;&le;&nbsp;<var>s</var>&nbsp;&le;&nbsp;59</li>
+
+     <li>If <var>second</var> is not an integer, or optionally if <var>second</var> is an integer:
+
+      <ol>
+       <li>A U+002E FULL STOP character (.)</li>
+
+       <li>One, two, or three <span>ASCII digits</span>, representing the fractional part of <var>second</var></li>
+      </ol>
+     </li>
+    </ol>
+   </li>
+  </ol>
+
+  <p class="note">The <var>second</var> component cannot be 60 or 61; leap seconds cannot
+  be represented.</p>
+  </div>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The rules to <dfn>parse a time string</dfn> are as follows. This will return either a time, or
+  nothing. If at any point the algorithm says that it "fails", this means that it is aborted at that
+  point and returns nothing.</p>
+
+  <ol>
+   <li><p>Let <var>input</var> be the string being parsed.</p></li>
+
+   <li><p>Let <var>position</var> be a pointer into <var>input</var>, initially
+   pointing at the start of the string.</p></li>
+
+   <li><p><span>Parse a time component</span> to obtain <var>hour</var>, <var>minute</var>, and <var>second</var>. If this returns nothing, then fail.</p>
+
+   <li><p>If <var>position</var> is <em>not</em> beyond the end of <var>input</var>, then fail.</p></li>
+
+   <li><p>Let <var>time</var> be the time with hour <var>hour</var>, minute <var>minute</var>, and second <var>second</var>.</p></li>
+
+   <li><p>Return <var>time</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The rules to <dfn>parse a time component</dfn>, given an <var>input</var> string and a
+  <var>position</var>, are as follows. This will return either an hour, a minute, and a
+  second, or nothing. If at any point the algorithm says that it "fails", this means that it is
+  aborted at that point and returns nothing.</p>
+
+  <ol>
+   <li><p><span>Collect a sequence of code points</span> that are <span>ASCII digits</span> from
+   <var>input</var> given <var>position</var>. If the collected sequence is not exactly two
+   characters long, then fail. Otherwise, interpret the resulting sequence as a base-ten integer.
+   Let <var>hour</var> be that number.</p></li>
+
+   <li>If <var>hour</var> is not a number in the range 0&nbsp;&le;&nbsp;<var>hour</var>&nbsp;&le;&nbsp;23, then fail.</li>
+
+   <li><p>If <var>position</var> is beyond the end of <var>input</var> or if the
+   character at <var>position</var> is not a U+003A COLON character, then fail. Otherwise,
+   move <var>position</var> forwards one character.</p></li>
+
+   <li><p><span>Collect a sequence of code points</span> that are <span>ASCII digits</span> from
+   <var>input</var> given <var>position</var>. If the collected sequence is not exactly two
+   characters long, then fail. Otherwise, interpret the resulting sequence as a base-ten integer.
+   Let <var>minute</var> be that number.</p></li>
+
+   <li>If <var>minute</var> is not a number in the range 0&nbsp;&le;&nbsp;<var>minute</var>&nbsp;&le;&nbsp;59, then fail.</li>
+
+   <li><p>Let <var>second</var> be 0.</p></li>
+
+   <li>
+    <p>If <var>position</var> is not beyond the end of <var>input</var> and the character at
+    <var>position</var> is U+003A (:):</p>
+
+    <ol>
+     <li><p>Advance <var>position</var> to the next character in <var>input</var>.</p></li>
+
+     <li><p>If <var>position</var> is beyond the end of <var>input</var>, or at
+     the last character in <var>input</var>, or if the next <em>two</em> characters in <var>input</var> starting at <var>position</var> are not both <span>ASCII
+     digits</span>, then fail.</p></li>
+
+     <li><p><span>Collect a sequence of code points</span> that are either <span>ASCII digits</span>
+     or U+002E FULL STOP characters from <var>input</var> given <var>position</var>. If the
+     collected sequence is three characters long, or if it is longer than three characters long and
+     the third character is not a U+002E FULL STOP character, or if it has more than one U+002E FULL
+     STOP character, then fail. Otherwise, interpret the resulting sequence as a base-ten number
+     (possibly with a fractional part). Set <var>second</var> to that number.</p></li>
+
+     <li><p>If <var>second</var> is not a number in the range
+     0&nbsp;&le;&nbsp;<var>second</var>&nbsp;&lt;&nbsp;60, then fail.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Return <var>hour</var>, <var>minute</var>, and <var>second</var>.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+
+  <h5>Local dates and times</h5>
+
+  <p>A <dfn data-x="concept-datetime-local">local date and time</dfn> consists of a specific
+  <span>proleptic-Gregorian date</span>, consisting of a year, a month, and a day, and a time,
+  consisting of an hour, a minute, a second, and a fraction of a second, but expressed without a
+  time zone. <ref>GREGORIAN</ref></p>
+
+  <div algorithm>
+  <p>A string is a <dfn>valid local date and time string</dfn> representing a date and time if it
+  consists of the following components in the given order:</p>
+
+  <ol>
+   <li>A <span>valid date string</span> representing the date</li>
+
+   <li>A U+0054 LATIN CAPITAL LETTER T character (T) or a U+0020 SPACE character</li>
+
+   <li>A <span>valid time string</span> representing the time</li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>A string is a <!--en-GB--><dfn id="valid-normalised-local-date-and-time-string">valid
+  normalized local date and time string</dfn> representing a date and time if it consists of the
+  following components in the given order:</p>
+
+  <ol>
+   <li>A <span>valid date string</span> representing the date</li>
+
+   <li>A U+0054 LATIN CAPITAL LETTER T character (T)</li>
+
+   <li>A <span>valid time string</span> representing the time, expressed as the shortest possible
+   string for the given time (e.g. omitting the seconds component entirely if the given time is zero
+   seconds past the minute)</li>
+  </ol>
+  </div>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The rules to <dfn>parse a local date and time string</dfn> are as follows. This will return
+  either a date and time, or nothing. If at any point the algorithm says that it "fails", this means
+  that it is aborted at that point and returns nothing.</p>
+
+  <ol>
+   <li><p>Let <var>input</var> be the string being parsed.</p></li>
+
+   <li><p>Let <var>position</var> be a pointer into <var>input</var>, initially
+   pointing at the start of the string.</p></li>
+
+   <li><p><span>Parse a date component</span> to obtain <var>year</var>, <var>month</var>, and <var>day</var>. If this returns nothing, then fail.</p>
+
+   <li><p>If <var>position</var> is beyond the end of <var>input</var> or if the
+   character at <var>position</var> is neither a U+0054 LATIN CAPITAL LETTER T character
+   (T) nor a U+0020 SPACE character, then fail. Otherwise, move <var>position</var>
+   forwards one character.</p></li>
+
+   <li><p><span>Parse a time component</span> to obtain <var>hour</var>, <var>minute</var>, and <var>second</var>. If this returns nothing, then fail.</p>
+
+   <li><p>If <var>position</var> is <em>not</em> beyond the end of <var>input</var>, then fail.</p></li>
+
+   <li><p>Let <var>date</var> be the date with year <var>year</var>, month <var>month</var>, and day <var>day</var>.</p></li>
+
+   <li><p>Let <var>time</var> be the time with hour <var>hour</var>, minute <var>minute</var>, and second <var>second</var>.</p></li>
+
+   <li><p>Return <var>date</var> and <var>time</var>.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+
+  <h5>Time zones</h5>
+
+  <p>A <dfn data-x="concept-timezone">time-zone offset</dfn> consists of a signed number of hours and
+  minutes.</p>
+
+  <div algorithm>
+  <p>A string is a <dfn>valid time-zone offset string</dfn> representing a time-zone offset if it
+  consists of either:</p>
+
+
+  <ul>
+   <li><p>A U+005A LATIN CAPITAL LETTER Z character (Z), allowed only if the time zone is
+   UTC</p></li>
+
+   <li>
+    <p>Or, the following components, in the given order:</p>
+
+    <ol>
+     <li>Either a U+002B PLUS SIGN character (+) or, if the time-zone offset is not zero, a U+002D
+     HYPHEN-MINUS character (-), representing the sign of the time-zone offset</li>
+     <!-- the -00:00 offset is disallowed because RFC3339 gives it a special semantic -->
+
+     <li>Two <span>ASCII digits</span>, representing the hours component <var>hour</var> of
+     the time-zone offset, in the range 0&nbsp;&le;&nbsp;<var>hour</var>&nbsp;&le;&nbsp;23</li>
+
+     <li>Optionally, a U+003A COLON character (:)</li>
+
+     <li>Two <span>ASCII digits</span>, representing the minutes component <var>minute</var> of the time-zone offset, in the range 0&nbsp;&le;&nbsp;<var>minute</var>&nbsp;&le;&nbsp;59</li>
+    </ol>
+   </li>
+  </ul>
+  </div>
+
+  <p class="note">This format allows for time-zone offsets from -23:59 to +23:59. Right now, in
+  practice, the range of offsets of actual time zones is -12:00 to +14:00, and the minutes component
+  of offsets of actual time zones is always either 00, 30, or 45. There is no guarantee that this
+  will remain so forever, however, since time zones are used as political footballs and are thus
+  subject to very whimsical policy decisions.</p>
+
+  <p class="note">See also the usage notes and examples in the <span data-x="concept-datetime">global
+  date and time</span> section below for details on using time-zone offsets with historical times
+  that predate the formation of formal time zones.</p>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The rules to <dfn>parse a time-zone offset string</dfn> are as follows. This will return either
+  a time-zone offset, or nothing. If at any point the algorithm says that it "fails", this means
+  that it is aborted at that point and returns nothing.</p>
+
+  <ol>
+   <li><p>Let <var>input</var> be the string being parsed.</p></li>
+
+   <li><p>Let <var>position</var> be a pointer into <var>input</var>, initially
+   pointing at the start of the string.</p></li>
+
+   <li><p><span>Parse a time-zone offset component</span> to obtain <var>timezone<sub>hours</sub></var> and <var>timezone<sub>minutes</sub></var>. If this
+   returns nothing, then fail.</p>
+
+   <li><p>If <var>position</var> is <em>not</em> beyond the end of <var>input</var>, then fail.</p></li>
+
+   <li><p>Return the time-zone offset that is <var>timezone<sub>hours</sub></var>
+   hours and <var>timezone<sub>minutes</sub></var> minutes from UTC.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The rules to <dfn>parse a time-zone offset component</dfn>, given an <var>input</var>
+  string and a <var>position</var>, are as follows. This will return either time-zone hours
+  and time-zone minutes, or nothing. If at any point the algorithm says that it "fails", this means
+  that it is aborted at that point and returns nothing.</p>
+
+  <ol>
+   <li>
+    <p>If the character at <var>position</var> is a U+005A LATIN CAPITAL LETTER Z character
+    (Z):</p>
+
+    <ol>
+     <li><p>Let <var>timezone<sub>hours</sub></var> be 0.</p></li>
+
+     <li><p>Let <var>timezone<sub>minutes</sub></var> be 0.</p></li>
+
+     <li><p>Advance <var>position</var> to the next character in <var>input</var>.</p></li>
+    </ol>
+
+    <p>Otherwise, if the character at <var>position</var> is either a U+002B PLUS SIGN (+)
+    or a U+002D HYPHEN-MINUS (-):</p>
+
+    <ol>
+     <li><p>If the character at <var>position</var> is a U+002B PLUS SIGN (+), let <var>sign</var> be "positive". Otherwise, it's a U+002D HYPHEN-MINUS (-); let <var>sign</var> be "negative".</p></li>
+
+     <li><p>Advance <var>position</var> to the next character in <var>input</var>.</p></li>
+
+     <li><p><span>Collect a sequence of code points</span> that are <span>ASCII digits</span> from
+     <var>input</var> given <var>position</var>. Let <var>s</var> be the collected
+     sequence.</p></li>
+
+     <li>
+      <p>If <var>s</var> is exactly two characters long:</p>
+
+      <ol>
+       <li><p>Interpret <var>s</var> as a base-ten integer. Let <var>timezone<sub>hours</sub></var> be that number.</p></li>
+
+       <li><p>If <var>position</var> is beyond the end of <var>input</var> or if
+       the character at <var>position</var> is not a U+003A COLON character, then fail.
+       Otherwise, move <var>position</var> forwards one character.</p></li>
+
+       <li><p><span>Collect a sequence of code points</span> that are <span>ASCII digits</span> from
+       <var>input</var> given <var>position</var>. If the collected sequence is not exactly two
+       characters long, then fail. Otherwise, interpret the resulting sequence as a base-ten
+       integer. Let <var>timezone<sub>minutes</sub></var> be that number.</p></li>
+      </ol>
+
+      <p>If <var>s</var> is exactly four characters long:</p>
+
+      <ol>
+       <li><p>Interpret the first two characters of <var>s</var> as a base-ten integer. Let
+       <var>timezone<sub>hours</sub></var> be that number.</p></li>
+
+       <li><p>Interpret the last two characters of <var>s</var> as a base-ten integer. Let
+       <var>timezone<sub>minutes</sub></var> be that number.</p></li>
+      </ol>
+
+      <p>Otherwise, fail.</p>
+     </li>
+
+     <li>If <var>timezone<sub>hours</sub></var> is not a number in the range
+     0&nbsp;&le;&nbsp;<var>timezone<sub>hours</sub></var>&nbsp;&le;&nbsp;23, then
+     fail.</li>
+
+     <li>If <var>sign</var> is "negative", then negate <var>timezone<sub>hours</sub></var>.</li>
+
+     <li>If <var>timezone<sub>minutes</sub></var> is not a number in the range
+     0&nbsp;&le;&nbsp;<var>timezone<sub>minutes</sub></var>&nbsp;&le;&nbsp;59,
+     then fail.</li>
+
+     <li>If <var>sign</var> is "negative", then negate <var>timezone<sub>minutes</sub></var>.</li>
+    </ol>
+
+    <p>Otherwise, fail.</p>
+   </li>
+
+   <li><p>Return <var>timezone<sub>hours</sub></var> and <var>timezone<sub>minutes</sub></var>.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+
+  <h5>Global dates and times</h5>
+
+  <p>A <dfn data-x="concept-datetime">global date and time</dfn> consists of a specific
+  <span>proleptic-Gregorian date</span>, consisting of a year, a month, and a day, and a time,
+  consisting of an hour, a minute, a second, and a fraction of a second, expressed with a time-zone
+  offset, consisting of a signed number of hours and minutes. <ref>GREGORIAN</ref></p>
+
+  <div algorithm>
+  <p>A string is a <dfn>valid global date and time string</dfn> representing a date, time, and a
+  time-zone offset if it consists of the following components in the given order:</p>
+
+  <ol>
+   <li>A <span>valid date string</span> representing the date</li>
+
+   <li>A U+0054 LATIN CAPITAL LETTER T character (T) or a U+0020 SPACE character</li>
+
+   <li>A <span>valid time string</span> representing the time</li>
+
+   <li>A <span>valid time-zone offset string</span> representing the time-zone offset</li>
+  </ol>
+  </div>
+
+  <p>Times in dates before the formation of UTC in the mid-twentieth century must be expressed and
+  interpreted in terms of UT1 (contemporary Earth solar time at the 0&deg; longitude), not UTC (the
+  approximation of UT1 that ticks in SI seconds). Time before the formation of time zones must be
+  expressed and interpreted as UT1 times with explicit time zones that approximate the contemporary
+  difference between the appropriate local time and the time observed at the location of Greenwich,
+  London.</p>
+
+  <div class="example">
+
+   <p>The following are some examples of dates written as <span data-x="valid global date and time
+   string">valid global date and time strings</span>.</p>
+
+   <dl>
+    <dt>"<code data-x="">0037-12-13 00:00Z</code>"</dt>
+
+    <dd>Midnight in areas using London time on the birthday of Nero (the Roman Emperor). See below
+    for further discussion on which date this actually corresponds to.</dd>
+
+    <dt>"<code data-x="">1979-10-14T12:00:00.001-04:00</code>"</dt>
+
+    <dd>One millisecond after noon on October 14th 1979, in the time zone in use on the east coast
+    of the USA during daylight saving time.</dd>
+
+    <dt>"<code data-x="">8592-01-01T02:09+02:09</code>"</dt>
+
+    <dd>Midnight UTC on the 1st of January, 8592. The time zone associated with that time is two
+    hours and nine minutes ahead of UTC, which is not currently a real time zone, but is nonetheless
+    allowed.</dd>
+   </dl>
+
+   <p>Several things are notable about these dates:</p>
+
+   <ul>
+    <li>Years with fewer than four digits have to be zero-padded. The date "37-12-13" would not be a
+    valid date.</li>
+
+    <li>If the "<code data-x="">T</code>" is replaced by a space, it must be a single space
+    character. The string "<code data-x="">2001-12-21&nbsp;&nbsp;12:00Z</code>" (with two spaces
+    between the components) would not be parsed successfully.</li>
+
+    <li>To unambiguously identify a moment in time prior to the introduction of the Gregorian
+    calendar (insofar as moments in time before the formation of UTC can be unambiguously
+    identified), the date has to be first converted to the Gregorian calendar from the calendar in
+    use at the time (e.g. from the Julian calendar). The date of Nero's birth is the 15th of
+    December 37, in the Julian Calendar, which is the 13th of December 37 in the <span>proleptic
+    Gregorian calendar</span>.</li> <!-- This might not be true. I can't find a reference that gives
+    his birthday with an explicit statement about the calendar being used. However, it seems
+    unlikely that it would be given in the Gregorian calendar, so I assume sites use the Julian one.
+    -->
+
+    <li>The time and time-zone offset components are not optional.</li>
+
+    <li>Dates before the year one can't be represented as a datetime in this version of HTML.</li>
+
+    <li>Times of specific events in ancient times are, at best, approximations, since time was not
+    well coordinated or measured until relatively recent decades.</li>
+
+    <li>Time-zone offsets differ based on daylight saving time.</li>
+   </ul>
+
+  </div>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The rules to <dfn>parse a global date and time string</dfn> are as follows. This will return
+  either a time in UTC, with associated time-zone offset information for roundtripping or display
+  purposes, or nothing. If at any point the algorithm says that it "fails", this means that it is
+  aborted at that point and returns nothing.</p>
+
+  <ol>
+   <li><p>Let <var>input</var> be the string being parsed.</p></li>
+
+   <li><p>Let <var>position</var> be a pointer into <var>input</var>, initially
+   pointing at the start of the string.</p></li>
+
+   <li><p><span>Parse a date component</span> to obtain <var>year</var>, <var>month</var>, and <var>day</var>. If this returns nothing, then fail.</p>
+
+   <li><p>If <var>position</var> is beyond the end of <var>input</var> or if the
+   character at <var>position</var> is neither a U+0054 LATIN CAPITAL LETTER T character
+   (T) nor a U+0020 SPACE character, then fail. Otherwise, move <var>position</var>
+   forwards one character.</p></li>
+
+   <li><p><span>Parse a time component</span> to obtain <var>hour</var>, <var>minute</var>, and <var>second</var>. If this returns nothing, then fail.</p>
+
+   <li><p>If <var>position</var> is beyond the end of <var>input</var>, then
+   fail.</p></li>
+
+   <li><p><span>Parse a time-zone offset component</span> to obtain <var>timezone<sub>hours</sub></var> and <var>timezone<sub>minutes</sub></var>. If this
+   returns nothing, then fail.</p>
+
+   <li><p>If <var>position</var> is <em>not</em> beyond the end of <var>input</var>, then fail.</p></li>
+
+   <li><p>Let <var>time</var> be the moment in time at year <var>year</var>, month
+   <var>month</var>, day <var>day</var>, hours <var>hour</var>, minute
+   <var>minute</var>, second <var>second</var>, subtracting <var>timezone<sub>hours</sub></var> hours and <var>timezone<sub>minutes</sub></var> minutes. That moment in time is a moment in the UTC time
+   zone.</p></li>
+
+   <li><p>Let <var>timezone</var> be <var>timezone<sub>hours</sub></var>
+   hours and <var>timezone<sub>minutes</sub></var> minutes from UTC.</p></li>
+
+   <li><p>Return <var>time</var> and <var>timezone</var>.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+
+  <h5>Weeks</h5>
+
+  <p>A <dfn data-x="concept-week">week</dfn> consists of a week-year number and a week number
+  representing a seven-day period starting on a Monday. Each week-year in this calendaring system
+  has either 52 or 53 such seven-day periods, as defined below. The seven-day period starting on the
+  Gregorian date Monday December 29th 1969 (1969-12-29) is defined as week number 1 in week-year
+  1970. Consecutive weeks are numbered sequentially. The week before the number 1 week in a
+  week-year is the last week in the previous week-year, and vice versa. <ref>GREGORIAN</ref></p>
+
+  <div algorithm>
+  <p>A week-year with a number <var>year</var> has 53 weeks if it corresponds to either a
+  year <var>year</var> in the <span>proleptic Gregorian calendar</span> that has a Thursday
+  as its first day (January 1st), or a year <var>year</var> in the <span>proleptic
+  Gregorian calendar</span> that has a Wednesday as its first day (January 1st) and where <var>year</var> is a number divisible by 400, or a number divisible by 4 but not by 100. All
+  other week-years have 52 weeks.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn>week number of the last day</dfn> of a week-year with 53 weeks is 53; the week number
+  of the last day of a week-year with 52 weeks is 52.</p>
+  </div>
+
+  <p class="note" var-scope>The week-year number of a particular day can be different than the number of the
+  year that contains that day in the <span>proleptic Gregorian calendar</span>. The first week in a
+  week-year <var>y</var> is the week that contains the first Thursday of the Gregorian year
+  <var>y</var>.</p>
+
+  <p class="note">For modern purposes, a <span data-x="concept-week">week</span> as defined here is
+  equivalent to ISO weeks as defined in ISO 8601. <ref>ISO8601</ref></p>
+
+  <div algorithm>
+  <p>A string is a <dfn>valid week string</dfn> representing a week-year <var>year</var>
+  and week <var>week</var> if it consists of the following components in the given
+  order:</p>
+
+  <ol>
+   <li>Four or more <span>ASCII digits</span>, representing <var>year</var>, where <var>year</var>&nbsp;&gt;&nbsp;0</li>
+
+   <li>A U+002D HYPHEN-MINUS character (-)</li>
+
+   <li>A U+0057 LATIN CAPITAL LETTER W character (W)</li>
+
+   <li>Two <span>ASCII digits</span>, representing the week <var>week</var>, in the range
+   1&nbsp;&le;&nbsp;<var>week</var>&nbsp;&le;&nbsp;<var>maxweek</var>, where <var>maxweek</var> is the <span>week number of the last day</span> of week-year <var>year</var></li>
+  </ol>
+  </div>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The rules to <dfn>parse a week string</dfn> are as follows. This will return either a week-year
+  number and week number, or nothing. If at any point the algorithm says that it "fails", this means
+  that it is aborted at that point and returns nothing.</p>
+
+  <ol>
+   <li><p>Let <var>input</var> be the string being parsed.</p></li>
+
+   <li><p>Let <var>position</var> be a pointer into <var>input</var>, initially
+   pointing at the start of the string.</p></li>
+
+   <li><p><span>Collect a sequence of code points</span> that are <span>ASCII digits</span> from
+   <var>input</var> given <var>position</var>. If the collected sequence is not at least four
+   characters long, then fail. Otherwise, interpret the resulting sequence as a base-ten integer.
+   Let <var>year</var> be that number.</p></li>
+
+   <li><p>If <var>year</var> is not a number greater than zero, then fail.</p></li>
+
+   <li><p>If <var>position</var> is beyond the end of <var>input</var> or if the
+   character at <var>position</var> is not a U+002D HYPHEN-MINUS character, then fail.
+   Otherwise, move <var>position</var> forwards one character.</p></li>
+
+   <li><p>If <var>position</var> is beyond the end of <var>input</var> or if the
+   character at <var>position</var> is not a U+0057 LATIN CAPITAL LETTER W character (W),
+   then fail. Otherwise, move <var>position</var> forwards one character.</p></li>
+
+   <li><p><span>Collect a sequence of code points</span> that are <span>ASCII digits</span> from
+   <var>input</var> given <var>position</var>. If the collected sequence is not exactly two
+   characters long, then fail. Otherwise, interpret the resulting sequence as a base-ten integer.
+   Let <var>week</var> be that number.</p></li>
+
+   <li><p>Let <var>maxweek</var> be the <span>week number of the last day</span> of year
+   <var>year</var>.</p></li>
+
+   <li><p>If <var>week</var> is not a number in the range 1&nbsp;&le;&nbsp;<var>week</var>&nbsp;&le;&nbsp;<var>maxweek</var>, then fail.</p></li>
+
+   <li><p>If <var>position</var> is <em>not</em> beyond the end of <var>input</var>, then fail.</p></li>
+
+   <li><p>Return the week-year number <var>year</var> and the week number <var>week</var>.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+
+  <h5>Durations</h5>
+
+  <!-- if you add support for year and month durations, then search for MONTHS throughout the spec
+  (not just this section) for things that have to change -->
+
+  <p>A <dfn data-x="concept-duration">duration</dfn> consists of <!--MONTHS: either a number of
+  months or--> a number of seconds.</p>
+
+  <p class="note">Since months and seconds are not comparable (a month is not a precise number of
+  seconds, but is instead a period whose exact length depends on the precise day from which it is
+  measured) a <span data-x="concept-duration">duration</span> as defined in this specification cannot
+  <!--MONTHS: consist of a mixture of both--> include months (or years, which are equivalent to
+  twelve months). Only durations that describe a specific number of seconds can be described.</p>
+
+  <div algorithm>
+  <p>A string is a <dfn>valid duration string</dfn> representing a <span
+  data-x="concept-duration">duration</span> <var>t</var> if it consists of either of the
+  following:</p>
+
+  <ul>
+   <li>
+    <!-- The ISO format -->
+
+    <!-- NOTE: ISO durations also have a number of formats we do not
+         consider conforming:
+
+         - a "week" format (e.g. P4W). This one is actually supported
+           by the parser.
+
+         - P<date>T<time>, with or without hyphens
+
+         - All these formats, with commas instead of periods for the
+           seconds decimal
+
+    -->
+
+    <p>A literal U+0050 LATIN CAPITAL LETTER P character followed by one or more of the following
+    subcomponents, in the order given, where <!--the number of years, if any, multiplied by twelve,
+    plus the number of months, if any, equals the number of months in <var>t</var>, if the
+    duration is in months; or, if it is in seconds, -->the number of days, hours, minutes, and
+    seconds corresponds to the same number of seconds as in <var>t</var>:</p>
+
+    <ol>
+<!--MONTHS:
+     <li><p>One or more <span>ASCII digits</span> followed by a U+0059 LATIN CAPITAL LETTER Y
+     character, representing a number of years.</p></li>
+
+     <li><p>One or more <span>ASCII digits</span> followed by a U+004D LATIN CAPITAL LETTER M
+     character, representing a number of months.</p></li>
+-->
+
+     <li><p>One or more <span>ASCII digits</span> followed by a U+0044 LATIN CAPITAL LETTER D
+     character, representing a number of days.</p></li>
+
+     <li>
+      <p>A U+0054 LATIN CAPITAL LETTER T character followed by one or more of the following
+      subcomponents, in the order given:</p>
+
+      <ol>
+       <li><p>One or more <span>ASCII digits</span> followed by a U+0048 LATIN CAPITAL LETTER H
+       character, representing a number of hours.</p></li>
+
+       <li><p>One or more <span>ASCII digits</span> followed by a U+004D LATIN CAPITAL LETTER M
+       character, representing a number of minutes.</p></li>
+
+       <li>
+        <p>The following components:</p>
+
+        <ol>
+         <li><p>One or more <span>ASCII digits</span>, representing a number of seconds.</p></li>
+
+         <li><p>Optionally, a U+002E FULL STOP character (.) followed by one, two, or three
+         <span>ASCII digits</span>, representing a fraction of a second.</p></li>
+
+         <li><p>A U+0053 LATIN CAPITAL LETTER S character.</p></li>
+        </ol>
+       </li>
+      </ol>
+     </li>
+    </ol>
+
+    <p class="note">This, as with a number of other date- and time-related microsyntaxes defined in
+    this specification, is based on one of the formats defined in ISO 8601. <ref>ISO8601</ref></p>
+   </li>
+
+   <li>
+    <p>One or more <span data-x="duration time component">duration time components</span>, each with
+    a different <span>duration time component scale</span>, in any order; the sum of the represented
+    seconds being equal to the number of seconds in <var>t</var>.</p>
+
+    <p>A <dfn>duration time component</dfn> is a string consisting of the following components:</p>
+
+    <ol>
+     <li><p>Zero or more <span>ASCII whitespace</span>.</p></li>
+
+     <li><p>One or more <span>ASCII digits</span>, representing a number of time units, scaled by
+     the <span>duration time component scale</span> specified (see below) to represent a number of
+     seconds.</p></li>
+
+     <li><p>If the <span>duration time component scale</span> specified is 1 (i.e. the units are
+     seconds), then, optionally, a U+002E FULL STOP character (.) followed by one, two, or three
+     <span>ASCII digits</span>, representing a fraction of a second.</p></li>
+
+     <li><p>Zero or more <span>ASCII whitespace</span>.</p></li>
+
+     <li>
+      <p>One of the following characters, representing the <dfn>duration time component scale</dfn>
+      of the time unit used in the numeric part of the <span>duration time component</span>:</p>
+
+      <dl>
+       <dt>U+0057 LATIN CAPITAL LETTER W character</dt>
+       <dt>U+0077 LATIN SMALL LETTER W character</dt>
+
+       <dd>Weeks. The scale is 604800.</dd>
+
+       <dt>U+0044 LATIN CAPITAL LETTER D character</dt>
+       <dt>U+0064 LATIN SMALL LETTER D character</dt>
+
+       <dd>Days. The scale is 86400.</dd>
+
+       <dt>U+0048 LATIN CAPITAL LETTER H character</dt>
+       <dt>U+0068 LATIN SMALL LETTER H character</dt>
+
+       <dd>Hours. The scale is 3600.</dd>
+
+       <dt>U+004D LATIN CAPITAL LETTER M character</dt>
+       <dt>U+006D LATIN SMALL LETTER M character</dt>
+
+       <dd>Minutes. The scale is 60.</dd>
+
+       <dt>U+0053 LATIN CAPITAL LETTER S character</dt>
+       <dt>U+0073 LATIN SMALL LETTER S character</dt>
+
+       <dd>Seconds. The scale is 1.</dd>
+      </dl>
+     </li>
+
+     <li><p>Zero or more <span>ASCII whitespace</span>.</p></li>
+    </ol>
+
+    <p class="note">This is not based on any of the formats in ISO 8601. It is intended to be a more
+    human-readable alternative to the ISO 8601 duration format.</p>
+   </li>
+  </ul>
+  </div>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The rules to <dfn>parse a duration string</dfn> are as follows. This will return either a <span
+  data-x="concept-duration">duration</span> or nothing. If at any point the algorithm says that it
+  "fails", this means that it is aborted at that point and returns nothing.</p>
+
+  <ol>
+   <!--MONTHS: this algorithm actually already parses months adequately, though it would need
+   tweaking if we introduced a "mo" unit for the non-ISO variant. See other "MONTHS" annotations
+   below. -->
+
+   <li><p>Let <var>input</var> be the string being parsed.</p></li>
+
+   <li><p>Let <var>position</var> be a pointer into <var>input</var>, initially
+   pointing at the start of the string.</p></li>
+
+   <li><p>Let <var>months</var>, <var>seconds</var>, and <var>component
+   count</var> all be zero.</p></li>
+
+   <li>
+    <p>Let <var>M-disambiguator</var> be <i>minutes</i>.</p>
+
+    <!--MONTHS: this note would change-->
+    <p class="note">This flag's other value is <i>months</i>. It is used to disambiguate the "M"
+    unit in ISO8601 durations, which use the same unit for months and minutes. Months are not
+    allowed, but are parsed for future compatibility and to avoid misinterpreting ISO8601 durations
+    that would be valid in other contexts.</p>
+   </li>
+
+   <li><p><span>Skip ASCII whitespace</span> within <var>input</var> given
+   <var>position</var>.</p></li>
+
+   <li><p>If <var>position</var> is past the end of <var>input</var>, then
+   fail.</p></li>
+
+   <li><p>If the character in <var>input</var> pointed to by <var>position</var> is a U+0050 LATIN
+   CAPITAL LETTER P character, then advance <var>position</var> to the next character, set
+   <var>M-disambiguator</var> to <i>months</i>, and <span>skip ASCII whitespace</span> within
+   <var>input</var> given <var>position</var>.</p></li>
+
+   <li>
+    <p>While true:</p>
+
+    <ol>
+     <li><p>Let <var>units</var> be undefined. It will be assigned one of the following
+     values: <i>years</i>, <i>months</i>, <i>weeks</i>, <i>days</i>, <i>hours</i>, <i>minutes</i>,
+     and <i>seconds</i>.</p></li>
+
+     <li><p>Let <var>next character</var> be undefined. It is used to process characters
+     from the <var>input</var>.</p></li>
+
+     <li><p>If <var>position</var> is past the end of <var>input</var>, then break.</p></li>
+
+     <li><p>If the character in <var>input</var> pointed to by <var>position</var> is a U+0054 LATIN
+     CAPITAL LETTER T character, then advance <var>position</var> to the next character, set
+     <var>M-disambiguator</var> to <i>minutes</i>, <span>skip ASCII whitespace</span> within
+     <var>input</var> given <var>position</var>, and <span>continue</span>.</p></li>
+
+     <li><p>Set <var>next character</var> to the character in <var>input</var>
+     pointed to by <var>position</var>.</p></li>
+
+     <li>
+      <p>If <var>next character</var> is a U+002E FULL STOP character (.), then let <var>N</var> be 0. (Do not advance <var>position</var>. That is taken care
+      of below.)</p>
+
+      <p>Otherwise, if <var>next character</var> is an <span data-x="ASCII digits">ASCII
+      digit</span>, then <span>collect a sequence of code points</span> that are <span>ASCII
+      digits</span> from <var>input</var> given <var>position</var>, interpret the resulting
+      sequence as a base-ten integer, and let <var>N</var> be that number.</p>
+
+      <p>Otherwise, <var>next character</var> is not part of a number; fail.</p>
+     </li>
+
+     <li><p>If <var>position</var> is past the end of <var>input</var>, then
+     fail.</p></li>
+
+     <li><p>Set <var>next character</var> to the character in <var>input</var>
+     pointed to by <var>position</var>, and this time advance <var>position</var>
+     to the next character. (If <var>next character</var> was a U+002E FULL STOP character
+     (.) before, it will still be that character this time.)</p></li>
+
+     <li>
+      <p>If <var>next character</var> is U+002E (.):</p>
+
+      <ol>
+       <li><p><span>Collect a sequence of code points</span> that are <span>ASCII digits</span> from
+       <var>input</var> given <var>position</var>. Let <var>s</var> be the resulting
+       sequence.</p></li>
+
+       <li><p>If <var>s</var> is the empty string, then fail.</p></li>
+
+       <li><p>Let <var>length</var> be the number of characters in <var>s</var>.</p></li>
+
+       <li><p>Let <var>fraction</var> be the result of interpreting <var>s</var>
+       as a base-ten integer, and then dividing that number by <span data-x="">10<sup><var>length</var></sup></span>.</li>
+
+       <li><p>Increment <var>N</var> by <var>fraction</var>.</p></li>
+
+       <li><p><span>Skip ASCII whitespace</span> within <var>input</var> given
+       <var>position</var>.</p></li>
+
+       <li><p>If <var>position</var> is past the end of <var>input</var>, then
+       fail.</p></li>
+
+       <li><p>Set <var>next character</var> to the character in <var>input</var>
+       pointed to by <var>position</var>, and advance <var>position</var> to the
+       next character.</p></li>
+
+       <li><p>If <var>next character</var> is neither a U+0053 LATIN CAPITAL LETTER S
+       character nor a U+0073 LATIN SMALL LETTER S character, then fail.</p></li>
+
+       <li><p>Set <var>units</var> to <i>seconds</i>.</p></li>
+      </ol>
+
+      <p>Otherwise:</p>
+
+      <ol>
+       <li><p>If <var>next character</var> is <span>ASCII whitespace</span>, then <span>skip ASCII
+       whitespace</span> within <var>input</var> given <var>position</var>, set <var>next
+       character</var> to the character in <var>input</var> pointed to by <var>position</var>, and
+       advance <var>position</var> to the next character.</p></li>
+
+       <li>
+        <!--MONTHS: this would probably be where we would add more
+        logic to support a new unit like 'mo' -->
+
+        <p>If <var>next character</var> is a U+0059 LATIN CAPITAL LETTER Y character, or a
+        U+0079 LATIN SMALL LETTER Y character, set <var>units</var> to <i>years</i> and set
+        <var>M-disambiguator</var> to <i>months</i>.</p>
+
+        <p>If <var>next character</var> is a U+004D LATIN CAPITAL LETTER M character or a
+        U+006D LATIN SMALL LETTER M character, and <var>M-disambiguator</var> is
+        <i>months</i>, then set <var>units</var> to <i>months</i>.</p>
+
+        <p>If <var>next character</var> is a U+0057 LATIN CAPITAL LETTER W character or a
+        U+0077 LATIN SMALL LETTER W character, set <var>units</var> to <i>weeks</i> and set
+        <var>M-disambiguator</var> to <i>minutes</i>.</p>
+
+        <p>If <var>next character</var> is a U+0044 LATIN CAPITAL LETTER D character or a
+        U+0064 LATIN SMALL LETTER D character, set <var>units</var> to <i>days</i> and set
+        <var>M-disambiguator</var> to <i>minutes</i>.</p>
+
+        <p>If <var>next character</var> is a U+0048 LATIN CAPITAL LETTER H character or a
+        U+0068 LATIN SMALL LETTER H character, set <var>units</var> to <i>hours</i> and set
+        <var>M-disambiguator</var> to <i>minutes</i>.</p>
+
+        <p>If <var>next character</var> is a U+004D LATIN CAPITAL LETTER M character or a
+        U+006D LATIN SMALL LETTER M character, and <var>M-disambiguator</var> is
+        <i>minutes</i>, then set <var>units</var> to <i>minutes</i>.</p>
+
+        <p>If <var>next character</var> is a U+0053 LATIN CAPITAL LETTER S character or a
+        U+0073 LATIN SMALL LETTER S character, set <var>units</var> to <i>seconds</i> and
+        set <var>M-disambiguator</var> to <i>minutes</i>.</p>
+
+        <p>Otherwise, if <var>next character</var> is none of the above characters, then
+        fail.</p>
+       </li>
+      </ol>
+     </li>
+
+     <li><p>Increment <var>component count</var>.</p></li>
+
+     <li><p>Let <var>multiplier</var> be 1.</p></li>
+
+     <li><p>If <var>units</var> is <i>years</i>, multiply <var>multiplier</var> by
+     12 and set <var>units</var> to <i>months</i>.</p></li>
+
+     <li>
+      <p>If <var>units</var> is <i>months</i>, add the product of <var>N</var> and
+      <var>multiplier</var> to <var>months</var>.</p>
+
+      <p>Otherwise:</p>
+
+      <ol>
+       <li><p>If <var>units</var> is <i>weeks</i>, multiply <var>multiplier</var>
+       by 7 and set <var>units</var> to <i>days</i>.</p></li>
+
+       <li><p>If <var>units</var> is <i>days</i>, multiply <var>multiplier</var>
+       by 24 and set <var>units</var> to <i>hours</i>.</p></li>
+
+       <li><p>If <var>units</var> is <i>hours</i>, multiply <var>multiplier</var>
+       by 60 and set <var>units</var> to <i>minutes</i>.</p></li>
+
+       <li><p>If <var>units</var> is <i>minutes</i>, multiply <var>multiplier</var> by 60 and set <var>units</var> to <i>seconds</i>.</p></li>
+
+       <li><p>Forcibly, <var>units</var> is now <i>seconds</i>. Add the product of <var>N</var> and <var>multiplier</var> to <var>seconds</var>.</p></li>
+      </ol>
+     </li>
+
+     <li><p><span>Skip ASCII whitespace</span> within <var>input</var> given
+     <var>position</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>If <var>component count</var> is zero,
+   fail.</p></li>
+
+   <!--MONTHS: if we add month support this is where you'd return them-->
+   <li><p>If <var>months</var> is not zero, fail.</p></li>
+
+   <li><p>Return the <span data-x="concept-duration">duration</span> consisting of <var>seconds</var> seconds.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+
+  <h5>Vaguer moments in time</h5>
+
+  <div algorithm>
+  <p>A string is a <dfn>valid date string with optional time</dfn> if
+  it is also one of the following:</p>
+
+  <ul>
+   <li>A <span>valid date string</span></li>
+
+   <li>A <span>valid global date and time string</span></li>
+  </ul>
+  </div>
+
+  <div w-nodev>
+
+  <hr>
+
+  <div algorithm>
+  <p>The rules to <dfn>parse a date or time string</dfn> are as follows. The algorithm will return
+  either a <span data-x="concept-date">date</span>, a <span data-x="concept-time">time</span>, a <span
+  data-x="concept-datetime">global date and time</span>, or nothing. If at any point the algorithm
+  says that it "fails", this means that it is aborted at that point and returns nothing.</p>
+
+  <ol>
+   <li><p>Let <var>input</var> be the string being parsed.</p></li>
+
+   <li><p>Let <var>position</var> be a pointer into <var>input</var>, initially
+   pointing at the start of the string.</p></li>
+
+   <li><p>Set <var>start position</var> to the same position as <var>position</var>.</p></li>
+
+   <li><p>Set the <var>date present</var> and <var>time present</var> flags to
+   true.</p></li>
+
+   <li><p><span>Parse a date component</span> to obtain <var>year</var>, <var>month</var>, and <var>day</var>. If this fails, then set the <var>date
+   present</var> flag to false.</p>
+
+   <li>
+    <p>If <var>date present</var> is true, and <var>position</var> is not beyond
+    the end of <var>input</var>, and the character at <var>position</var> is
+    either a U+0054 LATIN CAPITAL LETTER T character (T) or a U+0020 SPACE character, then advance
+    <var>position</var> to the next character in <var>input</var>.</p>
+
+    <p>Otherwise, if <var>date present</var> is true, and either <var>position</var> is beyond the end of <var>input</var> or the character at <var>position</var> is neither a U+0054 LATIN CAPITAL LETTER T character (T) nor a U+0020
+    SPACE character, then set <var>time present</var> to false.</p>
+
+    <p>Otherwise, if <var>date present</var> is false, set <var>position</var>
+    back to the same position as <var>start position</var>.</p>
+   </li>
+
+   <li><p>If the <var>time present</var> flag is true, then <span>parse a time
+   component</span> to obtain <var>hour</var>, <var>minute</var>, and <var>second</var>. If this returns nothing, then fail.</p></li>
+
+   <li><p>If the <var>date present</var> and <var>time present</var> flags are
+   both true, but <var>position</var> is beyond the end of <var>input</var>, then
+   fail.</p></li>
+
+   <li><p>If the <var>date present</var> and <var>time present</var> flags are
+   both true, <span>parse a time-zone offset component</span> to obtain <var>timezone<sub>hours</sub></var> and <var>timezone<sub>minutes</sub></var>. If this
+   returns nothing, then fail.</p>
+
+   <li><p>If <var>position</var> is <em>not</em> beyond the end of <var>input</var>, then fail.</p></li>
+
+   <li>
+    <p>If the <var>date present</var> flag is true and the <var>time present</var>
+    flag is false, then let <var>date</var> be the date with year <var>year</var>,
+    month <var>month</var>, and day <var>day</var>, and return <var>date</var>.</p>
+
+    <p>Otherwise, if the <var>time present</var> flag is true and the <var>date
+    present</var> flag is false, then let <var>time</var> be the time with hour <var>hour</var>, minute <var>minute</var>, and second <var>second</var>,
+    and return <var>time</var>.</p>
+
+    <p>Otherwise, let <var>time</var> be the moment in time at year <var>year</var>, month <var>month</var>, day <var>day</var>, hours <var>hour</var>, minute <var>minute</var>, second <var>second</var>,
+    subtracting <var>timezone<sub>hours</sub></var> hours and <var>timezone<sub>minutes</sub></var> minutes, that moment in time being a moment
+    in the UTC time zone; let <var>timezone</var> be <var>timezone<sub>hours</sub></var> hours and <var>timezone<sub>minutes</sub></var>
+    minutes from UTC; and return <var>time</var> and <var>timezone</var>.</p>
+   </li>
+  </ol>
+  </div>
+
+  </div>
+
+
+  <div w-nodev>
+

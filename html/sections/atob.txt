@@ -1,0 +1,66 @@
+WHATWG HTML — section atob — Base64 utility methods
+
+  <h3 id="atob">Base64 utility methods</h3>
+
+  <p>The <code data-x="dom-atob">atob()</code> and <code data-x="dom-btoa">btoa()</code> methods
+  allow developers to transform content to and from the base64 encoding.</p>
+
+  <p class="note">In these APIs, for mnemonic purposes, the "b" can be considered to stand for
+  "binary", and the "a" for "ASCII". In practice, though, for primarily historical reasons, both the
+  input and output of these functions are Unicode strings.</p>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>result</var> = self.<span subdfn data-x="dom-btoa">btoa</span>(<var>data</var>)</code></dt>
+
+   <dd>
+    <p>Takes the input data, in the form of a Unicode string containing only characters in the range
+    U+0000 to U+00FF, each representing a binary byte with values 0x00 to 0xFF respectively, and
+    converts it to its base64 representation, which it returns.</p>
+
+    <p>Throws an <span>"<code>InvalidCharacterError</code>"</span> <code>DOMException</code>
+    if the input string contains any out-of-range characters.</p>
+   </dd>
+
+   <dt><code data-x=""><var>result</var> = self.<span subdfn data-x="dom-atob">atob</span>(<var>data</var>)</code></dt>
+
+   <dd>
+    <p>Takes the input data, in the form of a Unicode string containing base64-encoded binary data,
+    decodes it, and returns a string consisting of characters in the range U+0000 to U+00FF, each
+    representing a binary byte with values 0x00 to 0xFF respectively, corresponding to that binary
+    data.</p>
+
+    <p>Throws an <span>"<code>InvalidCharacterError</code>"</span> <code>DOMException</code> if the
+    input string is not valid base64 data.</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn method for="WindowOrWorkerGlobalScope" data-x="dom-btoa"><code
+  id="dom-windowbase64-btoa">btoa(<var>data</var>)</code></dfn> method must throw an
+  <span>"<code>InvalidCharacterError</code>"</span> <code>DOMException</code> if <var>data</var>
+  contains any character whose code point is greater than U+00FF. Otherwise, the user agent must
+  convert <var>data</var> to a byte sequence whose <var>n</var>th byte is the eight-bit
+  representation of the <var>n</var>th code point of <var>data</var>, and then must apply
+  <span>forgiving-base64 encode</span> to that byte sequence and return the result.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="WindowOrWorkerGlobalScope" data-x="dom-atob"><code
+  id="dom-windowbase64-atob">atob(<var>data</var>)</code></dfn> method steps are:</p>
+
+  <ol>
+   <li><p>Let <var>decodedData</var> be the result of running <span>forgiving-base64 decode</span>
+   on <var>data</var>.</p></li>
+
+   <li><p>If <var>decodedData</var> is failure, then throw an
+   <span>"<code>InvalidCharacterError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>Return <var>decodedData</var>.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+

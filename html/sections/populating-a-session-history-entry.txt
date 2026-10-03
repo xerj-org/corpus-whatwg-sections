@@ -1,0 +1,1258 @@
+WHATWG HTML — section populating-a-session-history-entry — <span id="history-traversal"></span><span id="traverse-the-history"></span>Populating a session history entry
+
+  <h4><span id="history-traversal"></span><span id="traverse-the-history"></span>Populating a session history entry</h4>
+
+  <p>As explained in <a href="#history">the overview</a>, both <a
+  href="#navigating-across-documents">navigation</a> and <a
+  href="#reloading-and-traversing">traversal</a> involve creating a <span>session history
+  entry</span> and then attempting to populate its <span data-x="she-document">document</span>
+  member, so that it can be presented inside the <span>navigable</span>.</p>
+
+  <p>This involves either: using <a href="#note-navigate-called-with-response">an already-given
+  response</a>; using the <span data-x="document-state-resource">srcdoc resource</span> stored in
+  the <span>session history entry</span>; or <span data-x="create navigation params by
+  fetching">fetching</span>. The process has several failure modes, which can either result in
+  doing nothing (leaving the <span>navigable</span> on its currently-<span
+  data-x="nav-document">active</span> <code>Document</code>) or can result in populating the
+  <span>session history entry</span> with an <span data-x="navigate-ua-inline">error
+  document</span>.</p>
+
+  <div algorithm>
+  <p>To <dfn>attempt to populate the history entry's document</dfn> for a <span>session history
+  entry</span> <var>entry</var>, given a <span>navigable</span> <var>navigable</var>, a
+  <code>NavigationTimingType</code> <var>navTimingType</var>, a <span>source snapshot params</span>
+  <var>sourceSnapshotParams</var>, a <span>target snapshot params</span>
+  <var>targetSnapshotParams</var>, a <span>user navigation involvement</span>
+  <var>userInvolvement</var>, an optional <span>navigation ID</span>-or-null <var>navigationId</var>
+  (default null), an optional <span>navigation params</span>-or-null <var>navigationParams</var>
+  (default null), an optional string <var>cspNavigationType</var> (default "<code
+  data-x="">other</code>"), an optional boolean <dfn
+  data-x="attempt-to-populate-allow-post"><var>allowPOST</var></dfn> (default false), and optional
+  algorithm steps <dfn
+  data-x="attempt-to-populate-completion-steps"><var>completionSteps</var></dfn> (default an empty
+  algorithm):</p>
+
+  <ol>
+   <li><p><span>Assert</span>: this is running <span>in parallel</span>.</p></li>
+
+   <li><p><span>Assert</span>: if <var>navigationParams</var> is non-null, then
+   <var>navigationParams</var>'s <span data-x="navigation-params-response">response</span> is
+   non-null.</p></li>
+
+   <li><p>Let <var>documentResource</var> be <var>entry</var>'s <span
+   data-x="she-document-state">document state</span>'s <span
+   data-x="document-state-resource">resource</span>.</p></li>
+
+   <li>
+    <p>If <var>navigationParams</var> is null:</p>
+
+    <ol>
+     <li><p>If <var>documentResource</var> is a string, then set <var>navigationParams</var> to the
+     result of <span data-x="create navigation params from a srcdoc resource">creating navigation
+     params from a srcdoc resource</span> given <var>entry</var>, <var>navigable</var>,
+     <var>targetSnapshotParams</var>, <var>userInvolvement</var>, <var>navigationId</var>, and
+     <var>navTimingType</var>.</p></li>
+
+     <li>
+      <p>Otherwise, if all of the following are true:
+
+      <ul>
+       <li><p><var>entry</var>'s <span data-x="she-url">URL</span>'s <span
+       data-x="concept-url-scheme">scheme</span> is a <span>fetch scheme</span>; and</p></li>
+
+       <li><p><var>documentResource</var> is null, or <var>allowPOST</var> is true and
+       <var>documentResource</var>'s <span data-x="post-resource-request-body">request body</span>
+       is not failure,</p></li>
+      </ul>
+
+      <p>then set <var>navigationParams</var> to the result of <span data-x="create navigation
+      params by fetching">creating navigation params by fetching</span> given <var>entry</var>,
+      <var>navigable</var>, <var>sourceSnapshotParams</var>, <var>targetSnapshotParams</var>,
+      <var>cspNavigationType</var>, <var>userInvolvement</var>, <var>navigationId</var>, and
+      <var>navTimingType</var>.</p>
+     </li>
+
+     <li>
+      <p>Otherwise, if <var>entry</var>'s <span data-x="she-url">URL</span>'s <span
+      data-x="concept-url-scheme">scheme</span> is not a <span>fetch scheme</span>, then set
+      <var>navigationParams</var> to a new <span>non-fetch scheme navigation params</span>,
+      with</p>
+
+      <dl class="props">
+       <dt><span data-x="non-fetch-scheme-params-id">id</span></dt>
+       <dd><var>navigationId</var></dd>
+
+       <dt><span data-x="non-fetch-scheme-params-navigable">navigable</span></dt>
+       <dd><var>navigable</var></dd>
+
+       <dt><span data-x="non-fetch-scheme-params-url">URL</span></dt>
+       <dd><var>entry</var>'s <span data-x="she-url">URL</span></dd>
+
+       <dt><span data-x="non-fetch-scheme-params-target-sandbox">target snapshot sandboxing flags</span></dt>
+       <dd><var>targetSnapshotParams</var>'s <span
+       data-x="target-snapshot-params-sandbox">sandboxing flags</span></dd>
+
+       <dt><span data-x="non-fetch-scheme-params-source-activation">source snapshot has transient activation</span></dt>
+       <dd><var>sourceSnapshotParams</var>'s <span data-x="source-snapshot-params-activation">has
+       transient activation</span></dd>
+
+       <dt><span data-x="non-fetch-scheme-params-initiator-origin">initiator origin</span></dt>
+       <dd><var>entry</var>'s <span data-x="she-document-state">document state</span>'s <span
+       data-x="document-state-initiator-origin">initiator origin</span></dd>
+
+       <dt><span data-x="non-fetch-scheme-params-nav-timing-type">navigation timing type</span></dt>
+       <dd><var>navTimingType</var></dd>
+
+       <dt><span data-x="non-fetch-scheme-params-user-involvement">user involvement</span></dt>
+       <dd><var>userInvolvement</var></dd>
+      </dl>
+     </li>
+    </ol>
+   </li>
+
+   <li id="process-a-navigate-response">
+    <p><span>Queue a global task</span> on the <span>navigation and traversal task source</span>,
+    given <var>navigable</var>'s <span>active window</span>, to run these steps:</p>
+
+    <ol>
+     <li><p>If <var>navigable</var>'s <span>ongoing navigation</span> no longer equals
+     <var>navigationId</var>, then run <var>completionSteps</var> and abort these steps.</p></li>
+
+     <li>
+      <p>Let <var>saveExtraDocumentState</var> be true.</p>
+
+      <div class="note">
+       <p>Usually, in the cases where we end up populating <var>entry</var>'s <span
+       data-x="she-document-state">document state</span>'s <span
+       data-x="document-state-document">document</span>, we then want to save some of the state
+       from that <code>Document</code> into <var>entry</var>. This ensures that if there are future
+       traversals to <var>entry</var> where its <span
+       data-x="document-state-document">document</span> <a href="#note-bfcache">has been
+       destroyed</a>, we can use that state when creating a new <code>Document</code>.</p>
+
+       <p>However, in some specific cases, saving the state would be unhelpful. For those, we set
+       <var>saveExtraDocumentState</var> to false later in this algorithm.</p>
+      </div>
+     </li>
+
+     <li>
+      <p>If <var>navigationParams</var> is a <span>non-fetch scheme navigation params</span>:</p>
+
+      <ol>
+       <li>
+        <p>Set <var>entry</var>'s <span data-x="she-document-state">document state</span>'s <span
+        data-x="document-state-document">document</span> to the result of running <span>attempt to
+        create a non-fetch scheme document</span> given <var>navigationParams</var>.</p>
+
+        <p class="note">This can result in setting <var>entry</var>'s <span
+        data-x="she-document-state">document state</span>'s <span
+        data-x="document-state-document">document</span> to null, e.g., when <span data-x="hand-off
+        to external software">handing-off to external software</span>.</p>
+       </li>
+
+       <li><p>Set <var>saveExtraDocumentState</var> to false.</p></li>
+     </ol>
+     </li>
+
+     <li>
+      <p>Otherwise, if any of the following are true:</p>
+
+      <ul>
+       <li><p><var>navigationParams</var> is null;</p></li>
+
+       <li><p>the result of <span>should navigation response to navigation request of type in
+       target be blocked by Content Security Policy?</span> given <var>navigationParams</var>'s
+       <span data-x="navigation-params-request">request</span>, <var>navigationParams</var>'s <span
+       data-x="navigation-params-response">response</span>, <var>navigationParams</var>'s <span
+       data-x="navigation-params-policy-container">policy container</span>'s <span
+       data-x="policy-container-csp-list">CSP list</span>, <var>cspNavigationType</var>, and
+       <var>navigable</var> is "<code data-x="">Blocked</code>";</p></li>
+
+       <li><p><var>navigationParams</var>'s <span
+       data-x="navigation-params-reserved-environment">reserved environment</span> is non-null and
+       the result of <span data-x="check a navigation response's adherence to its embedder
+       policy">checking a navigation response's adherence to its embedder policy</span> given
+       <var>navigationParams</var>'s <span data-x="navigation-params-response">response</span>,
+       <var>navigable</var>, and <var>navigationParams</var>'s <span
+       data-x="navigation-params-policy-container">policy container</span>'s <span
+       data-x="policy-container-embedder-policy">embedder policy</span> is false; or </p></li>
+
+       <li><p>the result of <span data-x="check a navigation response's adherence to
+       `X-Frame-Options`">checking a navigation response's adherence to
+       `<code>X-Frame-Options</code>`</span> given <var>navigationParams</var>'s <span
+       data-x="navigation-params-response">response</span>, <var>navigable</var>,
+       <var>navigationParams</var>'s <span data-x="navigation-params-policy-container">policy
+       container</span>'s <span data-x="policy-container-csp-list">CSP list</span>, and
+       <var>navigationParams</var>'s <span data-x="navigation-params-origin">origin</span> is
+       false,</p></li>
+      </ul>
+
+      <p>then:</p>
+
+      <ol>
+       <li><p>Set <var>entry</var>'s <span data-x="she-document-state">document state</span>'s
+       <span data-x="document-state-document">document</span> to the result of <span
+       data-x="navigate-ua-inline">creating a document for inline content that doesn't have a
+       DOM</span>, given <var>navigable</var>, null, <var>navTimingType</var>, and
+       <var>userInvolvement</var>. The inline content should indicate to the user the sort of error
+       that occurred.</p></li>
+
+       <li><p><span>Make document unsalvageable</span> given <var>entry</var>'s <span
+       data-x="she-document-state">document state</span>'s <span
+       data-x="document-state-document">document</span> and "<code
+       data-x="blocking-navigation-failure">navigation-failure</code>".</p></li>
+
+       <li><p>Set <var>saveExtraDocumentState</var> to false.</p></li>
+
+       <li>
+        <p>If <var>navigationParams</var> is not null:</p>
+
+        <ol>
+         <li><p>Run the <span data-x="environment discarding steps">environment discarding
+         steps</span> for <var>navigationParams</var>'s <span
+         data-x="navigation-params-reserved-environment">reserved environment</span>.</p></li>
+
+         <li><p>Invoke <span>WebDriver BiDi navigation failed</span> with <var>navigable</var> and a
+         new <span>WebDriver BiDi navigation status</span> whose <span
+         data-x="navigation-status-id">id</span> is <var>navigationId</var>, <span
+         data-x="navigation-status-status">status</span> is "<code
+         data-x="navigation-status-canceled">canceled</code>", and <span
+         data-x="navigation-status-url">url</span> is <var>navigationParams</var>'s <span
+         data-x="navigation-params-response">response</span>'s <span
+         data-x="concept-response-url">URL</span>.</p></li>
+        </ol>
+       </li>
+      </ol>
+     </li>
+
+     <li id="navigation-as-a-download">
+      <p>Otherwise, if <var>navigationParams</var>'s <span
+      data-x="navigation-params-response">response</span> has a `<code
+      data-x="http-content-disposition">Content-Disposition</code>` header specifying the <code
+      data-x="">attachment</code> disposition type:</p>
+
+      <ol>
+       <li><p>Let <var>sourceAllowsDownloading</var> be <var>sourceSnapshotParams</var>'s <span
+       data-x="source-snapshot-params-download">allows downloading</span>.</p></li>
+
+       <li><p>Let <var>targetAllowsDownloading</var> be false if <var>navigationParams</var>'s
+       <span data-x="navigation-params-sandboxing">final sandboxing flag set</span> has the
+       <span>sandboxed downloads browsing context flag</span> set; otherwise true.</p></li>
+
+       <li><p>Let <var>uaAllowsDownloading</var> be true.</p></li>
+
+       <li><p>Optionally, the user agent may set <var>uaAllowsDownloading</var> to false, if it
+       believes doing so would safeguard the user from a potentially hostile download.</p></li>
+
+       <li>
+        <p>If <var>sourceAllowsDownloading</var>, <var>targetAllowsDownloading</var>, and
+        <var>uaAllowsDownloading</var> are true:</p>
+
+        <ol>
+         <li><p><span data-x="handle as a download">Handle as a download</span>
+         <var>navigationParams</var>'s <span data-x="navigation-params-response">response</span>
+         with <var>navigable</var> and <var>navigationId</var>.</p></li>
+        </ol>
+       </li>
+      </ol>
+
+      <p class="note">This branch leaves <var>entry</var>'s <span
+      data-x="she-document-state">document state</span>'s <span
+      data-x="document-state-document">document</span> as null.</p>
+     </li>
+
+     <li>
+      <p>Otherwise, if <var>navigationParams</var>'s <span
+      data-x="navigation-params-response">response</span>'s <span
+      data-x="concept-response-status">status</span> is not 204 and is not 205, then set
+      <var>entry</var>'s <span data-x="she-document-state">document state</span>'s <span
+      data-x="document-state-document">document</span> to the result of <span>loading a
+      document</span> given <var>navigationParams</var>, <var>sourceSnapshotParams</var>, and
+      <var>entry</var>'s <span data-x="she-document-state">document state</span>'s <span
+      data-x="document-state-initiator-origin">initiator origin</span>.</p>
+
+      <p class="note">This can result in setting <var>entry</var>'s <span
+      data-x="she-document-state">document state</span>'s <span
+      data-x="document-state-document">document</span> to null, e.g., when <span data-x="hand-off
+      to external software">handing-off to external software</span>.</p>
+     </li>
+
+     <li>
+      <p>If <var>entry</var>'s <span data-x="she-document-state">document state</span>'s <span
+      data-x="document-state-document">document</span> is not null:</p>
+
+      <ol>
+       <li><p>Set <var>entry</var>'s <span data-x="she-document-state">document state</span>'s
+       <span data-x="document-state-ever-populated">ever populated</span> to true.</p></li>
+
+       <li>
+        <p>If <var>saveExtraDocumentState</var> is true:</p>
+
+        <ol>
+         <li><p>Let <var>document</var> be <var>entry</var>'s <span
+         data-x="she-document-state">document state</span>'s <span
+         data-x="document-state-document">document</span>.</p></li>
+
+         <li><p>Set <var>entry</var>'s <span data-x="she-document-state">document state</span>'s
+         <span data-x="document-state-origin">origin</span> to <var>document</var>'s <span
+         data-x="concept-document-origin">origin</span>.</p></li>
+
+         <li>
+          <p>If <var>document</var>'s <span data-x="concept-document-url">URL</span>
+          <span>requires storing the policy container in history</span>:</p>
+
+          <ol>
+           <li><p><span>Assert</span>: <var>navigationParams</var> is a <span>navigation
+           params</span> (i.e., neither null nor a <span>non-fetch scheme navigation
+           params</span>).</p></li>
+
+           <li><p>Set <var>entry</var>'s <span data-x="she-document-state">document state</span>'s
+           <span data-x="document-state-history-policy-container">history policy container</span>
+           to <var>navigationParams</var>'s <span
+           data-x="navigation-params-policy-container">policy container</span>.</p></li>
+          </ol>
+         </li>
+        </ol>
+       </li>
+
+       <li>
+        <p>If <var>entry</var>'s <span data-x="she-document-state">document state</span>'s <span
+        data-x="document-state-request-referrer">request referrer</span> is "<code
+        data-x="">client</code>", and <var>navigationParams</var> is a <span>navigation
+        params</span> (i.e., neither null nor a <span>non-fetch scheme navigation
+        params</span>):</p>
+
+        <ol>
+         <li><p><span>Assert</span>: <var>navigationParams</var>'s <span
+         data-x="navigation-params-request">request</span> is not null.</p></li>
+
+         <li><p>Set <var>entry</var>'s <span data-x="she-document-state">document state</span>'s
+         <span data-x="document-state-request-referrer">request referrer</span> to
+         <var>navigationParams</var>'s <span data-x="navigation-params-request">request</span>'s
+         <span data-x="concept-request-referrer">referrer</span>.</p></li>
+        </ol>
+       </li>
+      </ol>
+     </li>
+
+     <li><p>Run <var>completionSteps</var>.</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>create navigation params from a srcdoc resource</dfn> given a <span>session history
+  entry</span> <var>entry</var>, a <span>navigable</span> <var>navigable</var>, a <span>target
+  snapshot params</span> <var>targetSnapshotParams</var>, a <span>user navigation involvement</span>
+  <var>userInvolvement</var>, a <span>navigation ID</span>-or-null <var>navigationId</var>, and a
+  <code>NavigationTimingType</code> <var>navTimingType</var>:</p>
+
+  <ol>
+   <li><p>Let <var>documentResource</var> be <var>entry</var>'s <span
+   data-x="she-document-state">document state</span>'s <span
+   data-x="document-state-resource">resource</span>.</p></li>
+
+   <li>
+    <p>Let <var>response</var> be a new <span data-x="concept-response">response</span> with</p>
+
+    <dl class="props">
+     <dt><span data-x="concept-response-url">URL</span></dt>
+     <dd><code>about:srcdoc</code></dd>
+
+     <dt><span data-x="concept-response-header-list">header list</span></dt>
+     <dd>« (`<code>Content-Type</code>`, `<code data-x="">text/html</code>`) »</dd>
+
+     <dt><span data-x="concept-response-body">body</span></dt>
+     <dd>the <span data-x="UTF-8 encode">UTF-8 encoding</span> of <var>documentResource</var>,
+     <span>as a body</span></dd>
+    </dl>
+   </li>
+
+   <li><p>Let <var>responseOrigin</var> be the result of <span>determining the origin</span> given
+   <var>response</var>'s <span data-x="concept-response-url">URL</span>,
+   <var>targetSnapshotParams</var>'s <span data-x="target-snapshot-params-sandbox">sandboxing
+   flags</span>, and <var>entry</var>'s <span data-x="she-document-state">document state</span>'s
+   <span data-x="document-state-origin">origin</span>.</p></li>
+
+   <li><p>Let <var>coop</var> be a new <span>opener policy</span>.</p></li>
+
+   <li>
+    <p>Let <var>coopEnforcementResult</var> be a new <span data-x="coop-enforcement-result">opener
+    policy enforcement result</span> with</p>
+
+    <dl class="props">
+     <dt><span data-x="coop-enforcement-url">url</span></dt>
+     <dd><var>response</var>'s <span data-x="concept-response-url">URL</span></dd>
+
+     <dt><span data-x="coop-enforcement-origin">origin</span></dt>
+     <dd><var>responseOrigin</var></dd>
+
+     <dt><span data-x="coop-enforcement-coop">opener policy</span></dt>
+     <dd><var>coop</var></dd>
+    </dl>
+   </li>
+
+   <li><p>Let <var>policyContainer</var> be the result of <span data-x="determining navigation
+   params policy container">determining navigation params policy container</span> given
+   <var>response</var>'s <span data-x="concept-response-url">URL</span>, <var>entry</var>'s <span
+   data-x="she-document-state">document state</span>'s <span
+   data-x="document-state-history-policy-container">history policy container</span>, null,
+   <var>navigable</var>'s <span data-x="nav-container-document">container document</span>'s <span
+   data-x="concept-document-policy-container">policy container</span>, and null.</p></li>
+
+   <li>
+    <p>Return a new <span>navigation params</span>, with</p>
+
+    <dl class="props">
+     <dt><span data-x="navigation-params-id">id</span></dt>
+     <dd><var>navigationId</var></dd>
+
+     <dt><span data-x="navigation-params-navigable">navigable</span></dt>
+     <dd><var>navigable</var></dd>
+
+     <dt><span data-x="navigation-params-request">request</span></dt>
+     <dd>null</dd>
+
+     <dt><span data-x="navigation-params-response">response</span></dt>
+     <dd><var>response</var></dd>
+
+     <dt><span data-x="navigation-params-fetch-controller">fetch controller</span></dt>
+     <dd>null</dd>
+
+     <dt><span data-x="navigation-params-commit-early-hints">commit early hints</span></dt>
+     <dd>null</dd>
+
+     <dt><span data-x="navigation-params-coop-enforcement-result">COOP enforcement result</span></dt>
+     <dd><var>coopEnforcementResult</var></dd>
+
+     <dt><span data-x="navigation-params-reserved-environment">reserved environment</span></dt>
+     <dd>null</dd>
+
+     <dt><span data-x="navigation-params-origin">origin</span></dt>
+     <dd><var>responseOrigin</var></dd>
+
+     <dt><span data-x="navigation-params-policy-container">policy container</span></dt>
+     <dd><var>policyContainer</var></dd>
+
+     <dt><span data-x="navigation-params-sandboxing">final sandboxing flag set</span></dt>
+     <dd><var>targetSnapshotParams</var>'s <span data-x="target-snapshot-params-sandbox">sandboxing
+     flags</span></dd>
+
+     <dt><span data-x="navigation-params-iframe-referrer-policy"><code>iframe</code> element referrer policy</span></dt>
+     <dd><var>targetSnapshotParams</var>'s <span
+     data-x="target-snapshot-params-iframe-referrer-policy"><code>iframe</code> element referrer
+     policy</span></dd>
+
+     <dt><span data-x="navigation-params-coop">opener policy</span></dt>
+     <dd><var>coop</var></dd>
+
+     <dt><span data-x="navigation-params-nav-timing-type">navigation timing type</span></dt>
+     <dd><var>navTimingType</var></dd>
+
+     <dt><span data-x="navigation-params-about-base-url">about base URL</span></dt>
+     <dd><var>entry</var>'s <span data-x="she-document-state">document state</span>'s <span
+     data-x="document-state-about-base-url">about base URL</span></dd>
+
+     <dt><span data-x="navigation-params-user-involvement">user involvement</span></dt>
+     <dd><var>userInvolvement</var></dd>
+    </dl>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p id="process-a-navigate-fetch">To <dfn>create navigation params by fetching</dfn> given a
+  <span>session history entry</span> <var>entry</var>, a <span>navigable</span>
+  <var>navigable</var>, a <span>source snapshot params</span> <var>sourceSnapshotParams</var>, a
+  <span>target snapshot params</span> <var>targetSnapshotParams</var>, a string
+  <var>cspNavigationType</var>, a <span>user navigation involvement</span>
+  <var>userInvolvement</var>, a <span>navigation ID</span>-or-null <var>navigationId</var>, and a
+  <code>NavigationTimingType</code> <var>navTimingType</var>, perform the following steps. They
+  return a <span>navigation params</span>, a <span>non-fetch scheme navigation params</span>, or
+  null.</p>
+
+  <p class="note">This algorithm mutates <var>entry</var>.</p>
+
+  <ol>
+   <li><p><span>Assert</span>: this is running <span>in parallel</span>.</p></li>
+
+   <li><p>Let <var>documentResource</var> be <var>entry</var>'s <span
+   data-x="she-document-state">document state</span>'s <span
+   data-x="document-state-resource">resource</span>.</p></li>
+
+   <li>
+    <p>Let <var>request</var> be a new <span data-x="concept-request">request</span>, with</p>
+
+    <dl class="props">
+     <dt><span data-x="concept-request-url">URL</span></dt>
+     <dd><var>entry</var>'s <span data-x="she-url">URL</span></dd>
+
+     <dt><span data-x="concept-request-client">client</span></dt>
+     <dd><var>sourceSnapshotParams</var>'s <span data-x="source-snapshot-params-client">fetch
+     client</span></dd>
+
+     <dt><span data-x="concept-request-destination">destination</span></dt>
+     <dd>"<code data-x="">document</code>" <span class="note">The destination is updated below when
+     <var>navigable</var> has a <span data-x="nav-container">container</span>.</span></dd>
+
+     <dt><span data-x="concept-request-credentials-mode">credentials mode</span></dt>
+     <dd>"<code data-x="">include</code>"</dd>
+
+     <dt><span>use-URL-credentials flag</span></dt>
+     <dd>set</dd>
+
+     <dt><span data-x="concept-request-redirect-mode">redirect mode</span></dt>
+     <dd>"<code data-x="">manual</code>"</dd>
+
+     <dt><span data-x="concept-request-replaces-client-id">replaces client id</span></dt>
+     <dd><var>navigable</var>'s <span data-x="nav-document">active document</span>'s <span>relevant
+     settings object</span>'s <span data-x="concept-environment-id">id</span></dd>
+
+     <dt><span data-x="concept-request-mode">mode</span></dt>
+     <dd>"<code data-x="">navigate</code>"</dd>
+
+     <dt><span data-x="concept-request-referrer">referrer</span></dt>
+     <dd><var>entry</var>'s <span data-x="she-document-state">document state</span>'s <span
+     data-x="document-state-request-referrer">request referrer</span></dd>
+
+     <dt><span data-x="concept-request-referrer-policy">referrer policy</span></dt>
+     <dd><var>entry</var>'s <span data-x="she-document-state">document state</span>'s <span
+     data-x="document-state-request-referrer-policy">request referrer policy</span></dd>
+
+     <dt><span data-x="concept-request-policy-container">policy container</span></dt>
+     <dd><var>sourceSnapshotParams</var>'s <span
+     data-x="source-snapshot-params-policy-container">source policy container</span></dd>
+
+     <dt><span data-x="concept-request-traversable-for-user-prompts">traversable for user prompts</span></dt>
+     <dd><var>navigable</var>'s <span data-x="nav-top">top-level traversable</span></dd>
+    </dl>
+   </li>
+
+   <li><p>If <var>navigable</var> is a <span>top-level traversable</span>, then set
+   <var>request</var>'s <span>top-level navigation initiator origin</span> to <var>entry</var>'s
+   <span data-x="she-document-state">document state</span>'s <span
+   data-x="document-state-initiator-origin">initiator origin</span>.</p></li>
+
+   <li>
+    <p>If <var>request</var>'s <span data-x="concept-request-client">client</span> is null:</p>
+
+    <p class="note">This <a href="#assert-null-sourcedocument">only occurs</a> in the case of a
+    browser UI-initiated navigation.</p>
+
+    <ol>
+     <li><p>Set <var>request</var>'s <span data-x="concept-request-origin">origin</span> to a new
+     <span data-x="concept-origin-opaque">opaque origin</span>.</p></li>
+
+     <li><p>Set <var>request</var>'s <span
+     data-x="concept-request-service-workers-mode">service-workers mode</span> to "<code
+     data-x="">all</code>".</p></li>
+
+     <li><p>Set <var>request</var>'s <span data-x="concept-request-referrer">referrer</span> to
+     "<code data-x="">no-referrer</code>".</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p>If <var>documentResource</var> is a <span>POST resource</span>:</p>
+
+    <ol>
+     <li><p>Set <var>request</var>'s <span data-x="concept-request-method">method</span> to `<code
+     data-x="">POST</code>`.</p></li>
+
+     <li><p>Set <var>request</var>'s <span data-x="concept-request-body">body</span> to
+     <var>documentResource</var>'s <span data-x="post-resource-request-body">request
+     body</span>.</p></li>
+
+     <li><p><span data-x="concept-header-list-set">Set</span> `<code data-x="">Content-Type</code>`
+     to <var>documentResource</var>'s <span data-x="post-resource-request-content-type">request
+     content-type</span> in <var>request</var>'s <span data-x="concept-request-header-list">header
+     list</span>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>If <var>entry</var>'s <span data-x="she-document-state">document state</span>'s <span
+   data-x="document-state-reload-pending">reload pending</span> is true, then set
+   <var>request</var>'s <span data-x="concept-request-reload-navigation-flag">reload-navigation
+   flag</span>.</p></li>
+
+   <li><p>Otherwise, if <var>entry</var>'s <span data-x="she-document-state">document
+   state</span>'s <span data-x="document-state-ever-populated">ever populated</span> is true, then
+   set <var>request</var>'s <span
+   data-x="concept-request-history-navigation-flag">history-navigation flag</span>.</p></li>
+
+   <li><p>If <var>sourceSnapshotParams</var>'s <span data-x="source-snapshot-params-activation">has
+   transient activation</span> is true, then set <var>request</var>'s <span
+   data-x="concept-request-user-activation">user-activation</span> to true.</p></li>
+
+   <li>
+    <p>If <var>navigable</var>'s <span data-x="nav-container">container</span> is non-null:</p>
+
+    <ol>
+     <li><p>If the <var>navigable</var>'s <span data-x="nav-container">container</span> has a
+     <span>browsing context scope origin</span>, then set <var>request</var>'s <span
+     data-x="concept-request-origin">origin</span> to that <span>browsing context scope
+     origin</span>.</p></li>
+
+     <li><p>Set <var>request</var>'s <span data-x="concept-request-destination">destination</span>
+     to <var>navigable</var>'s <span data-x="nav-container">container</span>'s <span
+     data-x="concept-element-local-name">local name</span>.</p></li>
+
+     <li>
+      <p>If <var>sourceSnapshotParams</var>'s <span data-x="source-snapshot-params-client">fetch
+      client</span> is <var>navigable</var>'s <span data-x="nav-container-document">container
+      document</span>'s <span>relevant settings object</span>, then set <var>request</var>'s <span
+      data-x="concept-request-initiator-type">initiator type</span> to <var>navigable</var>'s <span
+      data-x="nav-container">container</span>'s <span data-x="concept-element-local-name">local
+      name</span>.</p>
+
+      <p class="note">This ensure that only container-initiated navigations are reported to
+      resource timing.</p>
+     </li>
+    </ol>
+   </li>
+
+   <li><p>Let <var>response</var> be null.</p></li>
+
+   <li><p>Let <var>responseOrigin</var> be null.</p></li>
+
+   <li><p>Let <var>fetchController</var> be null.</p></li>
+
+   <li>
+    <p>Let <var>coopEnforcementResult</var> be a new <span data-x="coop-enforcement-result">opener
+    policy enforcement result</span>, with</p>
+
+    <dl class="props">
+     <dt><span data-x="coop-enforcement-url">url</span></dt>
+     <dd><var>navigable</var>'s <span data-x="nav-document">active document</span>'s <span
+     data-x="concept-document-url">URL</span></dd>
+
+     <dt><span data-x="coop-enforcement-origin">origin</span></dt>
+     <dd><var>navigable</var>'s <span data-x="nav-document">active document</span>'s <span
+     data-x="concept-document-origin">origin</span></dd>
+
+     <dt><span data-x="coop-enforcement-coop">opener policy</span></dt>
+     <dd><var>navigable</var>'s <span data-x="nav-document">active document</span>'s <span
+     data-x="concept-document-coop">opener policy</span></dd>
+
+     <dt><span data-x="coop-enforcement-source">current context is navigation source</span></dt>
+     <dd>true if <var>navigable</var>'s <span data-x="nav-document">active document</span>'s <span
+     data-x="concept-document-origin">origin</span> is <span>same origin</span> with
+     <var>entry</var>'s <span data-x="she-document-state">document state</span>'s <span
+     data-x="document-state-initiator-origin">initiator origin</span> otherwise false</dd>
+    </dl>
+   </li>
+
+   <li><p>Let <var>finalSandboxFlags</var> be an empty <span>sandboxing flag set</span>.</p></li>
+
+   <li><p>Let <var>responsePolicyContainer</var> be null.</p></li>
+
+   <li><p>Let <var>responseCOOP</var> be a new <span>opener policy</span>.</p></li>
+
+   <li><p>Let <var>locationURL</var> be null.</p></li>
+
+   <li><p>Let <var>currentURL</var> be <var>request</var>'s <span
+   data-x="concept-request-current-url">current URL</span>.</p></li>
+
+   <li><p>Let <var>commitEarlyHints</var> be null.</p></li>
+
+   <li>
+    <p>While true:</p>
+
+    <ol>
+     <li>
+      <p>If <var>request</var>'s <span data-x="concept-request-reserved-client">reserved
+      client</span> is not null and <var>currentURL</var>'s <span
+      data-x="concept-url-origin">origin</span> is not the <span data-x="same origin">same</span>
+      as <var>request</var>'s <span data-x="concept-request-reserved-client">reserved
+      client</span>'s <span data-x="concept-environment-creation-url">creation URL</span>'s <span
+      data-x="concept-url-origin">origin</span>:</p>
+
+      <ol>
+       <li><p>Run the <span>environment discarding steps</span> for <var>request</var>'s <span
+       data-x="concept-request-reserved-client">reserved client</span>.</p></li>
+
+       <li><p>Set <var>request</var>'s <span data-x="concept-request-reserved-client">reserved
+       client</span> to null.</p></li>
+
+       <li>
+        <p>Set <var>commitEarlyHints</var> to null.</p>
+
+        <p class="note">Preloaded links from <span data-x="early hints">early hint headers</span>
+        remain in the preload cache after a <span>same origin</span> redirect, but get discarded
+        when the redirect is cross-origin.</p>
+       </li>
+      </ol>
+     </li>
+
+     <li>
+      <p>If <var>request</var>'s <span data-x="concept-request-reserved-client">reserved
+      client</span> is null:</p>
+
+      <ol>
+       <li><p>Let <var>topLevelCreationURL</var> be <var>currentURL</var>.</p></li>
+
+       <li><p>Let <var>topLevelOrigin</var> be null.</p></li>
+
+       <li>
+        <p>If <var>navigable</var> is not a <span>top-level traversable</span>:</p>
+
+        <ol>
+         <li><p>Let <var>parentEnvironment</var> be <var>navigable</var>'s <span
+         data-x="nav-parent">parent</span>'s <span data-x="nav-document">active document</span>'s
+         <span>relevant settings object</span>.</p></li>
+
+         <li><p>Set <var>topLevelCreationURL</var> to <var>parentEnvironment</var>'s
+         <span>top-level creation URL</span>.</p></li>
+
+         <li><p>Set <var>topLevelOrigin</var> to <var>parentEnvironment</var>'s <span>top-level
+         origin</span>.</p></li>
+        </ol>
+       </li>
+
+       <li>
+        <p>Set <var>request</var>'s <span data-x="concept-request-reserved-client">reserved
+        client</span> to a new <span>environment</span> whose <span
+        data-x="concept-environment-id">id</span> is a unique opaque string, <span
+        data-x="concept-environment-target-browsing-context">target browsing context</span> is
+        <var>navigable</var>'s <span data-x="nav-bc">active browsing context</span>, <span
+        data-x="concept-environment-creation-url">creation URL</span> is <var>currentURL</var>,
+        <span>top-level creation URL</span> is <var>topLevelCreationURL</var>, and <span>top-level
+        origin</span> is <var>topLevelOrigin</var>.</p>
+
+        <p class="note">The created environment's <span
+        data-x="concept-environment-active-service-worker">active service worker</span> is set in
+        the <span data-x="on-fetch-request-algorithm">Handle Fetch</span> algorithm during the fetch
+        if the request URL matches a service worker registration. <ref>SW</ref></p>
+       </li>
+      </ol>
+     </li>
+
+     <li><p>If the result of <span>should navigation request of type be blocked by Content Security
+     Policy?</span> given <var>request</var> and <var>cspNavigationType</var> is "<code
+     data-x="">Blocked</code>", then set <var>response</var> to a <span>network error</span> and
+     <span>break</span>. <ref>CSP</ref></p></li>
+
+     <li><p>Set <var>response</var> to null.</p></li>
+
+     <li>
+      <p>If <var>fetchController</var> is null, then set <var>fetchController</var> to the result
+      of <!--FETCH--><span data-x="concept-fetch">fetching</span> <var>request</var>, with <i
+      data-x="processEarlyHintsResponse">processEarlyHintsResponse</i> set to
+      <var>processEarlyHintsResponse</var> as defined below, <i
+      data-x="processResponse">processResponse</i> set to <var>processResponse</var> as defined
+      below, and <i data-x="useParallelQueue">useParallelQueue</i> set to true.</p>
+
+      <p>Let <var>processEarlyHintsResponse</var> be the following algorithm given a <span
+      data-x="concept-response">response</span> <var>earlyResponse</var>:</p>
+
+      <ol>
+       <li><p>If <var>commitEarlyHints</var> is null, then set <var>commitEarlyHints</var> to the
+       result of <span data-x="process early hint headers">processing early hint headers</span>
+       given <var>earlyResponse</var> and <var>request</var>'s <span
+       data-x="concept-request-reserved-client">reserved client</span>.</p></li>
+      </ol>
+
+      <p>Let <var>processResponse</var> be the following algorithm given a <span
+      data-x="concept-response">response</span> <var>fetchedResponse</var>:</p>
+
+      <ol>
+       <li><p>Set <var>response</var> to <var>fetchedResponse</var>.</p></li>
+      </ol>
+     </li>
+
+     <li>
+      <p>Otherwise, <span>process the next manual redirect</span> for
+      <var>fetchController</var>.</p>
+
+      <p class="note">This will result in calling the <i
+      data-x="processResponse">processResponse</i> we supplied above, during our first iteration
+      through the loop, and thus setting <var>response</var>.</p>
+
+      <p class="note">Navigation handles redirects manually as navigation is the only place in the
+      web platform that cares for redirects to <code data-x="mailto protocol">mailto:</code> URLs
+      and such.</p>
+     </li>
+
+     <li>
+      <p>Wait until either <var>response</var> is non-null, or <var>navigable</var>'s <span>ongoing
+      navigation</span> changes to no longer equal <var>navigationId</var>.</p>
+
+      <p>If the latter condition occurs, then <span data-x="fetch-controller-abort">abort</span>
+      <var>fetchController</var>, and return.</p>
+
+      <p>Otherwise, proceed onward.</p>
+     </li>
+
+     <li>
+      <p>If <var>request</var>'s <span data-x="concept-request-body">body</span> is null, then set
+      <var>entry</var>'s <span data-x="she-document-state">document state</span>'s <span
+      data-x="document-state-resource">resource</span> to null.</p>
+
+      <p class="note">Fetch unsets the <span data-x="concept-request-body">body</span> for
+      particular redirects.</p>
+     </li>
+
+     <li><p>Set <var>responsePolicyContainer</var> to the result of <span>creating a policy
+     container from a fetch response</span> given <var>response</var> and <var>request</var>'s
+     <span data-x="concept-request-reserved-client">reserved client</span>.</p></li>
+
+     <li><p>Set <var>finalSandboxFlags</var> to the <span data-x="set union">union</span> of
+     <var>targetSnapshotParams</var>'s <span data-x="target-snapshot-params-sandbox">sandboxing
+     flags</span> and <var>responsePolicyContainer</var>'s <span
+     data-x="policy-container-csp-list">CSP list</span>'s <span>CSP-derived sandboxing
+     flags</span>.</p></li>
+
+     <li>
+      <p>Set <var>responseOrigin</var> to the result of <span>determining the origin</span> given
+      <var>response</var>'s <span data-x="concept-response-url">URL</span>,
+      <var>finalSandboxFlags</var>, and <var>entry</var>'s <span
+      data-x="she-document-state">document state</span>'s <span
+      data-x="document-state-initiator-origin">initiator origin</span>.</p>
+
+      <p class="note">If <var>response</var> is a redirect, then <var>response</var>'s <span
+      data-x="concept-response-url">URL</span> will be the URL that led to the redirect to
+      <var>response</var>'s <span data-x="concept-response-location-url">location URL</span>; it
+      will not be the <span data-x="concept-response-location-url">location URL</span> itself.</p>
+     </li>
+
+     <li>
+      <p>If <var>navigable</var> is a <span>top-level traversable</span>:</p>
+
+      <ol>
+       <li><p>Set <var>responseCOOP</var> to the result of <span data-x="obtain-coop">obtaining an
+       opener policy</span> given <var>response</var> and <var>request</var>'s <span
+       data-x="concept-request-reserved-client">reserved client</span>.</p></li>
+
+       <li><p>Set <var>coopEnforcementResult</var> to the result of <span
+       data-x="coop-enforce">enforcing the response's opener policy</span> given
+       <var>navigable</var>'s <span data-x="nav-bc">active browsing context</span>,
+       <var>response</var>'s <span data-x="concept-response-url">URL</span>,
+       <var>responseOrigin</var>, <var>responseCOOP</var>, <var>coopEnforcementResult</var>, and
+       <var>request</var>'s <span data-x="concept-request-referrer">referrer</span>.</p></li>
+
+       <li>
+        <p>If <var>finalSandboxFlags</var> is not empty and <var>responseCOOP</var>'s <span
+        data-x="coop-struct-value">value</span> is not "<code
+        data-x="coop-unsafe-none">unsafe-none</code>", then set <var>response</var> to an
+        appropriate <span>network error</span> and <span>break</span>.</p>
+
+        <p class="note">This results in a network error as one cannot simultaneously provide a clean
+        slate to a response using opener policy and sandbox the result of
+        navigating to that response.</p>
+       </li>
+      </ol>
+     </li>
+
+     <li>
+      <p>If <var>response</var> is not a <span>network error</span>, <var>navigable</var> is a
+      <span>child navigable</span>, and the result of performing a <span>cross-origin resource
+      policy check</span> with <var>navigable</var>'s <span
+      data-x="nav-container-document">container document</span>'s <span
+      data-x="concept-document-origin">origin</span>, <var>navigable</var>'s <span
+      data-x="nav-container-document">container document</span>'s <span>relevant settings
+      object</span>, <var>request</var>'s <span
+      data-x="concept-request-destination">destination</span>, <var>response</var>, and true is
+      <b>blocked</b>, then set <var>response</var> to a <span>network error</span> and
+      <span>break</span>.</p>
+
+      <p class="note">Here we're running the <span>cross-origin resource policy check</span>
+      against the <span data-x="nav-parent">parent navigable</span> rather than
+      <var>navigable</var> itself. This is because we care about the same-originness of the
+      embedded content against the parent context, not the navigation source.</p>
+     </li>
+
+     <li><p>Set <var>locationURL</var> to <var>response</var>'s <span
+     data-x="concept-response-location-url">location URL</span> given <var>currentURL</var>'s <span
+     data-x="concept-url-fragment">fragment</span>.</p></li>
+
+     <li><p>If <var>locationURL</var> is failure or null, then <span>break</span>.</p></li>
+
+     <li><p><span>Assert</span>: <var>locationURL</var> is a <span>URL</span>.</p></li>
+
+     <li><p>Set <var>entry</var>'s <span data-x="she-classic-history-api-state">classic history API
+     state</span> to <span>StructuredSerializeForStorage</span>(null).</p></li>
+
+     <li><p>Let <var>oldDocState</var> be <var>entry</var>'s <span
+     data-x="she-document-state">document state</span>.</p></li>
+
+     <li>
+      <p>Set <var>entry</var>'s <span data-x="she-document-state">document state</span> to a new
+      <span>document state</span>, with
+
+      <dl class="props">
+       <dt><span data-x="document-state-history-policy-container">history policy container</span></dt>
+       <dd>a <span data-x="clone a policy container">clone</span> of the <var>oldDocState</var>'s
+       <span data-x="document-state-history-policy-container">history policy container</span> if it
+       is non-null; null otherwise</dd>
+
+       <dt><span data-x="document-state-request-referrer">request referrer</span></dt>
+       <dd><var>oldDocState</var>'s <span data-x="document-state-request-referrer">request
+       referrer</span></dd>
+
+       <dt><span data-x="document-state-request-referrer-policy">request referrer policy</span></dt>
+       <dd><var>oldDocState</var>'s <span data-x="document-state-request-referrer-policy">request
+       referrer policy</span></dd>
+
+       <dt><span data-x="document-state-initiator-origin">initiator origin</span></dt>
+       <dd><var>oldDocState</var>'s <span data-x="document-state-initiator-origin">initiator
+       origin</span></dd>
+
+       <dt><span data-x="document-state-origin">origin</span></dt>
+       <dd><var>oldDocState</var>'s <span data-x="document-state-origin">origin</span></dd>
+
+       <dt><span data-x="document-state-about-base-url">about base URL</span></dt>
+       <dd><var>oldDocState</var>'s <span data-x="document-state-about-base-url">about base URL</span></dd>
+
+       <dt><span data-x="document-state-resource">resource</span></dt>
+       <dd><var>oldDocState</var>'s <span data-x="document-state-resource">resource</span></dd>
+
+       <dt><span data-x="document-state-ever-populated">ever populated</span></dt>
+       <dd><var>oldDocState</var>'s <span data-x="document-state-ever-populated">ever
+       populated</span></dd>
+
+       <dt><span data-x="document-state-nav-target-name">navigable target name</span></dt>
+       <dd><var>oldDocState</var>'s <span data-x="document-state-nav-target-name">navigable target
+       name</span></dd>
+      </dl>
+
+      <!-- https://github.com/whatwg/html/issues/6680 -->
+      <p class="note">For the navigation case, only <var>entry</var> referenced
+      <var>oldDocState</var>, which was created <a href="#navigation-create-document-state">early
+      in the navigate algorithm</a>. So for navigations, this is functionally just an update to
+      <var>entry</var>'s <span data-x="she-document-state">document state</span>. For the traversal
+      case, it's possible adjacent <span data-x="session history entry">session history
+      entries</span> also reference <var>oldDocState</var>, in which case they will continue doing
+      so even after we've updated <var>entry</var>'s <span data-x="she-document-state">document
+      state</span>.</p>
+
+      <p class="note"><var>oldDocState</var>'s <span
+      data-x="document-state-history-policy-container">history policy container</span> is only ever
+      non-null here in the traversal case, after we've populated it during a navigation to a URL
+      that <span>requires storing the policy container in history</span>.</p>
+
+      <div class="example">
+       <p>The setup is given by the following <span>Jake diagram</span>:</p>
+
+       <!--https://domenic.github.io/jake-diagram-generator/#IWN1cnJlbnQgPSAzCiFza2lwRG9jQ29sb3JzID0gMQp0b3AKICAwOiAvYSB8IGRvYzEKICAxOiAvYSNmb28gfCBkb2MxCiAgMjogL2EjYmFyIHwgZG9jMQogIDM6IC9i -->
+<table class="jake-diagram"><thead><tr><td></td><th class="step">0</th><th class="step">1</th><th class="step">2</th><th class="step current">3</th></tr></thead><tbody><tr><th><code data-x="">top</code></th><td colspan="1" class="doc-0 next-is-same-doc">/a</td><td colspan="1" class="doc-0 prev-is-same-doc next-is-same-doc">/a#foo</td><td colspan="1" class="doc-0 prev-is-same-doc">/a#bar</td><td colspan="1" class="doc-2 current">/b</td></tr></tbody></table>
+
+       <p>Also assume that the <span data-x="she-document-state">document state</span> shared by
+       the entries in steps 0, 1, and 2 has a null <span
+       data-x="document-state-document">document</span>, i.e., <a href="#note-bfcache">bfcache</a>
+       is not in play.</p>
+
+       <p>Now consider the scenario where we traverse back to step 2, but this time when fetching
+       <code data-x="">/a</code>, the server responds with a `<code data-x="">Location</code>`
+       header pointing to <code data-x="">/c</code>. That is, <var>locationURL</var> points to
+       <code data-x="">/c</code> and so we have reached this step instead of <span
+       data-x="break">breaking</span> out of the loop.</p>
+
+       <p>In this case, we replace the <span data-x="she-document-state">document state</span> of
+       the <span>session history entry</span> occupying step 2, but we do <em>not</em> replace the
+       document state of the entries occupying steps 0 and 1. The resulting <span>Jake
+       diagram</span> looks like this:</p>
+
+       <!--https://domenic.github.io/jake-diagram-generator/#IWN1cnJlbnQgPSAyCnRvcAogIDA6IC9hIHwgZG9jMQogIDE6IC9hI2ZvbyB8IGRvYzEKICAyOiAvYyNiYXIKICAzOiAvYg== -->
+<table class="jake-diagram"><thead><tr><td></td><th class="step">0</th><th class="step">1</th><th class="step current">2</th><th class="step">3</th></tr></thead><tbody><tr><th><code data-x="">top</code></th><td colspan="1" class="doc-0 next-is-same-doc">/a</td><td colspan="1" class="doc-0 prev-is-same-doc">/a#foo</td><td colspan="1" class="doc-1 current">/c#bar</td><td colspan="1" class="doc-2">/b</td></tr></tbody></table>
+
+       <p>Note that we perform this replacement even if we end up in a redirect chain back to the
+       original URL, for example if <code data-x="">/c</code> itself had a `<code
+       data-x="">Location</code>` header pointing to <code data-x="">/a</code>. Such a case would
+       end up like so:</p>
+
+       <!--https://domenic.github.io/jake-diagram-generator/#IWN1cnJlbnQgPSAyCnRvcAogIDA6IC9hIHwgZG9jMQogIDE6IC9hI2ZvbyB8IGRvYzEKICAyOiAvYSNiYXIKICAzOiAvYg== -->
+<table class="jake-diagram"><thead><tr><td></td><th class="step">0</th><th class="step">1</th><th class="step current">2</th><th class="step">3</th></tr></thead><tbody><tr><th><code data-x="">top</code></th><td colspan="1" class="doc-0 next-is-same-doc">/a</td><td colspan="1" class="doc-0 prev-is-same-doc">/a#foo</td><td colspan="1" class="doc-1 current">/a#bar</td><td colspan="1" class="doc-2">/b</td></tr></tbody></table>
+      </div>
+     </li>
+
+     <li>
+      <p>If <var>locationURL</var>'s <span data-x="concept-url-scheme">scheme</span> is not an
+      <span>HTTP(S) scheme</span>:</p>
+
+      <ol>
+       <li><p>Set <var>entry</var>'s <span data-x="she-document-state">document state</span>'s
+       <span data-x="document-state-resource">resource</span> to null.</p></li>
+
+       <li><p><span>Break</span>.</p></li>
+      </ol>
+     </li>
+
+     <li><p>Set <var>currentURL</var> to <var>locationURL</var>.</p></li>
+
+     <li><p>Set <var>entry</var>'s <span data-x="she-url">URL</span> to
+     <var>currentURL</var>.</p></li>
+    </ol>
+
+    <div class="note">
+     <p>By the end of this loop we will be in one of these scenarios:</p>
+
+     <ul>
+      <li><p><var>locationURL</var> is failure, because of an unparseable `<code
+      data-x="">Location</code>` header.</p></li>
+
+      <li><p><var>locationURL</var> is null, either because <var>response</var> is a <span>network
+      error</span> or because we successfully fetched a non-<span>network error</span> HTTP(S)
+      response with no `<code data-x="">Location</code>` header.</p></li>
+
+      <li><p><var>locationURL</var> is a <span>URL</span> with a non-<span data-x="HTTP(S)
+      scheme">HTTP(S)</span> <span data-x="concept-url-scheme">scheme</span>.</p></li>
+     </ul>
+    </div>
+   </li>
+
+   <li>
+    <p>If <var>locationURL</var> is a <span>URL</span> whose <span
+    data-x="concept-url-scheme">scheme</span> is not a <span>fetch scheme</span>, then return a new
+    <span>non-fetch scheme navigation params</span>, with</p>
+
+    <dl class="props">
+     <dt><span data-x="non-fetch-scheme-params-id">id</span></dt>
+     <dd><var>navigationId</var></dd>
+
+     <dt><span data-x="non-fetch-scheme-params-navigable">navigable</span></dt>
+     <dd><var>navigable</var></dd>
+
+     <dt><span data-x="non-fetch-scheme-params-url">URL</span></dt>
+     <dd><var>locationURL</var></dd>
+
+     <dt><span data-x="non-fetch-scheme-params-target-sandbox">target snapshot sandboxing flags</span></dt>
+     <dd><var>targetSnapshotParams</var>'s <span data-x="target-snapshot-params-sandbox">sandboxing
+     flags</span></dd>
+
+     <dt><span data-x="non-fetch-scheme-params-source-activation">source snapshot has transient activation</span></dt>
+     <dd><var>sourceSnapshotParams</var>'s <span data-x="source-snapshot-params-activation">has
+     transient activation</span></dd>
+
+     <dt><span data-x="non-fetch-scheme-params-initiator-origin">initiator origin</span></dt>
+     <dd><var>responseOrigin</var></dd>
+
+     <dt><span data-x="non-fetch-scheme-params-nav-timing-type">navigation timing type</span></dt>
+     <dd><var>navTimingType</var></dd>
+
+     <dt><span data-x="non-fetch-scheme-params-user-involvement">user involvement</span></dt>
+     <dd><var>userInvolvement</var></dd>
+    </dl>
+
+    <p class="note">At this point, <var>request</var>'s <span
+    data-x="concept-request-current-url">current URL</span> is the last <span>URL</span> in the
+    redirect chain with a <span data-x="fetch scheme">fetch</span> <span
+    data-x="concept-url-scheme">scheme</span> before redirecting to a non-<span>fetch scheme</span>
+    <span>URL</span>. It is this <span>URL</span>'s <span data-x="concept-url-origin">origin</span>
+    that will be used as the initiator origin for navigations to non-<span>fetch scheme</span>
+    <span data-x="url">URLs</span>.</p>
+   </li>
+
+   <li>
+    <p>If any of the following are true:</p>
+
+    <ul>
+     <li><p><var>response</var> is a <span>network error</span>;</p></li>
+
+     <li><p><var>locationURL</var> is failure; or</p></li>
+
+     <li><p><var>locationURL</var> is a <span>URL</span> whose <span
+     data-x="concept-url-scheme">scheme</span> is a <span>fetch scheme</span>,</p></li>
+    </ul>
+
+    <p>then return null.</p>
+
+    <p class="note">We allow redirects to non-<span>fetch scheme</span> <span
+    data-x="URL">URLs</span>, but redirects to <span>fetch scheme</span> <span
+    data-x="URL">URLs</span> that aren't <span data-x="HTTP(S) scheme">HTTP(S)</span> are treated
+    like network errors.</p>
+   </li>
+
+   <li><p><span>Assert</span>: <var>locationURL</var> is null and <var>response</var> is not a
+   <span>network error</span>.</li>
+
+   <li><p>Let <var>resultPolicyContainer</var> be the result of <span>determining navigation params
+   policy container</span> given <var>response</var>'s <span
+   data-x="concept-response-url">URL</span>, <var>entry</var>'s <span
+   data-x="she-document-state">document state</span>'s <span
+   data-x="document-state-history-policy-container">history policy container</span>,
+   <var>sourceSnapshotParams</var>'s <span data-x="source-snapshot-params-policy-container">source
+   policy container</span>, null, and <var>responsePolicyContainer</var>.</p></li>
+
+   <li>
+    <p>If <var>navigable</var>'s <span data-x="nav-container">container</span> is an
+    <code>iframe</code>, and <var>response</var>'s <span
+    data-x="concept-response-timing-allow-passed">timing allow passed flag</span> is set, then
+    set <var>navigable</var>'s <span data-x="nav-container">container</span>'s <span
+    data-x="iframe-pending-resource-timing-start-time">pending resource-timing start time</span> to
+    null.</p>
+
+    <p class="note">If the <code>iframe</code> is allowed to report to resource timing,
+    we don't need to run its fallback steps as the normal reporting would happen.</p>
+   </li>
+
+   <li>
+    <p>Return a new <span>navigation params</span>, with</p>
+
+    <dl class="props">
+     <dt><span data-x="navigation-params-id">id</span></dt>
+     <dd><var>navigationId</var></dd>
+
+     <dt><span data-x="navigation-params-navigable">navigable</span></dt>
+     <dd><var>navigable</var></dd>
+
+     <dt><span data-x="navigation-params-request">request</span></dt>
+     <dd><var>request</var></dd>
+
+     <dt><span data-x="navigation-params-response">response</span></dt>
+     <dd><var>response</var></dd>
+
+     <dt><span data-x="navigation-params-fetch-controller">fetch controller</span></dt>
+     <dd><var>fetchController</var></dd>
+
+     <dt><span data-x="navigation-params-commit-early-hints">commit early hints</span></dt>
+     <dd><var>commitEarlyHints</var></dd>
+
+     <dt><span data-x="navigation-params-coop">opener policy</span></dt>
+     <dd><var>responseCOOP</var></dd>
+
+     <dt><span data-x="navigation-params-reserved-environment">reserved environment</span></dt>
+     <dd><var>request</var>'s <span data-x="concept-request-reserved-client">reserved client</span></dd>
+
+     <dt><span data-x="navigation-params-origin">origin</span></dt>
+     <dd><var>responseOrigin</var></dd>
+
+     <dt><span data-x="navigation-params-policy-container">policy container</span></dt>
+     <dd><var>resultPolicyContainer</var></dd>
+
+     <dt><span data-x="navigation-params-sandboxing">final sandboxing flag set</span></dt>
+     <dd><var>finalSandboxFlags</var></dd>
+
+     <dt><span data-x="navigation-params-coop-enforcement-result">COOP enforcement result</span></dt>
+     <dd><var>coopEnforcementResult</var></dd>
+
+     <dt><span data-x="navigation-params-nav-timing-type">navigation timing type</span></dt>
+     <dd><var>navTimingType</var></dd>
+
+     <dt><span data-x="navigation-params-about-base-url">about base URL</span></dt>
+     <dd><var>entry</var>'s <span data-x="she-document-state">document state</span>'s <span
+     data-x="document-state-about-base-url">about base URL</span></dd>
+
+     <dt><span data-x="navigation-params-user-involvement">user involvement</span></dt>
+     <dd><var>userInvolvement</var></dd>
+    </dl>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>An element has a <dfn>browsing context scope origin</dfn> if its <code>Document</code>'s
+  <span>node navigable</span> is a <span>top-level traversable</span> or if all of its
+  <code>Document</code>'s <span>ancestor navigables</span> have <span
+  data-x="nav-document">active documents</span> whose <span
+  data-x="concept-document-origin">origins</span> are the <span>same origin</span> as the element's
+  <span>node document</span>'s <span data-x="concept-document-origin">origin</span>. If an element
+  has a <span>browsing context scope origin</span>, then its value is the <span
+  data-x="concept-document-origin">origin</span> of the element's <span>node document</span>.</p>
+  </div>
+
+  <p class="XXX">This definition is broken and needs investigation to see what it was intended to
+  express: see <a href="https://github.com/whatwg/html/issues/4703">issue #4703</a>.</p>
+
+  <div algorithm>
+  <p>To <dfn data-x="loading a document">load a document</dfn> given <span>navigation params</span>
+  <var>navigationParams</var>, <span>source snapshot params</span> <var>sourceSnapshotParams</var>,
+  and <span>origin</span> <var>initiatorOrigin</var>, perform the following steps. They return a
+  <code>Document</code> or null.</p>
+
+  <ol>
+   <li><p>Let <var>type</var> be the <span data-x="Content-Type sniffing">computed type</span> of
+   <var>navigationParams</var>'s <span
+   data-x="navigation-params-response">response</span>.</p></li>
+
+   <li>
+    <p>If the user agent has been configured to process resources of the given <var>type</var>
+    using some mechanism other than rendering the content in a <span>navigable</span>, then
+    skip this step. Otherwise, if the <var>type</var> is one of the following types:</p>
+
+    <dl class="switch">
+     <dt>an <span>HTML MIME type</span></dt>
+     <dd>Return the result of <span data-x="navigate-html">loading an HTML document</span>, given
+     <var>navigationParams</var>.</dd>
+
+     <dt>an <span>XML MIME type</span> that is not an <span>explicitly supported XML MIME
+     type</span></dt>
+     <dd>Return the result of <span data-x="navigate-xml">loading an XML document</span> given
+     <var>navigationParams</var> and <var>type</var>.</dd>
+
+     <dt>a <span>JavaScript MIME type</span></dt>
+     <dt>a <span>JSON MIME type</span> that is not an <span>explicitly supported JSON MIME
+     type</span></dt>
+     <dt>"<code>text/css</code>"</dt>
+     <dt>"<code>text/plain</code>"</dt>
+     <dt>"<code>text/vtt</code>"</dt>
+     <dd>Return the result of <span data-x="navigate-text">loading a text document</span> given
+     <var>navigationParams</var> and <var>type</var>.</dd>
+
+     <dt>"<code>multipart/x-mixed-replace</code>"</dt>
+     <dd>Return the result of <span data-x="navigate-multipart-x-mixed-replace">loading a
+     <code>multipart/x-mixed-replace</code> document</span>, given <var>navigationParams</var>,
+     <var>sourceSnapshotParams</var>, and <var>initiatorOrigin</var>.</dd>
+
+     <dt>a supported image, video, or audio type</dt>
+     <dd>Return the result of <span data-x="navigate-media">loading a media document</span> given
+     <var>navigationParams</var> and <var>type</var>.</dd>
+
+     <dt>"<code data-x="">application/pdf</code>"</dt>
+     <dt>"<code data-x="">text/pdf</code>"</dt>
+     <dd>If the user agent's <span>PDF viewer supported</span> is true, return the result of <span
+     data-x="navigate-ua-inline">creating a document for inline content that doesn't have a
+     DOM</span> given <var>navigationParams</var>'s <span
+     data-x="navigation-params-navigable">navigable</span>, <var>navigationParams</var>'s <span
+     data-x="navigation-params-id">id</span>, <var>navigationParams</var>'s <span
+     data-x="navigation-params-nav-timing-type">navigation timing type</span>, and
+     <var>navigationParams</var>'s <span data-x="navigation-params-user-involvement">user
+     involvement</span>.</dd>
+    </dl>
+
+    <p>Otherwise, proceed onward.</p>
+
+    <p>An <dfn>explicitly supported XML MIME type</dfn> is an <span>XML MIME type</span> for which
+    the user agent is configured to use an external application to render the content, or for which
+    the user agent has dedicated processing rules. For example, a web browser with a built-in Atom
+    feed viewer would be said to explicitly support the <code>application/atom+xml</code> MIME
+    type.</p>
+
+    <p>An <dfn>explicitly supported JSON MIME type</dfn> is a <span>JSON MIME type</span> for which
+    the user agent is configured to use an external application to render the content, or for which
+    the user agent has dedicated processing rules.</p>
+
+    <p class="note">In both cases, the external application or user agent will either <span
+    data-x="navigate-ua-inline">display the content inline</span> directly in
+    <var>navigationParams</var>'s <span data-x="navigation-params-navigable">navigable</span>, or
+    <span data-x="hand-off to external software">hand it off to external software</span>. Both
+    happen in the steps below.</p>
+   </li>
+
+   <li id="navigate-non-Document"><p>If, given <var>type</var>, the new resource is to be handled
+   by displaying some sort of inline content, e.g., a native rendering of the content or an error
+   message because the specified type is not supported, then return the result of <span
+   data-x="navigate-ua-inline">creating a document for inline content that doesn't have a
+   DOM</span> given <var>navigationParams</var>'s <span
+   data-x="navigation-params-navigable">navigable</span>, <var>navigationParams</var>'s <span
+   data-x="navigation-params-id">id</span>, <var>navigationParams</var>'s <span
+   data-x="navigation-params-nav-timing-type">navigation timing type</span>, and
+   <var>navigationParams</var>'s <span data-x="navigation-params-user-involvement">user
+   involvement</span>.</p></li>
+
+   <li><p>Otherwise, the document's <var>type</var> is such that the resource will not affect
+   <var>navigationParams</var>'s <span data-x="navigation-params-navigable">navigable</span>, e.g.,
+   because the resource is to be handed to an external application or because it is an unknown type
+   that will be processed by <span>handle as a download</span>. <span>Hand-off to external
+   software</span> given <var>navigationParams</var>'s <span
+   data-x="navigation-params-response">response</span>, <var>navigationParams</var>'s <span
+   data-x="navigation-params-navigable">navigable</span>, <var>navigationParams</var>'s <span
+   data-x="navigation-params-sandboxing">final sandboxing flag set</span>,
+   <var>sourceSnapshotParams</var>'s <span data-x="source-snapshot-params-activation">has transient
+   activation</span>, and <var>initiatorOrigin</var>.</p></li>
+
+   <li><p>Return null.</p></li>
+  </ol>
+  </div>
+
+

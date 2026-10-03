@@ -1,0 +1,30 @@
+WHATWG HTML — section introduction — Introduction
+
+  <h4>Introduction</h4>
+
+  <p>This section defines <dfn>find-in-page</dfn> — a common user-agent mechanism which allows users
+  to search through the contents of the page for particular information.</p>
+
+  <p>Access to the <span>find-in-page</span> feature is provided via a <dfn>find-in-page
+  interface</dfn>. This is a user-agent provided user interface, which allows the user to specify
+  input and the parameters of the search. This interface can appear as a result of a shortcut or a
+  menu selection.</p>
+
+  <p>A combination of text input and settings in the <span>find-in-page interface</span> represents
+  the user <dfn data-x="fip-query">query</dfn>. This typically includes the text that the user wants
+  to search for, as well as optional settings (e.g., the ability to restrict the search to whole
+  words only).</p>
+
+  <p>The user-agent processes page contents for a given <span data-x="fip-query">query</span>, and
+  identifies zero or more <dfn data-x="fip-matches">matches</dfn>, which are content ranges that
+  satisfy the user <span data-x="fip-query">query</span>.</p>
+
+  <p>One of the <span data-x="fip-matches">matches</span> is identified to the user as the <dfn
+  data-x="fip-active-match">active match</dfn>. It is highlighted and scrolled into view. The user
+  can navigate through the <span data-x="fip-matches">matches</span> by advancing the <span
+  data-x="fip-active-match">active match</span> using the <span>find-in-page interface</span>.</p>
+
+  <p class="XXX"><a href="https://github.com/whatwg/html/issues/3539">Issue #3539</a> tracks
+  standardizing how <span>find-in-page</span> underlies the currently-unspecified <code
+  data-x="">window.find()</code> API.</p>
+

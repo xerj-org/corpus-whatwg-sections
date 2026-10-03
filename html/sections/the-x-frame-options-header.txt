@@ -1,0 +1,215 @@
+WHATWG HTML — section the-x-frame-options-header — The `<code>X-Frame-Options</code>` header
+
+  <h3>The `<code>X-Frame-Options</code>` header</h3>
+
+  <p>The `<dfn http-header><code>X-Frame-Options</code></dfn>` HTTP response header is a way
+  of controlling whether and how a <code>Document</code> may be loaded inside of a <span>child
+  navigable</span>. For sites using CSP, the <code data-x="frame-ancestors
+  directive">frame-ancestors</code> directive provides more granular control over the
+  same situations. It was originally defined in <cite>HTTP Header Field X-Frame-Options</cite>, but
+  the definition<span w-nodev> and processing model</span> here supersedes that document.
+  <ref>CSP</ref> <ref>RFC7034</ref>
+
+  <p class="note">In particular, <cite>HTTP Header Field X-Frame-Options</cite> specified an `<code
+  data-x="">ALLOW-FROM</code>` variant of the header, but that is not to be implemented.</p>
+
+  <p class="note"><span w-nodev>Per the below processing model, if</span><span w-dev>If</span> both
+  a CSP <code data-x="frame-ancestors directive">frame-ancestors</code> directive and an
+  `<code>X-Frame-Options</code>` header are used in the same <span
+  data-x="concept-response">response</span>, then `<code>X-Frame-Options</code>` is ignored.</p>
+
+  <p>For web developers and conformance checkers, its value <span data-x="header-abnf">ABNF</span>
+  is:</p>
+
+  <pre><code data-x="" class="abnf">X-Frame-Options = "DENY" / "SAMEORIGIN"</code></pre>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>To <dfn>check a navigation response's adherence to `<code>X-Frame-Options</code>`</dfn>, given
+  a <span data-x="concept-response">response</span> <var>response</var>, a <span>navigable</span>
+  <var>navigable</var>, a <span data-x="concept-csp-list">CSP list</span> <var>cspList</var>, and
+  an <span>origin</span> <var>destinationOrigin</var>:</p>
+
+  <ol>
+   <li><p>If <var>navigable</var> is not a <span>child navigable</span>, then return true.</p></li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>policy</var> of <var>cspList</var>:</p>
+
+    <ol>
+     <li><p>If <var>policy</var>'s <span data-x="csp-disposition">disposition</span> is not "<code
+     data-x="">enforce</code>", then <span>continue</span>.</p></li>
+
+     <li><p>If <var>policy</var>'s <span data-x="csp-directive-set">directive set</span> <span
+     data-x="list contains">contains</span> a <code data-x="frame-ancestors
+     directive">frame-ancestors</code> directive, then return true.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Let <var>rawXFrameOptions</var> be the result of <span
+   data-x="concept-header-list-get-decode-split">getting, decoding, and splitting</span>
+   `<code>X-Frame-Options</code>` from <var>response</var>'s <span
+   data-x="concept-response-header-list">header list</span>.</p></li>
+
+   <li><p>Let <var>xFrameOptions</var> be a new <span>set</span>.</p></li>
+
+   <li><p><span data-x="list iterate">For each</span> <var>value</var> of
+   <var>rawXFrameOptions</var>, <span data-x="set append">append</span> <var>value</var>,
+   <span>converted to ASCII lowercase</span>, to <var>xFrameOptions</var>.</p></li>
+
+   <li>
+    <p>If <var>xFrameOptions</var>'s <span data-x="list size">size</span> is greater than 1, and
+    <var>xFrameOptions</var> <span data-x="list contains">contains</span> any of "<code
+    data-x="">deny</code>", "<code data-x="">allowall</code>", or "<code
+    data-x="">sameorigin</code>", then return false.</p>
+
+    <p class="note">The intention here is to block any attempts at applying
+    `<code>X-Frame-Options</code>` which were trying to do something valid, but appear confused.</p>
+
+    <p class="note">This is the only impact of the legacy `<code data-x="">ALLOWALL</code>` value
+    on the processing model.</p>
+   </li>
+
+   <li>
+    <p>If <var>xFrameOptions</var>'s <span data-x="list size">size</span> is greater than 1, then
+    return true.</p>
+
+    <p class="note">This means it contains multiple invalid values, which we treat the same way as
+    if the header was omitted entirely.</p>
+   </li>
+
+   <li><p>If <var>xFrameOptions</var>[0] is "<code data-x="">deny</code>", then return
+   false.</p></li>
+
+   <li>
+    <p>If <var>xFrameOptions</var>[0] is "<code data-x="">sameorigin</code>":</p>
+
+    <ol>
+     <li><p>Let <var>containerDocument</var> be <var>navigable</var>'s <span
+     data-x="nav-container-document">container document</span>.</p></li>
+
+     <li>
+      <p><span>While</span> <var>containerDocument</var> is not null:</p>
+
+      <ol>
+       <li><p>If <var>containerDocument</var>'s <span data-x="concept-document-origin">origin</span>
+       is not <span>same origin</span> with <var>destinationOrigin</var>, then return
+       false.</p></li>
+
+       <li><p>Set <var>containerDocument</var> to <var>containerDocument</var>'s <span
+       data-x="doc-container-document">container document</span>.</p></li>
+      </ol>
+     </li>
+    </ol>
+   </li>
+
+   <li>
+    <p>Return true.</p>
+
+    <p class="note">If we've reached this point then we have a lone invalid value (which could
+    potentially be one the legacy `<code data-x="">ALLOWALL</code>` or `<code
+    data-x="">ALLOW-FROM</code>` forms). These are treated as if the header were omitted
+    entirely.</p>
+   </li>
+  </ol>
+  </div>
+
+  <hr>
+
+  </div>
+
+  <div class="example">
+   <p>The following table illustrates the processing of various values for the header, including
+   non-conformant ones:</p>
+
+   <table class="data">
+    <thead>
+     <tr>
+      <th>`<code>X-Frame-Options</code>`</th>
+      <th>Valid</th>
+      <th>Result</th>
+     </tr>
+    </thead>
+    <tbody>
+     <tr>
+      <td>`<code data-x="">DENY</code>`</td>
+      <td>✅</td>
+      <td>embedding disallowed</td>
+     </tr>
+     <tr>
+      <td>`<code data-x="">SAMEORIGIN</code>`</td>
+      <td>✅</td>
+      <td>same-origin embedding allowed</td>
+     </tr>
+     <tr>
+      <td>`<code data-x="">INVALID</code>`</td>
+      <td>❌</td>
+      <td>embedding allowed</td>
+     </tr>
+     <tr>
+      <td>`<code data-x="">ALLOWALL</code>`</td>
+      <td>❌</td>
+      <td>embedding allowed</td>
+     </tr>
+     <tr>
+      <td>`<code data-x="">ALLOW-FROM=https://example.com/</code>`</td>
+      <td>❌</td>
+      <td>embedding allowed (from anywhere)</td>
+     </tr>
+    </tbody>
+   </table>
+  </div>
+
+  <div class="example">
+   <p>The following table illustrates how various non-conformant cases involving multiple values are
+   processed:</p>
+
+   <table class="data">
+    <thead>
+     <tr>
+      <th>`<code>X-Frame-Options</code>`</th>
+      <th>Result</th>
+     </tr>
+    </thead>
+    <tbody>
+     <tr>
+      <td>`<code data-x="">SAMEORIGIN, SAMEORIGIN</code>`</td>
+      <td>same-origin embedding allowed</td>
+     </tr>
+     <tr>
+      <td>`<code data-x="">SAMEORIGIN, DENY</code>`</td>
+      <td>embedding disallowed</td>
+     </tr>
+     <tr>
+      <td>`<code data-x="">SAMEORIGIN,</code>`</td>
+      <td>embedding disallowed</td>
+     </tr>
+     <tr>
+      <td>`<code data-x="">SAMEORIGIN, ALLOWALL</code>`</td>
+      <td>embedding disallowed</td>
+     </tr>
+     <tr>
+      <td>`<code data-x="">SAMEORIGIN, INVALID</code>`</td>
+      <td>embedding disallowed</td>
+     </tr>
+     <tr>
+      <td>`<code data-x="">ALLOWALL, INVALID</code>`</td>
+      <td>embedding disallowed</td>
+     </tr>
+     <tr>
+      <td>`<code data-x="">ALLOWALL,</code>`</td>
+      <td>embedding disallowed</td>
+     </tr>
+     <tr>
+      <td>`<code data-x="">INVALID, INVALID</code>`</td>
+      <td>embedding allowed</td>
+     </tr>
+    </tbody>
+   </table>
+
+   <p>The same results are obtained whether the values are delivered in a single header whose value is comma-delimited,
+   or in multiple headers.</p>
+  </div>
+
+

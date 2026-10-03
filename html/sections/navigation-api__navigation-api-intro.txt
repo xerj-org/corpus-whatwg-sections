@@ -1,0 +1,126 @@
+WHATWG HTML — section navigation-api/navigation-api-intro — Introduction
+
+  <h5 id="navigation-api-intro">Introduction</h5>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>The navigation API, provided by the global <code data-x="dom-navigation">navigation</code>
+  property, provides a modern and web application-focused way of managing navigations and history entries. It is a successor to the classic <code data-x="dom-location">location</code> and <code data-x="dom-history">history</code> APIs.</p>
+
+  <p>One ability the API provides is inspecting <span data-x="session history entry">session history entries</span>. For example, the following will display the entries' URLs in an ordered list:</p>
+
+  <pre><code class="js">const ol = document.createElement("ol");
+ol.start = 0; // so that the list items' ordinal values match up with the entry indices
+
+for (const entry of navigation.entries()) {
+  const li = document.createElement("li");
+
+  if (entry.index &lt; navigation.currentEntry.index) {
+    li.className = "backward";
+  } else if (entry.index > navigation.currentEntry.index) {
+    li.className = "forward";
+  } else {
+    li.className = "current";
+  }
+
+  li.textContent = entry.url;
+  ol.append(li);
+}</code></pre>
+
+  <p>The <code data-x="dom-Navigation-entries">navigation.entries()</code> array contains <code>NavigationHistoryEntry</code> instances, which have other useful properties in addition to the <code data-x="dom-NavigationHistoryEntry-url">url</code> and <code data-x="dom-NavigationHistoryEntry-index">index</code> properties shown here. Note that the array only contains <code>NavigationHistoryEntry</code> objects that represent the current <span>navigable</span>, and thus its contents are not impacted by navigations inside <span data-x="navigable container">navigable containers</span> such as <code>iframe</code>s, or by navigations of the <span data-x="nav-parent">parent navigable</span> in cases where the navigation API is itself being used inside an <code>iframe</code>. Additionally, it only contains <code>NavigationHistoryEntry</code> objects representing same-<span>origin</span> <span data-x="session history entry">session history entries</span>, meaning that if the user has visited other origins before or after the current one, there will not be corresponding <code>NavigationHistoryEntry</code>s.</p>
+
+  <hr>
+
+  <p>The navigation API can also be used to navigate, reload, or traverse through the history:</p>
+
+  <pre><code class="html">&lt;button onclick="navigation.reload()">Reload&lt;/button>
+
+&lt;input type="url" id="navigationURL">
+&lt;button onclick="navigation.navigate(navigationURL.value)">Navigate&lt;/button>
+
+&lt;button id="backButton" onclick="navigation.back()">Back&lt;/button>
+&lt;button id="forwardButton" onclick="navigation.forward()">Forward&lt;/button>
+
+&lt;select id="traversalDestinations">&lt;/select>
+&lt;button id="goButton" onclick="navigation.traverseTo(traversalDestinations.value)">Traverse To&lt;/button>
+
+&lt;script>
+backButton.disabled = !navigation.canGoBack;
+forwardButton.disabled = !navigation.canGoForward;
+
+for (const entry of navigation.entries()) {
+  traversalDestinations.append(new Option(entry.url, entry.key));
+}
+&lt;/script></code></pre>
+
+  <p>Note that traversals are again limited to same-<span>origin</span> destinations, meaning that, for example, <code data-x="dom-Navigation-canGoBack">navigation.canGoBack</code> will be false if the previous <span>session history entry</span> is for a page from another origin.</p>
+
+  <hr>
+
+  <p>The most powerful part of the navigation API is the <code data-x="event-navigate">navigate</code> event, which fires whenever almost any navigation or traversal occurs in the current <span>navigable</span>:</p>
+
+  <pre><code class="js">navigation.onnavigate = event => {
+  console.log(event.navigationType); // "push", "replace", "reload", or "traverse"
+  console.log(event.destination.url);
+  console.log(event.userInitiated);
+  // ... and <a href="#the-navigateevent-interface">other useful properties</a>
+};</code></pre>
+
+  <p>(The event will not fire for <a href="#nav-traversal-ui">location bar-initiated navigations</a>, or navigations initiated from other windows, when the destination of the navigation is a new document.)</p>
+
+  <p>Much of the time, the event's <code data-x="dom-Event-cancelable">cancelable</code> property will be true, meaning this event can be canceled using <code data-x="dom-Event-preventDefault">preventDefault()</code>:</p>
+
+  <pre><code class="js">navigation.onnavigate = event => {
+  if (event.cancelable && isDisallowedURL(event.destination.url)) {
+    alert(`Please don't go to ${event.destination.url}!`);
+    event.preventDefault();
+  }
+};
+</code></pre>
+
+  <p>The <code data-x="dom-Event-cancelable">cancelable</code> property will be false for some "<code data-x="dom-NavigationType-traverse">traverse</code>" navigations, such as those taking place inside <span data-x="child navigable">child navigables</span>, those crossing to new origins, or when the user attempts to traverse again shortly after a previous call to <code data-x="dom-Event-preventDefault">preventDefault()</code> prevented them from doing so.</p>
+
+  <p>The <code>NavigateEvent</code>'s <code data-x="dom-NavigateEvent-intercept">intercept()</code> method allows intercepting a navigation and converting it into a same-document navigation:</p>
+
+  <pre><code class="js">navigation.addEventListener("navigate", e => {
+  // Some navigations, e.g. cross-origin navigations, we cannot intercept.
+  // Let the browser handle those normally.
+  if (!e.canIntercept) {
+    return;
+  }
+
+  // Similarly, don't intercept fragment navigations or downloads.
+  if (e.hashChange || e.downloadRequest !== null) {
+    return;
+  }
+
+  const url = new URL(event.destination.url);
+
+  if (url.pathname.startsWith("/articles/")) {
+    e.intercept({
+      async handler() {
+        // The URL has already changed, so show a placeholder while
+        // fetching the new content, such as a spinner or loading page.
+        renderArticlePagePlaceholder();
+
+        // Fetch the new content and display when ready.
+        const articleContent = await getArticleContent(url.pathname, { signal: e.signal });
+        renderArticlePage(articleContent);
+      }
+    });
+  }
+});</code></pre>
+
+  <p>Note that the <code data-x="dom-NavigationInterceptOptions-handler">handler</code> function can return a promise to represent the asynchronous progress, and success or failure, of the navigation. While the promise is still pending, browser UI can treat the navigation as ongoing (e.g., by presenting a loading spinner). Other parts of the navigation API are also sensitive to these promises, such as the return value of <code data-x="dom-Navigation-navigate">navigation.navigate()</code>:
+
+  <pre><code class="js">const { committed, finished } = await navigation.navigate("/articles/the-navigation-api-is-cool");
+
+// The committed promise will fulfill once the URL has changed, which happens
+// immediately (as long as the NavigateEvent wasn't canceled).
+await committed;
+
+// The finished promise will fulfill once the Promise returned by handler() has
+// fulfilled, which happens once the article is downloaded and rendered. (Or,
+// it will reject, if handler() fails along the way).
+await finished;</code></pre>
+

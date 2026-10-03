@@ -1,0 +1,99 @@
+WHATWG URL — section idna — IDNA
+
+<h3 id=idna>IDNA</h3>
+
+<div algorithm>
+<p>The <dfn id=concept-domain-to-ascii>domain parser</dfn> algorithm, given a
+<a for=/>scalar value string</a> <var>domain</var> and a boolean <var>beStrict</var>, runs these
+steps. They return failure or a <a for=/>domain</a>.
+
+<ol>
+ <li><p>Let <var>strictResult</var> be the result of running <a>domain parser ToASCII</a> with
+ <var>domain</var> and true.
+
+ <li><p>If <var>strictResult</var> is a failure value, <a>domain-to-ASCII</a>
+ <a>validation error</a>. <span class=note>This step does not return.</span>
+
+ <li>
+  <p>If <var>beStrict</var> is true:
+
+  <ol>
+   <li><p>If <var>strictResult</var> is a failure value, then return failure.
+
+   <li><p>Return <var>strictResult</var>.
+  </ol>
+
+ <li><p>Let <var>result</var> be null.
+
+ <li>
+  <p>If <var>domain</var> is an <a>ASCII string</a>, then set <var>result</var> to
+  <var>domain</var>, <a lt="ASCII lowercase">lowercased</a>.
+
+  <p class=note>When <var>beStrict</var> is false and <var>domain</var> is an <a>ASCII string</a>,
+  the algorithm returns <var>domain</var> <a lt="ASCII lowercase">lowercased</a> regardless of
+  <a abstract-op lt=ToASCII>Unicode ToASCII</a>'s outcome, due to web compatibility.
+  <i>IgnoreInvalidPunycode</i> is not sufficient on its own, as Punycode can decode successfully
+  yet still fail validity criteria. E.g., <code>xn--8i7caa</code> decodes to <code>ｗｗｗ</code>,
+  whose code points have status "mapped". [[UTS46]]
+
+ <li>
+  <p>Otherwise:
+
+  <ol>
+   <li><p>Set <var>result</var> to the result of running <a>domain parser ToASCII</a> with
+   <var>domain</var> and false.
+
+   <li><p>If <var>result</var> is a failure value, then return failure.
+  </ol>
+
+ <li><p>If <var>result</var> is the empty string, then return failure.
+
+ <li>
+  <p>If <var>result</var> contains a <a>forbidden domain code point</a>, then return failure.
+
+  <p class=note>Due to web compatibility and compatibility with non-DNS-based systems the
+  <a>forbidden domain code points</a> are a subset of those disallowed when <i>UseSTD3ASCIIRules</i>
+  is true. See also <a href="https://github.com/whatwg/url/issues/397">issue #397</a>.
+
+ <li><p>Return <var>result</var>.
+</ol>
+
+<p class=note>This document and the web platform at large use
+<cite>Unicode IDNA Compatibility Processing</cite> and not IDNA2008. For instance,
+<code>☕.example</code> becomes <code>xn--53h.example</code> and not failure. [[UTS46]] [[RFC5890]]
+</div>
+
+<div algorithm>
+<p>The <dfn>domain parser ToASCII</dfn> algorithm, given a <a for=/>scalar value string</a>
+<var>domain</var> and a boolean <var>beStrict</var>, returns the result of running
+<a abstract-op lt=ToASCII>Unicode ToASCII</a> with <i>domain_name</i> set to <var>domain</var>,
+<i>CheckHyphens</i> set to <var>beStrict</var>, <i>CheckBidi</i> set to true, <i>CheckJoiners</i>
+set to true, <i>UseSTD3ASCIIRules</i> set to <var>beStrict</var>, <i>Transitional_Processing</i>
+set to false, <i>VerifyDnsLength</i> set to <var>beStrict</var>, and <i>IgnoreInvalidPunycode</i>
+set to false. [[!UTS46]]
+</div>
+
+<div algorithm>
+<p>The <dfn id=concept-domain-to-unicode>domain to Unicode</dfn> algorithm, given a <a>domain</a>
+<var>domain</var>, runs these steps:
+
+<ol>
+ <li><p>Let <var>result</var> be the result of running
+ <a abstract-op lt=ToUnicode>Unicode ToUnicode</a> with <i>domain_name</i> set to <var>domain</var>,
+ <i>CheckHyphens</i> set to false, <i>CheckBidi</i> set to true, <i>CheckJoiners</i> set to true,
+ <i>UseSTD3ASCIIRules</i> set to false, <i>Transitional_Processing</i> set to false, and
+ <i>IgnoreInvalidPunycode</i> set to false. [[!UTS46]]
+
+ <li>
+  <p>If an error was recorded, then return <var>domain</var>.
+
+  <p class=note>Because <var>domain</var> can only result from the <a>host parser</a>, any recorded
+  errors will already have been signified as <a>validation errors</a>. Returning <var>domain</var>
+  ensures the <a>domain parser</a> and <a>domain to Unicode</a> roundtrip on input such as
+  <code>xn--8i7caa</code>.
+
+ <li><p>Return <var>result</var>.
+</ol>
+</div>
+
+

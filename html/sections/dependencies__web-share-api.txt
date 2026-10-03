@@ -1,0 +1,12 @@
+WHATWG HTML — section dependencies/web-share-api — Web Share API
+
+  <dt>Web Share API</dt>
+
+  <dd>
+   <p>The following terms are defined in <cite>Web Share API</cite>:</p>
+
+   <ul class="brief">
+    <li><dfn data-x-href="https://w3c.github.io/web-share/#share-method" data-x="dom-Navigator-share">share()</dfn></li>
+   </ul>
+  </dd>
+

@@ -1,0 +1,90 @@
+WHATWG HTML — section the-canvas-element/compositing — Compositing
+
+  <h6>Compositing</h6>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>context</var>.<span subdfn data-x="dom-context-2d-globalAlpha">globalAlpha</span> [ = <var>value</var> ]</code></dt>
+
+   <dd>
+    <p>Returns the current <span data-x="concept-canvas-global-alpha">global alpha</span> value
+    applied to rendering operations.</p>
+
+    <p>Can be set, to change the <span data-x="concept-canvas-global-alpha">global alpha</span>
+    value. Values outside of the range 0.0 .. 1.0 are ignored.</p>
+   </dd>
+
+
+   <dt><code data-x=""><var>context</var>.<span subdfn data-x="dom-context-2d-globalCompositeOperation">globalCompositeOperation</span> [ = <var>value</var> ]</code></dt>
+
+   <dd>
+    <p>Returns the <span>current compositing and blending operator</span>, from the values defined
+    in <cite>Compositing and Blending</cite>. <ref>COMPOSITE</ref></p>
+
+    <p>Can be set, to change the <span>current compositing and blending operator</span>. Unknown
+    values are ignored.</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <p>Objects that implement the <code>CanvasCompositing</code> interface have a <span
+  data-x="concept-canvas-global-alpha">global alpha</span> value and a <span>current compositing
+  and blending operator</span> value that both affect all the drawing operations on this
+  object.</p>
+
+  <!-- conformance criteria for painting are described in the "drawing model" section below -->
+
+  <p>The <dfn data-x="concept-canvas-global-alpha">global alpha</dfn> value gives an alpha value
+  that is applied to shapes and images before they are composited onto the <span>output bitmap</span>.
+  The value ranges from 0.0 (fully transparent) to 1.0 (no additional transparency). It must
+  initially have the value 1.0.</p>
+
+  <div algorithm>
+  <p>The <dfn attribute for="CanvasCompositing"><code
+  data-x="dom-context-2d-globalAlpha">globalAlpha</code></dfn> getter steps are to return
+  <span>this</span>'s <span data-x="concept-canvas-global-alpha">global alpha</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <code data-x="dom-context-2d-globalAlpha">globalAlpha</code> setter steps are:
+
+  <ol>
+   <li><p>If the given value is either infinite, NaN, or not in the range 0.0 to 1.0, then
+   return.</p></li>
+
+   <li><p>Otherwise, set <span>this</span>'s <span data-x="concept-canvas-global-alpha">global
+   alpha</span> to the given value.</p></li>
+  </ol>
+  </div>
+
+  <p>The <dfn>current compositing and blending operator</dfn> value controls how shapes and images
+  are drawn onto the <span>output bitmap</span>, once they have had the <span
+  data-x="concept-canvas-global-alpha">global alpha</span> and the <span>current transformation
+  matrix</span> applied. Initially, it must be set to "<code
+  data-x="gcop-source-over">source-over</code>".</p>
+
+  <div algorithm>
+  <p>The <dfn attribute for="CanvasCompositing"><code
+  data-x="dom-context-2d-globalCompositeOperation">globalCompositeOperation</code></dfn> getter
+  steps are to return <span>this</span>'s <span>current compositing and blending
+  operator</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <code
+  data-x="dom-context-2d-globalCompositeOperation">globalCompositeOperation</code> setter steps
+  are:</p>
+
+  <ol>
+   <li><p>If the given value is not <span>identical to</span> any of the values that the
+   <span>&lt;blend-mode&gt;</span> or the <span>&lt;composite-mode&gt;</span> properties are defined
+   to take, then return. <ref>COMPOSITE</ref></p></li>
+
+   <li><p>Otherwise, set <span>this</span>'s <span>current compositing and blending operator</span>
+   to the given value.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+

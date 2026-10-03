@@ -1,0 +1,54 @@
+WHATWG HTML — section read-multipart-x-mixed-replace — Loading <code>multipart/x-mixed-replace</code> documents
+
+  <h4 id="read-multipart-x-mixed-replace">Loading <code>multipart/x-mixed-replace</code>
+  documents</h4>
+
+  <div algorithm>
+  <p>To <dfn data-x="navigate-multipart-x-mixed-replace">load a
+  <code>multipart/x-mixed-replace</code> document</dfn>, given <span>navigation params</span>
+  <var>navigationParams</var>, <span>source snapshot params</span> <var>sourceSnapshotParams</var>,
+  and <span>origin</span> <var>initiatorOrigin</var>:</p>
+
+  <ol>
+   <li><p>Parse <var>navigationParams</var>'s <span
+   data-x="navigation-params-response">response</span>'s <span
+   data-x="concept-response-body">body</span> using the rules for multipart types.
+   <ref>RFC2046</ref></p></li>
+
+   <li><p>Let <var>firstPartNavigationParams</var> be a copy of
+   <var>navigationParams</var>.</p></li>
+
+   <li><p>Set <var>firstPartNavigationParams</var>'s <span
+   data-x="navigation-params-response">response</span> to a new <span
+   data-x="concept-response">response</span> representing the first part of
+   <var>navigationParams</var>'s <span data-x="navigation-params-response">response</span>'s <span
+   data-x="concept-response-body">body</span>'s multipart stream.</p></li>
+
+   <li>
+    <p>Let <var>document</var> be the result of <span>loading a document</span> given
+    <var>firstPartNavigationParams</var>, <var>sourceSnapshotParams</var>, and
+    <var>initiatorOrigin</var>.</p>
+
+    <p>For each additional body part obtained from <var>navigationParams</var>'s <span
+    data-x="navigation-params-response">response</span>, the user agent must <span>navigate</span>
+    <var>document</var>'s <span>node navigable</span> to <var>navigationParams</var>'s <span
+    data-x="navigation-params-request">request</span>'s <span
+    data-x="concept-request-url">URL</span>, using <var>document</var>, with <i
+    data-x="navigation-response">response</i> set to <var>navigationParams</var>'s <span
+    data-x="navigation-params-response">response</span> and <i
+    data-x="navigation-hh">historyHandling</i> set to "<code
+    data-x="NavigationHistoryBehavior-replace">replace</code>".</p>
+   </li>
+
+   <li><p>Return <var>document</var>.</p></li>
+  </ol>
+  </div>
+
+  <p>For the purposes of algorithms processing these body parts as if they were complete
+  stand-alone resources, the user agent must act as if there were no more bytes for those resources
+  whenever the boundary following the body part is reached.</p>
+
+  <p class="note">Thus, <code data-x="event-load">load</code> events (and for that matter <code
+  data-x="event-unload">unload</code> events) do fire for each body part loaded.</p>
+
+

@@ -1,0 +1,113 @@
+WHATWG HTML — section dialog-light-dismiss — <dfn>Dialog light dismiss</dfn>
+
+  <h4><dfn>Dialog light dismiss</dfn></h4>
+
+  <p class="note">"Light dismiss" means that clicking outside of a <code>dialog</code> element whose <code
+  data-x="attr-dialog-closedby">closedby</code> attribute is in the <span
+  data-x="attr-dialog-closedby-any-state">Any</span> state will close the <code>dialog</code> element. This
+  is in addition to how such <code>dialog</code>s respond to <span data-x="close request">close requests</span>.</p>
+
+  <div algorithm>
+  <p>To <dfn>light dismiss open dialogs</dfn>, given a <code>PointerEvent</code> <var>event</var>:</p>
+
+  <ol>
+   <li><p><span>Assert</span>: <var>event</var>'s <code
+   data-x="dom-Event-isTrusted">isTrusted</code> attribute is true.</p></li>
+
+   <li><p>Let <var>document</var> be <var>event</var>'s <span
+   data-x="concept-event-target">target</span>'s <span>node document</span>.</p></li>
+
+   <li><p>If <var>document</var>'s <span>open dialogs list</span> is <span
+   data-x="list is empty">empty</span>, then return.</p></li>
+
+   <li><p>Let <var>ancestor</var> be the result of running <span>nearest clicked dialog</span>
+   given <var>event</var>.</p></li>
+
+   <li><p>If <var>event</var>'s <code data-x="dom-Event-type">type</code> is
+   "<code data-x="event-pointerdown">pointerdown</code>", then set <var>document</var>'s
+   <span>dialog pointerdown target</span> to <var>ancestor</var>.</p></li>
+
+   <li>
+    <p>If <var>event</var>'s <code data-x="dom-Event-type">type</code> is
+    "<code data-x="event-pointerup">pointerup</code>":</p>
+
+    <ol>
+     <li><p>Let <var>sameTarget</var> be true if <var>ancestor</var> is <var>document</var>'s
+     <span>dialog pointerdown target</span>.</p></li>
+
+     <li><p>Set <var>document</var>'s <span>dialog pointerdown target</span> to null.</p></li>
+
+     <li><p>If <var>sameTarget</var> is false, then return.</p></li>
+
+     <li><p>Let <var>topmostDialog</var> be the last element of <var>document</var>'s <span>open
+     dialogs list</span>.</p></li>
+
+     <li><p>If <var>ancestor</var> is <var>topmostDialog</var>, then return.</p></li>
+
+     <li><p>If <var>topmostDialog</var>'s <span>computed closed-by state</span> is not <span
+     data-x="attr-dialog-closedby-any-state">Any</span>, then return.</p></li>
+
+     <li><p><span>Assert</span>: <var>topmostDialog</var>'s <span
+     data-x="dialog-close-watcher">close watcher</span> is not null.</p></li>
+
+     <li><p><span data-x="close-watcher-request-close">Request to close</span>
+     <var>topmostDialog</var>'s <span data-x="dialog-close-watcher">close watcher</span> with
+     false.</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>run light dismiss activities</dfn>, given a <code>PointerEvent</code>
+  <var>event</var>:</p>
+
+  <ol>
+   <li><p>Run <span>light dismiss open popovers</span> with <var>event</var>.</p></li>
+
+   <li><p>Run <span>light dismiss open dialogs</span> with <var>event</var>.</p></li>
+  </ol>
+  </div>
+
+  <p class="XXX"><span>Run light dismiss activities</span> will be called by the <a
+  href="https://github.com/w3c/pointerevents/pull/460">Pointer Events spec</a> when the user clicks
+  or touches anywhere on the page.</p>
+
+  <div algorithm>
+  <p>To find the <dfn>nearest clicked dialog</dfn>, given a <code>PointerEvent</code>
+  <var>event</var>:</p>
+
+  <ol>
+   <li><p>Let <var>target</var> be <var>event</var>'s <span
+   data-x="concept-event-target">target</span>.</p></li>
+
+   <li><p>If <var>target</var> is a <code>dialog</code> element, <var>target</var> has an <code
+   data-x="attr-dialog-open">open</code> attribute, <var>target</var>'s <span>is modal</span> is
+   true, and <var>event</var>'s <code data-x="mouseevent-clientx">clientX</code> and
+   <code data-x="mouseevent-clienty">clientY</code> are outside the bounds of <var>target</var>,
+   then return null.
+
+   <p class="note">The check for <code data-x="mouseevent-clientx">clientX</code> and <code
+   data-x="mouseevent-clienty">clientY</code> is because a pointer event that hits the <code
+   data-x="">::backdrop</code> pseudo element of a dialog will result in <var>event</var> having a
+   target of the dialog element itself.</p>
+
+   <li><p>Let <var>currentNode</var> be <var>target</var>.</p></li>
+
+   <li>
+    <p>While <var>currentNode</var> is not null:</p>
+
+    <ol>
+     <li><p>If <var>currentNode</var> is a <code>dialog</code> element and <var>currentNode</var>
+     has an <code data-x="attr-dialog-open">open</code> attribute, then return
+     <var>currentNode</var>.</p></li>
+
+     <li><p>Set <var>currentNode</var> to <var>currentNode</var>'s parent in the <span>flat
+     tree</span>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Return null.</p></li>
+  </ol>
+  </div>
+

@@ -1,0 +1,291 @@
+WHATWG URL — section writing — Writing
+
+<h3 id=writing>Writing</h3>
+
+<p>A <dfn oldids=syntax-violation>validation error</dfn> indicates a mismatch between input and
+valid input. User agents, especially conformance checkers, are encouraged to report them somewhere.
+
+<div class=note>
+ <p>A <a>validation error</a> does not mean that the parser terminates. Termination of a parser is
+ always stated explicitly, e.g., through a return statement.
+
+ <p>It is useful to signal <a>validation errors</a> as error-handling can be non-intuitive, legacy
+ user agents might not implement correct error-handling, and the intent of what is written might be
+ unclear to other developers.
+</div>
+
+<table class=yesno>
+ <thead>
+  <tr>
+   <th>Error type
+   <th>Error description
+   <th>Failure
+ <!-- The rows inside the <tbody>s are generally sorted by first occurrence. However, where logical
+      groupings exist those override that sorting:
+      - domain- and host- stay together
+      - IPv6- stays together
+      - IPv4-in-IPv6- stays together -->
+ <tbody>
+  <tr>
+   <th colspan=3 scope=rowgroup><a href=#idna>IDNA</a>
+  <tr>
+   <td><dfn id=validation-error-domain-to-ascii>domain-to-ASCII</dfn>
+   <td>
+    <p><a abstract-op lt=ToASCII>Unicode ToASCII</a> records an error when <i>CheckHyphens</i>,
+    <i>UseSTD3ASCIIRules</i>, and <i>VerifyDnsLength</i> are all set to true. [[UTS46]]
+    <p class=note>If details about <a abstract-op lt=ToASCII>Unicode ToASCII</a> errors are
+    recorded, user agents are encouraged to pass those along.
+    <div class=example id=example-domain-invalid-code-point>
+     <p>Hosts are <a for=string>percent-decoded</a> before being processed when the URL
+     <a>is special</a>, which would result in the following host portion becoming
+     "<code>exa#mple.org</code>" and thus triggering this error.
+     <p>"<code>https://exa%23mple.org</code>"
+    </div>
+   <td class=yes>Yes<br>(when <var ignore>beStrict</var> is true, or <var ignore>domain</var> is
+   not an <a>ASCII string</a> and <a abstract-op lt=ToASCII>Unicode ToASCII</a> with relaxed
+   parameters also fails)
+ <tbody>
+  <tr>
+   <th colspan=3 scope=rowgroup><a href=#host-parsing>Host parsing</a>
+  <!-- domain host -->
+  <tr>
+   <td><dfn>domain-percent-encoded</dfn>
+   <td>
+    <p>The input's <a for=/>host</a> to be processed as a domain contains a
+    <a>percent-encoded byte</a>.
+    <p class=example id=example-domain-percent-encoded>"<code>https://exam%70le.org</code>"
+   <td class=no>·
+  <!-- opaque-host parser -->
+  <tr>
+   <td><dfn>host-invalid-code-point</dfn>
+   <td>
+    <p>An <a>opaque host</a> (in a URL that <a>is not special</a>) contains a
+    <a>forbidden host code point</a>.
+    <p class=example id=example-host-invalid-code-point>"<code>foo://exa[mple.org</code>"
+   <td class=yes>Yes
+  <!-- IPv4 parser -->
+  <tr>
+   <td><dfn>IPv4-empty-part</dfn>
+   <td>
+    <p>An <a for=/>IPv4 address</a> ends with a U+002E (.).
+    <p class=example id=example-ipv4-empty-part>"<code>https://127.0.0.1./</code>"
+   <td class=no>·
+  <tr>
+   <td><dfn>IPv4-too-few-parts</dfn>
+   <td>
+    <p>An <a for=/>IPv4 address</a> has fewer than 4 parts.
+    <p class=example id=example-ipv4-too-few-parts>"<code>https://1.2.3/</code>"
+   <td class=no>·
+  <tr>
+   <td><dfn>IPv4-too-many-parts</dfn>
+   <td>
+    <p>An <a for=/>IPv4 address</a> has more than 4 parts.
+    <p class=example id=example-ipv4-too-many-parts>"<code>https://1.2.3.4.5/</code>"
+   <td class=yes>Yes
+  <tr>
+   <td><dfn>IPv4-non-numeric-part</dfn>
+   <td>
+    <p>An <a for=/>IPv4 address</a> part is not numeric.
+    <p class=example id=example-ipv4-non-numeric-part>"<code>https://test.42</code>"
+   <td class=yes>Yes
+  <tr>
+   <td><dfn>IPv4-non-decimal-part</dfn>
+   <td>
+    <p>The <a for=/>IPv4 address</a> contains numbers expressed using hexadecimal or octal digits.
+    <p class=example id=example-ipv4-non-decimal-part>"<code>https://127.0.0x0.1</code>"
+   <td class=no>·
+  <tr>
+   <td><dfn>IPv4-out-of-range-part</dfn>
+   <td>
+    <p>An <a for=/>IPv4 address</a> part exceeds 255.
+    <p class=example id=example-ipv4-out-of-range-part>"<code>https://255.255.4000.1</code>"
+   <td class=yes>Yes<br>(only if applicable to the last part)
+  <tr>
+   <td><dfn>IPv4-non-ASCII-input</dfn>
+   <td>
+    <p>An <a for=/>IPv4 address</a> is derived from a non-<a>ASCII string</a> through IDNA
+    processing.
+    <p class=example id=example-ipv4-non-ascii-input>"<code>https://①.②.③.④</code>"
+   <td class=no>·
+  <!-- host parser, but grouped with IPv6- -->
+  <tr>
+   <td><dfn>IPv6-unclosed</dfn>
+   <td>
+    <p>An <a for=/>IPv6 address</a> is missing the closing U+005D (]).
+    <p class=example id=example-ipv6-unclosed>"<code>https://\[::1</code>"
+   <td class=yes>Yes
+  <!-- IPv6 parser -->
+  <tr>
+   <td><dfn>IPv6-invalid-compression</dfn>
+   <td>
+    <p>An <a for=/>IPv6 address</a> begins with improper compression.
+    <p class=example id=example-ipv6-invalid-compression>"<code>https://\[:1]</code>"
+   <td class=yes>Yes
+  <tr>
+   <td><dfn>IPv6-too-many-pieces</dfn>
+   <td>
+    <p>An <a for=/>IPv6 address</a> contains more than 8 pieces.
+    <p class=example id=example-ipv6-too-many-pieces>"<code>https://[1:2:3:4:5:6:7:8:9]</code>"
+   <td class=yes>Yes
+  <tr>
+   <td><dfn>IPv6-multiple-compression</dfn>
+   <td>
+    <p>An <a for=/>IPv6 address</a> is compressed in more than one spot.
+    <p class=example id=example-ipv6-multiple-compression>"<code>https://[1::1::1]</code>"
+   <td class=yes>Yes
+  <tr>
+   <td><dfn>IPv6-invalid-code-point</dfn>
+   <td>
+    <p>An <a for=/>IPv6 address</a> contains a code point that is neither an <a>ASCII hex digit</a>
+    nor a U+003A (:). Or it unexpectedly ends.
+    <div class=example id=example-ipv6-invalid-code-point>
+     <p>"<code>https://[1:2:3!:4]</code>"
+     <p>"<code>https://[1:2:3:]</code>"
+    </div>
+   <td class=yes>Yes
+  <tr>
+   <td><dfn>IPv6-too-few-pieces</dfn>
+   <td>
+    <p>An uncompressed <a for=/>IPv6 address</a> contains fewer than 8 pieces.
+    <p class=example id=example-ipv6-too-few-pieces>"<code>https://[1:2:3]</code>"
+   <td class=yes>Yes
+  <tr>
+   <td><dfn>IPv6-piece-leading-zero</dfn>
+   <td>
+    <p>An <a for=/>IPv6 address</a> <a for="IPv6 address">piece</a> contains a leading U+0030 (0).
+    <p class=example id=example-ipv6-piece-leading-zero>"<code>https://\[::01]</code>"
+   <td class=no>·
+  <tr>
+   <td><dfn>IPv4-in-IPv6-too-many-pieces</dfn>
+   <td>
+    <p>An <a for=/>IPv6 address</a> with <a for=/>IPv4 address</a> syntax: the IPv6 address has more
+    than 6 pieces.
+    <p class=example id=example-ipv4-in-ipv6-too-many-pieces>"<code>https://[1:1:1:1:1:1:1:127.0.0.1]</code>"
+   <td class=yes>Yes
+  <tr>
+   <td><dfn>IPv4-in-IPv6-invalid-code-point</dfn>
+   <td>
+    <p>An <a for=/>IPv6 address</a> with <a for=/>IPv4 address</a> syntax:
+    <ul>
+     <li>An IPv4 part is empty or contains a non-<a>ASCII digit</a>.
+     <li>An IPv4 part contains a leading 0.
+     <li>There are too many IPv4 parts.
+    </ul>
+    <div class=example id=example-ipv4-in-ipv6-invalid-code-point>
+     <p>"<code>https://[ffff::.0.0.1]</code>"
+     <p>"<code>https://[ffff::127.0.xyz.1]</code>"
+     <p>"<code>https://[ffff::127.0xyz]</code>"
+     <p>"<code>https://[ffff::127.00.0.1]</code>"
+     <p>"<code>https://[ffff::127.0.0.1.2]</code>"
+    </div>
+   <td class=yes>Yes
+  <tr>
+   <td><dfn>IPv4-in-IPv6-out-of-range-part</dfn>
+   <td>
+    <p>An <a for=/>IPv6 address</a> with <a for=/>IPv4 address</a> syntax: an IPv4 part exceeds 255.
+    <p class=example id=example-ipv4-in-ipv6-out-of-range-part>"<code>https://[ffff::127.0.0.4000]</code>"
+   <td class=yes>Yes
+  <tr>
+   <td><dfn>IPv4-in-IPv6-too-few-parts</dfn>
+   <td>
+    <p>An <a for=/>IPv6 address</a> with <a for=/>IPv4 address</a> syntax: an IPv4 address contains
+    too few parts.
+    <p class=example id=example-ipv4-in-ipv6-too-few-parts>"<code>https://[ffff::127.0.0]</code>"
+   <td class=yes>Yes
+ <tbody>
+  <tr>
+   <th colspan=3 scope=rowgroup><a href=#url-parsing>URL parsing</a>
+  <!-- invalid-URL-unit is also present in the opaque-host parser, but this is a more logical place.
+       -->
+  <tr>
+   <td><dfn>invalid-URL-unit</dfn>
+   <td>
+    <p>A code point is found that is not a <a>URL unit</a>.
+    <div class=example id=example-invalid-url-unit>
+     <p>"<code>https://example.org/></code>"
+     <p>"<code> https://example.org </code>"
+     <p>"<code>ht<br>tps://example.org</code>"
+     <p>"<code>https://example.org/%s</code>"
+    </div>
+   <td class=no>·
+  <tr>
+   <td><dfn>special-scheme-missing-following-solidus</dfn>
+   <td>
+    <p>The input's scheme is not followed by "<code>//</code>".
+    <div class=example id=example-special-scheme-missing-following-solidus>
+     <p>"<code>file:c:/my-secret-folder</code>"
+     <p>"<code>https:example.org</code>"
+     <pre><code class="lang-javascript">
+const url = new URL("https:foo.html", "https://example.org/");</code></pre>
+    </div>
+   <td class=no>·
+  <tr>
+   <td><dfn>missing-scheme-non-relative-URL</dfn>
+   <td>
+    <p>The input is missing a <a for=url>scheme</a>, because it does not begin with an
+    <a>ASCII alpha</a>, and either no <a>base URL</a> was provided or the <a>base URL</a> cannot be
+    used as a <a>base URL</a> because it has an <a for=url>opaque path</a>.
+    <div class=example id=example-missing-scheme-non-relative-url>
+     <p>Input's <a for=url>scheme</a> is missing and no <a>base URL</a> is given:
+     <pre><code class=lang-javascript>
+const url = new URL("💩");</code></pre>
+     <p>Input's <a for=url>scheme</a> is missing, but the <a>base URL</a> has an
+     <a for=url>opaque path</a>.
+     <pre><code class=lang-javascript>
+const url = new URL("💩", "mailto:user@example.org");</code></pre>
+    </div>
+   <td class=yes>Yes
+  <tr>
+   <td><dfn>invalid-reverse-solidus</dfn>
+   <td>
+    <p>The URL has a <a>special scheme</a> and it uses U+005C (\) instead of U+002F (/).
+    <p class=example id=example-invalid-reverse-solidus>"<code>https://example.org\path\to\file</code>"
+   <td class=no>·
+  <tr>
+   <td><dfn>invalid-credentials</dfn>
+   <td>
+    <p>The input <a>includes credentials</a>.
+    <div class=example id=example-invalid-credentials>
+     <p>"<code>https://user@example.org</code>"
+     <p>"<code>ssh://user@example.org</code>"
+    </div>
+   <td class=no>·
+  <tr>
+   <td><dfn>host-missing</dfn>
+   <td>
+    <p>The input has a <a>special scheme</a>, but does not contain a <a for=/>host</a>.
+    <div class=example id=example-host-missing>
+     <p>"<code>https://#fragment</code>"
+     <p>"<code>https://:443</code>"
+     <p>"<code>https://user:pass@</code>"
+    </div>
+   <td class=yes>Yes
+  <tr>
+   <td><dfn>port-out-of-range</dfn>
+   <td>
+    <p>The input's port is too big.
+    <p class=example id=example-port-out-of-range>"<code>https://example.org:70000</code>"
+   <td class=yes>Yes
+  <tr>
+   <td><dfn>port-invalid</dfn>
+   <td>
+    <p>The input's port is invalid.
+    <p class=example id=example-port-invalid>"<code>https://example.org:7z</code>"
+   <td class=yes>Yes
+  <tr>
+   <td><dfn>file-invalid-Windows-drive-letter</dfn>
+   <td>
+    <p>The input is a <a>relative-URL string</a> that <a>starts with a Windows drive letter</a> and
+    the <a>base URL</a>'s <a for=url>scheme</a> is "<code>file</code>".
+    <pre class=example id=example-file-invalid-windows-drive-letter><code class=lang-javascript>
+const url = new URL("/c:/path/to/file", "file:///c:/");</code></pre>
+   <td class=no>·
+  <tr>
+   <td><dfn>file-invalid-Windows-drive-letter-host</dfn>
+   <td>
+    <p>A <code>file:</code> URL's host is a Windows drive letter.
+    <p class=example id=example-file-invalid-windows-drive-letter-host>"<code>file://c:</code>"
+   <td class=no>·
+</table>
+
+

@@ -1,0 +1,79 @@
+WHATWG HTML — section resolving-urls — Parsing URLs
+
+  <h4 id="resolving-urls">Parsing URLs</h4>
+
+  <p>Parsing a URL is the process of taking a string and obtaining the <span>URL record</span> that
+  it represents. While this process is defined in <cite>URL</cite>, the HTML standard defines
+  several wrappers to abstract base URLs and encodings. <ref>URL</ref></p>
+
+  <p class="note">Most new APIs are to use <span>parse a URL</span>. Older APIs and HTML elements
+  might have reason to use <span data-x="encoding-parsing a URL">encoding-parse a URL</span>. When a
+  custom base URL is needed or no base URL is desired, the <span>URL parser</span> can of course be
+  used directly as well.</p>
+
+  <div algorithm>
+  <p>To <dfn export>parse a URL</dfn>, given a string <var>url</var>, relative to a
+  <code>Document</code> object or <span>environment settings object</span> <var>environment</var>,
+  run these steps. They return failure or a <span>URL</span>.</p>
+
+  <ol>
+   <li><p>Let <var>baseURL</var> be <var>environment</var>'s <span data-x="document base URL">base
+   URL</span>, if <var>environment</var> is a <code>Document</code> object; otherwise
+   <var>environment</var>'s <span>API base URL</span>.</p></li>
+
+   <li><p>Return the result of applying the <span>URL parser</span> to <var>url</var>, with
+   <var>baseURL</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p id="resolve-a-url">To <dfn export data-x="encoding-parsing a URL">encoding-parse a URL</dfn>,
+  given a string <var>url</var>, relative to a <code>Document</code> object or <span>environment
+  settings object</span> <var>environment</var>, run these steps. They return failure or a
+  <span>URL</span>.</p>
+
+  <ol>
+   <li><p>Let <var>encoding</var> be <span>UTF-8</span>.</p></li>
+
+   <li><p>If <var>environment</var> is a <code>Document</code> object, then set <var>encoding</var>
+   to <var>environment</var>'s <span data-x="document's character encoding">character
+   encoding</span>.</p></li>
+
+   <li><p>Otherwise, if <var>environment</var>'s <span>relevant global object</span> is a
+   <code>Window</code> object, set <var>encoding</var> to <var>environment</var>'s <span>relevant
+   global object</span>'s <span data-x="concept-document-window">associated
+   <code>Document</code></span>'s <span data-x="document's character encoding">character
+   encoding</span>.</p></li>
+
+   <li><p>Let <var>baseURL</var> be <var>environment</var>'s <span data-x="document base URL">base
+   URL</span>, if <var>environment</var> is a <code>Document</code> object; otherwise
+   <var>environment</var>'s <span>API base URL</span>.</p></li>
+
+   <li><p>Return the result of applying the <span>URL parser</span> to <var>url</var>, with
+   <var>baseURL</var> and <var>encoding</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="encoding-parsing-and-serializing a URL">encoding-parse-and-serialize a
+  URL</dfn>, given a string <var>url</var>, relative to a <code>Document</code> object or
+  <span>environment settings object</span> <var>environment</var>, run these steps. They return
+  failure or a string.</p>
+
+  <ol>
+   <li><p>Let <var>url</var> be the result of <span>encoding-parsing a URL</span> given
+   <var>url</var>, relative to <var>environment</var>.</p></li>
+
+   <li><p>If <var>url</var> is failure, then return failure.</p></li>
+
+   <li><p>Return the result of applying the <span data-x="concept-url-serializer">URL
+   serializer</span> to <var>url</var>.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+
+
+  <div w-nodev>
+

@@ -1,0 +1,11 @@
+WHATWG HTML — section speculative-loading — Speculative loading
+
+  <h3 split-filename="speculative-loading">Speculative loading</h3>
+
+  <p>Speculative loading is the practice of performing navigation actions, such as prefetching,
+  ahead of navigation starting. This makes subsequent navigations faster.</p>
+
+  <p>Developers can initiate speculative loads by using <span data-x="speculation rule
+  set">speculation rules</span>. User agents might also perform speculative loads in certain
+  <span>implementation-defined</span> scenarios, such as typing into the address bar.</p>
+

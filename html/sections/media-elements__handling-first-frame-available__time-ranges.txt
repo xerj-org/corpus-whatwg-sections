@@ -1,0 +1,131 @@
+WHATWG HTML — section media-elements/handling-first-frame-available/time-ranges — Time ranges
+
+  <h5>Time ranges</h5>
+
+  <p>Objects implementing the <code>TimeRanges</code> interface
+  represent a list of ranges (periods) of time.</p>
+
+  <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>TimeRanges</dfn> {
+  readonly attribute unsigned long <span data-x="dom-TimeRanges-length">length</span>;
+  double <span data-x="dom-TimeRanges-start">start</span>(unsigned long index);
+  double <span data-x="dom-TimeRanges-end">end</span>(unsigned long index);
+};</code></pre>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>media</var>.<span subdfn data-x="dom-TimeRanges-length">length</span></code></dt>
+
+   <dd><p>Returns the number of ranges in the object.</p></dd>
+
+   <dt><code data-x=""><var>time</var> = <var>media</var>.<span subdfn data-x="dom-TimeRanges-start">start</span>(<var>index</var>)</code></dt>
+
+   <dd>
+    <p>Returns the time for the start of the range with the given index.</p>
+
+    <p>Throws an <span>"<code>IndexSizeError</code>"</span> <code>DOMException</code> if the index
+    is out of range.</p>
+   </dd>
+
+   <dt><code data-x=""><var>time</var> = <var>media</var>.<span subdfn data-x="dom-TimeRanges-end">end</span>(<var>index</var>)</code></dt>
+
+   <dd>
+    <p>Returns the time for the end of the range with the given index.</p>
+
+    <p>Throws an <span>"<code>IndexSizeError</code>"</span> <code>DOMException</code> if the index
+    is out of range.</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <p>A <code>TimeRanges</code> object has <dfn data-x="timeranges-ranges">ranges</dfn>, a
+  <span>list</span> of zero or more <span data-x="timeranges-range">time ranges</span>.</p>
+
+  <p>A <dfn data-x="timeranges-range">time range</dfn> is a <span>struct</span> with the following
+  <span data-x="struct item">items</span>:</p>
+
+  <ul>
+   <li><p>A <dfn data-x="timeranges-range-start">start</dfn>, a number, in seconds.</p></li>
+
+   <li><p>An <dfn data-x="timeranges-range-end">end</dfn>, a number, in seconds.</p></li>
+  </ul>
+
+  <div algorithm>
+  <p>The <dfn attribute for="TimeRanges"><code data-x="dom-TimeRanges-length">length</code></dfn>
+  getter steps are to return <span>this</span>'s <span data-x="timeranges-ranges">ranges</span>'s
+  <span data-x="list size">size</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="TimeRanges"><code
+  data-x="dom-TimeRanges-start">start(<var>index</var>)</code></dfn> method steps are:</p>
+
+  <ol>
+   <li><p>If <var>index</var> is greater than or equal to <span>this</span>'s <span
+   data-x="timeranges-ranges">ranges</span>'s <span data-x="list size">size</span>, then throw an
+   <span>"<code>IndexSizeError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>Return <span>this</span>'s <span
+   data-x="timeranges-ranges">ranges</span>[<var>index</var>]'s <span
+   data-x="timeranges-range-start">start</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="TimeRanges"><code
+  data-x="dom-TimeRanges-end">end(<var>index</var>)</code></dfn> method steps are:</p>
+
+  <ol>
+   <li><p>If <var>index</var> is greater than or equal to <span>this</span>'s <span
+   data-x="timeranges-ranges">ranges</span>'s <span data-x="list size">size</span>, then throw an
+   <span>"<code>IndexSizeError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>Return <span>this</span>'s <span
+   data-x="timeranges-ranges">ranges</span>[<var>index</var>]'s <span
+   data-x="timeranges-range-end">end</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>A <code>TimeRanges</code> object is a <dfn id="normalised-timeranges-object" export><!-- en-GB
+  -->normalized <code>TimeRanges</code> object</dfn> if the following are true for each <span
+  data-x="timeranges-range">time range</span> in its <span
+  data-x="timeranges-ranges">ranges</span>:</p>
+
+  <ul>
+   <li><p>Its <span data-x="timeranges-range-start">start</span> is greater than the <span
+   data-x="timeranges-range-end">end</span> of all earlier <span data-x="timeranges-range">time
+   ranges</span>.</p></li>
+
+   <li><p>Its <span data-x="timeranges-range-start">start</span> is less than or equal to its <span
+   data-x="timeranges-range-end">end</span>.</p></li>
+  </ul>
+  </div>
+
+  <p>In other words, the <span data-x="timeranges-range">time ranges</span> in such an object are
+  ordered, don't overlap, and don't touch (adjacent ones are folded into one bigger <span
+  data-x="timeranges-range">time range</span>). A <span data-x="timeranges-range">time range</span>
+  can be empty (referencing just a single moment in time), e.g., to indicate that only one frame is
+  currently buffered in the case that the user agent has discarded the entire <span>media
+  resource</span> except for the current frame, when a <span>media element</span> is paused.</p>
+
+  <p>A <span data-x="timeranges-range">time range</span>'s <span
+  data-x="timeranges-range-start">start</span> and <span data-x="timeranges-range-end">end</span>
+  are inclusive.</p>
+
+  <p class="example">Thus, the <span data-x="timeranges-range-end">end</span> of a <span
+  data-x="timeranges-range">time range</span> would be equal to the <span
+  data-x="timeranges-range-start">start</span> of a following adjacent (touching but not
+  overlapping) <span data-x="timeranges-range">time range</span>. Similarly, a <span
+  data-x="timeranges-range">time range</span> covering a whole timeline anchored at zero would have
+  a <span data-x="timeranges-range-start">start</span> equal to zero and an <span
+  data-x="timeranges-range-end">end</span> equal to the duration of the timeline.</p>
+
+  <p>The timelines used by the objects returned by the <code
+  data-x="dom-media-buffered">buffered</code>, <code data-x="dom-media-seekable">seekable</code>, and
+  <code data-x="dom-media-played">played</code> IDL attributes of <span data-x="media element">media
+  elements</span> must be that element's <span>media timeline</span>.</p>
+
+  </div>
+
+

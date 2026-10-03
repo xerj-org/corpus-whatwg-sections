@@ -1,0 +1,99 @@
+WHATWG HTML — section navigation-api/navigation-interface — The <code>Navigation</code> interface
+
+  <h5 id="navigation-interface">The <code>Navigation</code> interface</h5>
+
+  <div w-nodev>
+
+  <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>Navigation</dfn> : <span>EventTarget</span> {
+  sequence&lt;<span>NavigationHistoryEntry</span>> <span data-x="dom-Navigation-entries">entries</span>();
+  readonly attribute <span>NavigationHistoryEntry</span>? <span data-x="dom-Navigation-currentEntry">currentEntry</span>;
+  undefined <span data-x="dom-Navigation-updateCurrentEntry">updateCurrentEntry</span>(<span>NavigationUpdateCurrentEntryOptions</span> options);
+  readonly attribute <span>NavigationTransition</span>? <span data-x="dom-Navigation-transition">transition</span>;
+  readonly attribute <span>NavigationActivation</span>? <span data-x="dom-Navigation-activation">activation</span>;
+
+  readonly attribute boolean <span data-x="dom-Navigation-canGoBack">canGoBack</span>;
+  readonly attribute boolean <span data-x="dom-Navigation-canGoForward">canGoForward</span>;
+
+  <span>NavigationResult</span> <span data-x="dom-Navigation-navigate">navigate</span>(USVString url, optional <span>NavigationNavigateOptions</span> options = {});
+  <span>NavigationResult</span> <span data-x="dom-Navigation-reload">reload</span>(optional <span>NavigationReloadOptions</span> options = {});
+
+  <span>NavigationResult</span> <span data-x="dom-Navigation-traverseTo">traverseTo</span>(DOMString key, optional <span>NavigationOptions</span> options = {});
+  <span>NavigationResult</span> <span data-x="dom-Navigation-back">back</span>(optional <span>NavigationOptions</span> options = {});
+  <span>NavigationResult</span> <span data-x="dom-Navigation-forward">forward</span>(optional <span>NavigationOptions</span> options = {});
+
+  attribute <span>EventHandler</span> <span data-x="handler-Navigation-onnavigate">onnavigate</span>;
+  attribute <span>EventHandler</span> <span data-x="handler-Navigation-onnavigatesuccess">onnavigatesuccess</span>;
+  attribute <span>EventHandler</span> <span data-x="handler-Navigation-onnavigateerror">onnavigateerror</span>;
+  attribute <span>EventHandler</span> <span data-x="handler-Navigation-oncurrententrychange">oncurrententrychange</span>;
+};
+
+dictionary <dfn dictionary>NavigationUpdateCurrentEntryOptions</dfn> {
+  required any <dfn dict-member for="NavigationUpdateCurrentEntryOptions" data-x="dom-NavigationUpdateCurrentEntryOptions-state">state</dfn>;
+};
+
+dictionary <dfn dictionary>NavigationOptions</dfn> {
+  any <dfn dict-member for="NavigationOptions" data-x="dom-NavigationOptions-info">info</dfn>;
+};
+
+dictionary <dfn dictionary>NavigationNavigateOptions</dfn> : <span>NavigationOptions</span> {
+  any <dfn dict-member for="NavigationNavigateOptions" data-x="dom-NavigationNavigateOptions-state">state</dfn>;
+  <span>NavigationHistoryBehavior</span> <dfn dict-member for="NavigationNavigateOptions" data-x="dom-NavigationNavigateOptions-history">history</dfn> = "<span data-x="NavigationHistoryBehavior-auto">auto</span>";
+};
+
+dictionary <dfn dictionary>NavigationReloadOptions</dfn> : <span>NavigationOptions</span> {
+  any <dfn dict-member for="NavigationNavigateOptions" data-x="dom-NavigationReloadOptions-state">state</dfn>;
+};
+
+dictionary <dfn dictionary>NavigationResult</dfn> {
+  <span data-x="idl-Promise">Promise</span>&lt;<span>NavigationHistoryEntry</span>> <dfn dict-member for="NavigationResult" data-x="dom-NavigationResult-committed">committed</dfn>;
+  <span data-x="idl-Promise">Promise</span>&lt;<span>NavigationHistoryEntry</span>> <dfn dict-member for="NavigationResult" data-x="dom-NavigationResult-finished">finished</dfn>;
+};
+
+enum <dfn enum>NavigationHistoryBehavior</dfn> {
+  "<span data-x="NavigationHistoryBehavior-auto">auto</span>",
+  "<span data-x="NavigationHistoryBehavior-push">push</span>",
+  "<span data-x="NavigationHistoryBehavior-replace">replace</span>"
+};</code></pre>
+
+  <div algorithm>
+  <p>Each <code>Window</code> has an associated <dfn data-x="window-navigation-api">navigation
+  API</dfn>, which is a <code>Navigation</code> object. Upon creation of the <code>Window</code>
+  object, its <span data-x="window-navigation-api">navigation API</span> must be set to a
+  <span>new</span> <code>Navigation</code> object created in the <code>Window</code> object's <span
+  data-x="concept-relevant-realm">relevant realm</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="Window"><code data-x="dom-navigation">navigation</code></dfn> getter
+  steps are to return <span>this</span>'s <span data-x="window-navigation-api">navigation
+  API</span>.</p>
+  </div>
+
+  </div>
+
+  <p>The following are the <span>event handlers</span> (and their corresponding <span data-x="event
+  handler event type">event handler event types</span>) <span w-nodev>that must be</span> supported,
+  as <span>event handler IDL attributes</span>, by all objects implementing the
+  <code>Navigation</code> interface:</p>
+
+  <table>
+   <thead>
+    <tr>
+     <th><span data-x="event handlers">Event handler</span>
+     <th><span>Event handler event type</span>
+   <tbody>
+    <tr>
+     <td><dfn attribute for="Navigation"><code data-x="handler-Navigation-onnavigate">onnavigate</code></dfn>
+     <td><code data-x="event-navigate">navigate</code>
+    <tr>
+     <td><dfn attribute for="Navigation"><code data-x="handler-Navigation-onnavigatesuccess">onnavigatesuccess</code></dfn>
+     <td><code data-x="event-navigatesuccess">navigatesuccess</code>
+    <tr>
+     <td><dfn attribute for="Navigation"><code data-x="handler-Navigation-onnavigateerror">onnavigateerror</code></dfn>
+     <td><code data-x="event-navigateerror">navigateerror</code>
+    <tr>
+     <td><dfn attribute for="Navigation"><code data-x="handler-Navigation-oncurrententrychange">oncurrententrychange</code></dfn>
+     <td><code data-x="event-currententrychange">currententrychange</code>
+  </table>
+

@@ -1,0 +1,38 @@
+WHATWG URL — section goals — Goals
+
+<h2 id=goals class=no-num>Goals</h2>
+
+<p>The URL standard takes the following approach towards making URLs fully interoperable:
+
+<ul>
+ <li><p>Align RFC 3986 and RFC 3987 with contemporary implementations and
+ obsolete the RFCs in the process. (E.g., spaces, other "illegal" code points,
+ query encoding, equality, canonicalization, are all concepts not entirely
+ shared, or defined.) URL parsing needs to become as solid as HTML parsing.
+ [[RFC3986]]
+ [[RFC3987]]
+
+ <li><p>Standardize on the term URL. URI and IRI are just confusing. In
+ practice a single algorithm is used for both so keeping them distinct is
+ not helping anyone. URL also easily wins the
+ <a href="https://trends.google.com/trends/explore?q=url,uri">search result popularity contest</a>.
+
+ <li><p>Supplanting <a href="https://tools.ietf.org/html/rfc6454#section-4">Origin of a URI [sic]</a>.
+ [[RFC6454]]
+
+ <li><p>Define URL's existing JavaScript API in full detail and add
+ enhancements to make it easier to work with. Add a new <code><a interface>URL</a></code>
+ object as well for URL manipulation without usage of HTML elements. (Useful
+ for JavaScript worker environments.)
+
+ <li><p>Ensure the combination of parser, serializer, and API guarantee idempotence. For example, a
+ non-failure result of a parse-then-serialize operation will not change with any further
+ parse-then-serialize operations applied to it. Similarly, manipulating a non-failure result through
+ the API will not change from applying any number of serialize-then-parse operations to it.
+</ul>
+
+<p class=note>As the editors learn more about the subject matter the goals
+might increase in scope somewhat.
+
+
+

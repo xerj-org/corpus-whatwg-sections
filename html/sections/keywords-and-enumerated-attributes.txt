@@ -1,0 +1,75 @@
+WHATWG HTML — section keywords-and-enumerated-attributes — Keywords and enumerated attributes
+
+  <h4>Keywords and enumerated attributes</h4>
+
+  <p>Some attributes, called <dfn data-x="enumerated attribute" data-lt="enumerated attribute"
+  export>enumerated attributes</dfn>, take on a finite set of states. The state for such an
+  attribute is derived by combining the attribute's value, a set of keyword/state mappings, and
+  three possible special states that can also be given in the specification of the attribute. These
+  special states are the <dfn><i>invalid value default</i></dfn>, the <dfn><i>missing value
+  default</i></dfn>, and the <dfn><i>empty value default</i></dfn>.</p>
+
+  <p class="note">Multiple keywords can map to the same state.</p>
+
+  <div algorithm>
+  <p>To determine the state of an attribute, use the following steps:</p>
+
+  <ol>
+   <li>
+    <p>If the attribute is not specified:</p>
+
+    <ol>
+     <li><p>If the attribute has a <i data-x="missing value default">missing value default</i>
+     state defined, then return that <i data-x="missing value default">missing value default</i>
+     state.</p></li>
+
+     <li><p>Otherwise, return no state.</p></li>
+    </ol>
+   </li>
+
+   <li><p>If the attribute's value is an <span>ASCII case-insensitive</span> match for one of the
+   keywords defined for the attribute, then return the state represented by that keyword.</p></li>
+
+   <li><p>If the attribute has an <i data-x="empty value default">empty value default</i> state
+   defined and the attribute's value is the empty string, then return that <i data-x="empty value
+   default">empty value default</i> state.</p></li>
+
+   <li><p>If the attribute has an <i data-x="invalid value default">invalid value default</i> state
+   defined, then return that <i data-x="invalid value default">invalid value default</i>
+   state.</p></li>
+
+   <li><p>Return no state.</p></li>
+  </ol>
+  </div>
+
+  <p>For authoring conformance purposes, if an enumerated attribute is specified, the attribute's
+  value must be one of:</p>
+
+  <ul>
+   <li><p>An <span>ASCII case-insensitive</span> match for one of the conforming keywords for that
+   attribute, with no leading or trailing whitespace.</p></li>
+   <li><p>The empty string and the attribute must have an <i data-x="empty value default">empty
+   value default</i> defined.</p></li>
+  </ul>
+
+  <div algorithm>
+  <p>For <span data-x="reflect">reflection</span> purposes, states which have any keywords mapping
+  to them are said to have a <dfn>canonical keyword</dfn>. This is determined as follows:</p>
+
+  <ol>
+   <li><p>If there is only one keyword mapping to the given state, then it is that keyword.</p></li>
+
+   <li><p>If there is only one <em>conforming</em> keyword mapping to the given state, then it is
+   that conforming keyword.</p></li>
+
+   <li><p>If there are two conforming keywords mapping to the given state, and one is the empty
+   string, then the canonical keyword will be the conforming keyword that is not the empty
+   string.</p></li>
+
+   <li><p>Otherwise, the canonical keyword for the state will be explicitly given in the
+   specification for the attribute.</p></li>
+  </ol>
+  </div>
+
+
+

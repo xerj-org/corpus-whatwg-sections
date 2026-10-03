@@ -1,0 +1,521 @@
+WHATWG HTML — section parse-errors — <dfn data-x="parse error">Parse errors</dfn>
+
+  <h4><dfn data-x="parse error">Parse errors</dfn></h4>
+
+  <p>This specification defines the parsing rules for HTML documents, whether they are syntactically
+  correct or not. Certain points in the parsing algorithm are said to be <span data-x="parse
+  error">parse errors</span>. The error handling for parse errors is well-defined (that's the
+  processing rules described throughout this specification), but user agents, while parsing an HTML
+  document, may <span data-x="abort a parser">abort the parser</span> at the first <span>parse
+  error</span> that they encounter for which they do not wish to apply the rules described in this
+  specification.</p>
+
+  <p>Conformance checkers must report at least one parse error condition to the user if one or more
+  parse error conditions exist in the document and must not report parse error conditions if none
+  exist in the document. Conformance checkers may report more than one parse error condition if more
+  than one parse error condition exists in the document.</p>
+
+  <p class="note">Parse errors are only errors with the <em>syntax</em> of HTML. In addition to
+  checking for parse errors, conformance checkers will also verify that the document obeys all the
+  other conformance requirements described in this specification.</p>
+
+  <p>Some parse errors have dedicated codes outlined in the table below that should be used by
+  conformance checkers in reports.</p>
+
+  <p><i>Error descriptions in the table below are non-normative.</i></p>
+
+  <table class="parse-error-table">
+   <thead>
+    <tr>
+     <th>Code
+     <th>Description
+    <tbody>
+    <tr>
+     <td><dfn data-x="parse-error-abrupt-closing-of-empty-comment">abrupt-closing-of-empty-comment</dfn>
+     <td><p>This error occurs if the parser encounters an empty <span
+     data-x="syntax-comments">comment</span> that is abruptly closed by a U+003E (>) <span>code
+     point</span> (i.e., <code data-x="">&lt;!--></code> or <code data-x="">&lt;!---></code>). The
+     parser behaves as if the comment is closed correctly.</p>
+
+    <tr>
+     <td><dfn data-x="parse-error-abrupt-doctype-public-identifier">abrupt-doctype-public-identifier</dfn>
+     <td><p>This error occurs if the parser encounters a U+003E (>) <span>code point</span> in the
+     <span data-x="syntax-doctype">DOCTYPE</span> public identifier (e.g., <code
+     data-x="">&lt;!DOCTYPE html PUBLIC "foo></code>). In such a case, if the DOCTYPE is correctly
+     placed as a document preamble, the parser sets the <code>Document</code> to <span>quirks
+     mode</span>.</p>
+
+    <tr>
+     <td><dfn data-x="parse-error-abrupt-doctype-system-identifier">abrupt-doctype-system-identifier</dfn>
+     <td><p>This error occurs if the parser encounters a U+003E (>) <span>code point</span> in the
+     <span data-x="syntax-doctype">DOCTYPE</span> system identifier (e.g., <code
+     data-x="">&lt;!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "foo></code>). In such a case,
+     if the DOCTYPE is correctly placed as a document preamble, the parser sets the
+     <code>Document</code> to <span>quirks mode</span>.</p>
+
+    <tr>
+     <td><dfn data-x="parse-error-absence-of-digits-in-numeric-character-reference">absence-of-digits-in-numeric-character-reference</dfn>
+     <td><p>This error occurs if the parser encounters a numeric <span
+     data-x="syntax-charref">character reference</span> that doesn't contain any digits (e.g., <code
+     data-x="">&amp;#qux;</code>). In this case the parser doesn't resolve the character
+     reference.</p>
+
+    <tr>
+     <td><dfn data-x="parse-error-cdata-in-html-content">cdata-in-html-content</dfn>
+     <td><p>This error occurs if the parser encounters a <span data-x="syntax-cdata">CDATA
+     section</span> outside of foreign content (SVG or MathML). The parser treats such CDATA
+     sections (including leading "<code data-x="">[CDATA[</code>" and trailing "<code
+     data-x="">]]</code>") as comments.</p>
+
+    <tr>
+     <td><dfn data-x="parse-error-character-reference-outside-unicode-range">character-reference-outside-unicode-range</dfn>
+     <td><p>This error occurs if the parser encounters a numeric <span
+     data-x="syntax-charref">character reference</span> that references a <span>code point</span>
+     that is greater than the valid Unicode range. The parser resolves such a character reference to
+     a U+FFFD REPLACEMENT CHARACTER.</p>
+
+    <tr>
+     <td><dfn data-x="parse-error-control-character-in-input-stream">control-character-in-input-stream</dfn>
+     <td><p>This error occurs if the <span>input stream</span> contains a <span
+     data-x="control">control</span> <span>code point</span> that is not <span>ASCII
+     whitespace</span> or U+0000 NULL. Such code points are parsed as-is and usually, where parsing
+     rules don't apply any additional restrictions, make their way into the DOM.</p>
+
+    <tr>
+     <td><dfn data-x="parse-error-control-character-reference">control-character-reference</dfn>
+     <td><p>This error occurs if the parser encounters a numeric <span
+     data-x="syntax-charref">character reference</span> that references a <span
+     data-x="control">control</span> <span>code point</span> that is not <span>ASCII
+     whitespace</span> or is a U+000D CARRIAGE RETURN. The parser resolves such character references
+     as-is except C1 control references that are replaced according to the <span>numeric character
+     reference end state</span>.</p>
+
+    <tr>
+     <td><dfn data-x="parse-error-disallowed-processing-instruction-target">disallowed-processing-instruction-target</dfn>
+     <td>
+      <p>This error occurs if the parser encounters a <span data-x="syntax-pi-target">processing
+      instruction target</span> that is an <span>ASCII case-insensitive</span> match for "<code
+      data-x="">xml</code>" or "<code data-x="">xml-stylesheet</code>". The preceding U+003F (?) and
+      all content that follows up to a U+003E (>) (if present) or to the end of the <span>input
+      stream</span> is treated as a comment.</p>
+
+    <tr>
+     <td><dfn data-x="parse-error-duplicate-attribute">duplicate-attribute</dfn>
+     <td><p>This error occurs if the parser encounters an <span
+     data-x="syntax-attributes">attribute</span> in a tag that already has an attribute with the
+     same name. The parser ignores all such duplicate occurrences of the attribute.
+
+    <tr>
+     <td><dfn data-x="parse-error-end-tag-with-attributes">end-tag-with-attributes</dfn>
+     <td><p>This error occurs if the parser encounters an <span data-x="syntax-end-tag">end
+     tag</span> with <span data-x="syntax-attributes">attributes</span>. Attributes in end tags are
+     ignored and do not make their way into the DOM.</p>
+
+    <tr>
+     <td><dfn data-x="parse-error-end-tag-with-trailing-solidus">end-tag-with-trailing-solidus</dfn>
+     <td><p>This error occurs if the parser encounters an <span data-x="syntax-end-tag">end
+     tag</span> that has a U+002F (/) <span>code point</span> right before the closing U+003E (>)
+     code point (e.g., <code data-x="">&lt;/div/></code>). Such a tag is treated as a regular end
+     tag.</p>
+
+    <tr>
+     <td><dfn data-x="parse-error-eof-before-tag-name">eof-before-tag-name</dfn>
+     <td><p>This error occurs if the parser encounters the end of the <span>input stream</span>
+     where a tag name is expected. In this case the parser treats the beginning of a <span
+     data-x="syntax-start-tag">start tag</span> (i.e., <code data-x="">&lt;</code>) or an <span
+     data-x="syntax-end-tag">end tag</span> (i.e., <code data-x="">&lt;/</code>) as text
+     content.</p>
+
+    <tr>
+     <td><dfn data-x="parse-error-eof-in-cdata">eof-in-cdata</dfn>
+     <td><p>This error occurs if the parser encounters the end of the <span>input stream</span> in a
+     <span data-x="syntax-cdata">CDATA section</span>. The parser treats such CDATA sections as if
+     they are closed immediately before the end of the input stream.</p>
+
+    <tr>
+     <td><dfn data-x="parse-error-eof-in-comment">eof-in-comment</dfn>
+     <td><p>This error occurs if the parser encounters the end of the <span>input stream</span> in a
+     <span data-x="syntax-comments">comment</span>. The parser treats such comments as if they are
+     closed immediately before the end of the input stream.</p>
+
+    <tr>
+     <td><dfn data-x="parse-error-eof-in-doctype">eof-in-doctype</dfn>
+     <td><p>This error occurs if the parser encounters the end of the input stream in a <span
+     data-x="syntax-doctype">DOCTYPE</span>. In such a case, if the DOCTYPE is correctly placed as a
+     document preamble, the parser sets the <code>Document</code> to <span>quirks mode</span>.</p>
+
+    <tr>
+     <td><dfn data-x="parse-error-eof-in-processing-instruction">eof-in-processing-instruction</dfn>
+     <td><p>This error occurs if the parser encounters the end of the <span>input stream</span> in a
+     <span data-x="syntax-processing-instruction">processing instruction</span> (e.g., <code
+     data-x="">&lt;?</code> or <code data-x="">&lt;?marker name=</code>). Such processing
+     instructions are ignored.</p>
+
+    <tr>
+     <td><dfn data-x="parse-error-eof-in-script-html-comment-like-text">eof-in-script-html-comment-like-text</dfn>
+     <td>
+      <p>This error occurs if the parser encounters the end of the <span>input stream</span> in text
+      that resembles an <span data-x="syntax-comments">HTML comment</span> inside
+      <code>script</code> element content (e.g., <code data-x="">&lt;script>&lt;!-- foo</code>).</p>
+
+      <p class="note">Syntactic structures that resemble HTML comments in <code>script</code>
+      elements are parsed as text content. They can be a part of a scripting language-specific
+      syntactic structure or be treated as an HTML-like comment, if the scripting language supports
+      them (e.g., parsing rules for HTML-like comments can be found in Annex B of the JavaScript
+      specification). The common reason for this error is a violation of the <span data-x="script
+      content restrictions">restrictions for contents of <code>script</code> elements</span>. <ref>JAVASCRIPT</ref></p>
+
+    <tr>
+     <td><dfn data-x="parse-error-eof-in-tag">eof-in-tag</dfn>
+     <td><p>This error occurs if the parser encounters the end of the <span>input stream</span> in a
+     <span data-x="syntax-start-tag">start tag</span> or an <span data-x="syntax-end-tag">end
+     tag</span> (e.g., <code data-x="">&lt;div id=</code>). Such a tag is ignored.</p>
+
+    <tr>
+     <td><dfn data-x="parse-error-incorrectly-closed-comment">incorrectly-closed-comment</dfn>
+     <td><p>This error occurs if the parser encounters a <span
+     data-x="syntax-comments">comment</span> that is closed by the "<code data-x="">--!></code>"
+     <span>code point</span> sequence. The parser treats such comments as if they are correctly
+     closed by the "<code data-x="">--></code>" code point sequence.</p>
+
+    <tr>
+     <td><dfn data-x="parse-error-incorrectly-opened-comment">incorrectly-opened-comment</dfn>
+     <td>
+      <p>This error occurs if the parser encounters the "<code data-x="">&lt;!</code>" <span>code
+      point</span> sequence that is not immediately followed by two U+002D (-) code points and that
+      is not the start of a <span data-x="syntax-doctype">DOCTYPE</span> or a <span
+      data-x="syntax-cdata">CDATA section</span>. All content that follows the "<code
+      data-x="">&lt;!</code>" code point sequence up to a U+003E (>) code point (if present) or to
+      the end of the <span>input stream</span> is treated as a comment.</p>
+
+      <p class="note">One possible cause of this error is using an XML markup declaration (e.g.,
+      <code data-x="">&lt;!ELEMENT br EMPTY></code>) in HTML.</p>
+
+    <tr>
+     <td><dfn data-x="parse-error-invalid-character-sequence-after-doctype-name">invalid-character-sequence-after-doctype-name</dfn>
+     <td><p>This error occurs if the parser encounters any <span>code point</span> sequence other
+     than "<code data-x="">PUBLIC</code>" and "<code data-x="">SYSTEM</code>" keywords after a <span
+     data-x="syntax-doctype">DOCTYPE</span> name. In such a case, the parser ignores any following
+     public or system identifiers, and if the DOCTYPE is correctly placed as a document preamble,
+     and if the <span>parser cannot change the mode flag</span> is false, sets the <code>Document</code>
+     to <span>quirks mode</span>.</p>
+
+    <tr>
+     <td><dfn data-x="parse-error-invalid-first-character-of-processing-instruction-target">invalid-first-character-of-processing-instruction-target</dfn>
+     <td>
+      <p>This error occurs if the parser encounters a <span>code point</span> that is not an
+      <span>ASCII alpha</span> or U+005F (_) where the first code point of a <span
+      data-x="syntax-pi-target">processing instruction target</span> is expected. The preceding
+      U+003F (?) and all content that follows up to a U+003E (>) (if present) or to the end of the
+      <span>input stream</span> is treated as a comment.</p>
+
+    <tr>
+     <td><dfn data-x="parse-error-invalid-first-character-of-tag-name">invalid-first-character-of-tag-name</dfn>
+     <td>
+      <p>This error occurs if the parser encounters a <span>code point</span> that is not an
+      <span>ASCII alpha</span> where the first code point of a <span data-x="syntax-start-tag">start
+      tag</span> name or an <span data-x="syntax-end-tag">end tag</span> name is expected. If a
+      start tag was expected such code point and a preceding U+003C (&lt;) is treated as text
+      content, and all content that follows is treated as markup. Whereas, if an end tag was
+      expected, such code point and all content that follows up to a U+003E (>) code point (if
+      present) or to the end of the <span>input stream</span> is treated as a comment.</p>
+
+      <div class="example">
+       <p>For example, consider the following markup:</p>
+
+       <pre><code class="html">&lt;42>&lt;/42></code></pre>
+
+       <p>This will be parsed into:</p>
+
+       <ul class="domTree"><li class="t1"><code>html</code><ul><li class="t1"><code>head</code></li><li class="t1"><code>body</code><ul><li class="t3"><code>#text</code>: <span data-x="">&lt;42></span></li><li class="t8"><code>#comment</code>: <span data-x="">42</span></li></ul></li></ul></li></ul>
+      </div>
+
+      <p class="note">While the first code point of a tag name is limited to an <span>ASCII
+      alpha</span>, a wide range of code points (including <span>ASCII digits</span>) is allowed in
+      subsequent positions.</p>
+
+    <tr>
+     <td><dfn data-x="parse-error-invalid-processing-instruction-target">invalid-processing-instruction-target</dfn>
+     <td>
+      <p>This error occurs if the parser encounters a <span>code point</span> that is not an
+      <span>ASCII alphanumeric</span>, U+002D (-), or U+005F (_) where a <span
+      data-x="syntax-pi-target">processing instruction target</span> is expected. The preceding
+      U+003F (?) and all content that follows up to a U+003E (>) (if present) or to the end of the
+      <span>input stream</span> is treated as a comment.</p>
+
+    <tr>
+     <td><dfn data-x="parse-error-missing-attribute-value">missing-attribute-value</dfn>
+     <td><p>This error occurs if the parser encounters a U+003E (>) <span>code point</span> where an
+     <span data-x="syntax-attributes">attribute</span> value is expected (e.g., <code
+     data-x="">&lt;div id=></code>). The parser treats the attribute as having an empty value.</p>
+
+    <tr>
+     <td><dfn data-x="parse-error-missing-doctype-name">missing-doctype-name</dfn>
+     <td><p>This error occurs if the parser encounters a <span
+     data-x="syntax-doctype">DOCTYPE</span> that is missing a name (e.g., <code
+     data-x="">&lt;!DOCTYPE></code>). In such a case, if the DOCTYPE is correctly placed as a
+     document preamble, the parser sets the <code>Document</code> to <span>quirks mode</span>.</p>
+
+    <tr>
+     <td><dfn data-x="parse-error-missing-doctype-public-identifier">missing-doctype-public-identifier</dfn>
+     <td><p>This error occurs if the parser encounters a U+003E (>) <span>code point</span> where
+     start of the <span data-x="syntax-doctype">DOCTYPE</span> public identifier is expected (e.g.,
+     <code data-x="">&lt;!DOCTYPE html PUBLIC ></code>). In such a case, if the DOCTYPE is correctly
+     placed as a document preamble, the parser sets the <code>Document</code> to <span>quirks
+     mode</span>.</p>
+
+    <tr>
+     <td><dfn data-x="parse-error-missing-doctype-system-identifier">missing-doctype-system-identifier</dfn>
+     <td><p>This error occurs if the parser encounters a U+003E (>) <span>code point</span> where
+     start of the <span data-x="syntax-doctype">DOCTYPE</span> system identifier is expected (e.g.,
+     <code data-x="">&lt;!DOCTYPE html SYSTEM ></code>). In such a case, if the DOCTYPE is correctly
+     placed as a document preamble, the parser sets the <code>Document</code> to <span>quirks
+     mode</span>.</p>
+
+    <tr>
+     <td><dfn data-x="parse-error-missing-end-tag-name">missing-end-tag-name</dfn>
+     <td><p>This error occurs if the parser encounters a U+003E (>) <span>code point</span> where an
+     <span data-x="syntax-end-tag">end tag</span> name is expected, i.e., <code
+     data-x="">&lt;/></code>. The parser ignores the whole "<code data-x="">&lt;/></code>" code
+     point sequence.</p>
+
+    <tr>
+     <td><dfn data-x="parse-error-missing-quote-before-doctype-public-identifier">missing-quote-before-doctype-public-identifier</dfn>
+     <td><p>This error occurs if the parser encounters the <span
+     data-x="syntax-doctype">DOCTYPE</span> public identifier that is not preceded by a quote (e.g.,
+     <code data-x="">&lt;!DOCTYPE html PUBLIC -//W3C//DTD HTML 4.01//EN"></code>). In such a case,
+     the parser ignores the public identifier, and if the DOCTYPE is correctly placed as a document
+     preamble, sets the <code>Document</code> to <span>quirks mode</span>.</p>
+
+    <tr>
+     <td><dfn data-x="parse-error-missing-quote-before-doctype-system-identifier">missing-quote-before-doctype-system-identifier</dfn>
+     <td><p>This error occurs if the parser encounters the <span
+     data-x="syntax-doctype">DOCTYPE</span> system identifier that is not preceded by a quote (e.g.,
+     <code data-x="">&lt;!DOCTYPE html SYSTEM
+     http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"></code>). In such a case, the parser
+     ignores the system identifier, and if the DOCTYPE is correctly placed as a document preamble,
+     sets the <code>Document</code> to <span>quirks mode</span>.</p>
+
+    <tr>
+     <td><dfn data-x="parse-error-missing-semicolon-after-character-reference">missing-semicolon-after-character-reference</dfn>
+     <td>
+      <p>This error occurs if the parser encounters a <span data-x="syntax-charref">character
+      reference</span> that is not terminated by a U+003B (;) <span>code point</span>.
+      The parser behaves the same as if the character reference is terminated by the U+003B
+      (;) code point.</p>
+
+      <p class="note">Most <span>named character references</span> require a terminating U+003B
+      (;) <span>code point</span>. Those that don't might get resolved as a longer named <span
+      data-x="syntax-charref">character reference</span> in certain ambiguous scenarios.</p>
+
+      <p class="example">For example, <code data-x="">&amp;notin</code> will be parsed as "<code
+      data-x="">&not;in</code>", i.e., the same as if the input were <code
+      data-x="">&amp;not;in</code>, whereas <code data-x="">&amp;notin;</code> will be parsed as
+      "<code data-x="">&notin;</code>".</p>
+
+    <tr>
+     <td><dfn data-x="parse-error-missing-whitespace-after-doctype-public-keyword">missing-whitespace-after-doctype-public-keyword</dfn>
+     <td><p>This error occurs if the parser encounters a <span
+     data-x="syntax-doctype">DOCTYPE</span> whose "<code data-x="">PUBLIC</code>" keyword and public
+     identifier are not separated by <span>ASCII whitespace</span>. In this case the parser behaves
+     as if ASCII whitespace is present.</p>
+
+    <tr>
+     <td><dfn data-x="parse-error-missing-whitespace-after-doctype-system-keyword">missing-whitespace-after-doctype-system-keyword</dfn>
+     <td><p>This error occurs if the parser encounters a <span
+     data-x="syntax-doctype">DOCTYPE</span> whose "<code data-x="">SYSTEM</code>" keyword and system
+     identifier are not separated by <span>ASCII whitespace</span>. In this case the parser behaves
+     as if ASCII whitespace is present.</p>
+
+    <tr>
+     <td><dfn data-x="parse-error-missing-whitespace-before-doctype-name">missing-whitespace-before-doctype-name</dfn>
+     <td><p>This error occurs if the parser encounters a <span
+     data-x="syntax-doctype">DOCTYPE</span> whose "<code data-x="">DOCTYPE</code>" keyword and name
+     are not separated by <span>ASCII whitespace</span>. In this case the parser behaves as if ASCII
+     whitespace is present.</p>
+
+    <tr>
+     <td><dfn data-x="parse-error-missing-whitespace-between-attributes">missing-whitespace-between-attributes</dfn>
+     <td><p>This error occurs if the parser encounters <span
+     data-x="syntax-attributes">attributes</span> that are not separated by <span>ASCII
+     whitespace</span> (e.g., <code data-x="">&lt;div id="foo"class="bar"></code>). In this case the
+     parser behaves as if ASCII whitespace is present.</p>
+
+    <tr>
+     <td><dfn data-x="parse-error-missing-whitespace-between-doctype-public-and-system-identifiers">missing-whitespace-between-doctype-public-and-system-identifiers</dfn>
+     <td><p>This error occurs if the parser encounters a <span
+     data-x="syntax-doctype">DOCTYPE</span> whose public and system identifiers are not separated by
+     <span>ASCII whitespace</span>. In this case the parser behaves as if ASCII whitespace is
+     present.</p>
+
+    <tr>
+     <td><dfn data-x="parse-error-nested-comment">nested-comment</dfn>
+     <td><p>This error occurs if the parser encounters a nested <span
+     data-x="syntax-comments">comment</span> (e.g., <code data-x="">&lt;!-- &lt;!-- nested -->
+     --></code>). Such a comment will be closed by the first occurring "<code data-x="">--></code>"
+     <span>code point</span> sequence and everything that follows will be treated as markup.</p>
+
+    <tr>
+     <td><dfn data-x="parse-error-noncharacter-character-reference">noncharacter-character-reference</dfn>
+     <td><p>This error occurs if the parser encounters a numeric <span
+     data-x="syntax-charref">character reference</span> that references a <span>noncharacter</span>.
+     The parser resolves such character references as-is.</p>
+
+    <tr>
+     <td><dfn data-x="parse-error-noncharacter-in-input-stream">noncharacter-in-input-stream</dfn>
+     <td><p>This error occurs if the <span>input stream</span> contains a <span>noncharacter</span>.
+     Such <span data-x="code point">code points</span> are parsed as-is and usually, where parsing
+     rules don't apply any additional restrictions, make their way into the DOM.</p>
+
+    <tr>
+     <td><dfn data-x="parse-error-non-void-html-element-start-tag-with-trailing-solidus">non-void-html-element-start-tag-with-trailing-solidus</dfn>
+     <td>
+      <p>This error occurs if the parser encounters a <span data-x="syntax-start-tag">start
+      tag</span> for an element that is not in the list of <span>void elements</span> or is not a
+      part of foreign content (i.e., not an SVG or MathML element) that has a U+002F (/) <span>code
+      point</span> right before the closing U+003E (>) code point. The parser behaves as if the
+      U+002F (/) is not present.</p>
+
+      <div class="example">
+       <p>For example, consider the following markup:</p>
+
+       <pre><code class="html">&lt;div/>&lt;span>&lt;/span>&lt;span>&lt;/span></code></pre>
+
+       <p>This will be parsed into:</p>
+
+       <ul class="domTree"><li class="t1"><code>html</code><ul><li class="t1"><code>head</code></li><li class="t1"><code>body</code><ul><li class="t1"><code>div</code><ul><li class="t1"><code>span</code></li><li class="t1"><code>span</code></li></ul></li></ul></li></ul></li></ul>
+      </div>
+
+      <p class="note">The trailing U+002F (/) in a start tag name can be used only in foreign
+      content to specify self-closing tags. (Self-closing tags don't exist in HTML.) It is also
+      allowed for void elements, but doesn't have any effect in this case.</p>
+
+    <tr>
+     <td><dfn data-x="parse-error-null-character-reference">null-character-reference</dfn>
+     <td><p>This error occurs if the parser encounters a numeric <span
+     data-x="syntax-charref">character reference</span> that references a U+0000 NULL <span>code
+     point</span>. The parser resolves such character references to a U+FFFD REPLACEMENT
+     CHARACTER.</p>
+
+    <tr>
+     <td><dfn data-x="parse-error-surrogate-character-reference">surrogate-character-reference</dfn>
+     <td><p>This error occurs if the parser encounters a numeric <span
+     data-x="syntax-charref">character reference</span> that references a <span>surrogate</span>.
+     The parser resolves such character references to a U+FFFD REPLACEMENT CHARACTER.</p>
+
+    <tr>
+     <td><dfn data-x="parse-error-surrogate-in-input-stream">surrogate-in-input-stream</dfn>
+     <td>
+      <p>This error occurs if the <span>input stream</span> contains a <span
+      data-x="surrogate">surrogate</span>. Such <span data-x="code point">code points</span> are
+      parsed as-is and usually, where parsing rules don't apply any additional restrictions, make
+      their way into the DOM.</p>
+
+      <p class="note">Surrogates can only find their way into the input stream via script APIs such
+      as <code data-x="dom-document-write">document.write()</code>.</p>
+
+    <tr>
+     <td><dfn data-x="parse-error-unexpected-character-after-doctype-system-identifier">unexpected-character-after-doctype-system-identifier</dfn>
+     <td><p>This error occurs if the parser encounters any <span data-x="code point">code
+     points</span> other than <span>ASCII whitespace</span> or closing U+003E (>) after the <span
+     data-x="syntax-doctype">DOCTYPE</span> system identifier. The parser ignores these code
+     points.</p>
+
+    <tr>
+     <td><dfn data-x="parse-error-unexpected-character-in-attribute-name">unexpected-character-in-attribute-name</dfn>
+     <td>
+      <p>This error occurs if the parser encounters a U+0022 ("), U+0027 ('), or U+003C (&lt;)
+      <span>code point</span> in an <span data-x="syntax-attribute-name">attribute name</span>. The
+      parser includes such code points in the attribute name.</p>
+
+      <p class="note">Code points that trigger this error are usually a part of another syntactic
+      construct and can be a sign of a typo around the attribute name.</p>
+
+      <div class="example">
+       <p>For example, consider the following markup:</p>
+
+       <pre><code class="html">&lt;div foo&lt;div></code></pre>
+
+       <p>Due to a forgotten U+003E (>) code point after <code data-x="">foo</code> the parser
+       treats this markup as a single <code>div</code> element with a "<code
+       data-x="">foo&lt;div</code>" attribute.</p>
+
+       <p>As another example of this error, consider the following markup:</p>
+
+       <pre><code class="html">&lt;div id'bar'></code></pre>
+
+       <p>Due to a forgotten U+003D (=) code point between an attribute name and value the parser
+       treats this markup as a <code>div</code> element with the attribute "<code
+       data-x="">id'bar'</code>" that has an empty value.</p>
+     </div>
+
+    <tr>
+     <td><dfn data-x="parse-error-unexpected-character-in-unquoted-attribute-value">unexpected-character-in-unquoted-attribute-value</dfn>
+     <td>
+      <p>This error occurs if the parser encounters a U+0022 ("), U+0027 ('), U+003C (&lt;), U+003D
+      (=), or U+0060 (`) <span>code point</span> in an unquoted <span
+      data-x="syntax-attribute-value">attribute value</span>. The parser includes such code points
+      in the attribute value.</p>
+
+      <p class="note">Code points that trigger this error are usually a part of another syntactic
+      construct and can be a sign of a typo around the attribute value.</p>
+
+      <p class="note">U+0060 (`) is in the list of code points that trigger this error because
+      certain legacy user agents treat it as a quote.</p>
+
+      <div class="example">
+       <p>For example, consider the following markup:</p>
+
+       <pre><code class="html">&lt;div foo=b'ar'></code></pre>
+
+       <p>Due to a misplaced U+0027 (') code point the parser sets the value of the "<code
+       data-x="">foo</code>" attribute to "<code data-x="">b'ar'</code>".</p>
+     </div>
+
+    <tr>
+     <td><dfn data-x="parse-error-unexpected-equals-sign-before-attribute-name">unexpected-equals-sign-before-attribute-name</dfn>
+     <td>
+      <p>This error occurs if the parser encounters a U+003D (=) <span>code point</span> before an
+      attribute name. In this case the parser treats U+003D (=) as the first code point of the
+      attribute name.</p>
+
+      <p class="note">The common reason for this error is a forgotten attribute name.</p>
+
+      <div class="example">
+       <p>For example, consider the following markup:</p>
+
+       <pre><code class="html">&lt;div foo="bar" ="baz"></code></pre>
+
+       <p>Due to a forgotten attribute name the parser treats this markup as a <code>div</code>
+       element with two attributes: a "<code data-x="">foo</code>" attribute with a "<code
+       data-x="">bar</code>" value and a "<code data-x="">="baz"</code>" attribute with an empty
+       value.</p>
+      </div>
+
+    <tr>
+     <td><dfn data-x="parse-error-unexpected-null-character">unexpected-null-character</dfn>
+     <td><p>This error occurs if the parser encounters a U+0000 NULL <span>code point</span> in the
+     <span>input stream</span> in certain positions. In general, such code points are either
+     ignored or, for security reasons, replaced with a U+FFFD REPLACEMENT CHARACTER.</p>
+
+    <tr>
+     <td><dfn data-x="parse-error-unexpected-solidus-in-tag">unexpected-solidus-in-tag</dfn>
+     <td><p>This error occurs if the parser encounters a U+002F (/) <span>code point</span> that is
+     not a part of a quoted <span data-x="syntax-attributes">attribute</span> value and not
+     immediately followed by a U+003E (>) code point in a tag (e.g., <code data-x="">&lt;div /
+     id="foo"></code>). In this case the parser behaves as if it encountered <span>ASCII
+     whitespace</span>.</p>
+
+    <tr>
+     <td><dfn data-x="parse-error-unknown-named-character-reference">unknown-named-character-reference</dfn>
+     <td><p>This error occurs if the parser encounters an <span
+     data-x="syntax-ambiguous-ampersand">ambiguous ampersand</span>. In this case the parser doesn't
+     resolve the <span data-x="syntax-charref">character reference</span>.</p>
+
+  </table>
+
+  </div>
+
+
+  <div w-nodev>
+

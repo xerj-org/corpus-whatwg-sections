@@ -1,0 +1,107 @@
+WHATWG HTML — section the-td-element — The <dfn element><code>td</code></dfn> element
+
+  <h4>The <dfn element><code>td</code></dfn> element</h4>
+
+  <dl class="element">
+   <dt><span data-x="concept-element-categories">Categories</span>:</dt>
+   <dd>None.</dd>
+   <dt><span data-x="concept-element-contexts">Contexts in which this element can be used</span>:</dt>
+   <dd>As a child of a <code>tr</code> element.</dd>
+   <dt><span data-x="concept-element-content-model">Content model</span>:</dt>
+   <dd><span>Flow content</span>.</dd>
+   <dt><span data-x="concept-element-attributes">Content attributes</span>:</dt>
+   <dd><span>Global attributes</span></dd>
+   <dd><code data-x="attr-tdth-colspan">colspan</code></dd>
+   <dd><code data-x="attr-tdth-rowspan">rowspan</code></dd>
+   <dd><code data-x="attr-tdth-headers">headers</code></dd>
+   <!-- v2 char, to specify the decimal character used in numeric cells -->
+   <dt><span
+   data-x="concept-element-accessibility-considerations">Accessibility considerations</span>:</dt>
+   <dd><a href="https://w3c.github.io/html-aria/#el-td">For authors</a>.</dd>
+   <dd><a href="https://w3c.github.io/html-aam/#el-td">For implementers</a>.</dd>
+   <dt><span data-x="concept-element-sanitization">Sanitization</span>:</dt>
+   <dd><span data-x="sanitizer-category-default">Default</span> with attributes <code
+   data-x="attr-tdth-colspan">colspan</code>, <code data-x="attr-tdth-headers">headers</code>, <code
+   data-x="attr-tdth-rowspan">rowspan</code>.</dd>
+   <dt><span data-x="concept-element-dom">DOM interface</span>:</dt>
+   <dd>
+    <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>HTMLTableCellElement</dfn> : <span>HTMLElement</span> {
+  [<span>HTMLConstructor</span>] constructor();
+
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>, <span data-x="xattr-ReflectDefault">ReflectDefault=1</span>, <span data-x="xattr-ReflectRange">ReflectRange=(1, 1000)</span>] attribute unsigned long <dfn attribute for="HTMLTableCellElement" data-x="dom-tdth-colSpan">colSpan</dfn>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>, <span data-x="xattr-ReflectDefault">ReflectDefault=1</span>, <span data-x="xattr-ReflectRange">ReflectRange=(0, 65534)</span>] attribute unsigned long <dfn attribute for="HTMLTableCellElement" data-x="dom-tdth-rowSpan">rowSpan</dfn>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute DOMString <dfn data-x="dom-tdth-headers">headers</dfn>;
+  readonly attribute long <span data-x="dom-tdth-cellIndex">cellIndex</span>;
+
+  [<span>CEReactions</span>] attribute DOMString <span data-x="dom-th-scope">scope</span>; // only conforming for th elements
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute DOMString <dfn attribute for="HTMLTableCellElement" data-x="dom-th-abbr">abbr</dfn>;  // only conforming for th elements
+
+  // <a href="#HTMLTableCellElement-partial">also has obsolete members</a>
+};</code></pre>
+
+    <p><span w-dev>Uses <code>HTMLTableCellElement</code>. </span>The
+    <code>HTMLTableCellElement</code> interface is also used for <code>th</code> elements.</p>
+   </dd>
+  </dl>
+
+  <p>The <code>td</code> element <span>represents</span> a data <span
+  data-x="concept-cell">cell</span> in a table.</p>
+
+  <div w-nodev>
+
+  <p>The <code>td</code> element and its <code data-x="attr-tdth-colspan">colspan</code>, <code
+  data-x="attr-tdth-rowspan">rowspan</code>, and <code data-x="attr-tdth-headers">headers</code>
+  attributes take part in the <span>table model</span>.</p>
+
+  <p>User agents, especially in non-visual environments or where displaying the table as a 2D grid
+  is impractical, may give the user context for the cell when rendering the contents of a cell; for
+  instance, giving its position in the <span>table model</span>, or listing the cell's header cells
+  (as determined by the <span>algorithm for assigning header cells</span>). When a cell's header
+  cells are being listed, user agents may use the value of <code data-x="attr-th-abbr">abbr</code>
+  attributes on those header cells, if any, instead of the contents of the header cells
+  themselves.</p>
+
+  </div>
+
+  <div class="example">
+
+   <p>In this example, we see a snippet of a web application consisting of a grid of editable cells
+   (essentially a simple spreadsheet). One of the cells has been configured to show the sum of the
+   cells above it. Three have been marked as headings, which use <code>th</code> elements instead of
+   <code>td</code> elements. A script would attach event handlers to these elements to maintain the
+   total.</p>
+
+   <pre><code class="html">&lt;table>
+ &lt;tr>
+  &lt;th>&lt;input value="Name">
+  &lt;th>&lt;input value="Paid ($)">
+ &lt;tr>
+  &lt;td>&lt;input value="Jeff">
+  &lt;td>&lt;input value="14">
+ &lt;tr>
+  &lt;td>&lt;input value="Britta">
+  &lt;td>&lt;input value="9">
+ &lt;tr>
+  &lt;td>&lt;input value="Abed">
+  &lt;td>&lt;input value="25">
+ &lt;tr>
+  &lt;td>&lt;input value="Shirley">
+  &lt;td>&lt;input value="2">
+ &lt;tr>
+  &lt;td>&lt;input value="Annie">
+  &lt;td>&lt;input value="5">
+ &lt;tr>
+  &lt;td>&lt;input value="Troy">
+  &lt;td>&lt;input value="5">
+ &lt;tr>
+  &lt;td>&lt;input value="Pierce">
+  &lt;td>&lt;input value="1000">
+ &lt;tr>
+  &lt;th>&lt;input value="Total">
+  &lt;td>&lt;output value="1060">
+&lt;/table></code></pre>
+
+  </div>
+
+

@@ -1,0 +1,39 @@
+WHATWG HTML — section the-canvas-element/colour-spaces-and-colour-correction — Color spaces and color space conversion
+
+  <!--en-GB--><h5 id="colour-spaces-and-colour-correction">Color spaces and color space
+  conversion</h5>
+
+  <pre><code class="idl">enum <dfn enum>PredefinedColorSpace</dfn> { "<span data-x="dom-PredefinedColorSpace-srgb">srgb</span>", "<span data-x="dom-PredefinedColorSpace-srgb-linear">srgb-linear</span>", "<span data-x="dom-PredefinedColorSpace-display-p3">display-p3</span>", "<span data-x="dom-PredefinedColorSpace-display-p3-linear">display-p3-linear</span>" };</code></pre>
+
+  <p>The <code>PredefinedColorSpace</code> enumeration is used to specify the <span
+  data-x="concept-canvas-color-space">color space</span> of the canvas's backing store.</p>
+
+  <p>The "<dfn enum-value for="PredefinedColorSpace"><code
+  data-x="dom-PredefinedColorSpace-srgb">srgb</code></dfn>" value indicates the <span>'srgb'</span>
+  color space.</p>
+
+  <p>The "<dfn enum-value for="PredefinedColorSpace"><code
+  data-x="dom-PredefinedColorSpace-srgb-linear">srgb-linear</code></dfn>" value indicates the
+  <span>'srgb-linear'</span> color space.</p>
+
+  <p>The "<dfn enum-value for="PredefinedColorSpace"><code
+  data-x="dom-PredefinedColorSpace-display-p3">display-p3</code></dfn>" value indicates the
+  <span>'display-p3'</span> color space.</p>
+
+  <p>The "<dfn enum-value for="PredefinedColorSpace"><code
+  data-x="dom-PredefinedColorSpace-display-p3-linear">display-p3-linear</code></dfn>" value indicates the
+  <span>'display-p3-linear'</span> color space.</p>
+
+  <p><span data-x="Converting Colors">Color space conversion</span> must be applied to the canvas's
+  backing store when rendering the canvas to the output device.</p>
+
+  <p class="note">The algorithm for converting between color spaces can be found in the
+  <span>Converting Colors</span> section of <cite>CSS Color</cite>. This color space conversion is
+  identical to the color space conversion that would be applied to an <code>img</code> element with
+  a color profile that specifies the same <span data-x="concept-canvas-color-space">color
+  space</span> as the canvas's backing store. <ref>CSSCOLOR</ref></p>
+
+  </div>
+
+
+

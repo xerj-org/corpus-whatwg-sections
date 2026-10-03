@@ -1,0 +1,123 @@
+WHATWG URL — section host-miscellaneous — Host miscellaneous
+
+<h3 id=host-miscellaneous>Host miscellaneous</h3>
+
+<p>A <dfn export>forbidden host code point</dfn> is U+0000 NULL, U+0009 TAB, U+000A LF, U+000D CR,
+U+0020 SPACE, U+0023 (#), U+002F (/), U+003A (:), U+003C (&lt;), U+003E (>), U+003F (?), U+0040 (@),
+U+005B ([), U+005C (\), U+005D (]), U+005E (^), or U+007C (|).
+
+<p>A <dfn export>forbidden domain code point</dfn> is a <a>forbidden host code point</a>,
+a <a>C0 control</a>, U+0025 (%), or U+007F DELETE.
+
+<div algorithm>
+<p>To obtain the <dfn export for=host>public suffix</dfn> of a <a for=/>host</a> <var>host</var>,
+run these steps. They return null or a <a for=/>domain</a> representing a portion of <var>host</var>
+that is included on the <cite>Public Suffix List</cite>. [[!PSL]]
+
+<ol>
+ <li><p>If <var>host</var> is not a <a>domain</a>, then return null.
+
+ <li><p>Let <var>trailingDot</var> be "<code>.</code>" if <var>host</var>
+ <a for=string>ends with</a> "<code>.</code>"; otherwise the empty string.
+
+ <li><p>Let <var>publicSuffix</var> be the public suffix determined by running the
+ <a href="https://github.com/publicsuffix/list/wiki/Format#formal-algorithm">Public Suffix List algorithm</a>
+ with <var>host</var> as domain. [[!PSL]]
+
+ <li><p><a for=/>Assert</a>: <var>publicSuffix</var> is an <a>ASCII string</a> that
+ <a for=string>ends with</a> <var>trailingDot</var>.
+
+ <li><p>Return <var>publicSuffix</var>.
+</ol>
+</div>
+
+<div algorithm>
+<p>To obtain the <dfn export for=host>registrable domain</dfn> of a <a for=/>host</a>
+<var>host</var>, run these steps. They return null or a <a for=/>domain</a> formed by
+<var>host</var>'s <a for=host>public suffix</a> and the <a for=/>domain label</a> preceding it, if
+any.
+
+<ol>
+ <li><p>If <var>host</var>'s <a for=host>public suffix</a> is null or <var>host</var>'s
+ <a for=host>public suffix</a> <a for=host>equals</a> <var>host</var>, then return null.
+
+ <li><p>Let <var>trailingDot</var> be "<code>.</code>" if <var>host</var>
+ <a for=string>ends with</a> "<code>.</code>"; otherwise the empty string.
+
+ <li><p>Let <var>registrableDomain</var> be the registrable domain determined by running the
+ <a href="https://github.com/publicsuffix/list/wiki/Format#formal-algorithm">Public Suffix List algorithm</a>
+ with <var>host</var> as domain. [[!PSL]]
+
+ <li><p><a for=/>Assert</a>: <var>registrableDomain</var> is an <a>ASCII string</a> that
+ <a for=string>ends with</a> <var>trailingDot</var>.
+
+ <li><p>Return <var>registrableDomain</var>.
+</ol>
+</div>
+
+<div class=example id=example-host-psl>
+ <table>
+  <tr>
+   <th>Host input
+   <th>Public suffix
+   <th>Registrable domain
+  <tr>
+   <td><code>com</code>
+   <td><code>com</code>
+   <td>null
+  <tr>
+   <td><code>example.com</code>
+   <td><code>com</code>
+   <td><code>example.com</code>
+  <tr>
+   <td><code>www.example.com</code>
+   <td><code>com</code>
+   <td><code>example.com</code>
+  <tr>
+   <td><code>sub.www.example.com</code>
+   <td><code>com</code>
+   <td><code>example.com</code>
+  <tr>
+   <td><code>EXAMPLE.COM</code>
+   <td><code>com</code>
+   <td><code>example.com</code>
+  <tr>
+   <td><code>example.com.</code>
+   <td><code>com.</code>
+   <td><code>example.com.</code>
+  <tr>
+   <td><code>github.io</code>
+   <td><code>github.io</code>
+   <td>null
+  <tr>
+   <td><code>whatwg.github.io</code>
+   <td><code>github.io</code>
+   <td><code>whatwg.github.io</code>
+  <tr>
+   <td><code>إختبار</code>
+   <td><code>xn--kgbechtv</code>
+   <td>null
+  <tr>
+   <td><code>example.إختبار</code>
+   <td><code>xn--kgbechtv</code>
+   <td><code>example.xn--kgbechtv</code>
+  <tr>
+   <td><code>sub.example.إختبار</code>
+   <td><code>xn--kgbechtv</code>
+   <td><code>example.xn--kgbechtv</code>
+  <tr>
+   <td><code>[2001:0db8:85a3:0000:0000:8a2e:0370:7334]</code>
+   <td>null
+   <td>null
+ </table>
+</div>
+
+<p class=warning id=warning-avoid-psl>Specifications should prefer the <a for=/>origin</a> concept
+for security decisions. The notion of "<a for=host>public suffix</a>" and
+"<a for=host>registrable domain</a>" cannot be relied-upon to provide a hard security boundary, as
+the public suffix list will diverge from client to client. Specifications which ignore this advice
+are encouraged to carefully consider whether URLs' schemes ought to be incorporated into any
+decisions made, i.e. whether to use the <a for=/>same site</a> or <a>schemelessly same site</a>
+concepts.
+
+

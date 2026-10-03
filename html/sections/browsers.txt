@@ -1,0 +1,14 @@
+WHATWG HTML — section browsers — Loading web pages (+loading-web-pages-supporting-concepts)
+
+  <h2 split-filename="browsers" id="browsers">Loading web pages</h2>
+
+  <div w-nodev>
+
+  <p>This section describes features that apply most directly to web browsers. Having said that,
+  except where specified otherwise, the requirements defined in this section <em>do</em> apply to
+  all user agents, whether they are web browsers or not.</p>
+
+  </div>
+
+  <h3 id="loading-web-pages-supporting-concepts">Supporting concepts</h3>
+

@@ -1,0 +1,13 @@
+WHATWG HTML — section dependencies/web-cryptography-api — Web Cryptography API
+
+   <dt>Web Cryptography API</dt>
+
+   <dd>
+    <p>The following terms are defined in <cite>Web Cryptography API</cite>:
+    <ref>WEBCRYPTO</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://w3c.github.io/webcrypto/#dfn-generate-a-random-uuid">generating a random UUID</dfn></li>
+    </ul>
+   </dd>
+

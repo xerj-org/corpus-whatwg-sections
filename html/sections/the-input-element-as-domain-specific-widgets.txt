@@ -1,0 +1,74 @@
+WHATWG HTML — section the-input-element-as-domain-specific-widgets — The <code>input</code> element as domain-specific widgets
+
+  <h4>The <code>input</code> element as domain-specific widgets</h4>
+
+  <div algorithm>
+  <p>An <code>input</code> element whose <code data-x="attr-input-type">type</code> attribute is in
+  the <span data-x="attr-input-type-date">Date</span> state is a <span>devolvable widget</span>
+  <span>expected</span> to render as an <span>'inline-block'</span> box depicting a date control.</p>
+  </div>
+
+  <div algorithm>
+  <p>An <code>input</code> element whose <code data-x="attr-input-type">type</code> attribute is in
+  the <span data-x="attr-input-type-month">Month</span> state is a <span>devolvable widget</span>
+  <span>expected</span> to render as an <span>'inline-block'</span> box depicting a month control.</p>
+  </div>
+
+  <div algorithm>
+  <p>An <code>input</code> element whose <code data-x="attr-input-type">type</code> attribute is in
+  the <span data-x="attr-input-type-week">Week</span> state is a <span>devolvable widget</span>
+  <span>expected</span> to render as an <span>'inline-block'</span> box depicting a week control.</p>
+  </div>
+
+  <div algorithm>
+  <p>An <code>input</code> element whose <code data-x="attr-input-type">type</code> attribute is in
+  the <span data-x="attr-input-type-time">Time</span> state is a <span>devolvable widget</span>
+  <span>expected</span> to render as an <span>'inline-block'</span> box depicting a time control.</p>
+  </div>
+
+  <div algorithm>
+  <p>An <code>input</code> element whose <code data-x="attr-input-type">type</code> attribute is in
+  the <span data-x="attr-input-type-datetime-local">Local Date and Time</span> state is a
+  <span>devolvable widget</span> <span>expected</span> to render as an <span>'inline-block'</span>
+  box depicting a local date and time control.</p>
+  </div>
+
+  <div algorithm>
+  <p>An <code>input</code> element whose <code data-x="attr-input-type">type</code> attribute is in
+  the <span data-x="attr-input-type-number">Number</span> state is a <span>devolvable widget</span>
+  <span>expected</span> to render as an <span>'inline-block'</span> box depicting a number
+  control.</p>
+  </div>
+
+  <div algorithm>
+  <p>An <code>input</code> element whose <code data-x="attr-input-type">type</code> attribute is in
+  the <span data-x="attr-input-type-number">Number</span> state is an
+  <span>element with default preferred size</span>, and user agents are <span>expected</span> to
+  apply the <span>'field-sizing'</span> CSS property to the element. The <span>block size</span> of
+  the <span>intrinsic size</span> is about one line high. If the <span>'field-sizing'</span>
+  property on the element has a <span>computed value</span> of
+  <span data-x="field-sizing-content">'content'</span>, the <span>inline size</span> of the
+  <span>intrinsic size</span> is <span>expected</span> to be about as wide as necessary to show the
+  current <span data-x="concept-fe-value">value</span>. Otherwise, the <span>inline size</span> of
+  the <span>intrinsic size</span> is <span>expected</span> to be about as wide as necessary to show
+  the widest possible value.</p>
+  </div>
+
+  <div algorithm>
+  <p>An <code>input</code> element whose <code data-x="attr-input-type">type</code> attribute is in
+  the <span data-x="attr-input-type-date">Date</span>,
+  <span data-x="attr-input-type-month">Month</span>,
+  <span data-x="attr-input-type-week">Week</span>, <span data-x="attr-input-type-time">Time</span>,
+  or <span data-x="attr-input-type-datetime-local">Local Date and Time</span> state, is
+  <span>expected</span> to be about one line high, and about as wide as necessary to show the
+  widest possible value.</p>
+  </div>
+
+  <p class="XXX">Need to detail the <span>native appearance</span> and <span>primitive
+  appearance</span>.</p>
+
+  </div>
+
+
+  <div w-nodev>
+

@@ -1,0 +1,26 @@
+WHATWG HTML — section about-dev-edition — About this specification (+introduction)
+
+  <h2 class="no-num no-toc" id="about-dev-edition">About this specification</h2>
+
+  <p>This specification is like no other — it has been processed with <em>you</em>, the humble web
+  developer, in mind.</p>
+
+  <p>The focus of this specification is readability and ease of access. Unlike the <a
+  href="/multipage/">full HTML Standard</a>, this "developer's edition" removes information that
+  only browser vendors need know. It is automatically produced from the full specification by our
+  build tooling, and thus always in sync with the latest developments in HTML.</p>
+
+  <p>To read about its conception, construction, and future, read the <a
+  href="https://web.archive.org/web/20150220020906/http://archive.germanforblack.com:80/articles/html5-for-web-developers">original
+  press release</a>, and the <a href="https://blog.whatwg.org/developers-edition-comeback">blog post
+  about its relaunch</a>.</p>
+
+  <p>Finally, feel free to <a href="https://github.com/whatwg/html/labels/dev%20edition">contribute
+  on GitHub</a> to make this edition better for everyone!</p>
+
+  </div>
+
+  <h2 split-filename="introduction" id="introduction">Introduction</h2>
+
+  <div w-nodev>
+

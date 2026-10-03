@@ -1,0 +1,147 @@
+WHATWG HTML — section navigation-api/the-history-entry-list — The history entry list
+
+  <h5>The history entry list</h5>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>entries</var> = <span data-x="dom-navigation">navigation</span>.<span subdfn data-x="dom-Navigation-entries">entries()</span></code></dt>
+   <dd><p>Returns an array of <code>NavigationHistoryEntry</code> instances represent the current
+   navigation history entry list, i.e., all <span data-x="session history entry">session history
+   entries</span> for this <span>navigable</span> that are <span>same origin</span> and contiguous
+   to the <span data-x="nav-current-history-entry">current session history entry</span>.</p>
+
+   <dt><code data-x=""><span data-x="dom-navigation">navigation</span>.<span subdfn data-x="dom-Navigation-currentEntry">currentEntry</span></code></dt>
+   <dd><p>Returns the <code>NavigationHistoryEntry</code> corresponding to the <span
+   data-x="nav-current-history-entry">current session history entry</span>.</p>
+
+   <dt><code data-x=""><span data-x="dom-navigation">navigation</span>.<span subdfn data-x="dom-Navigation-updateCurrentEntry">updateCurrentEntry</span>({ <span data-x="dom-NavigationUpdateCurrentEntryOptions-state">state</span> })</code></dt>
+   <dd>
+    <p>Updates the <span data-x="she-navigation-api-state">navigation API state</span> of the <span
+    data-x="nav-current-history-entry">current session history entry</span>, without performing a
+    navigation like <code data-x="dom-navigation-reload">navigation.reload()</code> would do.</p>
+
+    <p>This method is best used to capture updates to the page that have already happened, and need
+    to be reflected into the navigation API state. For cases where the state update is meant to
+    drive a page update, instead use <code
+    data-x="dom-Navigation-navigate">navigation.navigate()</code> or <code
+    data-x="dom-Navigation-reload">navigation.reload()</code>, which will trigger a <code
+    data-x="event-navigate">navigate</code> event.</p>
+   </dd>
+
+   <dt><code data-x=""><span data-x="dom-navigation">navigation</span>.<span subdfn data-x="dom-Navigation-canGoBack">canGoBack</span></code></dt>
+   <dd><p>Returns true if the current <span data-x="nav-current-history-entry">current session
+   history entry</span> (i.e., <code data-x="dom-Navigation-currentEntry">currentEntry</code>) is
+   not the first one in the navigation history entry list (i.e., in <code
+   data-x="dom-Navigation-entries">entries()</code>). This means that there is a previous
+   <span>session history entry</span> for this <span>navigable</span>, and its <span
+   data-x="she-document-state">document state</span>'s <span
+   data-x="document-state-origin">origin</span> is <span>same origin</span> with the current
+   <code>Document</code>'s <span data-x="concept-document-origin">origin</span>.</p>
+
+   <dt><code data-x=""><span data-x="dom-navigation">navigation</span>.<span subdfn data-x="dom-Navigation-canGoForward">canGoForward</span></code></dt>
+   <dd><p>Returns true if the current <span data-x="nav-current-history-entry">current session
+   history entry</span> (i.e., <code data-x="dom-Navigation-currentEntry">currentEntry</code>) is
+   not the last one in the navigation history entry list (i.e., in <code
+   data-x="dom-Navigation-entries">entries()</code>). This means that there is a next <span>session
+   history entry</span> for this <span>navigable</span>, and its <span
+   data-x="she-document-state">document state</span>'s <span
+   data-x="document-state-origin">origin</span> is <span>same origin</span> with the current
+   <code>Document</code>'s <span data-x="concept-document-origin">origin</span>.</p>
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn method for="Navigation"><code data-x="dom-Navigation-entries">entries()</code></dfn>
+  method steps are:</p>
+
+  <ol>
+   <li><p>If <span>this</span> <span>has entries and events disabled</span>, then return the empty
+   list.</p></li>
+
+   <li>
+    <p>Return <span>this</span>'s <span data-x="navigation-entry-list">entry list</span>.</p>
+
+    <p class="note">Recall that because of Web IDL's sequence type conversion rules, this will
+    create a new JavaScript array object on each call. That is, <code data-x=""><span
+    data-x="dom-Navigation-entries">navigation.entries()</span> !== <span
+    data-x="dom-Navigation-entries">navigation.entries()</span></code>.</p>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="Navigation"><code
+  data-x="dom-Navigation-currentEntry">currentEntry</code></dfn> getter steps are to return the
+  <span data-x="navigation-current-entry">current entry</span> of <span>this</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="Navigation"><code
+  data-x="dom-Navigation-updateCurrentEntry">updateCurrentEntry(<var>options</var>)</code></dfn>
+  method steps are:</p>
+
+  <ol>
+   <li><p>Let <var>current</var> be the <span data-x="navigation-current-entry">current entry</span>
+   of <span>this</span>.</p></li>
+
+   <li><p>If <var>current</var> is null, then throw an <span>"<code>InvalidStateError</code>"</span>
+   <code>DOMException</code>.</p></li>
+
+   <li><p>Let <var>serializedState</var> be
+   <span>StructuredSerializeForStorage</span>(<var>options</var>["<code
+   data-x="dom-NavigationUpdateCurrentEntryOptions-state">state</code>"]), rethrowing any
+   exceptions.</p></li>
+
+   <li><p>Set <var>current</var>'s <span data-x="nhe-she">session history entry</span>'s <span
+   data-x="she-navigation-api-state">navigation API state</span> to
+   <var>serializedState</var>.</p></li>
+
+   <li><p><span data-x="concept-event-fire">Fire an event</span> named <code
+   data-x="event-currententrychange">currententrychange</code> at <span>this</span> using
+   <code>NavigationCurrentEntryChangeEvent</code>, with its <code
+   data-x="dom-NavigationCurrentEntryChangeEvent-navigationType">navigationType</code> attribute
+   initialized to null and its <code data-x="dom-NavigationCurrentEntryChangeEvent-from">from</code>
+   initialized to <var>current</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="Navigation"><code
+  data-x="dom-Navigation-canGoBack">canGoBack</code></dfn> getter steps are:</p>
+
+  <ol>
+   <li><p>If <span>this</span> <span>has entries and events disabled</span>, then return
+   false.</p></li>
+
+   <li><p><span>Assert</span>: <span>this</span>'s <span
+   data-x="navigation-current-entry-index">current entry index</span> is not &minus;1.</p></li>
+
+   <li><p>If <span>this</span>'s <span data-x="navigation-current-entry-index">current entry
+   index</span> is 0, then return false.</p></li>
+
+   <li><p>Return true.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="Navigation"><code
+  data-x="dom-Navigation-canGoForward">canGoForward</code></dfn> getter steps are:</p>
+
+  <ol>
+   <li><p>If <span>this</span> <span>has entries and events disabled</span>, then return
+   false.</p></li>
+
+   <li><p><span>Assert</span>: <span>this</span>'s <span
+   data-x="navigation-current-entry-index">current entry index</span> is not &minus;1.</p></li>
+
+   <li><p>If <span>this</span>'s <span data-x="navigation-current-entry-index">current entry
+   index</span> is equal to <span>this</span>'s <span data-x="navigation-entry-list">entry
+   list</span>'s <span data-x="list size">size</span> &minus; 1, then return false.</p></li>
+
+   <li><p>Return true.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+

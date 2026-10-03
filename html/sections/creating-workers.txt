@@ -1,0 +1,574 @@
+WHATWG HTML — section creating-workers — Creating workers
+
+  <h4>Creating workers</h4>
+
+  <h5 w-nodev><span id="the-abstractworker-abstract-interface"></span>The
+  <code>AbstractWorker</code> mixin</h5>
+  <h5 w-dev>Properties present on both <code>Worker</code> and <code>SharedWorker</code></h5>
+
+  <pre><code class="idl">interface mixin <dfn interface>AbstractWorker</dfn> {
+  attribute <span>EventHandler</span> <span data-x="handler-AbstractWorker-onerror">onerror</span>;
+};</code></pre>
+
+  <p>The following are the <span>event handlers</span> (and their corresponding <span data-x="event
+  handler event type">event handler event types</span>) <span w-nodev>that must be</span> supported,
+  as <span>event handler IDL attributes</span>, by <span w-nodev>objects implementing the
+  <code>AbstractWorker</code> interface</span><span w-dev><code>Worker</code> and
+  <code>SharedWorker</code> objects</span>:</p>
+
+  <table>
+   <thead>
+    <tr><th><span data-x="event handlers">Event handler</span> <th><span>Event handler event type</span>
+   <tbody>
+    <tr><td><dfn attribute for="AbstractWorker"><code data-x="handler-AbstractWorker-onerror">onerror</code></dfn> <td> <code data-x="event-error">error</code>
+  </table>
+
+
+  <div w-nodev>
+  <h5>Script settings for workers</h5>
+
+  <div algorithm>
+  <p>To <dfn>set up a worker environment settings object</dfn>, given a <span>JavaScript execution
+  context</span> <var>execution context</var>, an <span>environment settings object</span>
+  <var>outside settings</var>, and a number <var>unsafeWorkerCreationTime</var>:</p>
+
+  <ol>
+   <li><p>Let <var>realm</var> be the value of <var>execution context</var>'s Realm
+   component.</p></li>
+
+   <li><p>Let <var>worker global scope</var> be <var>realm</var>'s <span
+   data-x="concept-realm-global">global object</span>.</p></li>
+
+   <li><p>Let <var>origin</var> be a unique <span
+   data-x="concept-origin-opaque">opaque origin</span> if <var>worker global scope</var>'s
+   <span data-x="concept-WorkerGlobalScope-url">url</span>'s <span
+   data-x="concept-url-scheme">scheme</span> is "<code data-x="">data</code>"; otherwise
+   <var>outside settings</var>'s <span
+   data-x="concept-settings-object-origin">origin</span>.</p></li>
+
+   <li>
+    <p>Let <var>settings object</var> be a new <span>environment settings object</span> whose algorithms
+    are defined as follows:</p>
+
+    <dl>
+     <dt>The <span>realm execution context</span></dt>
+     <dd>
+      <p>Return <var>execution context</var>.
+     </dd>
+
+     <dt>The <span data-x="concept-settings-object-module-map">module map</span></dt>
+     <dd>
+      <p>Return <var>worker global scope</var>'s <span
+      data-x="concept-WorkerGlobalScope-module-map">module map</span>.</p>
+     </dd>
+
+     <dt>The <span>API base URL</span></dt>
+     <dd>
+      <p>Return <var>worker global scope</var>'s <span
+      data-x="concept-WorkerGlobalScope-url">url</span>.</p>
+     </dd>
+
+     <dt>The <span data-x="concept-settings-object-origin">origin</span></dt>
+     <dd><p>Return <var>origin</var>.</p></dd>
+
+     <dt>The <span data-x="concept-settings-object-has-cross-site-ancestor">has cross-site
+     ancestor</span></dt>
+     <dd>
+      <ol>
+       <li><p>If <var>outside settings</var>'s <span
+       data-x="concept-settings-object-has-cross-site-ancestor">has cross-site ancestor</span> is
+       true, then return true.</p></li>
+
+       <li><p>If <var>worker global scope</var>'s <span
+       data-x="concept-WorkerGlobalScope-url">url</span>'s <span
+       data-x="concept-url-scheme">scheme</span> is "<code data-x="">data</code>", then return
+       true.</p></li>
+
+       <li><p>Return false.</p></li>
+      </ol>
+     </dd>
+
+     <dt>The <span data-x="concept-settings-object-policy-container">policy container</span></dt>
+     <dd>
+      <p>Return <var>worker global scope</var>'s <span
+      data-x="concept-WorkerGlobalScope-policy-container">policy container</span>.</p>
+     </dd>
+
+     <dt>The <span data-x="concept-settings-object-cross-origin-isolated-capability">cross-origin
+     isolated capability</span></dt>
+     <dd><p>Return <var>worker global scope</var>'s <span
+     data-x="concept-WorkerGlobalScope-cross-origin-isolated-capability">cross-origin isolated
+     capability</span>.</p></dd>
+
+     <dt>The <span data-x="concept-settings-object-time-origin">time origin</span></dt>
+     <dd><p>Return the result of <span data-x="coarsen time">coarsening</span>
+     <var>unsafeWorkerCreationTime</var> with <var>worker global scope</var>'s <span
+     data-x="concept-WorkerGlobalScope-cross-origin-isolated-capability">cross-origin isolated
+     capability</span>.</p></dd>
+    </dl>
+   </li>
+
+   <li><p>Set <var>settings object</var>'s <span data-x="concept-environment-id">id</span> to a new
+   unique opaque string, <span data-x="concept-environment-creation-url">creation URL</span> to
+   <var>worker global scope</var>'s <span data-x="concept-WorkerGlobalScope-url">url</span>,
+   <span>top-level creation URL</span> to null,
+   <span data-x="concept-environment-target-browsing-context">target browsing context</span> to
+   null, and <span data-x="concept-environment-active-service-worker">active service worker</span>
+   to null.</p></li>
+
+   <li><p>If <var>worker global scope</var> is a <code>DedicatedWorkerGlobalScope</code> object,
+   then set <var>settings object</var>'s <span>top-level origin</span> to <var>outside
+   settings</var>'s <span>top-level origin</span>.</p></li>
+
+   <li>
+    <p>Otherwise, set <var>settings object</var>'s <span>top-level origin</span> to an
+    <span>implementation-defined</span> value.</p>
+
+    <p class="XXX">See <a href="https://privacycg.github.io/storage-partitioning/">Client-Side
+    Storage Partitioning</a> for the latest on properly defining this.</p>
+   </li>
+
+   <li><p>Set <var>realm</var>'s [[HostDefined]] field to <var>settings object</var>.</p></li>
+
+   <li><p>Return <var>settings object</var>.</p></li>
+  </ol>
+  </div>
+  </div>
+
+
+  <h5>Dedicated workers and the <code subdfn>Worker</code> interface</h5>
+
+  <pre><code class="idl">[Exposed=(Window,DedicatedWorker,SharedWorker)]
+interface <dfn interface>Worker</dfn> : <span>EventTarget</span> {
+  <span data-x="dom-Worker">constructor</span>((<code data-x="tt-trustedscripturl">TrustedScriptURL</code> or USVString) scriptURL, optional <span>WorkerOptions</span> options = {});
+
+  undefined <span data-x="dom-Worker-terminate">terminate</span>();
+
+  undefined <span data-x="dom-Worker-postMessage">postMessage</span>(any message, sequence&lt;<span data-x="idl-object">object</span>&gt; transfer);
+  undefined <span data-x="dom-Worker-postMessage-options">postMessage</span>(any message, optional <span>StructuredSerializeOptions</span> options = {});
+};
+
+dictionary <dfn dictionary>WorkerOptions</dfn> {
+  DOMString <dfn dict-member for="WorkerOptions" data-x="dom-WorkerOptions-name">name</dfn> = "";
+  <span>WorkerType</span> <dfn dict-member for="WorkerOptions" data-x="dom-WorkerOptions-type">type</dfn> = "classic";
+  <span>RequestCredentials</span> <dfn dict-member for="WorkerOptions" data-x="dom-WorkerOptions-credentials">credentials</dfn> = "same-origin"; // credentials is only used if type is "module"
+};
+
+enum <dfn enum>WorkerType</dfn> { "classic", "module" };
+
+<span>Worker</span> includes <span>AbstractWorker</span>;
+<span>Worker</span> includes <span>MessageEventTarget</span>;</code></pre>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>worker</var> = new <span subdfn data-x="dom-Worker">Worker</span>(<var>scriptURL</var> [, <var>options</var> ])</code></dt>
+   <dd>
+    <p>Returns a new <code>Worker</code> object. <var>scriptURL</var> will be fetched and executed
+    in the background, creating a new global environment for which <var>worker</var> represents the
+    communication channel.</p>
+
+    <p><var>options</var> can contain the following values:</p>
+
+    <ul>
+     <li><p><code subdfn data-x="dom-WorkerOptions-name">name</code> can be used to define the <span
+     data-x="concept-WorkerGlobalScope-name">name</span> of that global environment, primarily for
+     debugging purposes.</p></li>
+
+     <li><p><code subdfn data-x="dom-WorkerOptions-type">type</code> can be used to load the new
+     global environment from <var>scriptURL</var> as a JavaScript module, by setting it to the value
+     "<code data-x="">module</code>".</p></li>
+
+     <li><p><code subdfn data-x="dom-WorkerOptions-credentials">credentials</code> can be used to
+     specify how <var>scriptURL</var> is fetched, but only if <code
+     data-x="dom-WorkerOptions-type">type</code> is set to "<code data-x="">module</code>".</p></li>
+    </ul>
+   </dd>
+
+   <dt><code data-x=""><var>worker</var>.<span subdfn data-x="dom-Worker-terminate">terminate</span>()</code></dt>
+   <dd>Aborts <var>worker</var>'s associated global environment.</dd>
+
+   <dt><code data-x=""><var>worker</var>.<span subdfn data-x="dom-Worker-postMessage">postMessage</span>(<var>message</var> [, <var>transfer</var> ])</code></dt>
+   <dt><code data-x=""><var>worker</var>.<span subdfn data-x="dom-Worker-postMessage-options">postMessage</span>(<var>message</var> [, { <span data-x="dom-StructuredSerializeOptions-transfer">transfer</span> } ])</code></dt>
+   <dd><p>Clones <var>message</var> and transmits it to <var>worker</var>'s global environment.
+   <var>transfer</var> can be passed as a list of objects that are to be transferred rather than
+   cloned.</p></dd>
+  </dl>
+
+  <div w-nodev>
+
+  <p>Each <code>Worker</code> object has an associated <dfn for="Worker">outside port</dfn> (a
+  <code>MessagePort</code>). This port is part of a channel that is set up when the worker is
+  created, but it is not exposed. This object must never be garbage collected before the
+  <code>Worker</code> object.</p>
+
+  <div algorithm>
+  <p>The <dfn method for="Worker"><code data-x="dom-Worker-terminate">terminate()</code></dfn>
+  method steps are to <span>terminate a worker</span> given <span>this</span>'s worker.</p>
+  </div>
+
+  <!-- TODO: "this's worker" is not really well-defined; pick either the Worker or the
+  WorkerGlobalScope maybe? ("terminate a worker" needs updating though.) -->
+
+  <div algorithm>
+  <p>The <dfn method for="Worker"><code
+  data-x="dom-Worker-postMessage">postMessage(<var>message</var>, <var>transfer</var>)</code></dfn>
+  and <dfn method for="Worker"><code
+  data-x="dom-Worker-postMessage-options">postMessage(<var>message</var>,
+  <var>options</var>)</code></dfn> methods on <code>Worker</code> objects act as if, when invoked,
+  they immediately invoked the respective <code
+  data-x="dom-MessagePort-postMessage">postMessage(<var>message</var>, <var>transfer</var>)</code>
+  and <code data-x="dom-MessagePort-postMessage-options">postMessage(<var>message</var>,
+  <var>options</var>)</code> on <span>this</span>'s <span>outside port</span>, with the same
+  arguments, and returned the same return value.</p>
+  </div>
+
+  </div>
+
+  <div class="example">
+
+   <p>The <code data-x="dom-Worker-postMessage">postMessage()</code>
+   method's first argument can be structured data:</p>
+
+   <pre><code class="js">worker.postMessage({opcode: 'activate', device: 1938, parameters: [23, 102]});</code></pre>
+
+  </div>
+
+  <div w-nodev>
+
+  <hr>
+
+  <div algorithm>
+  <p>The <dfn constructor for="Worker"><code data-x="dom-Worker">new Worker(<var>scriptURL</var>,
+  <var>options</var>)</code></dfn> constructor steps are:</p>
+
+  <ol>
+   <li><p>Let <var>compliantScriptURL</var> be the result of invoking the <span
+   data-x="tt-getcompliantstring">get trusted type compliant string</span> algorithm with <code
+   data-x="tt-trustedscripturl">TrustedScriptURL</code>, <span>this</span>'s <span>relevant global
+   object</span>, <var>scriptURL</var>, "<code data-x="">Worker constructor</code>", and "<code
+   data-x="">script</code>".</p></li>
+
+   <li><p>Let <var>outsideSettings</var> be <span>this</span>'s <span>relevant settings
+   object</span>.</p>
+
+   <li>
+    <p>Let <var>workerURL</var> be the result of <span>encoding-parsing a URL</span> given
+    <var>compliantScriptURL</var>, relative to <var>outsideSettings</var>.</p>
+
+    <p class="note">Any <span data-x="same origin">same-origin</span> URL (including <code
+    data-x="blob protocol">blob:</code> URLs) can be used. <code data-x="data protocol">data:</code>
+    URLs can also be used, but they create a worker with an <span
+    data-x="concept-origin-opaque">opaque origin</span>.</p>
+   </li>
+
+   <li><p>If <var>workerURL</var> is failure, then throw a <span>"<code>SyntaxError</code>"</span>
+   <code>DOMException</code>.</p></li>
+
+   <li><p>Let <var>outsidePort</var> be a <span>new</span> <code>MessagePort</code> in
+   <var>outsideSettings</var>'s <span data-x="environment settings object's
+   realm">realm</span>.</p></li>
+
+   <li><p>Set <var>outsidePort</var>'s <span>message event target</span> to
+   <span>this</span>.</p></li>
+
+   <li><p>Set <span>this</span>'s <span>outside port</span> to <var>outsidePort</var>.</p></li>
+
+   <li><p>Let <var>worker</var> be <span>this</span>.</p></li>
+
+   <li>
+    <p>Run this step <span>in parallel</span>:</p>
+
+    <ol>
+     <li><p><span>Run a worker</span> given <var>worker</var>, <var>workerURL</var>,
+     <var>outsideSettings</var>, <var>outsidePort</var>, and <var>options</var>.</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  </div>
+
+
+  <h5>Shared workers and the <code subdfn>SharedWorker</code> interface</h5>
+
+  <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>SharedWorker</dfn> : <span>EventTarget</span> {
+  <span data-x="dom-SharedWorker">constructor</span>((<code data-x="tt-trustedscripturl">TrustedScriptURL</code> or USVString) scriptURL, optional (DOMString or <span>SharedWorkerOptions</span>) options = {});
+
+  readonly attribute <span>MessagePort</span> <span data-x="dom-SharedWorker-port">port</span>;
+};
+<span>SharedWorker</span> includes <span>AbstractWorker</span>;
+
+dictionary <dfn dictionary>SharedWorkerOptions</dfn> : <span>WorkerOptions</span> {
+  boolean <dfn dict-member for="SharedWorkerOptions" data-x="dom-SharedWorkerOptions-extendedLifetime">extendedLifetime</dfn> = false;
+};</code></pre>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>sharedWorker</var> = new <span subdfn data-x="dom-SharedWorker">SharedWorker</span>(<var>scriptURL</var> [, <var>name</var> ])</code></dt>
+   <dd><p>Returns a new <code>SharedWorker</code> object. <var>scriptURL</var> will be fetched and
+   executed in the background, creating a new global environment for which <var>sharedWorker</var>
+   represents the communication channel. <var>name</var> can be used to define the <span
+   data-x="concept-WorkerGlobalScope-name">name</span> of that global environment.</p></dd>
+
+   <dt><code data-x=""><var>sharedWorker</var> = new <span data-x="dom-SharedWorker">SharedWorker</span>(<var>scriptURL</var> [, <var>options</var> ])</code></dt>
+   <dd>
+    <p>Returns a new <code>SharedWorker</code> object. <var>scriptURL</var> will be fetched and
+    executed in the background, creating a new global environment for which <var>sharedWorker</var>
+    represents the communication channel.</p>
+
+    <p><var>options</var> can contain the following values:</p>
+
+    <ul>
+     <li><p><code data-x="dom-WorkerOptions-name">name</code> can be used to define the <span
+     data-x="concept-WorkerGlobalScope-name">name</span> of that global environment.</p></li>
+
+     <li><p><code data-x="dom-WorkerOptions-type">type</code> can be used to load the new global
+     environment from <var>scriptURL</var> as a JavaScript module, by setting it to the value "<code
+     data-x="">module</code>".</p></li>
+
+     <li><p><code data-x="dom-WorkerOptions-credentials">credentials</code> can be used to specify
+     how <var>scriptURL</var> is fetched, but only if <code
+     data-x="dom-WorkerOptions-type">type</code> is set to "<code data-x="">module</code>".</p></li>
+
+     <li><p><code data-x="dom-SharedWorkerOptions-extendedLifetime">extendedLifetime</code> can be
+     set to request that the newly-created global environment be given extra time to perform its
+     operations even after all of its <span data-x="owner set">owners</span> have disappeared. This
+     can be useful, for example, for performing asynchronous work after page unload.</p></li>
+    </ul>
+
+    <p class="warning">Note that attempting to construct a shared worker with <var>options</var>
+    whose <code data-x="dom-WorkerOptions-type">type</code>, <code
+    data-x="dom-WorkerOptions-credentials">credentials</code>, or <code
+    data-x="dom-SharedWorkerOptions-extendedLifetime">extendedLifetime</code> values mismatch those
+    of an existing shared worker with the same <span
+    data-x="concept-SharedWorkerGlobalScope-constructor-url">constructor URL</span> and <span
+    data-x="concept-WorkerGlobalScope-name">name</span>, will cause the returned
+    <var>sharedWorker</var> to fire an <code data-x="event-error">error</code> event and not connect
+    to the existing shared worker.</p>
+   </dd>
+
+   <dt><code data-x=""><var>sharedWorker</var>.<span subdfn data-x="dom-SharedWorker-port">port</span></code></dt>
+   <dd><p>Returns <var>sharedWorker</var>'s <code>MessagePort</code> object which can be used to
+   communicate with the global environment.</p></dd>
+  </dl>
+
+  <div w-nodev>
+
+  <p>A user agent has an associated <dfn>shared worker manager</dfn> which is the result of
+  <span>starting a new parallel queue</span>.</p>
+
+  <p class="note">Each user agent has a single <span>shared worker manager</span> for simplicity.
+  Implementations could use one per <span>origin</span>; that would not be observably different and
+  enables more concurrency.</p>
+
+  <hr>
+
+  <p>Each <code>SharedWorker</code> has a <dfn data-x="concept-SharedWorker-port">port</dfn>, a
+  <code>MessagePort</code> set when the object is created.</p>
+
+  <div algorithm>
+  <p>The <dfn attribute for="SharedWorker"><code data-x="dom-SharedWorker-port">port</code></dfn>
+  getter steps are to return <span>this</span>'s <span
+  data-x="concept-SharedWorker-port">port</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn constructor for="SharedWorker"><code data-x="dom-SharedWorker">new
+  SharedWorker(<var>scriptURL</var>, <var>options</var>)</code></dfn> constructor steps are:</p>
+
+  <ol>
+   <li><p>Let <var>compliantScriptURL</var> be the result of invoking the <span
+   data-x="tt-getcompliantstring">get trusted type compliant string</span> algorithm with <code
+   data-x="tt-trustedscripturl">TrustedScriptURL</code>, <span>this</span>'s <span>relevant global
+   object</span>, <var>scriptURL</var>, "<code data-x="">SharedWorker constructor</code>", and
+   "<code data-x="">script</code>".</p></li>
+
+   <li><p>If <var>options</var> is a <code data-x="idl-DOMString">DOMString</code>, set
+   <var>options</var> to a new <code>WorkerOptions</code> dictionary whose <code
+   data-x="dom-WorkerOptions-name">name</code> member is set to the value of <var>options</var> and
+   whose other members are set to their default values.</p></li>
+
+   <li><p>Let <var>outsideSettings</var> be <span>this</span>'s <span>relevant settings
+   object</span>.</p></li>
+
+   <li>
+    <p>Let <var>urlRecord</var> be the result of <span>encoding-parsing a URL</span> given
+    <var>compliantScriptURL</var>, relative to <var>outsideSettings</var>.</p>
+
+    <p class="note">Any <span data-x="same origin">same-origin</span> URL (including <code
+    data-x="blob protocol">blob:</code> URLs) can be used. <code data-x="data protocol">data:</code>
+    URLs can also be used, but they create a worker with an <span
+    data-x="concept-origin-opaque">opaque origin</span>.</p>
+   </li>
+
+   <li><p>If <var>urlRecord</var> is failure, then throw a <span>"<code>SyntaxError</code>"</span>
+   <code>DOMException</code>.</p></li>
+
+   <li><p>Let <var>outsidePort</var> be a <span>new</span> <code>MessagePort</code> in
+   <var>outsideSettings</var>'s <span data-x="environment settings object's
+   realm">realm</span>.</p></li>
+
+   <li><p>Set <span>this</span>'s <span data-x="concept-SharedWorker-port">port</span> to
+   <var>outsidePort</var>.</p></li>
+
+   <li><p>Let <var>callerIsSecureContext</var> be true if <var>outsideSettings</var> is a
+   <span>secure context</span>; otherwise, false.</p></li>
+
+   <li><p>Let <var>outsideStorageKey</var> be the result of running <span>obtain a storage key for
+   non-storage purposes</span> given <var>outsideSettings</var>.</p></li>
+
+   <li><p>Let <var>worker</var> be <span>this</span>.</p></li>
+
+   <li>
+    <p><span>Enqueue the following steps</span> to the <span>shared worker manager</span>:</p>
+
+    <ol>
+     <li><p>Let <var>workerGlobalScope</var> be null.</p></li>
+
+     <li>
+      <p><span data-x="list iterate">For each</span> <var>scope</var> in the list of all
+      <code>SharedWorkerGlobalScope</code> objects:</p>
+
+      <ol>
+        <li>
+         <p>If all of the following are true:</p>
+
+         <ul>
+          <li><var>scope</var>'s <span
+          data-x="concept-SharedWorkerGlobalScope-constructor-storage-key">constructor storage
+          key</span> <span data-x="storage key equal">equals</span>
+          <var>outsideStorageKey</var>;</li>
+
+          <li><var>scope</var>'s <span data-x="dom-WorkerGlobalScope-closing">closing</span> flag is
+          false;</li>
+
+          <li><var>scope</var>'s
+          <span data-x="concept-SharedWorkerGlobalScope-constructor-url">constructor URL</span>
+          <span data-x="concept-url-equals">equals</span>
+          <var>urlRecord</var>; and</li>
+
+          <li><var>scope</var>'s <span data-x="concept-WorkerGlobalScope-name">name</span> equals
+          <var>options</var>["<code data-x="dom-WorkerOptions-name">name</code>"],</li>
+         </ul>
+
+         <p>then:</p>
+
+         <ol>
+          <li><p>Set <var>workerGlobalScope</var> to <var>scope</var>.</p></li>
+
+          <li><p><span>Break</span>.</p></li>
+         </ol>
+        </li>
+      </ol>
+
+      <p class="note"><code data-x="data protocol">data:</code> URLs create a worker with an <span
+      data-x="concept-origin-opaque">opaque origin</span>, which would prevent such a worker from
+      ever being matched if its own <span>storage key</span> were used. Instead, the <span
+      data-x="concept-SharedWorkerGlobalScope-constructor-storage-key">constructor storage
+      key</span> (derived from the creating environment) and <span
+      data-x="concept-SharedWorkerGlobalScope-constructor-url">constructor URL</span> are compared,
+      so the same <code data-x="data protocol">data:</code> URL can be used within a <span>storage
+      key</span> to get to the same <code>SharedWorkerGlobalScope</code> object, but cannot be used
+      to bypass the <span>storage key</span> restriction.</p>
+     </li>
+
+     <li>
+      <p>If <var>workerGlobalScope</var> is not null, but the user agent has been configured to
+      disallow communication between the worker represented by the <var>workerGlobalScope</var> and
+      the <span data-x="concept-script">scripts</span> whose <span
+      data-x="concept-script-settings-object">settings object</span> is <var>outsideSettings</var>,
+      then set <var>workerGlobalScope</var> to null.</p>
+
+      <p class="note">For example, a user agent could have a development mode that isolates a
+      particular <span>top-level traversable</span> from all other pages, and scripts in that
+      development mode could be blocked from connecting to shared workers running in the normal
+      browser mode.</p>
+     </li>
+
+     <li>
+      <p>If <var>workerGlobalScope</var> is not null, and any of the following are true:</p>
+
+      <ul>
+       <li><p><var>workerGlobalScope</var>'s <span
+       data-x="concept-WorkerGlobalScope-type">type</span> is not equal to <var>options</var>["<code
+       data-x="dom-WorkerOptions-type">type</code>"];</p></li>
+
+       <li><p><var>workerGlobalScope</var>'s <span
+       data-x="concept-SharedWorkerGlobalScope-credentials">credentials</span> is not equal to
+       <var>options</var>["<code data-x="dom-WorkerOptions-credentials">credentials</code>"];
+       or</p></li>
+
+       <li><p><var>workerGlobalScope</var>'s <span
+       data-x="concept-SharedWorkerGlobalScope-extended-lifetime">extended lifetime</span> is not
+       equal to <var>options</var>["<code
+       data-x="dom-SharedWorkerOptions-extendedLifetime">extendedLifetime</code>"],</p></li>
+      </ul>
+
+      <p>then:</p>
+
+      <ol>
+       <li><p><span>Queue a global task</span> on the <span>DOM manipulation task source</span>
+       given <var>worker</var>'s <span>relevant global object</span> to <span
+       data-x="concept-event-fire">fire an event</span> named <code
+       data-x="event-error">error</code> at <var>worker</var>.</p></li>
+
+       <li><p>Abort these steps.</p></li>
+      </ol>
+     </li>
+
+     <li>
+      <p>If <var>workerGlobalScope</var> is not null:</p>
+
+      <ol>
+       <li><p>Let <var>insideSettings</var> be <var>workerGlobalScope</var>'s <span>relevant
+       settings object</span>.</p></li>
+
+       <li><p>Let <var>workerIsSecureContext</var> be true if <var>insideSettings</var> is a
+       <span>secure context</span>; otherwise, false.</p></li>
+
+       <li>
+        <p>If <var>workerIsSecureContext</var> is not <var>callerIsSecureContext</var>:</p>
+
+        <ol>
+         <li><p><span>Queue a global task</span> on the <span>DOM manipulation task source</span>
+         given <var>worker</var>'s <span>relevant global object</span> to <span
+         data-x="concept-event-fire">fire an event</span> named <code
+         data-x="event-error">error</code> at <var>worker</var>.</p></li>
+
+         <li><p>Abort these steps.</p></li>
+        </ol>
+       </li>
+
+       <li><p>Associate <var>worker</var> with <var>workerGlobalScope</var>.</p></li>
+
+       <li><p>Let <var>insidePort</var> be a <span>new</span> <code>MessagePort</code> in
+       <var>insideSettings</var>'s <span data-x="environment settings object's
+       realm">realm</span>.</p></li>
+
+       <li><p><span>Entangle</span> <var>outsidePort</var> and <var>insidePort</var>.</p></li>
+
+       <li><p><span>Queue a global task</span> on the <span>DOM manipulation task source</span>
+       given <var>workerGlobalScope</var> to <span data-x="concept-event-fire">fire an event</span>
+       named <code data-x="event-WorkerGlobalScope-connect">connect</code> at
+       <var>workerGlobalScope</var>, using <code>MessageEvent</code>, with the <code
+       data-x="dom-MessageEvent-data">data</code> attribute initialized to the empty string, the
+       <code data-x="dom-MessageEvent-ports">ports</code> attribute initialized to a new
+       <span>frozen array</span> containing only <var>insidePort</var>, and the <code
+       data-x="dom-MessageEvent-source">source</code> attribute initialized to
+       <var>insidePort</var>.</p></li>
+
+       <li><p><span data-x="set append">Append</span> the <span>relevant owner to add</span> given
+       <var>outsideSettings</var> to <var>workerGlobalScope</var>'s <span>owner set</span>.</p></li>
+      </ol>
+     </li>
+
+     <li><p>Otherwise, <span>in parallel</span>, <span>run a worker</span> given <var>worker</var>,
+     <var>urlRecord</var>, <var>outsideSettings</var>, <var>outsidePort</var>, and
+     <var>options</var>.</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  </div>
+
+

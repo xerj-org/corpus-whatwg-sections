@@ -1,0 +1,133 @@
+WHATWG HTML — section the-optgroup-element — The <dfn element><code>optgroup</code></dfn> element
+
+  <h4>The <dfn element><code>optgroup</code></dfn> element</h4>
+
+  <dl class="element">
+   <dt><span data-x="concept-element-categories">Categories</span>:</dt>
+   <dd>None.</dd>
+   <dt><span data-x="concept-element-contexts">Contexts in which this element can be used</span>:</dt>
+   <dd>As a descendant of a <code>select</code> element.</dd>
+   <dt><span data-x="concept-element-content-model">Content model</span>:</dt>
+   <dd>Zero or one <code>legend</code> element followed by zero or more <code>option</code>
+   elements, <span>script-supporting elements</span>, <code>noscript</code> elements, or
+   <code>div</code> elements.</dd>
+   <dt><span data-x="concept-element-attributes">Content attributes</span>:</dt>
+   <dd><span>Global attributes</span></dd>
+   <dd><code data-x="attr-optgroup-disabled">disabled</code></dd>
+   <dd><code data-x="attr-optgroup-label">label</code></dd>
+   <dt><span
+   data-x="concept-element-accessibility-considerations">Accessibility considerations</span>:</dt>
+   <dd><a href="https://w3c.github.io/html-aria/#el-optgroup">For authors</a>.</dd>
+   <dd><a href="https://w3c.github.io/html-aam/#el-optgroup">For implementers</a>.</dd>
+   <dt><span data-x="concept-element-sanitization">Sanitization</span>:</dt>
+   <dd><span data-x="sanitizer-uncategorized">Uncategorized</span>.</dd>
+   <dt><span data-x="concept-element-dom">DOM interface</span>:</dt>
+   <dd w-nodev>
+    <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>HTMLOptGroupElement</dfn> : <span>HTMLElement</span> {
+  [<span>HTMLConstructor</span>] constructor();
+
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute boolean <dfn attribute for="HTMLOptGroupElement" data-x="dom-optgroup-disabled">disabled</dfn>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute DOMString <dfn attribute for="HTMLOptGroupElement" data-x="dom-optgroup-label">label</dfn>;
+};</code></pre>
+   </dd>
+   <dd w-dev>Uses <code>HTMLOptGroupElement</code>.</dd>
+  </dl>
+
+  <p>The <code>optgroup</code> element <span>represents</span> a <span
+  data-x="optgroup-option-group">group of <code>option</code> elements</span> with a common
+  label.</p>
+
+  <div algorithm>
+  <p>The <dfn data-x="optgroup-option-group">element's group of <code>option</code> elements</dfn>
+  consists of the <code>option</code> elements that are descendants of the <code>optgroup</code>
+  element.</p>
+  </div>
+
+  <div w-nodev>
+
+  <p>When showing <code>option</code> elements in <code>select</code> elements, user agents should
+  show the <code>option</code> elements of such groups as being related to each other and separate
+  from other <code>option</code> elements.</p>
+
+  </div>
+
+  <p>The <dfn element-attr for="optgroup"><code
+  data-x="attr-optgroup-disabled">disabled</code></dfn> attribute is a <span>boolean
+  attribute</span> and can be used to <span data-x="concept-option-disabled">disable</span> a <span
+  data-x="optgroup-option-group">group of <code>option</code> elements</span> together.</p>
+
+  <div algorithm>
+  <p>Whenever an <code>optgroup</code> element's <code
+  data-x="attr-optgroup-disabled">disabled</code> attribute is added or removed, then:</p>
+
+  <ol>
+   <li><p>Let <var>select</var> be the <code>optgroup</code> element's <span data-x="option element
+   nearest ancestor select">nearest ancestor <code>select</code></span>.</p></li>
+
+   <li><p>If <var>select</var> is null, then return.</p></li>
+
+   <li><p><span>Reset a <code>select</code>'s selectedness</span> given <var>select</var> and
+   false.</p></li>
+  </ol>
+  </div>
+
+  <p>The <dfn element-attr for="optgroup"><code data-x="attr-optgroup-label">label</code></dfn>
+  attribute must be specified if the <code>optgroup</code> has no child <code>legend</code>
+  element.</p>
+
+  <div algorithm>
+  <p>To <dfn data-x="concept-optgroup-label">get an <code>optgroup</code> element's label</dfn>,
+  given an <code>optgroup</code> <var>optgroup</var>:</p>
+
+  <ol>
+   <li><p>If <var>optgroup</var>'s first element child is a <code>legend</code> element, then return
+   the result of <span>get HTML-aware text content</span> given that <code>legend</code> element and
+   true.</p></li>
+
+   <li><p>If <var>optgroup</var> has a <code data-x="attr-optgroup-label">label</code> attribute,
+   then return the value of that attribute.</p></li>
+
+   <li><p>Return the empty string.</p></li>
+  </ol>
+  </div>
+
+  <p>The value of the <span data-x="concept-optgroup-label"><code>optgroup</code> label
+  algorithm</span> gives the name of the group, for the purposes of the user interface. <span
+  w-nodev>User agents should use this attribute's value when labeling the group of
+  <code>option</code> elements in a <code>select</code> element.</span></p>
+
+  <p class="note">There is no way to select an <code>optgroup</code> element. Only
+  <code>option</code> elements can be selected. An <code>optgroup</code> element merely provides a
+  label for a group of <code>option</code> elements.</p>
+
+  <div class="example">
+
+   <p>The following snippet shows how a set of lessons from three courses could be offered in a
+   <code>select</code> drop-down widget:</p>
+
+   <pre><code class="html">&lt;form action="courseselector.dll" method="get">
+ &lt;p>Which course would you like to watch today?
+ &lt;p>&lt;label>Course:
+  &lt;select name="c">
+   &lt;optgroup label="8.01 Physics I: Classical Mechanics">
+    &lt;option value="8.01.1">Lecture 01: Powers of Ten
+    &lt;option value="8.01.2">Lecture 02: 1D Kinematics
+    &lt;option value="8.01.3">Lecture 03: Vectors
+   &lt;optgroup label="8.02 Electricity and Magnetism">
+    &lt;option value="8.02.1">Lecture 01: What holds our world together?
+    &lt;option value="8.02.2">Lecture 02: Electric Field
+    &lt;option value="8.02.3">Lecture 03: Electric Flux
+   &lt;optgroup label="8.03 Physics III: Vibrations and Waves">
+    &lt;option value="8.03.1">Lecture 01: Periodic Phenomenon
+    &lt;option value="8.03.2">Lecture 02: Beats
+    &lt;option value="8.03.3">Lecture 03: Forced Oscillations with Damping
+  &lt;/select>
+ &lt;/label>
+ &lt;p>&lt;input type=submit value="&#x25B6; Play">
+&lt;/form></code></pre>
+
+  </div>
+
+
+

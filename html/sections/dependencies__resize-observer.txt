@@ -1,0 +1,18 @@
+WHATWG HTML — section dependencies/resize-observer — Resize Observer
+
+   <dt>Resize Observer</dt>
+
+   <dd>
+    <p>The following terms are defined in <cite>Resize Observer</cite>:
+    <ref>RESIZEOBSERVER</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://drafts.csswg.org/resize-observer-1/#gather-active-observations-h">gather active resize observations at depth</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/resize-observer-1/#has-active-observations-h">has active resize observations</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/resize-observer-1/#has-skipped-observations-h">has skipped resize observations</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/resize-observer-1/#broadcast-resize-notifications-h">broadcast active resize observations</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/resize-observer-1/#deliver-resize-error">deliver resize loop error</dfn></li>
+    </ul>
+   </dd>
+
+

@@ -1,0 +1,42 @@
+WHATWG HTML — section the-figcaption-element — The <dfn element><code>figcaption</code></dfn> element
+
+  <h4>The <dfn element><code>figcaption</code></dfn> element</h4>
+
+  <dl class="element">
+   <dt><span data-x="concept-element-categories">Categories</span>:</dt>
+   <dd>None.</dd>
+   <dt><span data-x="concept-element-contexts">Contexts in which this element can be used</span>:</dt>
+   <dd>As the first or last child of a <code>figure</code> element.</dd>
+   <dt><span data-x="concept-element-content-model">Content model</span>:</dt>
+   <dd><span>Flow content</span>.</dd>
+   <dt><span data-x="concept-element-attributes">Content attributes</span>:</dt>
+   <dd><span>Global attributes</span></dd>
+   <dt><span
+   data-x="concept-element-accessibility-considerations">Accessibility considerations</span>:</dt>
+   <dd><a href="https://w3c.github.io/html-aria/#el-figcaption">For authors</a>.</dd>
+   <dd><a href="https://w3c.github.io/html-aam/#el-figcaption">For implementers</a>.</dd>
+   <dt><span data-x="concept-element-sanitization">Sanitization</span>:</dt>
+   <dd><span data-x="sanitizer-category-default">Default</span>.</dd>
+   <dt><span data-x="concept-element-dom">DOM interface</span>:</dt>
+   <dd>Uses <code>HTMLElement</code>.</dd>
+  </dl>
+
+  <p>The <code>figcaption</code> element <span>represents</span> a caption or legend for the rest of
+  the contents of the <code>figcaption</code> element's parent <code>figure</code> element<span
+  w-nodev>, if any</span>.</p>
+
+  <div class="example">
+   <p>The element can contain additional information about the source:</p>
+
+   <pre><code class="html">&lt;figcaption>
+ &lt;p>A duck.&lt;/p>
+ &lt;p>&lt;small>Photograph courtesy of 🌟 News.&lt;/small>&lt;/p>
+&lt;/figcaption></code></pre>
+
+   <pre><code class="html">&lt;figcaption>
+ &lt;p>Average rent for 3-room apartments, excluding non-profit apartments&lt;/p>
+ &lt;p>Zürich’s Statistics Office — &lt;time datetime=2017-11-14>14 November 2017&lt;/time>&lt;/p>
+&lt;/figcaption></code></pre>
+  </div>
+
+

@@ -1,0 +1,78 @@
+WHATWG HTML — section terminology — Terminology
+
+  <h4>Terminology</h4>
+
+  <div algorithm>
+  <p>A string is a <dfn>valid non-empty URL</dfn> if it is a <span>valid URL string</span> but it is
+  not the empty string.</p>
+  </div>
+
+  <div algorithm>
+  <p>A string is a <dfn>valid URL potentially surrounded by spaces</dfn> if, after <span
+  data-x="strip leading and trailing ASCII whitespace">stripping leading and trailing ASCII
+  whitespace</span> from it, it is a <span>valid URL string</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>A string is a <dfn>valid non-empty URL potentially surrounded by spaces</dfn> if, after <span
+  data-x="strip leading and trailing ASCII whitespace">stripping leading and trailing ASCII
+  whitespace</span> from it, it is a <span>valid non-empty URL</span>.</p>
+  </div>
+
+  <hr>
+
+  <p>This specification defines the URL <dfn><code>about:legacy-compat</code></dfn> as a reserved,
+  though unresolvable, <code data-x="about protocol">about:</code> URL, for use in <span
+  data-x="syntax-doctype">DOCTYPE</span>s in <span>HTML documents</span> when needed for
+  compatibility with XML tools. <ref>ABOUT</ref></p>
+
+  <p>This specification defines the URL <dfn><code>about:html-kind</code></dfn> as a reserved,
+  though unresolvable, <code data-x="about protocol">about:</code> URL, that is used as an
+  identifier for kinds of media tracks. <ref>ABOUT</ref></p>
+
+  <p>This specification defines the URL <dfn><code>about:srcdoc</code></dfn> as a reserved, though
+  unresolvable, <code data-x="about protocol">about:</code> URL, that is used as the <span
+  data-x="concept-document-url">URL</span> of <span data-x="an iframe srcdoc
+  document"><code>iframe</code> <code data-x="attr-iframe-srcdoc">srcdoc</code> documents</span>.
+  <ref>ABOUT</ref></p>
+
+  <hr>
+
+  <div algorithm>
+  <p>A <span>URL</span> <dfn>matches <code>about:blank</code></dfn> if its <span
+  data-x="concept-url-scheme">scheme</span> is "<code data-x="">about</code>", its <span
+  data-x="concept-url-path">path</span> contains a single string "<code data-x="">blank</code>", its
+  <span data-x="concept-url-username">username</span> and <span
+  data-x="concept-url-password">password</span> are the empty string, and its <span
+  data-x="concept-url-host">host</span> is null.</p>
+  </div>
+
+  <p class="note">Such a URL's <span data-x="concept-url-query">query</span> and <span
+  data-x="concept-url-fragment">fragment</span> can be non-null. For example, the <span>URL
+  record</span> created by <span data-x="URL parser">parsing</span> "<code
+  data-x="">about:blank?foo#bar</code>" <span>matches <code>about:blank</code></span>.</p>
+
+  <div algorithm>
+  <p>A <span>URL</span> <dfn>matches <code>about:srcdoc</code></dfn> if its <span
+  data-x="concept-url-scheme">scheme</span> is "<code data-x="">about</code>", its <span
+  data-x="concept-url-path">path</span> contains a single string "<code data-x="">srcdoc</code>",
+  its <span data-x="concept-url-query">query</span> is null, its <span
+  data-x="concept-url-username">username</span> and <span
+  data-x="concept-url-password">password</span> are the empty string, and its <span
+  data-x="concept-url-host">host</span> is null.</p>
+  </div>
+
+  <p class="note">The reason that <span>matches <code>about:srcdoc</code></span> ensures that the
+  <span>URL</span>'s <span data-x="concept-url-query">query</span> is null is because it is not
+  possible to create <span data-x="an iframe srcdoc document">an <code>iframe</code> <code
+  data-x="attr-iframe-srcdoc">srcdoc</code> document</span> whose <span
+  data-x="concept-document-url">URL</span> has a non-null <span
+  data-x="concept-url-query">query</span>, unlike <code>Document</code>s whose <span
+  data-x="concept-document-url">URL</span> <span>matches <code>about:blank</code></span>. In other
+  words, the set of all <span>URL</span>s that <span data-x="matches about:srcdoc">match
+  <code>about:srcdoc</code></span> only vary in their <span
+  data-x="concept-url-fragment">fragment</span>.</p>
+
+
+  <div w-nodev>
+

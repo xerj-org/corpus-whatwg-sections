@@ -1,0 +1,157 @@
+WHATWG HTML — section parsing-html-fragments — Parsing HTML fragments
+
+  <h3>Parsing HTML fragments</h3>
+
+  <div algorithm>
+  <p>The <dfn>HTML fragment parsing algorithm</dfn>, given an <code>Element</code> or
+  <code>DocumentFragment</code> <var>target</var>, a string <var>input</var>, an optional boolean
+  <var>allowDeclarativeShadowRoots</var> (default false), and an optional <span>parser scripting
+  mode</span> <var>scriptingMode</var> (default <span data-x="scripting-mode-inert">Inert</span>),
+  is the following steps. They return a <code>DocumentFragment</code>.</p>
+
+  <p class="note">Parts marked <dfn>fragment case</dfn> in algorithms in the <span>HTML
+  parser</span> section are parts that only occur if the parser's <span>fragment context
+  element</span> is non-null. The algorithms have been annotated with such markings for
+  informational purposes only; such markings have no normative weight. If it is possible for a
+  condition described as a <span>fragment case</span> to occur even when the parser's <span>fragment
+  context element</span> is null, then that is an error in the specification.</p>
+
+  <ol>
+   <li><p><span>Assert</span>: <var>scriptingMode</var> is either <span
+   data-x="scripting-mode-inert">Inert</span> or <span
+   data-x="scripting-mode-fragment">Fragment</span>.
+
+   <li><p>Let <dfn data-x="concept-frag-parse-context"><var>context</var></dfn> be
+   <var>target</var> if <var>target</var> is an <code>Element</code>; otherwise
+   <var>target</var>'s <span data-x="concept-DocumentFragment-host">host</span>.</p></li>
+
+   <li><p><span>Assert</span>: <var data-x="concept-frag-parse-context">context</var> is
+   non-null.</p></li>
+
+   <li><p>Let <var>document</var> be a <code>Document</code> node whose <span
+   data-x="concept-document-type">type</span> is "<code data-x="">html</code>".</p></li>
+
+   <li><p>Let <var>contextDocument</var> be <var
+   data-x="concept-frag-parse-context">context</var>'s <span>node document</span>.</p></li>
+
+   <li><p>If <var>contextDocument</var> is in <span>quirks mode</span>, then set
+   <var>document</var>'s <span data-x="concept-document-mode">mode</span> to "<code
+   data-x="">quirks</code>".</p></li>
+
+   <li><p>Otherwise, if <var>contextDocument</var> is in <span>limited-quirks mode</span>, then set
+   <var>document</var>'s <span data-x="concept-document-mode">mode</span> to "<code
+   data-x="">limited-quirks</code>".</p></li>
+
+   <li><p>Create a new <span>HTML parser</span> whose <span>allow declarative shadow roots</span> is
+   <var>allowDeclarativeShadowRoots</var>, and associate it with <var>document</var>.</p></li>
+
+   <li><p>Set the parser's <span>fragment context element</span> to <var
+   data-x="concept-frag-parse-context">context</var>.</p></li>
+
+   <li><p>If <var>contextDocument</var>'s <span data-x="concept-n-script">scripting is
+   disabled</span>, then set <var>scriptingMode</var> to <span
+   data-x="scripting-mode-disabled">Disabled</span>.</p></li>
+
+   <li><p>Set the parser's <span>scripting mode</span> to <var>scriptingMode</var>.</p></li>
+
+   <li>
+    <p>Set the state of the <span>HTML parser</span>'s <span>tokenization</span> stage as
+    follows, switching on <var data-x="concept-frag-parse-context">context</var>:</p>
+
+    <dl class="switch">
+     <dt><code>title</code></dt>
+     <dt><code>textarea</code></dt>
+     <dd>Switch the tokenizer to the <span>RCDATA state</span>.</dd>
+
+     <dt><code>style</code></dt>
+     <dt><code>xmp</code></dt>
+     <dt><code>iframe</code></dt>
+     <dt><code>noembed</code></dt>
+     <dt><code>noframes</code></dt>
+     <dd>Switch the tokenizer to the <span>RAWTEXT state</span>.</dd>
+
+     <dt><code>script</code></dt>
+     <dd>Switch the tokenizer to the <span>script data state</span>.</dd>
+
+     <dt><code>noscript</code></dt>
+     <dd>If <span>scripting mode</span> is not <span
+     data-x="scripting-mode-disabled">Disabled</span>, switch the tokenizer to the <span>RAWTEXT
+     state</span>. Otherwise, leave the tokenizer in the <span>data state</span>.</dd>
+
+     <dt><code>plaintext</code></dt>
+     <dd>Switch the tokenizer to the <span>PLAINTEXT state</span>.</dd>
+
+     <dt>Any other element</dt>
+     <dd>Leave the tokenizer in the <span>data state</span>.</dd>
+    </dl>
+
+    <p class="note">For performance reasons, an implementation that does not report errors and
+    that uses the actual state machine described in this specification directly could use the
+    PLAINTEXT state instead of the RAWTEXT and script data states where those are mentioned in the
+    list above. Except for rules regarding parse errors, they are equivalent, since there is no
+    <span>appropriate end tag token</span> in the fragment case, yet they involve far fewer state
+    transitions.</p>
+   </li>
+
+   <li><p>Let <var>root</var> be the result of <span data-x="create an element">creating an
+   element</span> given <var>document</var>, "<code data-x="">html</code>", the <span>HTML
+   namespace</span>, null, null, false, and the result of <span data-x="look up a custom element
+   registry">looking up a custom element registry</span> given <var>target</var>.</p></li>
+
+   <li><p><span data-x="concept-node-append">Append</span> <var>root</var> to
+   <var>document</var>.</p></li>
+
+   <li><p>Set up the <span>HTML parser</span>'s <span>stack of open elements</span> so that it
+   contains just the single element <var>root</var>.</p></li>
+
+   <li><p>Let <var>fragment</var> be the result of <span data-x="create a document fragment">creating
+   a document fragment</span> given <var>target</var>'s <span>node
+   document</span>.</p></li>
+
+   <li><p>Set the parser's <span>root insertion target</span> to <var>fragment</var>.</p></li>
+
+   <li><p>If <var data-x="concept-frag-parse-context">context</var> is a <code>template</code>
+   element, then push "<span data-x="insertion mode: in template">in template</span>" onto the
+   <span>stack of template insertion modes</span> so that it is the new <span>current template
+   insertion mode</span>.</p></li>
+
+   <li>
+    <p>Create a start tag token whose name is the local name of <var
+    data-x="concept-frag-parse-context">context</var> and whose attributes are the attributes of
+    <var data-x="concept-frag-parse-context">context</var>.</p>
+
+    <p>Let this start tag token be the start tag token of <var
+    data-x="concept-frag-parse-context">context</var>; e.g. for the purposes of determining if it is
+    an <span>HTML integration point</span>.</p>
+   </li>
+
+   <li>
+    <p><span data-x="reset the insertion mode appropriately">Reset the parser's insertion mode
+    appropriately</span>.</p>
+
+    <p class="note">The parser will reference its <span>fragment context element</span> as part of
+    that algorithm.</p>
+   </li>
+
+   <li><p>Set the <span>HTML parser</span>'s <span><code>form</code> element pointer</span> to the
+   nearest node to <var data-x="concept-frag-parse-context">context</var> that is a
+   <code>form</code> element (going straight up the ancestor chain, and including the element
+   itself, if it is a <code>form</code> element), if any. (If there is no such <code>form</code>
+   element, the <span><code>form</code> element pointer</span> keeps its initial value,
+   null.)</p></li>
+
+   <li><p>Place the <var>input</var> into the <span>input stream</span> for the <span>HTML
+   parser</span> just created. The encoding <span
+   data-x="concept-encoding-confidence">confidence</span> is <i>irrelevant</i>.</p></li>
+
+   <li><p>Start the <span>HTML parser</span> and let it run until it has consumed all the characters
+   just inserted into the input stream.</p></li>
+
+   <li><p>Return <var>fragment</var>.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+
+

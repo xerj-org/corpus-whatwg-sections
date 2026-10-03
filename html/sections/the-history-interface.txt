@@ -1,0 +1,569 @@
+WHATWG HTML — section the-history-interface — The <code>History</code> interface
+
+  <h4>The <code>History</code> interface</h4>
+
+  <pre><code class="idl">enum <dfn enum>ScrollRestoration</dfn> { "<span data-x="dom-ScrollRestoration-auto">auto</span>", "<span data-x="dom-ScrollRestoration-manual">manual</span>" };
+
+[Exposed=Window]
+interface <dfn interface>History</dfn> {
+  readonly attribute unsigned long <span data-x="dom-history-length">length</span>;
+  attribute <span>ScrollRestoration</span> <span data-x="dom-history-scroll-restoration">scrollRestoration</span>;
+  readonly attribute any <span data-x="dom-history-state">state</span>;
+  undefined <span data-x="dom-history-go">go</span>(optional long delta = 0);
+  undefined <span data-x="dom-history-back">back</span>();
+  undefined <span data-x="dom-history-forward">forward</span>();
+  undefined <span data-x="dom-history-pushState">pushState</span>(any data, DOMString unused, optional USVString? url = null);
+  undefined <span data-x="dom-history-replaceState">replaceState</span>(any data, DOMString unused, optional USVString? url = null);
+};</code></pre>
+
+  <dl class="domintro">
+   <dt><code data-x=""><span subdfn data-x="dom-history">history</span>.<span subdfn data-x="dom-history-length">length</span></code></dt>
+
+   <dd><p>Returns the number of overall <span data-x="tn-session-history-entries">session history
+   entries</span> for the current <span>traversable navigable</span>.</p></dd>
+
+   <dt><code data-x=""><span data-x="dom-history">history</span>.<span subdfn data-x="dom-history-scroll-restoration">scrollRestoration</span></code></dt>
+
+   <dd><p>Returns the <span data-x="she-scroll-restoration-mode">scroll restoration mode</span> of
+   the <span data-x="nav-active-history-entry">active session history entry</span>.</p></dd>
+
+   <dt><code data-x=""><span data-x="dom-history">history</span>.<span data-x="dom-history-scroll-restoration">scrollRestoration</span> = <var>value</var></code></dt>
+
+   <dd><p>Set the <span data-x="she-scroll-restoration-mode">scroll restoration mode</span> of the
+   <span data-x="nav-active-history-entry">active session history entry</span> to
+   <var>value</var>.</p></dd>
+
+   <dt><code data-x=""><span data-x="dom-history">history</span>.<span subdfn data-x="dom-history-state">state</span></code></dt>
+
+   <dd><p>Returns the <span data-x="she-classic-history-api-state">classic history API state</span>
+   of the <span data-x="nav-active-history-entry">active session history entry</span>, deserialized
+   into a JavaScript value.</p></dd>
+
+   <dt><code data-x=""><span data-x="dom-history">history</span>.<span data-x="dom-history-go">go</span>()</code></dt>
+
+   <dd><p>Reloads the current page.</p></dd>
+
+   <dt><code data-x=""><span data-x="dom-history">history</span>.<span subdfn data-x="dom-history-go">go</span>(<var>delta</var>)</code></dt>
+
+   <dd>
+    <p>Goes back or forward the specified number of steps in the overall <span
+    data-x="tn-session-history-entries">session history entries</span> list for the current
+    <span>traversable navigable</span>.</p>
+
+    <p>A zero delta will reload the current page.</p>
+
+    <p>If the delta is out of range, does nothing.</p>
+   </dd>
+
+   <dt><code data-x=""><span data-x="dom-history">history</span>.<span subdfn data-x="dom-history-back">back</span>()</code></dt>
+
+   <dd>
+    <p>Goes back one step in the overall <span data-x="tn-session-history-entries">session history
+    entries</span> list for the current <span>traversable navigable</span>.</p>
+
+    <p>If there is no previous page, does nothing.</p>
+   </dd>
+
+   <dt><code data-x=""><span data-x="dom-history">history</span>.<span subdfn data-x="dom-history-forward">forward</span>()</code></dt>
+
+   <dd>
+    <p>Goes forward one step in the overall <span data-x="tn-session-history-entries">session
+    history entries</span> list for the current <span>traversable navigable</span>.</p>
+
+    <p>If there is no next page, does nothing.</p>
+   </dd>
+
+   <dt><code data-x=""><span data-x="dom-history">history</span>.<span subdfn data-x="dom-history-pushState">pushState</span>(<var>data</var>, "")</code></dt>
+   <dd>
+    <p>Adds a new entry into session history with its <span
+    data-x="she-classic-history-api-state">classic history API state</span> set to a serialization
+    of <var>data</var>. The <span data-x="nav-active-history-entry">active history entry</span>'s
+    <span data-x="she-url">URL</span> will be copied over and used for the new entry's URL.</p>
+
+    <p>(The second parameter exists for historical reasons, and cannot be omitted; passing the
+    empty string is traditional.)</p>
+   </dd>
+
+   <dt><code data-x=""><span data-x="dom-history">history</span>.<span data-x="dom-history-pushState">pushState</span>(<var>data</var>, "", <var>url</var>)</code></dt>
+   <dd>
+    <p>Adds a new entry into session history with its <span
+    data-x="she-classic-history-api-state">classic history API state</span> set to a serialization
+    of <var>data</var>, and with its <span data-x="she-url">URL</span> set to <var>url</var>.</p>
+
+    <p>If the current <code>Document</code> <span data-x="can have its URL rewritten">cannot have
+    its URL rewritten</span> to <var>url</var>, a <span>"<code>SecurityError</code>"</span>
+    <code>DOMException</code> will be thrown.</p>
+
+    <p>(The second parameter exists for historical reasons, and cannot be omitted; passing the
+    empty string is traditional.)</p>
+   </dd>
+
+   <dt><code data-x=""><span data-x="dom-history">history</span>.<span subdfn data-x="dom-history-replaceState">replaceState</span>(<var>data</var>, "")</code></dt>
+   <dd>
+    <p>Updates the <span data-x="she-classic-history-api-state">classic history API state</span> of
+    the <span data-x="nav-active-history-entry">active session history entry</span> to a structured
+    clone of <var>data</var>.</p>
+
+    <p>(The second parameter exists for historical reasons, and cannot be omitted; passing the
+    empty string is traditional.)</p>
+   </dd>
+
+   <dt><code data-x=""><span data-x="dom-history">history</span>.<span data-x="dom-history-replaceState">replaceState</span>(<var>data</var>, "", <var>url</var>)</code></dt>
+   <dd>
+    <p>Updates the <span data-x="she-classic-history-api-state">classic history API state</span> of
+    the <span data-x="nav-active-history-entry">active session history entry</span> to a structured
+    clone of <var>data</var>, and its <span data-x="she-url">URL</span> to <var>url</var>.</p>
+
+    <p>If the current <code>Document</code> <span data-x="can have its URL rewritten">cannot have
+    its URL rewritten</span> to <var>url</var>, a <span>"<code>SecurityError</code>"</span>
+    <code>DOMException</code> will be thrown.</p>
+
+    <p>(The second parameter exists for historical reasons, and cannot be omitted; passing the
+    empty string is traditional.)</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <p>A <code>Document</code> has a <dfn data-x="doc-history">history object</dfn>, a
+  <code>History</code> object.</p>
+
+  <div algorithm>
+  <p>The <dfn attribute for="Window"><code data-x="dom-history">history</code></dfn> getter steps
+  are to return <span>this</span>'s <span data-x="concept-document-window">associated
+  <code>Document</code></span>'s <span data-x="doc-history">history object</span>.</p>
+  </div>
+
+  <hr>
+
+  <p>Each <code>History</code> object has <dfn data-x="concept-history-state">state</dfn>,
+  initially null.</p>
+
+  <p>Each <code>History</code> object has a <dfn data-x="concept-history-length">length</dfn>, a
+  non-negative integer, initially 0.</p>
+
+  <p>Each <code>History</code> object has an <dfn data-x="concept-history-index">index</dfn>, a
+  non-negative integer, initially 0.</p>
+
+  <p class="note">Although the <span data-x="concept-history-index">index</span> is not directly
+  exposed, it can be inferred from changes to the <span
+  data-x="concept-history-length">length</span> during synchronous navigations. In fact, that is
+  what it's used for.</p>
+
+  <div algorithm>
+  <p>The <dfn attribute for="History"><code data-x="dom-history-length">length</code></dfn> getter
+  steps are:</p>
+
+  <ol>
+   <li><p>If <span>this</span>'s <span>relevant global object</span>'s <span
+   data-x="concept-document-window">associated <code>Document</code></span> is not <span>fully
+   active</span>, then throw a <span>"<code>SecurityError</code>"</span>
+   <code>DOMException</code>.</p></li>
+
+   <li><p>Return <span>this</span>'s <span data-x="concept-history-length">length</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="History"><code
+  data-x="dom-history-scroll-restoration">scrollRestoration</code></dfn> getter steps are:</p>
+
+  <ol>
+   <li><p>If <span>this</span>'s <span>relevant global object</span>'s <span
+   data-x="concept-document-window">associated <code>Document</code></span> is not <span>fully
+   active</span>, then throw a <span>"<code>SecurityError</code>"</span>
+   <code>DOMException</code>.</p></li>
+
+   <li><p>Return <span>this</span>'s <span>relevant global object</span>'s <span data-x="window
+   navigable">navigable</span>'s <span data-x="nav-active-history-entry">active session history
+   entry</span>'s <span data-x="she-scroll-restoration-mode">scroll restoration
+   mode</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <code data-x="dom-history-scroll-restoration">scrollRestoration</code> setter steps
+  are:</p>
+
+  <ol>
+   <li><p>If <span>this</span>'s <span>relevant global object</span>'s <span
+   data-x="concept-document-window">associated <code>Document</code></span> is not <span>fully
+   active</span>, then throw a <span>"<code>SecurityError</code>"</span>
+   <code>DOMException</code>.</p></li>
+
+   <li><p>Set <span>this</span>'s <span>relevant global object</span>'s <span data-x="window
+   navigable">navigable</span>'s <span data-x="nav-active-history-entry">active session history
+   entry</span>'s <span data-x="she-scroll-restoration-mode">scroll restoration mode</span> to the
+   given value.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="History"><code data-x="dom-history-state">state</code></dfn> getter
+  steps are:</p>
+
+  <ol>
+   <li><p>If <span>this</span>'s <span>relevant global object</span>'s <span
+   data-x="concept-document-window">associated <code>Document</code></span> is not <span>fully
+   active</span>, then throw a <span>"<code>SecurityError</code>"</span>
+   <code>DOMException</code>.</p></li>
+
+   <li><p>Return <span>this</span>'s <span data-x="concept-history-state">state</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="History"><code data-x="dom-history-go">go(<var>delta</var>)</code></dfn>
+  method steps are to <span>delta traverse</span> <span>this</span> given <var>delta</var>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="History"><code data-x="dom-history-back">back()</code></dfn> method steps
+  are to <span>delta traverse</span> <span>this</span> given &minus;1.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="History"><code data-x="dom-history-forward">forward()</code></dfn> method
+  steps are to <span>delta traverse</span> <span>this</span> given +1.</p>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>delta traverse</dfn> a <code>History</code> object <var>history</var> given an integer
+  <var>delta</var>:</p>
+
+  <ol>
+   <li><p>Let <var>document</var> be <var>history</var>'s <span>relevant global object</span>'s
+   <span data-x="concept-document-window">associated <code>Document</code></span>.</p></li>
+
+   <li><p>If <var>document</var> is not <span>fully active</span>, then throw a
+   <span>"<code>SecurityError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>If <var>history</var>'s <span>relevant global object</span>'s <span data-x="window
+   navigable">navigable</span>'s <span>allowed to perform a navigation or history update</span>
+   returns <span>blocked</span>, then return.</p></li>
+
+   <li><p>If <var>delta</var> is 0, then <span>reload</span> <var>document</var>'s <span>node
+   navigable</span>, and return.</p></li>
+
+   <li><p><span>Traverse the history by a delta</span> given <var>document</var>'s <span>node
+   navigable</span>'s <span data-x="nav-traversable">traversable navigable</span>, <var>delta</var>,
+   and with <i data-x="traverse-sourceDocument">sourceDocument</i> set to
+   <var>document</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="History"><code data-x="dom-history-pushState">pushState(<var>data</var>,
+  <var>unused</var>, <var>url</var>)</code></dfn> method steps are to run the <span>shared history
+  push/replace state steps</span> given <span>this</span>, <var>data</var>, <var>url</var>, and
+  "<code data-x="NavigationHistoryBehavior-push">push</code>".</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="History"><code
+  data-x="dom-history-replaceState">replaceState(<var>data</var>, <var>unused</var>,
+  <var>url</var>)</code></dfn> method steps are to run the <span>shared history push/replace state
+  steps</span> given <span>this</span>, <var>data</var>, <var>url</var>, and "<code
+  data-x="NavigationHistoryBehavior-replace">replace</code>".</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn>shared history push/replace state steps</dfn>, given a <code>History</code>
+  <var>history</var>, a value <var>data</var>, a <span>scalar value string</span>-or-null
+  <var>url</var>, and a <span>history handling behavior</span> <var>historyHandling</var>, are:</p>
+
+  <ol>
+   <li><p>Let <var>document</var> be <var>history</var>'s <span>relevant global object</span>'s
+   <span data-x="concept-document-window">associated <code>Document</code></span>.</p></li>
+
+   <li><p>If <var>document</var> is not <span>fully active</span>, then throw a
+   <span>"<code>SecurityError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>Let <var>serializedData</var> be
+   <span>StructuredSerializeForStorage</span>(<var>data</var>). Rethrow any exceptions.</p></li>
+
+   <li><p>Let <var>newURL</var> be <var>document</var>'s <span
+   data-x="concept-document-url">URL</span>.</p></li>
+
+   <li>
+    <p>If <var>url</var> is not null or the empty string:</p>
+
+    <ol>
+     <li><p>Set <var>newURL</var> to the result of <span>encoding-parsing a URL</span> given
+     <var>url</var>, relative to the <span>relevant settings object</span> of
+     <var>history</var>.</p></li>
+
+     <li><p>If <var>newURL</var> is failure, then throw a <span>"<code>SecurityError</code>"</span>
+     <code>DOMException</code>.</p></li>
+
+     <li><p>If <var>document</var> <span data-x="can have its URL rewritten">cannot have its URL
+     rewritten</span> to <var>newURL</var>, then throw a <span>"<code>SecurityError</code>"</span>
+     <code>DOMException</code>.</p></li>
+    </ol>
+
+    <p class="note">The special case for the empty string here is historical, and leads to
+    different resulting URLs when comparing code such as <code data-x="">location.href = ""</code>
+    (which performs URL parsing on the empty string) versus <code
+    data-x="">history.pushState(null, "", "")</code> (which bypasses it).</p>
+   </li>
+
+   <li><p>If <var>history</var>'s <span>relevant global object</span>'s <span data-x="window
+   navigable">navigable</span>'s <span>allowed to perform a navigation or history update</span>
+   returns <span>blocked</span>, then return.</p></li>
+
+   <li><p>Let <var>navigation</var> be <var>history</var>'s <span>relevant global object</span>'s
+   <span data-x="window-navigation-api">navigation API</span>.</p></li>
+
+   <li><p>Let <var>continue</var> be the result of <span data-x="fire a push/replace/reload navigate
+   event">firing a push/replace/reload <code data-x="event-navigate">navigate</code> event</span> at
+   <var>navigation</var> with <i data-x="fire-navigate-prr-navigationType">navigationType</i> set to
+   <var>historyHandling</var>, <i data-x="fire-navigate-prr-isSameDocument">isSameDocument</i> set
+   to true, <i data-x="fire-navigate-prr-destinationURL">destinationURL</i> set to
+   <var>newURL</var>, and <i
+   data-x="fire-navigate-prr-classicHistoryAPIState">classicHistoryAPIState</i> set to
+   <var>serializedData</var>.</p></li>
+
+   <li><p>If <var>continue</var> is false, then return.</p>
+
+   <li><p>Run the <span>URL and history update steps</span> given <var>document</var> and
+   <var>newURL</var>, with <i data-x="uhus-serializedData">serializedData</i> set to
+   <var>serializedData</var> and <i data-x="uhus-historyHandling">historyHandling</i> set to
+   <var>historyHandling</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>User agents may limit the number of state objects added to the session history per page. If a
+  page hits the <span>implementation-defined</span> limit, user agents must remove the entry
+  immediately after the first entry for that <code>Document</code> object in the session history
+  after having added the new entry. (Thus the state history acts as a FIFO buffer for eviction, but
+  as a LIFO buffer for navigation.)</p>
+  </div>
+
+  <div algorithm>
+  <p>A <code>Document</code> <var>document</var> <dfn>can have its URL rewritten</dfn> to a
+  <span>URL</span> <var>targetURL</var> if the following algorithm returns true:</p>
+
+  <ol>
+   <li><p>Let <var>documentURL</var> be <var>document</var>'s <span
+   data-x="concept-document-url">URL</span>.</p></li>
+
+   <li><p>If <var>targetURL</var> and <var>documentURL</var> differ in their <span
+   data-x="concept-url-scheme">scheme</span>, <span data-x="concept-url-username">username</span>,
+   <span data-x="concept-url-password">password</span>, <span
+   data-x="concept-url-host">host</span>, or <span data-x="concept-url-port">port</span>
+   components, then return false.</p></li>
+
+   <li>
+    <p>If <var>targetURL</var>'s <span data-x="concept-url-scheme">scheme</span> is an
+    <span>HTTP(S) scheme</span>, then return true.</p>
+
+    <p class="note">Differences in <span data-x="concept-url-path">path</span>, <span
+    data-x="concept-url-query">query</span>, and <span
+    data-x="concept-url-fragment">fragment</span> are allowed for <code data-x="http
+    protocol">http:</code> and <code data-x="https protocol">https:</code> URLs.</p>
+   </li>
+
+   <li>
+    <p>If <var>targetURL</var>'s <span data-x="concept-url-scheme">scheme</span> is "<code
+    data-x="">file</code>":</p>
+
+    <ol>
+     <li><p>If <var>targetURL</var> and <var>documentURL</var> differ in their <span
+     data-x="concept-url-path">path</span> component, then return false.</p></li>
+
+     <li><p>Return true.</p></li>
+    </ol>
+
+    <p class="note">Differences in <span data-x="concept-url-query">query</span> and <span
+    data-x="concept-url-fragment">fragment</span> are allowed for <code data-x="">file:</code>
+    URLs.</p>
+   </li>
+
+   <li>
+    <p>If <var>targetURL</var> and <var>documentURL</var> differ in their <span
+    data-x="concept-url-path">path</span> component or <span
+    data-x="concept-url-query">query</span> components, then return false.</p>
+
+    <p class="note">Only differences in <span data-x="concept-url-fragment">fragment</span> are
+    allowed for other types of URLs.</p>
+   </li>
+
+   <li><p>Return true.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+  <div class="example">
+   <table>
+    <thead>
+     <tr>
+      <th><var ignore>document</var>'s <span data-x="concept-document-url">URL</span>
+      <th><var ignore>targetURL</var>
+      <th><span subdfn>can have its URL rewritten</span>
+    <tbody>
+     <tr>
+      <td><code data-x="">https://example.com/home</code>
+      <td><code data-x="">https://example.com/home#about</code>
+      <td>✅
+     <tr>
+      <td><code data-x="">https://example.com/home</code>
+      <td><code data-x="">https://example.com/home?page=shop</code>
+      <td>✅
+     <tr>
+      <td><code data-x="">https://example.com/home</code>
+      <td><code data-x="">https://example.com/shop</code>
+      <td>✅
+     <tr>
+      <td><code data-x="">https://example.com/home</code>
+      <td><code data-x="">https://user:pass@example.com/home</code>
+      <td>❌
+     <tr>
+      <td><code data-x="">https://example.com/home</code>
+      <td><code data-x="">http://example.com/home</code>
+      <td>❌
+     <tr>
+      <td><code data-x="">file:///path/to/x</code>
+      <td><code data-x="">file:///path/to/x#hash</code>
+      <td>✅
+     <tr>
+      <td><code data-x="">file:///path/to/x</code>
+      <td><code data-x="">file:///path/to/x?search</code>
+      <td>✅
+     <tr>
+      <td><code data-x="">file:///path/to/x</code>
+      <td><code data-x="">file:///path/to/y</code>
+      <td>❌
+     <tr>
+      <td><code data-x="">about:blank</code>
+      <td><code data-x="">about:blank#hash</code>
+      <td>✅
+     <tr>
+      <td><code data-x="">about:blank</code>
+      <td><code data-x="">about:blank?search</code>
+      <td>❌
+     <tr>
+      <td><code data-x="">about:blank</code>
+      <td><code data-x="">about:srcdoc</code>
+      <td>❌
+     <tr>
+      <td><code data-x="">data:text/html,foo</code>
+      <td><code data-x="">data:text/html,foo#hash</code>
+      <td>✅
+     <tr>
+      <td><code data-x="">data:text/html,foo</code>
+      <td><code data-x="">data:text/html,foo?search</code>
+      <td>❌
+     <tr>
+      <td><code data-x="">data:text/html,foo</code>
+      <td><code data-x="">data:text/html,bar</code>
+      <td>❌
+     <tr>
+      <td><code data-x="">data:text/html,foo</code>
+      <td><code data-x="">data:bar</code>
+      <td>❌
+     <tr>
+      <td><code data-x="">blob:https://example.com/77becafe-657b-4fdc-8bd3-e83aaa5e8f43</code>
+      <td><code data-x="">blob:https://example.com/77becafe-657b-4fdc-8bd3-e83aaa5e8f43#hash</code>
+      <td>✅
+     <tr>
+      <td><code data-x="">blob:https://example.com/77becafe-657b-4fdc-8bd3-e83aaa5e8f43</code>
+      <td><code data-x="">blob:https://example.com/77becafe-657b-4fdc-8bd3-e83aaa5e8f43?search</code>
+      <td>❌
+     <tr>
+      <td><code data-x="">blob:https://example.com/77becafe-657b-4fdc-8bd3-e83aaa5e8f43</code>
+      <td><code data-x="">blob:https://example.com/anything</code>
+      <td>❌
+     <tr>
+      <td><code data-x="">blob:https://example.com/77becafe-657b-4fdc-8bd3-e83aaa5e8f43</code>
+      <td><code data-x="">blob:path</code>
+      <td>❌
+   </table>
+
+   <p>Note how only the <span data-x="concept-document-url">URL</span> of the <code>Document</code>
+   matters, and not its <span data-x="concept-document-origin">origin</span>. They can mismatch in
+   cases like <code>about:blank</code> <code>Document</code>s with inherited origins, in sandboxed
+   <code>iframe</code>s, or when the <code data-x="dom-document-domain">document.domain</code>
+   setter has been used.</p>
+  </div>
+
+  <div class="example">
+
+   <p>Consider a game where the user can navigate along a line, such that the user is always at some
+   coordinate, and such that the user can bookmark the page corresponding to a particular
+   coordinate, to return to it later.</p>
+
+   <p>A static page implementing the x=5 position in such a game could look like the following:</p>
+
+   <pre><code class="html">&lt;!DOCTYPE HTML>
+&lt;!-- this is https://example.com/line?x=5 -->
+&lt;html lang="en">
+&lt;title>Line Game - 5&lt;/title>
+&lt;p>You are at coordinate 5 on the line.&lt;/p>
+&lt;p>
+ &lt;a href="?x=6">Advance to 6&lt;/a> or
+ &lt;a href="?x=4">retreat to 4&lt;/a>?
+&lt;/p></code></pre>
+
+   <p>The problem with such a system is that each time the user clicks, the whole page has to be
+   reloaded. Here instead is another way of doing it, using script:</p>
+
+   <pre><code class="html">&lt;!DOCTYPE HTML>
+&lt;!-- this starts off as https://example.com/line?x=5 -->
+&lt;html lang="en">
+&lt;title>Line Game - 5&lt;/title>
+&lt;p>You are at coordinate &lt;span id="coord">5&lt;/span> on the line.&lt;/p>
+&lt;p>
+ &lt;a href="?x=6" onclick="go(1); return false;">Advance to 6&lt;/a> or
+ &lt;a href="?x=4" onclick="go(-1); return false;">retreat to 4&lt;/a>?
+&lt;/p>
+&lt;script>
+ var currentPage = 5; // prefilled by server
+ function go(d) {
+   setupPage(currentPage + d);
+   history.pushState(currentPage, "", '?x=' + currentPage);
+ }
+ onpopstate = function(event) {
+   setupPage(event.state);
+ }
+ function setupPage(page) {
+   currentPage = page;
+   document.title = 'Line Game - ' + currentPage;
+   document.getElementById('coord').textContent = currentPage;
+   document.links[0].href = '?x=' + (currentPage+1);
+   document.links[0].textContent = 'Advance to ' + (currentPage+1);
+   document.links[1].href = '?x=' + (currentPage-1);
+   document.links[1].textContent = 'retreat to ' + (currentPage-1);
+ }
+&lt;/script></code></pre>
+
+   <p>In systems without script, this still works like the previous example. However, users that
+   <em>do</em> have script support can now navigate much faster, since there is no network access
+   for the same experience. Furthermore, contrary to the experience the user would have with just a
+   na&iuml;ve script-based approach, bookmarking and navigating the session history still work.</p>
+
+   <p>In the example above, the <var ignore>data</var> argument to the <code
+   data-x="dom-history-pushState">pushState()</code> method is the same information as would be sent
+   to the server, but in a more convenient form, so that the script doesn't have to parse the URL
+   each time the user navigates.</p>
+
+  </div>
+
+  <div class="example">
+   <p>Most applications want to use the same <span>scroll restoration mode</span> value for all of
+   their history entries. To achieve this they can set the <code
+   data-x="dom-history-scroll-restoration">scrollRestoration</code> attribute as soon as possible
+   (e.g., in the first <code>script</code> element in the document's <code>head</code> element) to
+   ensure that any entry added to the history session gets the desired scroll restoration mode.</p>
+
+   <pre><code class="html">&lt;head&gt;
+  &lt;script&gt;
+       if ('scrollRestoration' in history)
+            history.scrollRestoration = 'manual';
+  &lt;/script&gt;
+&lt;/head&gt;
+   </code></pre>
+  </div>
+
+

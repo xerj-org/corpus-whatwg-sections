@@ -1,0 +1,23 @@
+WHATWG HTML — section iframe-element-referrer-policy — <code>iframe</code> element referrer policy
+
+  <h4><code>iframe</code> element referrer policy</h4>
+
+  <div algorithm>
+  <p>To <dfn data-x="determining the iframe element referrer policy">determine the
+  <code>iframe</code> element referrer policy</dfn> given an element-or-null
+  <var>embedder</var>:</p>
+
+  <ol>
+   <li><p>If <var>embedder</var> is an <code>iframe</code> element, then return
+   <var>embedder</var>'s <code data-x="attr-iframe-referrerpolicy">referrerpolicy</code> attribute's
+   state's corresponding keyword.</p></li>
+
+   <li><p>Return the empty string.</p></li>
+  </ol>
+  </div>
+
+  <p class="note">This is used for allowing masking of some <span
+  data-x="concept-document-origin">origins</span> in the <span>internal ancestor origin objects list
+  creation steps</span>.</p>
+
+

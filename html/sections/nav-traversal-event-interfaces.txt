@@ -1,0 +1,340 @@
+WHATWG HTML — section nav-traversal-event-interfaces — Event interfaces
+
+  <h4 id="nav-traversal-event-interfaces">Event interfaces</h4>
+
+  <p class="note">The <code>NavigateEvent</code> interface has <a href="#the-navigate-event">its own
+  dedicated section</a>, due to its complexity.</p>
+
+
+  <h5>The <code>NavigationCurrentEntryChangeEvent</code> interface</h5>
+
+  <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>NavigationCurrentEntryChangeEvent</dfn> : <span>Event</span> {
+  constructor(DOMString type, <span>NavigationCurrentEntryChangeEventInit</span> eventInitDict);
+
+  readonly attribute <span>NavigationType</span>? <span data-x="dom-NavigationCurrentEntryChangeEvent-navigationType">navigationType</span>;
+  readonly attribute <span>NavigationHistoryEntry</span> <span data-x="dom-NavigationCurrentEntryChangeEvent-from">from</span>;
+};
+
+dictionary <dfn dictionary>NavigationCurrentEntryChangeEventInit</dfn> : <span>EventInit</span> {
+  <span>NavigationType</span>? <dfn dict-member for="NavigationCurrentEntryChangeEventInit" data-x="dom-NavigationCurrentEntryChangeEventInit-navigationType">navigationType</dfn> = null;
+  required <span>NavigationHistoryEntry</span> <dfn dict-member for="NavigationCurrentEntryChangeEventInit" data-x="dom-NavigationCurrentEntryChangeEventInit-from">from</dfn>;
+};</code></pre>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>event</var>.<span subdfn data-x="dom-NavigationCurrentEntryChangeEvent-navigationType">navigationType</span></code></dt>
+   <dd><p>Returns the type of navigation which caused the current entry to change, or null if the
+   change is due to <code
+   data-x="dom-Navigation-updateCurrentEntry">navigation.updateCurrentEntry()</code>.</p></dd>
+
+   <dt><code data-x=""><var>event</var>.<span subdfn data-x="dom-NavigationCurrentEntryChangeEvent-from">from</span></code></dt>
+   <dd>
+    <p>Returns the previous value of <code
+    data-x="dom-Navigation-currentEntry">navigation.currentEntry</code>, before the current entry
+    changed.</p>
+
+    <p>If <code data-x="dom-NavigationCurrentEntryChangeEvent-navigationType">navigationType</code>
+    is null or "<code data-x="dom-NavigationType-reload">reload</code>", then this value will be the
+    same as <code data-x="dom-Navigation-currentEntry">navigation.currentEntry</code>. In that case,
+    the event signifies that the contents of the entry changed, even if we did not move to a new
+    entry or replace the current one.</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn attribute for="NavigationCurrentEntryChangeEvent"><code
+  data-x="dom-NavigationCurrentEntryChangeEvent-navigationType">navigationType</code></dfn> and <dfn
+  attribute for="NavigationCurrentEntryChangeEvent"><code
+  data-x="dom-NavigationCurrentEntryChangeEvent-from">from</code></dfn> attributes must return the
+  values they were initialized to.</p>
+  </div>
+
+  </div>
+
+
+  <h5>The <code>PopStateEvent</code> interface</h5>
+
+  <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>PopStateEvent</dfn> : <span>Event</span> {
+  constructor(DOMString type, optional <span>PopStateEventInit</span> eventInitDict = {});
+
+  readonly attribute any <span data-x="dom-PopStateEvent-state">state</span>;
+  readonly attribute boolean <span data-x="dom-PopStateEvent-hasUAVisualTransition">hasUAVisualTransition</span>;
+};
+
+dictionary <dfn dictionary>PopStateEventInit</dfn> : <span>EventInit</span> {
+  any <dfn dict-member for="PopStateEventInit" data-x="dom-PopStateEventInit-state">state</dfn> = null;
+  boolean <dfn dict-member for="PopStateEventInit" data-x="dom-PopStateEventInit-hasUAVisualTransition">hasUAVisualTransition</dfn> = false;
+};</code></pre>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>event</var>.<span subdfn data-x="dom-PopStateEvent-state">state</span></code></dt>
+
+   <dd><p>Returns a copy of the information that was provided to <code
+   data-x="dom-history-pushState">pushState()</code> or <code
+   data-x="dom-history-replaceState">replaceState()</code>.</p></dd>
+
+   <dt><code data-x=""><var>event</var>.<span subdfn data-x="dom-PopStateEvent-hasUAVisualTransition">hasUAVisualTransition</span></code></dt>
+
+   <dd><p>Returns true if the user agent performed a visual transition for this navigation before
+   dispatching this event. If true, the best user experience will be given if the author
+   synchronously updates the DOM to the post-navigation state.</p></dd>
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn attribute for="PopStateEvent"><code
+  data-x="dom-PopStateEvent-state">state</code></dfn> attribute must return the value it was
+  initialized to. It represents the context information for the event, or null, if the state
+  represented is the initial state of the <code>Document</code>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="PopStateEvent"><code data-x="dom-PopStateEvent-hasUAVisualTransition">
+  hasUAVisualTransition</code></dfn> attribute must return the value it was initialized to.</p>
+  </div>
+
+  </div>
+
+
+  <h5>The <code>HashChangeEvent</code> interface</h5>
+
+  <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>HashChangeEvent</dfn> : <span>Event</span> {
+  constructor(DOMString type, optional <span>HashChangeEventInit</span> eventInitDict = {});
+
+  readonly attribute USVString <span data-x="dom-HashChangeEvent-oldURL">oldURL</span>;
+  readonly attribute USVString <span data-x="dom-HashChangeEvent-newURL">newURL</span>;
+};
+
+dictionary <dfn dictionary>HashChangeEventInit</dfn> : <span>EventInit</span> {
+  USVString oldURL = "";
+  USVString newURL = "";
+};</code></pre>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>event</var>.<span subdfn data-x="dom-HashChangeEvent-oldURL">oldURL</span></code></dt>
+
+   <dd>
+    <p>Returns the <span>URL</span> of the <span>session history entry</span> that was previously
+    current.</p>
+   </dd>
+
+
+   <dt><code data-x=""><var>event</var>.<span subdfn data-x="dom-HashChangeEvent-newURL">newURL</span></code></dt>
+
+   <dd>
+    <p>Returns the <span>URL</span> of the <span>session history entry</span> that is now
+    current.</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HashChangeEvent"><code
+  data-x="dom-HashChangeEvent-oldURL">oldURL</code></dfn> attribute must return the value it was
+  initialized to. It represents context information for the event, specifically the URL of the
+  <span>session history entry</span> that was traversed from.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HashChangeEvent"><code
+  data-x="dom-HashChangeEvent-newURL">newURL</code></dfn> attribute must return the value it was
+  initialized to. It represents context information for the event, specifically the URL of the
+  <span>session history entry</span> that was traversed to.</p>
+  </div>
+
+  </div>
+
+
+  <h5>The <code>PageSwapEvent</code> interface</h5>
+
+  <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>PageSwapEvent</dfn> : <span>Event</span> {
+  constructor(DOMString type, optional <span>PageSwapEventInit</span> eventInitDict = {});
+  readonly attribute <code>NavigationActivation</code>? <span data-x="dom-PageSwapEvent-activation">activation</span>;
+  readonly attribute <code>ViewTransition</code>? <span data-x="dom-PageSwapEvent-viewTransition">viewTransition</span>;
+};
+
+dictionary <dfn dictionary>PageSwapEventInit</dfn> : <span>EventInit</span> {
+  <span>NavigationActivation</span>? <dfn dict-member for="PageSwapEventInit" data-x="dom-PageSwapEventInit-activation">activation</dfn> = null;
+  <code>ViewTransition</code>? <dfn dict-member for="PageSwapEventInit" data-x="dom-PageSwapEventInit-viewTransition">viewTransition</dfn> = null;
+};</code></pre>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>event</var>.<span subdfn data-x="dom-PageSwapEvent-activation">activation</span></code></dt>
+   <dd><p>A <code>NavigationActivation</code> object representing the destination and type of the
+   cross-document navigation. This would be null for cross-origin navigations.</p></dd>
+
+   <dt><code data-x=""><var>event</var>.<span data-x="dom-PageSwapEvent-activation">activation</span>.<span data-x="dom-NavigationActivation-entry">entry</span></code></dt>
+   <dd><p>A <code>NavigationHistoryEntry</code>, representing the <code>Document</code> that is
+   about to become active.</p></dd>
+
+   <dt><code data-x=""><var>event</var>.<span data-x="dom-PageSwapEvent-activation">activation</span>.<span data-x="dom-NavigationActivation-from">from</span></code></dt>
+   <dd><p>A <code>NavigationHistoryEntry</code>, equivalent to the value of the <code
+   data-x="dom-Navigation-currentEntry">navigation.currentEntry</code> property at the moment the
+   event is fired.</p></dd>
+
+   <dt><code data-x=""><var>event</var>.<span data-x="dom-PageSwapEvent-activation">activation</span>.<span data-x="dom-NavigationActivation-navigationType">navigationType</span></code></dt>
+   <dd><p>One of "<code data-x="dom-NavigationType-push">push</code>", "<code
+   data-x="dom-NavigationType-replace">replace</code>", "<code
+   data-x="dom-NavigationType-reload">reload</code>", or "<code
+   data-x="dom-NavigationType-traverse">traverse</code>", indicating what type of navigation
+   that is about to result in a page swap.</p></dd>
+
+   <dt><code data-x=""><var>event</var>.<span subdfn data-x="dom-PageSwapEvent-viewTransition">viewTransition</span></code></dt>
+   <dd>
+    <p>Returns the <code>ViewTransition</code> object that represents an outbound cross-document view
+    transition, if such transition is active when the event is fired. Otherwise, returns null.</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn attribute for="PageSwapEvent"><code
+  data-x="dom-PageSwapEvent-activation">activation</code></dfn> and <dfn attribute
+  for="PageSwapEvent"><code
+  data-x="dom-PageSwapEvent-viewTransition">viewTransition</code></dfn> attributes must return
+  the values they were initialized to.</p>
+  </div>
+
+  </div>
+
+
+  <h5>The <code>PageRevealEvent</code> interface</h5>
+
+  <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>PageRevealEvent</dfn> : <span>Event</span> {
+  constructor(DOMString type, optional <span>PageRevealEventInit</span> eventInitDict = {});
+  readonly attribute <code>ViewTransition</code>? <span data-x="dom-PageRevealEvent-viewTransition">viewTransition</span>;
+};
+
+dictionary <dfn dictionary>PageRevealEventInit</dfn> : <span>EventInit</span> {
+  <code>ViewTransition</code>? <dfn dict-member for="PageRevealEventInit" data-x="dom-PageRevealEventInit-viewTransition">viewTransition</dfn> = null;
+};</code></pre>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>event</var>.<span subdfn data-x="dom-PageRevealEvent-viewTransition">viewTransition</span></code></dt>
+   <dd>
+    <p>Returns the <code>ViewTransition</code> object that represents an inbound cross-document view
+    transition, if such transition is active when the event is fired. Otherwise, returns null.</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn attribute for="PageRevealEvent"><code
+  data-x="dom-PageRevealEvent-viewTransition">viewTransition</code></dfn> attribute must return the
+  value it was initialized to.</p>
+  </div>
+
+  </div>
+
+
+  <h5>The <code>PageTransitionEvent</code> interface</h5>
+
+  <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>PageTransitionEvent</dfn> : <span>Event</span> {
+  constructor(DOMString type, optional <span>PageTransitionEventInit</span> eventInitDict = {});
+
+  readonly attribute boolean <span data-x="dom-PageTransitionEvent-persisted">persisted</span>;
+};
+
+dictionary <dfn dictionary>PageTransitionEventInit</dfn> : <span>EventInit</span> {
+  boolean persisted = false;
+};</code></pre>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>event</var>.<span subdfn data-x="dom-PageTransitionEvent-persisted">persisted</span></code></dt>
+
+   <dd>
+    <p>For the <code data-x="event-pageshow">pageshow</code> event, returns false if the page is
+    newly being loaded (and the <code data-x="event-load">load</code> event will fire). Otherwise,
+    returns true.</p>
+
+    <p>For the <code data-x="event-pagehide">pagehide</code> event, returns false if the page is
+    going away for the last time. Otherwise, returns true, meaning that the page might be reused if
+    the user navigates back to this page (if the <code>Document</code>'s <i
+    data-x="concept-document-salvageable">salvageable</i> state stays true). </p>
+
+    <p>Things that can cause the page to be unsalvageable include:</p>
+
+    <ul>
+     <li><p>The user agent decided to not keep the <code>Document</code> alive in a <span>session
+     history entry</span> after <span data-x="unload a document">unload</span></p></li>
+
+     <li><p>Having <code>iframe</code>s that are not <i
+     data-x="concept-document-salvageable">salvageable</i></p></li>
+
+     <li><p>Active <code>WebSocket</code> objects</p></li>
+
+     <li><p><span data-x="abort a document">Aborting a <code>Document</code></span></p></li>
+    </ul>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn attribute for="PageTransitionEvent"><code
+  data-x="dom-PageTransitionEvent-persisted">persisted</code></dfn> attribute must return the value
+  it was initialized to. It represents the context information for the event.</p>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>fire a page transition event</dfn> named <var>eventName</var> at a <code>Window</code>
+  <var>window</var> with a boolean <var>persisted</var>, <span data-x="concept-event-fire">fire
+  an event</span> named <var>eventName</var> at <var>window</var>, using
+  <code>PageTransitionEvent</code>, with the <code
+  data-x="dom-PageTransitionEvent-persisted">persisted</code> attribute initialized to
+  <var>persisted</var>, the <code data-x="dom-Event-cancelable">cancelable</code> attribute
+  initialized to true, the <code data-x="dom-Event-bubbles">bubbles</code> attribute initialized to
+  true, and <i>legacy target override flag</i> set.</p>
+  </div>
+
+  <p class="note">The values for <code data-x="dom-Event-cancelable">cancelable</code> and <code
+  data-x="dom-Event-bubbles">bubbles</code> don't make any sense, since canceling the event does
+  nothing and it's not possible to bubble past the <code>Window</code> object. They are set to true
+  for historical reasons.</p>
+
+  </div>
+
+
+  <h5>The <code>BeforeUnloadEvent</code> interface</h5>
+
+  <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>BeforeUnloadEvent</dfn> : <span>Event</span> {
+  attribute DOMString <span data-x="dom-BeforeUnloadEvent-returnValue">returnValue</span>;
+};</code></pre>
+
+  <p class="note">There are no <code>BeforeUnloadEvent</code>-specific initialization methods.</p>
+
+  <p>The <code>BeforeUnloadEvent</code> interface is a legacy interface which allows <span>checking
+  if unloading is canceled</span> to be controlled not only by canceling the event, but by setting
+  the <code data-x="dom-BeforeUnloadEvent-returnValue">returnValue</code> attribute to a value
+  besides the empty string. Authors should use the <code
+  data-x="dom-Event-preventDefault">preventDefault()</code> method, or other means of canceling
+  events, instead of using <code data-x="dom-BeforeUnloadEvent-returnValue">returnValue</code>.</p>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn attribute for="BeforeUnloadEvent"><code
+  data-x="dom-BeforeUnloadEvent-returnValue">returnValue</code></dfn> attribute controls the process
+  of <span>checking if unloading is canceled</span>. When the event is created, the
+  attribute must be set to the empty string. On getting, it must return the last value it was set
+  to. On setting, the attribute must be set to the new value.</p>
+  </div>
+
+  <p class="note">This attribute is a <code data-x="">DOMString</code> only for historical reasons.
+  Any value besides the empty string will be treated as a request to ask the user for
+  confirmation.</p>
+
+  </div>
+

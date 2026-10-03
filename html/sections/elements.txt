@@ -1,0 +1,809 @@
+WHATWG HTML — section elements — Elements
+
+  <h4>Elements</h4>
+
+  <p>There are six different kinds of <dfn data-x="syntax-elements">elements</dfn>: <span>void
+  elements</span>, <span>the <code data-x="">template</code> element</span>, <span>raw text
+  elements</span>, <span>escapable raw text elements</span>, <span>foreign elements</span>, and
+  <span>normal elements</span>.</p>
+
+  <dl>
+   <dt><dfn>Void elements</dfn></dt>
+
+   <dd><code>area</code>, <code>base</code>, <code>br</code>, <code>col</code>, <code>embed</code>,
+   <code>hr</code>, <code>img</code>, <code>input</code>, <code>link</code>, <code>meta</code>,
+   <code>source</code>, <code>track</code>, <code>wbr</code></dd>
+   <!-- non-conforming elements treated as void by the parser are not listed here: basefont,
+   bgsound, frame, param, keygen -->
+
+   <dt><dfn>The <code data-x="">template</code> element</dfn></dt>
+   <dd><code>template</code></dd>
+
+   <dt><dfn>Raw text elements</dfn></dt>
+
+   <dd><code>script</code>, <code>style</code></dd> <!-- iframe and noscript don't count as raw text
+   for syntax purposes -->
+
+   <dt><dfn>Escapable raw text elements</dfn></dt>
+
+   <dd><code>textarea</code>, <code>title</code></dd>
+
+   <dt><dfn>Foreign elements</dfn></dt>
+
+   <dd>Elements from the <span>MathML namespace</span> and the <span>SVG namespace</span>.</dd>
+
+   <dt><dfn>Normal elements</dfn></dt>
+
+   <dd>All other allowed <span>HTML elements</span> are normal elements.</dd>
+  </dl>
+
+  <p><dfn data-x="syntax-tags">Tags</dfn> are used to delimit the start and end of elements in the
+  markup. <span data-x="raw text elements">Raw text</span>, <span data-x="escapable raw text
+  elements">escapable raw text</span>, and <span data-x="normal elements">normal</span> elements have
+  a <span data-x="syntax-start-tag">start tag</span> to indicate where they begin, and an <span
+  data-x="syntax-end-tag">end tag</span> to indicate where they end. The start and end tags of
+  certain <span>normal elements</span> can be <span data-x="syntax-tag-omission">omitted</span>, as
+  described below in the section on <span data-x="syntax-tag-omission">optional tags</span>. Those
+  that cannot be omitted must not be omitted. <span>Void elements</span> only have a start tag; end
+  tags must not be specified for <span>void elements</span>. <span>Foreign elements</span> must
+  either have a start tag and an end tag, or a start tag that is marked as self-closing, in which
+  case they must not have an end tag.</p>
+
+  <p>The <span data-x="concept-html-contents">contents</span> of the element must be placed between
+  just after the start tag (which <span data-x="syntax-tag-omission">might be implied, in certain
+  cases</span>) and just before the end tag (which again, <span data-x="syntax-tag-omission">might be
+  implied in certain cases</span>). The exact allowed contents of each individual element depend on
+  the <span data-x="content models">content model</span> of that element, as described earlier in
+  this specification. Elements must not contain content that their content model disallows. In
+  addition to the restrictions placed on the contents by those content models, however, the five
+  types of elements have additional <em>syntactic</em> requirements.</p>
+
+  <p><span>Void elements</span> can't have any contents (since there's no end tag, no content can be
+  put between the start tag and the end tag).</p>
+
+  <p id="template-syntax"><span>The <code data-x="">template</code> element</span> can have
+  <span>template contents</span>, but such <span>template contents</span> are not children of the
+  <code>template</code> element itself. Instead, they are stored in a <code>DocumentFragment</code>
+  associated with a different <code>Document</code> — without a <span>browsing context</span> — so
+  as to avoid the <code>template</code> contents interfering with the main <code>Document</code>.
+  The markup for the <span>template contents</span> of a <code>template</code> element is placed
+  just after the <code>template</code> element's start tag and just before <code>template</code>
+  element's end tag (as with other elements), and may consist of any <span
+  data-x="syntax-text">text</span>, <span data-x="syntax-charref">character references</span>, <span
+  data-x="syntax-elements">elements</span>, and <span data-x="syntax-comments">comments</span>, but
+  the text must not contain the character U+003C LESS-THAN SIGN (&lt;) or an <span
+  data-x="syntax-ambiguous-ampersand">ambiguous ampersand</span>.</p>
+
+  <p><span>Raw text elements</span> can have <span data-x="syntax-text">text</span>, though it has <a
+  href="#cdata-rcdata-restrictions">restrictions</a> described below.</p>
+
+  <p><span>Escapable raw text elements</span> can have <span data-x="syntax-text">text</span> and
+  <span data-x="syntax-charref">character references</span>, but the text must not contain an <span
+  data-x="syntax-ambiguous-ampersand">ambiguous ampersand</span>. There are also <a
+  href="#cdata-rcdata-restrictions">further restrictions</a> described below.</p>
+
+  <p><span>Foreign elements</span> whose start tag is marked as self-closing can't have any contents
+  (since, again, as there's no end tag, no content can be put between the start tag and the end
+  tag). <span>Foreign elements</span> whose start tag is <em>not</em> marked as self-closing can
+  have <span data-x="syntax-text">text</span>, <span data-x="syntax-charref">character
+  references</span>, <span data-x="syntax-cdata">CDATA sections</span>, other <span
+  data-x="syntax-elements">elements</span>, and <span data-x="syntax-comments">comments</span>, but
+  the text must not contain the character U+003C LESS-THAN SIGN (&lt;) or an <span
+  data-x="syntax-ambiguous-ampersand">ambiguous ampersand</span>.</p>
+
+  <div class="note">
+
+   <p>The HTML syntax does not support namespace declarations, even in <span>foreign
+   elements</span>.</p>
+
+   <p>For instance, consider the following HTML fragment:</p>
+
+   <pre><code class="html">&lt;p>
+ &lt;svg>
+  &lt;metadata>
+   &lt;!-- this is invalid -->
+   &lt;cdr:license xmlns:cdr="https://www.example.com/cdr/metadata" name="MIT"/>
+  &lt;/metadata>
+ &lt;/svg>
+&lt;/p></code></pre>
+
+   <p>The innermost element, <code data-x="">cdr:license</code>, is actually in the SVG namespace, as
+   the "<code data-x="">xmlns:cdr</code>" attribute has no effect (unlike in XML). In fact, as the
+   comment in the fragment above says, the fragment is actually non-conforming. This is because
+   <cite>SVG 2</cite> does not define any elements called "<code data-x="">cdr:license</code>" in
+   the SVG namespace.</p>
+
+  </div>
+
+  <p><span>Normal elements</span> can have <span data-x="syntax-text">text</span>, <span
+  data-x="syntax-charref">character references</span>, other <span
+  data-x="syntax-elements">elements</span>, and <span data-x="syntax-comments">comments</span>, but
+  the text must not contain the character U+003C LESS-THAN SIGN (&lt;) or an <span
+  data-x="syntax-ambiguous-ampersand">ambiguous ampersand</span>. Some <span>normal elements</span>
+  also have <a href="#element-restrictions">yet more restrictions</a> on what content they are
+  allowed to hold, beyond the restrictions imposed by the content model and those described in this
+  paragraph. Those restrictions are described below.</p>
+
+  <p>Tags contain a <dfn data-x="syntax-tag-name">tag name</dfn>, giving the element's name. HTML
+  elements all have names that only use <span data-x="ASCII alphanumeric">ASCII
+  alphanumerics</span>. In the HTML syntax, tag names, even those for <span>foreign elements</span>,
+  may be written with any mix of lower- and uppercase letters that, when converted to all-lowercase,
+  matches the element's tag name; tag names are case-insensitive.</p>
+
+
+  <h5>Start tags</h5>
+
+  <div algorithm>
+  <p><dfn data-x="syntax-start-tag">Start tags</dfn> must have the following format:</p>
+
+  <ol>
+   <li>The first character of a start tag must be a U+003C LESS-THAN SIGN character (&lt;).</li>
+
+   <li>The next few characters of a start tag must be the element's <span
+   data-x="syntax-tag-name">tag name</span>.</li>
+
+   <li>If there are to be any attributes in the next step, there must first be one or more
+   <span>ASCII whitespace</span>.</li>
+
+   <li>Then, the start tag may have a number of attributes, the <span
+   data-x="syntax-attributes">syntax for which</span> is described below. Attributes must be
+   separated from each other by one or more <span>ASCII whitespace</span>.</li>
+
+   <li>After the attributes, or after the <span data-x="syntax-tag-name">tag name</span> if there
+   are no attributes, there may be one or more <span>ASCII whitespace</span>. (Some attributes are
+   required to be followed by a space. See the <span data-x="syntax-attributes">attributes
+   section</span> below.)</li>
+
+   <li>Then, if the element is one of the <span>void elements</span>, or if the element is a <span
+   data-x="foreign elements">foreign element</span>, then there may be a single U+002F SOLIDUS
+   character (/), which on <span>foreign elements</span> marks the start tag as self-closing. On
+   <span>void elements</span>, it does not mark the start tag as self-closing but instead is
+   unnecessary and has no effect of any kind. For such void elements, it should be used only with
+   caution — especially since, if directly preceded by an <a href="#unquoted">unquoted attribute
+   value</a>, it becomes part of the attribute value rather than being discarded by the
+   parser.</li>
+
+   <li>Finally, start tags must be closed by a U+003E GREATER-THAN SIGN character (&gt;).</li>
+  </ol>
+  </div>
+
+
+  <h5>End tags</h5>
+
+  <div algorithm>
+  <p><dfn data-x="syntax-end-tag">End tags</dfn> must have the following format:</p>
+
+  <ol>
+   <li>The first character of an end tag must be a U+003C LESS-THAN SIGN character (&lt;).</li>
+
+   <li>The second character of an end tag must be a U+002F SOLIDUS character (/).</li>
+
+   <li>The next few characters of an end tag must be the element's <span data-x="syntax-tag-name">tag
+   name</span>.</li>
+
+   <li>After the tag name, there may be one or more <span>ASCII whitespace</span>.</li>
+
+   <li>Finally, end tags must be closed by a U+003E GREATER-THAN SIGN character (&gt;).</li>
+  </ol>
+  </div>
+
+
+  <h5>Attributes</h5>
+
+  <p><dfn data-x="syntax-attributes">Attributes</dfn> for an element are expressed inside the
+  element's start tag.</p>
+
+  <p>Attributes have a name and a value. <dfn data-x="syntax-attribute-name">Attribute names</dfn>
+  must consist of one or more characters other than <span data-x="control">controls</span>,
+  U+0020 SPACE, U+0022 ("), U+0027 ('), U+003E (&gt;), U+002F (/), U+003D (=), and <span
+  data-x="noncharacter">noncharacters</span>. In the HTML syntax, attribute names, even those for
+  <span>foreign elements</span>, may be written with any mix of <span data-x="ASCII lower
+  alpha">ASCII lower</span> and <span data-x="ASCII upper alpha">ASCII upper alphas</span>.</p>
+
+  <p><dfn data-x="syntax-attribute-value">Attribute values</dfn> are a mixture of <span
+  data-x="syntax-text">text</span> and <span data-x="syntax-charref">character references</span>,
+  except with the additional restriction that the text cannot contain an <span
+  data-x="syntax-ambiguous-ampersand">ambiguous ampersand</span>.</p>
+
+  <p>Attributes can be specified in four different ways:</p>
+
+  <dl>
+   <dt>Empty attribute syntax</dt>
+
+   <dd>
+    <p>Just the <span data-x="syntax-attribute-name">attribute name</span>. The value is implicitly
+    the empty string.</p>
+
+    <div class="example">
+
+     <p>In the following example, the <code data-x="attr-fe-disabled">disabled</code> attribute is
+     given with the empty attribute syntax:</p>
+
+     <pre><code class="html">&lt;input <em>disabled</em>&gt;</code></pre>
+
+    </div>
+
+    <p>If an attribute using the empty attribute syntax is to be followed by another attribute, then
+    there must be <span>ASCII whitespace</span> separating the two.</p>
+   </dd>
+
+   <dt id="unquoted">Unquoted attribute value syntax</dt>
+
+   <dd>
+    <p>The <span data-x="syntax-attribute-name">attribute name</span>, followed by zero or more
+    <span>ASCII whitespace</span>, followed by a single U+003D EQUALS SIGN character, followed by
+    zero or more <span>ASCII whitespace</span>, followed by the <span
+    data-x="syntax-attribute-value">attribute value</span>, which, in addition to the requirements
+    given above for attribute values, must not contain any literal <span>ASCII whitespace</span>,
+    any U+0022 QUOTATION MARK characters (&#x22;), U+0027 APOSTROPHE characters (&#x27;), U+003D
+    EQUALS SIGN characters (=), U+003C LESS-THAN SIGN characters (&lt;), U+003E GREATER-THAN SIGN
+    characters (&gt;), or U+0060 GRAVE ACCENT characters (`), and must not be the empty string.</p>
+
+    <!-- The ` character is in this list on a temporary basis, waiting for IE to fix its parsing bug
+         whereby it treats ` as an attribute value delimiter. Otherwise, escaping software that
+         tries to be clever and not use quotes when it doesn't need to could be tricked by an
+         attacker.
+
+         Posit a site that allows the user to input text that is used verbatim in two attributes,
+         such that the user can set the first attribute's value to:
+
+            `
+
+         ...and the second to:
+
+            ` onload='...payload...' end=x
+
+         ...with the assumption that the site is going to not quote the first one, and quote the
+         second one with double quotes:
+
+            <body data-x=` class="` onload='...payload...' end=x">
+
+         In IE, this is treated as:
+
+            <body data-x=' class="'
+                  onload='...payload...'
+                  end='x"'>
+
+    -->
+
+
+    <div class="example">
+
+     <p>In the following example, the <code data-x="attr-input-value">value</code> attribute is given
+     with the unquoted attribute value syntax:</p>
+
+     <pre><code class="html">&lt;input <em>value=yes</em>&gt;</code></pre>
+
+    </div>
+
+    <p>If an attribute using the unquoted attribute syntax is to be followed by another attribute or
+    by the optional U+002F SOLIDUS character (/) allowed in step 6 of the <span
+    data-x="syntax-start-tag">start tag</span> syntax above, then there must be <span>ASCII
+    whitespace</span> separating the two.</p>
+   </dd>
+
+   <dt>Single-quoted attribute value syntax</dt>
+
+   <dd>
+    <p>The <span data-x="syntax-attribute-name">attribute name</span>, followed by zero or more
+    <span>ASCII whitespace</span>, followed by a single U+003D EQUALS SIGN character, followed by
+    zero or more <span>ASCII whitespace</span>, followed by a single U+0027 APOSTROPHE character
+    ('), followed by the <span data-x="syntax-attribute-value">attribute value</span>, which, in
+    addition to the requirements given above for attribute values, must not contain any literal
+    U+0027 APOSTROPHE characters ('), and finally followed by a second single U+0027 APOSTROPHE
+    character (').</p>
+
+    <div class="example">
+
+     <p>In the following example, the <code data-x="attr-input-type">type</code> attribute is given
+     with the single-quoted attribute value syntax:</p>
+
+     <pre><code class="html">&lt;input <em>type='checkbox'</em>&gt;</code></pre>
+
+    </div>
+
+    <p>If an attribute using the single-quoted attribute syntax is to be followed by another
+    attribute, then there must be <span>ASCII whitespace</span> separating the two.</p>
+   </dd>
+
+   <dt>Double-quoted attribute value syntax</dt>
+
+   <dd>
+    <p>The <span data-x="syntax-attribute-name">attribute name</span>, followed by zero or more
+    <span>ASCII whitespace</span>, followed by a single U+003D EQUALS SIGN character, followed by
+    zero or more <span>ASCII whitespace</span>, followed by a single U+0022 QUOTATION MARK character
+    ("), followed by the <span data-x="syntax-attribute-value">attribute value</span>, which, in
+    addition to the requirements given above for attribute values, must not contain any literal
+    U+0022 QUOTATION MARK characters ("), and finally followed by a second single U+0022 QUOTATION
+    MARK character (").</p>
+
+    <div class="example">
+
+     <p>In the following example, the <code data-x="attr-fe-name">name</code> attribute is given with
+     the double-quoted attribute value syntax:</p>
+
+     <pre><code class="html">&lt;input <em>name="be evil"</em>&gt;</code></pre>
+
+    </div>
+
+    <p>If an attribute using the double-quoted attribute syntax is to be followed by another
+    attribute, then there must be <span>ASCII whitespace</span> separating the two.</p>
+   </dd>
+  </dl>
+
+  <p>There must never be two or more attributes on the same start tag whose names are an <span>ASCII
+  case-insensitive</span> match for each other.</p>
+
+  <hr>
+
+  <p>When a <span data-x="foreign elements">foreign element</span> has one of the namespaced
+  attributes given by the local name and namespace of the first and second cells of a row from the
+  following table, it must be written using the name given by the third cell from the same row.</p>
+
+  <table>
+   <thead>
+    <tr> <th> Local name <th> Namespace <th> Attribute name
+   <tbody>
+    <tr> <td> <code data-x="">actuate</code> <td> <span>XLink namespace</span> <td> <code data-x="">xlink:actuate</code>
+    <tr> <td> <code data-x="">arcrole</code> <td> <span>XLink namespace</span> <td> <code data-x="">xlink:arcrole</code>
+    <tr> <td> <code data-x="">href</code> <td> <span>XLink namespace</span> <td> <code data-x="">xlink:href</code>
+    <tr> <td> <code data-x="">role</code> <td> <span>XLink namespace</span> <td> <code data-x="">xlink:role</code>
+    <tr> <td> <code data-x="">show</code> <td> <span>XLink namespace</span> <td> <code data-x="">xlink:show</code>
+    <tr> <td> <code data-x="">title</code> <td> <span>XLink namespace</span> <td> <code data-x="">xlink:title</code>
+    <tr> <td> <code data-x="">type</code> <td> <span>XLink namespace</span> <td> <code data-x="">xlink:type</code>
+    <tr> <td> <code data-x="">lang</code> <td> <span>XML namespace</span> <td> <code data-x="">xml:lang</code>
+    <tr> <td> <code data-x="">space</code> <td> <span>XML namespace</span> <td> <code data-x="">xml:space</code>
+    <tr> <td> <code data-x="">xmlns</code> <td> <span>XMLNS namespace</span> <td> <code data-x="">xmlns</code>
+    <tr> <td> <code data-x="">xlink</code> <td> <span>XMLNS namespace</span> <td> <code data-x="">xmlns:xlink</code>
+  </table>
+
+  <p>No other namespaced attribute can be expressed in <span>the HTML syntax</span>.</p>
+
+  <p class="note">Whether the attributes in the table above are conforming or not is defined by
+  other specifications (e.g. <cite>SVG 2</cite> and <cite>MathML</cite>); this section only
+  describes the syntax rules if the attributes are serialized using the HTML syntax.</p>
+
+
+  <h5>Optional tags</h5>
+
+  <p>Certain tags can be <dfn data-x="syntax-tag-omission">omitted</dfn>.</p>
+
+  <p class="note">Omitting an element's <span data-x="syntax-start-tag">start tag</span> in the
+  situations described below does not mean the element is not present; it is implied, but it is
+  still there. For example, an HTML document always has a root <code>html</code> element, even if
+  the string <code data-x="">&lt;html></code> doesn't appear anywhere in the markup.</p>
+
+  <!-- <html> -->
+  <p>An <code>html</code> element's <span data-x="syntax-start-tag">start tag</span> may be omitted
+  if the first thing inside the <code>html</code> element is not a <span
+  data-x="syntax-comments">comment</span>.</p>
+
+  <div class="example">
+
+   <p>For example, in the following case it's ok to remove the "<code data-x="">&lt;html></code>"
+   tag:</p>
+
+   <pre><code class="html">&lt;!DOCTYPE HTML>
+<strong>&lt;html></strong>
+  &lt;head>
+    &lt;title>Hello&lt;/title>
+  &lt;/head>
+  &lt;body>
+    &lt;p>Welcome to this example.&lt;/p>
+  &lt;/body>
+&lt;/html></code></pre>
+
+   <p>Doing so would make the document look like this:</p>
+
+   <pre><code class="html">&lt;!DOCTYPE HTML>
+
+  &lt;head>
+    &lt;title>Hello&lt;/title>
+  &lt;/head>
+  &lt;body>
+    &lt;p>Welcome to this example.&lt;/p>
+  &lt;/body>
+&lt;/html></code></pre>
+
+   <p>This has the exact same DOM. In particular, note that whitespace around the <span>document
+   element</span> is ignored by the parser. The following example would also have the exact same
+   DOM:</p>
+
+   <pre><code class="html">&lt;!DOCTYPE HTML>&lt;head>
+    &lt;title>Hello&lt;/title>
+  &lt;/head>
+  &lt;body>
+    &lt;p>Welcome to this example.&lt;/p>
+  &lt;/body>
+&lt;/html></code></pre>
+
+   <p>However, in the following example, removing the start tag moves the comment to before the
+   <code>html</code> element:</p>
+
+   <pre><code class="html">&lt;!DOCTYPE HTML>
+&lt;html>
+  <strong>&lt;!-- where is this comment in the DOM? --></strong>
+  &lt;head>
+    &lt;title>Hello&lt;/title>
+  &lt;/head>
+  &lt;body>
+    &lt;p>Welcome to this example.&lt;/p>
+  &lt;/body>
+&lt;/html></code></pre>
+
+   <p>With the tag removed, the document actually turns into the same as this:</p>
+
+   <pre><code class="html">&lt;!DOCTYPE HTML>
+&lt;!-- where is this comment in the DOM? -->
+<small>&lt;html></small>
+  &lt;head>
+    &lt;title>Hello&lt;/title>
+  &lt;/head>
+  &lt;body>
+    &lt;p>Welcome to this example.&lt;/p>
+  &lt;/body>
+&lt;/html></code></pre>
+
+   <p>This is why the tag can only be removed if it is not followed by a comment: removing the tag
+   when there is a comment there changes the document's resulting parse tree. Of course, if the
+   position of the comment does not matter, then the tag can be omitted, as if the comment had been
+   moved to before the start tag in the first place.</p>
+
+  </div>
+
+  <!-- </html> -->
+  <p>An <code>html</code> element's <span data-x="syntax-end-tag">end tag</span> may be omitted if
+  the <code>html</code> element is not immediately followed by a <span
+  data-x="syntax-comments">comment</span>.</p>
+
+  <!-- <head> -->
+  <p>A <code>head</code> element's <span data-x="syntax-start-tag">start tag</span> may be omitted if
+  the element is empty, or if the first thing inside the <code>head</code> element is an
+  element.</p>
+
+  <!-- </head> -->
+  <p>A <code>head</code> element's <span data-x="syntax-end-tag">end tag</span> may be omitted if
+  the <code>head</code> element is not immediately followed by <span>ASCII whitespace</span> or a
+  <span data-x="syntax-comments">comment</span>.</p>
+
+  <!-- <body> -->
+  <p>A <code>body</code> element's <span data-x="syntax-start-tag">start tag</span> may be omitted
+  if the element is empty, or if the first thing inside the <code>body</code> element is not
+  <span>ASCII whitespace</span> or a <span data-x="syntax-comments">comment</span>, except if the
+  first thing inside the <code>body</code> element is a <code>meta</code>, <code>noscript</code>,
+  <code>link</code>, <code>script</code>, <code>style</code>, or <code>template</code> element.
+  <!-- Note that even if the </head> end tag is present, the parser makes <style> and <script>
+  elements between </head> and <body> end up in the <head> instead of implying the <body> --></p>
+
+  <!-- </body> -->
+  <p>A <code>body</code> element's <span data-x="syntax-end-tag">end tag</span> may be omitted if the
+  <code>body</code> element is not immediately followed by a <span
+  data-x="syntax-comments">comment</span>.</p>
+
+  <div class="example">
+
+   <p>Note that in the example above, the <code>head</code> element start and end tags, and the
+   <code>body</code> element start tag, can't be omitted, because they are surrounded by
+   whitespace:</p>
+
+   <pre><code class="html">&lt;!DOCTYPE HTML>
+&lt;html><strong>
+  </strong>&lt;head><strong>
+    </strong>&lt;title>Hello&lt;/title><strong>
+  </strong>&lt;/head><strong>
+  </strong>&lt;body><strong>
+    </strong>&lt;p>Welcome to this example.&lt;/p>
+  &lt;/body>
+&lt;/html></code></pre>
+
+   <p>(The <code>body</code> and <code>html</code> element end tags could be omitted without
+   trouble; any spaces after those get parsed into the <code>body</code> element anyway.)</p>
+
+   <p>Usually, however, whitespace isn't an issue. If we first remove the whitespace we don't care
+   about:</p>
+
+   <pre><code class="html">&lt;!DOCTYPE HTML>&lt;html>&lt;head>&lt;title>Hello&lt;/title>&lt;/head>&lt;body>&lt;p>Welcome to this example.&lt;/p>&lt;/body>&lt;/html></code></pre>
+
+   <p>Then we can omit a number of tags without affecting the DOM:</p>
+
+   <pre><code class="html">&lt;!DOCTYPE HTML>&lt;title>Hello&lt;/title>&lt;p>Welcome to this example.&lt;/p></code></pre>
+
+   <p>At that point, we can also add some whitespace back:</p>
+
+   <pre><code class="html">&lt;!DOCTYPE HTML>
+&lt;title>Hello&lt;/title>
+&lt;p>Welcome to this example.&lt;/p></code></pre>
+
+   <p>This would be equivalent to this document, with the omitted tags shown in their
+   parser-implied positions; the only whitespace text node that results from this is the newline at
+   the end of the <code>head</code> element:</p>
+
+   <pre><code class="html">&lt;!DOCTYPE HTML>
+<small>&lt;html>&lt;head></small>&lt;title>Hello&lt;/title>
+<small>&lt;/head>&lt;body></small>&lt;p>Welcome to this example.&lt;/p><small>&lt;/body>&lt;/html></small></code></pre>
+
+  </div>
+
+  <!-- </li> -->
+  <p>An <code>li</code> element's <span data-x="syntax-end-tag">end tag</span> may be omitted if the
+  <code>li</code> element is immediately followed by another <code>li</code> element or if there is
+  no more content in the parent element.</p>
+
+  <!-- </dt> -->
+  <p>A <code>dt</code> element's <span data-x="syntax-end-tag">end tag</span> may be omitted if the
+  <code>dt</code> element is immediately followed by another <code>dt</code> element or a
+  <code>dd</code> element.</p>
+
+  <!-- </dd> -->
+  <p>A <code>dd</code> element's <span data-x="syntax-end-tag">end tag</span> may be omitted if the
+  <code>dd</code> element is immediately followed by another <code>dd</code> element or a
+  <code>dt</code> element, or if there is no more content in the parent element.</p>
+
+  <!-- </p> -->
+  <p>A <code>p</code> element's <span data-x="syntax-end-tag">end tag</span> may be omitted if the
+  <code>p</code> element is immediately followed by an <code>address</code>, <code>article</code>,
+  <code>aside</code>, <code>blockquote</code>, <code>details</code>, <code>dialog</code>,
+  <code>div</code>, <code>dl</code>, <code>fieldset</code>, <code>figcaption</code>,
+  <code>figure</code>, <code>footer</code>, <code>form</code>, <code>h1</code>, <code>h2</code>,
+  <code>h3</code>, <code>h4</code>, <code>h5</code>, <code>h6</code>, <code>header</code>,
+  <code>hgroup</code>, <code>hr</code>, <code>main</code>, <code>menu</code>, <code>nav</code>,
+  <code>ol</code>, <code>p</code>, <code>pre</code>, <code>search</code>, <code>section</code>,
+  <code>table</code>, or <code>ul</code> element, or if there is no more content in the parent
+  element and the parent element is an <span data-x="HTML elements">HTML element</span> that is not
+  an <code>a</code>, <code>audio</code>, <code>del</code>, <code>ins</code>, <code>map</code>,
+  <code>noscript</code>, or <code>video</code> element, or an <span>autonomous custom
+  element</span>.</p>
+
+  <div class="example">
+
+   <p>We can thus simplify the earlier example further:
+
+   <pre><code class="html">&lt;!DOCTYPE HTML>&lt;title>Hello&lt;/title>&lt;p>Welcome to this example.</code></pre>
+
+  </div>
+
+  <!-- </rt> -->
+  <p>An <code>rt</code> element's <span data-x="syntax-end-tag">end tag</span> may be omitted if the
+  <code>rt</code> element is immediately followed by an <code>rt</code> or <code>rp</code> element,
+  or if there is no more content in the parent element.</p>
+
+  <!-- </rp> -->
+  <p>An <code>rp</code> element's <span data-x="syntax-end-tag">end tag</span> may be omitted if the
+  <code>rp</code> element is immediately followed by an <code>rt</code> or <code>rp</code> element,
+  or if there is no more content in the parent element.</p>
+
+  <!-- </optgroup> (the text assumes <optgroup> can only be inside a <select>; commented out text
+  below can handle the non-<select> case if we ever allow it) -->
+  <p>An <code>optgroup</code> element's <span data-x="syntax-end-tag">end tag</span> may be omitted
+  if the <code>optgroup</code> element <!--has an ancestor <code>select</code> element and--> is
+  immediately followed by another <code>optgroup</code> element, if it is immediately followed by an
+  <code>hr</code> element, or if <!--all of the elements that are ancestors of the
+  <code>optgroup</code> element, up to and including the first ancestor element that is not an
+  <code>optgroup</code> element, have no more content--> there is no more content in the parent
+  element.</p>
+  <!-- so e.g. the max number of </optgroup>s are omitted here:
+   <select><optgroup></select>
+   <p id=x><optgroup></optgroup>x</p>
+   <p id=x><optgroup><optgroup></optgroup></optgroup>x</p>
+   <p><optgroup id=x><optgroup></optgroup>x</p>
+   <p><optgroup><optgroup id=x>x</p>
+  -->
+
+  <!-- </option> -->
+  <p>An <code>option</code> element's <span data-x="syntax-end-tag">end tag</span> may be omitted if
+  the <code>option</code> element is immediately followed by another <code>option</code> element, if
+  it is immediately followed by an <code>optgroup</code> element, if it is immediately followed by
+  an <code>hr</code> element, or if there is no more content in the parent element.</p>
+
+  <!-- <colgroup> -->
+  <p>A <code>colgroup</code> element's <span data-x="syntax-start-tag">start tag</span> may be
+  omitted if the first thing inside the <code>colgroup</code> element is a <code>col</code> element,
+  and if the element is not immediately preceded by another <code>colgroup</code> element whose
+  <span data-x="syntax-end-tag">end tag</span> has been omitted. (It can't be omitted if the element
+  is empty.)</p>
+
+  <!-- </colgroup> -->
+  <p>A <code>colgroup</code> element's <span data-x="syntax-end-tag">end tag</span> may be omitted
+  if the <code>colgroup</code> element is not immediately followed by <span>ASCII whitespace</span>
+  or a <span data-x="syntax-comments">comment</span>.</p>
+
+  <!-- </caption> -->
+  <p>A <code>caption</code> element's <span data-x="syntax-end-tag">end tag</span> may be omitted if
+  the <code>caption</code> element is not immediately followed by <span>ASCII whitespace</span> or a
+  <span data-x="syntax-comments">comment</span>.</p>
+
+  <!-- </thead> -->
+  <p>A <code>thead</code> element's <span data-x="syntax-end-tag">end tag</span> may be omitted if
+  the <code>thead</code> element is immediately followed by a <code>tbody</code> or
+  <code>tfoot</code> element.</p>
+
+  <!-- <tbody> -->
+  <p>A <code>tbody</code> element's <span data-x="syntax-start-tag">start tag</span> may be omitted
+  if the first thing inside the <code>tbody</code> element is a <code>tr</code> element, and if the
+  element is not immediately preceded by a <code>tbody</code>, <code>thead</code>, or
+  <code>tfoot</code> element whose <span data-x="syntax-end-tag">end tag</span> has been omitted. (It
+  can't be omitted if the element is empty.)</p>
+
+  <!-- </tbody> -->
+  <p>A <code>tbody</code> element's <span data-x="syntax-end-tag">end tag</span> may be omitted if
+  the <code>tbody</code> element is immediately followed by a <code>tbody</code> or
+  <code>tfoot</code> element, or if there is no more content in the parent element.</p>
+
+  <!-- </tfoot> -->
+  <p>A <code>tfoot</code> element's <span data-x="syntax-end-tag">end tag</span> may be omitted if
+  there is no more content in the parent element.</p>
+
+  <!-- </tr> -->
+  <p>A <code>tr</code> element's <span data-x="syntax-end-tag">end tag</span> may be omitted if the
+  <code>tr</code> element is immediately followed by another <code>tr</code> element, or if there is
+  no more content in the parent element.</p>
+
+  <!-- </td> -->
+  <p>A <code>td</code> element's <span data-x="syntax-end-tag">end tag</span> may be omitted if the
+  <code>td</code> element is immediately followed by a <code>td</code> or <code>th</code> element,
+  or if there is no more content in the parent element.</p>
+
+  <!-- </th> -->
+  <p>A <code>th</code> element's <span data-x="syntax-end-tag">end tag</span> may be omitted if the
+  <code>th</code> element is immediately followed by a <code>td</code> or <code>th</code> element,
+  or if there is no more content in the parent element.</p>
+
+  <div class="example">
+
+   <p>The ability to omit all these table-related tags makes table markup much terser.</p>
+
+   <p>Take this example:</p>
+
+   <pre><code class="html">&lt;table>
+ &lt;caption>37547 TEE Electric Powered Rail Car Train Functions (Abbreviated)&lt;/caption>
+ &lt;colgroup>&lt;col>&lt;col>&lt;col>&lt;/colgroup>
+ &lt;thead>
+  &lt;tr>
+   &lt;th>Function&lt;/th>
+   &lt;th>Control Unit&lt;/th>
+   &lt;th>Central Station&lt;/th>
+  &lt;/tr>
+ &lt;/thead>
+ &lt;tbody>
+  &lt;tr>
+   &lt;td>Headlights&lt;/td>
+   &lt;td>&#x2714;&lt;/td>
+   &lt;td>&#x2714;&lt;/td>
+  &lt;/tr>
+  &lt;tr>
+   &lt;td>Interior Lights&lt;/td>
+   &lt;td>&#x2714;&lt;/td>
+   &lt;td>&#x2714;&lt;/td>
+  &lt;/tr>
+  &lt;tr>
+   &lt;td>Electric locomotive operating sounds&lt;/td>
+   &lt;td>&#x2714;&lt;/td>
+   &lt;td>&#x2714;&lt;/td>
+  &lt;/tr>
+  &lt;tr>
+   &lt;td>Engineer's cab lighting&lt;/td>
+   &lt;td>&lt;/td>
+   &lt;td>&#x2714;&lt;/td>
+  &lt;/tr>
+  &lt;tr>
+   &lt;td>Station Announcements - Swiss&lt;/td>
+   &lt;td>&lt;/td>
+   &lt;td>&#x2714;&lt;/td>
+  &lt;/tr>
+ &lt;/tbody>
+&lt;/table></code></pre>
+
+   <p>The exact same table, modulo some whitespace differences, could be marked up as follows:</p>
+
+   <pre><code class="html">&lt;table>
+ &lt;caption>37547 TEE Electric Powered Rail Car Train Functions (Abbreviated)
+ &lt;colgroup>&lt;col>&lt;col>&lt;col>
+ &lt;thead>
+  &lt;tr>
+   &lt;th>Function
+   &lt;th>Control Unit
+   &lt;th>Central Station
+ &lt;tbody>
+  &lt;tr>
+   &lt;td>Headlights
+   &lt;td>&#x2714;
+   &lt;td>&#x2714;
+  &lt;tr>
+   &lt;td>Interior Lights
+   &lt;td>&#x2714;
+   &lt;td>&#x2714;
+  &lt;tr>
+   &lt;td>Electric locomotive operating sounds
+   &lt;td>&#x2714;
+   &lt;td>&#x2714;
+  &lt;tr>
+   &lt;td>Engineer's cab lighting
+   &lt;td>
+   &lt;td>&#x2714;
+  &lt;tr>
+   &lt;td>Station Announcements - Swiss
+   &lt;td>
+   &lt;td>&#x2714;
+&lt;/table></code></pre>
+
+   <p>Since the cells take up much less room this way, this can be made even terser by having each
+   row on one line:</p>
+
+   <pre><code class="html">&lt;table>
+ &lt;caption>37547 TEE Electric Powered Rail Car Train Functions (Abbreviated)
+ &lt;colgroup>&lt;col>&lt;col>&lt;col>
+ &lt;thead>
+  &lt;tr> &lt;th>Function                              &lt;th>Control Unit     &lt;th>Central Station
+ &lt;tbody>
+  &lt;tr> &lt;td>Headlights                            &lt;td>&#x2714;                &lt;td>&#x2714;
+  &lt;tr> &lt;td>Interior Lights                       &lt;td>&#x2714;                &lt;td>&#x2714;
+  &lt;tr> &lt;td>Electric locomotive operating sounds  &lt;td>&#x2714;                &lt;td>&#x2714;
+  &lt;tr> &lt;td>Engineer's cab lighting               &lt;td>                 &lt;td>&#x2714;
+  &lt;tr> &lt;td>Station Announcements - Swiss         &lt;td>                 &lt;td>&#x2714;
+&lt;/table></code></pre>
+
+   <p>The only differences between these tables, at the DOM level, is with the precise position of
+   the (in any case semantically-neutral) whitespace.</p>
+
+  </div>
+
+  <p><strong>However</strong>, a <span data-x="syntax-start-tag">start tag</span> must never be
+  omitted if it has any attributes.</p>
+
+  <div class="example">
+
+   <p>Returning to the earlier example with all the whitespace removed and then all the optional
+   tags removed:</p>
+
+   <pre><code class="html">&lt;!DOCTYPE HTML>&lt;title>Hello&lt;/title>&lt;p>Welcome to this example.</code></pre>
+
+   <p>If the <code>body</code> element in this example had to have a <code
+   data-x="attr-class">class</code> attribute and the <code>html</code> element had to have a <code
+   data-x="attr-lang">lang</code> attribute, the markup would have to become:</p>
+
+   <pre><code class="html">&lt;!DOCTYPE HTML>&lt;html lang="en">&lt;title>Hello&lt;/title>&lt;body class="demo">&lt;p>Welcome to this example.</code></pre>
+
+  </div>
+
+  <p class="note">This section assumes that the document is conforming, in particular, that there
+  are no <span data-x="content models">content model</span> violations. Omitting tags in the fashion
+  described in this section in a document that does not conform to the <span>content models</span>
+  described in this specification is likely to result in unexpected DOM differences (this is, in
+  part, what the content models are designed to avoid).</p>
+
+
+  <h5 id="element-restrictions">Restrictions on content models</h5>
+
+  <p>For historical reasons, certain elements have extra restrictions beyond even the restrictions
+  given by their content model.</p>
+
+  <p>A <code>table</code> element must not contain <code>tr</code> elements, even though these
+  elements are technically allowed inside <code>table</code> elements according to the content
+  models described in this specification. (If a <code>tr</code> element is put inside a
+  <code>table</code> in the markup, it will in fact imply a <code>tbody</code> start tag before
+  it.)</p>
+
+  <p>A single <span data-x="syntax-newlines">newline</span> may be placed immediately after the <span
+  data-x="syntax-start-tag">start tag</span> of <code>pre</code> and <code>textarea</code> elements.
+  This does not affect the processing of the element. The otherwise optional <span
+  data-x="syntax-newlines">newline</span> <em>must</em> be included if the element's contents
+  themselves start with a <span data-x="syntax-newlines">newline</span> (because otherwise the
+  leading newline in the contents would be treated like the optional newline, and ignored).</p>
+
+  <div class="example">
+   <p>The following two <code>pre</code> blocks are equivalent:</p>
+   <pre><code class="html">&lt;pre>Hello&lt;/pre></code></pre>
+   <pre><code class="html">&lt;pre><br>Hello&lt;/pre></code></pre>
+  </div>
+
+
+  <h5 id="cdata-rcdata-restrictions">Restrictions on the contents of raw text and escapable raw text elements</h5>
+
+  <p>The text in <span data-x="raw text elements">raw text</span> and <span>escapable raw text
+  elements</span> must not contain any occurrences of the string "<code data-x="">&lt;/</code>"
+  (U+003C LESS-THAN SIGN, U+002F SOLIDUS) followed by characters that case-insensitively match the
+  tag name of the element followed by one of U+0009 CHARACTER TABULATION (tab), U+000A LINE FEED
+  (LF), U+000C FORM FEED (FF), U+000D CARRIAGE RETURN (CR), U+0020 SPACE, U+003E GREATER-THAN SIGN
+  (>), or U+002F SOLIDUS (/).</p>
+
+

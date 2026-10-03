@@ -1,0 +1,30 @@
+WHATWG HTML — section infrastructure-for-sequences-of-documents — Infrastructure for sequences of documents
+
+  <h3 split-filename="document-sequences">Infrastructure for sequences of documents</h3>
+
+  <p>This standard contains several related concepts for grouping sequences of documents. As a
+  brief, non-normative summary:</p>
+
+  <ul>
+   <li><p><span data-x="navigable">Navigables</span> are a user-facing representation of a sequence
+   of documents, i.e., they represent something that can be navigated between documents. Typical
+   examples are tabs or windows in a web browser, or <code>iframe</code>s<span w-nodev>, or
+   <code>frame</code>s in a <code>frameset</code></span>.</p></li>
+
+   <li><p><span data-x="traversable navigable">Traversable navigables</span> are a special type of
+   navigable which control the session history of themselves and of their descendant navigables.
+   That is, in addition to their own series of documents, they represent a tree of further series
+   of documents, plus the ability to linearly traverse back and forward through a flattened view of
+   this tree.</p></li>
+
+   <li><p><span data-x="browsing context">Browsing contexts</span> are a developer-facing
+   representation of a series of documents. They correspond 1:1 with <code>WindowProxy</code>
+   objects. Each navigable can present a series of browsing contexts, with <a
+   href="#browsing-context-group-switches-due-to-cross-origin-opener-policy">switches</a> between
+   those browsing contexts occurring under certain well-defined circumstances.</p></li>
+  </ul>
+
+  <p>Most of this standard works in the language of navigables, but certain APIs expose the
+  existence of browsing context switches, and so some parts of the standard need to work in terms
+  of browsing contexts.</p>
+

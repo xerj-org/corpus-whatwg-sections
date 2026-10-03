@@ -1,0 +1,143 @@
+WHATWG HTML — section the-tbody-element — The <dfn element><code>tbody</code></dfn> element
+
+  <h4>The <dfn element><code>tbody</code></dfn> element</h4>
+
+  <dl class="element">
+   <dt><span data-x="concept-element-categories">Categories</span>:</dt>
+   <dd>None.</dd>
+   <dt><span data-x="concept-element-contexts">Contexts in which this element can be used</span>:</dt>
+   <dd>As a child of a <code>table</code> element, after any
+   <code>caption</code>, <code>colgroup</code>, and
+   <code>thead</code> elements, but only if there are no
+   <code>tr</code> elements that are children of the
+   <code>table</code> element.</dd>
+   <dt><span data-x="concept-element-content-model">Content model</span>:</dt>
+   <dd>Zero or more <code>tr</code> and <span data-x="script-supporting elements">script-supporting</span> elements.</dd>
+   <dt><span data-x="concept-element-attributes">Content attributes</span>:</dt>
+   <dd><span>Global attributes</span></dd>
+   <dt><span
+   data-x="concept-element-accessibility-considerations">Accessibility considerations</span>:</dt>
+   <dd><a href="https://w3c.github.io/html-aria/#el-tbody">For authors</a>.</dd>
+   <dd><a href="https://w3c.github.io/html-aam/#el-tbody">For implementers</a>.</dd>
+   <dt><span data-x="concept-element-sanitization">Sanitization</span>:</dt>
+   <dd><span data-x="sanitizer-category-default">Default</span>.</dd>
+   <dt><span data-x="concept-element-dom">DOM interface</span>:</dt>
+   <dd>
+    <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>HTMLTableSectionElement</dfn> : <span>HTMLElement</span> {
+  [<span>HTMLConstructor</span>] constructor();
+
+  [SameObject] readonly attribute <span>HTMLCollection</span> <span data-x="dom-tbody-rows">rows</span>;
+  <span>HTMLTableRowElement</span> <span data-x="dom-tbody-insertRow">insertRow</span>(optional long index = -1);
+  [<span>CEReactions</span>] undefined <span data-x="dom-tbody-deleteRow">deleteRow</span>(long index);
+
+  // <a href="#HTMLTableSectionElement-partial">also has obsolete members</a>
+};</code></pre>
+    <p><span w-dev>Uses <code>HTMLTableSectionElement</code>. </span>The
+    <code>HTMLTableSectionElement</code> interface is also used for <code>thead</code> and
+    <code>tfoot</code> elements.</p>
+   </dd>
+  </dl>
+
+  <p>The <code>tbody</code> element <span>represents</span> a <span
+  data-x="concept-row-group">block</span> of <span data-x="concept-row">rows</span> that consist of a
+  body of data for the parent <code>table</code> element, if the <code>tbody</code> element has a
+  parent and it is a <code>table</code>.</p>
+
+  <div w-nodev>
+
+  <p>The <code>tbody</code> element takes part in the <span>table model</span>.</p>
+
+  </div>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>tbody</var>.<span subdfn data-x="dom-tbody-rows">rows</span></code></dt>
+   <dd>
+    <p>Returns an <code>HTMLCollection</code> of the <code>tr</code> elements of the table
+    section.</p>
+   </dd>
+
+   <dt><code data-x=""><var>tr</var> = <var>tbody</var>.<span subdfn data-x="dom-tbody-insertRow">insertRow</span>([ <var>index</var> ])</code></dt>
+   <dd>
+    <p>Creates a <code>tr</code> element, inserts it into the table section at the position given by
+    the argument, and returns the <code>tr</code>.</p>
+
+    <p>The position is relative to the rows in the table section. The index &#x2212;1, which is the
+    default if the argument is omitted, is equivalent to inserting at the end of the table
+    section.</p>
+
+    <p>If the given position is less than &#x2212;1 or greater than the number of rows, throws an
+    <span>"<code>IndexSizeError</code>"</span> <code>DOMException</code>.</p>
+   </dd>
+
+   <dt><code data-x=""><var>tbody</var>.<span subdfn data-x="dom-tbody-deleteRow">deleteRow</span>(<var>index</var>)</code></dt>
+   <dd>
+    <p>Removes the <code>tr</code> element with the given position in the table section.</p>
+
+    <p>The position is relative to the rows in the table section. The index &#x2212;1 is equivalent
+    to deleting the last row of the table section.</p>
+
+    <p>If the given position is less than &#x2212;1 or greater than the index of the last row, or if
+    there are no rows, throws an <span>"<code>IndexSizeError</code>"</span>
+    <code>DOMException</code>.</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLTableSectionElement"><code
+  data-x="dom-tbody-rows">rows</code></dfn> attribute must return an <code>HTMLCollection</code>
+  rooted at this element, whose filter matches only <code>tr</code> elements that are children of
+  this element.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="HTMLTableSectionElement"><code
+  data-x="dom-tbody-insertRow">insertRow(<var>index</var>)</code></dfn> method must act as
+  follows:</p>
+
+  <ol>
+   <li><p>If <var>index</var> is less than &#x2212;1 or greater than the number of elements in the
+   <code data-x="dom-tbody-rows">rows</code> collection, throw an
+   <span>"<code>IndexSizeError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>Let <var>table row</var> be the result of <span data-x="create an element">creating an
+   element</span> given this element's <span>node document</span>, "<code data-x="">tr</code>", and
+   the <span>HTML namespace</span>.</p></li>
+
+   <li><p>If <var>index</var> is &#x2212;1 or equal to the number of items in the <code
+   data-x="dom-tbody-rows">rows</code> collection, then <span
+   data-x="concept-node-append">append</span> <var>table row</var> to this element.</p></li>
+
+   <li><p>Otherwise, <span data-x="concept-node-insert">insert</span> <var>table row</var> as a
+   child of this element, immediately before the <var>index</var>th <code>tr</code> element in the
+   <code data-x="dom-tbody-rows">rows</code> collection.</p></li>
+
+   <li><p>Return <var>table row</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="HTMLTableSectionElement"><code
+  data-x="dom-tbody-deleteRow">deleteRow(<var>index</var>)</code></dfn> method must, when invoked,
+  act as follows:
+
+  <ol>
+   <li><p>If <var>index</var> is less than &#x2212;1 or greater than or equal to the number of
+   elements in the <code data-x="dom-tbody-rows">rows</code> collection, then throw an
+   <span>"<code>IndexSizeError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>If <var>index</var> is &#x2212;1, then <span data-x="concept-node-remove">remove</span>
+   the last element in the <code data-x="dom-tbody-rows">rows</code> collection from this
+   element, or do nothing if the <code data-x="dom-tbody-rows">rows</code> collection is
+   empty.</p></li>
+
+   <li><p>Otherwise, <span data-x="concept-node-remove">remove</span> the <var>index</var>th element
+   in the <code data-x="dom-tbody-rows">rows</code> collection from this element.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+

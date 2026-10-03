@@ -1,0 +1,34 @@
+WHATWG HTML — section space-separated-tokens — Space-separated tokens
+
+  <h4>Space-separated tokens</h4>
+
+  <div algorithm>
+  <p>A <dfn export>set of space-separated tokens</dfn> is a string containing zero or more words
+  (known as tokens) separated by one or more <span>ASCII whitespace</span>, where words consist of
+  any string of one or more characters, none of which are <span>ASCII whitespace</span>.</p>
+
+  <p>A string containing a <span>set of space-separated tokens</span> may have leading or trailing
+  <span>ASCII whitespace</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>An <dfn export>unordered set of unique space-separated tokens</dfn> is a <span>set of
+  space-separated tokens</span> where none of the tokens are duplicated.</p>
+  </div>
+
+  <div algorithm>
+  <p>An <dfn>ordered set of unique space-separated tokens</dfn> is a <span>set of space-separated
+  tokens</span> where none of the tokens are duplicated but where the order of the tokens is
+  meaningful.</p>
+  </div>
+
+  <p><span data-x="set of space-separated tokens">Sets of space-separated tokens</span> sometimes
+  have a defined set of allowed values. When a set of allowed values is defined, the tokens must all
+  be from that list of allowed values; other values are non-conforming. If no such set of allowed
+  values is provided, then all values are conforming.</p>
+
+  <p class="note">How tokens in a <span>set of space-separated tokens</span> are to be compared
+  (e.g. case-sensitively or not) is defined on a per-set basis.</p>
+
+
+

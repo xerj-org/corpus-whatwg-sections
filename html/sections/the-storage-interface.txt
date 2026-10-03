@@ -1,0 +1,258 @@
+WHATWG HTML — section the-storage-interface — The <code>Storage</code> interface
+
+  <h4>The <code>Storage</code> interface</h4>
+
+  <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>Storage</dfn> {
+  readonly attribute unsigned long <span data-x="dom-Storage-length">length</span>;
+  DOMString? <span data-x="dom-Storage-key">key</span>(unsigned long index);
+  getter DOMString? <span data-x="dom-Storage-getItem">getItem</span>(DOMString key);
+  setter undefined <span data-x="dom-Storage-setItem">setItem</span>(DOMString key, DOMString value);
+  deleter undefined <span data-x="dom-Storage-removeItem">removeItem</span>(DOMString key);
+  undefined <span data-x="dom-Storage-clear">clear</span>();
+};</code></pre>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>storage</var>.<span subdfn data-x="dom-Storage-length">length</span></code></dt>
+   <dd><p>Returns the number of key/value pairs.</p></dd>
+
+   <dt><code data-x=""><var>storage</var>.<span subdfn data-x="dom-Storage-key">key</span> (<var>n</var>)</code></dt>
+   <dd><p>Returns the name of the <var>n</var>th key, or null if <var>n</var> is greater than or
+   equal to the number of key/value pairs.</p></dd>
+
+   <dt><code data-x=""><var>value</var> = <var>storage</var>.<span subdfn data-x="dom-Storage-getItem">getItem</span> (<var>key</var>)</code></dt>
+   <dd><p>Returns the current value associated with the given <var>key</var>, or null if the given
+   <var>key</var> does not exist.</p></dd>
+
+   <dt><code data-x=""><var>value</var> = <var>storage</var>[<var>key</var>]</code></dt>
+   <dd><p>Returns the current value associated with the given <var>key</var>, or undefined if the
+   given <var>key</var> does not exist.</p></dd>
+
+   <dt><code data-x=""><var>storage</var>.<span subdfn data-x="dom-Storage-setItem">setItem</span> (<var>key</var>, <var>value</var>)</code></dt>
+   <dt><code data-x=""><var>storage</var>[<var>key</var>] = <var>value</var></code></dt>
+   <dd>
+    <p>Sets the value of the pair identified by <var>key</var> to <var>value</var>, creating a new
+    key/value pair if none existed for <var>key</var> previously.</p>
+
+    <p>Throws a <code>QuotaExceededError</code> if the new value couldn't be set. (Setting could
+    fail if, e.g., the user has disabled storage for the site, or if the quota has been
+    exceeded.)</p>
+
+    <p>Dispatches a <code data-x="event-storage">storage</code> event on <code>Window</code> objects
+    holding an equivalent <code>Storage</code> object.</p>
+   </dd>
+
+   <dt><code data-x=""><var>storage</var>.<span subdfn data-x="dom-Storage-removeItem">removeItem</span> (<var>key</var>)</code></dt>
+   <dt><code>delete</code> <var>storage</var>[<var>key</var>]</dt>
+   <dd>
+    <p>Removes the key/value pair with the given <var>key</var>, if a key/value pair with the given
+    <var>key</var> exists.</p>
+
+    <p>Dispatches a <code data-x="event-storage">storage</code> event on <code>Window</code> objects
+    holding an equivalent <code>Storage</code> object.</p>
+   </dd>
+
+   <dt><code data-x=""><var>storage</var>.<span subdfn data-x="dom-Storage-clear">clear</span>()</code></dt>
+   <dd>
+    <p>Removes all key/value pairs, if there are any.</p>
+
+    <p>Dispatches a <code data-x="event-storage">storage</code> event on <code>Window</code> objects
+    holding an equivalent <code>Storage</code> object.</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <p>A <code>Storage</code> object has an associated:</p>
+
+  <dl>
+   <dt><dfn data-x="concept-Storage-map">map</dfn>
+   <dd>A <span>storage proxy map</span>.</dd>
+
+   <dt><dfn data-x="concept-Storage-type">type</dfn>
+   <dd>"<code data-x="">local</code>" or "<code data-x="">session</code>".
+  </dl>
+
+  <div algorithm>
+  <p>To <dfn data-x="concept-Storage-reorder">reorder</dfn> a <code>Storage</code> object
+  <var>storage</var>, reorder <var>storage</var>'s <span data-x="concept-Storage-map">map</span>'s
+  <span data-x="map entry">entries</span> in an <span>implementation-defined</span> manner.</p>
+  </div>
+
+  <p class="note">Unfortunate as it is, iteration order is not defined and can change upon most
+  mutations.</p>
+
+  <div algorithm>
+  <p>To <dfn data-x="concept-Storage-broadcast">broadcast</dfn> a <code>Storage</code> object
+  <var>storage</var>, given a <var>key</var>, <var>oldValue</var>, and <var>newValue</var>, run
+  these steps:</p>
+
+  <ol>
+   <li><p>Let <var>thisDocument</var> be <var>storage</var>'s <span>relevant global object</span>'s <span data-x="concept-document-window">associated <code>Document</code></span>.</p></li>
+
+   <li><p>Let <var>url</var> be the <span data-x="concept-url-serializer">serialization</span> of
+   <var>thisDocument</var>'s <span data-x="concept-document-url">URL</span>.</p></li>
+
+   <li>
+    <p>Let <var>remoteStorages</var> be all <code>Storage</code> objects excluding
+    <var>storage</var> whose:</p>
+
+    <ul>
+     <li><span data-x="concept-Storage-type">type</span> is <var>storage</var>'s <span
+     data-x="concept-Storage-type">type</span></li>
+
+     <li><span>relevant settings object</span>'s <span>origin</span> is <span>same origin</span>
+     with <var>storage</var>'s <span>relevant settings object</span>'s <span>origin</span></li>
+    </ul>
+
+    <p>and, if <span data-x="concept-Storage-type">type</span> is "<code data-x="">session</code>",
+    whose <span>relevant settings object</span>'s <span data-x="concept-document-window">associated
+    <code>Document</code></span>'s <span>node navigable</span>'s <span
+    data-x="nav-traversable">traversable navigable</span> is <var>thisDocument</var>'s <span>node
+    navigable</span>'s <span data-x="nav-traversable">traversable navigable</span>.</p>
+   </li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>remoteStorage</var> of
+    <var>remoteStorages</var>: <span>queue a global task</span> on the <span>DOM manipulation task
+    source</span> given <var>remoteStorage</var>'s <span>relevant global object</span> to <span
+    data-x="concept-event-fire">fire an event</span> named <code
+    data-x="event-storage">storage</code> at <var>remoteStorage</var>'s <span>relevant global
+    object</span>, using <code>StorageEvent</code>, with <code
+    data-x="dom-StorageEvent-key">key</code> initialized to <var>key</var>, <code
+    data-x="dom-StorageEvent-oldValue">oldValue</code> initialized to <var>oldValue</var>, <code
+    data-x="dom-StorageEvent-newValue">newValue</code> initialized to <var>newValue</var>, <code
+    data-x="dom-StorageEvent-url">url</code> initialized to <var>url</var>, and <code
+    data-x="dom-StorageEvent-storageArea">storageArea</code> initialized to
+    <var>remoteStorage</var>.</p>
+    <!-- This ignores the fact that Storage objects that are part of the same agent should not get
+         their own tasks, much like the text that predates it. -->
+
+    <p class="note">The <code>Document</code> object associated with the resulting <span
+    data-x="concept-task">task</span> is not necessarily <span>fully active</span>, but events fired
+    on such objects are ignored by the <span>event loop</span> until the <code>Document</code>
+    becomes <span>fully active</span> again.</p>
+   </li>
+  </ol>
+  </div>
+
+  <hr>
+
+  <div algorithm>
+  <p>The <dfn attribute for="Storage"><code data-x="dom-Storage-length">length</code></dfn> getter
+  steps are to return <span>this</span>'s <span data-x="concept-Storage-map">map</span>'s <span
+  data-x="map size">size</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="Storage"><code data-x="dom-Storage-key">key(<var>index</var>)</code></dfn>
+  method steps are:</p>
+
+  <ol>
+   <li><p>If <var>index</var> is greater than or equal to <span>this</span>'s <span
+   data-x="concept-Storage-map">map</span>'s <span data-x="map size">size</span>, then return
+   null.</p></li>
+
+   <li><p>Let <var>keys</var> be the result of running <span data-x="map get the keys">get the
+   keys</span> on <span>this</span>'s <span data-x="concept-Storage-map">map</span>.
+
+   <li><p>Return <var>keys</var>[<var>index</var>].</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <span>supported property names</span> on a <code>Storage</code> object <var>storage</var>
+  are the result of running <span data-x="map get the keys">get the keys</span> on
+  <var>storage</var>'s <span data-x="concept-Storage-map">map</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="Storage"><code
+  data-x="dom-Storage-getItem">getItem(<var>key</var>)</code></dfn> method steps are:</p>
+
+  <ol>
+   <li><p>If <span>this</span>'s <span data-x="concept-Storage-map">map</span>[<var>key</var>] does
+   not <span data-x="map exists">exist</span>, then return null.</p></li>
+
+   <li><p>Return <span>this</span>'s <span
+   data-x="concept-Storage-map">map</span>[<var>key</var>].</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="Storage"><code data-x="dom-Storage-setItem">setItem(<var>key</var>,
+  <var>value</var>)</code></dfn> method steps are:</p>
+
+  <ol>
+   <li><p>Let <var>oldValue</var> be null.</p></li>
+
+   <li><p>Let <var>reorder</var> be true.</p></li>
+
+   <li>
+    <p>If <span>this</span>'s <span data-x="concept-Storage-map">map</span>[<var>key</var>]
+    <span data-x="map exists">exists</span>:</p>
+
+    <ol>
+     <li><p>Set <var>oldValue</var> to <span>this</span>'s <span
+     data-x="concept-Storage-map">map</span>[<var>key</var>].</p></li>
+
+     <li><p>If <var>oldValue</var> <span>is</span> <var>value</var>, then return.</p></li>
+
+     <li><p>Set <var>reorder</var> to false.</p></li>
+    </ol>
+   </li>
+
+   <li><p>If <var>value</var> cannot be stored, then throw a
+   <code>QuotaExceededError</code>.</p></li>
+
+   <li><p><span data-x="map set">Set</span> <span>this</span>'s <span
+   data-x="concept-Storage-map">map</span>[<var>key</var>] to <var>value</var>.</p></li>
+
+   <li><p>If <var>reorder</var> is true, then <span data-x="concept-Storage-reorder">reorder</span>
+   <span>this</span>.</p></li>
+
+   <li><p><span data-x="concept-Storage-broadcast">Broadcast</span> <span>this</span> with
+   <var>key</var>, <var>oldValue</var>, and <var>value</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="Storage"><code
+  data-x="dom-Storage-removeItem">removeItem(<var>key</var>)</code></dfn> method steps are:</p>
+
+  <ol>
+   <li><p>If <span>this</span>'s <span data-x="concept-Storage-map">map</span>[<var>key</var>] does
+   not <span data-x="map exists">exist</span>, then return.</p></li>
+
+   <li><p>Set <var>oldValue</var> to <span>this</span>'s <span
+   data-x="concept-Storage-map">map</span>[<var>key</var>].</p></li>
+
+   <li><p><span data-x="map remove">Remove</span> <span>this</span>'s <span
+   data-x="concept-Storage-map">map</span>[<var>key</var>].</p></li>
+
+   <li><p><span data-x="concept-Storage-reorder">Reorder</span> <span>this</span>.</p></li>
+
+   <li><p><span data-x="concept-Storage-broadcast">Broadcast</span> <span>this</span> with
+   <var>key</var>, <var>oldValue</var>, and null.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="Storage"><code data-x="dom-Storage-clear">clear()</code></dfn> method
+  steps are:</p>
+
+  <ol>
+   <li><p>If <span>this</span>'s <span data-x="concept-Storage-map">map</span> is <span
+   data-x="map empty">empty</span>, then return.</p></li>
+
+   <li><p><span data-x="map clear">Clear</span> <span>this</span>'s <span
+   data-x="concept-Storage-map">map</span>.</p></li>
+
+   <li><p><span data-x="concept-Storage-broadcast">Broadcast</span> <span>this</span> with null,
+   null, and null.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+

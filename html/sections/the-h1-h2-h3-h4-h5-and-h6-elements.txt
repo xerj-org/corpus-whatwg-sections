@@ -1,0 +1,86 @@
+WHATWG HTML — section the-h1-h2-h3-h4-h5-and-h6-elements — The <dfn id="the-h1-element" element><code>h1</code></dfn>, <dfn id="the-h2-element" element><code>h2</code></dfn>, <dfn id="the-h3-element" element><code>h3</code></dfn>, <dfn id="the-h4-element" element><code>h4</code></dfn>, <dfn id="the-h5-element" element><code>h5</code></dfn>, and <dfn id="the-h6-element" element><code>h6</code></dfn> elements
+
+  <h4>The <dfn id="the-h1-element" element><code>h1</code></dfn>, <dfn id="the-h2-element"
+  element><code>h2</code></dfn>, <dfn id="the-h3-element" element><code>h3</code></dfn>, <dfn
+  id="the-h4-element" element><code>h4</code></dfn>, <dfn id="the-h5-element"
+  element><code>h5</code></dfn>, and <dfn id="the-h6-element" element><code>h6</code></dfn>
+  elements</h4>
+
+  <dl class="element">
+   <dt><span data-x="concept-element-categories">Categories</span>:</dt>
+   <dd><span>Flow content</span>.</dd>
+   <dd><span>Heading content</span>.</dd>
+   <dd><span>Palpable content</span>.</dd>
+   <dt><span data-x="concept-element-contexts">Contexts in which this element can be used</span>:</dt>
+   <dd>As a child of an <code>hgroup</code> element.</dd>
+   <dd>Where <span>heading content</span> is expected.</dd>
+   <dt><span data-x="concept-element-content-model">Content model</span>:</dt>
+   <dd><span>Phrasing content</span>.</dd>
+   <dt><span data-x="concept-element-attributes">Content attributes</span>:</dt>
+   <dd><span>Global attributes</span></dd>
+   <dt><span
+   data-x="concept-element-accessibility-considerations">Accessibility considerations</span>:</dt>
+   <dd><a href="https://w3c.github.io/html-aria/#el-h1-h6">For authors</a>.</dd>
+   <dd><a href="https://w3c.github.io/html-aam/#el-h1-h6">For implementers</a>.</dd>
+   <dt><span data-x="concept-element-sanitization">Sanitization</span>:</dt>
+   <dd><span data-x="sanitizer-category-default">Default</span>.</dd>
+   <dt><span data-x="concept-element-dom">DOM interface</span>:</dt>
+   <dd w-nodev>
+    <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>HTMLHeadingElement</dfn> : <span>HTMLElement</span> {
+  [<span>HTMLConstructor</span>] constructor();
+
+  // <a href="#HTMLHeadingElement-partial">also has obsolete members</a>
+};</code></pre>
+   </dd>
+   <dd w-dev>Uses <code>HTMLHeadingElement</code>.</dd>
+  </dl>
+
+  <p>These elements <span data-x="represents">represent</span> headings for their sections.</p>
+
+  <p>The semantics and meaning of these elements are defined in the section on <a
+  href="#headings-and-outlines">headings and outlines</a>.</p>
+
+  <p>These elements have a <span>heading level</span> given by the number in their name. The
+  <span>heading level</span> corresponds to the levels of nested sections. The <code>h1</code>
+  element is for a top-level section, <code>h2</code> for a subsection, <code>h3</code> for a
+  sub-subsection, and so on.</p>
+
+  <div class="example">
+
+   <p>As far as their respective document outlines (their heading and section structures) are
+   concerned, these two snippets are semantically equivalent:</p>
+
+   <pre><code class="html">&lt;body>
+&lt;h1>Let's call it a draw(ing surface)&lt;/h1>
+&lt;h2>Diving in&lt;/h2>
+&lt;h2>Simple shapes&lt;/h2>
+&lt;h2>Canvas coordinates&lt;/h2>
+&lt;h3>Canvas coordinates diagram&lt;/h3>
+&lt;h2>Paths&lt;/h2>
+&lt;/body></code></pre>
+
+   <pre><code class="html">&lt;body>
+ &lt;h1>Let's call it a draw(ing surface)&lt;/h1>
+ &lt;section>
+  &lt;h2>Diving in&lt;/h2>
+ &lt;/section>
+ &lt;section>
+  &lt;h2>Simple shapes&lt;/h2>
+ &lt;/section>
+ &lt;section>
+  &lt;h2>Canvas coordinates&lt;/h2>
+  &lt;section>
+   &lt;h3>Canvas coordinates diagram&lt;/h3>
+  &lt;/section>
+ &lt;/section>
+ &lt;section>
+  &lt;h2>Paths&lt;/h2>
+ &lt;/section>
+&lt;/body></code></pre>
+
+   <p>Authors might prefer the former style for its terseness, or the latter style for its
+   additional styling hooks. Which is best is purely an issue of preferred authoring style.</p>
+  </div>
+
+

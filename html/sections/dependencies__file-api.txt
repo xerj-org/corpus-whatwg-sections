@@ -1,0 +1,26 @@
+WHATWG HTML — section dependencies/file-api — File API
+
+   <dt>File API</dt>
+
+   <dd>
+    <p>This specification uses the following features defined in <cite>File API</cite>:
+    <ref>FILEAPI</ref></p>
+
+    <ul class="brief">
+     <li>The <dfn data-x-href="https://w3c.github.io/FileAPI/#dfn-Blob"><code>Blob</code></dfn> interface and its
+             <dfn data-x="dom-Blob-type" data-x-href="https://w3c.github.io/FileAPI/#dfn-type"><code>type</code></dfn> attribute</li>
+     <li>The <dfn data-x-href="https://w3c.github.io/FileAPI/#dfn-file"><code>File</code></dfn> interface and its
+             <dfn data-x="dom-File-name" data-x-href="https://w3c.github.io/FileAPI/#dfn-name"><code>name</code></dfn> and
+             <dfn data-x="dom-File-lastModified" data-x-href="https://w3c.github.io/FileAPI/#dfn-lastModified"><code>lastModified</code></dfn> attributes</li>
+     <li>The <dfn data-x-href="https://w3c.github.io/FileAPI/#filelist-section"><code>FileList</code></dfn> interface</li>
+     <li>The concept of a <code>Blob</code>'s <dfn data-x-href="https://w3c.github.io/FileAPI/#snapshot-state">snapshot state</dfn></li>
+     <li>The concept of <dfn data-x="file-error-read">read errors</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/FileAPI/#BlobURLStore">Blob URL Store</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/FileAPI/#blob-url-entry">blob URL entry</dfn> and its
+         <dfn data-x="blob-url-entry-environment" data-x-href="https://w3c.github.io/FileAPI/#blob-url-entry-environment">environment</dfn></li>
+     <li>The <dfn data-x="blob-url-obtain-object" data-x-href="https://w3c.github.io/FileAPI/#blob-url-obtain-object">obtain a blob object</dfn> algorithm</li>
+    </ul>
+   </dd>
+
+
+

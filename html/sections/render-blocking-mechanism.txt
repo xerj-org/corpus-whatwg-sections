@@ -1,0 +1,63 @@
+WHATWG HTML — section render-blocking-mechanism — <dfn>Render-blocking mechanism</dfn>
+
+  <h4><dfn>Render-blocking mechanism</dfn></h4>
+
+  <p>Each <code>Document</code> has a <dfn>render-blocking element set</dfn>, a <span>set</span> of
+  elements, initially the empty set.</p>
+
+  <div algorithm>
+  <p>A <code>Document</code> <var>document</var> <dfn>allows adding render-blocking elements</dfn>
+  if <var>document</var>'s <span data-x="concept-document-content-type">content type</span> is
+  "<code>text/html</code>" and <span>the body element</span> of <var>document</var> is null.</p>
+  </div>
+
+  <div algorithm>
+  <p>A <code>Document</code> <var>document</var> is <dfn>render-blocked</dfn> if both of the
+  following are true:</p>
+
+  <ul>
+   <li><p><var>document</var>'s <span>render-blocking element set</span> is non-empty, or
+   <var>document</var> <span>allows adding render-blocking elements</span>.</p>
+
+   <li><p>The <span>current high resolution time</span> given <var>document</var>'s <span>relevant
+   global object</span> has not exceeded an <span>implementation-defined</span> timeout value.</p>
+  </ul>
+  </div>
+
+  <div algorithm>
+  <p>An element <var>el</var> is <dfn>render-blocking</dfn> if <var>el</var>'s
+  <span>node document</span> <var>document</var> is <span>render-blocked</span>, and <var>el</var>
+  is in <var>document</var>'s <span>render-blocking element set</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>block rendering</dfn> on an element <var>el</var>:</p>
+
+  <ol>
+   <li><p>Let <var>document</var> be <var>el</var>'s <span>node document</span>.</p>
+
+   <li><p>If <var>document</var> <span>allows adding render-blocking elements</span>, then
+   <span data-x="set append">append</span> <var>el</var> to <var>document</var>'s
+   <span>render-blocking element set</span>.</p>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>unblock rendering</dfn> on an element <var>el</var>:</p>
+
+  <ol>
+   <li><p>Let <var>document</var> be <var>el</var>'s <span>node document</span>.</p>
+
+   <li><p><span data-x="list remove">Remove</span> <var>el</var> from <var>document</var>'s
+   <span>render-blocking element set</span>.</p>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>Whenever a <span>render-blocking</span> element <var>el</var>
+  <span>becomes browsing-context disconnected</span>, or <var>el</var>'s
+  <span>blocking attribute</span>'s value is changed so that <var>el</var> is no longer
+  <span>potentially render-blocking</span>, then <span>unblock rendering</span> on
+  <var>el</var>.</p>
+  </div>
+

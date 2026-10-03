@@ -1,0 +1,22 @@
+WHATWG URL — section url-apis-elsewhere — URL APIs elsewhere
+
+<h3 id=url-apis-elsewhere>URL APIs elsewhere</h3>
+
+<p>A standard that exposes <a for=/>URLs</a>, should expose the <a for=/>URL</a> as a string (by
+<a lt="URL serializer">serializing</a> an internal <a for=/>URL</a>). A standard should not expose a
+<a for=/>URL</a> using a {{URL}} object. {{URL}} objects are meant for <a for=/>URL</a>
+manipulation. In IDL the USVString type should be used.
+
+<p class=note>The higher-level notion here is that values are to be exposed as immutable data
+structures.
+
+<p>If a standard decides to use a variant of the name "URL" for a feature it defines, it should name
+such a feature "url" (i.e., lowercase and with an "l" at the end). Names such as "URL", "URI", and
+"IRI" should not be used. However, if the name is a compound, "URL" (i.e., uppercase) is preferred,
+e.g., "newURL" and "oldURL".
+
+<p class=note>The {{EventSource}} and {{HashChangeEvent}} interfaces in <cite>HTML</cite> are
+examples of proper naming. [[HTML]]
+
+
+

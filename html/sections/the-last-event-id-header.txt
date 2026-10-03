@@ -1,0 +1,15 @@
+WHATWG HTML — section the-last-event-id-header — The `<code>Last-Event-ID</code>` header (+parsing-an-event-stream)
+
+  <h4>The `<code>Last-Event-ID</code>` header</h4>
+
+  <p>The <dfn http-header><code>Last-Event-ID</code></dfn>` HTTP request header reports an
+  <code>EventSource</code> object's <span data-x="concept-event-stream-last-event-id">last event ID
+  string</span> to the server when the user agent is to <span>reestablish the connection</span>.
+
+  <p class="XXX">See <a href="https://github.com/whatwg/html/issues/7363">whatwg/html issue
+  #7363</a> to define the value space better. It is essentially any UTF-8 encoded string, that does
+  not contain U+0000 NULL, U+000A LF, or U+000D CR.</p>
+
+
+  <h4 w-nodev>Parsing an event stream</h4>
+

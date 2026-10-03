@@ -1,0 +1,516 @@
+WHATWG HTML — section element-internals — Element internals (+common-idioms)
+
+  <h4>Element internals</h4>
+
+  <p>Certain capabilities are meant to be available to a custom element author, but not to a custom
+  element consumer. These are provided by the <code
+  data-x="dom-attachInternals">element.attachInternals()</code> method, which returns an instance of
+  <code>ElementInternals</code>. The properties and methods of <code>ElementInternals</code> allow
+  control over internal features which the user agent provides to all elements.</p>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>element</var>.<span subdfn data-x="dom-attachInternals">attachInternals()</span></code></dt>
+
+   <dd><p>Returns an <code>ElementInternals</code> object targeting the <span>custom element</span>
+   <var>element</var>. Throws an exception if <var>element</var> is not a <span>custom
+   element</span>, if the "<code data-x="">internals</code>" feature was disabled as part of the
+   element definition, or if it is called twice on the same element.</p></dd>
+  </dl>
+
+  <div w-nodev>
+
+  <p>Each <code>HTMLElement</code> has an <dfn>attached internals</dfn> (null or an
+  <code>ElementInternals</code> object), initially null.</p>
+
+  <div algorithm>
+  <p>The <dfn method for="HTMLElement"><code
+  data-x="dom-attachInternals">attachInternals()</code></dfn> method steps are:</p>
+
+  <ol>
+   <!-- We could lift this restriction in the future. -->
+   <li><p>If <span>this</span>'s <span data-x="concept-element-is-value"><code data-x="">is</code>
+   value</span> is not null, then throw a <span>"<code>NotSupportedError</code>"</span>
+   <code>DOMException</code>.</p></li>
+
+   <li><p>Let <var>definition</var> be the result of <span data-x="look up a custom element
+   definition">looking up a custom element definition</span> given <span>this</span>'s <span
+   data-x="element-custom-element-registry">custom element registry</span>, <span>this</span>'s
+   <span data-x="concept-element-namespace">namespace</span>, <span>this</span>'s <span
+   data-x="concept-element-local-name">local name</span>, and null.</p></li>
+
+   <li><p>If <var>definition</var> is null, then throw a
+   <span>"<code>NotSupportedError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>If <var>definition</var>'s <span
+   data-x="concept-custom-element-definition-disable-internals">disable internals</span> is true,
+   then throw a <span>"<code>NotSupportedError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>If <span>this</span>'s <span>attached internals</span> is non-null, then throw a
+   <span>"<code>NotSupportedError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>If <span>this</span>'s <span>custom element state</span> is not "<code
+   data-x="">precustomized</code>" or "<code data-x="">custom</code>", then throw a
+   <span>"<code>NotSupportedError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>Set <span>this</span>'s <span>attached internals</span> to a new
+   <code>ElementInternals</code> instance whose <span data-x="internals-target">target
+   element</span> is <span>this</span>.</p></li>
+
+   <li><p>Return <span>this</span>'s <span>attached internals</span>.</p></li>
+  </ol>
+  </div>
+
+  <h5>The <code>ElementInternals</code> interface</h5>
+
+  <p>The IDL for the <code>ElementInternals</code> interface is as follows, with the various operations and attributes
+  defined in the following sections:</p>
+
+  <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>ElementInternals</dfn> {
+  // <a href="#shadow-root-access">Shadow root access</a>
+  readonly attribute <code>ShadowRoot</code>? <span data-x="dom-ElementInternals-shadowRoot">shadowRoot</span>;
+
+  // <a href="#form-associated-custom-elements">Form-associated custom elements</a>
+  undefined <span data-x="dom-ElementInternals-setFormValue">setFormValue</span>((<span>File</span> or <span data-x="idl-USVString">USVString</span> or <span>FormData</span>)? value,
+                         optional (<span>File</span> or <span data-x="idl-USVString">USVString</span> or <span>FormData</span>)? state);
+
+  readonly attribute <span>HTMLFormElement</span>? <span data-x="dom-ElementInternals-form">form</span>;
+
+  undefined <span data-x="dom-ElementInternals-setValidity">setValidity</span>(optional <span>ValidityStateFlags</span> flags = {},
+                        optional DOMString message,
+                        optional <span>HTMLElement</span> anchor);
+  readonly attribute boolean <span data-x="dom-ElementInternals-willValidate">willValidate</span>;
+  readonly attribute <span>ValidityState</span> <span data-x="dom-ElementInternals-validity">validity</span>;
+  readonly attribute DOMString <span data-x="dom-ElementInternals-validationMessage">validationMessage</span>;
+  boolean <span data-x="dom-ElementInternals-checkValidity">checkValidity</span>();
+  boolean <span data-x="dom-ElementInternals-reportValidity">reportValidity</span>();
+
+  readonly attribute <span>NodeList</span> <span data-x="dom-ElementInternals-labels">labels</span>;
+
+  // <a href="#custom-state-pseudo-class">Custom state pseudo-class</a>
+  [SameObject] readonly attribute <span>CustomStateSet</span> <span data-x="dom-ElementInternals-states">states</span>;
+};
+
+// <a href="#accessibility-semantics">Accessibility semantics</a>
+<span>ElementInternals</span> includes <span>ARIAMixin</span>;
+
+dictionary <dfn dictionary>ValidityStateFlags</dfn> {
+  boolean valueMissing = false;
+  boolean typeMismatch = false;
+  boolean patternMismatch = false;
+  boolean tooLong = false;
+  boolean tooShort = false;
+  boolean rangeUnderflow = false;
+  boolean rangeOverflow = false;
+  boolean stepMismatch = false;
+  boolean badInput = false;
+  boolean customError = false;
+};</code></pre>
+
+  <p>Each <code>ElementInternals</code> has a <dfn data-x="internals-target">target element</dfn>,
+  which is a <span>custom element</span>.</p>
+
+  </div>
+
+  <h5>Shadow root access</h5>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>internals</var>.<span data-x="dom-ElementInternals-shadowRoot">shadowRoot</span></code></dt>
+   <dd><p>Returns the <code>ShadowRoot</code> for <var>internals</var>'s <span
+   data-x="internals-target">target element</span>, if the <span data-x="internals-target">target
+   element</span> is a <span>shadow host</span>, or null otherwise.</p></dd>
+  </dl>
+
+  <div w-nodev>
+  <div algorithm>
+  <p>The <dfn attribute for="ElementInternals"><code
+  data-x="dom-ElementInternals-shadowRoot">shadowRoot</code></dfn> getter steps are:</p>
+
+  <ol>
+   <li><p>Let <var>target</var> be <span>this</span>'s <span data-x="internals-target">target
+   element</span>.</p></li>
+
+   <li><p>If <var>target</var> is not a <span>shadow host</span>, then return null.</p></li>
+
+   <li><p>Let <var>shadow</var> be <var>target</var>'s <span
+   data-x="concept-element-shadow-root">shadow root</span>.</p></li>
+
+   <li><p>If <var>shadow</var>'s <span>available to element internals</span> is false, then return
+   null.</p></li>
+
+   <li><p>Return <var>shadow</var>.</p></li>
+  </ol>
+  </div>
+  </div>
+
+  <h5>Form-associated custom elements</h5>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>internals</var>.<span data-x="dom-ElementInternals-setFormValue">setFormValue</span>(<var>value</var>)</code></dt>
+   <dd>
+    <p>Sets both the <span data-x="face-state">state</span> and <span
+    data-x="face-submission-value">submission value</span> of <var>internals</var>'s <span
+    data-x="internals-target">target element</span> to <var>value</var>.</p>
+
+    <p>If <var>value</var> is null, the element won't participate in form submission.</p>
+   </dd>
+
+   <dt><code data-x=""><var>internals</var>.<span data-x="dom-ElementInternals-setFormValue">setFormValue</span>(<var>value</var>,
+   <var>state</var>)</code></dt>
+   <dd>
+    <p>Sets the <span data-x="face-submission-value">submission value</span> of
+    <var>internals</var>'s <span data-x="internals-target">target element</span> to
+    <var>value</var>, and its <span data-x="face-state">state</span> to <var>state</var>.</p>
+
+    <p>If <var>value</var> is null, the element won't participate in form submission.</p>
+   </dd>
+
+   <dt><code data-x=""><var>internals</var>.<span data-x="dom-ElementInternals-form">form</span></code></dt>
+   <dd><p>Returns the <span>form owner</span> of <var>internals</var>'s <span
+   data-x="internals-target">target element</span>.</p></dd>
+
+   <dt><code data-x=""><var>internals</var>.<span data-x="dom-ElementInternals-setValidity">setValidity</span>(<var>flags</var>,
+   <var>message</var> [, <var>anchor</var> ])</code></dt>
+   <dd><p>Marks <var>internals</var>'s <span data-x="internals-target">target element</span> as
+   suffering from the constraints indicated by the <var>flags</var> argument, and sets the element's
+   validation message to <var>message</var>. If <var>anchor</var> is specified, the user agent might
+   use it to indicate problems with the constraints of <var>internals</var>'s <span
+   data-x="internals-target">target element</span> when the <span>form owner</span> is validated
+   interactively or <code data-x="dom-ElementInternals-reportValidity">reportValidity()</code> is
+   called.</p></dd>
+
+   <dt><code data-x=""><var>internals</var>.<span data-x="dom-ElementInternals-setValidity">setValidity</span>({})</code></dt>
+   <dd><p>Marks <var>internals</var>'s <span data-x="internals-target">target element</span> as
+   <span data-x="concept-fv-valid">satisfying its constraints</span>.</p></dd>
+
+   <dt><code data-x=""><var>internals</var>.<span data-x="dom-ElementInternals-willValidate">willValidate</span></code></dt>
+   <dd><p>Returns true if <var>internals</var>'s <span data-x="internals-target">target
+   element</span> will be validated when the form is submitted; false otherwise.</p></dd>
+
+   <dt><code data-x=""><var>internals</var>.<span data-x="dom-ElementInternals-validity">validity</span></code></dt>
+   <dd><p>Returns the <code>ValidityState</code> object for <var>internals</var>'s <span
+   data-x="internals-target">target element</span>.</p></dd>
+
+   <dt><code data-x=""><var>internals</var>.<span data-x="dom-ElementInternals-validationMessage">validationMessage</span></code></dt>
+   <dd><p>Returns the error message that would be shown to the user if <var>internals</var>'s <span
+   data-x="internals-target">target element</span> was to be checked for validity.</p></dd>
+
+   <dt><code data-x=""><var>valid</var> = <var>internals</var>.<span data-x="dom-ElementInternals-checkValidity">checkValidity()</span></code></dt>
+   <dd><p>Returns true if <var>internals</var>'s <span data-x="internals-target">target
+   element</span> has no validity problems; false otherwise. Fires an <code
+   data-x="event-invalid">invalid</code> event at the element in the latter case.</p></dd>
+
+   <dt><code data-x=""><var>valid</var> = <var>internals</var>.<span data-x="dom-ElementInternals-reportValidity">reportValidity()</span></code></dt>
+   <dd><p>Returns true if <var>internals</var>'s <span data-x="internals-target">target
+   element</span> has no validity problems; otherwise, returns false, fires an <code
+   data-x="event-invalid">invalid</code> event at the element, and (if the event isn't canceled)
+   reports the problem to the user.</p></dd>
+
+   <dt><code data-x=""><var>internals</var>.<span data-x="dom-ElementInternals-labels">labels</span></code></dt>
+   <dd><p>Returns a <code>NodeList</code> of all the <code>label</code> elements that
+   <var>internals</var>'s <span data-x="internals-target">target element</span> is associated
+   with.</p></dd>
+  </dl>
+
+  <p>Each <span>form-associated custom element</span> has <dfn
+  data-x="face-submission-value">submission value</dfn>. It is used to provide one or more
+  <span data-x="form entry">entries</span> on form submission.
+  The initial value of <span data-x="face-submission-value">submission value</span> is null, and
+  <span data-x="face-submission-value">submission value</span> can be null, a string, a
+  <code>File</code>, or a <span>list</span> of <span data-x="form entry">entries</span>.</p>
+
+  <p>Each <span>form-associated custom element</span> has <dfn data-x="face-state">state</dfn>.
+  It is information with which the user agent can restore a user's input for the element.
+  The initial value of <span data-x="face-state">state</span> is null, and <span
+  data-x="face-state">state</span> can be null, a string, a <code>File</code>, or a
+  <span>list</span> of <span data-x="form entry">entries</span>.</p>
+
+  <p>The <code data-x="dom-ElementInternals-setFormValue">setFormValue()</code> method is used by
+  the custom element author to set the element's <span data-x="face-submission-value">submission
+  value</span> and <span data-x="face-state">state</span>, thus communicating these to the user
+  agent.</p>
+
+  <p>When the user agent believes it is a good idea to restore a <span>form-associated custom
+  element</span>'s <span data-x="face-state">state</span>, for example <span data-x="restore
+  persisted state">after navigation</span> or restarting the user agent, they may <span>enqueue a
+  custom element callback reaction</span> with that element, callback name "<code
+  data-x="">formStateRestoreCallback</code>", and « the state to be restored, "<code
+  data-x="">restore</code>" ».</p>
+
+  <p>If the user agent has a form-filling assist feature, then when the feature is invoked, it may
+  <span>enqueue a custom element callback reaction</span> with a <span>form-associated custom
+  element</span>, callback name "<code data-x="">formStateRestoreCallback</code>", and « the state
+  value determined by history of state value and some heuristics, "<code
+  data-x="">autocomplete</code>" ».</p>
+
+  <p>In general, the <span data-x="face-state">state</span> is information specified by a user, and
+  the <span data-x="face-submission-value">submission value</span> is a value after canonicalization
+  or sanitization, suitable for submission to the server. The following examples makes this
+  concrete:</p>
+
+  <p class="example">Suppose that we have a <span>form-associated custom element</span> which asks a
+  user to specify a date. The user specifies <kbd>"3/15/2019"</kbd>, but the control wishes to
+  submit <code data-x="">"2019-03-15"</code> to the server. <kbd>"3/15/2019"</kbd> would be a <span
+  data-x="face-state">state</span> of the element, and <code data-x="">"2019-03-15"</code> would be
+  a <span data-x="face-submission-value">submission value</span>.</p>
+
+  <p class="example">Suppose you develop a custom element emulating a the behavior of the existing
+  <span data-x="attr-input-type-checkbox">checkbox</span> <code>input</code> type. Its <span
+  data-x="face-submission-value">submission value</span> would be the value of its <code
+  data-x="">value</code> content attribute, or the string <code data-x="">"on"</code>. Its <span
+  data-x="face-state">state</span> would be one of <code data-x="">"checked"</code>, <code
+  data-x="">"unchecked"</code>, <code data-x="">"checked/indeterminate"</code>, or <code
+  data-x="">"unchecked/indeterminate"</code>.</p>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn method for="ElementInternals"><code
+  data-x="dom-ElementInternals-setFormValue">setFormValue(<var>value</var>,
+  <var>state</var>)</code></dfn> method steps are:</p>
+
+  <ol>
+   <li><p>Let <var>element</var> be <span>this</span>'s <span data-x="internals-target">target
+   element</span>.</p></li>
+
+   <li><p>If <var>element</var> is not a <span>form-associated custom element</span>, then throw a
+   <span>"<code>NotSupportedError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>Set <var>element</var>'s <span
+   data-x="face-submission-value">submission value</span> to <var>value</var> if <var>value</var> is
+   not a <code>FormData</code> object, or to a <span data-x="list clone">clone</span> of
+   <var>value</var>'s <span data-x="FormData entry list">entry list</span> otherwise.</p></li>
+
+   <li><p>If the <var>state</var> argument of the function is omitted, set <var>element</var>'s
+   <span data-x="face-state">state</span> to its <span data-x="face-submission-value">submission
+   value</span>.
+
+   <li><p>Otherwise, if <var>state</var> is a <code>FormData</code> object, set <var>element</var>'s
+   <span data-x="face-state">state</span> to a <span data-x="list clone">clone</span> of
+   <var>state</var>'s <span data-x="FormData entry list">entry list</span>.</p></li>
+
+   <li><p>Otherwise, set <var>element</var>'s <span data-x="face-state">state</span> to
+   <var>state</var>.</p></li>
+  </ol>
+  </div>
+
+  <hr>
+
+  <p>Each <span>form-associated custom element</span> has validity flags named
+  <code data-x="">valueMissing</code>, <code data-x="">typeMismatch</code>,
+  <code data-x="">patternMismatch</code>, <code data-x="">tooLong</code>,
+  <code data-x="">tooShort</code>, <code data-x="">rangeUnderflow</code>,
+  <code data-x="">rangeOverflow</code>, <code data-x="">stepMismatch</code>, and
+  <code data-x="">customError</code>. They are false initially.</p>
+
+  <p>Each <span>form-associated custom element</span> has a
+  <dfn data-x="face-validation-message">validation message</dfn> string. It is the empty string
+  initially.</p>
+
+  <p>Each <span>form-associated custom element</span> has a
+  <dfn data-x="face-validation-anchor">validation anchor</dfn> element. It is null initially.</p>
+
+  <div algorithm>
+  <p>The <dfn method for="ElementInternals"><code
+  data-x="dom-ElementInternals-setValidity">setValidity(<var>flags</var>, <var>message</var>,
+  <var>anchor</var>)</code></dfn> method steps are:</p>
+
+  <ol>
+   <li><p>Let <var>element</var> be <span>this</span>'s <span data-x="internals-target">target
+   element</span>.</p></li>
+
+   <li><p>If <var>element</var> is not a <span>form-associated custom element</span>, then throw a
+   <span>"<code>NotSupportedError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>If <var>message</var> is not given, then set it to the empty string.</p></li>
+
+   <li><p>If <var>flags</var> contains one or more true values and <var>message</var> is the empty
+   string, then throw a <code>TypeError</code>.</p></li>
+
+   <li><p>Set <var>message</var> to the result of <span data-x="normalize newlines">normalizing
+   newlines</span> given <var>message</var>.</p></li>
+
+   <li><p>For each entry <var>flag</var> → <var>value</var> of <var>flags</var>, set
+   <var>element</var>'s validity flag with the name <var>flag</var> to <var>value</var>.</p></li>
+
+   <li><p>Set <var>element</var>'s <span data-x="face-validation-message">validation message</span>
+   to the empty string if all of <var>element</var>'s validity flags are false; otherwise to
+   <var>message</var>.</p></li>
+
+   <li><p>If <var>element</var>'s <code data-x="">customError</code> validity flag is true, then set
+   <var>element</var>'s <span>custom validity error message</span> to <var>element</var>'s
+   <span data-x="face-validation-message">validation message</span>. Otherwise, set
+   <var>element</var>'s <span>custom validity error message</span> to the empty string.</p></li>
+
+   <li><p>If <var>anchor</var> is not given, then set it to <var>element</var>.</p></li>
+
+   <li><p>Otherwise, if <var>anchor</var> is not a <span>shadow-including inclusive
+   descendant</span> of <var>element</var>, then throw a <span>"<code>NotFoundError</code>"</span>
+   <code>DOMException</code>.</p></li>
+
+   <li><p>Set <var>element</var>'s <span data-x="face-validation-anchor">validation anchor</span> to
+   <var>anchor</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="ElementInternals"><code
+  data-x="dom-ElementInternals-validationMessage">validationMessage</code></dfn> getter steps
+  are:</p>
+
+  <ol>
+   <li><p>Let <var>element</var> be <span>this</span>'s <span data-x="internals-target">target
+   element</span>.</p></li>
+
+   <li><p>If <var>element</var> is not a <span>form-associated custom element</span>, then throw a
+   <span>"<code>NotSupportedError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>Return <var>element</var>'s <span data-x="face-validation-message">validation
+   message</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn data-x="face-entry-construction">entry construction algorithm</dfn> for a
+  <span>form-associated custom element</span>, given an element <var>element</var> and an
+  <span>entry list</span> <var>entry list</var>, consists of the following steps:</p>
+
+  <ol>
+   <li>
+    <p>If <var>element</var>'s <span data-x="face-submission-value">submission value</span> is a
+    <span>list</span> of <span data-x="form entry">entries</span>, then <span data-x="list
+    append">append</span> each item of <var>element</var>'s <span
+    data-x="face-submission-value">submission value</span> to <var>entry list</var>, and return.</p>
+
+    <p class="note">In this case, user agent does not refer to the
+    <code data-x="attr-fe-name">name</code> content attribute value. An implementation of
+    <span>form-associated custom element</span> is responsible to decide names of
+    <span data-x="form entry">entries</span>. They can be the
+    <code data-x="attr-fe-name">name</code> content attribute value, they can be strings based on
+    the <code data-x="attr-fe-name">name</code> content attribute value, or they can be unrelated
+    to the <code data-x="attr-fe-name">name</code> content attribute.</p>
+   </li>
+
+   <li><p>If the element does not have a <code data-x="attr-fe-name">name</code> attribute
+   specified, or its <code data-x="attr-fe-name">name</code> attribute's value is the empty string,
+   then return.</p></li>
+
+   <li><p>If the element's <span data-x="face-submission-value">submission value</span> is not
+   null, <span>create an entry</span> with the <code data-x="attr-fe-name">name</code> attribute
+   value and the <span data-x="face-submission-value">submission value</span>, and <span
+   data-x="list append">append</span> it to <var>entry list</var>.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+  <h5>Accessibility semantics</h5>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>internals</var>.<span data-x="dom-ARIAMixin-role">role</span> [ = <var>value</var> ]</code></dt>
+   <dd><p>Sets or retrieves the default ARIA role for <var>internals</var>'s <span
+   data-x="internals-target">target element</span>, which will be used unless the page author
+   overrides it using the <code data-x="attr-aria-role">role</code> attribute.</p></dd>
+
+   <dt><code data-x=""><var>internals</var>.<span data-x="dom-ARIAMixin-aria*">aria*</span> [ = <var>value</var> ]</code></dt>
+   <dd><p>Sets or retrieves various default ARIA states or property values for
+   <var>internals</var>'s <span data-x="internals-target">target element</span>, which will be used
+   unless the page author overrides them using the <code data-x="attr-aria-*">aria-*</code>
+   attributes.</p></dd>
+  </dl>
+
+  <p w-dev>By using the <code data-x="">role</code> and <code data-x="">aria*</code> properties of
+  <code>ElementInternals</code>, custom element authors can set default accessibile roles, states,
+  and property values for their custom element, similar to how native elements behave. See <a
+  href="#custom-elements-accessibility-example">the example above</a> for more details.</p>
+
+  <div w-nodev>
+
+  <p>Each <span>custom element</span> has an <dfn>internal content attribute map</dfn>, which is a
+  <span data-x="ordered map">map</span>, initially empty. See the <a href="#wai-aria">Requirements
+  related to ARIA and to platform accessibility APIs</a> section for information on how this impacts
+  platform accessibility APIs.</p>
+
+  </div>
+
+  <h5>Custom state pseudo-class</h5>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>internals</var>.<span data-x="dom-ElementInternals-states">states</span>.add(<var>value</var>)</code></dt>
+   <dd>
+    <p>Adds the string <var>value</var> to the element's <span>states set</span> to be exposed as a
+    pseudo-class.</p>
+   </dd>
+
+   <dt><code data-x=""><var>internals</var>.<span data-x="dom-ElementInternals-states">states</span>.has(<var>value</var>)</code></dt>
+   <dd>
+    <p>Returns true if <var>value</var> is in the element's <span>states set</span>, otherwise
+    false.</p>
+   </dd>
+
+   <dt><code data-x=""><var>internals</var>.<span data-x="dom-ElementInternals-states">states</span>.delete(<var>value</var>)</code></dt>
+   <dd>
+    <p>If the element's <span>states set</span> has <var>value</var>, then it will be removed and
+    true will be returned. Otherwise, false will be returned.</p>
+   </dd>
+
+   <dt><code data-x=""><var>internals</var>.<span data-x="dom-ElementInternals-states">states</span>.clear()</code></dt>
+   <dd>
+    <p>Removes all values from the element's <span>states set</span>.</p>
+   </dd>
+
+   <dt><code data-x="">for (const <var>stateName</var> of <var>internals</var>.<span data-x="dom-ElementInternals-states">states</span>)</code></dt>
+   <dt><code data-x="">for (const <var>stateName</var> of <var>internals</var>.<span data-x="dom-ElementInternals-states">states</span>.entries())</code></dt>
+   <dt><code data-x="">for (const <var>stateName</var> of <var>internals</var>.<span data-x="dom-ElementInternals-states">states</span>.keys())</code></dt>
+   <dt><code data-x="">for (const <var>stateName</var> of <var>internals</var>.<span data-x="dom-ElementInternals-states">states</span>.values())</code></dt>
+   <dd>
+    <p>Iterates over all values in the element's <span>states set</span>.</p>
+   </dd>
+
+   <dt><code data-x=""><var>internals</var>.<span data-x="dom-ElementInternals-states">states</span>.forEach(<var>callback</var>)</code></dt>
+   <dd>
+    <p>Iterates over all values in the element's <span>states set</span> by calling
+    <var>callback</var> once for each value.</p>
+   </dd>
+
+   <dt><code data-x=""><var>internals</var>.<span data-x="dom-ElementInternals-states">states</span>.size</code></dt>
+   <dd>
+    <p>Returns the number of values in the element's <span>states set</span>.</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+   <p>Each <span>custom element</span> has a <dfn>states set</dfn>, which is a
+   <code>CustomStateSet</code>, initially empty.</p>
+
+   <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>CustomStateSet</dfn> {
+  setlike&lt;DOMString>;
+};</code></pre>
+
+   <div algorithm>
+   <p>The <dfn attribute for="HTMLElement"><code
+   data-x="dom-ElementInternals-states">states</code></dfn> getter steps are to return
+   <span>this</span>'s <span data-x="internals-target">target element</span>'s <span>states
+   set</span>.</p>
+   </div>
+  </div>
+
+  <div class="example">
+   <p>The <span>states set</span> can expose boolean states represented by existence/non-existence
+   of string values. If an author wants to expose a state which can have three values, it can be
+   converted to three exclusive boolean states. For example, a state called <code
+   data-x="">readyState</code> with <code data-x="">"loading"</code>, <code
+   data-x="">"interactive"</code>, and <code data-x="">"complete"</code> values can be mapped to
+   three exclusive boolean states, <code data-x="">"loading"</code>, <code
+   data-x="">"interactive"</code>, and <code data-x="">"complete"</code>:</p>
+
+   <pre><code class="js">// Change the readyState from anything to "complete".
+this._readyState = "complete";
+this._internals.states.delete("loading");
+this._internals.states.delete("interactive");
+this._internals.states.add("complete");</code></pre>
+  </div>
+
+  <h3 split-filename="semantics-other" id="common-idioms">Common idioms without dedicated elements</h3>
+

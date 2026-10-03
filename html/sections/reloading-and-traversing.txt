@@ -1,0 +1,120 @@
+WHATWG HTML — section reloading-and-traversing — Reloading and traversing
+
+  <h4>Reloading and traversing</h4>
+
+  <div algorithm>
+  <p>To <dfn>reload</dfn> a <span>navigable</span> <var>navigable</var> given an optional
+  <span>serialized state</span>-or-null <dfn
+  data-x="reload-navigation-api-state"><var>navigationAPIState</var></dfn> (default null), an
+  optional <span>user navigation involvement</span> <dfn
+  data-x="reload-user-involvement"><var>userInvolvement</var></dfn> (default "<code
+  data-x="uni-none">none</code>"), and an optional <span>navigation API method
+  tracker</span>-or-null <dfn data-x="reload-api-method-tracker"><var>apiMethodTracker</var></dfn>
+  (default null):</p>
+
+  <ol>
+   <li>
+    <p>If <var>userInvolvement</var> is not "<code data-x="uni-browser-ui">browser UI</code>":</p>
+
+    <ol>
+     <li><p>Let <var>navigation</var> be <var>navigable</var>'s <span data-x="nav-window">active
+     window</span>'s <span data-x="window-navigation-api">navigation API</span>.</p></li>
+
+     <li><p>Let <var>destinationNavigationAPIState</var> be <var>navigable</var>'s <span
+     data-x="nav-active-history-entry">active session history entry</span>'s <span
+     data-x="she-navigation-api-state">navigation API state</span>.</p></li>
+
+     <li><p>If <var>navigationAPIState</var> is not null, then set
+     <var>destinationNavigationAPIState</var> to <var>navigationAPIState</var>.</p></li>
+
+     <li><p>Let <var>continue</var> be the result of <span data-x="fire a push/replace/reload
+     navigate event">firing a push/replace/reload <code data-x="event-navigate">navigate</code>
+     event</span> at <var>navigation</var> with <i
+     data-x="fire-navigate-prr-navigationType">navigationType</i> set to "<code
+     data-x="dom-NavigationType-reload">reload</code>", <i
+     data-x="fire-navigate-prr-isSameDocument">isSameDocument</i> set to false, <i
+     data-x="fire-navigate-prr-userInvolvement">userInvolvement</i> set to
+     <var>userInvolvement</var>, <i data-x="fire-navigate-prr-destinationURL">destinationURL</i>
+     set to <var>navigable</var>'s <span data-x="nav-active-history-entry">active session history
+     entry</span>'s <span data-x="she-url">URL</span>, <i
+     data-x="fire-navigate-prr-navigationAPIState">navigationAPIState</i> set to
+     <var>destinationNavigationAPIState</var>, and <i
+     data-x="fire-navigate-prr-api-method-tracker">apiMethodTracker</i> set to
+     <var>apiMethodTracker</var>.</p></li>
+
+     <li><p>If <var>continue</var> is false, then return.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Set <var>navigable</var>'s <span data-x="nav-active-history-entry">active session history
+   entry</span>'s <span data-x="she-document-state">document state</span>'s <span
+   data-x="document-state-reload-pending">reload pending</span> to true.</p></li>
+
+   <li><p>Let <var>traversable</var> be <var>navigable</var>'s <span
+   data-x="nav-traversable">traversable navigable</span>.</p></li>
+
+   <li>
+    <p><span data-x="tn-append-session-history-traversal-steps">Append the following session
+    history traversal steps</span> to <var>traversable</var>:</p>
+
+    <ol>
+     <li><p><span>Apply the reload history step</span> to <var>traversable</var> given
+     <var>userInvolvement</var>.</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>traverse the history by a delta</dfn> given a <span>traversable navigable</span>
+  <var>traversable</var>, an integer <var>delta</var>, and an optional <code>Document</code> <dfn
+  data-x="traverse-sourceDocument"><var>sourceDocument</var></dfn>:</p>
+
+  <ol>
+   <li><p>Let <var>sourceSnapshotParams</var> and <var>initiatorToCheck</var> be null.</p></li>
+
+   <li><p>Let <var>userInvolvement</var> be "<code data-x="uni-browser-ui">browser
+   UI</code>".</p></li>
+
+   <li>
+    <p>If <var>sourceDocument</var> is given:</p>
+
+    <ol>
+     <li><p>Set <var>sourceSnapshotParams</var> to the result of <span>snapshotting source snapshot
+     params</span> given <var>sourceDocument</var>.</p></li>
+
+     <li><p>Set <var>initiatorToCheck</var> to <var>sourceDocument</var>'s <span>node
+     navigable</span>.</p></li>
+
+     <li><p>Set <var>userInvolvement</var> to "<code data-x="uni-none">none</code>".</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p><span data-x="tn-append-session-history-traversal-steps">Append the following session
+    history traversal steps</span> to <var>traversable</var>:</p>
+
+    <ol>
+     <li><p>Let <var>allSteps</var> be the result of <span>getting all used history steps</span>
+     for <var>traversable</var>.</p></li>
+
+     <li><p>Let <var>currentStepIndex</var> be the index of <var>traversable</var>'s <span
+     data-x="tn-current-session-history-step">current session history step</span> within
+     <var>allSteps</var>.</p></li>
+
+     <li><p>Let <var>targetStepIndex</var> be <var>currentStepIndex</var> plus
+     <var>delta</var>.</p></li>
+
+     <li><p>If <var>allSteps</var>[<var>targetStepIndex</var>] does not <span data-x="list
+     contains">exist</span>, then abort these steps.</p></li>
+
+     <li><p><span>Apply the traverse history step</span>
+     <var>allSteps</var>[<var>targetStepIndex</var>] to <var>traversable</var>, given
+     <var>sourceSnapshotParams</var>, <var>initiatorToCheck</var>, and
+     <var>userInvolvement</var>.</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+

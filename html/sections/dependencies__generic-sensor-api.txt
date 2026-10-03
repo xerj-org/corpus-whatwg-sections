@@ -1,0 +1,12 @@
+WHATWG HTML — section dependencies/generic-sensor-api — Generic Sensor API
+
+  <dt>Generic Sensor API</dt>
+
+  <dd>
+   <p>The following terms are defined in <cite>Generic Sensor API</cite>:</p>
+
+   <ul class="brief">
+    <li><dfn data-x="request-sensor-access" data-x-href="https://w3c.github.io/sensors/#request-sensor-access">request sensor access</dfn></li>
+   </ul>
+  </dd>
+

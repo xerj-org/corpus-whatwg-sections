@@ -1,0 +1,125 @@
+WHATWG HTML — section close-requests — Close requests
+
+  <h4>Close requests</h4>
+
+  <p>In an <span>implementation-defined</span> (and likely device-specific) manner, a user can send
+  a <dfn export>close request</dfn> to the user agent. This indicates that the user wishes to close
+  something that is currently being shown on the screen, such as a popover, menu, dialog, picker, or
+  display mode.</p>
+
+  <div class="example">
+   <p>Some example close requests are:</p>
+
+   <ul>
+    <li><p>The <kbd>Esc</kbd> key on desktop platforms.</p></li>
+
+    <li><p>The back button or gesture on certain mobile platforms such as Android.</p></li>
+
+    <li><p>Any assistive technology's dismiss gesture, such as iOS VoiceOver's two-finger scrub "z"
+    gesture.</p></li>
+
+    <li><p>A game controller's canonical "back" button, such as the circle button on a DualShock
+    gamepad.</p></li>
+   </ul>
+  </div>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>Whenever the user agent receives a potential close request targeted at a <code>Document</code>
+  <var>document</var>, it must <span>queue a global task</span> on the <span>user interaction task
+  source</span> given <var>document</var>'s <span>relevant global object</span> to perform the
+  following <dfn export>close request steps</dfn>:</p>
+
+  <ol>
+   <li>
+    <p>If <var>document</var>'s <span>fullscreen element</span> is not null:</p>
+
+    <ol>
+     <li><p><span>Fully exit fullscreen</span> given <var>document</var>'s <span>node
+     navigable</span>'s <span data-x="nav-top">top-level traversable</span>'s <span
+     data-x="nav-document">active document</span>.</p></li>
+
+     <li><p>Return.</p>
+    </ol>
+
+    <p class="note">This does <em>not</em> fire any relevant event, such as <code
+    data-x="event-keydown">keydown</code>; it only causes <code
+    data-x="event-fullscreenchange">fullscreenchange</code> to be eventually fired.</p>
+   </li>
+
+   <li>
+    <p>Optionally, skip to the step labeled <a href="#close-request-fallback">alternative
+    processing</a>.</p>
+
+    <p class="note">For example, if the user agent detects user frustration at repeated close
+    request interception by the current web page, it might take this path.</p>
+   </li>
+
+   <li>
+    <p>Fire any relevant events, per <cite>UI Events</cite> or other relevant specifications.
+    <ref>UIEVENTS</ref></p>
+
+    <p class="example">An example of a relevant event in the <cite>UI Events</cite> model would be
+    the <code data-x="event-keydown">keydown</code>  event that <cite>UI Events</cite> <a
+    href="https://w3c.github.io/uievents/#events-keyboard-event-order">suggests</a> firing when the
+    user presses the <kbd>Esc</kbd> key on their keyboard. On most platforms with keyboards, this
+    is treated as a <span>close request</span>, and so would trigger these <span>close request
+    steps</span>.</p>
+
+    <p class="example">An example of relevant events that are outside of the model given in
+    <cite>UI Events</cite> would be assistive technology synthesizing an <kbd>Esc</kbd> <code
+    data-x="event-keydown">keydown</code> event when the user sends a <span>close request</span> by
+    using a dismiss gesture.</p>
+   </li>
+
+   <li><p>Let <var>event</var> be null if no such events are fired, or the <code>Event</code>
+   object representing one of the fired events otherwise. If multiple events are fired, which one
+   is chosen is <span>implementation-defined</span>.</p></li>
+
+   <li><p>If <var>event</var> is not null, and its <span>canceled flag</span> is set, then
+   return.</p></li>
+
+   <li>
+    <p>If <var>document</var> is not <span>fully active</span>, then return.</p>
+
+    <p class="note">This step is necessary because, if <var>event</var> is not null, then an event
+    listener might have caused <var>document</var> to no longer be <span>fully active</span>.</p>
+   </li>
+
+   <li><p>Let <var>closedSomething</var> be the result of <span data-x="process close
+   watchers">processing close watchers</span> on <var>document</var>'s <span>relevant global
+   object</span>.</p></li>
+
+   <li><p>If <var>closedSomething</var> is true, then return.</p></li>
+
+   <li id="close-request-fallback"><p><i>Alternative processing</i>: Otherwise, there was nothing
+   watching for a <span>close request</span>. The user agent may instead interpret this interaction
+   as some other action, instead of interpreting it as a close request.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+  <p>On platforms where pressing the <kbd>Esc</kbd> key is interpreted as a <span>close
+  request</span>, the user agent must interpret the key being pressed <em>down</em> as the close
+  request, instead of the key being released. Thus, in the above algorithm, the "relevant events"
+  that are fired must be the single <code data-x="event-keydown">keydown</code> event.</p>
+
+  <p class="example">On platforms where <kbd>Esc</kbd> is the <span>close request</span>, the user
+  agent will first fire an appropriately-initialized <code data-x="event-keydown">keydown</code>
+  event. If the web developer cancels the event by calling <code
+  data-x="dom-Event-preventDefault">preventDefault()</code>, then nothing further happens. But if
+  the event fires without being canceled, then the user agent proceeds to <span>process close
+  watchers</span>.</p>
+
+  <p class="example">On platforms where a back button is a potential <span>close request</span>, no
+  event is involved, so when the back button is pressed, the user agent proceeds directly to
+  <span>process close watchers</span>. If there is an <span
+  data-x="close-watcher-active">active</span> <span>close watcher</span>, then that will get
+  triggered. If there is not, then the user agent can interpret the back button press in another
+  way, for example as a request to <span>traverse the history by a delta</span> of &minus;1.</p>
+
+
+  <div w-nodev>
+

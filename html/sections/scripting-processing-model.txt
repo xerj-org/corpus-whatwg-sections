@@ -1,0 +1,2304 @@
+WHATWG HTML — section scripting-processing-model — <span id="processing-model-7"></span>Script processing model
+
+  <h4 id="scripting-processing-model"><span id="processing-model-7"></span>Script processing
+  model</h4>
+
+  <div w-nodev>
+
+  <h5 id="script-structs"><span id="definitions-2"></span>Scripts</h5>
+
+  <p>A <dfn data-x="concept-script" export>script</dfn> is one of two possible <span
+  data-x="struct">structs</span> (namely, a <span>classic script</span> or a
+  <span>module script</span>). All scripts have:</p>
+
+  <dl>
+   <dt>A <dfn for="script" export data-x="concept-script-settings-object"
+   id="settings-object">settings object</dfn></dt>
+
+   <dd><p>An <span>environment settings object</span>, containing various settings that are shared
+   with other <span data-x="concept-script">scripts</span> in the same context.</p></dd>
+
+   <dt>A <dfn for="script" export data-x="concept-script-record">record</dfn></dt>
+
+   <dd>
+    <p>One of the following:</p>
+
+    <ul>
+     <li><p>a <span>script record</span>, for <span data-x="classic script">classic
+     scripts</span>;</p></li>
+
+     <li><p>a <span>Source Text Module Record</span>, for <span data-x="JavaScript module
+     script">JavaScript module scripts</span>;</p></li>
+
+     <li><p>a <span>Synthetic Module Record</span>, for <span data-x="CSS module script">CSS module
+     scripts</span>, <span data-x="JSON module script">JSON module scripts</span>, and
+     <span data-x="text module script">text module scripts</span>;</p></li>
+
+     <li><p>a <span>WebAssembly Module Record</span>, for <span data-x="WebAssembly module
+     script">WebAssembly module scripts</span>; or</p></li>
+
+     <li><p>null, representing a parsing failure.</p></li>
+    </ul>
+   </dd>
+
+   <dt>A <dfn for="script" data-x="concept-script-parse-error">parse error</dfn></dt>
+
+   <dd>
+    <p>A JavaScript value, which has meaning only if the <span
+    data-x="concept-script-record">record</span> is null, indicating that the corresponding script
+    source text could not be parsed.</p>
+
+    <p class="note">This value is used for internal tracking of immediate parse errors when <a
+    href="#creating-scripts">creating scripts</a>, and is not to be used directly. Instead, consult
+    the <span data-x="concept-script-error-to-rethrow">error to rethrow</span> when determining
+    "what went wrong" for this script.</p>
+  </dd>
+
+   <dt>An <dfn for="script" export data-x="concept-script-error-to-rethrow">error
+   to rethrow</dfn></dt>
+
+   <dd>
+    <p>A JavaScript value representing an error that will prevent evaluation from succeeding. It
+    will be re-thrown by any attempts to <a href="#calling-scripts">run</a> the script.</p>
+
+    <p class="note">This could be the script's <span data-x="concept-script-parse-error">parse
+    error</span>, but in the case of a <span>module script</span> it could instead be the
+    <span data-x="concept-script-parse-error">parse error</span> from one of its dependencies, or
+    an error from <span>resolve a module specifier</span>.</p>
+
+    <p class="note">Since this exception value is provided by the JavaScript specification, we know
+    that it is never null, so we use null to signal that no error has occurred.</p>
+   </dd>
+
+   <dt><dfn for="script" export
+   data-x="concept-script-script-fetch-options">Fetch options</dfn></dt>
+
+   <dd>Null or a <span>script fetch options</span>, containing various options related to fetching
+   this script or <span data-x="module script">module scripts</span> that it imports.</dd>
+
+   <dt>A <dfn for="script" export data-x="concept-script-base-url">base
+   URL</dfn></dt>
+
+   <dd><p>Null or a base <span>URL</span> used for <span data-x="resolve a module
+   specifier">resolving module specifiers</span>. When non-null, this will either be the URL from
+   which the script was obtained, for external scripts, or the <span>document base URL</span> of the
+   containing document, for inline scripts.</p></dd>
+  </dl>
+
+
+  <p>A <dfn export>classic script</dfn> is a type of <span data-x="concept-script">script</span>
+  that has the following additional <span data-x="struct item">item</span>:</p>
+
+  <dl>
+   <dt>A <dfn>muted errors</dfn> boolean</dt>
+
+   <dd><p>A boolean which, if true, means that error information will not be provided for errors in
+   this script. This is used to mute errors for cross-origin scripts, since that can leak private
+   information.</p></dd>
+  </dl>
+
+  <p>A <dfn export>module script</dfn> is another type of <span
+  data-x="concept-script">script</span>. It has no additional <span data-x="struct
+  item">items</span>.</p>
+
+  <p><span data-x="module script">Module scripts</span> can be classified into five types:</p>
+
+  <ul>
+   <li>
+    <div algorithm>
+    <p>A <span>module script</span> is a <dfn export>JavaScript module script</dfn> if
+    its <span data-x="concept-script-record">record</span> is a <span>Source Text Module
+    Record</span>.</p>
+    </div>
+   </li>
+
+   <li>
+    <div algorithm>
+    <p>A <span>module script</span> is a <dfn export>CSS module script</dfn> if its <span
+    data-x="concept-script-record">record</span> is a <span>Synthetic Module Record</span>, and it
+    was created via the <span data-x="creating a CSS module script">create a CSS module
+    script</span> algorithm. CSS module scripts represent a parsed CSS style sheet.</p>
+    </div>
+
+    <!--
+     This definition is not super-rigorous, but it doesn't need to be for now. If we ever start
+     testing if something is a CSS module script in algorithms, instead of just referring to the
+     concept, then we should consider adding a type item to the module script struct.
+    -->
+   </li>
+
+   <li>
+    <div algorithm>
+    <p>A <span>module script</span> is a <dfn export>JSON module script</dfn> if its <span
+    data-x="concept-script-record">record</span> is a <span>Synthetic Module Record</span>, and it
+    was created via the <span data-x="creating a JSON module script">create a JSON module
+    script</span> algorithm. JSON module scripts represent a parsed JSON document.</p>
+    </div>
+
+    <!--
+     This definition is not super-rigorous, but it doesn't need to be for now. If we ever start
+     testing if something is a JSON module script in algorithms, instead of just referring to the
+     concept, then we should consider adding a type item to the module script struct.
+    -->
+   </li>
+
+   <li>
+    <div algorithm>
+    <p>A <span>module script</span> is a <dfn export>text module script</dfn> if its <span
+    data-x="concept-script-record">record</span> is a <span>Synthetic Module Record</span>, and it
+    was created via the <span data-x="creating a text module script">create a text module
+    script</span> algorithm. Text module scripts represent textual data encoded as UTF-8.</p>
+    </div>
+   </li>
+
+   <li>
+    <div algorithm>
+    <p>A <span>module script</span> is a <dfn export>WebAssembly module script</dfn> if
+    its <span data-x="concept-script-record">record</span> is a <span>WebAssembly Module
+    Record</span>.</p>
+    </div>
+   </li>
+  </ul>
+
+  <p class="note">As CSS style sheets, JSON documents, and text do not import dependent modules, and do not
+  throw exceptions on evaluation, the <span data-x="concept-script-script-fetch-options">fetch
+  options</span> and <span data-x="concept-script-base-url">base URL</span> of <span data-x="CSS
+  module script">CSS module scripts</span>, <span data-x="JSON module script">JSON module
+  scripts</span>, and <span data-x="text module script">text module scripts</span> are always null.</p>
+
+  <div algorithm>
+  <p>The <dfn>active script</dfn> is determined by the following algorithm:</p>
+
+  <ol>
+   <li><p>Let <var>record</var> be <span>GetActiveScriptOrModule</span>().</p></li>
+
+   <li><p>If <var>record</var> is null, return null.</p></li>
+
+   <li><p>Return <var>record</var>.[[HostDefined]].</p></li>
+  </ol>
+  </div>
+
+  <p class="note">The <span>active script</span> concept is so far only used by the
+  <code>import()</code> feature, to determine the <span data-x="concept-script-base-url">base
+  URL</span> to use for resolving relative module specifiers.</p>
+
+  <h5 id="fetching-scripts">Fetching scripts</h5>
+
+  <p>This section introduces a number of algorithms for fetching scripts, taking various necessary
+  inputs and resulting in <span data-x="classic script">classic</span> or <span data-x="module
+  script">module scripts</span>.</p>
+
+  <hr>
+
+  <p><dfn>Script fetch options</dfn> is a <span>struct</span> with the following <span
+  data-x="struct item">items</span>:</p>
+
+  <dl>
+   <dt><dfn data-x="concept-script-fetch-options-nonce">cryptographic nonce</dfn></dt>
+
+   <dd><p>The <span data-x="concept-request-nonce-metadata">cryptographic nonce metadata</span> used
+   for the initial fetch and for fetching any imported modules</p></dd>
+
+   <dt><dfn data-x="concept-script-fetch-options-integrity">integrity metadata</dfn></dt>
+
+   <dd><p>The <span data-x="concept-request-integrity-metadata">integrity metadata</span> used for
+   the initial fetch</dd>
+
+   <dt><dfn data-x="concept-script-fetch-options-parser">parser metadata</dfn></dt>
+
+   <dd><p>The <span data-x="concept-request-parser-metadata">parser metadata</span> used for the
+   initial fetch and for fetching any imported modules</p></dd>
+
+   <dt><dfn data-x="concept-script-fetch-options-credentials">credentials mode</dfn></dt>
+
+   <dd><p>The <span data-x="concept-request-credentials-mode">credentials mode</span> used for the
+   initial fetch (for <span data-x="module script">module scripts</span>) and for fetching any
+   imported modules (for both <span data-x="module script">module scripts</span> and <span
+   data-x="classic script">classic scripts</span>)</p></dd>
+
+   <dt><dfn data-x="concept-script-fetch-options-referrer-policy">referrer policy</dfn></dt>
+
+   <dd>
+    <p>The <span data-x="concept-request-referrer-policy">referrer policy</span> used for the
+    initial fetch and for fetching any imported modules</p>
+
+    <p class="note">This policy can mutate after a <span>module script</span>'s <span
+    data-x="concept-response">response</span> is received, to be the <span>referrer policy</span>
+    <span data-x="parse-referrer-policy-header">parsed</span> from the <span
+    data-x="concept-response">response</span>, and used when fetching any module dependencies.</p>
+   </dd>
+
+   <dt><dfn data-x="concept-script-fetch-options-render-blocking">render-blocking</dfn></dt>
+
+   <dd><p>The boolean value of <span data-x="concept-request-render-blocking">render-blocking</span>
+   used for the initial fetch and for fetching any imported modules. Unless otherwise stated, its
+   value is false.</p></dd>
+
+   <dt><dfn data-x="concept-script-fetch-options-fetch-priority">fetch priority</dfn></dt>
+
+   <dd><p>The <span data-x="concept-request-priority">priority</span> used for the
+   initial fetch</p></dd>
+
+  </dl>
+
+  <p class="note">Recall that via the <code>import()</code> feature, <span data-x="classic
+  script">classic scripts</span> can import <span data-x="module script">module scripts</span>.</p>
+
+  <div algorithm>
+  <p>The <dfn>default script fetch options</dfn> are a <span>script fetch options</span> whose <span
+  data-x="concept-script-fetch-options-nonce">cryptographic nonce</span> is the empty string, <span
+  data-x="concept-script-fetch-options-integrity">integrity metadata</span> is the empty string,
+  <span data-x="concept-script-fetch-options-parser">parser metadata</span> is "<code
+  data-x="">not-parser-inserted</code>", <span
+  data-x="concept-script-fetch-options-credentials">credentials mode</span> is "<code
+  data-x="">same-origin</code>", <span
+  data-x="concept-script-fetch-options-referrer-policy">referrer policy</span> is the empty
+  string, and <span data-x="concept-script-fetch-options-fetch-priority">fetch priority</span>
+  is "<code data-x="">auto</code>".</p>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>set up the classic script request</dfn>,
+  given a <span data-x="concept-request">request</span> <var>request</var> and
+  a <span>script fetch options</span> <var>options</var>,
+  set <var>request</var>'s <span data-x="concept-request-nonce-metadata">cryptographic nonce
+  metadata</span> to <var>options</var>'s <span
+  data-x="concept-script-fetch-options-nonce">cryptographic nonce</span>, its <span
+  data-x="concept-request-integrity-metadata">integrity metadata</span> to <var>options</var>'s
+  <span data-x="concept-script-fetch-options-integrity">integrity metadata</span>, its <span
+  data-x="concept-request-parser-metadata">parser metadata</span> to <var>options</var>'s <span
+  data-x="concept-script-fetch-options-parser">parser metadata</span>, its <span
+  data-x="concept-request-referrer-policy">referrer policy</span> to <var>options</var>'s <span
+  data-x="concept-script-fetch-options-referrer-policy">referrer policy</span>, its
+  <span data-x="concept-request-render-blocking">render-blocking</span> to <var>options</var>'s
+  <span data-x="concept-script-fetch-options-render-blocking">render-blocking</span>, and its
+  <span data-x="concept-request-priority">priority</span> to <var>options</var>'s
+  <span data-x="concept-script-fetch-options-fetch-priority">fetch priority</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>set up the module script request</dfn>,
+  given a <span data-x="concept-request">request</span> <var>request</var> and
+  a <span>script fetch options</span> <var>options</var>,
+  set <var>request</var>'s <span data-x="concept-request-nonce-metadata">cryptographic nonce
+  metadata</span> to <var>options</var>'s <span
+  data-x="concept-script-fetch-options-nonce">cryptographic nonce</span>, its <span
+  data-x="concept-request-integrity-metadata">integrity metadata</span> to <var>options</var>'s
+  <span data-x="concept-script-fetch-options-integrity">integrity metadata</span>, its <span
+  data-x="concept-request-parser-metadata">parser metadata</span> to <var>options</var>'s <span
+  data-x="concept-script-fetch-options-parser">parser metadata</span>, its <span
+  data-x="concept-request-credentials-mode">credentials mode</span> to <var>options</var>'s <span
+  data-x="concept-script-fetch-options-credentials">credentials mode</span>, its <span
+  data-x="concept-request-referrer-policy">referrer policy</span> to <var>options</var>'s <span
+  data-x="concept-script-fetch-options-referrer-policy">referrer policy</span>, its
+  <span data-x="concept-request-render-blocking">render-blocking</span> to <var>options</var>'s
+  <span data-x="concept-script-fetch-options-render-blocking">render-blocking</span>, and its
+  <span data-x="concept-request-priority">priority</span> to <var>options</var>'s
+  <span data-x="concept-script-fetch-options-fetch-priority">fetch priority</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>get the descendant script fetch options</dfn> given a <span>script fetch options</span>
+  <var>originalOptions</var>, a <span>URL</span> <var>url</var>, and an <span>environment settings
+  object</span> <var>settingsObject</var>:</p>
+
+  <ol>
+   <li><p>Let <var>newOptions</var> be a copy of <var>originalOptions</var>.</p></li>
+
+   <li><p>Let <var>integrity</var> be the result of <span>resolving a module integrity
+   metadata</span> with <var>url</var> and <var>settingsObject</var>.</p></li>
+
+   <li><p>Set <var>newOptions</var>'s <span
+   data-x="concept-script-fetch-options-integrity">integrity metadata</span> to
+   <var>integrity</var>.</p></li>
+
+   <li><p>Set <var>newOptions</var>'s <span
+   data-x="concept-script-fetch-options-fetch-priority">fetch priority</span> to "<code
+   data-x="">auto</code>".</p></li>
+
+   <li><p>Return <var>newOptions</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="resolving a module integrity metadata">resolve a module integrity
+  metadata</dfn>, given a <span>URL</span> <var>url</var> and an <span>environment settings
+  object</span> <var>settingsObject</var>:</p>
+
+  <ol>
+   <li><p>Let <var>map</var> be <var>settingsObject</var>'s <span
+   data-x="concept-settings-object-global">global object</span>'s <span
+   data-x="concept-global-import-map">import map</span>.</p></li>
+
+   <li><p>If <var>map</var>'s <span
+   data-x="concept-import-map-integrity">integrity</span>[<var>url</var>] does not <span
+   data-x="map exists">exist</span>, then return the empty string.</p></li>
+
+   <li><p>Return <var>map</var>'s <span
+   data-x="concept-import-map-integrity">integrity</span>[<var>url</var>].</p></li>
+  </ol>
+  </div>
+
+  <hr>
+
+  <div algorithm>
+  <p>Several of the below algorithms can be customized with a <dfn
+  data-x="fetching-scripts-perform-fetch" export for="fetching scripts">perform the fetch
+  hook</dfn> algorithm, which takes a <span data-x="concept-request">request</span>, a boolean <var
+  data-x="fetching-scripts-is-top-level">isTopLevel</var>, and a <dfn export for="fetching
+  scripts"><var
+  data-x="fetching-scripts-processCustomFetchResponse">processCustomFetchResponse</var></dfn>
+  algorithm. It runs <var
+  data-x="fetching-scripts-processCustomFetchResponse">processCustomFetchResponse</var> with a <span
+  data-x="concept-response">response</span> and either null (on failure) or a <span>byte
+  sequence</span> containing the response body. <dfn export for="fetching scripts"><var
+  data-x="fetching-scripts-is-top-level">isTopLevel</var></dfn> will be true for all <span>classic
+  script</span> fetches, and for the initial fetch when <span data-x="fetch an external module
+  script graph">fetching an external module script graph</span> or <span data-x="fetch a module
+  worker script graph">fetching a module worker script graph</span>, but false for the fetches
+  resulting from <code data-x="">import</code> statements encountered throughout the graph or from
+  <code data-x="">import()</code> expressions.</p>
+  </div>
+
+  <p>By default, not supplying a <span data-x="fetching-scripts-perform-fetch">perform the fetch
+  hook</span> will cause the below algorithms to simply <span data-x="concept-fetch">fetch</span>
+  the given <span data-x="concept-request">request</span>, with algorithm-specific customizations
+  to the <span data-x="concept-request">request</span> and validations of the resulting <span
+  data-x="concept-response">response</span>.</p>
+
+  <p>To layer your own customizations on top of these algorithm-specific ones, supply a <span
+  data-x="fetching-scripts-perform-fetch">perform the fetch hook</span> that modifies the given
+  <span data-x="concept-request">request</span>, <span data-x="concept-fetch">fetches</span> it,
+  and then performs specific validations of the resulting <span
+  data-x="concept-response">response</span> (completing with a <span>network error</span> if the
+  validations fail).</p>
+
+  <p>The hook can also be used to perform more subtle customizations, such as keeping a cache of
+  <span data-x="concept-response">responses</span> and avoiding performing a <span
+  data-x="concept-fetch">fetch</span> at all.</p>
+
+  <p class="note"><cite>Service Workers</cite> is an example of a specification that runs these
+  algorithms with its own options for the hook. <ref>SW</ref></p>
+
+  <hr>
+
+  <p>Now for the algorithms themselves.</p>
+
+  <div algorithm>
+  <p>To <dfn export>fetch a classic script</dfn> given a <span>URL</span> <var>url</var>, an
+  <span>environment settings object</span> <var>settingsObject</var>, a <span>script fetch
+  options</span> <var>options</var>, a <span data-x="CORS settings attribute">CORS settings
+  attribute state</span> <var>corsSetting</var>, an <span>encoding</span> <var>encoding</var>, and
+  an algorithm <var>onComplete</var>, run these steps. <var>onComplete</var> must be an algorithm
+  accepting null (on failure) or a <span>classic script</span> (on success).</p>
+
+  <ol>
+   <li><p>Let <var>request</var> be the result of <span data-x="create a potential-CORS
+   request">creating a potential-CORS request</span> given <var>url</var>, "<code
+   data-x="">script</code>", and <var>corsSetting</var>.</p></li>
+
+   <li><p>Set <var>request</var>'s <span data-x="concept-request-client">client</span> to
+   <var>settingsObject</var>.</p>
+
+   <li><p>Set <var>request</var>'s <span data-x="concept-request-initiator-type">initiator
+   type</span> to "<code data-x="">script</code>".</p>
+
+   <li><p><span>Set up the classic script request</span> given <var>request</var> and
+   <var>options</var>.</p></li>
+
+   <!--FETCH-->
+   <li>
+    <p><span data-x="concept-fetch">Fetch</span> <var>request</var> with
+    the following <i data-x="processResponseConsumeBody">processResponseConsumeBody</i> steps given
+    <span data-x="concept-response">response</span> <var>response</var> and null, failure, or a
+    <span>byte sequence</span> <var>bodyBytes</var>:</p>
+
+    <p class="note"><var>response</var> can be either <span>CORS-same-origin</span> or
+    <span>CORS-cross-origin</span>. This only affects how error reporting happens.</p>
+
+    <ol>
+     <li><p>Set <var>response</var> to <var>response</var>'s <span>unsafe response</span>.</p></li>
+
+     <li>
+      <p>If any of the following are true:</p>
+
+      <ul>
+       <li><p><var>bodyBytes</var> is null or failure; or</p></li>
+
+       <li><p><var>response</var>'s <span data-x="concept-response-status">status</span> is not an
+       <span>ok status</span>,</p></li>
+      </ul>
+
+      <p>then run <var>onComplete</var> given null, and abort these steps.</p>
+
+      <p class="note">For historical reasons, this algorithm does not include MIME type checking,
+      unlike the other script-fetching algorithms in this section.</p>
+     </li>
+
+     <li><p>Let <var>potentialMIMETypeForEncoding</var> be the result of <span data-x="extract a
+     MIME type">extracting a MIME type</span> given <var>response</var>'s <span
+     data-x="concept-response-header-list">header list</span>.</p></li>
+
+     <li>
+      <p>Set <var>encoding</var> to the result of <span data-x="legacy extract an encoding">legacy
+      extracting an encoding</span> given <var>potentialMIMETypeForEncoding</var> and
+      <var>encoding</var>.</p>
+
+      <p class="note">This intentionally ignores the <span>MIME type essence</span>.</p>
+     </li>
+
+     <li>
+      <p>Let <var>sourceText</var> be the result of <span data-x="decode">decoding</span>
+      <var>bodyBytes</var> to Unicode, using <var>encoding</var> as the fallback encoding.</p>
+
+      <p class="note">The <span>decode</span> algorithm overrides <var>encoding</var> if the file
+      contains a BOM.</p>
+     </li>
+
+     <li><p>Let <var>mutedErrors</var> be true if <var>response</var> was
+     <span>CORS-cross-origin</span>, and false otherwise.</p></li>
+
+     <li><p>Let <var>script</var> be the result of <span>creating a classic script</span> given
+     <var>sourceText</var>, <var>settingsObject</var>, <var>response</var>'s <span
+     data-x="concept-response-url">URL</span>, <var>options</var>,
+     <var>mutedErrors</var>, and <var>url</var>.</p></li>
+
+     <li>Run <var>onComplete</var> given <var>script</var>.</li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn export>fetch a classic worker script</dfn> given a <span>URL</span> <var>url</var>, an
+  <span>environment settings object</span> <var>fetchClient</var>, a <span
+  data-x="concept-request-destination">destination</span> <var>destination</var>, an
+  <span>environment settings object</span> <var>settingsObject</var>, an algorithm
+  <var>onComplete</var>, and an optional <span data-x="fetching-scripts-perform-fetch">perform the
+  fetch hook</span> <var>performFetch</var>, run these steps. <var>onComplete</var> must be an
+  algorithm accepting null (on failure) or a <span>classic script</span> (on success).</p>
+
+  <ol>
+   <li><p>Let <var>request</var> be a new <span data-x="concept-request">request</span> whose <span
+   data-x="concept-request-url">URL</span> is <var>url</var>, <span
+   data-x="concept-request-client">client</span> is <var>fetchClient</var>, <span
+   data-x="concept-request-destination">destination</span> is <var>destination</var>, <span
+   data-x="concept-request-initiator-type">initiator type</span> is "<code data-x="">other</code>",
+   <span data-x="concept-request-mode">mode</span> is "<code data-x="">same-origin</code>", <span
+   data-x="concept-request-credentials-mode">credentials mode</span> is "<code
+   data-x="">same-origin</code>", <span data-x="concept-request-parser-metadata">parser
+   metadata</span> is "<code data-x="">not parser-inserted</code>", and whose
+   <span>use-URL-credentials flag</span> is set.</p></li>
+
+   <!--FETCH-->
+   <li>
+    <p>If <var>performFetch</var> was given, run <var>performFetch</var> with <var>request</var>,
+    true, and with <var>processResponseConsumeBody</var> as defined below.</p>
+
+    <p>Otherwise, <span data-x="concept-fetch">fetch</span> <var>request</var> with <i
+    data-x="processResponseConsumeBody">processResponseConsumeBody</i> set to
+    <var>processResponseConsumeBody</var> as defined below.</p>
+
+    <p>In both cases, let <var>processResponseConsumeBody</var> given <span
+    data-x="concept-response">response</span> <var>response</var> and null, failure, or a <span>byte
+    sequence</span> <var>bodyBytes</var> be the following algorithm:</p>
+
+    <ol>
+     <li><p>Set <var>response</var> to <var>response</var>'s <span>unsafe response</span>.</p></li>
+
+     <li>
+      <p>If any of the following are true:</p>
+
+      <ul>
+       <li><p><var>bodyBytes</var> is null or failure; or</p></li>
+
+       <li><p><var>response</var>'s <span data-x="concept-response-status">status</span> is not an
+       <span>ok status</span>,</p></li>
+      </ul>
+
+      <p>then run <var>onComplete</var> given null, and abort these steps.</p>
+     </li>
+
+     <li>
+      <p>If all of the following are true:</p>
+
+      <ul>
+       <li><p><var>response</var>'s <span data-x="concept-response-url">URL</span>'s <span
+       data-x="concept-url-scheme">scheme</span> is an <span>HTTP(S) scheme</span>; and</p></li>
+
+       <li><p>the result of <span data-x="extract a MIME type">extracting a MIME type</span> from
+       <var>response</var>'s <span data-x="concept-response-header-list">header list</span> is not
+       a <span>JavaScript MIME type</span>,</p>
+      </ul>
+
+      <p>then run <var>onComplete</var> given null, and abort these steps.</p>
+
+      <p class="note">Other <span data-x="fetch scheme">fetch schemes</span> are exempted from MIME
+      type checking for historical web-compatibility reasons. We might be able to tighten this in
+      the future; see <a href="https://github.com/whatwg/html/issues/3255">issue #3255</a>.</p>
+     </li>
+
+     <li><p>Let <var>sourceText</var> be the result of <span data-x="UTF-8 decode">UTF-8
+     decoding</span> <var>bodyBytes</var>.</p></li>
+
+     <li><p>Let <var>script</var> be the result of <span>creating a classic script</span> using
+     <var>sourceText</var>, <var>settingsObject</var>, <var>response</var>'s <span
+     data-x="concept-response-url">URL</span>, and the <span>default script fetch
+     options</span>.</p></li>
+
+     <li><p>Run <var>onComplete</var> given <var>script</var>.</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn export>fetch a classic worker-imported script</dfn> given a <span>URL</span>
+  <var>url</var>, an <span>environment settings object</span> <var>settingsObject</var>, and an
+  optional <span data-x="fetching-scripts-perform-fetch">perform the fetch hook</span>
+  <var>performFetch</var>, run these steps. The algorithm will return a <span>classic script</span>
+  on success, or throw an exception on failure.</p>
+
+  <ol>
+   <li><p>Let <var>response</var> be null.</p></li>
+
+   <li><p>Let <var>bodyBytes</var> be null.</p></li>
+
+   <li><p>Let <var>request</var> be a new <span data-x="concept-request">request</span> whose <span
+   data-x="concept-request-url">URL</span> is <var>url</var>, <span
+   data-x="concept-request-client">client</span> is <var>settingsObject</var>, <span
+   data-x="concept-request-destination">destination</span> is "<code data-x="">script</code>",
+   <span data-x="concept-request-initiator-type">initiator type</span> is "<code
+   data-x="">other</code>", <span data-x="concept-request-parser-metadata">parser metadata</span>
+   is "<code data-x="">not parser-inserted</code>", and whose <span>use-URL-credentials flag</span>
+   is set.</p></li>
+
+   <li>
+    <p>If <var>performFetch</var> was given, run <var>performFetch</var> with <var>request</var>,
+    <var>isTopLevel</var>, and with <var>processResponseConsumeBody</var> as defined below.</p>
+
+    <p>Otherwise, <span data-x="concept-fetch">fetch</span> <var>request</var> with <i
+    data-x="processResponseConsumeBody">processResponseConsumeBody</i> set to
+    <var>processResponseConsumeBody</var> as defined below.</p>
+
+    <p>In both cases, let <var>processResponseConsumeBody</var> given <span
+    data-x="concept-response">response</span> <var>res</var> and null, failure, or a
+    <span>byte sequence</span> <var>bb</var> be the following algorithm:</p>
+
+    <ol>
+     <li><p>Set <var>bodyBytes</var> to <var>bb</var>.</p></li>
+
+     <li><p>Set <var>response</var> to <var>res</var>.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p><span>Pause</span> until <var>response</var> is not null.</p>
+
+    <p class="note">Unlike other algorithms in this section, the fetching process is synchronous
+    here.</p>
+   </li>
+
+   <li><p>Set <var>response</var> to <var>response</var>'s <span>unsafe response</span>.</p></li>
+
+   <li>
+    <p>If any of the following are true:</p>
+
+    <ul>
+     <li><p><var>bodyBytes</var> is null or failure;</p></li>
+
+     <li><p><var>response</var>'s <span data-x="concept-response-status">status</span> is not an
+     <span>ok status</span>; or</p></li>
+
+     <li><p>the result of <span data-x="extract a MIME type">extracting a MIME type</span> from
+     <var>response</var>'s <span data-x="concept-response-header-list">header list</span> is not a
+     <span>JavaScript MIME type</span>,</p>
+    </ul>
+
+    <p>then throw a <span>"<code>NetworkError</code>"</span> <code>DOMException</code>.</p>
+   </li>
+
+   <li><p>Let <var>sourceText</var> be the result of <span data-x="UTF-8 decode">UTF-8
+   decoding</span> <var>bodyBytes</var>.</p></li>
+
+   <li><p>Let <var>mutedErrors</var> be true if <var>response</var> was
+   <span>CORS-cross-origin</span>, and false otherwise.</p></li>
+
+   <li><p>Let <var>script</var> be the result of <span>creating a classic script</span> given
+   <var>sourceText</var>, <var>settingsObject</var>, <var>response</var>'s <span
+   data-x="concept-response-url">URL</span>, the <span>default script fetch options</span>, and
+   <var>mutedErrors</var>.</p></li>
+
+   <li><p>Return <var>script</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn export id="fetch-a-module-script-tree">fetch an external module script graph</dfn>
+  given a <span>URL</span> <var>url</var>, an <span>environment settings object</span>
+  <var>settingsObject</var>, a <span>script fetch options</span> <var>options</var>, and an
+  algorithm <var>onComplete</var>, run these steps. <var>onComplete</var> must be an algorithm
+  accepting null (on failure) or a <span>module script</span> (on success).</p>
+
+  <ol>
+   <li>
+    <p><span>Fetch a single module script</span> given <var>url</var>, <var>settingsObject</var>,
+    "<code data-x="">script</code>", <var>options</var>, <var>settingsObject</var>, "<code
+    data-x="">client</code>", true, and with the following steps given <var>result</var>:</p>
+
+    <ol>
+     <li><p>If <var>result</var> is null, run <var>onComplete</var> given null, and abort these
+     steps.</p></li>
+
+     <li><p><span data-x="fetch the descendants of and link a module script">Fetch the descendants of
+     and link</span> <var>result</var> given <var>settingsObject</var>, "<code
+     data-x="">script</code>", and <var>onComplete</var>.</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>fetch a modulepreload module script graph</dfn> given a <span>URL</span> <var>url</var>,
+  a <span data-x="concept-request-destination">destination</span> <var>destination</var>, an
+  <span>environment settings object</span> <var>settingsObject</var>, a <span>script fetch
+  options</span> <var>options</var>, and an algorithm <var>onComplete</var>, run these steps.
+  <var>onComplete</var> must be an algorithm accepting null (on failure) or a <span>module
+  script</span> (on success).</p>
+
+  <ol>
+   <li>
+    <p><span>Fetch a single module script</span> given <var>url</var>, <var>settingsObject</var>,
+    <var>destination</var>, <var>options</var>, <var>settingsObject</var>, "<code
+    data-x="">client</code>", true, and with the following steps given <var>result</var>:</p>
+
+    <ol>
+     <li><p>Run <var>onComplete</var> given <var>result</var>.</p></li>
+
+     <li><p><span>Assert</span>: <var>settingsObject</var>'s <span
+     data-x="concept-settings-object-global">global object</span> implements
+     <code>Window</code>.</p></li>
+
+     <li>
+      <p>If <var>result</var> is not null, optionally <span data-x="fetch the descendants of and
+      link a module script">fetch the descendants of and link</span> <var>result</var> given
+      <var>settingsObject</var>, <var>destination</var>, and an empty algorithm.</p>
+
+      <p class="note">Generally, performing this step will be beneficial for performance, as it
+      allows pre-loading the modules that will invariably be requested later, via algorithms such as
+      <span>fetch an external module script graph</span> that fetch the entire graph. However, user
+      agents might wish to skip them in bandwidth-constrained situations, or situations where the
+      relevant fetches are already in flight.</p>
+     </li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>fetch an inline module script graph</dfn> given a <span>string</span>
+  <var>sourceText</var>, a <span>URL</span> <var>baseURL</var>, an <span>environment settings
+  object</span> <var>settingsObject</var>, a <span>script fetch options</span> <var>options</var>,
+  and an algorithm <var>onComplete</var>, run these steps. <var>onComplete</var> must be an
+  algorithm accepting null (on failure) or a <span>module script</span> (on success).</p>
+
+  <ol>
+   <li><p>Let <var>script</var> be the result of <span>creating a JavaScript module script</span>
+   using <var>sourceText</var>, <var>settingsObject</var>, <var>baseURL</var>, and
+   <var>options</var>.</p></li>
+
+   <li><p><span data-x="fetch the descendants of and link a module script">Fetch the descendants of
+   and link</span> <var>script</var>, given <var>settingsObject</var>, "<code
+   data-x="">script</code>", and <var>onComplete</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn export id="fetch-a-module-worker-script-tree">fetch a module worker script graph</dfn>
+  given a <span>URL</span> <var>url</var>, an <span>environment settings object</span>
+  <var>fetchClient</var>, a <span data-x="concept-request-destination">destination</span>
+  <var>destination</var>, a <span data-x="concept-script-fetch-options-credentials">credentials
+  mode</span> <var>credentialsMode</var>, an <span>environment settings object</span>
+  <var>settingsObject</var>, and an algorithm <var>onComplete</var>, <span>fetch a worklet/module
+  worker script graph</span> given <var>url</var>, <var>fetchClient</var>, <var>destination</var>,
+  <var>credentialsMode</var>, <var>settingsObject</var>, and <var>onComplete</var>.</p>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>fetch a worklet script graph</dfn> given a <span>URL</span> <var>url</var>, an
+  <span>environment settings object</span> <var>fetchClient</var>, a <span
+  data-x="concept-request-destination">destination</span> <var>destination</var>, a
+  <span data-x="concept-script-fetch-options-credentials">credentials mode</span>
+  <var>credentialsMode</var>, an <span>environment settings object</span>
+  <var>settingsObject</var>, a <span data-x="concept-Worklet-module-responses-map">module responses
+  map</span> <var>moduleResponsesMap</var>, and an algorithm <var>onComplete</var>, <span>fetch a
+  worklet/module worker script graph</span> given <var>url</var>, <var>fetchClient</var>,
+  <var>destination</var>, <var>credentialsMode</var>, <var>settingsObject</var>,
+  <var>onComplete</var>, and the following <span data-x="fetching-scripts-perform-fetch">perform the
+  fetch hook</span> given <var>request</var> and <var
+  data-x="fetching-scripts-processCustomFetchResponse">processCustomFetchResponse</var>:</p>
+
+  <ol>
+   <li><p>Let <var>requestURL</var> be <var>request</var>'s <span
+   data-x="concept-request-url">URL</span>.</p></li>
+
+   <li><p>If <var>moduleResponsesMap</var>[<var>requestURL</var>] is "<code
+   data-x="">fetching</code>", wait <span>in parallel</span> until that entry's value changes, then
+   <span>queue a task</span> on the <span>networking task source</span> to proceed with running the
+   following steps.</p></li>
+
+   <li>
+    <p>If <var>moduleResponsesMap</var>[<var>requestURL</var>] <span data-x="map
+   exists">exists</span>:</p>
+
+    <ol>
+     <li><p>Let <var>cached</var> be <var>moduleResponsesMap</var>[<var>requestURL</var>].</p></li>
+
+     <li><p>Run <var>processCustomFetchResponse</var> with <var>cached</var>[0] and
+     <var>cached</var>[1].</p></li>
+
+     <li><p>Return.</p></li>
+    </ol>
+   </li>
+
+   <li><p><span data-x="map set">Set</span> <var>moduleResponsesMap</var>[<var>requestURL</var>] to
+   "<code data-x="">fetching</code>".</p></li>
+
+   <li>
+    <p><span data-x="concept-fetch">Fetch</span> <var>request</var>, with <i
+    data-x="processResponseConsumeBody">processResponseConsumeBody</i> set to the following steps
+    given <span data-x="concept-response">response</span> <var>response</var> and null, failure, or a
+    <span>byte sequence</span> <var>bodyBytes</var>:</p>
+
+    <ol>
+     <li><p>Set <var>moduleResponsesMap</var>[<var>requestURL</var>] to (<var>response</var>,
+     <var>bodyBytes</var>).</p></li>
+
+     <li><p>Run <var>processCustomFetchResponse</var> with <var>response</var> and
+     <var>bodyBytes</var>.</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <hr>
+
+  <p>The following algorithms are meant for internal use by this specification only as part of <span
+  data-x="fetch an external module script graph">fetching an external module script graph</span> or
+  other similar concepts above, and should not be used directly by other specifications.</p>
+
+  <p>This diagram illustrates how these algorithms relate to the ones above, as well as to each
+  other:</p>
+
+  <svg id="module-script-fetching-diagram" viewBox="0 0 941 166" role="img" aria-label="Fetch an external module script, fetch a modulepreload module script graph, fetch an inline module script graph, and fetch a module worker script graph all call fetch the descendants of and link a module script.">
+   <defs>
+    <marker id="module-script-fetching-diagram-arrow" orient="auto" markerWidth="6" markerHeight="6" refX="5" refY="3">
+     <path d="M0,0 V6 L5,3 Z" style="fill: var(--text, CanvasText)"/>
+    </marker>
+   </defs>
+
+   <g transform="translate(0.5,0.5)" class="caller">
+    <rect width="180" height="50"/>
+    <foreignObject width="180" height="50">
+     <span xmlns="http://www.w3.org/1999/xhtml">fetch an external module script graph</span>
+    </foreignObject>
+   </g>
+   <path d="M90.5,50.5 L470.5,140.5" marker-end="url(#module-script-fetching-diagram-arrow)"/>
+
+   <g transform="translate(190.5,0.5)" class="caller">
+    <rect width="180" height="50"/>
+    <foreignObject width="180" height="50">
+     <span xmlns="http://www.w3.org/1999/xhtml">fetch a modulepreload module script graph</span>
+    </foreignObject>
+   </g>
+   <path d="M280.5,50.5 L470.5,140.5" marker-end="url(#module-script-fetching-diagram-arrow)"/>
+
+   <g transform="translate(380.5,0.5)" class="caller">
+    <rect width="180" height="50"/>
+    <foreignObject width="180" height="50">
+     <span xmlns="http://www.w3.org/1999/xhtml">fetch an inline module script graph</span>
+    </foreignObject>
+   </g>
+   <path d="M470.5,50.5 L470.5,140.5" marker-end="url(#module-script-fetching-diagram-arrow)"/>
+
+   <g transform="translate(570.5,0.5)" class="caller">
+    <rect width="180" height="50"/>
+    <foreignObject width="180" height="50">
+     <span xmlns="http://www.w3.org/1999/xhtml">fetch a module worker script graph</span>
+    </foreignObject>
+   </g>
+   <path d="M660.5,50.5 L755.5,70.5" marker-end="url(#module-script-fetching-diagram-arrow)"/>
+
+   <g transform="translate(760.5,0.5)" class="caller">
+    <rect width="180" height="50"/>
+    <foreignObject width="180" height="50">
+     <span xmlns="http://www.w3.org/1999/xhtml">fetch a worklet script graph</span>
+    </foreignObject>
+   </g>
+   <path d="M850.5,50.5 L755.5,70.5" marker-end="url(#module-script-fetching-diagram-arrow)"/>
+
+   <g transform="translate(665.5,70.5)" class="caller">
+    <rect width="180" height="50"/>
+    <foreignObject width="180" height="50">
+     <span xmlns="http://www.w3.org/1999/xhtml">fetch a worklet/module worker script graph</span>
+    </foreignObject>
+   </g>
+   <path d="M755.5,120.5 L470.5,140.5" marker-end="url(#module-script-fetching-diagram-arrow)"/>
+
+   <g transform="translate(260.5,140.5)" class="subalgorithm">
+    <rect width="420" height="25"/>
+    <foreignObject width="420" height="25">
+     <span xmlns="http://www.w3.org/1999/xhtml">fetch the descendants of and link a module script</span>
+    </foreignObject>
+   </g>
+  </svg>
+
+  <div algorithm>
+  <p>To <dfn>fetch a worklet/module worker script graph</dfn> given a <span>URL</span>
+  <var>url</var>, an <span>environment settings object</span> <var>fetchClient</var>, a <span
+  data-x="concept-request-destination">destination</span> <var>destination</var>, a <span
+  data-x="concept-script-fetch-options-credentials">credentials mode</span>
+  <var>credentialsMode</var>, an <span>environment settings object</span> <var>settingsObject</var>,
+  an algorithm <var>onComplete</var>, and an optional <span
+  data-x="fetching-scripts-perform-fetch">perform the fetch hook</span> <var>performFetch</var>, run
+  these steps. <var>onComplete</var> must be an algorithm accepting null (on failure) or a
+  <span>module script</span> (on success).</p>
+
+  <ol>
+   <li><p>Let <var>options</var> be a <span>script fetch options</span> whose <span
+   data-x="concept-script-fetch-options-nonce">cryptographic nonce</span> is the empty string, <span
+   data-x="concept-script-fetch-options-integrity">integrity metadata</span> is the empty string,
+   <span data-x="concept-script-fetch-options-parser">parser metadata</span> is "<code
+   data-x="">not-parser-inserted</code>", <span
+   data-x="concept-script-fetch-options-credentials">credentials mode</span> is
+   <var>credentialsMode</var>, <span data-x="concept-script-fetch-options-referrer-policy">referrer
+   policy</span> is the empty string, and <span
+   data-x="concept-script-fetch-options-fetch-priority">fetch priority</span> is "<code
+   data-x="">auto</code>".</p>
+
+   <li>
+    <p><span>Fetch a single module script</span> given <var>url</var>,
+    <var>fetchClient</var>, <var>destination</var>, <var>options</var>, <var>settingsObject</var>,
+    "<code data-x="">client</code>", true, and <var>onSingleFetchComplete</var> as defined below. If
+    <var>performFetch</var> was given, pass it along as well.</p>
+
+    <p><var>onSingleFetchComplete</var> given <var>result</var> is the following algorithm:</p>
+
+    <ol>
+     <li><p>If <var>result</var> is null, run <var>onComplete</var> given null, and abort these
+     steps.</p></li>
+
+     <li><p><span data-x="fetch the descendants of and link a module script">Fetch the descendants
+     of and link</span> <var>result</var> given <var>fetchClient</var>,
+     <var>destination</var>, and <var>onComplete</var>. If <var>performFetch</var> was given, pass
+     it along as well.</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="fetch the descendants of and link a module script">fetch the descendants of and
+  link</dfn> a <span>module script</span> <var>moduleScript</var>, given an <span>environment
+  settings object</span> <var>fetchClient</var>, a <span
+  data-x="concept-request-destination">destination</span> <var>destination</var>, an algorithm
+  <var>onComplete</var>, and an optional <span data-x="fetching-scripts-perform-fetch">perform the
+  fetch hook</span> <var>performFetch</var>, run these steps. <var>onComplete</var> must be an
+  algorithm accepting null (on failure) or a <span>module script</span> (on success).</p>
+
+  <ol>
+   <li><p>Let <var>record</var> be <var>moduleScript</var>'s <span
+   data-x="concept-script-record">record</span>.</p></li>
+
+   <li>
+    <p>If <var>record</var> is null:</p>
+
+    <ol>
+     <li><p>Set <var>moduleScript</var>'s <span data-x="concept-script-error-to-rethrow">error to
+     rethrow</span> to <var>moduleScript</var>'s <span>parse error</span>.</p></li>
+
+     <li><p>Run <var>onComplete</var> given <var>moduleScript</var>.</li>
+
+     <li><p>Return.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Let <var>state</var> be <span>Record</span> { [[ErrorToRethrow]]: null, [[Destination]]:
+   <var>destination</var>, [[PerformFetch]]: null, [[FetchClient]]: <var>fetchClient</var>
+   }.</p></li>
+
+   <li><p>If <var>performFetch</var> was given, set <var>state</var>.[[PerformFetch]] to
+   <var>performFetch</var>.</p></li>
+
+   <li>
+    <p>Let <var>loadingPromise</var> be <var>record</var>.<span
+    data-x="js-LoadRequestedModules">LoadRequestedModules</span>(<var>state</var>).</p>
+
+    <p class="note">This step will recursively load all the module transitive dependencies.</p>
+   </li>
+
+   <li>
+    <p><span>Upon fulfillment</span> of <var>loadingPromise</var>, run the following steps:</p>
+
+    <ol>
+     <li>
+      <p>Perform <var>record</var>.<span data-x="js-Link">Link</span>().</p>
+
+      <p class="note">This step will recursively call <span data-x="js-Link">Link</span> on all of
+      the module's unlinked dependencies.</p>
+
+      <p>If this throws an exception, catch it, and set <var>moduleScript</var>'s <span
+      data-x="concept-script-error-to-rethrow">error to rethrow</span> to that exception.</p>
+     </li>
+
+     <li><p>Run <var>onComplete</var> given <var>moduleScript</var>.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p><span>Upon rejection</span> of <var>loadingPromise</var>, run the
+    following steps:</p>
+
+    <ol>
+     <li><p>If <var>state</var>.[[ErrorToRethrow]] is not null, set <var>moduleScript</var>'s <span
+     data-x="concept-script-error-to-rethrow">error to rethrow</span> to
+     <var>state</var>.[[ErrorToRethrow]] and run <var>onComplete</var> given
+     <var>moduleScript</var>.</p></li>
+
+     <li>
+      <p>Otherwise, run <var>onComplete</var> given null.</p>
+
+      <p class="note"><var>state</var>.[[ErrorToRethrow]] is null when <var>loadingPromise</var> is
+      rejected due to a loading error.</p>
+     </li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>fetch a single module script</dfn>, given a <span>URL</span> <var>url</var>, an
+  <span>environment settings object</span> <var>fetchClient</var>, a <span
+  data-x="concept-request-destination">destination</span> <var>destination</var>, a <span>script
+  fetch options</span> <var>options</var>, an <span>environment settings object</span>
+  <var>settingsObject</var>, a <span data-x="concept-request-referrer">referrer</span>
+  <var>referrer</var>, an optional <span>ModuleRequest Record</span> <var>moduleRequest</var>, a
+  boolean <var data-x="fetching-scripts-is-top-level">isTopLevel</var>, an algorithm
+  <var>onComplete</var>, and an optional <span data-x="fetching-scripts-perform-fetch">perform the
+  fetch hook</span> <var>performFetch</var>, run these steps. <var>onComplete</var> must be an
+  algorithm accepting null (on failure) or a <span>module script</span> (on success).</p>
+
+  <ol>
+   <li><p>Let <var>moduleType</var> be "<code data-x="">javascript-or-wasm</code>".</p></li>
+
+   <li><p>If <var>moduleRequest</var> was given, then set <var>moduleType</var> to the result of
+   running the <span>module type from module request</span> steps given
+   <var>moduleRequest</var>.</p></li>
+
+   <li><p><span>Assert</span>: the result of running the <span>module type allowed</span> steps
+   given <var>moduleType</var> and <var>settingsObject</var> is true. Otherwise, we would not have
+   reached this point because a failure would have been raised when inspecting
+   <var>moduleRequest</var>.[[Attributes]] in
+   <a href="#validate-requested-module-specifiers">HostLoadImportedModule</a> or <span>fetch a
+   single imported module script</span>.</p></li>
+
+   <li><p>Let <var>moduleMap</var> be <var>settingsObject</var>'s <span
+   data-x="concept-settings-object-module-map">module map</span>.</p></li>
+
+   <li><p>If <var>moduleMap</var>[(<var>url</var>, <var>moduleType</var>)] is a <span>module
+   script</span>, run <var>onComplete</var> given <var>moduleMap</var>[(<var>url</var>,
+   <var>moduleType</var>)], and return.</p></li>
+
+   <li><p>If <var>moduleMap</var>[(<var>url</var>, <var>moduleType</var>)] is a <span>list</span>,
+   <span data-x="list append">append</span> <var>onComplete</var> to
+   <var>moduleMap</var>[(<var>url</var>, <var>moduleType</var>)], and return.</p></li>
+
+   <li><p><span data-x="map set">Set</span> <var>moduleMap</var>[(<var>url</var>,
+   <var>moduleType</var>)] to « <var>onComplete</var> ».</p></li>
+
+   <li><p>Let <var>request</var> be a new <span data-x="concept-request">request</span> whose
+   <span data-x="concept-request-url">URL</span> is <var>url</var>, <span
+   data-x="concept-request-mode">mode</span> is "<code data-x="">cors</code>", <span
+   data-x="concept-request-referrer">referrer</span> is <var>referrer</var>, and <span
+   data-x="concept-request-client">client</span> is <var>fetchClient</var>.</p></li>
+
+   <li><p>Set <var>request</var>'s <span data-x="concept-request-destination">destination</span> to
+   the result of running the <span>fetch destination from module type</span> steps given
+   <var>destination</var> and <var>moduleType</var>.</p></li>
+
+   <!--
+    "serviceworker" being included here is not redundant with the Service Worker spec's own
+    same-origin check, because the request's mode also affects the Origin and Sec-Fetch-Mode
+    headers.
+   -->
+   <li><p>If <var>destination</var> is "<code data-x="">worker</code>", "<code
+   data-x="">sharedworker</code>", or "<code data-x="">serviceworker</code>", and
+   <var>isTopLevel</var> is true, then set <var>request</var>'s <span
+   data-x="concept-request-mode">mode</span> to "<code data-x="">same-origin</code>".</p></li>
+
+   <li><p>Set <var>request</var>'s <span data-x="concept-request-initiator-type">initiator
+   type</span> to "<code data-x="">script</code>".</p>
+
+   <li><p><span>Set up the module script request</span> given <var>request</var> and
+   <var>options</var>.</p></li>
+
+   <!--FETCH-->
+   <li>
+    <p>If <var>performFetch</var> was given, run <var>performFetch</var> with <var>request</var>,
+    <var>isTopLevel</var>, and with <var>processResponseConsumeBody</var> as defined below.</p>
+
+    <p>Otherwise, <span data-x="concept-fetch">fetch</span> <var>request</var> with <i
+    data-x="processResponseConsumeBody">processResponseConsumeBody</i> set to
+    <var>processResponseConsumeBody</var> as defined below.</p>
+
+    <p>In both cases, let <var>processResponseConsumeBody</var> given <span
+    data-x="concept-response">response</span> <var>response</var> and null, failure, or a
+    <span>byte sequence</span> <var>bodyBytes</var> be the following algorithm:</p>
+
+    <p class="note"><var>response</var> is always <span>CORS-same-origin</span>.</p>
+
+    <ol>
+     <li>
+      <p>If any of the following are true:</p>
+
+      <ul>
+       <li><p><var>bodyBytes</var> is null or failure; or</p></li>
+
+       <li><p><var>response</var>'s <span data-x="concept-response-status">status</span> is not an
+       <span>ok status</span>,</p></li>
+      </ul>
+
+      <p>then:</p>
+
+      <ol>
+       <li><p>Let <var>callbacks</var> be
+       <var>moduleMap</var>[(<var>url</var>, <var>moduleType</var>)].</p></li>
+
+       <li><p><span data-x="map remove">Remove</span>
+       <var>moduleMap</var>[(<var>url</var>, <var>moduleType</var>)].</p></li>
+
+       <li><p><span data-x="list iterate">For each</span> <var>callback</var> of
+       <var>callbacks</var>: run <var>callback</var> given null.</p></li>
+
+       <li><p>Return.</p></li>
+      </ol>
+     </li>
+
+     <li><p>Let <var>mimeType</var> be the result of <span data-x="extract a MIME type">extracting
+     a MIME type</span> from <var>response</var>'s <span
+     data-x="concept-response-header-list">header list</span>.</p></li>
+
+     <li><p>Let <var>moduleScript</var> be null.</p></li>
+
+     <li><p>Let <var>referrerPolicy</var> be the result of <span
+     data-x="parse-referrer-policy-header">parsing the `<code>Referrer-Policy</code>` header</span>
+     given <var>response</var>. <ref>REFERRERPOLICY</ref></p></li>
+
+     <li><p>If <var>referrerPolicy</var> is not the empty string, set <var>options</var>'s <span
+     data-x="concept-script-fetch-options-referrer-policy">referrer policy</span> to
+     <var>referrerPolicy</var>.</p></li>
+
+     <li><p>If <var>mimeType</var>'s <span data-x="MIME type essence">essence</span> is
+     "<code>application/wasm</code>" and <var>moduleType</var> is "<code
+     data-x="">javascript-or-wasm</code>", then set <var>moduleScript</var> to the result of
+     <span>creating a WebAssembly module script</span> given <var>bodyBytes</var>,
+     <var>settingsObject</var>, <var>response</var>'s <span
+     data-x="concept-response-url">URL</span>, and <var>options</var>.</p></li>
+
+     <li>
+      <p>Otherwise:</p>
+      <ol>
+       <li><p>Let <var>sourceText</var> be the result of <span data-x="UTF-8 decode">UTF-8
+       decoding</span> <var>bodyBytes</var>.</p></li>
+
+       <li><p>If <var>moduleType</var> is "<code data-x="">text</code>", then set
+       <var>moduleScript</var> to the result of <span>creating a text module script</span> given
+       <var>sourceText</var> and <var>settingsObject</var>.</p></li>
+
+       <li><p>If <var>mimeType</var> is a <span>JavaScript MIME type</span> and <var>moduleType</var>
+       is "<code data-x="">javascript-or-wasm</code>", then set <var>moduleScript</var> to the result of
+       <span>creating a JavaScript module script</span> given <var>sourceText</var>,
+       <var>settingsObject</var>, <var>response</var>'s <span
+       data-x="concept-response-url">URL</span>, and <var>options</var>.</p></li>
+
+       <li><p>If the <span>MIME type essence</span> of <var>mimeType</var> is "<code>text/css</code>"
+       and <var>moduleType</var> is "<code data-x="">css</code>", then set <var>moduleScript</var> to
+       the result of <span>creating a CSS module script</span> given <var>sourceText</var> and
+       <var>settingsObject</var>.</p></li>
+
+       <li><p>If <var>mimeType</var> is a <span>JSON MIME type</span> and
+       <var>moduleType</var> is "<code data-x="">json</code>", then set <var>moduleScript</var> to
+       the result of <span>creating a JSON module script</span> given <var>sourceText</var> and
+       <var>settingsObject</var>.</p></li>
+      </ol>
+     </li>
+
+     <li><p>Let <var>callbacks</var> be
+     <var>moduleMap</var>[(<var>url</var>, <var>moduleType</var>)].</p></li>
+
+     <li>
+      <p>If <var>moduleScript</var> is null, then <span data-x="map remove">remove</span>
+      <var>moduleMap</var>[(<var>url</var>, <var>moduleType</var>)]; otherwise
+      <span data-x="map set">set</span> <var>moduleMap</var>[(<var>url</var>,
+      <var>moduleType</var>)] to <var>moduleScript</var>.</p>
+
+      <p class="note">It is intentional that the <span>module map</span> is keyed by the <span
+      data-x="concept-request-url">request URL</span>, whereas the <span
+      data-x="concept-script-base-url">base URL</span> for the <span>module script</span> is
+      set to the <span data-x="concept-response-url">response URL</span>. The former is used to
+      deduplicate fetches, while the latter is used for URL resolution.</p>
+     </li>
+
+     <li><p><span data-x="list iterate">For each</span> <var>callback</var> of
+     <var>callbacks</var>: run <var>callback</var> given <var>moduleScript</var>.</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>fetch a single imported module script</dfn>, given a <span>URL</span> <var>url</var>,
+  an <span>environment settings object</span> <var>fetchClient</var>, a <span
+  data-x="concept-request-destination">destination</span> <var>destination</var>, a <span>script
+  fetch options</span> <var>options</var>, <span>environment settings object</span>
+  <var>settingsObject</var>, a <span data-x="concept-request-referrer">referrer</span>
+  <var>referrer</var>, a <span>ModuleRequest Record</span> <var>moduleRequest</var>, an
+  algorithm <var>onComplete</var>, and an optional <span
+  data-x="fetching-scripts-perform-fetch">perform the fetch hook</span> <var>performFetch</var>, run
+  these steps. <var>onComplete</var> must be an algorithm accepting null (on failure) or a
+  <span>module script</span> (on success).</p>
+
+  <ol>
+   <li><p><span>Assert</span>: <var>moduleRequest</var>.[[Attributes]] does not contain any
+   <span>Record</span> <var>entry</var> such that <var>entry</var>.[[Key]] is not "<code
+   data-x="">type</code>", because we only asked for "<code data-x="">type</code>" attributes in
+   <span>HostGetSupportedImportAttributes</span>.</p></li>
+
+   <li><p>Let <var>moduleType</var> be the result of running the <span>module type from module
+   request</span> steps given <var>moduleRequest</var>.</p></li>
+
+   <li><p>If the result of running the <span>module type allowed</span> steps given
+   <var>moduleType</var> and <var>settingsObject</var> is false, then run <var>onComplete</var>
+   given null, and return.</p></li>
+
+   <li><p><span>Fetch a single module script</span> given <var>url</var>, <var>fetchClient</var>,
+   <var>destination</var>, <var>options</var>, <var>settingsObject</var>, <var>referrer</var>,
+   <var>moduleRequest</var>, false, and <var>onComplete</var>. If <var>performFetch</var> was given,
+   pass it along as well.</p></li>
+  </ol>
+  </div>
+
+  <h5 id="creating-scripts">Creating scripts</h5>
+
+ <p>This standard refers to the following concepts defined there:</p>
+
+  <ul class="brief">
+   <li><dfn data-x="webdriver-bidi-command-script-evaluate"
+   data-x-href="https://w3c.github.io/webdriver-bidi/#command-script-evaluate">WebDriver BiDi
+   command "script.evaluate"</dfn></li>
+  </ul>
+
+  <div algorithm>
+  <p>To <dfn data-x="creating a classic script">create a classic script</dfn>, given a
+  <span>string</span> <var>source</var>, an <span>environment settings object</span>
+  <var>settings</var>, a <span>URL</span> <var>baseURL</var>, a <span>script fetch options</span>
+  <var>options</var>, an optional boolean <var>mutedErrors</var> (default false), an optional
+  <span>URL</span>-or-null <var>sourceURLForWindowScripts</var> (default null), and an optional
+  boolean <var>bypassDisabledScripting</var> (default false):</p>
+
+  <p class="note">The <var>bypassDisabledScripting</var> parameter is intended to be used for
+  running scripts even if <span data-x="concept-environment-noscript">scripting is disabled</span>.
+  This is required for some automation scenarios, e.g. for WebDriver BiDi command <a
+  href="https://w3c.github.io/webdriver-bidi/#commands-scriptevaluate">"script.evaluate"</a>.</p>
+
+  <p class="note">The <var>bypassDisabledScripting</var> parameter is intended to be used for
+  running scripts even if scripting is disabled. This is required for some automation scenarios,
+  e.g. for <span data-x="webdriver-bidi-command-script-evaluate">WebDriver BiDi command
+  "script.evaluate"</span>. When the scripting process (e.g., executing a script via a WebDriver
+  BiDi command) is invoked with <var>bypassDisabledScripting</var> set to true, the event loop is
+  allowed to run to resolve thenables (from promises) and weakmap finalizations created by that
+  script, even if <span data-x="concept-environment-noscript">scripting is disabled</span>. This is
+  necessary to ensure the proper functioning of testing scripts, which often rely on asynchronous
+  operations.</p>
+
+  <ol>
+   <li>
+    <p>If <var>mutedErrors</var> is true, then set <var>baseURL</var> to
+    <code>about:blank</code>.</p>
+
+    <p class="note">When <var>mutedErrors</var> is true, <var>baseURL</var> is the script's
+    <span>CORS-cross-origin</span> <span data-x="concept-response">response</span>'s <span
+    data-x="concept-response-url">URL</span>, which shouldn't be exposed to JavaScript. Therefore,
+    <var>baseURL</var> is sanitized here.</p>
+   </li>
+
+   <li><p>If <span data-x="concept-environment-noscript">scripting is disabled</span> for
+   <var>settings</var> and <var>bypassDisabledScripting</var> is false, then set <var>source</var>
+   to the empty string.</p></li>
+
+   <li><p>Let <var>script</var> be a new <span>classic script</span> that this algorithm will
+   subsequently initialize.</p></li>
+
+   <li><p>Set <var>script</var>'s <span data-x="concept-script-settings-object">settings
+   object</span> to <var>settings</var>.</p></li>
+
+   <li><p>Set <var>script</var>'s <span data-x="concept-script-base-url">base URL</span> to
+   <var>baseURL</var>.</p></li>
+
+   <li><p>Set <var>script</var>'s <span data-x="concept-script-script-fetch-options">fetch
+   options</span> to <var>options</var>.</p></li>
+
+   <li><p>Set <var>script</var>'s <span>muted errors</span> to <var>mutedErrors</var>.</p></li>
+
+   <li><p>Set <var>script</var>'s <span data-x="concept-script-parse-error">parse error</span> and
+   <span data-x="concept-script-error-to-rethrow">error to rethrow</span> to null.</p></li>
+
+   <li><p><span>Record classic script creation time</span> given <var>script</var> and
+   <var>sourceURLForWindowScripts</var>.</p></li>
+
+   <li>
+    <p>Let <var>result</var> be <span data-x="js-ParseScript">ParseScript</span>(<var>source</var>,
+    <var>settings</var>'s <span data-x="environment settings object's realm">realm</span>,
+    <var>script</var>).</p>
+
+    <p class="note">Passing <var>script</var> as the last parameter here ensures
+    <var>result</var>.[[HostDefined]] will be <var>script</var>.</p>
+   </li>
+
+   <li>
+    <p>If <var>result</var> is a <span>list</span> of errors:
+
+    <ol>
+     <li><p>Set <var>script</var>'s <span data-x="concept-script-parse-error">parse error</span> and
+     its <span data-x="concept-script-error-to-rethrow">error to rethrow</span> to
+     <var>result</var>[0].</p></li>
+
+     <li><p>Return <var>script</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Set <var>script</var>'s <span data-x="concept-script-record">record</span> to
+   <var>result</var>.</p></li>
+
+   <li><p>Return <var>script</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="creating a JavaScript module script">create a JavaScript module script</dfn>,
+  given a <span>string</span> <var>source</var>, an <span>environment settings
+  object</span> <var>settings</var>, a <span>URL</span> <var>baseURL</var>, and a <span>script fetch
+  options</span> <var>options</var>:</p>
+
+  <ol>
+   <li><p>If <span data-x="concept-environment-noscript">scripting is disabled</span> for
+   <var>settings</var>, then set <var>source</var> to the empty string.</p></li>
+
+   <li><p>Let <var>script</var> be a new <span>module script</span> that this algorithm will
+   subsequently initialize.</p></li>
+
+   <li><p>Set <var>script</var>'s <span data-x="concept-script-settings-object">settings
+   object</span> to <var>settings</var>.</p></li>
+
+   <li><p>Set <var>script</var>'s <span data-x="concept-script-base-url">base URL</span> to
+   <var>baseURL</var>.</p></li>
+
+   <li><p>Set <var>script</var>'s <span data-x="concept-script-script-fetch-options">fetch
+   options</span> to <var>options</var>.</p></li>
+
+   <li><p>Set <var>script</var>'s <span data-x="concept-script-parse-error">parse error</span> and
+   <span data-x="concept-script-error-to-rethrow">error to rethrow</span> to null.</p></li>
+
+   <li>
+    <p>Let <var>result</var> be <span data-x="js-ParseModule">ParseModule</span>(<var>source</var>,
+    <var>settings</var>'s <span data-x="environment settings object's realm">realm</span>,
+    <var>script</var>).</p>
+
+    <p class="note">Passing <var>script</var> as the last parameter here ensures
+    <var>result</var>.[[HostDefined]] will be <var>script</var>.</p>
+   </li>
+
+   <li>
+    <p>If <var>result</var> is a <span>list</span> of errors:</p>
+
+    <ol>
+     <li><p>Set <var>script</var>'s <span data-x="concept-script-parse-error">parse error</span> to
+     <var>result</var>[0].</p></li>
+
+     <li><p>Return <var>script</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Set <var>script</var>'s <span data-x="concept-script-record">record</span> to
+   <var>result</var>.</p></li>
+
+   <li><p>Return <var>script</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="creating a WebAssembly module script">create a WebAssembly module script</dfn>,
+  given a <span>byte sequence</span> <var>bodyBytes</var>, an <span>environment settings
+  object</span> <var>settings</var>, a <span>URL</span> <var>baseURL</var>, and a <span>script fetch
+  options</span> <var>options</var>:</p>
+
+  <ol>
+   <li>
+    <p>If <span data-x="concept-environment-noscript">scripting is disabled</span> for
+    <var>settings</var>, then set <var>bodyBytes</var> to the byte sequence 0x00 0x61 0x73 0x6D 0x01
+    0x00 0x00 0x00.</p>
+
+    <p class="note">This byte sequence corresponds to an empty WebAssembly module with only the magic
+    bytes and version number provided.</p>
+   </li>
+
+   <li><p>Let <var>script</var> be a new <span>module script</span> that this algorithm will
+   subsequently initialize.</p></li>
+
+   <li><p>Set <var>script</var>'s <span data-x="concept-script-settings-object">settings
+   object</span> to <var>settings</var>.</p></li>
+
+   <li><p>Set <var>script</var>'s <span data-x="concept-script-base-url">base URL</span> to
+   <var>baseURL</var>.</p></li>
+
+   <li><p>Set <var>script</var>'s <span data-x="concept-script-script-fetch-options">fetch
+   options</span> to <var>options</var>.</p></li>
+
+   <li><p>Set <var>script</var>'s <span data-x="concept-script-parse-error">parse error</span> and
+   <span data-x="concept-script-error-to-rethrow">error to rethrow</span> to null.</p></li>
+
+   <li>
+    <p>Let <var>result</var> be the result of <span data-x="parse a WebAssembly module">parsing a
+    WebAssembly module</span> given <var>bodyBytes</var>,
+    <var>settings</var>'s <span data-x="environment settings object's realm">realm</span>, and
+    <var>script</var>.</p>
+
+    <p class="note">Passing <var>script</var> as the last parameter here ensures
+    <var>result</var>.[[HostDefined]] will be <var>script</var>.</p>
+   </li>
+
+   <li>
+    <p>If the previous step threw an error <var>error</var>:</p>
+
+    <ol>
+     <li><p>Set <var>script</var>'s <span data-x="concept-script-parse-error">parse error</span> to
+     <var>error</var>.</p></li>
+
+     <li><p>Return <var>script</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Set <var>script</var>'s <span data-x="concept-script-record">record</span> to
+   <var>result</var>.</p></li>
+
+   <li><p>Return <var>script</var>.</p></li>
+  </ol>
+  </div>
+
+  <p class="note"><cite>WebAssembly JavaScript Interface: ESM Integration</cite> specifies the
+  hooks for the WebAssembly integration with ECMA-262 module loading. This includes support both
+  for direct dependency imports, as well as for source phase imports, which support virtualization
+  and multi-instantiation. <ref>WASMESM</ref></p>
+
+  <div algorithm>
+  <p>To <dfn data-x="creating a CSS module script">create a CSS module script</dfn>, given a
+  string <var>source</var> and an <span>environment settings object</span> <var>settings</var>:</p>
+
+  <ol>
+   <li><p>Let <var>script</var> be a new <span>module script</span> that this algorithm will
+   subsequently initialize.</p></li>
+
+   <li><p>Set <var>script</var>'s <span data-x="concept-script-settings-object">settings
+   object</span> to <var>settings</var>.</p></li>
+
+   <li><p>Set <var>script</var>'s <span data-x="concept-script-base-url">base URL</span> and
+   <span data-x="concept-script-script-fetch-options">fetch options</span> to null.</p></li>
+
+   <li><p>Set <var>script</var>'s <span data-x="concept-script-parse-error">parse error</span> and
+   <span data-x="concept-script-error-to-rethrow">error to rethrow</span> to null.</p></li>
+
+   <li><p>Let <var>sheet</var> be the result of running the steps to <span>create a constructed
+   <code>CSSStyleSheet</code></span> with an empty dictionary as the argument.</p></li>
+
+   <li>
+    <p>Run the steps to <span>synchronously replace the rules of a <code>CSSStyleSheet</code></span>
+    on <var>sheet</var> given <var>source</var>.</p>
+
+    <p>If this throws an exception, catch it, and set <var>script</var>'s <span
+    data-x="concept-script-parse-error">parse error</span> to that exception, and return
+    <var>script</var>.</p>
+
+    <p class="note">The steps to <span>synchronously replace the rules of a
+    <code>CSSStyleSheet</code></span> will throw if <var>source</var> contains any <code
+    data-x="">@import</code> rules.  This is by-design for now because there is not yet an
+    agreement on how to handle these for CSS module scripts; therefore they are blocked altogether
+    until a consensus is reached.</p>
+   </li>
+
+   <li><p>Set <var>script</var>'s <span data-x="concept-script-record">record</span> to the result
+   of <span>CreateDefaultExportSyntheticModule</span>(<var>sheet</var>).</p></li>
+
+   <li><p>Return <var>script</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="creating a JSON module script">create a JSON module script</dfn>, given a
+  string <var>source</var> and an <span>environment settings object</span> <var>settings</var>:</p>
+
+  <ol>
+   <li><p>Let <var>script</var> be a new <span>module script</span> that this algorithm will
+   subsequently initialize.</p></li>
+
+   <li><p>Set <var>script</var>'s <span data-x="concept-script-settings-object">settings
+   object</span> to <var>settings</var>.</p></li>
+
+   <li><p>Set <var>script</var>'s <span data-x="concept-script-base-url">base URL</span> and
+   <span data-x="concept-script-script-fetch-options">fetch options</span> to null.</p></li>
+
+   <li><p>Set <var>script</var>'s <span data-x="concept-script-parse-error">parse error</span> and
+   <span data-x="concept-script-error-to-rethrow">error to rethrow</span> to null.</p></li>
+
+   <li>
+    <p>Let <var>result</var> be <span>ParseJSONModule</span>(<var>source</var>).</p>
+
+    <p>If this throws an exception, catch it, and set <var>script</var>'s <span
+    data-x="concept-script-parse-error">parse error</span> to that exception, and return
+    <var>script</var>.</p>
+   </li>
+
+   <li><p>Set <var>script</var>'s <span data-x="concept-script-record">record</span> to
+   <var>result</var>.</p></li>
+
+   <li><p>Return <var>script</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="creating a text module script">create a text module script</dfn>, given a
+  string <var>text</var> and an <span>environment settings object</span> <var>settings</var>:</p>
+
+  <ol>
+   <li><p>Let <var>script</var> be a new <span>module script</span> that this algorithm will
+   subsequently initialize.</p></li>
+
+   <li><p>Set <var>script</var>'s <span data-x="concept-script-settings-object">settings
+   object</span> to <var>settings</var>.</p></li>
+
+   <li><p>Set <var>script</var>'s <span data-x="concept-script-base-url">base URL</span> and
+   <span data-x="concept-script-script-fetch-options">fetch options</span> to null.</p></li>
+
+   <li><p>Set <var>script</var>'s <span data-x="concept-script-parse-error">parse error</span> and
+   <span data-x="concept-script-error-to-rethrow">error to rethrow</span> to null.</p></li>
+
+   <li><p>Let <var>result</var> be <span>CreateTextModule</span>(<var>text</var>).</p></li>
+
+   <li><p>Set <var>script</var>'s <span data-x="concept-script-record">record</span> to
+   <var>result</var>.</p></li>
+
+   <li><p>Return <var>script</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn>module type from module request</dfn> steps, given a <span>ModuleRequest
+  Record</span> <var>moduleRequest</var>, are as follows:</p>
+
+  <ol>
+   <li><p>Let <var>moduleType</var> be "<code data-x="">javascript-or-wasm</code>".</p></li>
+
+   <li>
+    <p>If <var>moduleRequest</var>.[[Attributes]] has a <span>Record</span> <var>entry</var> such
+    that <var>entry</var>.[[Key]] is "<code data-x="">type</code>":</p>
+
+    <ol>
+     <li>
+      <p>If <var>entry</var>.[[Value]] is "<code data-x="">javascript-or-wasm</code>", then set
+      <var>moduleType</var> to null.</p>
+
+      <p class="note">This specification uses the "<code data-x="">javascript-or-wasm</code>" module
+      type internally for <span data-x="JavaScript module script">JavaScript module scripts</span> or
+      <span data-x="WebAssembly module script">WebAssembly module scripts</span>, so this step is
+      needed to prevent modules from being imported using a
+      "<code data-x="">javascript-or-wasm</code>" type attribute (a null <var>moduleType</var> will
+      cause the <span>module type allowed</span> check to fail).</p>
+     </li>
+
+     <li><p>Otherwise, set <var>moduleType</var> to <var>entry</var>.[[Value]].</p></li>
+    </ol>
+   </li>
+
+   <li><p>Return <var>moduleType</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn>module type allowed</dfn> steps, given a <span>string</span> <var>moduleType</var>
+  and an <span>environment settings object</span> <var>settings</var>, are as follows:</p>
+
+  <ol>
+   <li><p>If <var>moduleType</var> is not "<code data-x="">javascript-or-wasm</code>", "<code
+   data-x="">css</code>", "<code data-x="">json</code>", or "<code data-x="">text</code>", then
+   return false.</p></li>
+
+   <li><p>If <var>moduleType</var> is "<code data-x="">css</code>" and the
+   <code>CSSStyleSheet</code> interface is not <span data-x="idl-exposed">exposed</span> in
+   <var>settings</var>'s <span data-x="environment settings object's realm">realm</span>, then
+   return false.</p></li>
+
+   <li><p>Return true.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn>fetch destination from module type</dfn> steps, given a <span
+  data-x="concept-request-destination">destination</span> <var>defaultDestination</var> and a
+  <span>string</span> <var>moduleType</var>, are as follows:</p>
+
+  <ol>
+   <li>If <var>moduleType</var> is "<code data-x="">json</code>", then return "<code
+   data-x="">json</code>".</li>
+
+   <li>If <var>moduleType</var> is "<code data-x="">css</code>", then return "<code
+   data-x="">style</code>".</li>
+
+   <li>If <var>moduleType</var> is "<code data-x="">text</code>", then return "<code
+   data-x="">text</code>".</li>
+
+   <li>Return <var>defaultDestination</var>.</li>
+  </ol>
+  </div>
+
+  <h5 id="calling-scripts">Calling scripts</h5>
+
+  <div algorithm>
+  <p>To <dfn export>run a classic script</dfn> given a <span>classic script</span> <var>script</var>
+  and an optional boolean <var>rethrow errors</var> (default false):</p>
+
+  <ol>
+   <li><p>Let <var>settings</var> be the <span data-x="concept-script-settings-object">settings
+   object</span> of <var>script</var>.</p></li>
+
+   <li><p><span>Check if we can run script</span> with <var>settings</var>. If this returns "do
+   not run", then return <span>NormalCompletion</span>(empty).</p></li>
+
+   <li><p><span>Record classic script execution start time</span> given <var>script</var>.</p></li>
+
+   <li><p><span>Prepare to run script</span> given <var>settings</var>.</p></li>
+
+   <li><p>Let <var>evaluationStatus</var> be null.</p></li>
+
+   <li><p>If <var>script</var>'s <span data-x="concept-script-error-to-rethrow">error to
+   rethrow</span> is not null, then set <var>evaluationStatus</var> to
+   <span>ThrowCompletion</span>(<var>script</var>'s <span
+   data-x="concept-script-error-to-rethrow">error to rethrow</span>).</p></li>
+
+   <li>
+    <p>Otherwise, set <var>evaluationStatus</var> to <span
+    data-x="js-ScriptEvaluation">ScriptEvaluation</span>(<var>script</var>'s <span
+    data-x="concept-script-record">record</span>).</p>
+
+    <p>If <span data-x="js-ScriptEvaluation">ScriptEvaluation</span> does not complete because the
+    user agent has <span data-x="abort a running script">aborted the running script</span>, leave
+    <var>evaluationStatus</var> as null.</p>
+   </li>
+
+   <li>
+    <p>If <var>evaluationStatus</var> is an <span data-x="Completion Record">abrupt
+    completion</span>:</p>
+
+    <ol>
+     <li>
+      <p>If <var>rethrow errors</var> is true and <var>script</var>'s <span>muted
+      errors</span> is false:</p>
+
+      <ol>
+       <li><p><span>Clean up after running script</span> with <var>settings</var>.</p></li>
+
+       <li><p>Rethrow <var>evaluationStatus</var>.[[Value]].</p></li>
+      </ol>
+
+     <li>
+      <p>If <var>rethrow errors</var> is true and <var>script</var>'s <span>muted
+      errors</span> is true:</p>
+
+      <ol>
+       <li><p><span>Clean up after running script</span> with <var>settings</var>.</p></li>
+
+       <li><p>Throw a <span>"<code>NetworkError</code>"</span> <code>DOMException</code>.</p></li>
+      </ol>
+     </li>
+
+     <li>
+      <p>Otherwise, <var>rethrow errors</var> is false. Perform the following steps:</p>
+
+      <ol>
+       <li><p><span>Report an exception</span> given by <var>evaluationStatus</var>.[[Value]] for
+       <var>script</var>'s <span data-x="concept-script-settings-object">settings object</span>'s
+       <span data-x="concept-settings-object-global">global object</span>.</p></li>
+
+       <li><p><span>Clean up after running script</span> with <var>settings</var>.</p></li>
+
+       <li><p>Return <var>evaluationStatus</var>.</p></li>
+      </ol>
+     </li>
+    </ol>
+   </li>
+
+   <li><p><span>Clean up after running script</span> with <var>settings</var>.</p></li>
+
+   <li><p>If <var>evaluationStatus</var> is a normal completion, then return
+   <var>evaluationStatus</var>.</p></li>
+
+   <li><p>If we've reached this point, <var>evaluationStatus</var> was left as null because the
+   script was <span data-x="abort a running script">aborted prematurely</span> during evaluation.
+   Return <span>ThrowCompletion</span>(a new <code>QuotaExceededError</code>).
+   </p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn export>run a module script</dfn> given a <span>module script</span> <var>script</var>
+  and an optional boolean <var>preventErrorReporting</var> (default false):</p>
+
+  <ol>
+   <li><p>Let <var>settings</var> be the <span data-x="concept-script-settings-object">settings
+   object</span> of <var>script</var>.</p></li>
+
+   <li><p><span>Check if we can run script</span> with <var>settings</var>. If this returns "do not
+   run", then return <span>a promise resolved with</span> undefined.</p></li>
+
+   <li><p><span>Record module script execution start time</span> given <var>script</var>.</p></li>
+
+   <li><p><span>Prepare to run script</span> given <var>settings</var>.</p></li>
+
+   <li><p>Let <var>evaluationPromise</var> be null.</p></li>
+
+   <li><p>If <var>script</var>'s <span data-x="concept-script-error-to-rethrow">error to
+   rethrow</span> is not null, then set <var>evaluationPromise</var> to <span>a promise rejected
+   with</span> <var>script</var>'s <span data-x="concept-script-error-to-rethrow">error to
+   rethrow</span>.</p></li>
+
+   <li>
+    <p>Otherwise:</p>
+
+    <ol>
+     <li><p>Let <var>record</var> be <var>script</var>'s <span
+     data-x="concept-script-record">record</span>.</p>
+
+     <li>
+      <p>Set <var>evaluationPromise</var> to <var>record</var>.<span
+      data-x="js-Evaluate">Evaluate</span>().</p>
+
+      <p class="note">This step will recursively evaluate all of the module's dependencies.</p>
+
+      <p>If <span data-x="js-Evaluate">Evaluate</span> fails to complete as a result of the user agent
+      <span data-x="abort a running script">aborting the running script</span>, then set
+      <var>evaluationPromise</var> to <span>a promise rejected with</span> a new
+      <code>QuotaExceededError</code>.</p>
+      </li>
+    </ol>
+   </li>
+
+   <li><p>If <var>preventErrorReporting</var> is false, then <span>upon rejection</span> of
+   <var>evaluationPromise</var> with <var>reason</var>, <span>report an exception</span> given by
+   <var>reason</var> for <var>script</var>'s <span data-x="concept-script-settings-object">settings
+   object</span>'s <span data-x="concept-settings-object-global">global object</span>.</p></li>
+
+   <li><p><span>Clean up after running script</span> with <var>settings</var>.</p></li>
+
+   <li><p>Return <var>evaluationPromise</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The steps to <dfn>check if we can run script</dfn> with an <span>environment settings
+  object</span> <var>settings</var> are as follows. They return either "run" or "do not run".</p>
+
+  <ol>
+   <li><p>If the <span data-x="concept-settings-object-global">global object</span> specified by
+   <var>settings</var> is a <code>Window</code> object whose <code>Document</code> object is not
+   <span>fully active</span>, then return "do not run".</p>
+
+   <li><p>If <span data-x="concept-environment-noscript">scripting is disabled</span> for
+   <var>settings</var>, then return "do not run".</p>
+
+   <li><p>Return "run".</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The steps to <dfn export>prepare to run script</dfn> with an <span>environment settings
+  object</span> <var>settings</var> are as follows:</p>
+
+  <ol>
+   <li><p>Push <var>settings</var>'s <span>realm execution context</span> onto the <span>JavaScript
+   execution context stack</span>; it is now the <span>running JavaScript execution
+   context</span>.</p></li>
+
+   <li><p>Add <var>settings</var> to the <span>surrounding agent</span>'s <span
+   data-x="concept-agent-event-loop">event loop</span>'s <span>currently running task</span>'s
+   <span>script evaluation environment settings object set</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The steps to <dfn export>clean up after running script</dfn> with an <span>environment settings
+  object</span> <var>settings</var> are as follows:</p>
+
+  <ol>
+   <li><p><span>Assert</span>: <var>settings</var>'s <span>realm execution context</span> is the
+   <span>running JavaScript execution context</span>.</p></li>
+
+   <li><p>Remove <var>settings</var>'s <span>realm execution context</span> from the
+   <span>JavaScript execution context stack</span>.</p></li>
+
+   <li><p>If the <span>JavaScript execution context stack</span> is now empty, <span>perform a
+   microtask checkpoint</span>. (If this runs scripts, these algorithms will be invoked
+   reentrantly.)</p></li>
+  </ol>
+  </div>
+
+  <p class="note">These algorithms are not invoked by one script directly calling another, but they
+  can be invoked reentrantly in an indirect manner, e.g. if a script dispatches an event which has
+  event listeners registered.</p>
+
+  <div algorithm>
+  <p>The <dfn>running script</dfn> is the <span data-x="concept-script">script</span> in the
+  [[HostDefined]] field in the ScriptOrModule component of the <span>running JavaScript execution
+  context</span>.</p>
+  </div>
+
+
+  <h5>Killing scripts</h5>
+
+  <p>Although the JavaScript specification does not account for this possibility, it's sometimes
+  necessary to <dfn data-lt="abort a running script|abort the running script" export>abort a
+  running script</dfn>. This causes any <span data-x="js-ScriptEvaluation">ScriptEvaluation</span>
+  or <span>Source Text Module Record</span> <span data-x="js-Evaluate">Evaluate</span> invocations
+  to cease immediately, emptying the <span>JavaScript execution context stack</span> without
+  triggering any of the normal mechanisms like <code data-x="">finally</code> blocks.
+  <ref>JAVASCRIPT</ref></p>
+
+  <p>User agents may impose resource limitations on scripts, for example CPU quotas, memory limits,
+  total execution time limits, or bandwidth limitations. When a script exceeds a limit, the user
+  agent may either throw a <code>QuotaExceededError</code>, <span data-x="abort a running
+  script">abort the script</span> without an exception, prompt the user, or throttle script
+  execution.</p>
+
+  <div class="example">
+
+   <p>For example, the following script never terminates. A user agent could, after waiting for a
+   few seconds, prompt the user to either terminate the script or let it continue.</p>
+
+   <pre><code class="html">&lt;script>
+ while (true) { /* loop */ }
+&lt;/script></code></pre>
+
+  </div>
+
+  <p>User agents are encouraged to allow users to disable scripting whenever the user is prompted
+  either by a script (e.g. using the <code data-x="dom-alert">window.alert()</code> API) or because
+  of a script's actions (e.g. because it has exceeded a time limit).</p>
+
+  <p>If scripting is disabled while a script is executing, the script should be terminated
+  immediately.</p>
+
+  <p>User agents may allow users to specifically disable scripts just for the purposes of closing a
+  <span>browsing context</span>.</p>
+
+  <p class="example">For example, the prompt mentioned in the example above could also offer the
+  user with a mechanism to just close the page entirely, without running any <code
+  data-x="event-unload">unload</code> event handlers.</p>
+
+  </div>
+
+  <h5 id="runtime-script-errors">Runtime script errors</h5>
+
+  <dl class="domintro">
+   <dt><code data-x="">self.<span subdfn data-x="dom-reportError">reportError</span>(<var>e</var>)</code></dt>
+   <dd><p>Dispatches an <code data-x="event-error">error</code> event at the global object for the
+   given value <var>e</var>, in the same fashion as an unhandled exception.</p></dd>
+  </dl>
+
+  <p w-dev>In various scenarios, the user agent can report an exception by firing an <code
+  data-x="event-error">error</code> event at the <code>Window</code>. If this event is not canceled,
+  then the error is considered not handled, and can be reported to the developer console.</p>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>To <dfn data-x="extract-error">extract error information</dfn> from a JavaScript value
+  <var>exception</var>:</p>
+
+  <ol>
+   <li><p>Let <var>attributes</var> be an empty <span data-x="ordered map">map</span> keyed by IDL
+   attributes.</p></li>
+
+   <li><p>Set <var>attributes</var>[<code data-x="dom-ErrorEvent-error">error</code>] to
+   <var>exception</var>.</p></li>
+
+   <li>
+    <p>
+     <!--INSERT TRACKING-->
+     Set <var>attributes</var>[<code data-x="dom-ErrorEvent-message">message</code>],
+     <var>attributes</var>[<code data-x="dom-ErrorEvent-filename">filename</code>],
+     <var>attributes</var>[<code data-x="dom-ErrorEvent-lineno">lineno</code>], and
+     <var>attributes</var>[<code data-x="dom-ErrorEvent-colno">colno</code>] to
+     <span>implementation-defined</span> values derived from <var>exception</var>.
+    </p>
+
+    <p class="note">Browsers implement behavior not specified here or in the JavaScript
+    specification to gather values which are helpful, including in unusual cases (e.g., <code
+    data-x="">eval</code>). In the future, this might be specified in greater detail.</p>
+   </li>
+
+   <li><p>Return <var>attributes</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p id="runtime-script-errors-in-documents"><span id="report-the-error"></span>To <dfn
+  export>report an exception</dfn> <var>exception</var> which is a JavaScript value, for a
+  particular <span>global object</span> <var>global</var> and optional boolean <dfn
+  data-x="report-exception-omitError"><var>omitError</var></dfn> (default false):</p>
+
+  <ol>
+   <li><p>Let <var>notHandled</var> be true.</p></li>
+
+   <li><p>Let <var>errorInfo</var> be the result of <span data-x="extract-error">extracting error
+   information</span> from <var>exception</var>.</p></li>
+
+   <li>
+    <p>Let <var>script</var> be a <span data-x="concept-script">script</span> found in an
+    <span>implementation-defined</span> way, or null. This should usually be the <span>running
+    script</span> (most notably during <span>run a classic script</span>).</p>
+
+    <p class="note">Implementations have not yet settled on interoperable behavior for which script
+    is used to determine whether errors are muted in less common cases.</p>
+   </li>
+
+   <li><p>If <var>script</var> is a <span>classic script</span> and <var>script</var>'s <span>muted
+   errors</span> is true, then set <var>errorInfo</var>[<code
+   data-x="dom-ErrorEvent-error">error</code>] to null, <var>errorInfo</var>[<code
+   data-x="dom-ErrorEvent-message">message</code>] to "<code data-x="">Script error.</code>",
+   <var>errorInfo</var>[<code data-x="dom-ErrorEvent-filename">filename</code>] to the empty
+   string, <var>errorInfo</var>[<code data-x="dom-ErrorEvent-lineno">lineno</code>] to 0, and
+   <var>errorInfo</var>[<code data-x="dom-ErrorEvent-colno">colno</code>] to 0.</p></li>
+
+   <li><p>If <var>omitError</var> is true, then set <var>errorInfo</var>[<code
+   data-x="dom-ErrorEvent-error">error</code>] to null.</p></li>
+
+   <li>
+    <p>If <var>global</var> is not <span>in error reporting mode</span>:</p>
+
+    <ol>
+     <li>Set <var>global</var>'s <span>in error reporting mode</span> to true.</li>
+
+     <li>
+      <p>If <var>global</var> implements <code>EventTarget</code>, then set <var>notHandled</var> to
+      the result of <span data-x="concept-event-fire">firing an event</span> named <code
+      data-x="event-error">error</code> at <var>global</var>, using <code>ErrorEvent</code>, with
+      the <code data-x="dom-Event-cancelable">cancelable</code> attribute initialized to true,
+      and additional attributes initialized according to <var>errorInfo</var>.</p>
+
+      <p class="note">Returning true in an event handler cancels the event per <span>the event
+      handler processing algorithm</span>.</p>
+     </li>
+
+     <li><p>Set <var>global</var>'s <span>in error reporting mode</span> to false.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p>If <var>notHandled</var> is true:</p>
+
+    <ol>
+     <li><p>Set <var>errorInfo</var>[<code data-x="dom-ErrorEvent-error">error</code>] to
+     null.</p></li>
+
+     <li>
+      <p>If <var>global</var> implements <code>DedicatedWorkerGlobalScope</code>, <span>queue a
+      global task</span> on the <span>DOM manipulation task source</span> with the
+      <var>global</var>'s associated <code>Worker</code>'s <span>relevant global object</span> to
+      run these steps:</p>
+
+      <ol>
+       <li><p>Let <var>workerObject</var> be the <code>Worker</code> object associated with
+       <var>global</var>.</p></li>
+
+       <li><p>Set <var>notHandled</var> to the result of <span data-x="concept-event-fire">firing
+       an event</span> named <code data-x="event-error">error</code> at <var>workerObject</var>,
+       using <code>ErrorEvent</code>, with the <code
+       data-x="dom-Event-cancelable">cancelable</code> attribute initialized to true,
+       and additional attributes initialized according to <var>errorInfo</var>.</p></li>
+
+       <li>
+        <p>If <var>notHandled</var> is true, then <span data-x="report an exception">report</span>
+        <var>exception</var> for <var>workerObject</var>'s <span>relevant global object</span> with
+        <span data-x="report-exception-omitError"><var>omitError</var></span> set to true.</p>
+
+        <p class="note">The actual <var>exception</var> value will not be available in the owner
+        realm, but the user agent still carries through enough information to set the message,
+        filename, and other attributes, as well as potentially report to a developer console.</p>
+       </li>
+      </ol>
+     </li>
+
+     <li><p>Otherwise, the user agent may report <var>exception</var> to a developer
+     console.</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <p>If the implicit port connecting a worker to its <code>Worker</code> object has been
+  disentangled (i.e. if the parent worker has been terminated), then the user agent must act as if
+  the <code>Worker</code> object had no <code data-x="event-error">error</code> event handler and as
+  if that worker's <code data-x="handler-WorkerGlobalScope-onerror">onerror</code> attribute was
+  null, but must otherwise act as described above.</p>
+
+  <p class="note">Thus, error reports propagate up to the chain of dedicated workers up to the
+  original <code>Document</code>, even if some of the workers along this chain have been terminated
+  and garbage collected.</p>
+
+  <p>Previous revisions of this standard defined an algorithm to <dfn data-x="report the exception"
+  data-lt="report the exception" export>report the exception</dfn>. As part of <a
+  href="https://github.com/whatwg/html">issue #958</a>, this has been superseded by <span>report an
+  exception</span> which behaves differently and takes different inputs. <a
+  href="https://github.com/whatwg/html/issues/10516">Issue #10516</a> tracks updating the
+  specification ecosystem.</p>
+
+  <hr>
+
+  <div algorithm>
+  <p>The <dfn method for="WindowOrWorkerGlobalScope"
+  data-x="dom-reportError"><code>reportError(<var>e</var>)</code></dfn> method steps are to
+  <span>report an exception</span> <var>e</var> for <span>this</span>.</p>
+  </div>
+
+  <p class="XXX">It is unclear whether <span data-x="muted errors">muting</span> is
+  applicable here. In Chrome and Safari it is muted, but in Firefox it is not. See also <a
+  href="https://github.com/whatwg/html/issues/958">issue #958</a>.</p>
+
+  <hr>
+
+  <p id="the-errorevent-interface">The <code>ErrorEvent</code> interface is defined as follows:</p>
+
+  <pre><code class="idl">[Exposed=*]
+interface <dfn interface>ErrorEvent</dfn> : <span>Event</span> {
+  <span data-x="dom-Event-constructor">constructor</span>(DOMString type, optional <span>ErrorEventInit</span> eventInitDict = {});
+
+  readonly attribute DOMString <span data-x="dom-ErrorEvent-message">message</span>;
+  readonly attribute USVString <span data-x="dom-ErrorEvent-filename">filename</span>;
+  readonly attribute unsigned long <span data-x="dom-ErrorEvent-lineno">lineno</span>;
+  readonly attribute unsigned long <span data-x="dom-ErrorEvent-colno">colno</span>;
+  readonly attribute any <span data-x="dom-ErrorEvent-error">error</span>;
+};
+
+dictionary <dfn dictionary>ErrorEventInit</dfn> : <span>EventInit</span> {
+  DOMString message = "";
+  USVString filename = "";
+  unsigned long lineno = 0;
+  unsigned long colno = 0;
+  any error;
+};</code></pre>
+
+  <div algorithm>
+  <p>The <dfn attribute for="ErrorEvent"><code data-x="dom-ErrorEvent-message">message</code></dfn>
+  attribute must return the value it was initialized to. It represents the error message.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="ErrorEvent"><code
+  data-x="dom-ErrorEvent-filename">filename</code></dfn> attribute must return the value it was
+  initialized to. It represents the <span>URL</span> of the script in which the error originally
+  occurred.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="ErrorEvent"><code data-x="dom-ErrorEvent-lineno">lineno</code></dfn>
+  attribute must return the value it was initialized to. It represents the line number where the
+  error occurred in the script.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="ErrorEvent"><code data-x="dom-ErrorEvent-colno">colno</code></dfn>
+  attribute must return the value it was initialized to. It represents the column number where the
+  error occurred in the script.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="ErrorEvent"><code data-x="dom-ErrorEvent-error">error</code></dfn>
+  attribute must return the value it was initialized to. It must initially be initialized to
+  undefined. Where appropriate, it is set to the object representing the error (e.g., the exception
+  object in the case of an uncaught exception).</p>
+  </div>
+
+  </div>
+
+  <h5>Unhandled promise rejections</h5>
+
+  <p>In addition to synchronous <a href="#runtime-script-errors">runtime script errors</a>, scripts
+  may experience asynchronous promise rejections, tracked via the <code
+  data-x="event-unhandledrejection">unhandledrejection</code> and <code
+  data-x="event-rejectionhandled">rejectionhandled</code> events.<span w-nodev> Tracking these
+  rejections is done via the <span>HostPromiseRejectionTracker</span> abstract operation, but
+  reporting them is defined here.</span></p>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>To <dfn>notify about rejected promises</dfn> given a <span>global object</span>
+  <var>global</var>:</p>
+
+  <ol>
+   <li><p>Let <var>list</var> be a <span data-x="list clone">clone</span> of <var>global</var>'s
+   <span>about-to-be-notified rejected promises list</span>.</p></li>
+
+   <li><p>If <var>list</var> <span data-x="list is empty">is empty</span>, then return.</p></li>
+
+   <li><p><span data-x="list empty">Empty</span> <var>global</var>'s <span>about-to-be-notified
+   rejected promises list</span>.</p></li>
+
+   <li>
+    <p><span>Queue a global task</span> on the <span>DOM manipulation task source</span> given
+    <var>global</var> to run the following step:</p>
+
+    <ol>
+     <li><p><span data-x="list iterate">For each</span> promise <var>p</var> of <var>list</var>:</p>
+
+      <ol>
+       <li><p>If <var>p</var>.[[PromiseIsHandled]] is true, then <span>continue</span>.</p></li>
+
+       <li><p>Let <var>notCanceled</var> be the result of <span data-x="concept-event-fire">firing
+       an event</span> named <code data-x="event-unhandledrejection">unhandledrejection</code> at
+       <var>global</var>, using <code>PromiseRejectionEvent</code>, with the <code
+       data-x="dom-Event-cancelable">cancelable</code> attribute initialized to true, the <code
+       data-x="dom-PromiseRejectionEvent-promise">promise</code> attribute initialized to
+       <var>p</var>, and the <code data-x="dom-PromiseRejectionEvent-reason">reason</code>
+       attribute initialized to <var>p</var>.[[PromiseResult]].</p></li>
+
+       <li id="concept-promise-rejection-handled"><p id="concept-promise-rejection-nothandled">If
+       <var>notCanceled</var> is true, then the user agent may report
+       <var>p</var>.[[PromiseResult]] to a developer console.</p></li>
+
+       <li><p>If <var>p</var>.[[PromiseIsHandled]] is false, then <span data-x="set
+       append">append</span> <var>p</var> to <var>global</var>'s <span>outstanding rejected
+       promises weak set</span>.</p></li>
+      </ol>
+     </li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <p id="the-promiserejectionevent-interface">The <code>PromiseRejectionEvent</code> interface is
+  defined as follows:</p>
+
+  <pre><code class="idl">[Exposed=*]
+interface <dfn interface>PromiseRejectionEvent</dfn> : <span>Event</span> {
+  <span data-x="dom-Event-constructor">constructor</span>(DOMString type, <span>PromiseRejectionEventInit</span> eventInitDict);
+
+  readonly attribute <span data-x="idl-object">object</span> <span data-x="dom-PromiseRejectionEvent-promise">promise</span>;
+  readonly attribute any <span data-x="dom-PromiseRejectionEvent-reason">reason</span>;
+};
+
+dictionary <dfn dictionary>PromiseRejectionEventInit</dfn> : <span>EventInit</span> {
+  required <span data-x="idl-object">object</span> promise;
+  any reason;
+};</code></pre>
+
+  <div algorithm>
+  <p>The <dfn attribute for="PromiseRejectionEvent"><code
+  data-x="dom-PromiseRejectionEvent-promise">promise</code></dfn> attribute must return the value it
+  was initialized to. It represents the promise which this notification is about.</p>
+  </div>
+
+  <p class="note">Because of how Web IDL conversion rules for <code
+  data-x=""><span data-x="idl-Promise">Promise</span>&lt;<var ignore>T</var>></code> types always wrap the input into a new promise, the
+  <code data-x="dom-PromiseRejectionEvent-promise">promise</code> attribute is of type <code
+  data-x="idl-object">object</code> instead, which is more appropriate for representing an opaque
+  handle to the original promise object.</p>
+
+  <div algorithm>
+  <p>The <dfn attribute for="PromiseRejectionEvent"><code
+  data-x="dom-PromiseRejectionEvent-reason">reason</code></dfn> attribute must return the value it
+  was initialized to. It represents the rejection reason for the promise.</p>
+  </div>
+
+
+  <h5>Import map parse results</h5>
+
+  <p>An <dfn>import map parse result</dfn> is a <span>struct</span> that is similar to a <span
+  data-x="concept-script">script</span>, and also can be stored in a <code>script</code> element's
+  <span data-x="concept-script-result">result</span>, but is not counted as a <span
+  data-x="concept-script">script</span> for other purposes. It has the following <span
+  data-x="struct item">items</span>:</p>
+
+  <dl>
+   <dt>An <dfn data-x="impr-import-map">import map</dfn></dt>
+   <dd>An <span>import map</span> or null.</dd>
+
+   <dt>An <dfn data-x="impr-error-to-rethrow">error to rethrow</dfn></dt>
+   <dd>A JavaScript value representing an error that will prevent using this import map, when
+   non-null.</dd>
+  </dl>
+
+  <div algorithm>
+  <p>To <dfn>create an import map parse result</dfn> given a <span>string</span> <var>input</var>
+  and a <span>URL</span> <var>baseURL</var>:</p>
+
+  <ol>
+   <li><p>Let <var>result</var> be an <span>import map parse result</span> whose <span
+   data-x="impr-import-map">import map</span> is null and whose <span
+   data-x="impr-error-to-rethrow">error to rethrow</span> is null.</p></li>
+
+   <li><p><span>Parse an import map string</span> given <var>input</var> and <var>baseURL</var>,
+   catching any exceptions. If this threw an exception, then set <var>result</var>'s <span
+   data-x="impr-error-to-rethrow">error to rethrow</span> to that exception. Otherwise, set
+   <var>result</var>'s <span data-x="impr-import-map">import map</span> to the return
+   value.</p></li>
+
+   <li><p>Return <var>result</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>register an import map</dfn> given a <code>Window</code> <var>global</var> and an
+  <span>import map parse result</span> <var>result</var>:</p>
+
+  <ol>
+   <li><p>If <var>result</var>'s <span data-x="impr-error-to-rethrow">error to rethrow</span> is
+   not null, then <span>report an exception</span> given by <var>result</var>'s <span
+   data-x="impr-error-to-rethrow">error to rethrow</span> for <var>global</var> and
+   return.</p></li>
+
+   <li><p><span data-x="merge existing and new import maps">Merge existing and new import
+   maps</span>, given <var>global</var> and <var>result</var>'s <span
+   data-x="impr-import-map">import map</span>.</p></li>
+  </ol>
+  </div>
+
+
+  <h5>Speculation rules parse results</h5>
+
+  <p>A <dfn>speculation rules parse result</dfn> is a <span>struct</span> that is similar to a <span
+  data-x="concept-script">script</span>, and also can be stored in a <code>script</code> element's
+  <span data-x="concept-script-result">result</span>, but is not counted as a <span
+  data-x="concept-script">script</span> for other purposes. It has the following <span
+  data-x="struct item">items</span>:</p>
+
+  <dl>
+   <dt>A <dfn data-x="srpr-sr-set">speculation rule set</dfn></dt>
+   <dd>A <span>speculation rule set</span> or null.</dd>
+
+   <dt>An <dfn data-x="srpr-error-to-rethrow">error to rethrow</dfn></dt>
+   <dd>A JavaScript value representing an error that will prevent using these speculation rules,
+   when non-null.</dd>
+  </dl>
+
+  <div algorithm>
+  <p>To <dfn>create a speculation rules parse result</dfn> given a <span>string</span>
+  <var>input</var> and a <code>Document</code> <var>document</var>:</p>
+
+  <ol>
+   <li><p>Let <var>result</var> be a <span>speculation rules parse result</span> whose <span
+   data-x="srpr-sr-set">speculation rule set</span> is null and whose <span
+   data-x="srpr-error-to-rethrow">error to rethrow</span> is null.</p></li>
+
+   <li><p><span>Parse a speculation rule set string</span> given <var>input</var>,
+   <var>document</var>, and <var>document</var>'s <span>document base URL</span>, catching any
+   exceptions. If this threw an exception, then set <var>result</var>'s <span
+   data-x="srpr-error-to-rethrow">error to rethrow</span> to that exception. Otherwise, set
+   <var>result</var>'s <span data-x="srpr-sr-set">speculation rule set</span> to the return
+   value.</p></li>
+
+   <li><p>Return <var>result</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>register speculation rules</dfn> given a <code>Window</code> <var>global</var>, a
+  <span>speculation rules parse result</span> <var>result</var>, and an optional boolean
+  <var>queueErrors</var> (default false):</p>
+
+  <ol>
+   <li>
+    <p>If <var>result</var>'s <span data-x="srpr-error-to-rethrow">error to rethrow</span> is not
+    null:</p>
+
+    <ol>
+     <li>
+      <p>If <var>queueErrors</var> is true, then <span>queue a global task</span> on the <span>DOM
+      manipulation task source</span> given <var>global</var> to perform the following step:</p>
+
+      <ol>
+       <li><p><span>Report an exception</span> given by <var>result</var>'s <span
+       data-x="srpr-error-to-rethrow">error to rethrow</span> for <var>global</var>.</p></li>
+      </ol>
+     </li>
+
+     <li><p>Otherwise, <span>report an exception</span> given by <var>result</var>'s <span
+     data-x="srpr-error-to-rethrow">error to rethrow</span> for <var>global</var>.</p></li>
+
+     <li><p>Return.</p></li>
+    </ol>
+   </li>
+
+   <li><p><span data-x="list append">Append</span> <var>result</var>'s <span
+   data-x="srpr-sr-set">speculation rule set</span> to <var>global</var>'s <span
+   data-x="concept-document-window">associated <code>Document</code></span>'s <span
+   data-x="document-sr-sets">speculation rule sets</span>.</p></li>
+
+   <li><p><span>Consider speculative loads</span> for <var>global</var>'s <span
+   data-x="concept-document-window">associated <code>Document</code></span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>unregister speculation rules</dfn> given a <code>Window</code> <var>global</var> and a
+  <span>speculation rules parse result</span> <var>result</var>:</p>
+
+  <ol>
+   <li><p>If <var>result</var>'s <span data-x="srpr-error-to-rethrow">error to rethrow</span> is not
+   null, then return.</p></li>
+
+   <li><p><span data-x="list remove">Remove</span> <var>result</var>'s <span
+   data-x="srpr-sr-set">speculation rule set</span> from <var>global</var>'s <span
+   data-x="concept-document-window">associated <code>Document</code></span>'s <span
+   data-x="document-sr-sets">speculation rule sets</span>.</p></li>
+
+   <li><p><span>Consider speculative loads</span> for <var>global</var>'s <span
+   data-x="concept-document-window">associated <code>Document</code></span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>update speculation rules</dfn> given a <code>Window</code> <var>global</var>, a
+  <span>speculation rules parse result</span> <var>oldResult</var>, and a <span>speculation rules
+  parse result</span> <var>newResult</var>:</p>
+
+  <ol>
+   <li><p><span data-x="list remove">Remove</span> <var>oldResult</var>'s <span
+   data-x="srpr-sr-set">speculation rule set</span> from <var>global</var>'s <span
+   data-x="concept-document-window">associated <code>Document</code></span>'s <span
+   data-x="document-sr-sets">speculation rule sets</span>.</p></li>
+
+   <li>
+    <p><span>Register speculation rules</span> given <var>global</var>, <var>newResult</var>, and
+    true.</p>
+
+    <p class="note" id="note-update-speculation-rules-queue-errors">When updating speculation rules,
+    as opposed to registering them for the first time, we ensure that any <code
+    data-x="event-error">error</code> events are queued as tasks, instead of synchronously fired.
+    Although synchronously executing <code data-x="event-error">error</code> event handlers is OK
+    when inserting <code>script</code> elements, it's best if other modifications do not cause such
+    synchronous script execution.</p>
+   </li>
+  </ol>
+  </div>
+
+  </div>
+
+

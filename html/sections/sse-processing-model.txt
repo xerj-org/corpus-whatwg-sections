@@ -1,0 +1,100 @@
+WHATWG HTML — section sse-processing-model — <span id="processing-model-9"></span>Processing model
+
+  <h4 id="sse-processing-model"><span id="processing-model-9"></span>Processing model</h4>
+
+  <div algorithm>
+  <p>When a user agent is to <dfn>announce the connection</dfn>, the user agent must <span>queue a
+  task</span> which, if the <code data-x="dom-EventSource-readyState">readyState</code> attribute is
+  set to a value other than <code data-x="dom-EventSource-CLOSED">CLOSED</code>, sets the <code
+  data-x="dom-EventSource-readyState">readyState</code> attribute to <code
+  data-x="dom-EventSource-OPEN">OPEN</code> and <span data-x="concept-event-fire">fires an
+  event</span> named <code data-x="event-open">open</code> at the <code>EventSource</code>
+  object.</p>
+  </div>
+
+  <div algorithm>
+  <p>When a user agent is to <dfn>reestablish the connection</dfn>, the user agent must run the
+  following steps. These steps are run <span>in parallel</span>, not as part of a <span
+  data-x="concept-task">task</span>. (The tasks that it queues, of course, are run like normal tasks
+  and not themselves <span>in parallel</span>.)</p>
+
+  <ol>
+   <li>
+    <p><span>Queue a task</span> to run the following steps:</p>
+
+    <ol>
+     <li><p>If the <code data-x="dom-EventSource-readyState">readyState</code> attribute is set to
+     <code data-x="dom-EventSource-CLOSED">CLOSED</code>, abort the task.</p></li>
+
+     <li><p>Set the <code data-x="dom-EventSource-readyState">readyState</code> attribute to <code
+     data-x="dom-EventSource-CONNECTING">CONNECTING</code>.</p></li>
+
+     <li><p><span data-x="concept-event-fire">Fire an event</span> named <code
+     data-x="event-error">error</code> at the <code>EventSource</code> object.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Wait a delay equal to the reconnection time of the event source.</li>
+
+   <li><p>Optionally, wait some more. In particular, if the previous attempt failed, then user
+   agents might introduce an exponential backoff delay to avoid overloading a potentially already
+   overloaded server. Alternatively, if the operating system has reported that there is no network
+   connectivity, user agents might wait for the operating system to announce that the network
+   connection has returned before retrying.</li>
+
+   <li><p>Wait until the aforementioned task has run, if it has not yet run.</p></li>
+
+   <li>
+    <p><span>Queue a task</span> to run the following steps:</p>
+
+    <ol>
+     <li><p>If the <code>EventSource</code> object's <code
+     data-x="dom-EventSource-readyState">readyState</code> attribute is not set to <code
+     data-x="dom-EventSource-CONNECTING">CONNECTING</code>, then return.</p></li>
+
+     <li><p>Let <var>request</var> be the <code>EventSource</code> object's <span
+     data-x="concept-event-stream-request">request</span>.
+
+     <li>
+      <p>If the <code>EventSource</code> object's <span
+      data-x="concept-event-stream-last-event-id">last event ID string</span> is not the empty
+      string:</p>
+
+      <ol>
+       <li><p>Let <var>lastEventIDValue</var> be the <code>EventSource</code> object's <span
+       data-x="concept-event-stream-last-event-id">last event ID string</span>, <span data-x="UTF-8
+       encode">encoded as UTF-8</span>.</p></li>
+
+       <li><p><span data-x="concept-header-list-set">Set</span> (`<code>Last-Event-ID</code>`,
+       <var>lastEventIDValue</var>) in <var>request</var>'s <span
+       data-x="concept-request-header-list">header list</span>.</p></li>
+      </ol>
+     </li>
+
+     <!--FETCH--><li><p><span data-x="concept-fetch">Fetch</span> <var>request</var> and process the
+     response obtained in this fashion, if any, as described earlier in this section.</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>When a user agent is to <dfn>fail the connection</dfn>, the user agent must <span>queue a
+  task</span> which, if the <code data-x="dom-EventSource-readyState">readyState</code> attribute is
+  set to a value other than <code data-x="dom-EventSource-CLOSED">CLOSED</code>, sets the <code
+  data-x="dom-EventSource-readyState">readyState</code> attribute to <code
+  data-x="dom-EventSource-CLOSED">CLOSED</code> and <span data-x="concept-event-fire">fires an
+  event</span> named <code data-x="event-error">error</code> at the <code>EventSource</code> object.
+  <strong>Once the user agent has <span data-x="fail the connection">failed the connection</span>,
+  it does <em>not</em> attempt to reconnect.</strong></p>
+  </div>
+
+  <hr>
+
+  <p>The <span>task source</span> for any <span data-x="concept-task">tasks</span> that are <span
+  data-x="queue a task">queued</span> by <code>EventSource</code> objects is the <dfn>remote event
+  task source</dfn>.</p>
+
+  </div>
+
+

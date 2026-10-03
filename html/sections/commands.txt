@@ -1,0 +1,334 @@
+WHATWG HTML — section commands — Commands
+
+  <h4 id="commands">Commands</h4>
+
+  <h5>Facets</h5>
+
+  <p>A <dfn data-x="concept-command">command</dfn> is the abstraction behind menu items, buttons, and
+  links. Once a command is defined, other parts of the interface can refer to the same command,
+  allowing many access points to a single feature to share facets such as the <span
+  data-x="command-facet-DisabledState">Disabled State</span>.</p>
+
+  <p id="facets">Commands are defined to have the following <dfn
+  data-x="concept-facet">facets</dfn>:</p>
+
+  <dl>
+   <dt><dfn data-x="command-facet-Label">Label</dfn></dt>
+
+   <dd>The name of the command as seen by the user.</dd>
+
+   <dt><dfn data-x="command-facet-AccessKey">Access Key</dfn></dt>
+
+   <dd>A key combination selected by the user agent that triggers the command. A command might not
+   have an Access Key.</dd>
+
+   <dt><dfn data-x="command-facet-HiddenState">Hidden State</dfn></dt>
+
+   <dd>Whether the command is hidden or not (basically, whether it should be shown in menus).</dd>
+
+   <dt><dfn data-x="command-facet-DisabledState">Disabled State</dfn></dt>
+
+   <dd>Whether the command is relevant and can be triggered or not.</dd>
+
+   <dt><dfn data-x="command-facet-Action">Action</dfn></dt>
+
+   <dd>The actual effect that triggering the command will have. This could be a scripted event
+   handler, a <span>URL</span> to which to <span>navigate</span>, or a form submission.</dd>
+  </dl>
+
+  <div algorithm>
+  <p id="expose-commands-in-ui">User agents may expose the <span
+  data-x="concept-command">commands</span> that match the following criteria:</p>
+
+  <ul>
+   <li><p>The <span data-x="command-facet-HiddenState">Hidden State</span> facet is false
+   (visible).</p></li>
+
+   <li><p>The element is <span>in a document</span> with a non-null <span
+   data-x="concept-document-bc">browsing context</span>.</p></li>
+
+   <li><p>Neither the element nor any of its ancestors has a <code
+   data-x="attr-hidden">hidden</code> attribute specified.</p></li>
+  </ul>
+  </div>
+
+  <p>User agents are encouraged to do this especially for commands that have <span
+  data-x="command-facet-AccessKey">Access Keys</span>, as a way to advertise those keys to the
+  user.</p>
+
+  <p class="example">For example, such commands could be listed in the user agent's menu bar.</p>
+
+
+  <div w-nodev>
+
+  <h5><dfn data-x="a-command">Using the <code>a</code> element to define a command</dfn></h5>
+
+  <div algorithm>
+  <p>An <code>a</code> element with an <code data-x="attr-hyperlink-href">href</code> attribute <span
+  data-x="concept-command">defines a command</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <span data-x="command-facet-Label">Label</span> of the command is the element's
+  <span>descendant text content</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <span data-x="command-facet-AccessKey">Access Key</span> of the command is the element's
+  <span>assigned access key</span>, if any.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <span data-x="command-facet-HiddenState">Hidden State</span> of the command is true (hidden)
+  if the element has a <code data-x="attr-hidden">hidden</code> attribute, and false otherwise.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <span data-x="command-facet-DisabledState">Disabled State</span> facet of the command is
+  true if the element or one of its ancestors is <span>inert</span>, and false otherwise.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <span data-x="command-facet-Action">Action</span> of the command is to <span>fire a <code
+  data-x="event-click">click</code> event</span> at the element.</p>
+  </div>
+
+
+  <h5><dfn data-x="button-command">Using the <code>button</code> element to define a command</dfn></h5>
+
+  <div algorithm>
+  <p>A <code>button</code> element always <span data-x="concept-command">defines a
+  command</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <span data-x="command-facet-Label">Label</span>, <span
+  data-x="command-facet-AccessKey">Access Key</span>, <span
+  data-x="command-facet-HiddenState">Hidden State</span>, and <span
+  data-x="command-facet-Action">Action</span> facets of the command are determined <span
+  data-x="a-command">as for <code>a</code> elements</span> (see the previous section).</p>
+  </div>
+
+  <div algorithm>
+  <p>The <span data-x="command-facet-DisabledState">Disabled State</span> of the command is true if
+  the element or one of its ancestors is <span>inert</span>, or if the element's <span
+  data-x="concept-fe-disabled">disabled</span> state is set, and false otherwise.</p>
+  </div>
+
+
+  <h5><dfn data-x="input-command">Using the <code>input</code> element to define a command</dfn></h5>
+
+  <div algorithm>
+  <p>An <code>input</code> element whose <code data-x="attr-input-type">type</code> attribute is in
+  one of the <span data-x="attr-input-type-submit">Submit Button</span>, <span
+  data-x="attr-input-type-reset">Reset Button</span>, <span data-x="attr-input-type-image">Image
+  Button</span>, <span data-x="attr-input-type-button">Button</span>, <span
+  data-x="attr-input-type-radio">Radio Button</span>, or <span
+  data-x="attr-input-type-checkbox">Checkbox</span> states <span data-x="concept-command">defines a
+  command</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <span data-x="command-facet-Label">Label</span> of the command is determined as
+  follows:</p>
+
+  <ol>
+    <li><p>If the <code data-x="attr-input-type">type</code> attribute is in one of the
+    <span data-x="attr-input-type-submit">Submit Button</span>, <span
+    data-x="attr-input-type-reset">Reset Button</span>, <span data-x="attr-input-type-image">Image
+    Button</span>, or <span data-x="attr-input-type-button">Button</span> states, then the
+    <span data-x="command-facet-Label">Label</span> is the string given by the
+    <code data-x="attr-input-value">value</code> attribute, if any, and a UA-dependent,
+    locale-dependent value that the UA uses to label the button itself if the attribute is
+    absent.</p></li>
+
+    <li><p>Otherwise, if the element is a <span>labeled control</span>, then the <span
+    data-x="command-facet-Label">Label</span> is the <span>descendant text content</span> of the
+    first <code>label</code> element in <span>tree order</span> whose <span>labeled control</span>
+    is the element in question. (In JavaScript terms, this is given by <code
+    data-x="">element.labels[0].textContent</code>.)</p></li>
+
+    <li><p>Otherwise, if the <code data-x="attr-input-value">value</code> attribute is present, then
+    the <span data-x="command-facet-Label">Label</span> is the value of that attribute.</p></li>
+
+    <li><p>Otherwise, the <span data-x="command-facet-Label">Label</span> is the empty string.</p></li>
+  </ol>
+  </div>
+
+  <div class="note">
+    <p>Even though the <code data-x="attr-input-value">value</code> attribute on
+    <code>input</code> elements in the <span data-x="attr-input-type-image">Image Button</span>
+    state is non-conformant, the attribute can still contribute to the <span
+    data-x="command-facet-Label">Label</span> determination, if it is present and the Image Button's
+    <code data-x="attr-input-alt">alt</code> attribute is missing.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <span data-x="command-facet-AccessKey">Access Key</span> of the command is the element's
+  <span>assigned access key</span>, if any.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <span data-x="command-facet-HiddenState">Hidden State</span> of the command is true (hidden)
+  if the element has a <code data-x="attr-hidden">hidden</code> attribute, and false otherwise.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <span data-x="command-facet-DisabledState">Disabled State</span> of the command is true if
+  the element or one of its ancestors is <span>inert</span>, or if the element's <span
+  data-x="concept-fe-disabled">disabled</span> state is set, and false otherwise.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <span data-x="command-facet-Action">Action</span> of the command is to <span>fire a <code
+  data-x="event-click">click</code> event</span> at the element.</p>
+  </div>
+
+
+  <h5><dfn data-x="option-command">Using the <code>option</code> element to define a command</dfn></h5>
+
+  <div algorithm>
+  <p>An <code>option</code> element with an ancestor <code>select</code> element and either no <code
+  data-x="attr-option-value">value</code> attribute or a <code data-x="attr-option-value">value</code>
+  attribute that is not the empty string <span data-x="concept-command">defines a command</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <span data-x="command-facet-Label">Label</span> of the command is the value of the
+  <code>option</code> element's <code data-x="attr-option-label">label</code> attribute, if there is
+  one, or else the <code>option</code> element's <span>descendant text content</span>, with <span
+  data-x="strip and collapse ASCII whitespace">ASCII whitespace stripped and collapsed</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <span data-x="command-facet-AccessKey">Access Key</span> of the command is the element's
+  <span>assigned access key</span>, if any.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <span data-x="command-facet-HiddenState">Hidden State</span> of the command is true (hidden)
+  if the element has a <code data-x="attr-hidden">hidden</code> attribute, and false otherwise.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <span data-x="command-facet-DisabledState">Disabled State</span> of the command is true if
+  the element is <span data-x="concept-option-disabled">disabled</span>, or if its nearest ancestor
+  <code>select</code> element is <span data-x="concept-fe-disabled">disabled</span>, or if it or one
+  of its ancestors is <span>inert</span>, and false otherwise.</p>
+  </div>
+
+  <div algorithm>
+  <p>If the <code>option</code>'s nearest ancestor <code>select</code> element has a <code
+  data-x="attr-select-multiple">multiple</code> attribute, the <span
+  data-x="command-facet-Action">Action</span> of the command is to <span
+  data-x="concept-select-toggle">toggle</span> the <code>option</code> element. Otherwise, the <span
+  data-x="command-facet-Action">Action</span> is to <span
+  data-x="concept-select-pick">pick</span> the <code>option</code> element.</p>
+  </div>
+
+
+  <h5><dfn data-x="legend-command">Using the <code data-x="attr-accesskey">accesskey</code> attribute
+  on a <code>legend</code> element to define a command</dfn></h5>
+
+  <div algorithm>
+  <p>A <code>legend</code> element <span data-x="concept-command">defines a command</span> if all of
+  the following are true:</p>
+
+  <ul>
+   <li><p>It has an <span>assigned access key</span>.</p></li>
+
+   <li><p>It is a child of a <code>fieldset</code> element.</p></li>
+
+   <li><p>Its parent has a descendant that <span data-x="concept-command">defines a command</span>
+   that is neither a <code>label</code> element nor a <code>legend</code> element. This element,
+   if it exists, is <dfn>the <code>legend</code> element's <code>accesskey</code>
+   delegatee</dfn>.</p></li>
+  </ul>
+  </div>
+
+  <div algorithm>
+  <p>The <span data-x="command-facet-Label">Label</span> of the command is the element's
+  <span>descendant text content</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <span data-x="command-facet-AccessKey">Access Key</span> of the command is the element's
+  <span>assigned access key</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <span data-x="command-facet-HiddenState">Hidden State</span>, <span
+  data-x="command-facet-DisabledState">Disabled State</span>, and <span
+  data-x="command-facet-Action">Action</span> facets of the command are the same as the respective
+  facets of <span>the <code>legend</code> element's <code>accesskey</code> delegatee</span>.</p>
+  </div>
+
+  <div class="example">
+   <p>In this example, the <code>legend</code> element specifies an <code
+   data-x="attr-accesskey">accesskey</code>, which, when activated, will delegate to the
+   <code>input</code> element inside the <code>legend</code> element.</p>
+
+   <pre><code class="html">&lt;fieldset>
+ &lt;legend accesskey=p>
+  &lt;label>I want &lt;input name=pizza type=number step=1 value=1 min=0>
+   pizza(s) with these toppings&lt;/label>
+ &lt;/legend>
+ &lt;label>&lt;input name=pizza-cheese type=checkbox checked> Cheese&lt;/label>
+ &lt;label>&lt;input name=pizza-ham type=checkbox checked> Ham&lt;/label>
+ &lt;label>&lt;input name=pizza-pineapple type=checkbox> Pineapple&lt;/label>
+&lt;/fieldset></code></pre>
+  </div>
+
+
+  <h5><dfn data-x="accesskey-command">Using the <code data-x="attr-accesskey">accesskey</code>
+  attribute to define a command on other elements</dfn></h5>
+
+  <div algorithm>
+  <p>An element that has an <span>assigned access key</span> <span data-x="concept-command">defines a
+  command</span>.</p>
+  </div>
+
+  <p>If one of the earlier sections that define elements that <span data-x="concept-command">define
+  commands</span> define that this element <span data-x="concept-command">defines a command</span>,
+  then that section applies to this element, and this section does not. Otherwise, this section
+  applies to that element.</p>
+
+  <div algorithm>
+  <p>The <span data-x="command-facet-Label">Label</span> of the command depends on the element. If
+  the element is a <span>labeled control</span>, the <span>descendant text content</span> of the
+  first <code>label</code> element in <span>tree order</span> whose <span>labeled control</span> is
+  the element in question is the <span data-x="command-facet-Label">Label</span> (in JavaScript
+  terms, this is given by <code data-x="">element.labels[0].textContent</code>).
+  Otherwise, the <span data-x="command-facet-Label">Label</span> is the element's <span>descendant
+  text content</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <span data-x="command-facet-AccessKey">Access Key</span> of the command is the element's
+  <span>assigned access key</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <span data-x="command-facet-HiddenState">Hidden State</span> of the command is true (hidden)
+  if the element has a <code data-x="attr-hidden">hidden</code> attribute, and false otherwise.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <span data-x="command-facet-DisabledState">Disabled State</span> of the command is true if
+  the element or one of its ancestors is <span>inert</span>, and false otherwise.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <span data-x="command-facet-Action">Action</span> of the command is to run the following
+  steps:</p>
+
+  <ol>
+   <li>Run the <span>focusing steps</span> for the element.</li>
+
+   <li><span>Fire a <code data-x="event-click">click</code> event</span> at the element.</li>
+  </ol>
+  </div>
+
+  </div>
+
+

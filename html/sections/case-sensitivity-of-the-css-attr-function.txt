@@ -1,0 +1,19 @@
+WHATWG HTML — section case-sensitivity-of-the-css-attr-function — Case-sensitivity of the CSS <span>'attr()'</span> function
+
+  <h4>Case-sensitivity of the CSS <span>'attr()'</span> function</h4>
+
+  <p><cite>CSS Values and Units</cite> leaves the case-sensitivity of attribute names for the
+  purpose of the <span>'attr()'</span> function to be defined by the host language.
+  <ref>CSSVALUES</ref></p>
+
+  <p>When comparing the attribute name part of a CSS <span>'attr()'</span> function to the names of
+  namespace-less attributes on <span>HTML elements</span> in <span>HTML documents</span>, the name
+  part of the CSS <span>'attr()'</span> function must first be <span>converted to ASCII
+  lowercase</span>. The same function when compared to other attributes must be compared according
+  to its original case. In both cases, to match, the values must be <span>identical to</span> each
+  other (and therefore the comparison is case sensitive).</p>
+
+  <p class="note">This is the same as comparing the name part of a CSS <span>attribute
+  selector</span>, specified in the next section.</p>
+
+

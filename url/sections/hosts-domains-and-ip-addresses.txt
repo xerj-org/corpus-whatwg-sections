@@ -1,0 +1,78 @@
+WHATWG URL — section hosts-(domains-and-ip-addresses) — Hosts (domains and IP addresses)
+
+<h2 id="hosts-(domains-and-ip-addresses)">Hosts (domains and IP addresses)</h2>
+
+<p>At a high level, a <a for=/>host</a>, <a>valid host string</a>, <a>host parser</a>, and
+<a>host serializer</a> relate as follows:
+
+<ul>
+ <li><p>The <a>host parser</a> takes an arbitrary <a>scalar value string</a> and returns either
+ failure or a <a for=/>host</a>.
+
+ <li><p>A <a for=/>host</a> can be seen as the in-memory representation.
+
+ <li><p>A <a>valid host string</a> defines what input would not trigger a <a>validation error</a>
+ or failure when given to the <a>host parser</a>. I.e., input that would be considered conforming or
+ valid.
+
+ <li><p>The <a>host serializer</a> takes a <a for=/>host</a> and returns an <a>ASCII string</a>. (If
+ that string is then <a lt="host parser">parsed</a>, the result will <a for=host>equal</a> the
+ <a for=/>host</a> that was <a lt="host serializer">serialized</a>.)
+</ul>
+
+<div class=example id=example-host-parsing>
+ <p>A <a lt="host parser">parse</a>-<a lt="host serializer">serialize</a> roundtrip gives the
+ following results, depending on the <var ignore>isOpaque</var> argument to the <a>host parser</a>:
+
+ <table>
+  <tr>
+   <th>Input
+   <th>Output (<var ignore>isOpaque</var> = false)
+   <th>Output (<var ignore>isOpaque</var> = true)
+  <tr>
+   <td><code>EXAMPLE.COM</code>
+   <td rowspan=2><code>example.com</code> (<a for=/>domain</a>)
+   <td><code>EXAMPLE.COM</code> (<a>opaque host</a>)
+  <tr>
+   <td><code>example%2Ecom</code>
+   <td><code>example%2Ecom</code> (<a>opaque host</a>)
+  <tr>
+   <td><code>faß.example</code>
+   <td><code>xn--fa-hia.example</code> (<a for=/>domain</a>)
+   <td><code>fa%C3%9F.example</code> (<a>opaque host</a>)
+  <tr>
+   <td><code>0</code>
+   <td rowspan=3><code>0.0.0.0</code> (<a for=/ lt="IPv4 address">IPv4</a>)
+   <td><code>0</code> (<a>opaque host</a>)
+  <tr>
+   <td><code>%30</code>
+   <td><code>%30</code> (<a>opaque host</a>)
+  <tr>
+   <td><code>0x</code>
+   <td><code>0x</code> (<a>opaque host</a>)
+  <tr>
+   <td><code>0xffffffff</code>
+   <td><code>255.255.255.255</code> (<a for=/ lt="IPv4 address">IPv4</a>)
+   <td><code>0xffffffff</code> (<a>opaque host</a>)
+  <tr>
+   <td><code>[0:0::1]</code>
+   <td colspan=2><code>\[::1]</code> (<a for=/ lt="IPv6 address">IPv6</a>)
+  <tr>
+   <td><code>[0:0::1%5D</code>
+   <td colspan=2 rowspan=2>Failure
+  <tr>
+   <td><code>[0:0::%31]</code>
+  <tr>
+   <td><code>09</code>
+   <td rowspan=3>Failure
+   <td><code>09</code> (<a>opaque host</a>)
+  <tr>
+   <td><code>example.255</code>
+   <td><code>example.255</code> (<a>opaque host</a>)
+  <tr>
+   <td><code>example^example</code>
+   <td>Failure
+ </table>
+</div>
+
+

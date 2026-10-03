@@ -1,0 +1,123 @@
+WHATWG HTML — section microtask-queuing — Microtask queuing
+
+  <h3>Microtask queuing</h3>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>self</var>.<span subdfn data-x="dom-queueMicrotask">queueMicrotask</span>(<var>callback</var>)</code></dt>
+   <dd><p><span data-x="queue a microtask">Queues</span> a <span>microtask</span> to run the given
+   <var>callback</var>.</p></dd>
+  </dl>
+
+  <div algorithm>
+  <p w-nodev>The <dfn method for="WindowOrWorkerGlobalScope"><code
+  data-x="dom-queueMicrotask">queueMicrotask(<var>callback</var>)</code></dfn> method must
+  <span>queue a microtask</span> to <span data-x="es-invoking-callback-functions">invoke</span>
+  <var>callback</var> with « » and "<code data-x="">report</code>".</p>
+  </div>
+
+  <p>The <code data-x="dom-queueMicrotask">queueMicrotask()</code> method allows authors to schedule
+  a callback on the <span>microtask queue</span>. This allows their code to run once the
+  <span>JavaScript execution context stack</span> is next empty, which happens once all currently
+  executing synchronous JavaScript has run to completion. This doesn't yield control back to the
+  <span>event loop</span>, as would be the case when using, for example, <code
+  data-x="dom-setTimeout">setTimeout(<var ignore>f</var>,&nbsp;0)</code>.</p>
+
+  <p>Authors ought to be aware that scheduling a lot of microtasks has the same performance
+  downsides as running a lot of synchronous code. Both will prevent the browser from doing its own
+  work, such as rendering. In many cases, <code
+  data-x="dom-AnimationFrameProvider-requestAnimationFrame">requestAnimationFrame()</code> or
+  <code>requestIdleCallback()</code> is a better choice. In particular, if the goal is to run code
+  before the next rendering cycle, that is the purpose of <code
+  data-x="dom-AnimationFrameProvider-requestAnimationFrame">requestAnimationFrame()</code>.</p>
+
+  <p>As can be seen from the following examples, the best way of thinking about <code
+  data-x="dom-queueMicrotask">queueMicrotask()</code> is as a mechanism for rearranging synchronous
+  code, effectively placing the queued code immediately after the currently executing synchronous
+  JavaScript has run to completion.</p>
+
+  <div class="example">
+   <p>The most common reason for using <code data-x="dom-queueMicrotask">queueMicrotask()</code> is
+   to create consistent ordering, even in the cases where information is available synchronously,
+   without introducing undue delay.</p>
+
+   <p>For example, consider a custom element firing a <code data-x="">load</code> event, that also
+   maintains an internal cache of previously-loaded data. A na&iuml;ve implementation might look
+   like:</p>
+
+   <pre><code class="js">MyElement.prototype.loadData = function (url) {
+  if (this._cache[url]) {
+    this._setData(this._cache[url]);
+    this.dispatchEvent(new Event("load"));
+  } else {
+    fetch(url).then(res => res.arrayBuffer()).then(data => {
+      this._cache[url] = data;
+      this._setData(data);
+      this.dispatchEvent(new Event("load"));
+    });
+  }
+};</code></pre>
+
+   <p>This na&iuml;ve implementation is problematic, however, in that it causes its users to
+   experience inconsistent behavior. For example, code such as</p>
+
+   <pre><code class="js">element.addEventListener("load", () => console.log("loaded"));
+console.log("1");
+element.loadData();
+console.log("2");</code></pre>
+
+   <p>will sometimes log "1, 2, loaded" (if the data needs to be fetched), and sometimes log "1,
+   loaded, 2" (if the data is already cached). Similarly, after the call to <code
+   data-x="">loadData()</code>, it will be inconsistent whether or not the data is set on the
+   element.</p>
+
+   <p>To get a consistent ordering, <code data-x="dom-queueMicrotask">queueMicrotask()</code> can be
+   used:</p>
+
+   <pre><code class="js">MyElement.prototype.loadData = function (url) {
+  if (this._cache[url]) {<strong>
+    queueMicrotask(() => {
+      this._setData(this._cache[url]);
+      this.dispatchEvent(new Event("load"));
+    });</strong>
+  } else {
+    fetch(url).then(res => res.arrayBuffer()).then(data => {
+      this._cache[url] = data;
+      this._setData(data);
+      this.dispatchEvent(new Event("load"));
+    });
+  }
+};</code></pre>
+
+   <p>By essentially rearranging the queued code to be after the <span>JavaScript execution context
+   stack</span> empties, this ensures a consistent ordering and update of the element's state.</p>
+  </div>
+
+  <div class="example">
+   <p>Another interesting use of <code data-x="dom-queueMicrotask">queueMicrotask()</code> is to
+   allow uncoordinated "batching" of work by multiple callers. For example, consider a library
+   function that wants to send data somewhere as soon as possible, but doesn't want to make multiple
+   network requests if doing so is easily avoidable. One way to balance this would be like so:</p>
+
+   <pre><code class="js">const queuedToSend = [];
+
+function sendData(data) {
+  queuedToSend.push(data);
+
+  if (queuedToSend.length === 1) {
+    queueMicrotask(() => {
+      const stringToSend = JSON.stringify(queuedToSend);
+      queuedToSend.length = 0;
+
+      fetch("/endpoint", stringToSend);
+    });
+  }
+}</code></pre>
+
+   <p>With this architecture, multiple subsequent calls to <code data-x="">sendData()</code> within
+   the currently executing synchronous JavaScript will be batched together into one
+   <code>fetch()</code> call, but with no intervening event loop tasks preempting the fetch (as
+   would have happened with similar code that instead used <code
+   data-x="dom-setTimeout">setTimeout()</code>).</p>
+  </div>
+
+

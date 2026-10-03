@@ -1,0 +1,84 @@
+WHATWG HTML — section the-details-and-summary-elements — The <code>details</code> and <code>summary</code> elements
+
+  <h4>The <code>details</code> and <code>summary</code> elements</h4>
+
+  <pre><code class="css">@namespace "http://www.w3.org/1999/xhtml";
+
+details, summary {
+  display: block;
+}
+details > summary:first-of-type {
+  display: list-item;
+  counter-increment: list-item 0;
+  list-style: disclosure-closed inside;
+}
+details[open] > summary:first-of-type {
+  list-style-type: disclosure-open;
+}</code></pre>
+
+  <p>The <code>details</code> element is <span>expected</span> to have an internal <span>shadow
+  tree</span> with three child elements:</p>
+
+  <ol>
+   <li>
+    <p>The first child element is a <code>slot</code> that is <span>expected</span> to take the
+    <code>details</code> element's first <code>summary</code> element child, if any.  This element
+    has a single child <code>summary</code> element called the <dfn>default summary</dfn> which has
+    text content that is <span>implementation-defined</span> (and probably locale-specific).</p>
+
+    <p>The <code>summary</code> element that this slot <span>represents</span> is
+    <span>expected</span> to allow the user to request the details be shown or hidden.</p>
+   </li>
+
+   <li>
+    <p>The second child element is a <code>slot</code> that is <span>expected</span> to take the
+    <code>details</code> element's remaining descendants, if any.  This element has no contents.</p>
+
+    <p>This element is <span>expected</span> to match the <span>'::details-content'</span>
+    pseudo-element.</p>
+
+    <div algorithm>
+    <p>This element is <span>expected</span> to have its <code data-x="attr-style">style</code>
+    attribute set to "<code data-x="">display: block; content-visibility: hidden;</code>" when the
+    <code>details</code> element does not have an <code data-x="attr-details-open">open</code>
+    attribute. When it does have the <code data-x="attr-details-open">open</code> attribute, the
+    <code data-x="attr-style">style</code> attribute is <span>expected</span> to be set to
+    "<code data-x="">display: block;</code>".</p>
+    </div>
+
+    <p class="note">Because the slots are hidden inside a shadow tree, this <code
+    data-x="attr-style">style</code> attribute is not directly visible to author code. Its impacts,
+    however, are visible. Notably, the choice of <code data-x="">content-visibility: hidden</code>
+    instead of, e.g., <code data-x="">display: none</code>, impacts the results of various APIs that
+    query layout information.</p>
+   </li>
+
+   <li>
+    <p>The third child element is either a <code>link</code> or <code>style</code>
+    element with the following styles for the <span>default summary</span>:</p>
+    <pre><code class="css">:host summary {
+  display: list-item;
+  counter-increment: list-item 0;
+  list-style: disclosure-closed inside;
+}
+:host([open]) summary {
+  list-style-type: disclosure-open;
+}</code></pre>
+    <p class="note">The position of this child element relative to the other two is not observable.
+    This means that implementations might have it in a different order relative to its siblings.
+    Implementations might even associate the style with the shadow tree using a mechanism that is
+    not an element.</p>
+   </li>
+
+  </ol>
+
+  <p class="note">The structure of this shadow tree is observable through the ways that the children
+  of the <code>details</code> element and the <span>'::details-content'</span> pseudo-element
+  respond to CSS styles.</p>
+
+  <!-- https://mail.gnome.org/archives/usability/2006-June/msg00015.html -->
+
+  </div>
+
+  <div w-nodev>
+

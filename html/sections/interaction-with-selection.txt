@@ -1,0 +1,16 @@
+WHATWG HTML — section interaction-with-selection — Interaction with selection (+close-requests-and-close-watchers)
+
+  <h4>Interaction with selection</h4>
+
+  <p>The find-in-page process is invoked in the context of a document, and may have an effect on
+  the <span data-x="document-selection">selection</span> of that document. Specifically, the range
+  that defines the <span data-x="fip-active-match">active match</span> can dictate the current
+  selection. These selection updates, however, can happen at different times during the
+  find-in-page process (e.g. upon the <span>find-in-page interface</span> dismissal or upon a change
+  in the <span data-x="fip-active-match">active match</span> range).
+
+  <!-- TODO: Define scroll and highlight timing, as well as algorithms (what is and isn't found) -->
+
+
+  <h3>Close requests and close watchers</h3>
+

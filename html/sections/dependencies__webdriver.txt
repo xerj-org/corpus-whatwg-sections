@@ -1,0 +1,20 @@
+WHATWG HTML — section dependencies/webdriver — WebDriver
+
+   <dt>WebDriver</dt>
+
+   <dd>
+    <p>The following terms are defined in <cite>WebDriver</cite>: <ref>WEBDRIVER</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://w3c.github.io/webdriver/#dfn-extension-commands">extension command</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/webdriver/#dfn-remote-end-steps">remote end steps</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/webdriver/#dfn-errors">WebDriver error</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/webdriver/#dfn-error-code">WebDriver error code</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/webdriver/#dfn-invalid-argument">invalid argument</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/webdriver/#dfn-getting-properties">getting a property</dfn></li>
+     <li><dfn data-x="success-value" data-x-href="https://w3c.github.io/webdriver/#dfn-success">success</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/webdriver/#security">WebDriver's security considerations</dfn></li>
+     <li><dfn data-x="webdriver-current-browsing-context" data-x-href="https://w3c.github.io/webdriver/#dfn-current-browsing-context">current browsing context</dfn></li>
+    </ul>
+   </dd>
+

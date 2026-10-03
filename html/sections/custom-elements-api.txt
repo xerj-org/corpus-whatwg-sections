@@ -1,0 +1,566 @@
+WHATWG HTML — section custom-elements-api — The <code>CustomElementRegistry</code> interface
+
+  <h4 id="custom-elements-api">The <code>CustomElementRegistry</code> interface</h4>
+
+  <div w-nodev>
+
+  <p>Each <span>similar-origin window agent</span> has an associated <dfn export for="similar-origin
+  window agent">active custom element constructor map</dfn>, which is a <span data-x="ordered
+  map">map</span> of constructors to <code>CustomElementRegistry</code> objects.</p>
+
+  <div algorithm>
+  <p>The <code>Window</code> <dfn attribute for="Window"><code
+  data-x="dom-window-customElements">customElements</code></dfn> getter steps are:</p>
+
+  <ol>
+   <li>
+    <p><span>Assert</span>: <span>this</span>'s <span data-x="concept-document-window">associated
+    <code>Document</code></span>'s <span data-x="document-custom-element-registry">custom element
+    registry</span> is a <code>CustomElementRegistry</code> object.</p>
+
+    <p class="note">A <code>Window</code>'s <span data-x="concept-document-window">associated
+    <code>Document</code></span> is always created with a new
+    <code>CustomElementRegistry</code> object.</p>
+   </li>
+
+   <li><p>Return <span>this</span>'s <span data-x="concept-document-window">associated
+   <code>Document</code></span>'s <span data-x="document-custom-element-registry">custom element
+   registry</span>.</p></li>
+  </ol>
+  </div>
+
+  <pre><code class="idl" var-scope>[Exposed=Window]
+interface <dfn interface>CustomElementRegistry</dfn> {
+  <span data-x="dom-CustomElementRegistry">constructor</span>();
+
+  [<span>CEReactions</span>] undefined <span data-x="dom-CustomElementRegistry-define">define</span>(DOMString <var>name</var>, <span>CustomElementConstructor</span> <var>constructor</var>, optional <span>ElementDefinitionOptions</span> <var>options</var> = {});
+  (<span>CustomElementConstructor</span> or undefined) <span data-x="dom-CustomElementRegistry-get">get</span>(DOMString <var>name</var>);
+  DOMString? <span data-x="dom-CustomElementRegistry-getName">getName</span>(CustomElementConstructor <var>constructor</var>);
+  <span data-x="idl-Promise">Promise</span>&lt;<span>CustomElementConstructor</span>&gt; <span data-x="dom-CustomElementRegistry-whenDefined">whenDefined</span>(DOMString <var>name</var>);
+  [<span>CEReactions</span>] undefined <span data-x="dom-CustomElementRegistry-upgrade">upgrade</span>(<span>Node</span> <var>root</var>);
+  [<span>CEReactions</span>] undefined <span data-x="dom-CustomElementRegistry-initialize">initialize</span>(<span>Node</span> <var>root</var>);
+};
+
+callback <dfn callback>CustomElementConstructor</dfn> = <span>HTMLElement</span> ();
+
+dictionary <dfn dictionary>ElementDefinitionOptions</dfn> {
+  DOMString <dfn dict-member for="ElementDefinitionOptions" data-x="dom-ElementDefinitionOptions-extends">extends</dfn>;
+};</code></pre>
+
+  <p>Every <code>CustomElementRegistry</code> has an <dfn export for="CustomElementRegistry">is
+  scoped</dfn>, a boolean, initially false.</p>
+
+  <p>Every <code>CustomElementRegistry</code> has a <dfn export for="CustomElementRegistry">scoped
+  document set</dfn>, a <span>set</span> of <code>Document</code> objects, initially « ».</p>
+
+  <p>Every <code>CustomElementRegistry</code> has a <dfn>custom element definition set</dfn>, a
+  <span>set</span> of <span data-x="custom element definition">custom element definitions</span>,
+  initially « ». Lookup of items in this <span>set</span> uses their <span
+  data-x="concept-custom-element-definition-name">name</span>, <span
+  data-x="concept-custom-element-definition-local-name">local name</span>, or <span
+  data-x="concept-custom-element-definition-constructor">constructor</span>.</p>
+
+  <p>Every <code>CustomElementRegistry</code> also has an <dfn>element definition is running</dfn>
+  boolean which is used to prevent reentrant invocations of <span>element definition</span>. It is
+  initially false.</p>
+
+  <p>Every <code>CustomElementRegistry</code> also has a <dfn>when-defined promise map</dfn>, a
+  <span data-x="ordered map">map</span> of <span data-x="valid custom element name">valid custom
+  element names</span> to promises. It is used to implement the <code
+  data-x="dom-CustomElementRegistry-whenDefined">whenDefined()</code> method.</p>
+
+  <div algorithm>
+  <p>To <dfn export>look up a custom element registry</dfn>, given a <code>Node</code> object
+  <var>node</var>:</p>
+
+  <ol>
+   <li><p>If <var>node</var> is an <code>Element</code> object, then return <var>node</var>'s <span
+   data-x="element-custom-element-registry">custom element registry</span>.</p></li>
+
+   <li><p>If <var>node</var> is a <code>ShadowRoot</code> object, then return <var>node</var>'s
+   <span data-x="shadow-root-custom-element-registry">custom element registry</span>.</p></li>
+
+   <li><p>If <var>node</var> is a <code>Document</code> object, then return <var>node</var>'s <span
+   data-x="document-custom-element-registry">custom element registry</span>.</p></li>
+
+   <li><p>Return null.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>registry</var> = <var>window</var>.<span subdfn data-x="dom-window-customElements">customElements</span></code></dt>
+   <dd>Returns the global's associated <code>Document</code>'s <code>CustomElementRegistry</code>
+   object.</dd>
+
+   <dt><code data-x=""><var>registry</var> = new <span subdfn data-x="dom-CustomElementRegistry">CustomElementRegistry</span>()</code></dt>
+   <dd>Constructs a new <code>CustomElementRegistry</code> object, for scoped usage.</dd>
+
+   <dt><code data-x=""><var>registry</var>.<span subdfn data-x="dom-CustomElementRegistry-define">define</span>(<var>name</var>,
+   <var>constructor</var>)</code></dt>
+   <dd>Defines a new <span>custom element</span>, mapping the given name to the given constructor
+   as an <span>autonomous custom element</span>.</dd>
+
+   <dt><code data-x=""><var>registry</var>.<span data-x="dom-CustomElementRegistry-define">define</span>(<var>name</var>, <var>constructor</var>,
+   { extends: <var>baseLocalName</var> })</code></dt>
+   <dd>Defines a new <span>custom element</span>, mapping the given name to the given constructor as
+   a <span>customized built-in element</span> for the <span>element type</span> identified by the
+   supplied <var>baseLocalName</var>. A <span>"<code>NotSupportedError</code>"</span>
+   <code>DOMException</code> will be thrown upon trying to extend a <span>custom element</span> or
+   an unknown element, or when <var>registry</var> is not a global
+   <code>CustomElementRegistry</code> object.</dd>
+
+   <dt><code data-x=""><var>registry</var>.<span subdfn data-x="dom-CustomElementRegistry-get">get</span>(<var>name</var>)</code></dt>
+   <dd>Retrieves the <span>custom element constructor</span> defined for the given <span data-x="concept-custom-element-definition-name">name</span>. Returns undefined if there is no
+   <span>custom element definition</span> with the given <span data-x="concept-custom-element-definition-name">name</span>.</dd>
+
+   <dt><code data-x=""><var>registry</var>.<span subdfn data-x="dom-CustomElementRegistry-getName">getName</span>(<var>constructor</var>)</code></dt>
+   <dd>Retrieves the given name for a <span>custom element</span> defined for the given <span data-x="concept-custom-element-definition-constructor">constructor</span>. Returns null if there is no
+   <span>custom element definition</span> with the given <span data-x="concept-custom-element-definition-constructor">constructor</span>.</dd>
+
+   <dt><code data-x=""><var>registry</var>.<span subdfn data-x="dom-CustomElementRegistry-whenDefined">whenDefined</span>(<var>name</var>)</code></dt>
+   <dd>Returns a promise that will be fulfilled with the <span>custom element</span>'s constructor
+   when a <span>custom element</span> becomes defined with the given name. (If such a <span>custom
+   element</span> is already defined, the returned promise will be immediately fulfilled.) Returns a
+   promise rejected with a <span>"<code>SyntaxError</code>"</span> <code>DOMException</code> if not
+   given a <span>valid custom element name</span>.</dd>
+
+   <dt><code data-x=""><var>registry</var>.<span subdfn data-x="dom-CustomElementRegistry-upgrade">upgrade</span>(<var>root</var>)</code></dt>
+   <dd><span data-x="concept-try-upgrade">Tries to upgrade</span> all <span>shadow-including
+   inclusive descendant</span> elements of <var>root</var>, even if they are not
+   <span>connected</span>.</dd>
+
+   <dt><code data-x=""><var>registry</var>.<span subdfn data-x="dom-CustomElementRegistry-initialize">initialize</span>(<var>root</var>)</code></dt>
+   <dd>Each <span>inclusive descendant</span> of <var>root</var> with a null registry will have it
+   updated to this <code>CustomElementRegistry</code> object. A
+   <span>"<code>NotSupportedError</code>"</span> <code>DOMException</code> will be thrown if this
+   <code>CustomElementRegistry</code> object is not for scoped usage and either <var>root</var> is a
+   <code>Document</code> node or <var>root</var>'s <span>node document</span>'s <span
+   data-x="document-custom-element-registry">custom element registry</span> is not this
+   <code>CustomElementRegistry</code> object.</dd>
+  </dl>
+
+  <div algorithm>
+  <p w-nodev>The <dfn
+  data-x="dom-CustomElementRegistry"><code>new CustomElementRegistry()</code></dfn> constructor
+  steps are to set <span>this</span>'s <span>is scoped</span> to true.</p>
+  </div>
+
+  <p><dfn>Element definition</dfn> is a process of adding a <span>custom element definition</span>
+  to the <code>CustomElementRegistry</code>. This is accomplished by the <code
+  data-x="dom-CustomElementRegistry-define">define()</code> method.</p>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn method for="CustomElementRegistry"><code
+  data-x="dom-CustomElementRegistry-define">define(<var>name</var>, <var>constructor</var>,
+  <var>options</var>)</code></dfn> method steps are:</p>
+
+  <ol>
+   <li><p>If <span>IsConstructor</span>(<var>constructor</var>) is false, then throw a
+   <code>TypeError</code>.</p></li>
+
+   <li><p>If <var>name</var> is not a <span>valid custom element name</span>, then throw a
+   <span>"<code>SyntaxError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>If <span>this</span>'s <span>custom element definition set</span> <span data-x="list
+   contains">contains</span> an item with <span
+   data-x="concept-custom-element-definition-name">name</span> <var>name</var>, then throw a
+   <span>"<code>NotSupportedError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>If <span>this</span>'s <span>custom element definition set</span> <span data-x="list
+   contains">contains</span> an item with <span
+   data-x="concept-custom-element-definition-constructor">constructor</span> <var>constructor</var>,
+   then throw a <span>"<code>NotSupportedError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>Let <var>localName</var> be <var>name</var>.</p></li>
+
+   <li><p>Let <var>extends</var> be <var>options</var>["<code
+   data-x="dom-ElementDefinitionOptions-extends">extends</code>"] if it <span data-x="map
+   exists">exists</span>; otherwise null.</p></li>
+
+   <li>
+    <p>If <var>extends</var> is not null:</p>
+
+    <ol>
+     <li><p>If <span>this</span>'s <span>is scoped</span> is true, then throw a
+     <span>"<code>NotSupportedError</code>"</span> <code>DOMException</code>.</p></li>
+
+     <li><p>If <var>extends</var> is a <span>valid custom element name</span>, then throw a
+     <span>"<code>NotSupportedError</code>"</span> <code>DOMException</code>.</p></li>
+
+     <li><p>If the <span>element interface</span> for <var>extends</var> and the <span>HTML
+     namespace</span> is <code>HTMLUnknownElement</code> (e.g., if <var>extends</var> does not
+     indicate an element definition in this specification), then throw a
+     <span>"<code>NotSupportedError</code>"</span> <code>DOMException</code>.</p></li>
+
+     <li><p>Set <var>localName</var> to <var>extends</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>If <span>this</span>'s <span>element definition is running</span> is true, then throw
+   a <span>"<code>NotSupportedError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>Set <span>this</span>'s <span>element definition is running</span> to true.</p></li>
+
+   <li><p>Let <var>formAssociated</var> be false.</p></li>
+
+   <li><p>Let <var>disableInternals</var> be false.
+
+   <li><p>Let <var>disableShadow</var> be false.
+
+   <li><p>Let <var>observedAttributes</var> be an empty <code
+   data-x="">sequence&lt;DOMString></code>.</p></li>
+
+   <li>
+    <p>Run the following steps while catching any exceptions:</p>
+
+    <ol>
+     <li><p>Let <var>prototype</var> be ? <span data-x="js-Get">Get</span>(<var>constructor</var>,
+     "prototype").</p></li>
+
+     <li><p>If <var>prototype</var> <span data-x="js-Object">is not an Object</span>, then throw a
+     <code>TypeError</code> exception.</p></li>
+
+     <li><p>Let <var>lifecycleCallbacks</var> be the <span>ordered map</span> «[ "<code
+     data-x="">connectedCallback</code>" → null, "<code data-x="">disconnectedCallback</code>" →
+     null, "<code data-x="">connectedMoveCallback</code>" → null, "<code
+     data-x="">adoptedCallback</code>" → null, "<code data-x="">attributeChangedCallback</code>" →
+     null ]».</p>
+
+     <li>
+      <p>For each <var>callbackName</var> of <span data-x="map get the keys">the keys</span> of
+      <var>lifecycleCallbacks</var>:</p>
+
+      <ol>
+       <li><p>Let <var>callbackValue</var> be ? <span data-x="js-Get">Get</span>(<var>prototype</var>,
+       <var>callbackName</var>).</p>
+
+       <li><p>If <var>callbackValue</var> is not undefined, then <span data-x="map set">set</span>
+       <var>lifecycleCallbacks</var>[<var>callbackName</var>] to the result of <span
+       data-x="concept-idl-convert">converting</span> <var>callbackValue</var> to the Web IDL <code
+       data-x="idl-Function">Function</code> callback type.</p></li>
+      </ol>
+     </li>
+
+     <li>
+      <p>If <var>lifecycleCallbacks</var>["<code data-x="">attributeChangedCallback</code>"] is not
+      null:</p>
+
+      <ol>
+       <li><p>Let <var>observedAttributesIterable</var> be ? <span
+       data-x="js-Get">Get</span>(<var>constructor</var>, "observedAttributes").</p></li>
+
+       <li><p>If <var>observedAttributesIterable</var> is not undefined, then set
+       <var>observedAttributes</var> to the result of <span
+       data-x="concept-idl-convert">converting</span> <var>observedAttributesIterable</var> to a
+       <code data-x="">sequence&lt;DOMString></code>. Rethrow any exceptions from the
+       conversion.</p></li>
+      </ol>
+
+     <li><p>Let <var>disabledFeatures</var> be an empty <code
+     data-x="">sequence&lt;DOMString></code>.</p></li>
+
+     <li><p>Let <var>disabledFeaturesIterable</var> be ? <span
+     data-x="js-Get">Get</span>(<var>constructor</var>, "disabledFeatures").</p></li>
+
+     <li><p>If <var>disabledFeaturesIterable</var> is not undefined, then set
+     <var>disabledFeatures</var> to the result of <span
+     data-x="concept-idl-convert">converting</span> <var>disabledFeaturesIterable</var> to a <code
+     data-x="">sequence&lt;DOMString></code>. Rethrow any exceptions from the conversion.</p></li>
+
+     <li><p>If <var>disabledFeatures</var> <span data-x="list contains">contains</span> "<code
+     data-x="">internals</code>", then set <var>disableInternals</var> to true.</p></li>
+
+     <li><p>If <var>disabledFeatures</var> <span data-x="list contains">contains</span> "<code
+     data-x="">shadow</code>", then set <var>disableShadow</var> to true.</p></li>
+
+     <li><p>Let <var>formAssociatedValue</var> be ? <span data-x="js-Get">Get</span>(
+     <var>constructor</var>, "formAssociated").</p></li>
+
+     <li><p>Set <var>formAssociated</var> to the result of <span
+     data-x="concept-idl-convert">converting</span> <var>formAssociatedValue</var> to a <code
+     data-x="">boolean</code>.</p></li>
+
+     <li>
+      <p>If <var>formAssociated</var> is true, then for each <var>callbackName</var> of « "<code
+      data-x="">formAssociatedCallback</code>", "<code data-x="">formResetCallback</code>", "<code
+      data-x="">formDisabledCallback</code>", "<code data-x="">formStateRestoreCallback</code>"
+      »:</p>
+
+      <ol>
+       <li><p>Let <var>callbackValue</var> be ? <span data-x="js-Get">Get</span>(<var>prototype</var>,
+       <var>callbackName</var>).</p></li>
+
+       <li><p>If <var>callbackValue</var> is not undefined, then <span data-x="map set">set</span>
+       <var>lifecycleCallbacks</var>[<var>callbackName</var>] to the result of <span
+       data-x="concept-idl-convert">converting</span> <var>callbackValue</var> to the Web IDL <code
+       data-x="idl-Function">Function</code> callback type.</p></li>
+      </ol>
+     </li>
+    </ol>
+
+    <p>Then, regardless of whether the above steps threw an exception or not: set
+    <span>this</span>'s <span>element definition is running</span> to false.</p>
+
+    <p>Finally, if the steps threw an exception, rethrow that exception.</p>
+   </li>
+
+   <li><p>Let <var>definition</var> be a new <span>custom element definition</span> with <span
+   data-x="concept-custom-element-definition-name">name</span> <var>name</var>, <span
+   data-x="concept-custom-element-definition-local-name">local name</span> <var>localName</var>,
+   <span data-x="concept-custom-element-definition-constructor">constructor</span>
+   <var>constructor</var>, <span
+   data-x="concept-custom-element-definition-observed-attributes">observed attributes</span>
+   <var>observedAttributes</var>, <span
+   data-x="concept-custom-element-definition-lifecycle-callbacks">lifecycle callbacks</span>
+   <var>lifecycleCallbacks</var>,
+   <span data-x="concept-custom-element-definition-form-associated">form-associated</span>
+   <var>formAssociated</var>, <span
+   data-x="concept-custom-element-definition-disable-internals">disable internals</span>
+   <var>disableInternals</var>, and <span
+   data-x="concept-custom-element-definition-disable-shadow">disable shadow</span>
+   <var>disableShadow</var>.</p></li>
+
+   <li><p><span data-x="set append">Append</span> <var>definition</var> to <span>this</span>'s
+   <span>custom element definition set</span>.</p></li>
+
+   <li><p>If <span>this</span>'s <span>is scoped</span> is true, then for each <var>document</var>
+   of <span>this</span>'s <span>scoped document set</span>: <span>upgrade particular elements within
+   a document</span> given <span>this</span>, <var>document</var>, <var>definition</var>, and
+   <var>localName</var>.</p></li>
+
+   <li><p>Otherwise, <span>upgrade particular elements within a document</span> given
+   <span>this</span>, <span>this</span>'s <span>relevant global object</span>'s <span
+   data-x="concept-document-window">associated <code>Document</code></span>, <var>definition</var>,
+   <var>localName</var>, and <var>name</var>.</p></li>
+
+   <li>
+    <p>If <span>this</span>'s <span>when-defined promise map</span>[<var>name</var>] <span data-x="map
+    exists">exists</span>:</p>
+
+    <ol>
+     <li><p>Resolve <span>this</span>'s <span>when-defined promise map</span>[<var>name</var>] with
+     <var>constructor</var>.</p></li>
+
+     <li><p><span data-x="map remove">Remove</span> <span>this</span>'s <span>when-defined promise
+     map</span>[<var>name</var>].</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>upgrade particular elements within a document</dfn> given a
+  <code>CustomElementRegistry</code> object <var>registry</var>, a <code>Document</code> object
+  <var>document</var>, a <span>custom element definition</span> <var>definition</var>, a string
+  <var>localName</var>, and optionally a string <var>name</var> (default <var>localName</var>):</p>
+
+  <ol>
+   <li><p>Let <var>upgradeCandidates</var> be all elements that are <span data-x="shadow-including
+   descendant">shadow-including descendants</span> of <var>document</var>, whose <span
+   data-x="element-custom-element-registry">custom element registry</span> is <var>registry</var>,
+   whose namespace is the <span>HTML namespace</span>, and whose local name is <var>localName</var>,
+   in <span>shadow-including tree order</span>. Additionally, if <var>name</var> is not
+   <var>localName</var>, only include elements whose <span data-x="concept-element-is-value"><code
+   data-x="">is</code> value</span> is equal to <var>name</var>.</p></li>
+
+   <li><p>For each element <var>element</var> of <var>upgradeCandidates</var>: <span>enqueue a
+   custom element upgrade reaction</span> given <var>element</var> and
+   <var>definition</var>.</p></li>
+  </ol>
+  <!-- It is equivalent to just try to upgrade all elements in the document, and let "try to
+       upgrade" bail out, but this seems a bit more explicit. -->
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="CustomElementRegistry"><code
+  data-x="dom-CustomElementRegistry-get">get(<var>name</var>)</code></dfn> method steps are:</p>
+
+  <ol>
+   <li><p>If <span>this</span>'s <span>custom element definition set</span> <span data-x="list
+   contains">contains</span> an item with <span
+   data-x="concept-custom-element-definition-name">name</span> <var>name</var>, then return that
+   item's <span data-x="concept-custom-element-definition-constructor">constructor</span>.</p></li>
+
+   <li><p>Return undefined.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="CustomElementRegistry"><code
+  data-x="dom-CustomElementRegistry-getName">getName(<var>constructor</var>)</code></dfn> method
+  steps are:</p>
+
+  <ol>
+   <li><p>If <span>this</span>'s <span>custom element definition set</span> <span data-x="list
+   contains">contains</span> an item with <span
+   data-x="concept-custom-element-definition-constructor">constructor</span>
+   <var>constructor</var>, then return that item's <span
+   data-x="concept-custom-element-definition-name">name</span>.</p></li>
+
+   <li><p>Return null.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="CustomElementRegistry"><code
+  data-x="dom-CustomElementRegistry-whenDefined">whenDefined(<var>name</var>)</code></dfn> method
+  steps are:</p>
+
+  <ol>
+   <li><p>If <var>name</var> is not a <span>valid custom element name</span>, then return <span>a
+   promise rejected with</span> a <span>"<code>SyntaxError</code>"</span>
+   <code>DOMException</code>.</p></li>
+
+   <li><p>If <span>this</span>'s <span>custom element definition set</span> <span data-x="list
+   contains">contains</span> an item with <span
+   data-x="concept-custom-element-definition-name">name</span> <var>name</var>, then return <span>a
+   promise resolved with</span> that item's <span
+   data-x="concept-custom-element-definition-constructor">constructor</span>.</p></li>
+
+   <li><p>If <span>this</span>'s <span>when-defined promise map</span>[<var>name</var>] does not
+   <span data-x="map exists">exist</span>, then <span data-x="map set">set</span>
+   <span>this</span>'s <span>when-defined promise map</span>[<var>name</var>] to a new
+   promise.</p></li>
+
+   <li><p>Return <span>this</span>'s <span>when-defined promise
+   map</span>[<var>name</var>].</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+  <div class="example">
+   <p>The <code data-x="dom-CustomElementRegistry-whenDefined">whenDefined()</code> method can be
+   used to avoid performing an action until all appropriate <span data-x="custom element">custom
+   elements</span> are <span data-x="concept-element-defined">defined</span>. In this example, we
+   combine it with the <code data-x="selector-defined">:defined</code> pseudo-class to hide a
+   dynamically-loaded article's contents until we're sure that all of the <span data-x="autonomous
+   custom element">autonomous custom elements</span> it uses are defined.</p>
+
+   <pre><code class="js">articleContainer.hidden = true;
+
+fetch(articleURL)
+  .then(response => response.text())
+  .then(text => {
+    articleContainer.innerHTML = text;
+
+    return Promise.all(
+      [...articleContainer.querySelectorAll(":not(:defined)")]
+        .map(el => customElements.whenDefined(el.localName))
+    );
+  })
+  .then(() => {
+    articleContainer.hidden = false;
+  });</code></pre>
+  </div>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn method for="CustomElementRegistry"><code
+  data-x="dom-CustomElementRegistry-upgrade">upgrade(<var>root</var>)</code></dfn> method steps
+  are:</p>
+
+  <ol>
+   <li>
+    <p>For each <span>shadow-including inclusive descendant</span> <var>candidate</var> of
+    <var>root</var>, in <span>shadow-including tree order</span>:</p>
+
+    <ol>
+     <li><p>If <var>candidate</var> is not an <code>Element</code> node, then
+     <span>continue</span>.</p></li>
+
+     <li><p>If <var>candidate</var>'s <span data-x="element-custom-element-registry">custom element
+     registry</span> is not <span>this</span>, then <span>continue</span>.</p></li>
+
+     <li><p><span data-x="concept-try-upgrade">Try to upgrade</span> <var>candidate</var>.</p></li>
+    </ol>
+  </ol>
+  </div>
+
+  </div>
+
+  <div class="example">
+   <p>The <code data-x="dom-CustomElementRegistry-upgrade">upgrade()</code> method allows upgrading
+   of elements at will. Normally elements are automatically upgraded when they become
+   <span>connected</span>, but this method can be used if you need to upgrade before you're ready to
+   connect the element.</p>
+
+   <pre><code class="js">const el = document.createElement("spider-man");
+
+class SpiderMan extends HTMLElement {}
+customElements.define("spider-man", SpiderMan);
+
+console.assert(!(el instanceof SpiderMan)); // not yet upgraded
+
+customElements.upgrade(el);
+console.assert(el instanceof SpiderMan);    // upgraded!</code></pre>
+  </div>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn method for="CustomElementRegistry"><code
+  data-x="dom-CustomElementRegistry-initialize">initialize(<var>root</var>)</code></dfn> method
+  steps are:</p>
+
+  <ol>
+   <li><p>If <span>this</span>'s <span>is scoped</span> is false and either <var>root</var> is a
+   <code>Document</code> node or <var>root</var>'s <span>node document</span>'s <span
+   data-x="document-custom-element-registry">custom element registry</span> is not
+   <span>this</span>, then throw a <span>"<code>NotSupportedError</code>"</span>
+   <code>DOMException</code>.</p></li>
+
+   <li><p>If <var>root</var> is a <code>Document</code> node whose <span
+   data-x="document-custom-element-registry">custom element registry</span> is null, then set
+   <var>root</var>'s <span data-x="document-custom-element-registry">custom element registry</span>
+   to <span>this</span>.</p></li>
+
+   <li><p>Otherwise, if <var>root</var> is a <code>ShadowRoot</code> node whose <span
+   data-x="shadow-root-custom-element-registry">custom element registry</span> is null, then set
+   <var>root</var>'s <span data-x="shadow-root-custom-element-registry">custom element
+   registry</span> to <span>this</span>.</p></li>
+
+   <li>
+    <p>For each <span>inclusive descendant</span> <var>inclusiveDescendant</var> of <var>root</var>,
+    in <span>tree order</span>:</p>
+
+    <ol>
+     <li><p>If <var>inclusiveDescendant</var> is not an <code>Element</code> node, then
+     <span>continue</span>.</p></li>
+
+     <li>
+      <p>If <var>inclusiveDescendant</var>'s <span data-x="element-custom-element-registry">custom
+      element registry</span> is null:</p>
+
+      <ol>
+       <li><p>Set <var>inclusiveDescendant</var>'s <span
+       data-x="element-custom-element-registry">custom element registry</span> to
+       <span>this</span>.</p></li>
+
+       <li><p>If <span>this</span>'s <span>is scoped</span> is true, then <span data-x="set
+       append">append</span> <var>inclusiveDescendant</var>'s <span>node document</span> to
+       <span>this</span>'s <span>scoped document set</span>.</p></li>
+      </ol>
+     </li>
+
+     <li><p>If <var>inclusiveDescendant</var>'s <span
+     data-x="element-custom-element-registry">custom element registry</span> is not
+     <span>this</span>, then <span>continue</span>.</p></li>
+
+     <li><p><span data-x="concept-try-upgrade">Try to upgrade</span>
+     <var>inclusiveDescendant</var>.</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <p class="note">Once the custom element registry of a node is initialized to a
+  <code>CustomElementRegistry</code> object, it intentionally cannot be changed any further. This
+  simplifies reasoning about code and allows implementations to optimize.</p>
+
+

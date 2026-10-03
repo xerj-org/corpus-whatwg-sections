@@ -1,0 +1,30 @@
+WHATWG HTML — section native-appearance — Native appearance
+
+  <h4>Native appearance</h4>
+
+  <p>The <cite>CSS Basic User Interface</cite> specification calls elements that can have a
+  <span>native appearance</span> <span data-x="widget">widgets</span>, and defines whether to use that <span>native
+  appearance</span> depending on the <span>'appearance'</span> property. That logic, in
+  turn, depends on whether each the element is classified as a <span>devolvable
+  widget</span> or <span>non-devolvable widget</span>. This section defines which elements match
+  these concepts for HTML, what their <span>native appearance</span> is, and any particularity of
+  their <span data-x="devolved widget">devolved</span> state or <span>primitive appearance</span>.
+  <ref>CSSUI</ref></p>
+
+  <p>The following elements can have a <span>native appearance</span> for the purpose of the CSS
+  <span>'appearance'</span> property.</p>
+
+  <ul class="brief">
+   <li><code>button</code></li>
+   <li><code>input</code></li>
+   <li><code>meter</code></li>
+   <li><code>progress</code></li>
+   <li><code>select</code></li>
+   <li><code>textarea</code></li>
+  </ul>
+
+  </div>
+
+
+  <div w-nodev>
+

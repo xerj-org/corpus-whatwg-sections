@@ -1,0 +1,404 @@
+WHATWG HTML — section headings-and-outlines — <span id="headings-and-outlines"></span><span id="outlines"></span>Headings and outlines
+
+  <h4><span id="headings-and-outlines"></span><span id="outlines"></span>Headings and outlines</h4>
+
+  <p><code>h1</code>&ndash;<code>h6</code> elements have a <dfn>heading level</dfn>, which is
+  given by <span data-x="get an element's computed heading level">getting the element's computed
+  heading level</span>.</p>
+
+  <p>These elements <span data-x="represents">represent</span> <dfn
+  data-x="concept-heading">headings</dfn>. The lower a <span
+  data-x="concept-heading">heading</span>'s <span>heading level</span> is, the fewer ancestor
+  sections the <span data-x="concept-heading">heading</span> has.</p>
+
+  <div algorithm>
+  <p>The <dfn>outline</dfn> is all <span data-x="concept-heading">headings</span> in a
+  document, in <span>tree order</span>.</p>
+  </div>
+
+  <p>The <span>outline</span> should be used for generating document outlines, for example when
+  generating tables of contents. When creating an interactive table of contents, entries should
+  jump the user to the relevant <span data-x="concept-heading">heading</span>.</p>
+
+  <p>If a document has one or more <span data-x="concept-heading">headings</span>, at least a
+  single <span data-x="concept-heading">heading</span> within the <span>outline</span> should have
+  a <span>heading level</span> of 1.</p>
+
+  <div algorithm>
+  <p>Each <span data-x="concept-heading">heading</span> following another <span
+  data-x="concept-heading">heading</span> <var>lead</var> in the <span>outline</span> must
+  have a <span>heading level</span> that is less than, equal to, or 1 greater than <var>lead</var>'s
+  <span>heading level</span>.</p>
+  </div>
+
+  <div class="example">
+   <p>The following example is non-conforming:</p>
+
+   <pre class="bad"><code class="html">&lt;body&gt;
+ &lt;h1&gt;Apples&lt;/h1&gt;
+ &lt;p&gt;Apples are fruit.&lt;/p&gt;
+ &lt;section&gt;
+  &lt;h3&gt;Taste&lt;/h3&gt;
+  &lt;p&gt;They taste lovely.&lt;/p&gt;
+ &lt;/section&gt;
+&lt;/body&gt;</code></pre>
+
+   <p>It could be written as follows and then it would be conforming:</p>
+
+   <pre><code class="html">&lt;body&gt;
+ &lt;h1&gt;Apples&lt;/h1&gt;
+ &lt;p&gt;Apples are fruit.&lt;/p&gt;
+ &lt;section&gt;
+  &lt;h2&gt;Taste&lt;/h2&gt;
+  &lt;p&gt;They taste lovely.&lt;/p&gt;
+ &lt;/section&gt;
+&lt;/body&gt;</code></pre>
+
+  </div>
+
+  <h5>Heading levels &amp; offsets</h5>
+
+  <p>The <dfn element-attr for="global"><code data-x="attr-headingoffset">headingoffset</code></dfn>
+  content attribute allows authors to offset heading levels for descendants.</p>
+
+  <p>If the <code data-x="attr-headingoffset">headingoffset</code> attribute is specified, it must
+  have a value that is a <span>valid non-negative integer</span> between 0 and 8, inclusive.</p>
+
+  <p>The <dfn element-attr for="global"><code data-x="attr-headingreset">headingreset</code></dfn>
+  content attribute is a <span>boolean attribute</span>. It allows authors to prevent a heading
+  offset computation from traversing beyond the element with the attribute.</p>
+
+  <div algorithm>
+  <p>To <dfn>get an element's computed heading level</dfn>, given an element
+  <var>element</var>:</p>
+
+  <ol>
+   <li><p>Let <var>level</var> be 0.</p></li>
+
+   <li><p>If <var>element</var>'s local name is <code data-x="h1">h1</code>, then set
+   <var>level</var> to 1.</p></li>
+
+   <li><p>If <var>element</var>'s local name is <code data-x="h2">h2</code>, then set
+   <var>level</var> to 2.</p></li>
+
+   <li><p>If <var>element</var>'s local name is <code data-x="h3">h3</code>, then set
+   <var>level</var> to 3.</p></li>
+
+   <li><p>If <var>element</var>'s local name is <code data-x="h4">h4</code>, then set
+   <var>level</var> to 4.</p></li>
+
+   <li><p>If <var>element</var>'s local name is <code data-x="h5">h5</code>, then set
+   <var>level</var> to 5.</p></li>
+
+   <li><p>If <var>element</var>'s local name is <code data-x="h6">h6</code>, then set
+   <var>level</var> to 6.</p></li>
+
+   <li><p><span>Assert</span>: <var>level</var> is not 0.</p></li>
+
+   <li><p>Increment <var>level</var> by the result of <span
+   data-x="get an element's computed heading offset">getting an element's computed heading
+   offset</span> given <var>element</var>.</p></li>
+
+   <li><p>If <var>level</var> is greater than 9, then return 9.</p></li>
+
+   <li><p>Return <var>level</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>get an element's computed heading offset</dfn>, given an element <var>element</var>,
+  perform the following steps. They return a non-negative integer.</p>
+
+  <ol>
+   <li><p>Let <var>offset</var> be 0.</p></li>
+
+   <li><p>Let <var>inclusiveAncestor</var> be <var>element</var>.</p></li>
+
+   <li>
+    <p>While <var>inclusiveAncestor</var> is not null:</p>
+
+    <ol>
+     <li><p>Let <var>nextOffset</var> be 0.</p></li>
+
+     <li>
+      <p>If <var>inclusiveAncestor</var> is an <span data-x="HTML elements">HTML element</span> and
+      has a <code data-x="attr-headingoffset">headingoffset</code> attribute, then parse its value
+      using the <span>rules for parsing non-negative integers</span>.</p>
+
+      <p>If the result of parsing the value is not an error, then set <var>nextOffset</var> to that
+      value.</p>
+     </li>
+
+     <li><p>Increment <var>offset</var> by <var>nextOffset</var>.</p></li>
+
+     <li><p>If <var>inclusiveAncestor</var> is an <span data-x="HTML elements">HTML element</span>
+     and has a <code data-x="attr-headingreset">headingreset</code> attribute, then return
+     <var>offset</var>.</p></li>
+
+     <li><p>If <var>inclusiveAncestor</var>'s parent is a <span>shadow root</span>, then set
+     <var>inclusiveAncestor</var> to that <span>shadow root</span>'s <span
+     data-x="concept-DocumentFragment-host">host</span> and <span>continue</span>.</p></li>
+
+     <li><p>Set <var>inclusiveAncestor</var> to <var>inclusiveAncestor</var>'s <span>parent
+     element</span>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Return <var>offset</var>.</p></li>
+  </ol>
+  </div>
+
+  <div class="example">
+   <p>This example shows a combination of <code data-x="attr-headingoffset">headingoffset</code>,
+   <code data-x="attr-headingreset">headingreset</code>, and <code
+   data-x="attr-aria-level">aria-level</code> attributes with comments demonstrating the respective
+   heading levels. This example illustrates the various combinations and is not a best practice
+   example.</p>
+
+   <pre><code class="html">&lt;body>
+  &lt;main>
+   &lt;h1>This is a heading level 1&lt;/h1>
+   &lt;article headingoffset="1">
+    &lt;h1>This is a heading level 2&lt;/h1>
+    &lt;section headingoffset="1">
+     &lt;h1>This is a heading level 3&lt;/h1>
+     &lt;dialog headingreset>
+      &lt;h1>This is a heading level 1&lt;/h1>
+     &lt;/dialog>
+    &lt;/section>
+   &lt;/article>
+   &lt;h1 aria-level="2">This is a heading level 2&lt;/h1>
+  &lt;/main>
+&lt;/body></code></pre>
+  </div>
+
+  <h5>Sample outlines</h5>
+
+  <div class="example">
+   <p>The following markup fragment:</p>
+
+   <pre><code class="html">&lt;body>
+  &lt;hgroup id="document-title">
+    &lt;h1>HTML: Living Standard&lt;/h1>
+    &lt;p>Last Updated 12 August 2016&lt;/p>
+  &lt;/hgroup>
+  &lt;p>Some intro to the document.&lt;/p>
+  &lt;h2>Table of contents&lt;/h2>
+  &lt;ol id=toc>...&lt;/ol>
+  &lt;h2>First section&lt;/h2>
+  &lt;p>Some intro to the first section.&lt;/p>
+&lt;/body></code></pre>
+
+   <p>...results in 3 document headings:</p>
+
+   <ol class="brief">
+    <li><p><code data-x="">&lt;h1>HTML: Living Standard&lt;/h1></code></li>
+
+    <li><p><code data-x="">&lt;h2>Table of contents&lt;/h2></code>.</p></li>
+
+    <li><p><code data-x="">&lt;h2>First section&lt;/h2></code>.</p></li>
+   </ol>
+
+   <p>A rendered view of the <span>outline</span> might look like:</p>
+
+   <p><img loading="lazy" src="/images/outline.svg" width="465" height="120" alt="Top-level section with the heading &quot;HTML: Living Standard&quot; and two subsections; &quot;Table of contents&quot; and &quot;First section&quot;." class="darkmode-aware"></p>
+  </div>
+
+  <div class="example">
+   <p>First, here is a document, which is a book with very short chapters and subsections:</p>
+
+   <pre><code class="html">&lt;!DOCTYPE HTML>
+&lt;html lang=en>
+&lt;title>The Tax Book (all in one page)&lt;/title>
+&lt;h1>The Tax Book&lt;/h1>
+&lt;h2>Earning money&lt;/h2>
+&lt;p>Earning money is good.&lt;/p>
+&lt;h3>Getting a job&lt;/h3>
+&lt;p>To earn money you typically need a job.&lt;/p>
+&lt;h2>Spending money&lt;/h2>
+&lt;p>Spending is what money is mainly used for.&lt;/p>
+&lt;h3>Cheap things&lt;/h3>
+&lt;p>Buying cheap things often not cost-effective.&lt;/p>
+&lt;h3>Expensive things&lt;/h3>
+&lt;p>The most expensive thing is often not the most cost-effective either.&lt;/p>
+&lt;h2>Investing money&lt;/h2>
+&lt;p>You can lend your money to other people.&lt;/p>
+&lt;h2>Losing money&lt;/h2>
+&lt;p>If you spend money or invest money, sooner or later you will lose money.
+&lt;h3>Poor judgement&lt;/h3>
+&lt;p>Usually if you lose money it's because you made a mistake.&lt;/p></code></pre>
+
+   <p>Its <span>outline</span> could be presented as follows:</p>
+
+   <ol class="brief">
+    <li>
+     The Tax Book
+     <ol class="brief">
+      <li>
+       Earning money
+       <ol class="brief">
+        <li>Getting a job</li>
+       </ol>
+      </li>
+      <li>
+       Spending money
+       <ol class="brief">
+        <li>Cheap things</li>
+        <li>Expensive things</li>
+       </ol>
+      </li>
+      <li>Investing money</li>
+      <li>
+       Losing money
+       <ol class="brief">
+        <li>Poor judgement</li>
+       </ol>
+      </li>
+     </ol>
+   </ol>
+
+   <p>Notice that the <code>title</code> element is not a <span
+   data-x="concept-heading">heading</span>.</p>
+  </div>
+
+  <div class="example">
+   <p>A document can contain multiple top-level headings:</p>
+
+   <pre><code class="html">&lt;!DOCTYPE HTML>
+&lt;html lang=en>
+&lt;title>Alphabetic Fruit&lt;/title>
+&lt;h1>Apples&lt;/h1>
+&lt;p>Pomaceous.&lt;/p>
+&lt;h1>Bananas&lt;/h1>
+&lt;p>Edible.&lt;/p>
+&lt;h1>Carambola&lt;/h1>
+&lt;p>Star.&lt;/p></code></pre>
+
+   <p>The document's <span>outline</span> could be presented as follows:</p>
+
+   <ol class="brief">
+    <li>Apples</li>
+    <li>Bananas</li>
+    <li>Carambola</li>
+   </ol>
+  </div>
+
+  <div class="example">
+   <p><code>header</code> elements do not influence the <span>outline</span> of a
+   document:</p>
+
+   <pre><code class="html">&lt;!DOCTYPE HTML>
+&lt;html lang="en">
+&lt;title>We're adopting a child! &mdash; Ray's blog&lt;/title>
+&lt;h1>Ray's blog&lt;/h1>
+&lt;article>
+ &lt;header>
+  &lt;nav>
+   &lt;a href="?t=-1d">Yesterday&lt;/a>;
+   &lt;a href="?t=-7d">Last week&lt;/a>;
+   &lt;a href="?t=-1m">Last month&lt;/a>
+  &lt;/nav>
+  &lt;h2>We're adopting a child!&lt;/h2>
+ &lt;/header>
+ &lt;p>As of today, Janine and I have signed the papers to become
+ the proud parents of baby Diane! We've been looking forward to
+ this day for weeks.&lt;/p>
+&lt;/article>
+&lt;/html></code></pre>
+
+   <p>The document's <span>outline</span> could be presented as follows:</p>
+
+   <ol class="brief">
+    <li> Ray's blog
+     <ol class="brief">
+      <li> We're adopting a child!
+     </ol>
+   </ol>
+  </div>
+
+  <hr>
+
+  <div class="example">
+   <p>The following example is conforming, but not encouraged as it has no <span
+   data-x="concept-heading">heading</span> whose <span>heading level</span> is 1:</p>
+
+   <pre><code class="html">&lt;!DOCTYPE HTML>
+&lt;html lang=en>
+&lt;title>Alphabetic Fruit&lt;/title>
+&lt;section>
+ &lt;h2>Apples&lt;/h2>
+ &lt;p>Pomaceous.&lt;/p>
+&lt;/section>
+&lt;section>
+ &lt;h2>Bananas&lt;/h2>
+ &lt;p>Edible.&lt;/p>
+&lt;/section>
+&lt;section>
+ &lt;h2>Carambola&lt;/h2>
+ &lt;p>Star.&lt;/p>
+&lt;/section></code></pre>
+
+   <p>The document's <span>outline</span> could be presented as follows:</p>
+
+   <ol class="brief">
+    <li>
+     <ol class="brief">
+      <li>Apples</li>
+      <li>Bananas</li>
+      <li>Carambola</li>
+     </ol>
+    </li>
+   </ol>
+  </div>
+
+  <div class="example">
+   <p>The following example is conforming, but not encouraged as the first <span
+   data-x="concept-heading">heading</span>'s <span>heading level</span> is not 1:</p>
+
+   <pre><code class="html">&lt;!DOCTYPE HTML>
+&lt;html lang=en>
+&lt;title>Feathers on The Site of Encyclopedic Knowledge&lt;/title>
+ &lt;h2>A plea from our caretakers&lt;/h2>
+ &lt;p>Please, we beg of you, send help! We're stuck in the server room!&lt;/p>
+&lt;h1>Feathers&lt;/h1>
+&lt;p>Epidermal growths.&lt;/p></code></pre>
+
+  <p>The document's <span>outline</span> could be presented as follows:</p>
+
+  <ol class="brief">
+    <li>
+     <ol class="brief">
+      <li>A plea from our caretakers</li>
+     </ol>
+    </li>
+    <li>Feathers</li>
+   </ol>
+  </div>
+
+
+  <h5>Exposing outlines to users</h5>
+
+  <p>User agents are encouraged to expose page <span data-x="outline">outlines</span> to users to
+  aid in navigation. This is especially true for non-visual media, e.g. screen readers.</p>
+
+  <div class="example">
+   <p>For instance, a user agent could map the arrow keys as follows:</p>
+
+   <dl>
+    <dt><kbd><kbd>Shift</kbd> + <kbd>&larr; Left</kbd></kbd></dt>
+    <dd>Go to previous heading</dd>
+
+    <dt><kbd><kbd>Shift</kbd> + <kbd>&rarr; Right</kbd></kbd></dt>
+    <dd>Go to next heading</dd>
+
+    <dt><kbd><kbd>Shift</kbd> + <kbd>&uarr; Up</kbd></kbd></dt>
+    <dd>Go to next heading whose <span data-x="heading level">level</span> is one less than the
+    current heading's level</dd>
+
+    <dt><kbd><kbd>Shift</kbd> + <kbd>&darr; Down</kbd></kbd></dt>
+    <dd>Go to next heading whose <span data-x="heading level">level</span> is the same as the
+    current heading's level</dd>
+   </dl>
+  </div>
+
+

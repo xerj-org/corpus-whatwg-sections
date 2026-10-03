@@ -1,0 +1,328 @@
+WHATWG HTML — section agents-and-agent-clusters — Agents and agent clusters
+
+  <h4>Agents and agent clusters</h4>
+
+  <h5>Integration with the JavaScript agent formalism</h5>
+
+  <p>JavaScript defines the concept of an <span>agent</span>. This section gives the mapping of that
+  language-level concept on to the web platform.</p>
+
+  <div class="note">
+   <p>Conceptually, the <span>agent</span> concept is an architecture-independent, idealized
+   "thread" in which JavaScript code runs. Such code can involve multiple globals/<span
+   data-x="concept-global-object-realm">realms</span> that can synchronously access each other, and
+   thus needs to run in a single execution thread.</p>
+
+   <p w-nodev>Two <code>Window</code> objects having the same <span>agent</span> does not indicate
+   they can directly access all objects created in each other's realms. They would have to be
+   <span>same origin-domain</span>; see <span>IsPlatformObjectSameOrigin</span>.</p>
+  </div>
+
+  <p>The following types of agents exist on the web platform:</p>
+
+  <dl>
+   <dt><dfn export>Similar-origin window agent</dfn></dt>
+   <dd>
+    <p>Contains various <code>Window</code> objects which can potentially reach each other, either
+    directly or by using <code data-x="dom-document-domain">document.domain</code>.</p>
+
+    <p>If the encompassing <span>agent cluster</span>'s <span>is origin-keyed</span> is true, then
+    all the <code>Window</code> objects will be <span>same origin</span>, can reach each other
+    directly, and <code data-x="dom-document-domain">document.domain</code> will no-op.</p>
+
+    <p class="note">Two <code>Window</code> objects that are <span>same origin</span> can be in
+    different <span data-x="similar-origin window agent">similar-origin window agents</span>, for
+    instance if they are each in their own <span>browsing context group</span>.</p>
+   </dd>
+
+   <dt><dfn export>Dedicated worker agent</dfn></dt>
+   <dd><p>Contains a single <code>DedicatedWorkerGlobalScope</code>.</p></dd>
+
+   <dt><dfn export>Shared worker agent</dfn></dt>
+   <dd><p>Contains a single <code>SharedWorkerGlobalScope</code>.</p></dd>
+
+   <dt><dfn export>Service worker agent</dfn></dt>
+   <dd><p>Contains a single <code>ServiceWorkerGlobalScope</code>.</p></dd>
+
+   <dt><dfn export>Worklet agent</dfn></dt>
+   <dd>
+    <p>Contains a single <code>WorkletGlobalScope</code> object.</p>
+
+    <p class="note">Although a given worklet can have multiple realms, each such realm needs its own
+    agent, as each realm can be executing code independently and at the same time as the others.</p>
+   </dd>
+  </dl>
+
+  <p>Only <span data-x="shared worker agent">shared</span> and <span data-x="dedicated worker
+  agent">dedicated worker agents</span> allow the use of JavaScript <code>Atomics</code> APIs to
+  potentially <span data-x="forward progress">block</span>.</p>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>To <dfn>create an agent</dfn>, given a boolean <var>canBlock</var>:</p>
+
+  <ol>
+   <li><p>Let <var>signifier</var> be a new unique internal value.</p></li>
+
+   <li><p>Let <var>candidateExecution</var> be a new <span>candidate execution</span>.</p></li>
+
+   <li><p>Let <var>agent</var> be a new <span>agent</span> whose [[CanBlock]] is
+   <var>canBlock</var>, [[Signifier]] is <var>signifier</var>, [[CandidateExecution]] is
+   <var>candidateExecution</var>, and [[IsLockFree1]], [[IsLockFree2]], and [[LittleEndian]] are set
+   at the implementation's discretion.</p></li>
+
+   <li><p>Set <var>agent</var>'s <span data-x="concept-agent-event-loop">event loop</span> to a new
+   <span>event loop</span>.</p></li>
+
+   <li><p>Return <var>agent</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>For a <span>realm</span> <var>realm</var>, the <span>agent</span> whose [[Signifier]] is
+  <var>realm</var>.[[AgentSignifier]] is <dfn data-x="realm's agent" export data-lt="agent"
+  for="realm">the realm's agent</dfn>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn export>relevant agent</dfn> for a <span>platform object</span>
+  <var>platformObject</var> is <var>platformObject</var>'s <span
+  data-x="concept-relevant-realm">relevant realm</span>'s <span data-x="realm's
+  agent">agent</span>.</p>
+  </div>
+
+  <p class="note">The agent equivalent of the <span>current realm</span> is the <span>surrounding
+  agent</span>.</p>
+
+  </div>
+
+  <h5>Integration with the JavaScript agent cluster formalism</h5>
+
+  <p>JavaScript also defines the concept of an <span>agent cluster</span>, which this standard maps
+  to the web platform by placing agents appropriately when they are created<span w-nodev> using the
+  <span data-x="obtain-similar-origin-window-agent">obtain a similar-origin window agent</span> or
+  <span data-x="obtaining a worker/worklet agent">obtain a worker/worklet agent</span>
+  algorithms</span>.</p>
+
+  <p>The <span>agent cluster</span> concept is crucial for defining the JavaScript memory model, and
+  in particular among which <span data-x="agent">agents</span> the backing data of
+  <code>SharedArrayBuffer</code> objects can be shared.</p>
+
+  <p class="note">Conceptually, the <span>agent cluster</span> concept is an
+  architecture-independent, idealized "process boundary" that groups together multiple "threads"
+  (<span data-x="agent">agents</span>). The <span data-x="agent cluster">agent clusters</span>
+  defined by the specification are generally more restrictive than the actual process boundaries
+  implemented in user agents. By enforcing these idealized divisions at the specification level, we
+  ensure that web developers see interoperable behavior with regard to shared memory, even in the
+  face of varying and changing user agent process models.</p>
+
+  <div w-nodev>
+
+  <p>An <span>agent cluster</span> has an associated <dfn
+  data-x="agent-cluster-cross-origin-isolation">cross-origin isolation mode</dfn>, which is a
+  <span>cross-origin isolation mode</span>. It is initially "<code
+  data-x="cross-origin-isolation-none">none</code>".</p>
+
+  <p>An <span>agent cluster</span> has an associated <dfn>is origin-keyed</dfn> (a boolean), which
+  is initially false.</p>
+
+  <hr>
+
+  <p>The following defines the allocation of the <span data-x="agent cluster">agent clusters</span>
+  of <span data-x="similar-origin window agent">similar-origin window agents</span>.</p>
+
+  <p>An <dfn>agent cluster key</dfn> is a <span>site</span> or <span
+  data-x="concept-origin-tuple">tuple origin</span>. Without web developer action to achieve <a
+  href="#origin-keyed-agent-clusters">origin-keyed agent clusters</a>, it will be a
+  <span>site</span>.</p>
+
+  <p class="note">An equivalent formulation is that an <span>agent cluster key</span> can be a
+  <span>scheme-and-host</span> or an <span>origin</span>.</p>
+
+  <div algorithm>
+  <p>To <dfn data-x="obtain-similar-origin-window-agent">obtain a similar-origin window agent</dfn>,
+  given an <span>origin</span> <var>origin</var>, a <span>browsing context group</span>
+  <var>group</var>, and a boolean <var>requestsOAC</var>, run these steps:</p>
+
+  <ol>
+   <li><p>Let <var>site</var> be the result of <span data-x="obtain a site">obtaining a site</span>
+   with <var>origin</var>.</p></li>
+
+   <li><p>Let <var>key</var> be <var>site</var>.</p></li>
+
+   <li><p>If <var>group</var>'s <span data-x="bcg-cross-origin-isolation">cross-origin isolation
+   mode</span> is not "<code data-x="cross-origin-isolation-none">none</code>", then set
+   <var>key</var> to <var>origin</var>.</p></li>
+
+   <li><p>Otherwise, if <var>group</var>'s <span>historical agent cluster key
+   map</span>[<var>origin</var>] <span data-x="map exists">exists</span>, then set <var>key</var> to
+   <var>group</var>'s <span>historical agent cluster key map</span>[<var>origin</var>].</p></li>
+
+   <li>
+    <p>Otherwise:</p>
+
+    <ol>
+     <li><p>If <var>requestsOAC</var> is true, then set <var>key</var> to
+     <var>origin</var>.</p></li>
+
+     <li><p>Set <var>group</var>'s <span>historical agent cluster key map</span>[<var>origin</var>]
+     to <var>key</var>.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p>If <var>group</var>'s <span>agent cluster map</span>[<var>key</var>] <span data-x="map
+    exists">does not exist</span>:</p>
+
+    <ol>
+     <li><p>Let <var>agentCluster</var> be a new <span>agent cluster</span>.</p></li>
+
+     <li><p>Set <var>agentCluster</var>'s <span
+     data-x="agent-cluster-cross-origin-isolation">cross-origin isolation mode</span> to
+     <var>group</var>'s <span data-x="bcg-cross-origin-isolation">cross-origin isolation
+     mode</span>.</p></li>
+
+     <li>
+      <p>If <var>key</var> is an <span>origin</span>:</p>
+
+      <ol>
+       <li><p><span>Assert</span>: <var>key</var> is <var>origin</var>.</p></li>
+
+       <li><p>Set <var>agentCluster</var>'s <span>is origin-keyed</span> to true.</p></li>
+      </ol>
+     </li>
+
+     <li><p>Add the result of <span data-x="create an agent">creating an agent</span>, given false,
+     to <var>agentCluster</var>.</p></li>
+
+     <li><p>Set <var>group</var>'s <span>agent cluster map</span>[<var>key</var>] to
+     <var>agentCluster</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Return the single <span>similar-origin window agent</span> contained in <var>group</var>'s
+   <span>agent cluster map</span>[<var>key</var>].</p></li>
+  </ol>
+  </div>
+
+  <p class="note">This means that there is only one <span>similar-origin window agent</span> per
+  browsing context agent cluster. (However, <span data-x="dedicated worker agent">dedicated
+  worker</span> and <span data-x="worklet agent">worklet agents</span> might be in the same
+  cluster.)</p>
+
+  <hr>
+
+  <p>The following defines the allocation of the <span data-x="agent cluster">agent clusters</span>
+  of all other types of agents.</p>
+
+  <div algorithm>
+  <p>To <dfn data-x="obtaining a worker/worklet agent">obtain a worker/worklet agent</dfn>, given an
+  <span>environment settings object</span> or null <var>outside settings</var>, a boolean
+  <var>isTopLevel</var>, and a boolean <var>canBlock</var>, run these steps:</p>
+
+  <ol>
+   <li><p>Let <var>agentCluster</var> be null.
+
+   <li>
+    <p>If <var>isTopLevel</var> is true:</p>
+
+    <ol>
+     <li><p>Set <var>agentCluster</var> to a new <span>agent cluster</span>.</p></li>
+
+     <li>
+      <p>Set <var>agentCluster</var>'s <span>is origin-keyed</span> to true.</p>
+
+      <p class="note">These workers can be considered to be origin-keyed. However, this is not
+      exposed through any APIs (in the way that <code
+      data-x="dom-originAgentCluster">originAgentCluster</code> exposes the origin-keyedness for
+      windows).</p>
+     </li>
+    </ol>
+   </li>
+
+   <li>
+    <p>Otherwise:</p>
+
+    <ol>
+     <li><p><span>Assert</span>: <var>outside settings</var> is not null.</p></li>
+
+     <li><p>Let <var>ownerAgent</var> be <var>outside settings</var>'s <span data-x="environment
+     settings object's realm">realm</span>'s <span data-x="realm's agent">agent</span>.</p></li>
+
+     <li><p>Set <var>agentCluster</var> to the agent cluster which contains
+     <var>ownerAgent</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Let <var>agent</var> be the result of <span data-x="create an agent">creating an
+   agent</span> given <var>canBlock</var>.</p></li>
+
+   <li><p>Add <var>agent</var> to <var>agentCluster</var>.</p></li>
+
+   <li><p>Return <var>agent</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>obtain a dedicated/shared worker agent</dfn>, given an <span>environment settings
+  object</span> <var>outside settings</var> and a boolean <var>isShared</var>, return the result of
+  <span>obtaining a worker/worklet agent</span> given <var>outside settings</var>,
+  <var>isShared</var>, and true.</p>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>obtain a worklet agent</dfn>, given an <span>environment settings object</span>
+  <var>outside settings</var>, return the result of <span>obtaining a worker/worklet agent</span>
+  given <var>outside settings</var>, false, and false.</p>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn export>obtain a service worker agent</dfn>, return the result of <span>obtaining a
+  worker/worklet agent</span> given null, true, and false.</p>
+  </div>
+
+  <hr>
+
+  </div>
+
+  <div class="example" id="can-share-memory-with">
+   <p>The following pairs of global objects are each within the same <span>agent cluster</span>, and
+   thus can use <code>SharedArrayBuffer</code> instances to share memory with each other:</p>
+
+   <ul>
+    <li><p>A <code>Window</code> object and a dedicated worker that it created.</p></li>
+
+    <li><p>A worker (of any type) and a dedicated worker it created.</p></li>
+
+    <li><p var-scope>A <code>Window</code> object <var>A</var> and the <code>Window</code> object of an
+    <code>iframe</code> element that <var>A</var> created that could be <span>same
+    origin-domain</span> with <var>A</var>.</p></li>
+
+    <li><p>A <code>Window</code> object and a <span>same origin-domain</span> <code>Window</code>
+    object that opened it.</p></li>
+
+    <li><p>A <code>Window</code> object and a worklet that it created.</p></li>
+   </ul>
+
+   <p>The following pairs of global objects are <em>not</em> within the same <span>agent
+   cluster</span>, and thus cannot share memory:</p>
+
+   <ul>
+    <li><p>A <code>Window</code> object and a shared worker it created.</p></li>
+
+    <li><p>A worker (of any type) and a shared worker it created.</p></li>
+
+    <li><p>A <code>Window</code> object and a service worker it created.</p></li>
+
+    <li><p var-scope>A <code>Window</code> object <var>A</var> and the <code>Window</code> object of an
+    <code>iframe</code> element that <var>A</var> created that cannot be <span>same
+    origin-domain</span> with <var>A</var>.</p></li>
+
+    <li><p>Any two <code>Window</code> objects with no opener or ancestor relationship. This holds
+    even if the two <code>Window</code> objects are <span>same origin</span>.</p></li>
+   </ul>
+  </div>
+
+  <div w-nodev>
+

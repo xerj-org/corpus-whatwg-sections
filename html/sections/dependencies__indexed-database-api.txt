@@ -1,0 +1,15 @@
+WHATWG HTML — section dependencies/indexed-database-api — Indexed Database API
+
+   <dt>Indexed Database API</dt>
+
+   <dd>
+    <p>The following terms are defined in <cite>Indexed Database API</cite>:
+    <ref>INDEXEDDB</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://w3c.github.io/IndexedDB/#cleanup-indexed-database-transactions">cleanup Indexed Database transactions</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/IndexedDB/#idbversionchangeevent"><code>IDBVersionChangeEvent</code></dfn></li>
+    </ul>
+   </dd>
+
+

@@ -1,0 +1,799 @@
+WHATWG HTML — section the-canvas-element/text-styles — Text styles
+
+  <h6>Text styles</h6>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>context</var>.<span subdfn data-x="dom-context-2d-lang">lang</span> [ = <var>value</var> ]</code></dt>
+   <dt><code data-x=""><var>styles</var>.<span data-x="dom-context-2d-lang">lang</span> [ = <var>value</var> ]</code></dt>
+   <dd>
+    <p>Returns the current language setting.</p>
+
+    <p>Can be set to a BCP 47 language tag, the empty string, or "<code
+    data-x="dom-context-2d-lang-inherit">inherit</code>", to change the language used when
+    resolving fonts. "<code data-x="dom-context-2d-lang-inherit">inherit</code>" takes the language
+    from the <code>canvas</code> element's language, or the associated <span>document
+    element</span> when there is no <code>canvas</code> element.</p>
+
+    <p>The default is "<code data-x="dom-context-2d-lang-inherit">inherit</code>".</p>
+   </dd>
+
+   <dt><code data-x=""><var>context</var>.<span subdfn data-x="dom-context-2d-font">font</span> [ = <var>value</var> ]</code></dt>
+   <dt><code data-x=""><var>styles</var>.<span data-x="dom-context-2d-font">font</span> [ = <var>value</var> ]</code></dt>
+   <dd>
+    <p>Returns the current font settings.</p>
+
+    <p>Can be set, to change the font. The syntax is the same as for the CSS <span>'font'</span>
+    property; values that cannot be parsed as CSS font values are ignored. The default is "10px
+    sans-serif".</p>
+
+    <p>Relative keywords and lengths are computed relative to the font of the <code>canvas</code>
+    element.</p>
+   </dd>
+
+   <dt><code data-x=""><var>context</var>.<span subdfn data-x="dom-context-2d-textAlign">textAlign</span> [ = <var>value</var> ]</code></dt>
+   <dt><code data-x=""><var>styles</var>.<span data-x="dom-context-2d-textAlign">textAlign</span> [ = <var>value</var> ]</code></dt>
+   <dd>
+    <p>Returns the current text alignment settings.</p>
+
+    <p>Can be set, to change the alignment. The possible values are and their meanings are given
+    below. Other values are ignored. The default is "<code data-x="">start</code>".</p>
+   </dd>
+
+   <dt><code data-x=""><var>context</var>.<span subdfn data-x="dom-context-2d-textBaseline">textBaseline</span> [ = <var>value</var> ]</code></dt>
+   <dt><code data-x=""><var>styles</var>.<span data-x="dom-context-2d-textBaseline">textBaseline</span> [ = <var>value</var> ]</code></dt>
+   <dd>
+    <p>Returns the current baseline alignment settings.</p>
+
+    <p>Can be set, to change the baseline alignment. The possible values and their meanings are
+    given below. Other values are ignored. The default is "<code
+    data-x="dom-context-2d-textBaseline-alphabetic">alphabetic</code>".</p>
+   </dd>
+
+   <dt><code data-x=""><var>context</var>.<span subdfn data-x="dom-context-2d-direction">direction</span> [ = <var>value</var> ]</code></dt>
+   <dt><code data-x=""><var>styles</var>.<span data-x="dom-context-2d-direction">direction</span> [ = <var>value</var> ]</code></dt>
+   <dd>
+    <p>Returns the current directionality.</p>
+
+    <p>Can be set, to change the directionality. The possible values and their meanings are given
+    below. Other values are ignored. The default is "<code
+    data-x="dom-context-2d-direction-inherit">inherit</code>".</p>
+   </dd>
+
+   <dt><code data-x=""><var>context</var>.<span subdfn data-x="dom-context-2d-letterSpacing">letterSpacing</span> [ = <var>value</var> ]</code></dt>
+   <dt><code data-x=""><var>styles</var>.<span data-x="dom-context-2d-letterSpacing">letterSpacing</span> [ = <var>value</var> ]</code></dt>
+   <dd>
+    <p>Returns the current spacing between characters in the text.</p>
+
+    <p>Can be set, to change spacing between characters. Values that cannot be parsed as a CSS
+    <span>&lt;length></span> are ignored. The default is "<code data-x="">0px</code>".</p>
+   </dd>
+
+   <dt><code data-x=""><var>context</var>.<span subdfn data-x="dom-context-2d-fontKerning">fontKerning</span> [ = <var>value</var> ]</code></dt>
+   <dt><code data-x=""><var>styles</var>.<span data-x="dom-context-2d-fontKerning">fontKerning</span> [ = <var>value</var> ]</code></dt>
+   <dd>
+    <p>Returns the current font kerning settings.</p>
+
+    <p>Can be set, to change the font kerning. The possible values and their meanings are given
+    below. Other values are ignored. The default is "<code
+    data-x="dom-context-2d-fontKerning-auto">auto</code>".</p>
+   </dd>
+
+   <dt><code data-x=""><var>context</var>.<span subdfn data-x="dom-context-2d-fontStretch">fontStretch</span> [ = <var>value</var> ]</code></dt>
+   <dt><code data-x=""><var>styles</var>.<span data-x="dom-context-2d-fontStretch">fontStretch</span> [ = <var>value</var> ]</code></dt>
+   <dd>
+    <p>Returns the current font stretch settings.</p>
+
+    <p>Can be set, to change the font stretch. The possible values and their meanings are given
+    below. Other values are ignored. The default is "<code
+    data-x="dom-context-2d-fontStretch-normal">normal</code>".</p>
+   </dd>
+
+   <dt><code data-x=""><var>context</var>.<span subdfn data-x="dom-context-2d-fontVariantCaps">fontVariantCaps</span> [ = <var>value</var> ]</code></dt>
+   <dt><code data-x=""><var>styles</var>.<span data-x="dom-context-2d-fontVariantCaps">fontVariantCaps</span> [ = <var>value</var> ]</code></dt>
+   <dd>
+    <p>Returns the current font variant caps settings.</p>
+
+    <p>Can be set, to change the font variant caps. The possible values and their meanings are given
+    below. Other values are ignored. The default is "<code
+    data-x="dom-context-2d-fontVariantCaps-normal">normal</code>".</p>
+   </dd>
+
+   <dt><code data-x=""><var>context</var>.<span subdfn data-x="dom-context-2d-textRendering">textRendering</span> [ = <var>value</var> ]</code></dt>
+   <dt><code data-x=""><var>styles</var>.<span data-x="dom-context-2d-textRendering">textRendering</span> [ = <var>value</var> ]</code></dt>
+   <dd>
+    <p>Returns the current text rendering settings.</p>
+
+    <p>Can be set, to change the text rendering. The possible values and their meanings are given
+    below. Other values are ignored. The default is "<code
+    data-x="dom-context-2d-textRendering-auto">auto</code>".</p>
+   </dd>
+
+   <dt><code data-x=""><var>context</var>.<span subdfn data-x="dom-context-2d-wordSpacing">wordSpacing</span> [ = <var>value</var> ]</code></dt>
+   <dt><code data-x=""><var>styles</var>.<span data-x="dom-context-2d-wordSpacing">wordSpacing</span> [ = <var>value</var> ]</code></dt>
+   <dd>
+    <p>Returns the current spacing between words in the text.</p>
+
+    <p>Can be set, to change spacing between words. Values that cannot be parsed as a CSS
+    <span>&lt;length></span> are ignored. The default is "<code data-x="">0px</code>".</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <p>Objects that implement the <code>CanvasTextDrawingStyles</code> interface have attributes
+  (defined in this section) that control how text is laid out (rasterized or outlined) by the
+  object. Such objects can also have a <dfn>font style source object</dfn>. For
+  <code>CanvasRenderingContext2D</code> objects, this is the <code>canvas</code> element given by
+  the value of the context's <code data-x="dom-context-2d-canvas">canvas</code> attribute. For
+  <code>OffscreenCanvasRenderingContext2D</code> objects, this is the <span>associated
+  <code>OffscreenCanvas</code> object</span>.</p>
+
+  <div algorithm>
+  <p>Font resolution for the <span>font style source object</span> requires a <span>font
+  source</span>. This is determined for a given <var>object</var> implementing
+  <code>CanvasTextDrawingStyles</code> by the following steps: <ref>CSSFONTLOAD</ref></p>
+
+  <ol>
+   <li><p>If <var>object</var>'s <span>font style source object</span> is a <code>canvas</code>
+   element, return the element's <span>node document</span>.</p></li>
+
+   <li>
+    <p>Otherwise, <var>object</var>'s <span>font style source object</span> is an
+    <code>OffscreenCanvas</code> object:</p>
+
+    <ol>
+     <li><p>Let <var>global</var> be <var>object</var>'s <span>relevant global
+     object</span>.</p></li>
+
+     <li><p>If <var>global</var> is a <code>Window</code> object, then return <var>global</var>'s
+     <span data-x="concept-document-window">associated <code>Document</code></span>.</p></li>
+
+     <li><p><span>Assert</span>: <var>global</var> implements
+     <code>WorkerGlobalScope</code>.</p></li>
+
+     <li><p>Return <var>global</var>.</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <div class="example">
+   <p>This is an example of font resolution with a regular <code>canvas</code> element with ID <code
+   data-x="">c1</code>.</p>
+
+   <pre><code class="js">const font = new FontFace("MyCanvasFont", "url(mycanvasfont.ttf)");
+documents.fonts.add(font);
+
+const context = document.getElementById("c1").getContext("2d");
+document.fonts.ready.then(function() {
+  context.font = "64px MyCanvasFont";
+  context.fillText("hello", 0, 0);
+});</code></pre>
+
+   <p>In this example, the canvas will display text using <code data-x="">mycanvasfont.ttf</code> as
+   its font.</p>
+  </div>
+
+  <div class="example">
+   <p>This is an example of how font resolution can happen using <code>OffscreenCanvas</code>.
+   Assuming a <code>canvas</code> element with ID <code data-x="">c2</code> which is transferred to
+   a worker like so:</p>
+
+   <pre><code class="js">const offscreenCanvas = document.getElementById("c2").transferControlToOffscreen();
+worker.postMessage(offscreenCanvas, [offscreenCanvas]);</code></pre>
+
+   <p>Then, in the worker:</p>
+   <pre><code class="js">self.onmessage = function(ev) {
+  const transferredCanvas = ev.data;
+  const context = transferredCanvas.getContext("2d");
+  const font = new FontFace("MyFont", "url(myfont.ttf)");
+  self.fonts.add(font);
+  self.fonts.ready.then(function() {
+    context.font = "64px MyFont";
+    context.fillText("hello", 0, 0);
+  });
+};</code></pre>
+
+   <p>In this example, the canvas will display a text using <code data-x="">myfont.ttf</code>.
+   Notice that the font is only loaded inside the worker, and not in the document context.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="CanvasTextDrawingStyles"><code
+  data-x="dom-context-2d-font">font</code></dfn> IDL attribute, on setting, must be <span
+  data-x="parse something according to a CSS grammar">parsed as a CSS &lt;'font'> value</span> (but
+  without supporting property-independent style sheet syntax like 'inherit'), and the resulting font
+  must be assigned to the context, with the <span>'line-height'</span> component forced to 'normal',
+  with the <span>'font-size'</span> component converted to <span data-x="'px'">CSS pixels</span>,
+  and with system fonts being computed to explicit values. If the new value is syntactically
+  incorrect (including using property-independent style sheet syntax like 'inherit' or 'initial'),
+  then it must be ignored, without assigning a new font value. <ref>CSS</ref></p>
+  </div>
+
+  <p>Font family names must be interpreted in the context of the <span>font style source
+  object</span> when the font is to be used; any fonts embedded using <code
+  data-x="">@font-face</code> or loaded using <code>FontFace</code> objects that are visible to the
+  <span>font style source object</span> must therefore be available once they are loaded. (Each <span>font style source
+  object</span> has a <span>font source</span>, which determines what fonts are available.) If a font
+  is used before it is fully loaded, or if the <span>font style source object</span> does not have
+  that font in scope at the time the font is to be used, then it must be treated as if it was an
+  unknown font, falling back to another as described by the relevant CSS specifications.
+  <ref>CSSFONTS</ref> <ref>CSSFONTLOAD</ref></p>
+
+  <div algorithm>
+  <p>On getting, the <code data-x="dom-context-2d-font">font</code> attribute must return the <span
+  data-x="serializing a CSS value">serialized form</span> of the current font of the context (with
+  no <span>'line-height'</span> component). <ref>CSSOM</ref></p>
+  </div>
+
+  <div class="example">
+
+   <p>For example, after the following statement:</p>
+
+   <pre><code class="js">context.font = 'italic 400 12px/2 Unknown Font, sans-serif';</code></pre>
+
+   <p>...the expression <code data-x="">context.font</code> would evaluate to the string "<code
+   data-x="">italic&nbsp;12px&nbsp;&quot;Unknown&nbsp;Font&quot;,&nbsp;sans-serif</code>". The "400"
+   font-weight doesn't appear because that is the default value. The line-height doesn't appear
+   because it is forced to "normal", the default value.</p>
+
+  </div>
+
+  <p>When the object implementing the <code>CanvasTextDrawingStyles</code> interface is created, the
+  font of the context must be set to 10px sans-serif. When the <span>'font-size'</span> component is
+  set to lengths using percentages, <span>'em'</span> or <span>'ex'</span> units, or the 'larger' or
+  'smaller' keywords, these must be interpreted relative to the <span>computed value</span> of the
+  <span>'font-size'</span> property of the <span>font style source object</span> at the time that
+  the attribute is set, if it is an element. When the <span>'font-weight'</span> component is set to
+  the relative values 'bolder' and 'lighter', these must be interpreted relative to the
+  <span>computed value</span> of the <span>'font-weight'</span> property of the <span>font style
+  source object</span> at the time that the attribute is set, if it is an element. If the <span
+  data-x="computed value">computed values</span> are undefined for a particular case (e.g. because
+  the <span>font style source object</span> is not an element or is not <span>being
+  rendered</span>), then the relative keywords must be interpreted relative to the normal-weight
+  10px sans-serif default.</p>
+
+  <div algorithm>
+  <p>The <dfn attribute for="CanvasTextDrawingStyles"><code
+  data-x="dom-context-2d-textAlign">textAlign</code></dfn> IDL attribute, on getting, must return
+  the current value. On setting, the current value must be changed to the new value. When the object
+  implementing the <code>CanvasTextDrawingStyles</code> interface is created, the <code
+  data-x="dom-context-2d-textAlign">textAlign</code> attribute must initially have the value <code
+  data-x="dom-context-2d-textAlign-start">start</code>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="CanvasTextDrawingStyles"><code
+  data-x="dom-context-2d-textBaseline">textBaseline</code></dfn> IDL attribute, on getting, must
+  return the current value. On setting, the current value must be changed to the new value. When the
+  object implementing the <code>CanvasTextDrawingStyles</code> interface is created, the <code
+  data-x="dom-context-2d-textBaseline">textBaseline</code> attribute must initially have the value
+  <code data-x="dom-context-2d-textBaseline-alphabetic">alphabetic</code>.</p>
+  </div>
+
+  <p>Objects that implement the <code>CanvasTextDrawingStyles</code> interface have an associated
+  <dfn data-x="concept-CanvasTextDrawingStyles-language">language</dfn> value used to localize font
+  rendering. Valid values are a BCP 47 language tag, the empty string, or "<dfn
+  data-x="dom-context-2d-lang-inherit">inherit</dfn>" where the language comes from the
+  <code>canvas</code> element's language, or the associated <span>document element</span> when there
+  is no <code>canvas</code> element. Initially, the <span
+  data-x="concept-CanvasTextDrawingStyles-language">language</span> must be "<code
+  data-x="dom-context-2d-lang-inherit">inherit</code>".</p>
+
+  <div algorithm>
+  <p>The <dfn attribute for="CanvasTextDrawingStyles" data-x="dom-context-2d-lang"><code
+  data-x="dom-context-2d-lang">lang</code></dfn> getter steps are to return
+  <span>this</span>'s <span data-x="concept-CanvasTextDrawingStyles-language">language</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <code data-x="dom-context-2d-lang">lang</code> setter steps are to set <span>this</span>'s
+  <span data-x="concept-CanvasTextDrawingStyles-language">language</span> to the given value.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="CanvasTextDrawingStyles"><code
+  data-x="dom-context-2d-direction">direction</code></dfn> IDL attribute, on getting, must return
+  the current value. On setting, the current value must be changed to the new value. When the object
+  implementing the <code>CanvasTextDrawingStyles</code> interface is created, the <code
+  data-x="dom-context-2d-direction">direction</code> attribute must initially have the value "<code
+  data-x="dom-context-2d-direction-inherit">inherit</code>".</p>
+  </div>
+
+  <p>Objects that implement the <code>CanvasTextDrawingStyles</code> interface have attributes that
+  control the spacing between letters and words. Such objects have associated <dfn
+  data-x="concept-CanvasTextDrawingStyles-letter-spacing">letter spacing</dfn> and <dfn
+  data-x="concept-CanvasTextDrawingStyles-word-spacing">word spacing</dfn> values, which are CSS
+  <span>&lt;length></span> values. Initially, both must be the result of <span data-x="parse
+  something according to a CSS grammar">parsing</span> "<code data-x="">0px</code>" as a CSS
+  <span>&lt;length></span>.</p>
+
+  <div algorithm>
+  <p>The <dfn attribute for="CanvasTextDrawingStyles"
+  data-x="dom-context-2d-letterSpacing"><code>letterSpacing</code></dfn> getter steps are to return
+  the <span data-x="serializing a CSS value">serialized form</span> of <span>this</span>'s <span
+  data-x="concept-CanvasTextDrawingStyles-letter-spacing">letter spacing</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <code data-x="dom-context-2d-letterSpacing">letterSpacing</code> setter steps are:</p>
+
+  <ol>
+   <li><p>Let <var>parsed</var> be the result of <span data-x="parse something according to a CSS
+   grammar">parsing</span> the given value as a CSS <span>&lt;length></span>.</p></li>
+
+   <li><p>If <var>parsed</var> is failure, then return.</p></li>
+
+   <li><p>Set <span>this</span>'s <span
+   data-x="concept-CanvasTextDrawingStyles-letter-spacing">letter spacing</span> to
+   <var>parsed</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="CanvasTextDrawingStyles"
+  data-x="dom-context-2d-wordSpacing"><code>wordSpacing</code></dfn> getter steps are to return the
+  <span data-x="serializing a CSS value">serialized form</span> of <span>this</span>'s <span
+  data-x="concept-CanvasTextDrawingStyles-word-spacing">word spacing</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <code data-x="dom-context-2d-wordSpacing">wordSpacing</code> setter steps are:</p>
+
+  <ol>
+   <li><p>Let <var>parsed</var> be the result of <span data-x="parse something according to a CSS
+   grammar">parsing</span> the given value as a CSS <span>&lt;length></span>.</p></li>
+
+   <li><p>If <var>parsed</var> is failure, then return.</p></li>
+
+   <li><p>Set <span>this</span>'s <span data-x="concept-CanvasTextDrawingStyles-word-spacing">word
+   spacing</span> to <var>parsed</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="CanvasTextDrawingStyles"><code
+  data-x="dom-context-2d-fontKerning">fontKerning</code></dfn> IDL attribute, on
+  getting, must return the current value. On setting, the current value must be changed to the new
+  value. When the object implementing the <code>CanvasTextDrawingStyles</code> interface is created,
+  the <code data-x="dom-context-2d-fontKerning">fontKerning</code> attribute must
+  initially have the value "<code data-x="dom-context-2d-fontkerning-auto">auto</code>".</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="CanvasTextDrawingStyles"><code
+  data-x="dom-context-2d-fontStretch">fontStretch</code></dfn> IDL attribute, on
+  getting, must return the current value. On setting, the current value must be changed to the new
+  value. When the object implementing the <code>CanvasTextDrawingStyles</code> interface is created,
+  the <code data-x="dom-context-2d-fontStretch">fontStretch</code> attribute must
+  initially have the value "<code data-x="dom-context-2d-fontStretch-normal">normal</code>".</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="CanvasTextDrawingStyles"><code
+  data-x="dom-context-2d-fontVariantCaps">fontVariantCaps</code></dfn> IDL attribute, on
+  getting, must return the current value. On setting, the current value must be changed to the new
+  value. When the object implementing the <code>CanvasTextDrawingStyles</code> interface is created,
+  the <code data-x="dom-context-2d-fontVariantCaps">fontVariantCaps</code> attribute must
+  initially have the value "<code data-x="dom-context-2d-fontVariantCaps-normal">normal</code>".</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="CanvasTextDrawingStyles"><code
+  data-x="dom-context-2d-textRendering">textRendering</code></dfn> IDL attribute, on
+  getting, must return the current value. On setting, the current value must be changed to the new
+  value. When the object implementing the <code>CanvasTextDrawingStyles</code> interface is created,
+  the <code data-x="dom-context-2d-textRendering">textRendering</code> attribute must
+  initially have the value "<code data-x="dom-context-2d-textRendering-auto">auto</code>".</p>
+  </div>
+  </div>
+
+  <p>The <code data-x="dom-context-2d-textAlign">textAlign</code> attribute's allowed keywords are
+  as follows:</p>
+
+  <dl>
+   <dt><dfn enum-value for="CanvasTextAlign"><code data-x="dom-context-2d-textAlign-start">start</code></dfn>
+   <dd><p>Align to the start edge of the text (left side in left-to-right text, right side in
+   right-to-left text).</p></dd>
+
+   <dt><dfn enum-value for="CanvasTextAlign"><code data-x="dom-context-2d-textAlign-end">end</code></dfn>
+   <dd><p>Align to the end edge of the text (right side in left-to-right text, left side in
+   right-to-left text).</p></dd>
+
+   <dt><dfn enum-value for="CanvasTextAlign"><code data-x="dom-context-2d-textAlign-left">left</code></dfn>
+   <dd><p>Align to the left.</p></dd>
+
+   <dt><dfn enum-value for="CanvasTextAlign"><code data-x="dom-context-2d-textAlign-right">right</code></dfn>
+   <dd><p>Align to the right.</p></dd>
+
+   <dt><dfn enum-value for="CanvasTextAlign"><code data-x="dom-context-2d-textAlign-center">center</code></dfn>
+   <dd><p>Align to the center.</p></dd>
+  </dl>
+
+  <p>The <code data-x="dom-context-2d-textBaseline">textBaseline</code>
+  attribute's allowed keywords correspond to alignment points in the
+  font:</p>
+
+  <p><img loading="lazy" src="/images/baselines.png" width="738" height="300" alt="The em-over baseline is roughly at the top of the glyphs in a font, the hanging baseline is where some glyphs like &#x0906; are anchored, the middle is half-way between the em-over and em-under baselines, the alphabetic baseline is where characters like &#x00C1;, &#x00FF;, &#x0066;, and &#x03A9; are anchored, the ideographic-under baseline is where glyphs like &#x79C1; and &#x9054; are anchored, and the em-under baseline is roughly at the bottom of the glyphs in a font. The top and bottom of the bounding box can be far from these baselines, due to glyphs extending far outside em-over and em-under baselines."></p>
+
+  <p>The keywords map to these alignment points as follows:</p>
+
+  <dl>
+   <dt><dfn enum-value for="CanvasTextBaseline"><code data-x="dom-context-2d-textBaseline-top">top</code></dfn>
+   <dd>The <span>em-over baseline</span></dd>
+
+   <dt><dfn enum-value for="CanvasTextBaseline"><code data-x="dom-context-2d-textBaseline-hanging">hanging</code></dfn>
+   <dd>The <span>hanging baseline</span></dd>
+
+   <dt><dfn enum-value for="CanvasTextBaseline"><code data-x="dom-context-2d-textBaseline-middle">middle</code></dfn>
+   <dd>Halfway between the <span>em-over baseline</span> and the <span>em-under baseline</span></dd>
+
+   <dt><dfn enum-value for="CanvasTextBaseline"><code data-x="dom-context-2d-textBaseline-alphabetic">alphabetic</code></dfn>
+   <dd>The <span>alphabetic baseline</span></dd>
+
+   <dt><dfn enum-value for="CanvasTextBaseline"><code data-x="dom-context-2d-textBaseline-ideographic">ideographic</code></dfn>
+   <dd>The <span>ideographic-under baseline</span></dd>
+
+   <dt><dfn enum-value for="CanvasTextBaseline"><code data-x="dom-context-2d-textBaseline-bottom">bottom</code></dfn>
+   <dd>The <span>em-under baseline</span></dd>
+  </dl>
+
+  <p>The <code data-x="dom-context-2d-direction">direction</code> attribute's allowed keywords are
+  as follows:</p>
+
+  <dl>
+   <dt><dfn enum-value for="CanvasDirection"><code data-x="dom-context-2d-direction-ltr">ltr</code></dfn>
+
+   <dd><p>Treat input to the <span>text preparation algorithm</span> as left-to-right text.</p></dd>
+
+   <dt><dfn enum-value for="CanvasDirection"><code data-x="dom-context-2d-direction-rtl">rtl</code></dfn>
+
+   <dd><p>Treat input to the <span>text preparation algorithm</span> as right-to-left text.</p></dd>
+
+   <dt><dfn enum-value for="CanvasDirection"><code data-x="dom-context-2d-direction-inherit">inherit</code></dfn>
+
+   <dd><p>Use the process in the <span>text preparation algorithm</span> to obtain the text
+   direction from the <code>canvas</code> element, <span
+   data-x="offscreencanvas-placeholder">placeholder <code>canvas</code> element</span>, or
+   <span>document element</span>.</p></dd>
+  </dl>
+
+  <p>The <code data-x="dom-context-2d-fontKerning">fontKerning</code> attribute's allowed keywords
+  are as follows:</p>
+
+  <dl>
+   <dt><dfn enum-value for="CanvasFontKerning"><code data-x="dom-context-2d-fontkerning-auto">auto</code></dfn>
+   <dd><p>Kerning is applied at the discretion of the user agent.</p></dd>
+
+   <dt><dfn enum-value for="CanvasFontKerning"><code data-x="dom-context-2d-fontkerning-normal">normal</code></dfn>
+   <dd><p>Kerning is applied.</p></dd>
+
+   <dt><dfn enum-value for="CanvasFontKerning"><code data-x="dom-context-2d-fontkerning-none">none</code></dfn>
+   <dd><p>Kerning is not applied.</p></dd>
+  </dl>
+
+  <p>The <code data-x="dom-context-2d-fontStretch">fontStretch</code> attribute's allowed keywords
+  are as follows:</p>
+
+  <dl>
+   <dt><dfn enum-value for="CanvasFontStretch"><code data-x="dom-context-2d-fontstretch-ultra-condensed">ultra-condensed</code></dfn>
+   <dd><p>Same as CSS <span>'font-stretch'</span> <span>'ultra-condensed'</span> setting.</p></dd>
+
+   <dt><dfn enum-value for="CanvasFontStretch"><code data-x="dom-context-2d-fontstretch-extra-condensed">extra-condensed</code></dfn>
+   <dd><p>Same as CSS <span>'font-stretch'</span> <span>'extra-condensed'</span> setting.</p></dd>
+
+   <dt><dfn enum-value for="CanvasFontStretch"><code data-x="dom-context-2d-fontstretch-condensed">condensed</code></dfn>
+   <dd><p>Same as CSS <span>'font-stretch'</span> <span>'condensed'</span> setting.</p></dd>
+
+   <dt><dfn enum-value for="CanvasFontStretch"><code data-x="dom-context-2d-fontstretch-semi-condensed">semi-condensed</code></dfn>
+   <dd><p>Same as CSS <span>'font-stretch'</span> <span>'semi-condensed'</span> setting.</p></dd>
+
+   <dt><dfn enum-value for="CanvasFontStretch"><code data-x="dom-context-2d-fontstretch-normal">normal</code></dfn>
+   <dd><p>The default setting, where width of the glyphs is at 100%.</p></dd>
+
+   <dt><dfn enum-value for="CanvasFontStretch"><code data-x="dom-context-2d-fontstretch-semi-expanded">semi-expanded</code></dfn>
+   <dd><p>Same as CSS <span>'font-stretch'</span> <span>'semi-expanded'</span> setting.</p></dd>
+
+   <dt><dfn enum-value for="CanvasFontStretch"><code data-x="dom-context-2d-fontstretch-expanded">expanded</code></dfn>
+   <dd><p>Same as CSS <span>'font-stretch'</span> <span>'expanded'</span> setting.</p></dd>
+
+   <dt><dfn enum-value for="CanvasFontStretch"><code data-x="dom-context-2d-fontstretch-extra-expanded">extra-expanded</code></dfn>
+   <dd><p>Same as CSS <span>'font-stretch'</span> <span>'extra-expanded'</span> setting.</p></dd>
+
+   <dt><dfn enum-value for="CanvasFontStretch"><code data-x="dom-context-2d-fontstretch-ultra-expanded">ultra-expanded</code></dfn>
+   <dd><p>Same as CSS <span>'font-stretch'</span> <span>'ultra-expanded'</span> setting.</p></dd>
+  </dl>
+
+  <p>The <code data-x="dom-context-2d-fontVariantCaps">fontVariantCaps</code> attribute's allowed
+  keywords are as follows:</p>
+
+  <dl>
+   <dt><dfn enum-value for="CanvasFontVariantCaps"><code data-x="dom-context-2d-fontvariantcaps-normal">normal</code></dfn>
+   <dd><p>None of the features listed below are enabled.</p></dd>
+
+   <dt><dfn enum-value for="CanvasFontVariantCaps"><code data-x="dom-context-2d-fontvariantcaps-small-caps">small-caps</code></dfn>
+   <dd><p>Same as CSS <span>'font-variant-caps'</span> <span>'small-caps'</span> setting.</p></dd>
+
+   <dt><dfn enum-value for="CanvasFontVariantCaps"><code data-x="dom-context-2d-fontvariantcaps-all-small-caps">all-small-caps</code></dfn>
+   <dd><p>Same as CSS <span>'font-variant-caps'</span> <span>'all-small-caps'</span> setting.</p></dd>
+
+   <dt><dfn enum-value for="CanvasFontVariantCaps"><code data-x="dom-context-2d-fontvariantcaps-petite-caps">petite-caps</code></dfn>
+   <dd><p>Same as CSS <span>'font-variant-caps'</span> <span>'petite-caps'</span> setting.</p></dd>
+
+   <dt><dfn enum-value for="CanvasFontVariantCaps"><code data-x="dom-context-2d-fontvariantcaps-all-petite-caps">all-petite-caps</code></dfn>
+   <dd><p>Same as CSS <span>'font-variant-caps'</span> <span>'all-petite-caps'</span> setting.</p></dd>
+
+   <dt><dfn enum-value for="CanvasFontVariantCaps"><code data-x="dom-context-2d-fontvariantcaps-unicase">unicase</code></dfn>
+   <dd><p>Same as CSS <span>'font-variant-caps'</span> <span>'unicase'</span> setting.</p></dd>
+
+   <dt><dfn enum-value for="CanvasFontVariantCaps"><code data-x="dom-context-2d-fontvariantcaps-titling-caps">titling-caps</code></dfn>
+   <dd><p>Same as CSS <span>'font-variant-caps'</span> <span>'titling-caps'</span> setting.</p></dd>
+  </dl>
+
+  <p>The <code data-x="dom-context-2d-textRendering">textRendering</code> attribute's allowed
+  keywords are as follows:</p>
+
+  <dl>
+    <dt><dfn enum-value for="CanvasTextRendering"><code data-x="dom-context-2d-textRendering-auto">auto</code></dfn>
+    <dd><p>Same as 'auto' in <span>SVG text-rendering</span> property.</p></dd>
+
+    <dt><dfn enum-value for="CanvasTextRendering"><code data-x="dom-context-2d-textRendering-optimizeSpeed">optimizeSpeed</code></dfn>
+    <dd><p>Same as 'optimizeSpeed' in <span>SVG text-rendering</span> property.</p></dd>
+
+    <dt><dfn enum-value for="CanvasTextRendering"><code data-x="dom-context-2d-textRendering-optimizeLegibility">optimizeLegibility</code></dfn>
+    <dd><p>Same as 'optimizeLegibility' in <span>SVG text-rendering</span> property.</p></dd>
+
+    <dt><dfn enum-value for="CanvasTextRendering"><code data-x="dom-context-2d-textRendering-geometricPrecision">geometricPrecision</code></dfn>
+    <dd><p>Same as 'geometricPrecision' in <span>SVG text-rendering</span> property.</p></dd>
+  </dl>
+
+  <div algorithm>
+  <p>The <dfn>text preparation algorithm</dfn> is as follows. It takes as input a string <var>text</var>,
+  a <code>CanvasTextDrawingStyles</code> object <var>target</var>, and an optional length
+  <var>maxWidth</var>. It returns an array of glyph shapes, each positioned on a common coordinate
+  space, a <var>physical alignment</var> whose value is one of <i>left</i>, <i>right</i>, and
+  <i>center</i>, and an <span>inline box</span>. (Most callers of this algorithm ignore the
+  <var>physical alignment</var> and the <span>inline box</span>.)</p>
+
+  <ol>
+   <li><p>If <var>maxWidth</var> was provided but is less than or equal to zero or equal to NaN,
+   then return an empty array.</p></li>
+
+   <li><p>Replace all <span>ASCII whitespace</span> in <var>text</var> with U+0020 SPACE
+   characters.</p></li>
+
+   <li><p>Let <var>font</var> be the current font of <var>target</var>, as given
+   by that object's <code data-x="dom-context-2d-font">font</code> attribute.</p></li>
+
+   <li><p>Let <var>language</var> be the <var>target</var>'s <span
+   data-x="concept-CanvasTextDrawingStyles-language">language</span>.</p></li>
+
+   <li>
+    <p>If <var>language</var> is "<code data-x="dom-context-2d-lang-inherit">inherit</code>":</p>
+
+    <ol>
+     <li><p>Let <var>sourceObject</var> be <var>object</var>'s <span>font style source
+     object</span>.</p></li>
+
+     <li><p>If <var>sourceObject</var> is a <code>canvas</code>
+     element, then set <var>language</var> to the <var>sourceObject</var>'s
+     <span data-x="language">language</span>.</p></li>
+
+     <li>
+      <p>Otherwise:</p>
+
+      <ol>
+       <li><p><span>Assert</span>: <var>sourceObject</var> is an <code>OffscreenCanvas</code> object.</p></li>
+
+       <li><p>Set <var>language</var> to the <var>sourceObject</var>'s
+       <span data-x="offscreencanvas-inherited-lang">inherited language</span>.</p></li>
+      </ol>
+     </li>
+    </ol>
+   </li>
+
+   <li><p>If <var>language</var> is the empty string, then set <var>language</var> to
+   <span data-x="concept-explicitly-unknown">explicitly unknown</span>.</p></li>
+
+   <li>
+    <p>Apply the appropriate step from the following list to determine the value of
+    <var>direction</var>:</p>
+
+    <dl class="switch">
+
+     <dt>If the <var>target</var> object's <code
+     data-x="dom-context-2d-direction">direction</code> attribute has the value "<code
+     data-x="dom-context-2d-direction-ltr">ltr</code>"</dt>
+     <dd>Let <var>direction</var> be '<span data-x="concept-ltr">ltr</span>'.</dd>
+
+     <dt>If the <var>target</var> object's <code
+     data-x="dom-context-2d-direction">direction</code> attribute has the value "<code
+     data-x="dom-context-2d-direction-rtl">rtl</code>"</dt>
+     <dd>Let <var>direction</var> be '<span data-x="concept-rtl">rtl</span>'.</dd>
+
+     <dt>If the <var>target</var> object's <code
+     data-x="dom-context-2d-direction">direction</code> attribute has the value "<code
+     data-x="dom-context-2d-direction-inherit">inherit</code>"</dt>
+     <dd>
+      <ol>
+       <li><p>Let <var>sourceObject</var> be <var>object</var>'s <span>font style source
+       object</span>.</p></li>
+
+       <li><p>If <var>sourceObject</var> is a <code>canvas</code>
+       element, then let <var>direction</var> be <var>sourceObject</var>'s
+       <span data-x="the directionality">directionality</span>.</p></li>
+
+       <li>
+        <p>Otherwise:</p>
+        <ol>
+         <li><p><span>Assert</span>: <var>sourceObject</var> is an <code>OffscreenCanvas</code> object.</p></li>
+
+         <li><p>Let <var>direction</var> be <var>sourceObject</var>'s
+         <span data-x="offscreencanvas-inherited-direction">inherited direction</span>.</p></li>
+        </ol>
+       </li>
+      </ol>
+     </dd>
+    </dl>
+   </li>
+
+   <li>
+    <p>Form a hypothetical infinitely-wide CSS <span>line box</span> containing a single
+    <span>inline box</span> containing the text <var>text</var>, with the CSS
+    <span>content language</span> set to <var>language</var>, and with its CSS properties set as
+    follows:</p>
+
+    <table>
+     <thead>
+      <tr>
+       <th>Property</th>
+       <th>Source</th>
+      </tr>
+     </thead>
+     <tbody>
+      <tr>
+       <td><span>'direction'</span></td>
+       <td><var>direction</var></td>
+      </tr>
+      <tr>
+        <td><span>'font'</span></td>
+        <td><var>font</var></td>
+       </tr>
+       <tr>
+        <td><span>'font-kerning'</span></td>
+        <td><var>target</var>'s <code data-x="dom-context-2d-fontKerning">fontKerning</code></td>
+       </tr>
+       <tr>
+        <td><span>'font-stretch'</span></td>
+        <td><var>target</var>'s <code data-x="dom-context-2d-fontStretch">fontStretch</code></td>
+       </tr>
+       <tr>
+        <td><span>'font-variant-caps'</span></td>
+        <td><var>target</var>'s <code data-x="dom-context-2d-fontVariantCaps">fontVariantCaps</code></td>
+       </tr>
+       <tr>
+        <td><span>'letter-spacing'</span></td>
+        <td><var>target</var>'s <span data-x="concept-CanvasTextDrawingStyles-letter-spacing">letter spacing</span></td>
+       </tr>
+       <tr>
+        <td><span>SVG text-rendering</span></td>
+        <td><var>target</var>'s <code data-x="dom-context-2d-textRendering">textRendering</code></td>
+       </tr>
+       <tr>
+        <td><span>'white-space'</span></td>
+        <td>'pre'</td>
+       </tr>
+       <tr>
+        <td><span>'word-spacing'</span></td>
+        <td><var>target</var>'s <span data-x="concept-CanvasTextDrawingStyles-word-spacing">word spacing</span></td>
+       </tr>
+     </tbody>
+    </table>
+
+    <p>and with all other properties set to their initial values.</p>
+   </li>
+
+   <!-- if you insert a step here, make sure to adjust the next step's final words -->
+
+   <li><p>If <var>maxWidth</var> was provided and the hypothetical width of the
+   <span>inline box</span> in the hypothetical <span>line box</span> is greater than
+   <var>maxWidth</var> <span data-x="'px'">CSS pixels</span>, then change <var>font</var> to have a
+   more condensed font (if one is available or if a reasonably readable one can be synthesized by
+   applying a horizontal scale factor to the font) or a smaller font, and return to the previous
+   step.</p></li>
+
+   <li>
+    <p>The <var>anchor point</var> is a point on the <span>inline box</span>, and the <var>physical
+    alignment</var> is one of the values <i>left</i>, <i>right</i>, and <i>center</i>. These
+    variables are determined by the <code data-x="dom-context-2d-textAlign">textAlign</code> and
+    <code data-x="dom-context-2d-textBaseline">textBaseline</code> values as follows:</p>
+
+    <p>Horizontal position:</p>
+
+    <dl>
+     <dt>If <code data-x="dom-context-2d-textAlign">textAlign</code> is <code
+     data-x="dom-context-2d-textAlign-left">left</code></dt>
+
+     <dt>If <code data-x="dom-context-2d-textAlign">textAlign</code> is <code
+     data-x="dom-context-2d-textAlign-start">start</code> and <var>direction</var> is
+     'ltr'</dt>
+
+     <dt>If <code data-x="dom-context-2d-textAlign">textAlign</code> is <code
+     data-x="dom-context-2d-textAlign-end">end</code> and <var>direction</var> is 'rtl'</dt>
+
+     <dd>Set the <var>anchor point</var>'s horizontal position to the left edge of the
+     <span>inline box</span>, and let <var>physical alignment</var> be <i>left</i>.</dd>
+
+
+     <dt>If <code data-x="dom-context-2d-textAlign">textAlign</code> is <code
+     data-x="dom-context-2d-textAlign-right">right</code></dt>
+
+     <dt>If <code data-x="dom-context-2d-textAlign">textAlign</code> is <code
+     data-x="dom-context-2d-textAlign-end">end</code> and <var>direction</var> is 'ltr'</dt>
+
+     <dt>If <code data-x="dom-context-2d-textAlign">textAlign</code> is <code
+     data-x="dom-context-2d-textAlign-start">start</code> and <var>direction</var> is
+     'rtl'</dt>
+
+     <dd>Set the <var>anchor point</var>'s horizontal position to the right edge of the
+     <span>inline box</span>, and let <var>physical alignment</var> be <i>right</i>.</dd>
+
+
+     <dt>If <code data-x="dom-context-2d-textAlign">textAlign</code> is <code
+     data-x="dom-context-2d-textAlign-center">center</code></dt>
+
+     <dd>Set the <var>anchor point</var>'s horizontal position to half way between the left
+     and right edges of the <span>inline box</span>, and let <var>physical alignment</var> be
+     <i>center</i>.</dd>
+    </dl>
+
+    <p>Vertical position:</p>
+
+    <dl>
+     <dt>If <code data-x="dom-context-2d-textBaseline">textBaseline</code> is <code
+     data-x="dom-context-2d-textBaseline-top">top</code></dt>
+     <dd>Set the <var>anchor point</var>'s vertical position to the top of the em box of
+     the <span>first available font</span> of the <span>inline box</span>.</dd>
+
+     <dt>If <code data-x="dom-context-2d-textBaseline">textBaseline</code> is <code
+     data-x="dom-context-2d-textBaseline-hanging">hanging</code></dt>
+     <dd>Set the <var>anchor point</var>'s vertical position to the <span>hanging baseline</span> of
+     the <span>first available font</span> of the <span>inline box</span>.</dd>
+
+     <dt>If <code data-x="dom-context-2d-textBaseline">textBaseline</code> is <code
+     data-x="dom-context-2d-textBaseline-middle">middle</code></dt>
+     <dd>Set the <var>anchor point</var>'s vertical position to half way between the bottom
+     and the top of the em box of the <span>first available font</span> of the <span>inline
+     box</span>.</dd>
+
+     <dt>If <code data-x="dom-context-2d-textBaseline">textBaseline</code> is <code
+     data-x="dom-context-2d-textBaseline-alphabetic">alphabetic</code></dt>
+     <dd>Set the <var>anchor point</var>'s vertical position to the <span>alphabetic baseline</span>
+     of the <span>first available font</span> of the <span>inline box</span>.</dd>
+
+     <dt>If <code data-x="dom-context-2d-textBaseline">textBaseline</code> is <code
+     data-x="dom-context-2d-textBaseline-ideographic">ideographic</code></dt>
+     <dd>Set the <var>anchor point</var>'s vertical position to the <span>ideographic-under
+     baseline</span> of the <span>first available font</span> of the <span>inline box</span>.</dd>
+
+     <dt>If <code data-x="dom-context-2d-textBaseline">textBaseline</code> is <code
+     data-x="dom-context-2d-textBaseline-bottom">bottom</code></dt>
+     <dd>Set the <var>anchor point</var>'s vertical position to the bottom of the em box of
+     the <span>first available font</span> of the <span>inline box</span>.</dd>
+    </dl>
+   </li>
+
+   <li>
+    <p>Let <var>result</var> be an array constructed by iterating over each glyph in the
+    <span>inline box</span> from left to right (if any), adding to the array, for each glyph, the
+    shape of the glyph as it is in the <span>inline box</span>, positioned on a coordinate space
+    using <span data-x="'px'">CSS pixels</span> with its origin at the <var>anchor
+    point</var>.</p>
+   </li>
+
+   <li><p>Return <var>result</var>, <var>physical alignment</var>, and the inline
+   box.</p></li>
+  </ol>
+  </div>
+
+

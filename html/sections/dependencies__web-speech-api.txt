@@ -1,0 +1,12 @@
+WHATWG HTML — section dependencies/web-speech-api — Web Speech API
+
+   <dt>Web Speech API</dt>
+
+   <dd>
+    <p>The following terms are defined in <cite>Web Speech API</cite>:</p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://wicg.github.io/speech-api/#speechrecognition"><code>SpeechRecognition</code></dfn></li>
+    </ul>
+   </dd>
+

@@ -1,0 +1,203 @@
+WHATWG HTML — section speculative-html-parsing — Speculative HTML parsing
+
+  <h4>Speculative HTML parsing</h4>
+
+  <p>User agents may implement an optimization, as described in this section, to speculatively fetch
+  resources that are declared in the HTML markup while the HTML parser is waiting for a
+  <span>pending parsing-blocking script</span> to be fetched and executed, or during normal parsing,
+  at the time <span data-x="create an element for the token">an element is created for a token</span>.
+  While this optimization is not defined in precise detail, there are some rules to consider for
+  interoperability.</p>
+
+  <p>Each <span>HTML parser</span> can have an <dfn export>active speculative HTML parser</dfn>. It
+  is initially null.</p>
+
+  <p>The <dfn export>speculative HTML parser</dfn> must act like the normal HTML parser (e.g., the
+  tree builder rules apply), with some exceptions:</p>
+
+  <ul>
+   <li>
+    <p>The state of the normal HTML parser and the document itself must not be affected.</p>
+
+    <p class="example">For example, the <span>next input character</span> or the <span>stack of open
+    elements</span> for the normal HTML parser is not affected by the <span>speculative HTML
+    parser</span>.</p>
+   </li>
+
+   <li>
+    <p>Bytes pushed into the HTML parser's <span>input byte stream</span> must also be pushed into
+    the speculative HTML parser's <span>input byte stream</span>. Bytes read from the streams must
+    be independent.</p>
+   </li>
+
+   <li>
+    <p>The result of the speculative parsing is primarily a series of <span data-x="speculative
+    fetch">speculative fetches</span>. Which kinds of resources to speculatively fetch is
+    <span>implementation-defined</span>, but user agents must not speculatively fetch resources that
+    would not be fetched with the normal HTML parser, under the assumption that the script that is
+    blocking the HTML parser does nothing.</p>
+
+    <p class="note">It is possible that the same markup is seen multiple times from the
+    <span>speculative HTML parser</span> and then the normal HTML parser. It is expected that
+    duplicated fetches will be prevented by caching rules, which are not yet fully specified.</p>
+   </li>
+  </ul>
+
+  <div algorithm>
+  <p>A <dfn>speculative fetch</dfn> for a <span>speculative mock element</span> <var>element</var>
+  must follow these rules:</p>
+
+  <p class="XXX">Should some of these things be applied to the document "for real", even
+  though they are found speculatively?</p>
+
+  <ul>
+   <li>
+    <p>If the <span>speculative HTML parser</span> encounters one of the following elements, then
+    act as if that element is processed for the purpose of its effect of subsequent speculative
+    fetches.</p>
+
+    <ul class="brief">
+     <li>A <code>base</code> element.</li>
+
+     <li>A <code>meta</code> element whose <code data-x="attr-meta-http-equiv">http-equiv</code>
+     attribute is in the <span data-x="attr-meta-http-equiv-content-security-policy">Content
+     security policy</span> state.</li>
+
+     <li>A <code>meta</code> element whose <code data-x="attr-meta-name">name</code> attribute is an
+     <span>ASCII case-insensitive</span> match for "<code
+     data-x="meta-referrer">referrer</code>".</li>
+
+     <li>A <code>meta</code> element whose <code data-x="attr-meta-name">name</code> attribute is an
+     <span>ASCII case-insensitive</span> match for "<code data-x="">viewport</code>". (This can
+     affect whether a media query list <span>matches the environment</span>.) <ref>CSSDEVICEADAPT</ref></li>
+    </ul>
+   </li>
+
+   <li><p>Let <var>url</var> be the <span>URL</span> that <var>element</var> would fetch if it was
+   processed normally. If there is no such <span>URL</span> or if it is the empty string, then do
+   nothing. Otherwise, if <var>url</var> is already in the <span>list of speculative fetch
+   URLs</span>, then do nothing. Otherwise, fetch <var>url</var> as if the element was processed
+   normally, and add <var>url</var> to the <span>list of speculative fetch URLs</span>.</p></li>
+  </ul>
+  </div>
+
+  <p>Each <code>Document</code> has a <dfn>list of speculative fetch URLs</dfn>, which is a
+  <span>list</span> of <span data-x="URL">URLs</span>, initially empty.</p>
+
+  <div algorithm>
+  <p>To <dfn>start the speculative HTML parser</dfn> for an instance of an HTML parser
+  <var>parser</var>:</p>
+
+  <ol>
+   <li>
+    <p>Optionally, return.</p>
+
+    <p class="note">This step allows user agents to opt out of speculative HTML parsing.</p>
+   </li>
+
+   <li>
+    <p>If <var>parser</var>'s <span>active speculative HTML parser</span> is not null, then
+    <span>stop the speculative HTML parser</span> for <var>parser</var>.</p>
+
+    <p class="note">This can happen when <code data-x="dom-document-write">document.write()</code>
+    writes another parser-blocking script. For simplicity, this specification always restarts
+    speculative parsing, but user agents can implement a more efficient strategy, so long as the end
+    result is equivalent.</p>
+   </li>
+
+   <li><p>Let <var>speculativeParser</var> be a new <span>speculative HTML parser</span>, with the
+   same state as <var>parser</var>.</p></li>
+
+   <li><p>Let <var>speculativeDoc</var> be a new isomorphic representation of <var>parser</var>'s
+   <code>Document</code>, where all elements are instead <span data-x="speculative mock
+   element">speculative mock elements</span>. Let <var>speculativeParser</var> parse into
+   <var>speculativeDoc</var>.</p></li>
+
+   <li><p>Set <var>parser</var>'s <span>active speculative HTML parser</span> to
+   <var>speculativeParser</var>.</p></li>
+
+   <li><p><span>In parallel</span>, run <var>speculativeParser</var> until it is stopped or until it
+   reaches the end of its <span>input stream</span>.</p></li>
+  </ol>
+  </div>
+
+
+  <div algorithm>
+  <p>To <dfn>stop the speculative HTML parser</dfn> for an instance of an HTML parser
+  <var>parser</var>:</p>
+
+  <ol>
+   <li><p>Let <var>speculativeParser</var> be <var>parser</var>'s <span>active speculative HTML
+   parser</span>.</p></li>
+
+   <li><p>If <var>speculativeParser</var> is null, then return.</p></li>
+
+   <li><p>Throw away any pending content in <var>speculativeParser</var>'s <span>input
+   stream</span>, and discard any future content that would have been added to it.</p></li>
+
+   <li><p>Set <var>parser</var>'s <span>active speculative HTML parser</span> to null.</p></li>
+  </ol>
+  </div>
+
+  <p>The <span>speculative HTML parser</span> will create <span
+  data-x="speculative mock element">speculative mock elements</span> instead of normal elements. DOM
+  operations that the tree builder normally does on elements are expected to work appropriately on
+  speculative mock elements.</p>
+
+  <p>A <dfn>speculative mock element</dfn> is a <span>struct</span> with the following <span
+  data-x="struct item">items</span>:</p>
+
+  <ul>
+   <li><p>A <span>string</span> <dfn data-x="concept-mock-namespace">namespace</dfn>, corresponding
+   to an element's <span data-x="concept-element-namespace">namespace</span>.</p></li>
+
+   <li><p>A <span>string</span> <dfn data-x="concept-mock-local-name">local name</dfn>,
+   corresponding to an element's <span data-x="concept-element-local-name">local
+   name</span>.</p></li>
+
+   <li><p>A <span>list</span> <dfn data-x="concept-mock-attribute-list">attribute list</dfn>,
+   corresponding to an element's <span>attribute list</span>.</p></li>
+
+   <li><p>A <span>list</span> <dfn data-x="concept-mock-children">children</dfn>, corresponding to
+   an element's <span data-x="concept-tree-child">children</span>.</p></li>
+  </ul>
+
+  <div algorithm>
+  <p>To <dfn>create a speculative mock element</dfn> given a <var>namespace</var>,
+  <var>tagName</var>, and <var>attributes</var>:</p>
+
+  <ol>
+   <li><p>Let <var>element</var> be a new <span>speculative mock element</span>.</p></li>
+
+   <li><p>Set <var>element</var>'s <span data-x="concept-mock-namespace">namespace</span> to
+   <var>namespace</var>.</p></li>
+
+   <li><p>Set <var>element</var>'s <span data-x="concept-mock-local-name">local name</span> to
+   <var>tagName</var>.</p></li>
+
+   <li><p>Set <var>element</var>'s <span data-x="concept-mock-attribute-list">attribute list</span>
+   to <var>attributes</var>.</p></li>
+
+   <li><p>Set <var>element</var>'s <span data-x="concept-mock-children">children</span> to a new
+   empty <span>list</span>.</p></li>
+
+   <li><p>Optionally, perform a <span>speculative fetch</span> for <var>element</var>.</p></li>
+
+   <li><p>Return <var>element</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>When the tree builder says to insert an element into a <code>template</code> element's
+  <span>template contents</span>, if that is a <span>speculative mock element</span>, and the
+  <code>template</code> element's <span>template contents</span> is not a
+  <code>ShadowRoot</code> node, instead do nothing. URLs found speculatively inside
+  non-declarative-shadow-root <code>template</code> elements might themselves be templates, and must
+  not be speculatively fetched.</p>
+  </div>
+
+  </div>
+
+
+  <div w-nodev>
+

@@ -1,0 +1,15 @@
+WHATWG HTML — section unique-values — Unique internal values (+urls)
+
+  <h4 id="unique-values">Unique internal values</h4>
+
+  <p>A <dfn>unique internal value</dfn> is a value that is serializable, comparable by value, and
+  never exposed to script.</p>
+
+  <div algorithm>
+  <p>To create a <dfn>new unique internal value</dfn>, return a <span>unique internal value</span>
+  that has never previously been returned by this algorithm.</p>
+  </div>
+
+
+  <h3 split-filename="urls-and-fetching">URLs</h3>
+

@@ -1,0 +1,119 @@
+WHATWG HTML — section navigation-api/navigation-api-core — Core infrastructure
+
+  <h5 id="navigation-api-core">Core infrastructure</h5>
+
+  <div w-nodev>
+
+  <p>Each <code>Navigation</code> has an associated <dfn data-x="navigation-entry-list">entry
+  list</dfn>, a <span>list</span> of <code>NavigationHistoryEntry</code> objects, initially
+  empty.</p>
+
+  <p>Each <code>Navigation</code> has an associated <dfn
+  data-x="navigation-current-entry-index">current entry index</dfn>, an integer, initially
+  &minus;1.</p>
+
+  <div algorithm>
+  <p>The <dfn data-x="navigation-current-entry">current entry</dfn> of a <code>Navigation</code>
+  <var>navigation</var> is the result of running the following steps:</p>
+
+  <ol>
+   <li><p>If <var>navigation</var> <span>has entries and events disabled</span>, then return
+   null.</p></li>
+
+   <li><p><span>Assert</span>: <var>navigation</var>'s <span
+   data-x="navigation-current-entry-index">current entry index</span> is not &minus;1.</p></li>
+
+   <li><p>Return <var>navigation</var>'s <span data-x="navigation-entry-list">entry
+   list</span>[<var>navigation</var>'s <span data-x="navigation-current-entry-index">current entry
+   index</span>].</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>A <code>Navigation</code> <var>navigation</var> <dfn>has entries and events disabled</dfn> if
+  the following steps return true:</p>
+
+  <ol>
+   <li><p>Let <var>document</var> be <var>navigation</var>'s <span>relevant global object</span>'s
+   <span data-x="concept-document-window">associated <code>Document</code></span>.</p></li>
+
+   <li><p>If <var>document</var> is not <span>fully active</span>, then return true.</p></li>
+
+   <li><p>If <var>document</var>'s <span>is initial <code>about:blank</code></span> is true, then
+   return true.</p></li>
+
+   <li><p>If <var>document</var>'s <span data-x="concept-document-origin">origin</span> is <span
+   data-x="concept-origin-opaque">opaque</span>, then return true.</p></li>
+
+   <li><p>Return false.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="getting the navigation API entry index">get the navigation API entry
+  index</dfn> of a <span>session history entry</span> <var>she</var> within a
+  <code>Navigation</code> <var>navigation</var>:</p>
+
+  <ol>
+   <li><p>Let <var>index</var> be 0.</p></li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>nhe</var> of <var>navigation</var>'s <span
+    data-x="navigation-entry-list">entry list</span>:</p>
+
+    <ol>
+     <li><p>If <var>nhe</var>'s <span data-x="nhe-she">session history entry</span> is equal to
+     <var>she</var>, then return <var>index</var>.</p></li>
+
+     <li><p>Increment <var>index</var> by 1.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Return &minus;1.</p></li>
+  </ol>
+  </div>
+
+  <hr>
+
+  </div>
+
+  <p>A key type used throughout the navigation API is the <code>NavigationType</code>
+  enumeration:</p>
+
+  <pre><code class="idl">enum <dfn enum>NavigationType</dfn> {
+ "<span data-x="dom-NavigationType-push">push</span>",
+ "<span data-x="dom-NavigationType-replace">replace</span>",
+ "<span data-x="dom-NavigationType-reload">reload</span>",
+ "<span data-x="dom-NavigationType-traverse">traverse</span>"
+};</code></pre>
+
+  <p>This captures the main web developer-visible types of "navigations", which (as <a
+  href="#note-meaning-of-navigate">noted elsewhere</a>) do not exactly correspond to this standard's
+  singular <span>navigate</span> algorithm. The meaning of each value is the following:</p>
+
+  <dl>
+   <dt>"<dfn enum-value for="NavigationType"><code data-x="dom-NavigationType-push">push</code></dfn>"</dt>
+   <dd>Corresponds to calls to <span>navigate</span> where the <span>history handling
+   behavior</span> ends up as "<code data-x="NavigationHistoryBehavior-push">push</code>", or to
+   <code data-x="dom-History-pushState">history.pushState()</code>.</dd>
+
+   <dt>"<dfn enum-value for="NavigationType"><code data-x="dom-NavigationType-replace">replace</code></dfn>"</dt>
+   <dd>Corresponds to calls to <span>navigate</span> where the <span>history handling
+   behavior</span> ends up as "<code data-x="NavigationHistoryBehavior-replace">replace</code>", or
+   to <code data-x="dom-History-pushState">history.replaceState()</code>.</dd>
+
+   <dt>"<dfn enum-value for="NavigationType"><code data-x="dom-NavigationType-reload">reload</code></dfn>"</dt>
+   <dd>Corresponds to calls to <span>reload</span>.</dd>
+
+   <dt>"<dfn enum-value for="NavigationType"><code data-x="dom-NavigationType-traverse">traverse</code></dfn>"</dt>
+   <dd>Corresponds to calls to <span>traverse the history by a delta</span>.</dd>
+  </dl>
+
+  <div w-nodev>
+
+  <p class="note">The value space of the <code>NavigationType</code> enumeration is a superset of
+  the value space of the specification-internal <span>history handling behavior</span> type. Several
+  parts of this standard make use of this overlap, by passing in a <span>history handling
+  behavior</span> to an algorithm that expects a <code>NavigationType</code>.</p>
+
+

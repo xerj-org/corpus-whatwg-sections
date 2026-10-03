@@ -1,0 +1,204 @@
+WHATWG HTML — section autocapitalization — Autocapitalization
+
+  <h4>Autocapitalization</h4>
+
+  <p>Some methods of entering text, for example virtual keyboards on mobile devices, and also voice
+  input, often assist users by automatically capitalizing the first letter of sentences (when
+  composing text in a language with this convention). A virtual keyboard that implements
+  autocapitalization might automatically switch to showing uppercase letters (but allow the user to
+  toggle it back to lowercase) when a letter that should be autocapitalized is about to be typed.
+  Other types of input, for example voice input, may perform autocapitalization in a way that does
+  not give users an option to intervene first. The <code
+  data-x="attr-autocapitalize">autocapitalize</code> attribute allows authors to control such
+  behavior.</p>
+
+  <p>The <code data-x="attr-autocapitalize">autocapitalize</code> attribute, as typically
+  implemented, does not affect behavior when typing on a physical keyboard. (For this reason, as
+  well as the ability for users to override the autocapitalization behavior in some cases or edit
+  the text after initial input, the attribute must not be relied on for any sort of input
+  validation.)</p>
+
+  <p>The <code data-x="attr-autocapitalize">autocapitalize</code> attribute can be used on an <span
+  data-x="editing host">editing host</span> to control autocapitalization behavior for the hosted
+  editable region, on an <code>input</code> or <code>textarea</code> element to control the behavior
+  for inputting text into that element, or on a <code>form</code> element to control the default
+  behavior for all <span
+  data-x="category-autocapitalize-and-autocorrect">autocapitalize-and-autocorrect inheriting
+  elements</span> associated with the <code>form</code> element.
+
+  <p>The <code data-x="attr-autocapitalize">autocapitalize</code> attribute never causes
+  autocapitalization to be enabled for <code>input</code> elements whose <code
+  data-x="attr-input-type">type</code> attribute is in one of the <span
+  data-x="attr-input-type-url">URL</span>, <span
+  data-x="attr-input-type-email">Email</span>, or <span
+  data-x="attr-input-type-password">Password</span> states.<span w-nodev> (This behavior is included
+  in the <span data-x="used autocapitalization hint">used autocapitalization hint</span> algorithm
+  below.)</span></p>
+
+  <p>The autocapitalization processing model is based on selecting among five
+  <dfn data-x="autocapitalization hint">autocapitalization hints</dfn>, defined as follows:</p>
+
+  <dl>
+   <dt><dfn data-x="autocap-hint-default">Default</dfn></dt>
+   <dd><p>The user agent and input method should make their own determination of whether or not to
+   enable autocapitalization.</p></dd>
+
+   <dt><dfn data-x="autocap-hint-none">None</dfn></dt>
+   <dd><p>No autocapitalization should be applied (all letters should default to
+   lowercase).</p></dd>
+
+   <dt><dfn data-x="autocap-hint-sentences">Sentences</dfn></dt>
+   <dd><p>The first letter of each sentence should default to a capital letter; all other letters
+   should default to lowercase.</p></dd>
+
+   <dt><dfn data-x="autocap-hint-words">Words</dfn></dt>
+   <dd><p>The first letter of each word should default to a capital letter; all other letters should
+   default to lowercase.</p></dd>
+
+   <dt><dfn data-x="autocap-hint-characters">Characters</dfn></dt>
+   <dd><p>All letters should default to uppercase.</p></dd>
+  </dl>
+
+  <p>The <dfn element-attr for="html-global"><code
+  data-x="attr-autocapitalize">autocapitalize</code></dfn> attribute is an <span>enumerated
+  attribute</span> whose states are the possible <span data-x="autocapitalization
+  hint">autocapitalization hints</span>. The <span>autocapitalization hint</span> specified by the
+  attribute's state combines with other considerations to form the <span>used autocapitalization
+  hint</span>, which informs the behavior of the user agent. The keywords for this attribute and
+  their state mappings are as follows:</p>
+
+  <table>
+   <thead>
+    <tr>
+     <th> Keyword
+     <th> State
+   <tbody>
+    <tr>
+     <td><dfn attr-value for="html-global/autocapitalize"><code
+     data-x="attr-autocapitalize-off">off</code></dfn>
+
+     <td rowspan="2"><span data-x="autocap-hint-none">None</span>
+    <tr>
+     <td><dfn attr-value for="html-global/autocapitalize"><code
+     data-x="attr-autocapitalize-none">none</code></dfn>
+    <tr>
+     <td><dfn attr-value for="html-global/autocapitalize"><code
+     data-x="attr-autocapitalize-on">on</code></dfn>
+
+     <td rowspan="2"><span data-x="autocap-hint-sentences">Sentences</span>
+    <tr>
+     <td><dfn attr-value for="html-global/autocapitalize"><code
+     data-x="attr-autocapitalize-sentences">sentences</code></dfn>
+    <tr>
+     <td><dfn attr-value for="html-global/autocapitalize"><code
+     data-x="attr-autocapitalize-words">words</code></dfn>
+
+     <td><span data-x="autocap-hint-words">Words</span>
+    <tr>
+     <td><dfn attr-value for="html-global/autocapitalize"><code
+     data-x="attr-autocapitalize-characters">characters</code></dfn>
+
+     <td><span data-x="autocap-hint-characters">Characters</span>
+  </table>
+
+  <div algorithm>
+  <p>The attribute's <i data-x="missing value default">missing value default</i> is the <span
+  data-x="autocap-hint-default">Default</span> state, and its <i data-x="invalid value
+  default">invalid value default</i> is the <span data-x="autocap-hint-sentences">Sentences</span>
+  state.
+  </div>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>element</var>.<span subdfn data-x="dom-autocapitalize">autocapitalize</span> [ = <var>value</var> ]</code></dt>
+
+   <dd>
+    <p>Returns the current autocapitalization state for the element, or an empty string if it hasn't
+    been set. Note that for <code>input</code> and <code>textarea</code> elements that inherit their
+    state from a <code>form</code> element, this will return the autocapitalization state of the
+    <code>form</code> element, but for an element in an editable region, this will not return the
+    autocapitalization state of the editing host (unless this element is, in fact, the <span>editing
+    host</span>).</p>
+
+    <p>Can be set, to set the <code data-x="attr-autocapitalize">autocapitalize</code> content
+    attribute (and thereby change the autocapitalization behavior for the element).</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>To compute the <dfn>own autocapitalization hint</dfn> of an element <var>element</var>, run the
+  following steps:</p>
+
+  <ol>
+   <li><p>If the <code data-x="attr-autocapitalize">autocapitalize</code> content attribute is
+   present on <var>element</var>, and its value is not the empty string, return the state of the
+   attribute.</p></li>
+
+   <li><p>If <var>element</var> is an <span
+   data-x="category-autocapitalize-and-autocorrect">autocapitalize-and-autocorrect inheriting
+   element</span> and has a non-null <span>form owner</span>, return the <span>own
+   autocapitalization hint</span> of <var>element</var>'s <span>form owner</span>.</p></li>
+
+   <li><p>Return <span data-x="autocap-hint-default">Default</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLElement"><code
+  data-x="dom-autocapitalize">autocapitalize</code></dfn> getter steps are to:</p>
+
+  <ol>
+   <li><p>Let <var>state</var> be the <span>own autocapitalization hint</span> of
+   <span>this</span>.</p></li>
+
+   <li><p>If <var>state</var> is <span data-x="autocap-hint-default">Default</span>, then return the
+   empty string.</p></li>
+
+   <li><p>If <var>state</var> is <span data-x="autocap-hint-none">None</span>, then return "<code
+   data-x="attr-autocapitalize-none">none</code>".</p></li>
+
+   <li><p>If <var>state</var> is <span data-x="autocap-hint-sentences">Sentences</span>, then return
+   "<code data-x="attr-autocapitalize-sentences">sentences</code>".</p></li>
+
+   <li><p>Return the keyword value corresponding to <var>state</var>.</p></li>
+  </ol>
+  </div>
+
+  <hr>
+
+  <p>User agents that support customizable autocapitalization behavior for a text input method and
+  wish to allow web developers to control this functionality should, during text input into an
+  element, compute the <dfn>used autocapitalization hint</dfn> for the element. This will be an
+  <span>autocapitalization hint</span> that describes the recommended autocapitalization behavior
+  for text input into the element.</p>
+
+  <p>User agents or input methods may choose to ignore or override the <span>used autocapitalization
+  hint</span> in certain circumstances.</p>
+
+  <div algorithm>
+  <p>The <span>used autocapitalization hint</span> for an element <var>element</var> is computed
+  using the following algorithm:</p>
+
+  <ol>
+   <li><p>If <var>element</var> is an <code>input</code> element whose <code
+   data-x="attr-input-type">type</code> attribute is in one of the <span
+   data-x="attr-input-type-url">URL</span>, <span data-x="attr-input-type-email">Email</span>, or
+   <span data-x="attr-input-type-password">Password</span> states, then return <span
+   data-x="autocap-hint-default">Default</span>.</p></li>
+
+   <li><p>If <var>element</var> is an <code>input</code> element or a <code>textarea</code> element,
+   then return <var>element</var>'s <span>own autocapitalization hint</span>.</p></li>
+
+   <li><p>If <var>element</var> is an <span>editing host</span> or an <span>editable</span> element,
+   then return the <span>own autocapitalization hint</span> of the <span>editing host of</span>
+   <var>element</var>.</p></li>
+
+   <li><p><span>Assert</span>: this step is never reached, since text input only occurs in elements
+   that meet one of the above criteria.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+

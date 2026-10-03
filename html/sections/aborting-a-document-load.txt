@@ -1,0 +1,119 @@
+WHATWG HTML — section aborting-a-document-load — Aborting a document load
+
+  <h4>Aborting a document load</h4>
+
+  <div algorithm>
+  <p>To <dfn data-x="abort a document">abort</dfn> a <code>Document</code> <var>document</var>:</p>
+
+  <ol>
+   <li><p><span>Assert</span>: this is running as part of a <span data-x="concept-task">task</span>
+   queued on <var>document</var>'s <span>relevant agent</span>'s <span
+   data-x="concept-agent-event-loop">event loop</span>.</p></li>
+
+   <li><p>Cancel any instances of the <span data-x="concept-fetch">fetch</span> algorithm in the
+   context of <var>document</var>, discarding any <span data-x="concept-task">tasks</span> <span
+   data-x="queue a task">queued</span> for them, and discarding any further data received from the
+   network for them. If this resulted in any instances of the <span
+   data-x="concept-fetch">fetch</span> algorithm being canceled or any <span data-x="queue a
+   task">queued</span> <span data-x="concept-task">tasks</span> or any network data getting
+   discarded, then <span>make document unsalvageable</span> given <var>document</var> and
+   "<code data-x="blocking-fetch">fetch</code>".</p></li>
+
+   <li>
+    <p>If <var>document</var>'s <span data-x="concept-document-navigation-id">during-loading
+    navigation ID for WebDriver BiDi</span> is non-null:</p>
+
+    <ol>
+     <li><p>Invoke <span>WebDriver BiDi navigation aborted</span> with <var>document</var>'s
+     <span>node navigable</span> and a new <span>WebDriver BiDi navigation status</span> whose <span
+     data-x="navigation-status-id">id</span> is <var>document</var>'s <span
+     data-x="concept-document-navigation-id">during-loading navigation ID for WebDriver BiDi</span>,
+     <span data-x="navigation-status-status">status</span> is "<code
+     data-x="navigation-status-canceled" >canceled</code>", and <span
+     data-x="navigation-status-url">url</span> is <var>document</var>'s <span
+     data-x="concept-document-url">URL</span>.</p></li>
+
+     <li><p>Set <var>document</var>'s <span data-x="concept-document-navigation-id">during-loading
+     navigation ID for WebDriver BiDi</span> to null.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p>If <var>document</var> has an <span>active parser</span>:</p>
+
+    <ol>
+     <li><p>Set <var>document</var>'s <span>active parser was aborted</span> to true.</p></li>
+
+     <li><p><span data-x="abort a parser">Abort that parser</span>.</p></li>
+
+     <li><p><span>Make document unsalvageable</span> given <var>document</var> and
+     "<code data-x="blocking-parser-aborted">parser-aborted</code>".</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>abort a document and its descendants</dfn> given a <code>Document</code>
+  <var>document</var>:</p>
+
+  <ol>
+   <li><p><span>Assert</span>: this is running as part of a <span data-x="concept-task">task</span>
+   queued on <var>document</var>'s <span>relevant agent</span>'s <span
+   data-x="concept-agent-event-loop">event loop</span>.</p></li>
+
+   <li><p>Let <var>descendantNavigables</var> be <var>document</var>'s <span>descendant
+   navigables</span>.</p></li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>descendantNavigable</var> of
+    <var>descendantNavigables</var> <span class="XXX" data-x="">in what order?</span>, <span>queue
+    a global task</span> on the <span>navigation and traversal task source</span> given
+    <var>descendantNavigable</var>'s <span data-x="nav-window">active window</span> to perform the
+    following steps:</p>
+
+    <ol>
+     <li><p><span data-x="abort a document">Abort</span> <var>descendantNavigable</var>'s <span
+     data-x="nav-document">active document</span>.</p></li>
+
+     <li><p>If <var>descendantNavigable</var>'s <span data-x="nav-document">active
+     document</span>'s <i data-x="concept-document-salvageable">salvageable</i> is false, then set
+     <var>document</var>'s <i data-x="concept-document-salvageable">salvageable</i> to
+     false.</p></li>
+    </ol>
+   </li>
+
+   <li><p><span data-x="abort a document">Abort</span> <var>document</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p id="stop-document-loading">To <dfn data-x="nav-stop">stop loading</dfn> a
+  <span>navigable</span> <var>navigable</var>:</p>
+
+  <ol>
+   <li><p>Let <var>document</var> be <var>navigable</var>'s <span data-x="nav-document">active
+   document</span>.</p></li>
+
+   <li>
+    <p>If <var>document</var>'s <span>unload counter</span> is 0, and <var>navigable</var>'s
+    <span>ongoing navigation</span> is a <span>navigation ID</span>, then <span>set the ongoing
+    navigation</span> for <var>navigable</var> to null.</p>
+
+    <p class="note">This will have the effect of aborting any ongoing navigations of
+    <var>navigable</var>, since at certain points during navigation, changes to the <span>ongoing
+    navigation</span> will cause further work to be abandoned.</p>
+   </li>
+
+   <li><p><span>Abort a document and its descendants</span> given <var>document</var>.</p></li>
+  </ol>
+  </div>
+
+  <p class="XXX">Through their <a href="#nav-traversal-ui">user interface</a>, user agents also
+  allow stopping traversals, i.e. cases where the <span>ongoing navigation</span> is "<code
+  data-x="">traversal</code>". The above algorithm does not account for this. (On the other hand,
+  user agents do not allow <code data-x="dom-window-stop">window.stop()</code> to stop traversals,
+  so the above algorithm is correct for that caller.) See <a
+  href="https://github.com/whatwg/html/issues/6905">issue #6905</a>.</p>
+
+

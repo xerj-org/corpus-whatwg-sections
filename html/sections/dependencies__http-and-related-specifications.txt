@@ -1,0 +1,68 @@
+WHATWG HTML — section dependencies/http-and-related-specifications — HTTP and related specifications
+
+   <dt>HTTP and related specifications</dt>
+
+   <dd>
+    <p>The following terms are defined in the HTTP specifications: <ref>HTTP</ref></p>
+
+    <ul class="brief">
+     <li>`<dfn data-x="http-accept" data-x-href="https://httpwg.org/specs/rfc7231.html#header.accept"><code>Accept</code></dfn>` header</li>
+     <li>`<dfn data-x="http-accept-language" data-x-href="https://httpwg.org/specs/rfc7231.html#header.accept-language"><code>Accept-Language</code></dfn>` header</li>
+     <li>`<dfn data-x="http-cache-control" data-x-href="https://httpwg.org/specs/rfc7234.html#header.cache-control"><code>Cache-Control</code></dfn>` header</li>
+     <li>`<dfn data-x="http-content-disposition" data-x-href="https://httpwg.org/specs/rfc6266.html"><code>Content-Disposition</code></dfn>` header</li>
+     <li>`<dfn data-x="http-content-language" data-x-href="https://httpwg.org/specs/rfc7231.html#header.content-language"><code>Content-Language</code></dfn>` header</li>
+     <li>`<dfn data-x="http-content-range" data-x-href="https://httpwg.org/specs/rfc7233.html#header.content-range"><code>Content-Range</code></dfn>` header</li>
+     <li>`<dfn data-x="http-last-modified" data-x-href="https://httpwg.org/specs/rfc7232.html#header.last-modified"><code>Last-Modified</code></dfn>` header</li>
+     <li>`<dfn data-x="http-range" data-x-href="https://httpwg.org/specs/rfc7233.html#header.range"><code>Range</code></dfn>` header</li>
+     <li>`<dfn data-x="http-referer" data-x-href="https://httpwg.org/specs/rfc7231.html#header.referer"><code>Referer</code></dfn>` header</li>
+    </ul>
+
+    <p>The following terms are defined in <cite>HTTP State Management Mechanism</cite>:
+    <ref>COOKIES</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://httpwg.org/specs/rfc6265.html#sane-cookie-syntax">cookie-string</dfn></li>
+     <li><dfn data-x-href="https://httpwg.org/specs/rfc6265.html#storage-model">receives a set-cookie-string</dfn></li>
+     <li>`<dfn data-x="http-cookie" data-x-href="https://httpwg.org/specs/rfc6265.html#cookie"><code>Cookie</code></dfn>` header</li>
+    </ul>
+
+    <p>The following term is defined in <cite>Web Linking</cite>: <ref>WEBLINK</ref></p>
+
+    <ul class="brief">
+     <li>`<dfn data-x="http-link" data-x-href="https://httpwg.org/specs/rfc8288.html#header"><code>Link</code></dfn>` header</li>
+     <li><dfn data-x="parsing a link field value" data-x-href="https://httpwg.org/specs/rfc8288.html#parse-fv">Parsing a `<code>Link</code>` field value</dfn></li>
+    </ul>
+
+    <p>The following terms are defined in <cite>Structured Field Values for HTTP</cite>:
+    <ref>STRUCTURED-FIELDS</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x="http-structured-header" data-x-href="https://httpwg.org/specs/rfc8941.html">structured header</dfn></li>
+     <li><dfn data-x="http-structured-header-boolean" data-x-href="https://httpwg.org/specs/rfc8941.html#boolean">boolean</dfn></li>
+     <li><dfn data-x="http-structured-header-list" data-x-href="https://httpwg.org/specs/rfc8941.html#list">list</dfn></li>
+     <li><dfn data-x="http-structured-header-parameters" data-x-href="https://httpwg.org/specs/rfc8941.html#param">parameters</dfn></li>
+     <li><dfn data-x="http-structured-header-string" data-x-href="https://httpwg.org/specs/rfc8941.html#string">string</dfn></li>
+     <li><dfn data-x="http-structured-header-token" data-x-href="https://httpwg.org/specs/rfc8941.html#token">token</dfn></li>
+    </ul>
+
+    <p>The following terms are defined in <cite>MIME Sniffing</cite>: <ref>MIMESNIFF</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://mimesniff.spec.whatwg.org/#mime-type">MIME type</dfn></li>
+     <li><dfn data-x-href="https://mimesniff.spec.whatwg.org/#mime-type-essence">MIME type essence</dfn></li>
+     <li><dfn data-x-href="https://mimesniff.spec.whatwg.org/#valid-mime-type">valid MIME type string</dfn></li>
+     <li><dfn data-x-href="https://mimesniff.spec.whatwg.org/#valid-mime-type-with-no-parameters">valid MIME type string with no parameters</dfn></li>
+     <li><dfn data-x-href="https://mimesniff.spec.whatwg.org/#html-mime-type">HTML MIME type</dfn></li>
+     <li><dfn data-x-href="https://mimesniff.spec.whatwg.org/#javascript-mime-type">JavaScript MIME type</dfn> and
+         <dfn data-x-href="https://mimesniff.spec.whatwg.org/#javascript-mime-type-essence-match">JavaScript MIME type essence match</dfn></li>
+     <li><dfn data-x-href="https://mimesniff.spec.whatwg.org/#json-mime-type">JSON MIME type</dfn></li>
+     <li><dfn data-x-href="https://mimesniff.spec.whatwg.org/#xml-mime-type">XML MIME type</dfn></li>
+     <li><dfn data-x-href="https://mimesniff.spec.whatwg.org/#image-mime-type">image MIME type</dfn></li>
+     <li><dfn data-x-href="https://mimesniff.spec.whatwg.org/#audio-or-video-mime-type">audio or video MIME type</dfn></li>
+     <li><dfn data-x-href="https://mimesniff.spec.whatwg.org/#font-mime-type">font MIME type</dfn></li>
+     <li><dfn data-x-href="https://mimesniff.spec.whatwg.org/#parse-a-mime-type">parse a MIME type</dfn></li>
+     <li><dfn data-x-href="https://mimesniff.spec.whatwg.org/#supported-by-the-user-agent">is MIME type supported by the user agent?</dfn></li>
+    </ul>
+   </dd>
+
+

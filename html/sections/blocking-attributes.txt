@@ -1,0 +1,55 @@
+WHATWG HTML — section blocking-attributes — Blocking attributes
+
+  <h4>Blocking attributes</h4>
+
+  <p>A <dfn>blocking attribute</dfn> explicitly indicates that certain operations should be blocked
+  on the fetching of an external resource. The operations that can be blocked are represented by
+  <dfn data-x="possible blocking token">possible blocking tokens</dfn>, which are strings listed by
+  the following table:</p>
+
+  <table>
+   <thead>
+    <tr>
+     <th>Possible blocking token
+     <th>Description
+   <tbody>
+    <tr>
+     <td>"<dfn><code data-x="blocking-token-render">render</code></dfn>"
+     <td>The element is <span>potentially render-blocking</span>.
+  </table>
+
+
+  <p class="note" id="future-blocking-tokens">In the future, there might be more <span
+  data-x="possible blocking token">possible blocking tokens</span>.</p>
+
+  <p>A <span>blocking attribute</span> must have a value that is an <span>unordered set of unique
+  space-separated tokens</span>, each of which are <span data-x="possible blocking token">possible
+  blocking tokens</span>. The <span data-x="concept-supported-tokens">supported tokens</span> of a
+  <span>blocking attribute</span> are the <span data-x="possible blocking token">possible blocking
+  tokens</span>. Any element can have at most one <span>blocking attribute</span>.</p>
+
+  <div algorithm>
+  <p>The <dfn>blocking tokens set</dfn> for an element <var>el</var> are the result of the
+  following steps:</p>
+
+  <ol>
+   <li><p>Let <var>value</var> be the value of <var>el</var>'s <span>blocking attribute</span>, or
+   the empty string if no such attribute exists.</p>
+
+   <li><p>Set <var>value</var> to <var>value</var>, <span>converted to ASCII lowercase</span>.</p>
+
+   <li><p>Let <var>rawTokens</var> be the result of <span data-x="split a string on ASCII
+   whitespace">splitting <var>value</var> on ASCII whitespace</span>.</p>
+
+   <li><p>Return a set containing the elements of <var>rawTokens</var> that are <span
+   data-x="possible blocking token">possible blocking tokens</span>.</p>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>An element is <dfn>potentially render-blocking</dfn> if its <span>blocking tokens set</span>
+  contains "<code data-x="blocking-token-render">render</code>", or if it is
+  <dfn>implicitly potentially render-blocking</dfn>, which will be defined at the individual
+  elements. By default, an element is not <span>implicitly potentially render-blocking</span>.</p>
+  </div>
+

@@ -1,0 +1,27 @@
+WHATWG HTML — section the-input-element-as-a-colour-well — The <code>input</code> element as a color well
+
+  <!--en-GB--><h4 id="the-input-element-as-a-colour-well">The <code>input</code> element as a color
+  well</h4>
+
+  <p>An <code>input</code> element whose <code data-x="attr-input-type">type</code> attribute is in
+  the <span data-x="attr-input-type-color">Color</span> state is <span>expected</span> to depict a
+  color well, which, when activated, provides the user with a color picker (e.g. a color wheel or
+  color palette) from which the color can be changed. The element, when it generates a <span>CSS
+  box</span>, is <span>expected</span> to use <span>button layout</span>, that has a single
+  <span>block-level</span> <span>block container</span> child box, which is <span>expected</span> to
+  have a <span data-x="presentational hints">presentational hint</span> setting the
+  <span>'background-color'</span> property to the element's <span
+  data-x="concept-fe-value">value</span>.</p>
+
+  <p>Predefined suggested values (provided by the <code data-x="attr-input-list">list</code>
+  attribute) are <span>expected</span> to be shown in the color picker interface, not on the color
+  well itself.</p>
+
+  <p class="XXX">Need to detail the <span>native appearance</span> and <span>primitive
+  appearance</span>.</p>
+
+  </div>
+
+
+  <div w-nodev>
+

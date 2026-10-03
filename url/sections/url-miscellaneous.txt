@@ -1,0 +1,97 @@
+WHATWG URL — section url-miscellaneous — URL miscellaneous
+
+<h3 id=url-miscellaneous>URL miscellaneous</h3>
+
+<p>A <dfn export>special scheme</dfn> is an <a>ASCII string</a> that is listed in the first column
+of the following table. The <dfn export>default port</dfn> for a <a>special scheme</a> is listed in
+the second column on the same row. The <a>default port</a> for any other <a>ASCII string</a> is
+null.
+
+<table>
+ <tr><th><a>Special scheme</a>
+     <th><a>Default port</a>
+ <tr><td>"<code>ftp</code>"<td>21
+ <tr><td>"<code>file</code>"<td>null
+ <tr><td>"<code>http</code>"<td>80
+ <tr><td>"<code>https</code>"<td>443
+ <tr><td>"<code>ws</code>"<td>80
+ <tr><td>"<code>wss</code>"<td>443
+</table>
+
+<p>A <a for=/>URL</a> <dfn export>is special</dfn> if its <a for=url>scheme</a> is a
+<a>special scheme</a>. A <a for=/>URL</a> <dfn>is not special</dfn> if its <a for=url>scheme</a> is
+not a <a>special scheme</a>.
+
+<p>A <a for=/>URL</a>
+<dfn export lt="include credentials|includes credentials">includes credentials</dfn> if its
+<a for=url>username</a> or <a for=url>password</a> is not the empty string.
+<!-- also used by Fetch -->
+
+<p>A <a for=/>URL</a> has an <dfn export for=url>opaque path</dfn> if its <a for=url>path</a> is a
+<a for=/>URL path segment</a>.
+
+<p>A <a for=/>URL</a> <dfn export>cannot have a username/password/port</dfn> if its
+<a for=url>host</a> is null or the empty string, or its <a for=url>scheme</a> is
+"<code>file</code>".
+
+<p>A <a for=/>URL</a> can be designated as <dfn id=concept-base-url>base URL</dfn>.
+
+<p class=note>A <a>base URL</a> is useful for the <a>URL parser</a> when the input might be a
+<a>relative-URL string</a>.
+
+<hr>
+
+<p>A <dfn>Windows drive letter</dfn> is two code points, of which the first is an <a>ASCII alpha</a>
+and the second is either U+003A (:) or U+007C (|).
+
+<p>A <dfn>normalized Windows drive letter</dfn> is a <a>Windows drive letter</a> of which the second
+code point is U+003A (:).
+
+<p class="note">As per the <a href=#url-writing>URL writing</a> section, only a
+<a>normalized Windows drive letter</a> is conforming.
+
+<p>A string
+<dfn lt="start with a Windows drive letter|starts with a Windows drive letter">starts with a Windows drive letter</dfn>
+if all of the following are true:
+
+<ul class=brief>
+ <li>its <a for=string>length</a> is greater than or equal to 2
+ <li>its first two code points are a <a>Windows drive letter</a>
+ <li>its <a for=string>length</a> is 2 or its third code point is U+002F (/), U+005C (\),
+ U+003F (?), or U+0023 (#).
+</ul>
+
+<div class=example id=example-start-with-a-windows-drive-letter>
+ <table>
+  <tr>
+   <th>String
+   <th>Starts with a Windows drive letter
+  <tr>
+   <td>"<code>c:</code>"
+   <td>✅
+  <tr>
+   <td>"<code>c:/</code>"
+   <td>✅
+  <tr>
+   <td>"<code>c:a</code>"
+   <td>❌
+ </table>
+</div>
+
+<div algorithm>
+<p id=pop-a-urls-path>To <dfn local-lt=shorten>shorten a <var>url</var>'s path</dfn>:
+
+<ol>
+ <li><p><a for=/>Assert</a>: <var>url</var> does not have an <a for=url>opaque path</a>.
+
+ <li><p>Let <var>path</var> be <var>url</var>'s <a for=url>path</a>.
+
+ <li><p>If <var>url</var>'s <a for=url>scheme</a> is "<code>file</code>", <var>path</var>'s
+ <a for=list>size</a> is 1, and <var>path</var>[0] is a <a>normalized Windows drive letter</a>, then
+ return.
+
+ <li><p><a for=list>Remove</a> <var>path</var>'s last item, if any.
+</ol>
+</div>
+
+

@@ -1,0 +1,2258 @@
+WHATWG HTML — section attributes-common-to-form-controls — Attributes common to form controls
+
+  <h4>Attributes common to form controls</h4>
+
+  <h5>Naming form controls: the <code data-x="attr-fe-name">name</code> attribute</h5>
+
+  <p>The <dfn element-attr for="button,fieldset,input,output,select,textarea"><code
+  data-x="attr-fe-name">name</code></dfn> content attribute gives the name of the form control, as
+  used in <span>form submission</span> and in the <code>form</code> element's <code
+  data-x="dom-form-elements">elements</code> object. If the attribute is specified, its value must
+  not be the empty string or <code data-x="">isindex</code>.</p>
+
+  <p class="note">A number of user agents historically implemented special support for first-in-form
+  text controls with the name <code data-x="">isindex</code>, and this specification previously
+  defined related user agent requirements for it. However, some user agents subsequently dropped
+  that special support, and the related requirements were removed from this specification. So, to
+  avoid problematic reinterpretations in legacy user agents, the name <code data-x="">isindex</code>
+  is no longer allowed.</p>
+
+  <p>Other than <code data-x="">isindex</code>, any non-empty value for <code
+  data-x="attr-form-name">name</code> is allowed. An <span>ASCII case-insensitive</span> match for
+  the name <dfn><code data-x="attr-fe-name-charset">_charset_</code></dfn> is special: if used as
+  the name of a <span data-x="attr-input-type-hidden">Hidden</span> control with no <code
+  data-x="attr-input-value">value</code> attribute, then during submission the <code
+  data-x="attr-input-value">value</code> attribute is automatically given a value consisting of the
+  submission character encoding.</p>
+
+  <div class="note">
+   <p>DOM clobbering is a common cause of security issues. Avoid using the names of
+   built-in form properties with the <code data-x="attr-fe-name">name</code> content attribute.</p>
+
+   <p>In this example, the <code>input</code> element overrides the built-in <code
+   data-x="attr-fs-method">method</code> property:</p>
+
+   <pre><code class="js">let form = document.createElement("form");
+let input = document.createElement("input");
+form.appendChild(input);
+
+form.method;           // => "get"
+input.name = "method"; // DOM clobbering occurs here
+form.method === input; // => true</code></pre>
+
+   <p>Since the input name takes precedence over built-in form properties, the JavaScript reference
+   <code data-x="">form.method</code> will point to the <code>input</code> element named "method"
+   instead of the built-in <code data-x="attr-fs-method">method</code> property.</p>
+  </div>
+
+
+  <h5>Submitting element directionality: the <code data-x="attr-fe-dirname">dirname</code> attribute</h5>
+
+  <p>The <dfn element-attr for="input,textarea"><code data-x="attr-fe-dirname">dirname</code></dfn>
+  attribute on a form control element enables the submission of <span>the directionality</span> of
+  the element, and gives the name of the control that contains this value during <span>form
+  submission</span>. If such an attribute is specified, its value must not be the empty string.</p>
+
+  <div class="example">
+
+   <p>In this example, a form contains a text control and a submission button:</p>
+
+   <pre><code class="html">&lt;form action="addcomment.cgi" method=post>
+ &lt;p>&lt;label>Comment: &lt;input type=text name="comment" dirname="comment.dir" required>&lt;/label>&lt;/p>
+ &lt;p>&lt;button name="mode" type=submit value="add">Post Comment&lt;/button>&lt;/p>
+&lt;/form></code></pre>
+
+   <p>When the user submits the form, the user agent includes three fields, one called "comment",
+   one called "comment.dir", and one called "mode"; so if the user types "Hello", the submission
+   body might be something like:</p>
+
+   <pre>comment=Hello&amp;<strong>comment.dir=ltr</strong>&amp;mode=add</pre>
+
+   <p>If the user manually switches to a right-to-left writing direction and enters "<span data-x=""
+   dir=rtl lang=ar>&#x645;&#x631;&#x62d;&#x628;&#x627;</span>", the submission body might be
+   something like:</p>
+
+   <pre>comment=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7&amp;<strong>comment.dir=rtl</strong>&amp;mode=add</pre>
+
+  </div>
+
+
+  <h5>Limiting user input length: the <code data-x="attr-fe-maxlength">maxlength</code> attribute</h5>
+
+  <p>A <dfn data-lt="maxlength" element-attr for="input,textarea" data-x="attr-fe-maxlength">form
+  control <code data-x="">maxlength</code> attribute</dfn>, controlled by the <span
+  data-x="concept-fe-dirty">dirty value flag</span>, declares a limit on the number of characters a
+  user can input. The number of characters is measured using <span>length</span> and, in the case
+  of <code>textarea</code> elements, with all newlines normalized to a single character (as opposed
+  to CRLF pairs).</p>
+
+  <div algorithm>
+  <p>If an element has its <span data-x="attr-fe-maxlength">form control <code
+  data-x="">maxlength</code> attribute</span> specified, the attribute's value must be a <span>valid
+  non-negative integer</span>. If the attribute is specified and applying the <span>rules for
+  parsing non-negative integers</span> to its value results in a number, then that number is the
+  element's <dfn>maximum allowed value length</dfn>. If the attribute is omitted or parsing its
+  value results in an error, then there is no <span>maximum allowed value length</span>.</p>
+  </div>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p><strong>Constraint validation</strong>: If an element has a <span>maximum allowed value
+  length</span>, its <span data-x="concept-fe-dirty">dirty value flag</span> is true, its <span
+  data-x="concept-fe-value">value</span> was last changed by a user edit (as opposed to a change
+  made by a script), and the <span>length</span> of the element's <span
+  data-x="concept-fe-api-value">API value</span> is greater than the element's <span>maximum allowed
+  value length</span>, then the element is <span>suffering from being too long</span>.</p>
+  </div>
+
+  <p>User agents may prevent the user from causing the element's <span
+  data-x="concept-fe-api-value">API value</span> to be set to a value whose <span>length</span> is
+  greater than the element's <span>maximum allowed value length</span>.</p>
+
+  <p class="note">In the case of <code>textarea</code> elements, the <span
+  data-x="concept-fe-api-value">API value</span> and <span data-x="concept-fe-value">value</span>
+  differ. In particular, <span data-x="normalize newlines">newline normalization</span> is applied
+  before the <span>maximum allowed value length</span> is checked (whereas the <span>textarea
+  wrapping transformation</span> is not applied).</p>
+
+  </div>
+
+
+  <h5>Setting minimum input length requirements: the <code data-x="attr-fe-minlength">minlength</code> attribute</h5>
+
+  <p>A <dfn data-lt="minlength" element-attr for="input,textarea" data-x="attr-fe-minlength">form
+  control <code data-x="">minlength</code> attribute</dfn>, controlled by the <span
+  data-x="concept-fe-dirty">dirty value flag</span>, declares a lower bound on the number of
+  characters a user can input. The "number of characters" is measured using <span>length</span> and,
+  in the case of <code>textarea</code> elements, with all newlines normalized to a single character
+  (as opposed to CRLF pairs).</p>
+
+  <p class="note">The <code data-x="attr-fe-minlength">minlength</code> attribute does not imply the
+  <code data-x="">required</code> attribute. If the form control has no <code
+  data-x="">required</code> attribute, then the value can still be omitted; the <code
+  data-x="attr-fe-minlength">minlength</code> attribute only kicks in once the user has entered a
+  value at all. If the empty string is not allowed, then the <code data-x="">required</code>
+  attribute also needs to be set.</p>
+
+  <div algorithm>
+  <p>If an element has its <span data-x="attr-fe-minlength">form control <code
+  data-x="">minlength</code> attribute</span> specified, the attribute's value must be a <span>valid
+  non-negative integer</span>. If the attribute is specified and applying the <span>rules for
+  parsing non-negative integers</span> to its value results in a number, then that number is the
+  element's <dfn>minimum allowed value length</dfn>. If the attribute is omitted or parsing its
+  value results in an error, then there is no <span>minimum allowed value length</span>.</p>
+  </div>
+
+  <p>If an element has both a <span>maximum allowed value length</span> and a <span>minimum allowed
+  value length</span>, the <span>minimum allowed value length</span> must be smaller than or equal
+  to the <span>maximum allowed value length</span>.</p>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p><strong>Constraint validation</strong>: If an element has a <span>minimum allowed value
+  length</span>, its <span data-x="concept-fe-dirty">dirty value flag</span> is true, its <span
+  data-x="concept-fe-value">value</span> was last changed by a user edit (as opposed to a change
+  made by a script), its <span data-x="concept-fe-value">value</span> is not the empty string, and
+  the <span>length</span> of the element's <span data-x="concept-fe-api-value">API value</span> is
+  less than the element's <span>minimum allowed value length</span>, then the element is
+  <span>suffering from being too short</span>.</p>
+  </div>
+
+  </div>
+
+  <div class="example">
+
+   <p>In this example, there are four text controls. The first is required, and has to be at least 5
+   characters long. The other three are optional, but if the user fills one in, the user has to
+   enter at least 10 characters.</p>
+
+   <pre><code class="html">&lt;form action="/events/menu.cgi" method="post">
+ &lt;p>&lt;label>Name of Event: &lt;input required minlength=5 maxlength=50 name=event>&lt;/label>&lt;/p>
+ &lt;p>&lt;label>Describe what you would like for breakfast, if anything:
+    &lt;textarea name="breakfast" minlength="10">&lt;/textarea>&lt;/label>&lt;/p>
+ &lt;p>&lt;label>Describe what you would like for lunch, if anything:
+    &lt;textarea name="lunch" minlength="10">&lt;/textarea>&lt;/label>&lt;/p>
+ &lt;p>&lt;label>Describe what you would like for dinner, if anything:
+    &lt;textarea name="dinner" minlength="10">&lt;/textarea>&lt;/label>&lt;/p>
+ &lt;p>&lt;input type=submit value="Submit Request">&lt;/p>
+&lt;/form></code></pre>
+
+
+  </div>
+
+
+  <h5>Enabling and disabling form controls: the <code data-x="attr-fe-disabled">disabled</code> attribute</h5>
+
+  <p>The <dfn element-attr for="button,fieldset,input,object,output,select,textarea"><code
+  data-x="attr-fe-disabled">disabled</code></dfn> content attribute is a <span>boolean
+  attribute</span>.</p>
+
+  <p class="note">The <code data-x="attr-option-disabled">disabled</code> attribute for
+  <code>option</code> elements and the <code data-x="attr-optgroup-disabled">disabled</code>
+  attribute for <code>optgroup</code> elements are defined separately.</p>
+
+  <div algorithm>
+  <p>A form control is <dfn data-x="concept-fe-disabled">disabled</dfn> if any of the following are
+  true:</p>
+
+  <ul>
+   <li><p>the element is a <code>button</code>, <code>input</code>, <code>select</code>,
+   <code>textarea</code>, or <span>form-associated custom element</span>, and the <code
+   data-x="attr-fe-disabled">disabled</code> attribute is specified on this element (regardless of
+   its value); or</p></li>
+
+   <li><p>the element is a descendant of a <code>fieldset</code> element whose <code
+   data-x="attr-fieldset-disabled">disabled</code> attribute is specified, and the element is <em>not</em> a
+   descendant of that <code>fieldset</code> element's first <code>legend</code> element child, if
+   any.</p></li>
+  </ul>
+  </div>
+
+  <div w-nodev>
+
+  <p>A form control that is <span data-x="concept-fe-disabled">disabled</span> must prevent any
+  <code data-x="event-click">click</code> events that are <span data-x="queue a task">queued</span>
+  on the <span>user interaction task source</span> from being dispatched on the element.</p>
+
+  </div>
+
+  <p class="note">Being <span data-x="concept-fe-disabled">disabled</span> does not prevent all
+  modifications to the form control. For example, the control's <span
+  data-x="concept-fe-value">value</span> or <span data-x="concept-fe-checked">checkedness</span>
+  could be modified programmatically from JavaScript. Or, they could be indirectly modified by user
+  action, e.g., if other non-disabled elements in the control's <span>radio button group</span> were
+  modified.</p>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p><strong>Constraint validation</strong>: If an element is <span
+  data-x="concept-fe-disabled">disabled</span>, it is <span>barred from constraint
+  validation</span>.</p>
+  </div>
+
+  </div>
+
+
+  <h5>Form submission attributes</h5>
+
+  <p><dfn>Attributes for form submission</dfn> can be specified both on <code>form</code> elements
+  and on <span data-x="concept-submit-button">submit buttons</span> (elements that represent buttons
+  that submit forms, e.g. an <code>input</code> element whose <code
+  data-x="attr-input-type">type</code> attribute is in the <span
+  data-x="attr-input-type-submit">Submit Button</span> state).
+
+  <p>The <span>attributes for form submission</span> that may be specified on <code>form</code>
+  elements are <code data-x="attr-fs-action">action</code>, <code
+  data-x="attr-fs-enctype">enctype</code>, <code data-x="attr-fs-method">method</code>, <code
+  data-x="attr-fs-novalidate">novalidate</code>, and <code data-x="attr-fs-target">target</code>.</p>
+
+  <p>The corresponding <span>attributes for form submission</span> that may be specified on <span
+  data-x="concept-submit-button">submit buttons</span> are <code
+  data-x="attr-fs-formaction">formaction</code>, <code
+  data-x="attr-fs-formenctype">formenctype</code>, <code
+  data-x="attr-fs-formmethod">formmethod</code>, <code
+  data-x="attr-fs-formnovalidate">formnovalidate</code>, and <code
+  data-x="attr-fs-formtarget">formtarget</code>. When omitted, they default to the values given on
+  the corresponding attributes on the <code>form</code> element.</p>
+
+  <hr>
+
+  <p>The <dfn element-attr for="form,button"><code data-x="attr-fs-action">action</code></dfn> and
+  <dfn element-attr for="form,button"><code data-x="attr-fs-formaction">formaction</code></dfn>
+  content attributes, if specified, must have a value that is a <span>valid non-empty URL
+  potentially surrounded by spaces</span>.</p>
+
+  <p>The <dfn data-x="concept-fs-action">action</dfn> of an element is the value of the element's
+  <code data-x="attr-fs-formaction">formaction</code> attribute, if the element is a <span
+  data-x="concept-submit-button">submit button</span> and has such an attribute, or the value of its
+  <span>form owner</span>'s <code data-x="attr-fs-action">action</code> attribute, if <em>it</em> has
+  one, or else the empty string.</p>
+
+  <hr>
+
+  <p>The <dfn element-attr for="form,button"><code data-x="attr-fs-method">method</code></dfn> and
+  <dfn element-attr for="form,button"><code data-x="attr-fs-formmethod">formmethod</code></dfn>
+  content attributes are <span data-x="enumerated attribute">enumerated attributes</span> with the
+  following keywords and states:</p>
+
+  <table>
+   <thead>
+    <tr>
+     <th>Keyword
+     <th>State
+     <th>Brief description
+   <tbody>
+    <tr>
+     <td><dfn attr-value for="form/method,button/formmethod,input/formmethod"><code
+     data-x="attr-fs-method-GET-keyword">get</code></dfn>
+     <td><dfn data-x="attr-fs-method-GET">GET</dfn>
+     <td>Indicates the <code>form</code> will use the HTTP GET method.
+    <tr>
+     <td><dfn attr-value for="form/method,button/formmethod,input/formmethod"><code
+     data-x="attr-fs-method-POST-keyword">post</code></dfn>
+     <td><dfn data-x="attr-fs-method-POST">POST</dfn>
+     <td>Indicates the <code>form</code> will use the HTTP POST method.
+    <tr>
+     <td><dfn attr-value for="form/method,button/formmethod,input/formmethod"><code
+     data-x="attr-fs-method-dialog-keyword">dialog</code></dfn>
+     <td><dfn data-x="attr-fs-method-dialog">Dialog</dfn>
+     <td>Indicates the <code>form</code> is intended to close the <code>dialog</code> box in which
+     the form finds itself, if any, and otherwise not submit.
+  </table>
+
+  <p>The <code data-x="attr-fs-method">method</code> attribute's <i data-x="missing value
+  default">missing value default</i> and <i data-x="invalid value default">invalid value default</i>
+  are both the <span data-x="attr-fs-method-GET">GET</span> state.</p>
+
+  <p>The <code data-x="attr-fs-formmethod">formmethod</code> attribute has no <i data-x="missing
+  value default">missing value default</i>, and its <i data-x="invalid value default">invalid value
+  default</i> is the <span data-x="attr-fs-method-GET">GET</span> state.</p>
+
+  <div algorithm>
+  <p>The <dfn data-x="concept-fs-method">method</dfn> of an element is one of those states. If the
+  element is a <span data-x="concept-submit-button">submit button</span> and has a <code
+  data-x="attr-fs-formmethod">formmethod</code> attribute, then the element's <span
+  data-x="concept-fs-method">method</span> is that attribute's state; otherwise, it is the <span>form
+  owner</span>'s <code data-x="attr-fs-method">method</code> attribute's state.</p>
+  </div>
+
+  <div class="example">
+
+   <p>Here the <code data-x="attr-fs-method">method</code> attribute is used to explicitly specify
+   the default value, "<code data-x="attr-fs-method-GET-keyword">get</code>", so that the search
+   query is submitted in the URL:</p>
+
+   <pre><code class="html">&lt;form method="get" action="/search.cgi">
+ &lt;p>&lt;label>Search terms: &lt;input type=search name=q>&lt;/label>&lt;/p>
+ &lt;p>&lt;input type=submit>&lt;/p>
+&lt;/form></code></pre>
+
+  </div>
+
+  <div class="example">
+
+   <p>On the other hand, here the <code data-x="attr-fs-method">method</code> attribute is used to
+   specify the value "<code data-x="attr-fs-method-POST-keyword">post</code>", so that the user's
+   message is submitted in the HTTP request's body:</p>
+
+   <pre><code class="html">&lt;form method="post" action="/post-message.cgi">
+ &lt;p>&lt;label>Message: &lt;input type=text name=m>&lt;/label>&lt;/p>
+ &lt;p>&lt;input type=submit value="Submit message">&lt;/p>
+&lt;/form></code></pre>
+
+  </div>
+
+  <div class="example">
+
+   <p>In this example, a <code>form</code> is used with a <code>dialog</code>. The <code
+   data-x="attr-fs-method">method</code> attribute's "<code
+   data-x="attr-fs-method-dialog-keyword">dialog</code>" keyword is used to have the dialog
+   automatically close when the form is submitted.</p>
+
+   <pre lang="en-GB"><code class="html">&lt;dialog id="ship">
+ &lt;form method=dialog>
+  &lt;p>A ship has arrived in the harbour.&lt;/p>
+  &lt;button type=submit value="board">Board the ship&lt;/button>
+  &lt;button type=submit value="call">Call to the captain&lt;/button>
+ &lt;/form>
+&lt;/dialog>
+&lt;script>
+ var ship = document.getElementById('ship');
+ ship.showModal();
+ ship.onclose = function (event) {
+   if (ship.returnValue == 'board') {
+     // ...
+   } else {
+     // ...
+   }
+ };
+&lt;/script></code></pre>
+
+  </div>
+
+  <hr>
+
+  <p>The <dfn element-attr for="form,button"><code data-x="attr-fs-enctype">enctype</code></dfn> and
+  <dfn element-attr for="form,button"><code data-x="attr-fs-formenctype">formenctype</code></dfn>
+  content attributes are <span data-x="enumerated attribute">enumerated attributes</span> with the
+  following keywords and states:</p>
+
+  <ul>
+   <li>The "<dfn attr-value for="form/enctype,button/enctype"><code
+   data-x="attr-fs-enctype-urlencoded">application/x-www-form-urlencoded</code></dfn>" keyword and
+   corresponding state.</li>
+   <li>The "<dfn attr-value for="form/enctype,button/enctype"><code
+   data-x="attr-fs-enctype-formdata">multipart/form-data</code></dfn>" keyword and corresponding
+   state.</li>
+   <li>The "<dfn attr-value for="form/enctype,button/enctype"><code
+   data-x="attr-fs-enctype-text">text/plain</code></dfn>" keyword and corresponding state.</li>
+  </ul>
+
+  <div algorithm>
+  <p>The attribute's <i data-x="missing value default">missing value default</i> and <i
+  data-x="invalid value default">invalid value default</i> are both the <code
+  data-x="attr-fs-enctype-urlencoded">application/x-www-form-urlencoded</code> state.</p>
+  </div>
+
+  <p>The <code data-x="attr-fs-formenctype">formenctype</code> attribute has no <i data-x="missing
+  value default">missing value default</i>, and its <i data-x="invalid value default">invalid value
+  default</i> is the <code
+  data-x="attr-fs-enctype-urlencoded">application/x-www-form-urlencoded</code> state.</p>
+
+  <div algorithm>
+  <p>The <dfn data-x="concept-fs-enctype">enctype</dfn> of an element is one of those three states.
+  If the element is a <span data-x="concept-submit-button">submit button</span> and has a <code
+  data-x="attr-fs-formenctype">formenctype</code> attribute, then the element's <span
+  data-x="concept-fs-enctype">enctype</span> is that attribute's state; otherwise, it is the
+  <span>form owner</span>'s <code data-x="attr-fs-enctype">enctype</code> attribute's state.</p>
+  </div>
+
+  <hr>
+
+  <p>The <dfn element-attr for="form,button"><code data-x="attr-fs-target">target</code></dfn> and
+  <dfn element-attr for="form,button"><code data-x="attr-fs-formtarget">formtarget</code></dfn>
+  content attributes, if specified, must have values that are <span data-x="valid navigable target
+  name or keyword">valid navigable target names or keywords</span>.</p>
+
+  <hr>
+
+  <p>The <dfn element-attr for="form,button"><code
+  data-x="attr-fs-novalidate">novalidate</code></dfn> and <dfn element-attr for="form,button"><code
+  data-x="attr-fs-formnovalidate">formnovalidate</code></dfn> content attributes are <span
+  data-x="boolean attribute">boolean attributes</span>. If present, they indicate that the form is
+  not to be validated during submission.</p>
+
+  <div algorithm>
+  <p>The <dfn data-x="concept-fs-novalidate">no-validate state</dfn> of an element is true if the
+  element is a <span data-x="concept-submit-button">submit button</span> and the element's <code
+  data-x="attr-fs-formnovalidate">formnovalidate</code> attribute is present, or if the element's
+  <span>form owner</span>'s <code data-x="attr-fs-novalidate">novalidate</code> attribute is present,
+  and false otherwise.</p>
+  </div>
+
+  <div class="example">
+
+   <p>This attribute is useful to include "save" buttons on forms that have validation constraints,
+   to allow users to save their progress even though they haven't fully entered the data in the
+   form. The following example shows a simple form that has two required fields. There are three
+   buttons: one to submit the form, which requires both fields to be filled in; one to save the form
+   so that the user can come back and fill it in later; and one to cancel the form altogether.</p>
+
+   <pre><code class="html">&lt;form action="editor.cgi" method="post">
+ &lt;p>&lt;label>Name: &lt;input required name=fn>&lt;/label>&lt;/p>
+ &lt;p>&lt;label>Essay: &lt;textarea required name=essay>&lt;/textarea>&lt;/label>&lt;/p>
+ &lt;p>&lt;input type=submit name=submit value="Submit essay">&lt;/p>
+ &lt;p>&lt;input type=submit formnovalidate name=save value="Save essay">&lt;/p>
+ &lt;p>&lt;input type=submit formnovalidate name=cancel value="Cancel">&lt;/p>
+&lt;/form></code></pre>
+
+  </div>
+
+  <div w-nodev>
+
+  <hr>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLFormElement"><code data-x="dom-fs-action">action</code></dfn>
+  getter steps are:</p>
+
+  <ol>
+   <li><p>Let <var>attribute</var> be <span>this</span>'s <code
+   data-x="attr-fs-action">action</code> attribute.</p></li>
+
+   <li><p>If <var>attribute</var> is null or <var>attribute</var>'s <span
+   data-x="concept-attribute-value">value</span> is the empty string, then return
+   <span>this</span>'s <span>node document</span>'s <span
+   data-x="concept-document-url">URL</span>.</p></li>
+
+   <li><p>Let <var>urlString</var> be the result of <span>encoding-parsing-and-serializing a
+   URL</span> given <var>attribute</var>'s <span data-x="concept-attribute-value">value</span>,
+   relative to <span>this</span>'s <span>node document</span>.</p></li>
+
+   <li><p>If <var>urlString</var> is not failure, then return <var>urlString</var>.</p></li>
+
+   <li><p>Return <var>attribute</var>'s <span data-x="concept-attribute-value">value</span>, <span
+   data-x="convert">converted to a scalar value string</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLButtonElement,HTMLInputElement"><code
+  data-x="dom-fs-formAction">formAction</code></dfn> getter steps are:</p>
+
+  <ol>
+   <li><p>Let <var>attribute</var> be <span>this</span>'s <code
+   data-x="attr-fs-formaction">formaction</code> attribute.</p></li>
+
+   <li><p>If <var>attribute</var> is null or <var>attribute</var>'s <span
+   data-x="concept-attribute-value">value</span> is the empty string, then return
+   <span>this</span>'s <span>node document</span>'s <span
+   data-x="concept-document-url">URL</span>.</p></li>
+
+   <li><p>Let <var>urlString</var> be the result of <span>encoding-parsing-and-serializing a
+   URL</span> given <var>attribute</var>'s <span data-x="concept-attribute-value">value</span>,
+   relative to <span>this</span>'s <span>node document</span>.</p></li>
+
+   <li><p>If <var>urlString</var> is not failure, then return <var>urlString</var>.</p></li>
+
+   <li><p>Return <var>attribute</var>'s <span data-x="concept-attribute-value">value</span>, <span
+   data-x="convert">converted to a scalar value string</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLFormElement"><code data-x="dom-fs-method">method</code></dfn> and
+  <dfn attribute for="HTMLFormElement"><code data-x="dom-fs-enctype">enctype</code></dfn> IDL
+  attributes must <span>reflect</span> the respective content attributes of the same name,
+  <span>limited to only known values</span>. The <dfn attribute for="HTMLFormElement"><code
+  data-x="dom-fs-encoding">encoding</code></dfn> IDL attribute must <span>reflect</span> the <code
+  data-x="attr-fs-enctype">enctype</code> content attribute, <span>limited to only known
+  values</span>. The <dfn attribute for="HTMLButtonElement,HTMLInputElement"><code
+  data-x="dom-fs-formEnctype">formEnctype</code></dfn> IDL attribute must <span>reflect</span> the
+  <code data-x="attr-fs-formenctype">formenctype</code> content attribute, <span>limited to only
+  known values</span>. The <dfn attribute for="HTMLButtonElement,HTMLInputElement"><code
+  data-x="dom-fs-formMethod">formMethod</code></dfn> IDL attribute must <span>reflect</span> the
+  <code data-x="attr-fs-formmethod">formmethod</code> content attribute, <span>limited to only known
+  values</span>.
+  </div>
+
+  </div>
+
+
+  <h5>Autofill</h5>
+
+  <h6>Autofilling form controls: the <code data-x="attr-fe-autocomplete">autocomplete</code> attribute</h6>
+
+  <p>User agents sometimes have features for helping users fill forms in, for example prefilling the
+  user's address based on earlier user input. The <dfn element-attr
+  for="button,fieldset,input,object,output,select,textarea"><code
+  data-x="attr-fe-autocomplete">autocomplete</code></dfn> content attribute can be used to hint to
+  the user agent how to, or indeed whether to, provide such a feature.</p>
+
+  <!-- "mode" is already used by enumerated attributes... "role" is used by role=""... "mantle" it is. -->
+
+  <p>There are two ways this attribute is used. When wearing the <dfn>autofill expectation
+  mantle</dfn>, the <code data-x="attr-fe-autocomplete">autocomplete</code> attribute describes what
+  input is expected from users. When wearing the <dfn>autofill anchor mantle</dfn>, the <code
+  data-x="attr-fe-autocomplete">autocomplete</code> attribute describes the meaning of the given
+  value.</p>
+
+  <p>On an <code>input</code> element whose <code data-x="attr-input-type">type</code> attribute is
+  in the <span data-x="attr-input-type-hidden">Hidden</span> state, the <code
+  data-x="attr-fe-autocomplete">autocomplete</code> attribute wears the <span>autofill anchor
+  mantle</span>. In all other cases, it wears the <span>autofill expectation mantle</span>.</p>
+
+  <p>When wearing the <span>autofill expectation mantle</span>, the <code
+  data-x="attr-fe-autocomplete">autocomplete</code> attribute, if specified, must have a value that
+  is an ordered <span>set of space-separated tokens</span> consisting of either a single token that
+  is an <span>ASCII case-insensitive</span> match for the string "<code
+  data-x="attr-fe-autocomplete-off">off</code>", or a single token that is an <span>ASCII
+  case-insensitive</span> match for the string "<code data-x="attr-fe-autocomplete-on">on</code>",
+  or <span>autofill detail tokens</span>.</p>
+
+  <p>When wearing the <span>autofill anchor
+  mantle</span>, the <code
+  data-x="attr-fe-autocomplete">autocomplete</code> attribute, if specified, must have a value that is an ordered <span>set of
+  space-separated tokens</span> consisting of just <span>autofill detail tokens</span> (i.e. the
+  "<code data-x="attr-fe-autocomplete-on">on</code>" and "<code
+  data-x="attr-fe-autocomplete-off">off</code>" keywords are not allowed).</p>
+
+  <div algorithm>
+  <p><dfn>Autofill detail tokens</dfn> are the following, in the order given below:</p>
+
+  <ol>
+   <li>
+
+    <p>Optionally, a token whose first eight characters are an <span>ASCII case-insensitive</span>
+    match for the string "<dfn attr-value
+    for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+    data-x="attr-fe-autocomplete-section">section-</code></dfn>", meaning that the field belongs to
+    the named group.</p>
+
+    <div class="example">
+
+     <p>For example, if there are two shipping addresses in the form, then they could be marked up
+     as:</p>
+
+     <pre><code class="html">&lt;fieldset>
+ &lt;legend>Ship the blue gift to...&lt;/legend>
+ &lt;p> &lt;label> Address:     &lt;textarea name=ba autocomplete="section-blue shipping street-address">&lt;/textarea> &lt;/label>
+ &lt;p> &lt;label> City:        &lt;input name=bc autocomplete="section-blue shipping address-level2"> &lt;/label>
+ &lt;p> &lt;label> Postal Code: &lt;input name=bp autocomplete="section-blue shipping postal-code"> &lt;/label>
+&lt;/fieldset>
+&lt;fieldset>
+ &lt;legend>Ship the red gift to...&lt;/legend>
+ &lt;p> &lt;label> Address:     &lt;textarea name=ra autocomplete="section-red shipping street-address">&lt;/textarea> &lt;/label>
+ &lt;p> &lt;label> City:        &lt;input name=rc autocomplete="section-red shipping address-level2"> &lt;/label>
+ &lt;p> &lt;label> Postal Code: &lt;input name=rp autocomplete="section-red shipping postal-code"> &lt;/label>
+&lt;/fieldset></code></pre>
+
+    </div>
+   </li>
+
+   <li>
+    <p>Optionally, a token that is an <span>ASCII case-insensitive</span> match for one of the
+    following strings:</p>
+
+    <ul class="brief">
+
+     <li>"<dfn attr-value
+     for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+     data-x="attr-fe-autocomplete-shipping">shipping</code></dfn>", meaning the field is part of the
+     shipping address or contact information
+
+     <li>"<dfn attr-value
+     for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+     data-x="attr-fe-autocomplete-billing">billing</code></dfn>", meaning the field is part of the
+     billing address or contact information
+    </ul>
+   </li>
+
+   <li>
+    <p>Either of the following two options:</p>
+
+    <ul>
+     <li>
+      <p>A token that is an <span>ASCII case-insensitive</span> match for one of the following
+      <span>autofill field</span> names, excluding those that are <span>inappropriate for the
+      control</span>:</p>
+
+      <ul class="brief">
+       <li>"<code data-x="attr-fe-autocomplete-name">name</code>"
+       <li>"<code data-x="attr-fe-autocomplete-honorific-prefix">honorific-prefix</code>"
+       <li>"<code data-x="attr-fe-autocomplete-given-name">given-name</code>"
+       <li>"<code data-x="attr-fe-autocomplete-additional-name">additional-name</code>"
+       <li>"<code data-x="attr-fe-autocomplete-family-name">family-name</code>"
+       <li>"<code data-x="attr-fe-autocomplete-honorific-suffix">honorific-suffix</code>"
+       <li>"<code data-x="attr-fe-autocomplete-nickname">nickname</code>"
+       <li>"<code data-x="attr-fe-autocomplete-username">username</code>"
+       <li>"<code data-x="attr-fe-autocomplete-new-password">new-password</code>"
+       <li>"<code data-x="attr-fe-autocomplete-current-password">current-password</code>"
+       <li>"<code data-x="attr-fe-autocomplete-one-time-code">one-time-code</code>"
+       <li>"<code data-x="attr-fe-autocomplete-organization-title">organization-title</code>"
+       <li>"<code data-x="attr-fe-autocomplete-organization">organization</code>"
+       <li>"<code data-x="attr-fe-autocomplete-street-address">street-address</code>"
+       <li>"<code data-x="attr-fe-autocomplete-address-line1">address-line1</code>"
+       <li>"<code data-x="attr-fe-autocomplete-address-line2">address-line2</code>"
+       <li>"<code data-x="attr-fe-autocomplete-address-line3">address-line3</code>"
+       <li>"<code data-x="attr-fe-autocomplete-address-level4">address-level4</code>"
+       <li>"<code data-x="attr-fe-autocomplete-address-level3">address-level3</code>"
+       <li>"<code data-x="attr-fe-autocomplete-address-level2">address-level2</code>"
+       <li>"<code data-x="attr-fe-autocomplete-address-level1">address-level1</code>"
+       <li>"<code data-x="attr-fe-autocomplete-country">country</code>"
+       <li>"<code data-x="attr-fe-autocomplete-country-name">country-name</code>"
+       <li>"<code data-x="attr-fe-autocomplete-postal-code">postal-code</code>"
+       <li>"<code data-x="attr-fe-autocomplete-cc-name">cc-name</code>"
+       <li>"<code data-x="attr-fe-autocomplete-cc-given-name">cc-given-name</code>"
+       <li>"<code data-x="attr-fe-autocomplete-cc-additional-name">cc-additional-name</code>"
+       <li>"<code data-x="attr-fe-autocomplete-cc-family-name">cc-family-name</code>"
+       <li>"<code data-x="attr-fe-autocomplete-cc-number">cc-number</code>"
+       <li>"<code data-x="attr-fe-autocomplete-cc-exp">cc-exp</code>"
+       <li>"<code data-x="attr-fe-autocomplete-cc-exp-month">cc-exp-month</code>"
+       <li>"<code data-x="attr-fe-autocomplete-cc-exp-year">cc-exp-year</code>"
+       <li>"<code data-x="attr-fe-autocomplete-cc-csc">cc-csc</code>"
+       <li>"<code data-x="attr-fe-autocomplete-cc-type">cc-type</code>"
+       <li>"<code data-x="attr-fe-autocomplete-transaction-currency">transaction-currency</code>"
+       <li>"<code data-x="attr-fe-autocomplete-transaction-amount">transaction-amount</code>"
+       <li>"<code data-x="attr-fe-autocomplete-language">language</code>"
+       <li>"<code data-x="attr-fe-autocomplete-bday">bday</code>"
+       <li>"<code data-x="attr-fe-autocomplete-bday-day">bday-day</code>"
+       <li>"<code data-x="attr-fe-autocomplete-bday-month">bday-month</code>"
+       <li>"<code data-x="attr-fe-autocomplete-bday-year">bday-year</code>"
+       <li>"<code data-x="attr-fe-autocomplete-sex">sex</code>"
+       <li>"<code data-x="attr-fe-autocomplete-url">url</code>"
+       <li>"<code data-x="attr-fe-autocomplete-photo">photo</code>"
+      </ul>
+
+      <p>(See the table below for descriptions of these values.)</p>
+     </li>
+
+     <li>
+      <p>The following, in the given order:</p>
+
+      <ol>
+       <li>
+        <p>Optionally, a token that is an <span>ASCII case-insensitive</span> match for one of the
+        following strings:</p>
+
+        <ul class="brief">
+
+         <li>"<dfn attr-value
+         for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+         data-x="attr-fe-autocomplete-home">home</code></dfn>", meaning the field is for contacting
+         someone at their residence
+
+         <li>"<dfn attr-value
+         for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+         data-x="attr-fe-autocomplete-work">work</code></dfn>", meaning the field is for contacting
+         someone at their workplace
+
+         <li>"<dfn attr-value
+         for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+         data-x="attr-fe-autocomplete-mobile">mobile</code></dfn>"<!-- or "cell"?  -->, meaning the
+         field is for contacting someone regardless of location
+
+         <li>"<dfn attr-value
+         for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+         data-x="attr-fe-autocomplete-fax">fax</code></dfn>", meaning the field describes a fax
+         machine's contact details
+
+         <li>"<dfn attr-value
+         for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+         data-x="attr-fe-autocomplete-pager">pager</code></dfn>", meaning the field describes a
+         pager's or beeper's contact details
+        </ul>
+       </li>
+
+       <li>
+        <p>A token that is an <span>ASCII case-insensitive</span> match for one of the following
+        <span>autofill field</span> names, excluding those that are <span>inappropriate for the
+        control</span>:</p>
+
+        <ul class="brief">
+         <li>"<code data-x="attr-fe-autocomplete-tel">tel</code>"
+         <li>"<code data-x="attr-fe-autocomplete-tel-country-code">tel-country-code</code>"
+         <li>"<code data-x="attr-fe-autocomplete-tel-national">tel-national</code>"
+         <li>"<code data-x="attr-fe-autocomplete-tel-area-code">tel-area-code</code>"
+         <li>"<code data-x="attr-fe-autocomplete-tel-local">tel-local</code>"
+         <li>"<code data-x="attr-fe-autocomplete-tel-local-prefix">tel-local-prefix</code>"
+         <li>"<code data-x="attr-fe-autocomplete-tel-local-suffix">tel-local-suffix</code>"
+         <li>"<code data-x="attr-fe-autocomplete-tel-extension">tel-extension</code>"
+         <li>"<code data-x="attr-fe-autocomplete-email">email</code>"
+         <li>"<code data-x="attr-fe-autocomplete-impp">impp</code>"
+        </ul>
+
+        <p>(See the table below for descriptions of these values.)</p>
+       </li>
+      </ol>
+     </li>
+    </ul>
+   </li>
+
+   <li><p>Optionally, a token that is an <span>ASCII case-insensitive</span> match for the string
+   "<dfn data-x="attr-fe-autocomplete-webauthn"><code>webauthn</code></dfn>", meaning the user agent
+   should show <span data-x="public key credential">public key credentials</span> available via
+   <code data-x="conditional mediation">conditional</code> mediation when the user interacts with the
+   form control. <code data-x="attr-fe-autocomplete-webauthn">webauthn</code> is only valid for
+   <code>input</code> and <code>textarea</code> elements.</p></li>
+  </ol>
+  </div>
+
+  <p>As noted earlier, the meaning of the attribute and its keywords depends on the mantle that the
+  attribute is wearing.</p>
+
+  <dl class="switch">
+
+   <dt>When wearing the <span>autofill expectation mantle</span>...
+
+   <dd>
+    <p>The "<dfn attr-value
+    for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+    data-x="attr-fe-autocomplete-off">off</code></dfn>" keyword indicates either that the control's
+    input data is particularly sensitive (for example the activation code for a nuclear weapon); or
+    that it is a value that will never be reused (for example a one-time-key for a bank login) and
+    the user will therefore have to explicitly enter the data each time, instead of being able to
+    rely on the UA to prefill the value for them; or that the document provides its own autocomplete
+    mechanism and does not want the user agent to provide autocompletion values.</p>
+
+    <p>The "<dfn attr-value
+    for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+    data-x="attr-fe-autocomplete-on">on</code></dfn>" keyword indicates that the user agent is
+    allowed to provide the user with autocompletion values, but does not provide any further
+    information about what kind of data the user might be expected to enter. User agents would have
+    to use heuristics to decide what autocompletion values to suggest.</p>
+
+    <p>The <span>autofill field</span> listed above indicates that the user agent is allowed to
+    provide the user with autocompletion values, and specifies what kind of value is expected. The
+    meaning of each such keyword is described in the table below.</p>
+
+    <p>If the <code data-x="attr-fe-autocomplete">autocomplete</code> attribute is omitted, the default
+    value corresponding to the state of the element's <span>form owner</span>'s <code
+    data-x="attr-form-autocomplete">autocomplete</code> attribute is used instead (either "<code
+    data-x="attr-fe-autocomplete-on">on</code>" or "<code
+    data-x="attr-fe-autocomplete-off">off</code>"). If there is no <span>form owner</span>, then the
+    value "<code data-x="attr-fe-autocomplete-on">on</code>" is used.</p>
+   </dd>
+
+   <dt>When wearing the <span>autofill anchor mantle</span>...
+
+   <dd>
+    <p>The <span>autofill field</span> listed above indicates that the value of the particular kind
+    of value specified is that value provided for this element. The meaning of each such keyword is
+    described in the table below.</p>
+
+    <div class="example">
+
+     <p>In this example the page has explicitly specified the currency and amount of the
+     transaction. The form requests a credit card and other billing details. The user agent could
+     use this information to suggest a credit card that it knows has sufficient balance and that
+     supports the relevant currency.</p>
+
+     <pre><code class="html">&lt;form method=post action="step2.cgi">
+ &lt;input type=hidden autocomplete=transaction-currency value="CHF">
+ &lt;input type=hidden autocomplete=transaction-amount value="15.00">
+ &lt;p>&lt;label>Credit card number: &lt;input type=text inputmode=numeric autocomplete=cc-number>&lt;/label>
+ &lt;p>&lt;label>Expiry Date: &lt;input type=month autocomplete=cc-exp>&lt;/label>
+ &lt;p>&lt;input type=submit value="Continue...">
+&lt;/form></code></pre>
+
+    </div>
+   </dd>
+  </dl>
+
+  <p>The <dfn>autofill field</dfn> keywords relate to each other as described in the table below. Each field name
+  listed on a row of this table corresponds to the meaning given in the cell for that row in the
+  column labeled "Meaning". Some fields correspond to subparts of other fields; for example, a
+  credit card expiry date can be expressed as one field giving both the month and year of expiry
+  ("<code data-x="attr-fe-autocomplete-cc-exp">cc-exp</code>"), or as two fields, one giving the
+  month ("<code data-x="attr-fe-autocomplete-cc-exp-month">cc-exp-month</code>") and one the year
+  ("<code data-x="attr-fe-autocomplete-cc-exp-year">cc-exp-year</code>"). In such cases, the names of
+  the broader fields cover multiple rows, in which the narrower fields are defined.</p>
+
+  <p class="note">Generally, authors are encouraged to use the broader fields rather than the
+  narrower fields, as the narrower fields tend to expose Western biases. For example, while it is
+  common in some Western cultures to have a given name and a family name, in that order (and thus
+  often referred to as a <i>first name</i> and a <i>surname</i>), many cultures put the family name
+  first and the given name second, and many others simply have one name (a <i>mononym</i>). Having a
+  single field is therefore more flexible.</p>
+
+  <div algorithm>
+  <p>Some fields are only appropriate for certain form controls. An <span>autofill field</span> name
+  is <dfn data-x="inappropriate for the control">inappropriate for a control</dfn> if the control
+  does not belong to the group listed for that <span>autofill field</span> in the fifth column of
+  the first row describing that <span>autofill field</span> in the table below. What controls fall
+  into each group is described below the table.</p>
+  </div>
+
+  <table>
+   <thead>
+    <tr>
+     <th colspan=4> Field name
+     <th> Meaning
+     <th> Canonical Format
+     <th> Canonical Format Example
+     <th> Control group
+   <tbody>
+    <tr>
+     <td colspan=4>"<dfn attr-value
+     for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+     data-x="attr-fe-autocomplete-name">name</code></dfn>"
+     <td>Full name
+     <td>Free-form text, no newlines
+     <td>Sir Timothy John Berners-Lee, OM, KBE, FRS, FREng, FRSA
+     <td><span data-x="Control Group Text">Text</span>
+    <tr>
+     <td rowspan=5 class="non-rectangular-cell-indentation">
+      <td colspan=3>"<dfn attr-value for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code data-x="attr-fe-autocomplete-honorific-prefix">honorific-prefix</code></dfn>"
+      <td>Prefix or title (e.g. "Mr.", "Ms.", "Dr.", "<span lang="fr" data-x="">M<sup>lle</sup></span>")
+      <td>Free-form text, no newlines
+      <td>Sir
+     <td><span data-x="Control Group Text">Text</span>
+    <tr>
+      <td colspan=3>"<dfn attr-value
+      for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+      data-x="attr-fe-autocomplete-given-name">given-name</code></dfn>"
+      <td>Given name (in some Western cultures, also known as the <i>first name</i>)
+      <td>Free-form text, no newlines
+      <td>Timothy
+     <td><span data-x="Control Group Text">Text</span>
+    <tr>
+      <td colspan=3>"<dfn attr-value
+      for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+      data-x="attr-fe-autocomplete-additional-name">additional-name</code></dfn>"
+      <td>Additional names (in some Western cultures, also known as <i>middle names</i>, forenames other than the first name)
+      <td>Free-form text, no newlines
+      <td>John
+     <td><span data-x="Control Group Text">Text</span>
+    <tr>
+      <td colspan=3>"<dfn attr-value
+      for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+      data-x="attr-fe-autocomplete-family-name">family-name</code></dfn>"
+      <td>Family name (in some Western cultures, also known as the <i>last name</i> or <i>surname</i>)
+      <td>Free-form text, no newlines
+      <td>Berners-Lee
+     <td><span data-x="Control Group Text">Text</span>
+    <tr>
+      <td colspan=3>"<dfn attr-value
+      for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+      data-x="attr-fe-autocomplete-honorific-suffix">honorific-suffix</code></dfn>"
+      <td>Suffix (e.g. "Jr.", "B.Sc.", "MBASW", "II")
+      <td>Free-form text, no newlines
+      <td>OM, KBE, FRS, FREng, FRSA
+     <td><span data-x="Control Group Text">Text</span>
+    <tr>
+     <td colspan=4>"<dfn attr-value
+     for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+     data-x="attr-fe-autocomplete-nickname">nickname</code></dfn>"
+     <td>Nickname, screen name, handle: a typically short name used instead of the full name
+     <td>Free-form text, no newlines
+     <td>Tim
+     <td><span data-x="Control Group Text">Text</span>
+    <tr>
+     <td colspan=4>"<dfn attr-value
+     for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+     data-x="attr-fe-autocomplete-organization-title">organization-title</code></dfn>"
+     <td>Job title (e.g. "Software Engineer", "Senior Vice President", "Deputy Managing Director")
+     <td>Free-form text, no newlines
+     <td>Professor
+     <td><span data-x="Control Group Text">Text</span>
+    <tr>
+     <td colspan=4>"<dfn attr-value
+     for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+     data-x="attr-fe-autocomplete-username">username</code></dfn>"
+     <td>A username
+     <td>Free-form text, no newlines
+     <td>timbl
+     <td><span data-x="Control Group Username">Username</span>
+    <tr>
+     <td colspan=4>"<dfn attr-value
+     for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+     data-x="attr-fe-autocomplete-new-password">new-password</code></dfn>"
+     <td>A new password (e.g. when creating an account or changing a password)
+     <td>Free-form text, no newlines
+     <td>GUMFXbadyrS3
+     <td><span data-x="Control Group Password">Password</span>
+    <tr>
+     <td colspan=4>"<dfn attr-value
+     for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+     data-x="attr-fe-autocomplete-current-password">current-password</code></dfn>"
+     <td>The current password for the account identified by the <code data-x="attr-fe-autocomplete-username">username</code> field (e.g. when logging in)
+     <td>Free-form text, no newlines
+     <td>qwerty <!-- http://splashdata.com/press/worstpasswords2013.htm -->
+     <td><span data-x="Control Group Password">Password</span>
+    <tr>
+     <td colspan=4>"<dfn attr-value
+     for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+     data-x="attr-fe-autocomplete-one-time-code">one-time-code</code></dfn>"
+     <td>One-time code used for verifying user identity
+     <td>Free-form text, no newlines
+     <td>123456
+     <td><span data-x="Control Group Password">Password</span>
+   <tbody>
+    <tr>
+     <td colspan=4>"<dfn attr-value
+     for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+     data-x="attr-fe-autocomplete-organization">organization</code></dfn>"
+     <td>Company name corresponding to the person, address, or contact information in the other fields associated with this field
+     <td>Free-form text, no newlines
+     <td>World Wide Web Consortium
+     <td><span data-x="Control Group Text">Text</span>
+    <tr>
+     <td colspan=4>"<dfn attr-value
+     for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+     data-x="attr-fe-autocomplete-street-address">street-address</code></dfn>"
+     <td>Street address (multiple lines, newlines preserved)
+     <td>Free-form text
+     <td>32 Vassar Street<br>
+MIT Room 32-G524
+     <td><span data-x="Control Group Multiline">Multiline</span>
+    <tr>
+     <td rowspan=3 class="non-rectangular-cell-indentation">
+      <td colspan=3>"<dfn attr-value
+      for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+      data-x="attr-fe-autocomplete-address-line1">address-line1</code></dfn>"
+      <td rowspan=3>Street address (one line per field)
+      <td>Free-form text, no newlines
+      <td>32 Vassar Street
+     <td><span data-x="Control Group Text">Text</span>
+    <tr>
+      <td colspan=3>"<dfn attr-value
+      for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+      data-x="attr-fe-autocomplete-address-line2">address-line2</code></dfn>"
+      <td>Free-form text, no newlines
+      <td>MIT Room 32-G524
+     <td><span data-x="Control Group Text">Text</span>
+    <tr>
+      <td colspan=3>"<dfn attr-value
+      for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+      data-x="attr-fe-autocomplete-address-line3">address-line3</code></dfn>"
+      <td>Free-form text, no newlines
+      <td>
+     <td><span data-x="Control Group Text">Text</span>
+    <tr>
+     <td colspan=4>"<dfn attr-value
+     for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+     data-x="attr-fe-autocomplete-address-level4">address-level4</code></dfn>"
+     <td>The most fine-grained <a href="#more-on-address-levels">administrative level</a>, in
+     addresses with four administrative levels
+     <td>Free-form text, no newlines
+     <td>
+     <td><span data-x="Control Group Text">Text</span>
+    <tr>
+     <td colspan=4>"<dfn attr-value
+     for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+     data-x="attr-fe-autocomplete-address-level3">address-level3</code></dfn>"
+     <td>The <a href="#more-on-address-levels">third administrative level</a>, in addresses with
+     three or more administrative levels
+     <td>Free-form text, no newlines
+     <td>
+     <td><span data-x="Control Group Text">Text</span>
+    <tr>
+     <td colspan=4>"<dfn attr-value
+     for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+     data-x="attr-fe-autocomplete-address-level2">address-level2</code></dfn>"
+     <td>The <a href="#more-on-address-levels">second administrative level</a>, in addresses with
+     two or more administrative levels; in the countries with two administrative levels, this would
+     typically be the city, town, village, or other locality within which the relevant street
+     address is found
+     <td>Free-form text, no newlines
+     <td>Cambridge
+     <td><span data-x="Control Group Text">Text</span>
+    <tr>
+     <td colspan=4>"<dfn attr-value
+     for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+     data-x="attr-fe-autocomplete-address-level1">address-level1</code></dfn>"
+     <td>The broadest <a href="#more-on-address-levels">administrative level</a> in the address,
+     i.e. the province within which the locality is found; for example, in the US, this would be the
+     state; in Switzerland it would be the canton; in the UK, the post town
+     <td>Free-form text, no newlines
+     <td>MA
+     <td><span data-x="Control Group Text">Text</span>
+    <tr>
+     <td colspan=4>"<dfn attr-value
+     for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+     data-x="attr-fe-autocomplete-country">country</code></dfn>"
+     <td>Country code
+     <td>Valid <a href="https://www.iso.org/iso-3166-country-codes.html">ISO 3166-1-alpha-2 country code</a> <ref>ISO3166</ref>
+     <td>US
+     <td><span data-x="Control Group Text">Text</span>
+    <tr>
+     <td colspan=4>"<dfn attr-value
+     for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+     data-x="attr-fe-autocomplete-country-name">country-name</code></dfn>"
+     <td>Country name
+     <td>Free-form text, no newlines; <a href="#autofill-country">derived from <code data-x="attr-fe-autocomplete-country">country</code> in some cases</a>
+     <td>US
+     <td><span data-x="Control Group Text">Text</span>
+    <tr>
+     <td colspan=4>"<dfn attr-value
+     for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+     data-x="attr-fe-autocomplete-postal-code">postal-code</code></dfn>"
+     <td>Postal code, post code, ZIP code, CEDEX code (if CEDEX, append "CEDEX", and the <i lang="fr">arrondissement</i>, if relevant, to the <code data-x="attr-fe-autocomplete-address-level2">address-level2</code> field)
+     <td>Free-form text, no newlines
+     <td>02139
+     <td><span data-x="Control Group Text">Text</span>
+   <tbody>
+    <tr>
+     <td colspan=4>"<dfn attr-value
+     for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+     data-x="attr-fe-autocomplete-cc-name">cc-name</code></dfn>"
+     <td>Full name as given on the payment instrument
+     <td>Free-form text, no newlines
+     <td>Tim Berners-Lee
+     <td><span data-x="Control Group Text">Text</span>
+    <tr>
+     <td rowspan=3 class="non-rectangular-cell-indentation">
+      <td colspan=3>"<dfn attr-value
+      for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+      data-x="attr-fe-autocomplete-cc-given-name">cc-given-name</code></dfn>"
+      <td>Given name as given on the payment instrument (in some Western cultures, also known as the <i>first name</i>)
+      <td>Free-form text, no newlines
+      <td>Tim
+     <td><span data-x="Control Group Text">Text</span>
+    <tr>
+      <td colspan=3>"<dfn attr-value
+      for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+      data-x="attr-fe-autocomplete-cc-additional-name">cc-additional-name</code></dfn>"
+      <td>Additional names given on the payment instrument (in some Western cultures, also known as <i>middle names</i>, forenames other than the first name)
+      <td>Free-form text, no newlines
+      <td>
+     <td><span data-x="Control Group Text">Text</span>
+    <tr>
+      <td colspan=3>"<dfn attr-value
+      for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+      data-x="attr-fe-autocomplete-cc-family-name">cc-family-name</code></dfn>"
+      <td>Family name given on the payment instrument (in some Western cultures, also known as the <i>last name</i> or <i>surname</i>)
+      <td>Free-form text, no newlines
+      <td>Berners-Lee
+     <td><span data-x="Control Group Text">Text</span>
+    <tr>
+     <td colspan=4>"<dfn attr-value
+     for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+     data-x="attr-fe-autocomplete-cc-number">cc-number</code></dfn>"
+     <td>Code identifying the payment instrument (e.g. the credit card number)
+     <td><span>ASCII digits</span>
+     <td>4114360123456785 <!-- http://www.auricsystems.com/support-center/sample-credit-card-numbers -->
+     <td><span data-x="Control Group Text">Text</span>
+    <tr>
+     <td colspan=4>"<dfn attr-value
+     for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+     data-x="attr-fe-autocomplete-cc-exp">cc-exp</code></dfn>"
+     <td>Expiration date of the payment instrument
+     <td><span>Valid month string</span>
+     <td>2014-12
+     <td><span data-x="Control Group Month">Month</span>
+    <tr>
+     <td rowspan=2 class="non-rectangular-cell-indentation">
+      <td colspan=3>"<dfn attr-value
+      for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+      data-x="attr-fe-autocomplete-cc-exp-month">cc-exp-month</code></dfn>"
+      <td>Month component of the expiration date of the payment instrument
+      <td><span>Valid integer</span> in the range 1..12
+      <td>12
+      <td><span data-x="Control Group Numeric">Numeric</span>
+    <tr>
+      <td colspan=3>"<dfn attr-value
+      for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+      data-x="attr-fe-autocomplete-cc-exp-year">cc-exp-year</code></dfn>"
+      <td>Year component of the expiration date of the payment instrument
+      <td><span>Valid integer</span> greater than zero
+      <td>2014
+      <td><span data-x="Control Group Numeric">Numeric</span>
+    <tr>
+     <td colspan=4>"<dfn attr-value
+     for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+     data-x="attr-fe-autocomplete-cc-csc">cc-csc</code></dfn>"
+     <td>Security code for the payment instrument (also known as the card security code (CSC), card validation code (CVC), card verification value (CVV), signature panel code (SPC), credit card ID (CCID), etc.)
+     <td><span>ASCII digits</span>
+     <td>419
+     <td><span data-x="Control Group Text">Text</span>
+    <tr>
+     <td colspan=4>"<dfn attr-value
+     for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+     data-x="attr-fe-autocomplete-cc-type">cc-type</code></dfn>"
+     <td>Type of payment instrument
+     <td>Free-form text, no newlines
+     <td>Visa
+     <td><span data-x="Control Group Text">Text</span>
+   <tbody>
+    <tr>
+     <td colspan=4>"<dfn attr-value
+     for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+     data-x="attr-fe-autocomplete-transaction-currency">transaction-currency</code></dfn>"
+     <td>The currency that the user would prefer the transaction to use
+     <td>ISO 4217 currency code <ref>ISO4217</ref>
+     <td>GBP
+     <td><span data-x="Control Group Text">Text</span>
+    <tr>
+     <td colspan=4>"<dfn attr-value
+     for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+     data-x="attr-fe-autocomplete-transaction-amount">transaction-amount</code></dfn>"
+     <td>The amount that the user would like for the transaction (e.g. when entering a bid or sale price)
+     <td><span>Valid floating-point number</span>
+     <td>401.00
+     <td><span data-x="Control Group Numeric">Numeric</span>
+   <tbody>
+    <tr>
+     <td colspan=4>"<dfn attr-value
+     for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+     data-x="attr-fe-autocomplete-language">language</code></dfn>"
+     <td>Preferred language
+     <td>Valid BCP 47 language tag <ref>BCP47</ref>
+     <td>en
+     <td><span data-x="Control Group Text">Text</span>
+    <tr>
+     <td colspan=4>"<dfn attr-value
+     for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+     data-x="attr-fe-autocomplete-bday">bday</code></dfn>"
+     <td>Birthday
+     <td><span>Valid date string</span>
+     <td>1955-06-08
+     <td><span data-x="Control Group Date">Date</span>
+    <tr>
+     <td rowspan=3 class="non-rectangular-cell-indentation">
+      <td colspan=3>"<dfn attr-value
+      for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+      data-x="attr-fe-autocomplete-bday-day">bday-day</code></dfn>"
+      <td>Day component of birthday
+      <td><span>Valid integer</span> in the range 1..31
+      <td>8
+      <td><span data-x="Control Group Numeric">Numeric</span>
+    <tr>
+      <td colspan=3>"<dfn attr-value
+      for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+      data-x="attr-fe-autocomplete-bday-month">bday-month</code></dfn>"
+      <td>Month component of birthday
+      <td><span>Valid integer</span> in the range 1..12
+      <td>6
+      <td><span data-x="Control Group Numeric">Numeric</span>
+    <tr>
+      <td colspan=3>"<dfn attr-value
+      for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+      data-x="attr-fe-autocomplete-bday-year">bday-year</code></dfn>"
+      <td>Year component of birthday
+      <td><span>Valid integer</span> greater than zero
+      <td>1955
+      <td><span data-x="Control Group Numeric">Numeric</span>
+    <tr>
+     <td colspan=4>"<dfn attr-value
+     for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+     data-x="attr-fe-autocomplete-sex">sex</code></dfn>"
+     <td>Gender identity (e.g. Female, Fa'afafine)
+     <td>Free-form text, no newlines
+     <td>Male
+     <td><span data-x="Control Group Text">Text</span>
+    <tr>
+     <td colspan=4>"<dfn attr-value
+     for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+     data-x="attr-fe-autocomplete-url">url</code></dfn>"
+     <td>Home page or other web page corresponding to the company, person, address, or contact information in the other fields associated with this field
+     <td><span>Valid URL string</span>
+     <td>https://www.w3.org/People/Berners-Lee/
+     <td><span data-x="Control Group URL">URL</span>
+    <tr>
+     <td colspan=4>"<dfn attr-value
+     for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+     data-x="attr-fe-autocomplete-photo">photo</code></dfn>"
+     <td>Photograph, icon, or other image corresponding to the company, person, address, or contact information in the other fields associated with this field
+     <td><!--File or--> <span>Valid URL string</span>
+     <td>https://www.w3.org/Press/Stock/Berners-Lee/2001-europaeum-eighth.jpg
+     <td><!--<span data-x="Control Group File">File</span>--> <span data-x="Control Group URL">URL</span>
+   <tbody>
+    <tr>
+     <td colspan=4>"<dfn attr-value
+     for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+     data-x="attr-fe-autocomplete-tel">tel</code></dfn>"
+     <td>Full telephone number, including country code
+     <td><span>ASCII digits</span> and U+0020 SPACE characters, prefixed by a U+002B PLUS SIGN character (+)
+     <td>+1 617 253 5702
+     <td><span data-x="Control Group Tel">Tel</span>
+    <tr>
+     <td rowspan=6 class="non-rectangular-cell-indentation">
+      <td colspan=3>"<dfn attr-value
+      for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+      data-x="attr-fe-autocomplete-tel-country-code">tel-country-code</code></dfn>"
+      <td>Country code component of the telephone number
+      <td><span>ASCII digits</span> prefixed by a U+002B PLUS SIGN character (+)
+      <td>+1
+      <td><span data-x="Control Group Text">Text</span>
+    <tr>
+      <td colspan=3>"<dfn attr-value
+      for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+      data-x="attr-fe-autocomplete-tel-national">tel-national</code></dfn>"
+      <td>Telephone number without the county code component, with a country-internal prefix applied if applicable
+      <td><span>ASCII digits</span> and U+0020 SPACE characters
+      <td>617 253 5702
+      <td><span data-x="Control Group Text">Text</span>
+    <tr>
+      <td rowspan=4 class="non-rectangular-cell-indentation">
+       <td colspan=2>"<dfn attr-value
+       for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+       data-x="attr-fe-autocomplete-tel-area-code">tel-area-code</code></dfn>"
+       <td>Area code component of the telephone number, with a country-internal prefix applied if applicable
+       <td><span>ASCII digits</span>
+       <td>617
+       <td><span data-x="Control Group Text">Text</span>
+    <tr>
+       <td colspan=2>"<dfn attr-value
+       for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+       data-x="attr-fe-autocomplete-tel-local">tel-local</code></dfn>"
+       <td>Telephone number without the country code and area code components
+       <td><span>ASCII digits</span>
+       <td>2535702
+       <td><span data-x="Control Group Text">Text</span>
+    <tr>
+       <td rowspan=2 class="non-rectangular-cell-indentation">
+        <td>"<dfn attr-value
+        for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+        data-x="attr-fe-autocomplete-tel-local-prefix">tel-local-prefix</code></dfn>"
+        <td>First part of the component of the telephone number that follows the area code, when that component is split into two components
+        <td><span>ASCII digits</span>
+        <td>253
+        <td><span data-x="Control Group Text">Text</span>
+    <tr>
+        <td>"<dfn attr-value
+        for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+        data-x="attr-fe-autocomplete-tel-local-suffix">tel-local-suffix</code></dfn>"
+        <td>Second part of the component of the telephone number that follows the area code, when that component is split into two components
+        <td><span>ASCII digits</span>
+        <td>5702
+        <td><span data-x="Control Group Text">Text</span>
+    <tr>
+     <td colspan=4>"<dfn attr-value
+     for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+     data-x="attr-fe-autocomplete-tel-extension">tel-extension</code></dfn>"
+     <td>Telephone number internal extension code
+     <td><span>ASCII digits</span>
+     <td>1000
+     <td><span data-x="Control Group Text">Text</span>
+    <tr>
+     <td colspan=4>"<dfn attr-value
+     for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+     data-x="attr-fe-autocomplete-email">email</code></dfn>"
+     <td>Email address
+     <td><span>Valid email address</span>
+     <td>timbl@w3.org
+     <td><span data-x="Control Group Username">Username</span>
+    <tr>
+     <td colspan=4>"<dfn attr-value
+     for="button/autocomplete,fieldset/autocomplete,input/autocomplete,object/autocomplete,output/autocomplete,select/autocomplete,textarea/autocomplete"><code
+     data-x="attr-fe-autocomplete-impp">impp</code></dfn>"
+     <td>URL representing an instant messaging protocol endpoint (for example, "<code data-x="">aim:goim?screenname=example</code>" or "<code data-x="">xmpp:fred@example.net</code>")
+     <td><span>Valid URL string</span>
+     <td>irc://example.org/timbl,isuser
+     <td><span data-x="Control Group URL">URL</span>
+  </table>
+
+  <p>The groups correspond to controls as follows:</p>
+
+  <dl>
+   <dt><dfn data-x="Control Group Text">Text</dfn>
+
+   <dd><code>input</code> elements with a <code data-x="attr-input-type">type</code> attribute in the <span data-x="attr-input-type-hidden">Hidden</span> state
+   <dd><code>input</code> elements with a <code data-x="attr-input-type">type</code> attribute in the <span data-x="attr-input-type-text">Text</span> state
+   <dd><code>input</code> elements with a <code data-x="attr-input-type">type</code> attribute in the <span data-x="attr-input-type-search">Search</span> state
+   <dd><code>textarea</code> elements
+   <dd><code>select</code> elements
+
+   <dt><dfn data-x="Control Group Multiline">Multiline</dfn>
+
+   <dd><code>input</code> elements with a <code data-x="attr-input-type">type</code> attribute in the <span data-x="attr-input-type-hidden">Hidden</span> state
+   <dd><code>textarea</code> elements
+   <dd><code>select</code> elements
+
+   <dt><dfn data-x="Control Group Password">Password</dfn>
+
+   <dd><code>input</code> elements with a <code data-x="attr-input-type">type</code> attribute in the <span data-x="attr-input-type-hidden">Hidden</span> state
+   <dd><code>input</code> elements with a <code data-x="attr-input-type">type</code> attribute in the <span data-x="attr-input-type-text">Text</span> state
+   <dd><code>input</code> elements with a <code data-x="attr-input-type">type</code> attribute in the <span data-x="attr-input-type-search">Search</span> state
+   <dd><code>input</code> elements with a <code data-x="attr-input-type">type</code> attribute in the <span data-x="attr-input-type-password">Password</span> state
+   <dd><code>textarea</code> elements
+   <dd><code>select</code> elements
+
+   <dt><dfn data-x="Control Group URL">URL</dfn>
+
+   <dd><code>input</code> elements with a <code data-x="attr-input-type">type</code> attribute in the <span data-x="attr-input-type-hidden">Hidden</span> state
+   <dd><code>input</code> elements with a <code data-x="attr-input-type">type</code> attribute in the <span data-x="attr-input-type-text">Text</span> state
+   <dd><code>input</code> elements with a <code data-x="attr-input-type">type</code> attribute in the <span data-x="attr-input-type-search">Search</span> state
+   <dd><code>input</code> elements with a <code data-x="attr-input-type">type</code> attribute in the <span data-x="attr-input-type-url">URL</span> state
+   <dd><code>textarea</code> elements
+   <dd><code>select</code> elements
+
+   <dt><dfn data-x="Control Group Username">Username</dfn><span id="control-group-e-mail"></span>
+
+   <dd><code>input</code> elements with a <code data-x="attr-input-type">type</code> attribute in the <span data-x="attr-input-type-hidden">Hidden</span> state
+   <dd><code>input</code> elements with a <code data-x="attr-input-type">type</code> attribute in the <span data-x="attr-input-type-text">Text</span> state
+   <dd><code>input</code> elements with a <code data-x="attr-input-type">type</code> attribute in the <span data-x="attr-input-type-search">Search</span> state
+   <dd><code>input</code> elements with a <code data-x="attr-input-type">type</code> attribute in the <span data-x="attr-input-type-email">Email</span> state
+   <dd><code>textarea</code> elements
+   <dd><code>select</code> elements
+
+   <dt><dfn data-x="Control Group Tel">Tel</dfn>
+
+   <dd><code>input</code> elements with a <code data-x="attr-input-type">type</code> attribute in the <span data-x="attr-input-type-hidden">Hidden</span> state
+   <dd><code>input</code> elements with a <code data-x="attr-input-type">type</code> attribute in the <span data-x="attr-input-type-text">Text</span> state
+   <dd><code>input</code> elements with a <code data-x="attr-input-type">type</code> attribute in the <span data-x="attr-input-type-search">Search</span> state
+   <dd><code>input</code> elements with a <code data-x="attr-input-type">type</code> attribute in the <span data-x="attr-input-type-tel">Telephone</span> state
+   <dd><code>textarea</code> elements
+   <dd><code>select</code> elements
+
+   <dt><dfn data-x="Control Group Numeric">Numeric</dfn>
+
+   <dd><code>input</code> elements with a <code data-x="attr-input-type">type</code> attribute in the <span data-x="attr-input-type-hidden">Hidden</span> state
+   <dd><code>input</code> elements with a <code data-x="attr-input-type">type</code> attribute in the <span data-x="attr-input-type-text">Text</span> state
+   <dd><code>input</code> elements with a <code data-x="attr-input-type">type</code> attribute in the <span data-x="attr-input-type-search">Search</span> state
+   <dd><code>input</code> elements with a <code data-x="attr-input-type">type</code> attribute in the <span data-x="attr-input-type-number">Number</span> state
+   <dd><code>textarea</code> elements
+   <dd><code>select</code> elements
+
+   <dt><dfn data-x="Control Group Month">Month</dfn>
+
+   <dd><code>input</code> elements with a <code data-x="attr-input-type">type</code> attribute in the <span data-x="attr-input-type-hidden">Hidden</span> state
+   <dd><code>input</code> elements with a <code data-x="attr-input-type">type</code> attribute in the <span data-x="attr-input-type-text">Text</span> state
+   <dd><code>input</code> elements with a <code data-x="attr-input-type">type</code> attribute in the <span data-x="attr-input-type-search">Search</span> state
+   <dd><code>input</code> elements with a <code data-x="attr-input-type">type</code> attribute in the <span data-x="attr-input-type-month">Month</span> state
+   <dd><code>textarea</code> elements
+   <dd><code>select</code> elements
+
+   <dt><dfn data-x="Control Group Date">Date</dfn>
+
+   <dd><code>input</code> elements with a <code data-x="attr-input-type">type</code> attribute in the <span data-x="attr-input-type-hidden">Hidden</span> state
+   <dd><code>input</code> elements with a <code data-x="attr-input-type">type</code> attribute in the <span data-x="attr-input-type-text">Text</span> state
+   <dd><code>input</code> elements with a <code data-x="attr-input-type">type</code> attribute in the <span data-x="attr-input-type-search">Search</span> state
+   <dd><code>input</code> elements with a <code data-x="attr-input-type">type</code> attribute in the <span data-x="attr-input-type-date">Date</span> state
+   <dd><code>textarea</code> elements
+   <dd><code>select</code> elements
+
+<!--
+   <dt><dfn data-x="Control Group File">File</dfn>
+
+   <dd><code>input</code> elements with a <code data-x="attr-input-type">type</code> attribute in the <span data-x="attr-input-type-hidden">Hidden</span> state
+   <dd><code>input</code> elements with a <code data-x="attr-input-type">type</code> attribute in the <span data-x="attr-input-type-text">Text</span> state
+   <dd><code>input</code> elements with a <code data-x="attr-input-type">type</code> attribute in the <span data-x="attr-input-type-search">Search</span> state
+   <dd><code>input</code> elements with a <code data-x="attr-input-type">type</code> attribute in the <span data-x="attr-input-type-url">URL</span> state
+   <dd><code>input</code> elements with a <code data-x="attr-input-type">type</code> attribute in the <span data-x="attr-input-type-file">File</span> state
+   <dd><code>textarea</code> elements
+   <dd><code>select</code> elements
+-->
+  </dl>
+
+  <p id="more-on-address-levels"><strong>Address levels</strong>: The "<code
+  data-x="attr-fe-autocomplete-address-level1">address-level1</code>" &ndash; "<code
+  data-x="attr-fe-autocomplete-address-level4">address-level4</code>" fields are used to describe
+  the locality of the street address. Different locales have different numbers of levels. For
+  example, the US uses two levels (state and town), the UK uses one or two depending on the address
+  (the post town, and in some cases the locality), and China can use three (province, city,
+  district). The "<code data-x="attr-fe-autocomplete-address-level1">address-level1</code>" field
+  represents the widest administrative division. Different locales order the fields in different
+  ways; for example, in the US the town (level 2) precedes the state (level 1); while in Japan the
+  prefecture (level 1) precedes the city (level 2) which precedes the district (level 3). Authors
+  are encouraged to provide forms that are presented in a way that matches the country's conventions
+  (hiding, showing, and rearranging fields accordingly as the user changes the country).</p>
+
+
+  <div w-nodev>
+
+  <h6 id="autofill-processing-model"><span id="processing-model-3"></span>Processing model</h6>
+
+  <p>Each <code>input</code> element to which the <code data-x="attr-fe-autocomplete">autocomplete</code> attribute <span data-x="concept-input-apply">applies</span>, each <code>select</code> element, and each <code>textarea</code> element, has an
+  <dfn>autofill hint set</dfn>, an <dfn>autofill scope</dfn>, an <dfn>autofill field name</dfn>, a
+  <dfn>non-autofill credential type</dfn>, and an <dfn>IDL-exposed autofill value</dfn>.</p>
+
+  <p>The <span>autofill field name</span> specifies the specific kind of data expected in the field,
+  e.g. "<code data-x="attr-fe-autocomplete-street-address">street-address</code>" or "<code
+  data-x="attr-fe-autocomplete-cc-exp">cc-exp</code>".</p>
+
+  <p>The <span>autofill hint set</span> identifies what address or contact information type the user
+  agent is to look at, e.g. "<code data-x="attr-fe-autocomplete-shipping">shipping</code> <code
+  data-x="attr-fe-autocomplete-fax">fax</code>" or "<code
+  data-x="attr-fe-autocomplete-billing">billing</code>".</p>
+
+  <p>The <span>non-autofill credential type</span> identifies a type of
+  <span data-x="credman-credential">credential</span> that may be offered by the user agent when the
+  user interacts with the field alongside other <span>autofill field</span> values. If this value is
+  "<code data-x="">webauthn</code>" instead of null, selecting a credential of that type will resolve
+  a pending <code data-x="conditional mediation">conditional</code> mediation
+  <code>navigator.credentials.get()</code> request, instead of autofilling the field.</p>
+
+  <div class="example">
+   <p>For example, a sign-in page could instruct the user agent to either autofill a saved password,
+   or show a <span>public key credential</span> that will resolve a pending
+   <code>navigator.credentials.get()</code> request. A user can select either to sign-in.</p>
+
+   <pre><code class="html">&lt;input name=password type=password autocomplete="current-password webauthn"></code></pre>
+  </div>
+
+  <p>The <span>autofill scope</span> identifies the group of fields whose information concerns the
+  same subject, and consists of the <span>autofill hint set</span> with, if
+  applicable, the "<code data-x="">section-*</code>" prefix, e.g. "<code data-x="">billing</code>",
+  "<code data-x="">section-parent shipping</code>", or "<code data-x="">section-child shipping
+  home</code>".</p>
+
+  <div algorithm>
+  <p>These values are defined as the result of running the following algorithm:</p>
+
+  <ol>
+   <li><p>If the element has no <code data-x="attr-fe-autocomplete">autocomplete</code> attribute,
+   then jump to the step labeled <i>default</i>.</p></li>
+
+   <li><p>Let <var>tokens</var> be the result of <span data-x="split a string on ASCII
+   whitespace">splitting the attribute's value on ASCII whitespace</span>.</p></li>
+
+   <li><p>If <var>tokens</var> is empty, then jump to the step labeled <i>default</i>.</p></li>
+
+   <li><p>Let <var>index</var> be the index of the last token in <var>tokens</var>.</p></li>
+
+   <li><p>Let <var>field</var> be the <var>index</var>th token in <var>tokens</var>.</p></li>
+
+   <li><p>Set the <var>category</var>, <var>maximum tokens</var> pair to the result of <span
+   data-x="determine a field's category">determining a field's category</span> given
+   <var>field</var>.</p></li>
+
+   <li><p>If <var>category</var> is null, then jump to the step labeled <i>default</i>.</p></li>
+
+   <li><p>If the number of tokens in <var>tokens</var> is greater than <var>maximum tokens</var>,
+   then jump to the step labeled <i>default</i>.</p></li>
+
+   <li><p>If <var>category</var> is Off or Automatic but the element's <code
+   data-x="attr-fe-autocomplete">autocomplete</code> attribute is wearing the <span>autofill anchor
+   mantle</span>, then jump to the step labeled <i>default</i>.</p></li>
+
+   <li><p>If <var>category</var> is Off, set the element's <span>autofill field name</span>
+   to the string "<code data-x="">off</code>", set its <span>autofill hint set</span> to empty, and
+   set its <span>IDL-exposed autofill value</span> to the string "<code data-x="">off</code>". Then,
+   return.</p>
+
+   <li><p>If <var>category</var> is Automatic, set the element's <span>autofill field
+   name</span> to the string "<code data-x="">on</code>", set its <span>autofill hint set</span> to
+   empty, and set its <span>IDL-exposed autofill value</span> to the string "<code
+   data-x="">on</code>". Then, return.</p>
+
+   <li><p>Let <var>scope tokens</var> be an empty list.</p></li>
+
+   <li><p>Let <var>hint tokens</var> be an empty set.</p></li>
+
+   <li><p>Let <var>credential type</var> be null.</p></li>
+
+   <li><p>Let <var>IDL value</var> have the same value as <var>field</var>.</p></li>
+
+   <li>
+    <p>If <var>category</var> is Credential and the <var>index</var>th token in <var>tokens</var> is
+    an <span>ASCII case-insensitive</span> match for "<code
+    data-x="attr-fe-autocomplete-webauthn">webauthn</code>", then run the substeps that follow:</p>
+    <ol>
+     <li><p>Set <var>credential type</var> to "<code data-x="">webauthn</code>".</p></li>
+
+     <li><p>If the <var>index</var>th token in <var>tokens</var> is the first entry,
+     then skip to the step labeled <i>done</i>.</p></li>
+
+     <li><p>Decrement <var>index</var> by one.</p></li>
+
+     <li><p>Set the <var>category</var>, <var>maximum tokens</var> pair to the result of <span
+     data-x="determine a field's category">determining a field's category</span> given
+     the <var>index</var>th token in <var>tokens</var>.</p></li>
+
+     <li><p>If <var>category</var> is not Normal and <var>category</var> is not Contact, then jump to
+     the step labeled <i>default</i>.</p></li>
+
+     <li><p>If <var>index</var> is greater than <var>maximum tokens</var> minus one (i.e. if the
+     number of remaining tokens is greater than <var>maximum tokens</var>), then jump to the step
+     labeled <i>default</i>.</p></li>
+
+     <li><p>Set <var>IDL value</var> to the concatenation of the <var>index</var>th token in
+     <var>tokens</var>, a U+0020 SPACE character, and the previous value of <var>IDL
+     value</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>If the <var>index</var>th token in <var>tokens</var> is the first entry,
+   then skip to the step labeled <i>done</i>.</p></li>
+
+   <li><p>Decrement <var>index</var> by one.</p></li>
+
+   <li>
+    <p>If <var>category</var> is Contact and the <var>index</var>th token in <var>tokens</var> is an <span>ASCII case-insensitive</span> match for one of the strings in
+    the following list:</p>
+
+    <ul class="brief">
+     <li>"<code data-x="attr-fe-autocomplete-home">home</code>"
+     <li>"<code data-x="attr-fe-autocomplete-work">work</code>"
+     <li>"<code data-x="attr-fe-autocomplete-mobile">mobile</code>"
+     <li>"<code data-x="attr-fe-autocomplete-fax">fax</code>"
+     <li>"<code data-x="attr-fe-autocomplete-pager">pager</code>"
+    </ul>
+
+    <p>then:</p>
+
+    <ol>
+     <li><p>Let <var>contact</var> be the matching string from the list above.</p></li>
+
+     <li><p>Insert <var>contact</var> at the start of <var>scope
+     tokens</var>.</p></li>
+
+     <li><p>Add <var>contact</var> to <var>hint tokens</var>.</p></li>
+
+     <li><p>Let <var>IDL value</var> be the concatenation of <var>contact</var>, a
+     U+0020 SPACE character, and the previous value of <var>IDL value</var>.</p></li>
+
+     <li><p>If the <var>index</var>th entry in <var>tokens</var> is the first
+     entry, then skip to the step labeled <i>done</i>.</p></li>
+
+     <li><p>Decrement <var>index</var> by one.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p>If the <var>index</var>th token in <var>tokens</var> is an <span>ASCII
+    case-insensitive</span> match for one of the strings in the following list:</p>
+
+    <ul class="brief">
+     <li>"<code data-x="attr-fe-autocomplete-shipping">shipping</code>"
+     <li>"<code data-x="attr-fe-autocomplete-billing">billing</code>"
+    </ul>
+
+    <p>then:</p>
+
+    <ol>
+     <li><p>Let <var>mode</var> be the matching string from the list above.</p></li>
+
+     <li><p>Insert <var>mode</var> at the start of <var>scope
+     tokens</var>.</p></li>
+
+     <li><p>Add <var>mode</var> to <var>hint tokens</var>.</p></li>
+
+     <li><p>Let <var>IDL value</var> be the concatenation of <var>mode</var>, a
+     U+0020 SPACE character, and the previous value of <var>IDL value</var>.</p></li>
+
+     <li><p>If the <var>index</var>th entry in <var>tokens</var> is the first
+     entry, then skip to the step labeled <i>done</i>.</p></li>
+
+     <li><p>Decrement <var>index</var> by one.</p></li>
+    </ol>
+   </li>
+
+   <li><p>If the <var>index</var>th entry in <var>tokens</var> is not the first entry, then jump to
+   the step labeled <i>default</i>.</p></li>
+
+   <li><p>If the first eight characters of the <var>index</var>th token in <var>tokens</var> are not
+   an <span>ASCII case-insensitive</span> match for the string "<code
+   data-x="attr-fe-autocomplete-section">section-</code>", then jump to the step labeled
+   <i>default</i>.</p></li>
+
+   <li><p>Let <var>section</var> be the <var>index</var>th token in <var>tokens</var>,
+   <span>converted to ASCII lowercase</span>.</p></li>
+
+   <li><p>Insert <var>section</var> at the start of <var>scope tokens</var>.</p></li>
+
+   <li><p>Let <var>IDL value</var> be the concatenation of <var>section</var>, a U+0020 SPACE
+   character, and the previous value of <var>IDL value</var>.</p></li>
+
+   <li><p><i>Done</i>: Set the element's <span>autofill hint set</span> to <var>hint
+   tokens</var>.</p>
+
+   <li><p>Set the element's <span>non-autofill credential type</span> to <var>credential
+   type</var>.</p></li>
+
+   <li><p>Set the element's <span>autofill scope</span> to <var>scope tokens</var>.</p>
+
+   <li><p>Set the element's <span>autofill field name</span> to <var>field</var>.</p>
+
+   <li><p>Set the element's <span>IDL-exposed autofill value</span> to <var>IDL value</var>.</p>
+
+   <li><p>Return.</p></li>
+
+   <li><p><i>Default</i>: Set the element's <span>IDL-exposed autofill value</span> to the empty
+   string, and its <span>autofill hint set</span> and <span>autofill scope</span> to empty.</p></li>
+
+   <li><p>If the element's <code data-x="attr-fe-autocomplete">autocomplete</code> attribute is
+   wearing the <span>autofill anchor mantle</span>, then set the element's <span>autofill field
+   name</span> to the empty string and return.</p></li>
+
+   <li><p>Let <var>form</var> be the element's <span>form owner</span>, if any, or null
+   otherwise.</p></li>
+
+   <li>
+    <p>If <var>form</var> is not null and <var>form</var>'s <code
+    data-x="attr-form-autocomplete">autocomplete</code> attribute is in the <span
+    data-x="attr-form-autocomplete-off-state">Off</span> state, then set the element's
+    <span>autofill field name</span> to "<code data-x="attr-fe-autocomplete-off">off</code>".</p>
+
+    <p>Otherwise, set the element's <span>autofill field name</span> to "<code
+    data-x="attr-fe-autocomplete-on">on</code>".</p>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>determine a field's category</dfn>, given <var>field</var>:</p>
+
+  <ol>
+   <li>
+    <p>If the <var>field</var> is not an <span>ASCII case-insensitive</span> match for one of the
+    tokens given in the first column of the following table, return the pair (null, null).</p>
+
+    <table>
+     <thead>
+      <tr>
+       <th>Token
+       <th>Maximum number of tokens
+       <th>Category
+     <tbody>
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-off">off</code>"
+       <td>1
+       <td>Off
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-on">on</code>"
+       <td>1
+       <td>Automatic
+     <tbody>
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-name">name</code>"
+       <td>3
+       <td>Normal
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-honorific-prefix">honorific-prefix</code>"
+       <td>3
+       <td>Normal
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-given-name">given-name</code>"
+       <td>3
+       <td>Normal
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-additional-name">additional-name</code>"
+       <td>3
+       <td>Normal
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-family-name">family-name</code>"
+       <td>3
+       <td>Normal
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-honorific-suffix">honorific-suffix</code>"
+       <td>3
+       <td>Normal
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-nickname">nickname</code>"
+       <td>3
+       <td>Normal
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-organization-title">organization-title</code>"
+       <td>3
+       <td>Normal
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-username">username</code>"
+       <td>3
+       <td>Normal
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-new-password">new-password</code>"
+       <td>3
+       <td>Normal
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-current-password">current-password</code>"
+       <td>3
+       <td>Normal
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-one-time-code">one-time-code</code>"
+       <td>3
+       <td>Normal
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-organization">organization</code>"
+       <td>3
+       <td>Normal
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-street-address">street-address</code>"
+       <td>3
+       <td>Normal
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-address-line1">address-line1</code>"
+       <td>3
+       <td>Normal
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-address-line2">address-line2</code>"
+       <td>3
+       <td>Normal
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-address-line3">address-line3</code>"
+       <td>3
+       <td>Normal
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-address-level4">address-level4</code>"
+       <td>3
+       <td>Normal
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-address-level3">address-level3</code>"
+       <td>3
+       <td>Normal
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-address-level2">address-level2</code>"
+       <td>3
+       <td>Normal
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-address-level1">address-level1</code>"
+       <td>3
+       <td>Normal
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-country">country</code>"
+       <td>3
+       <td>Normal
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-country-name">country-name</code>"
+       <td>3
+       <td>Normal
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-postal-code">postal-code</code>"
+       <td>3
+       <td>Normal
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-cc-name">cc-name</code>"
+       <td>3
+       <td>Normal
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-cc-given-name">cc-given-name</code>"
+       <td>3
+       <td>Normal
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-cc-additional-name">cc-additional-name</code>"
+       <td>3
+       <td>Normal
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-cc-family-name">cc-family-name</code>"
+       <td>3
+       <td>Normal
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-cc-number">cc-number</code>"
+       <td>3
+       <td>Normal
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-cc-exp">cc-exp</code>"
+       <td>3
+       <td>Normal
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-cc-exp-month">cc-exp-month</code>"
+       <td>3
+       <td>Normal
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-cc-exp-year">cc-exp-year</code>"
+       <td>3
+       <td>Normal
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-cc-csc">cc-csc</code>"
+       <td>3
+       <td>Normal
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-cc-type">cc-type</code>"
+       <td>3
+       <td>Normal
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-transaction-currency">transaction-currency</code>"
+       <td>3
+       <td>Normal
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-transaction-amount">transaction-amount</code>"
+       <td>3
+       <td>Normal
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-language">language</code>"
+       <td>3
+       <td>Normal
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-bday">bday</code>"
+       <td>3
+       <td>Normal
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-bday-day">bday-day</code>"
+       <td>3
+       <td>Normal
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-bday-month">bday-month</code>"
+       <td>3
+       <td>Normal
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-bday-year">bday-year</code>"
+       <td>3
+       <td>Normal
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-sex">sex</code>"
+       <td>3
+       <td>Normal
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-url">url</code>"
+       <td>3
+       <td>Normal
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-photo">photo</code>"
+       <td>3
+       <td>Normal
+     <tbody>
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-tel">tel</code>"
+       <td>4
+       <td>Contact
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-tel-country-code">tel-country-code</code>"
+       <td>4
+       <td>Contact
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-tel-national">tel-national</code>"
+       <td>4
+       <td>Contact
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-tel-area-code">tel-area-code</code>"
+       <td>4
+       <td>Contact
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-tel-local">tel-local</code>"
+       <td>4
+       <td>Contact
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-tel-local-prefix">tel-local-prefix</code>"
+       <td>4
+       <td>Contact
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-tel-local-suffix">tel-local-suffix</code>"
+       <td>4
+       <td>Contact
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-tel-extension">tel-extension</code>"
+       <td>4
+       <td>Contact
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-email">email</code>"
+       <td>4
+       <td>Contact
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-impp">impp</code>"
+       <td>4
+       <td>Contact
+     <tbody>
+      <tr>
+       <td>"<code data-x="attr-fe-autocomplete-webauthn">webauthn</code>"
+       <td>5
+       <td>Credential
+    </table>
+   </li>
+
+   <li><p>Otherwise, let <var>maximum tokens</var> and <var>category</var> be the values of the
+   cells in the second and third columns of that row respectively.</p></li>
+
+   <li><p>Return the pair (<var>category</var>, <var>maximum tokens</var>).</p></li>
+  </ol>
+  </div>
+
+  <hr>
+
+  <div algorithm>
+  <p>For the purposes of autofill, a <dfn>control's data</dfn> depends on the kind of control:</p>
+
+  <dl>
+   <dt>An <code>input</code> element with its <code data-x="attr-input-type">type</code> attribute
+   in the <span data-x="attr-input-type-email">Email</span> state and with the <code
+   data-x="attr-input-multiple">multiple</code> attribute specified</dt>
+
+   <dd>The element's <span data-x="concept-fe-values">value<em>s</em></span>.</dd>
+
+<!--
+   <dt>An <code>input</code> element with its <code data-x="attr-input-type">type</code> attribute
+   in the <span data-x="attr-input-type-range">Range</span> state and with the <code
+   data-x="attr-input-multiple">multiple</code> attribute specified</dt>
+-->
+   <dt>Any other <code>input</code> element</dt>
+   <dt>A <code>textarea</code> element</dt>
+
+   <dd>The element's <span data-x="concept-fe-value">value</span>.</dd>
+
+   <dt>A <code>select</code> element with its <code data-x="attr-select-multiple">multiple</code>
+   attribute specified</dt>
+
+   <dd>The <code>option</code> elements in the <code>select</code> element's <span
+   data-x="concept-select-option-list">list of options</span> that have their <span
+   data-x="concept-option-selectedness">selectedness</span> set to true.</dd>
+
+   <dt>Any other <code>select</code> element</dt>
+
+   <dd>The <code>option</code> element in the <code>select</code> element's <span
+   data-x="concept-select-option-list">list of options</span> that has its <span
+   data-x="concept-option-selectedness">selectedness</span> set to true.</dd>
+  </dl>
+  </div>
+
+  <hr>
+
+  <p>How to process the <span>autofill hint set</span>, <span>autofill scope</span>, and
+  <span>autofill field name</span> depends on the mantle that the <code
+  data-x="attr-fe-autocomplete">autocomplete</code> attribute is wearing.</p>
+
+  <dl class="switch">
+
+   <dt>When wearing the <span>autofill expectation mantle</span>...
+
+   <dd>
+    <p>When an element's <span>autofill field name</span> is "<code
+    data-x="attr-fe-autocomplete-off">off</code>", the user agent should not remember the <span>control's
+    data</span>, and should not offer past values to the user.</p>
+
+    <p class="note">In addition, when an element's <span>autofill field name</span> is "<code
+    data-x="attr-fe-autocomplete-off">off</code>", <a href="#history-autocomplete">values are
+    reset</a> when <span data-x="reactivate a document">reactivating a document</span>.</p>
+
+    <div class="example">
+
+     <p>Banks frequently do not want UAs to prefill login information:</p>
+
+     <pre><code class="html">&lt;p>&lt;label>Account: &lt;input type="text" name="ac" autocomplete="off">&lt;/label>&lt;/p>
+&lt;p>&lt;label>PIN: &lt;input type="password" name="pin" autocomplete="off">&lt;/label>&lt;/p></code></pre>
+
+    </div>
+
+    <p>When an element's <span>autofill field name</span> is <em>not</em> "<code
+    data-x="attr-fe-autocomplete-off">off</code>", the user agent may store the <span>control's
+    data</span>, and may offer previously stored values to the user.</p>
+
+    <div class="example">
+
+     <p>For example, suppose a user visits a page with this control:</p>
+
+     <pre><code class="html">&lt;select name="country">
+ &lt;option>Afghanistan
+ &lt;option>Albania
+ &lt;option>Algeria
+ &lt;option>Andorra
+ &lt;option>Angola
+ &lt;option>Antigua and Barbuda
+ &lt;option>Argentina
+ &lt;option>Armenia
+ &lt;!-- <em>...</em> -->
+ &lt;option>Yemen
+ &lt;option>Zambia
+ &lt;option>Zimbabwe
+&lt;/select></code></pre>
+
+     <p>This might render as follows:</p>
+
+     <p><img loading="lazy" src="/images/select-country-1.png" width="232" height="172" alt="A drop-down control with a long alphabetical list of countries."></p>
+
+     <p>Suppose that on the first visit to this page, the user selects "Zambia". On the second visit,
+     the user agent could duplicate the entry for Zambia at the top of the list, so that the interface
+     instead looks like this:</p>
+
+     <p><img loading="lazy" src="/images/select-country-2.png" width="232" height="172" alt="The same drop-down control with the alphabetical list of countries, but with Zambia as an entry at the top."></p>
+
+    </div>
+
+    <p>When the <span>autofill field name</span> is "<code
+    data-x="attr-fe-autocomplete-on">on</code>", the user agent should attempt to use heuristics to
+    determine the most appropriate values to offer the user, e.g. based on the element's <code
+    data-x="attr-fe-name">name</code> value, the position of the element in its <span>tree</span>,
+    what other fields exist in the form, and so forth.</p>
+
+    <p>When the <span>autofill field name</span> is one of the names of the <span data-x="autofill
+    field">autofill fields</span> described above, the user agent should provide suggestions that
+    match the meaning of the field name as given in the table earlier in this section. The
+    <span>autofill hint set</span> should be used to select amongst multiple possible suggestions.</p>
+
+    <p class="example">For example, if a user once entered one address into fields that used the
+    "<code data-x="attr-fe-autocomplete-shipping">shipping</code>" keyword, and another address into
+    fields that used the "<code data-x="attr-fe-autocomplete-billing">billing</code>" keyword, then in
+    subsequent forms only the first address would be suggested for form controls whose <span>autofill
+    hint set</span> contains the keyword "<code
+    data-x="attr-fe-autocomplete-shipping">shipping</code>". Both addresses might be suggested,
+    however, for address-related form controls whose <span>autofill hint set</span> does not contain
+    either keyword.</p>
+   </dd>
+
+   <dt>When wearing the <span>autofill anchor mantle</span>...
+
+   <dd>
+    <p>When the <span>autofill field name</span> is not the empty string, then the user agent must
+    act as if the user had specified the <span>control's data</span> for the given <span>autofill
+    hint set</span>, <span>autofill scope</span>, and <span>autofill field name</span>
+    combination.</p>
+   </dd>
+  </dl>
+
+  <p>When the user agent <dfn data-x="concept-fe-autofill">autofills form controls</dfn>, elements
+  with the same <span>form owner</span> and the same <span>autofill scope</span> must use data
+  relating to the same person, address, payment instrument, and contact details. <span
+  id="autofill-country" data-x="">When a user agent autofills "<code
+  data-x="attr-fe-autocomplete-country">country</code>" and "<code
+  data-x="attr-fe-autocomplete-country-name">country-name</code>" fields with the same <span>form
+  owner</span> and <span>autofill scope</span>, and the user agent has a value for the <code
+  data-x="attr-fe-autocomplete-country">country</code>" field(s), then the "<code
+  data-x="attr-fe-autocomplete-country-name">country-name</code>" field(s) must be filled using a
+  human-readable name for the same country.</span> When a user agent fills in multiple fields at
+  once, all fields with the same <span>autofill field name</span>, <span>form owner</span>, and
+  <span>autofill scope</span> must be filled with the same value.</p>
+
+  <p class="example">Suppose a user agent knows of two phone numbers, +1 555 123 1234 and +1 555 666
+  7777. It would not be conforming for the user agent to fill a field with <code
+  data-x="">autocomplete="shipping tel-local-prefix"</code> with the value "123" and another field
+  in the same form with <code data-x="">autocomplete="shipping tel-local-suffix"</code> with the
+  value "7777". The only valid prefilled values given the aforementioned information would be "123"
+  and "1234", or "666" and "7777", respectively.</p>
+
+  <p class="example">Similarly, if a form for some reason contained both a "<code
+  data-x="attr-fe-autocomplete-cc-exp">cc-exp</code>" field and a "<code
+  data-x="attr-fe-autocomplete-cc-exp-month">cc-exp-month</code>" field, and the user agent
+  prefilled the form, then the month component of the former would have to match the latter.</p>
+
+  <div class="example">
+
+   <p>This requirement interacts with the <span>autofill anchor mantle</span> also. Consider the
+   following markup snippet:</p>
+
+   <pre><code class="html">&lt;form>
+ &lt;input type=hidden autocomplete="nickname" value="TreePlate">
+ &lt;input type=text autocomplete="nickname">
+&lt;/form></code></pre>
+
+   <p>The only value that a conforming user agent could suggest in the text control is "TreePlate",
+   the value given by the hidden <code>input</code> element.</p>
+
+  </div>
+
+  <p>The "<code data-x="">section-*</code>" tokens in the <span>autofill scope</span> are opaque;
+  user agents must not attempt to derive meaning from the precise values of these tokens.</p>
+
+  <p class="example">For example, it would not be conforming if the user agent decided that it
+  <!--non-normative-->should offer the address it knows to be the user's daughter's address for
+  "<code data-x="">section-child</code>" and the addresses it knows to be the user's spouses'
+  addresses for "<code data-x="">section-spouse</code>".</p>
+
+  <p>The autocompletion mechanism must be implemented by the user agent acting as if the user had
+  modified the <span>control's data</span>, and must be done at a time where the element is <span
+  data-x="concept-fe-mutable">mutable</span> (e.g. just after the element has been inserted into the
+  document, or when the user agent <span data-x="stop parsing">stops parsing</span>). User agents
+  must only prefill controls using values that the user could have entered.</p>
+
+  <p class="example">For example, if a <code>select</code> element only has <code>option</code>
+  elements with values "Steve" and "Rebecca", "Jay", and "Bob", and has an <span>autofill field
+  name</span> "<code data-x="attr-fe-autocomplete-given-name">given-name</code>", but the user
+  agent's only idea for what to prefill the field with is "Evan", then the user agent cannot prefill
+  the field. It would not be conforming to somehow set the <code>select</code> element to the value
+  "Evan", since the user could not have done so themselves.</p>
+
+  <p>A user agent prefilling a form control must not discriminate between form controls that are
+  <span>in a document tree</span> and those that are <span>connected</span>; that is, it is not
+  conforming to make the decision on whether or not to autofill based on whether the element's
+  <span>root</span> is a <span>shadow root</span> versus a <code>Document</code>.</p>
+
+  <p>A user agent prefilling a form control's <span data-x="concept-fe-value">value</span> must not
+  cause that control to <span data-x="suffering from a type mismatch">suffer from a type
+  mismatch</span>, <span data-x="suffering from being too long">suffer from being too long</span>,
+  <span data-x="suffering from being too short">suffer from being too short</span>, <span
+  data-x="suffering from an underflow">suffer from an underflow</span>, <span data-x="suffering from
+  an overflow">suffer from an overflow</span>, or <span data-x="suffering from a step
+  mismatch">suffer from a step mismatch</span>. A user agent prefilling a form control's <span
+  data-x="concept-fe-value">value</span> must not cause that control to <span data-x="suffering from
+  a pattern mismatch">suffer from a pattern mismatch</span> either. Where possible given the
+  control's constraints, user agents must use the format given as canonical in the aforementioned
+  table. Where it's not possible for the canonical format to be used, user agents should use
+  heuristics to attempt to convert values so that they can be used.</p>
+
+  <div class="example">
+
+   <p>For example, if the user agent knows that the user's middle name is "Ines", and attempts to
+   prefill a form control that looks like this:</p>
+
+   <pre><code class="html">&lt;input name=middle-initial maxlength=1 autocomplete="additional-name"></code></pre>
+
+   <p>...then the user agent could convert "Ines" to "I" and prefill it that way.</p>
+
+  </div>
+
+  <div class="example">
+
+   <p>A more elaborate example would be with month values. If the user agent knows that the user's
+   birthday is the 27th of July 2012, then it might try to prefill all of the following controls
+   with slightly different values, all driven from this information:</p>
+
+   <table>
+    <tr>
+     <td>
+      <pre><code class="html">&lt;input name=b type=month autocomplete="bday"></code></pre>
+     <td>
+      2012-07
+     <td>
+      The day is dropped since the <span
+      data-x="attr-input-type-month">Month</span> state only accepts a
+      month/year combination. (Note that this example is non-conforming, because the <span>autofill
+      field name</span> <code data-x="attr-fe-autocomplete-bday">bday</code> is not allowed with the
+      <span data-x="attr-input-type-month">Month</span> state.)
+    <tr>
+     <td>
+      <pre><code class="html">&lt;select name=c autocomplete="bday">
+ &lt;option>Jan
+ &lt;option>Feb
+ <em>...</em>
+ &lt;option>Jul
+ &lt;option>Aug
+ <em>...</em>
+&lt;/select></code></pre>
+     <td>
+      July
+     <td>
+      The user agent picks the month from the listed options, either by noticing there are twelve
+      options and picking the 7th, or by recognizing that one of the strings (three characters "Jul"
+      followed by a newline and a space) is a close match for the name of the month (July) in one of
+      the user agent's supported languages, or through some other similar mechanism.
+    <tr>
+     <td>
+      <pre><code class="html">&lt;input name=a type=number min=1 max=12 autocomplete="bday-month"></code></pre>
+     <td>
+      7
+     <td>
+      User agent converts "July" to a month number in the range 1..12, like the field.
+    <tr>
+     <td>
+      <pre><code class="html">&lt;input name=a type=number min=0 max=11 autocomplete="bday-month"></code></pre>
+     <td>
+      6
+     <td>
+      User agent converts "July" to a month number in the range 0..11, like the field.
+    <tr>
+     <td>
+      <pre><code class="html">&lt;input name=a type=number min=1 max=11 autocomplete="bday-month"></code></pre>
+     <td>
+     <td>
+      User agent doesn't fill in the field, since it can't make a good guess as to what the form expects.
+   </table>
+
+  </div>
+
+  <p>A user agent may allow the user to override an element's <span>autofill field name</span>, e.g.
+  to change it from "<code data-x="attr-fe-autocomplete-off">off</code>" to "<code
+  data-x="attr-fe-autocomplete-on">on</code>" to allow values to be remembered and prefilled despite
+  the page author's objections, or to always "<code data-x="attr-fe-autocomplete-off">off</code>",
+  never remembering values.</p>
+
+  <p>More specifically, user agents may in particular consider replacing the <span>autofill field
+  name</span> of form controls that match the description given in the first column of the following
+  table, when their <span>autofill field name</span> is either "<code
+  data-x="attr-fe-autocomplete-on">on</code>" or "<code
+  data-x="attr-fe-autocomplete-off">off</code>", with the value given in the second cell of that
+  row. If this table is used, the replacements must be done in <span>tree order</span>, since all
+  but the first row references the <span>autofill field name</span> of earlier elements. When the
+  descriptions below refer to form controls being preceded or followed by others, they mean in the
+  list of <span data-x="category-listed">listed elements</span> that share the same <span>form
+  owner</span>.</p>
+
+  <table>
+
+   <thead>
+    <tr>
+     <th>Form control
+     <th>New <span>autofill field name</span>
+
+   <tbody>
+
+
+    <tr>
+
+     <td>
+
+      an <code>input</code> element whose <code data-x="attr-input-type">type</code> attribute is in
+      the <span data-x="attr-input-type-text">Text</span> state that is followed by an
+      <code>input</code> element whose <code data-x="attr-input-type">type</code> attribute is in
+      the <span data-x="attr-input-type-password">Password</span> state
+
+     <td>
+
+      "<code data-x="attr-fe-autocomplete-username">username</code>"
+
+
+    <tr>
+
+     <td>
+
+      an <code>input</code> element whose <code data-x="attr-input-type">type</code> attribute is in
+      the <span data-x="attr-input-type-password">Password</span> state that is preceded by an
+      <code>input</code> element whose <span>autofill field name</span> is "<code
+      data-x="attr-fe-autocomplete-username">username</code>"
+
+     <td>
+
+      "<code data-x="attr-fe-autocomplete-current-password">current-password</code>"
+
+
+    <tr>
+
+     <td>
+
+      an <code>input</code> element whose <code data-x="attr-input-type">type</code> attribute is in
+      the <span data-x="attr-input-type-password">Password</span> state that is preceded by an
+      <code>input</code> element whose <span>autofill field name</span> is "<code
+      data-x="attr-fe-autocomplete-current-password">current-password</code>"
+
+     <td>
+
+      "<code data-x="attr-fe-autocomplete-new-password">new-password</code>"
+
+
+    <tr>
+
+     <td>
+
+      an <code>input</code> element whose <code data-x="attr-input-type">type</code> attribute is in
+      the <span data-x="attr-input-type-password">Password</span> state that is preceded by an
+      <code>input</code> element whose <span>autofill field name</span> is "<code
+      data-x="attr-fe-autocomplete-new-password">new-password</code>"
+
+     <td>
+
+      "<code data-x="attr-fe-autocomplete-new-password">new-password</code>"
+
+
+  </table>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLInputElement,HTMLSelectElement,HTMLTextAreaElement"><code
+  data-x="dom-fe-autocomplete">autocomplete</code></dfn> IDL attribute, on getting, must return the
+  element's <span>IDL-exposed autofill value</span>.</p>
+  </div>
+
+  </div>
+
+

@@ -1,0 +1,36 @@
+WHATWG HTML — section using-reflect-in-specifications — Using reflect in specifications
+
+  <h4>Using reflect in specifications</h4>
+
+  <p><span data-x="reflect">Reflection</span> is primarily about improving web developer ergonomics
+  by giving them typed access to content attributes through <span data-x="reflected IDL
+  attribute">reflected IDL attributes</span>. The ultimate source of truth, which the web platform
+  builds upon, is the content attributes themselves. That is, specification authors must not use the
+  <span>reflected IDL attribute</span> getter or setter steps, but instead must use the content
+  attribute presence and value. (Or an abstraction on top, such as the state of an <span>enumerated
+  attribute</span>.)</p>
+
+  <p>Two important exceptions to this are <span data-x="reflected IDL attribute">reflected IDL
+  attributes</span> whose type is one of the following:</p>
+
+  <ul>
+   <li><p var-scope><code data-x=""><var>T</var>?</code>, where <var>T</var> is either <code>Element</code> or
+   an interface that inherits from <code>Element</code></p></li>
+
+   <li><p var-scope><code data-x="">FrozenArray&lt;<var>T</var>&gt;?</code>, where <var>T</var> is either
+   <code>Element</code> or an interface that inherits from <code>Element</code></p></li>
+  </ul>
+
+  <p var-scope>For those, specification authors must use the <span>reflected target</span>'s
+  <span>get the <var>attr</var>-associated element</span> and <span>get the
+  <var>attr</var>-associated elements</span>, respectively. The content attribute presence and value
+  must not be used as they cannot be fully synchronized with the <span>reflected IDL
+  attribute</span>.</p>
+
+  <p var-scope>A <span>reflected target</span>'s <span>explicitly set <var>attr</var>-element</span>,
+  <span>explicitly set <var>attr</var>-elements</span>, <span>cached <var>attr</var>-associated
+  elements</span>, and <span>cached <var>attr</var>-associated elements object</span> are to be
+  treated as internal implementation details and not to be built upon.</p>
+
+  </div>
+

@@ -1,0 +1,35 @@
+WHATWG URL — section url-rendering-i18n — Internationalization and special characters
+
+<h4 id=url-rendering-i18n>Internationalization and special characters</h4>
+
+<p>Internationalized domain names (IDNs), special characters, and bidirectional text should be
+handled with care to prevent spoofing:
+
+<ul>
+ <li>
+  <p>If <a for=/>URL</a>'s <a for=url>host</a> is a <a for=/>domain</a>, browsers should render it
+  by running <a>domain to Unicode</a> with the <a for=/>URL</a>'s <a for=url>host</a>.
+
+  <p class=note>Various characters can be used in homograph spoofing attacks. Consider detecting
+  confusable characters and warning when they are in use. [[IDNFAQ]] [[UTS39]]
+
+ <li><p>URLs are particularly prone to confusion between host and path when they contain
+ bidirectional text, so in this case it is particularly advisable to only render a URL's
+ <a for=url>host</a>. For readability, other parts of the <a for=/>URL</a>, if rendered, should have
+ their sequences of <a>percent-encoded bytes</a> replaced with code points resulting from running
+ <a>UTF-8 decode without BOM</a> on the <a for=string>percent-decoding</a> of those sequences,
+ unless that renders those sequences invisible. Browsers may choose to not decode certain sequences
+ that present spoofing risks (e.g., U+1F512 (🔒)).
+
+ <li>
+  <p>Browsers should render bidirectional text as if it were in a left-to-right embedding. [[!BIDI]]
+
+  <p class=note>Unfortunately, as rendered <a for=/>URLs</a> are strings and can appear anywhere, a
+  specific bidirectional algorithm for rendered <a for=/>URLs</a> would not see wide adoption.
+  Bidirectional text interacts with the parts of a <a for=/>URL</a> in ways that can cause the
+  rendering to be different from the model. Users of bidirectional languages can come to expect
+  this, particularly in plain text environments.
+</ul>
+
+
+

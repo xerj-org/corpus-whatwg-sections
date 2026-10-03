@@ -1,0 +1,434 @@
+WHATWG HTML — section the-details-element — The <dfn element><code>details</code></dfn> element
+
+  <h4>The <dfn element><code>details</code></dfn> element</h4>
+
+  <dl class="element">
+   <dt><span data-x="concept-element-categories">Categories</span>:</dt>
+   <dd><span>Flow content</span>.</dd>
+   <dd><span>Interactive content</span>.</dd>
+   <dd><span>Palpable content</span>.</dd>
+   <dt><span data-x="concept-element-contexts">Contexts in which this element can be used</span>:</dt>
+   <dd>Where <span>flow content</span> is expected.</dd>
+   <dt><span data-x="concept-element-content-model">Content model</span>:</dt>
+   <dd>One <code>summary</code> element followed by <span>flow content</span>.</dd>
+   <dt><span data-x="concept-element-attributes">Content attributes</span>:</dt>
+   <dd><span>Global attributes</span></dd>
+   <dd><code data-x="attr-details-name">name</code></dd>
+   <dd><code data-x="attr-details-open">open</code></dd>
+   <dt><span
+   data-x="concept-element-accessibility-considerations">Accessibility considerations</span>:</dt>
+   <dd><a href="https://w3c.github.io/html-aria/#el-details">For authors</a>.</dd>
+   <dd><a href="https://w3c.github.io/html-aam/#el-details">For implementers</a>.</dd>
+   <dt><span data-x="concept-element-sanitization">Sanitization</span>:</dt>
+   <dd><span data-x="sanitizer-uncategorized">Uncategorized</span>.</dd>
+   <dt><span data-x="concept-element-dom">DOM interface</span>:</dt>
+   <dd w-nodev>
+    <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>HTMLDetailsElement</dfn> : <span>HTMLElement</span> {
+  [<span>HTMLConstructor</span>] constructor();
+
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute DOMString <dfn attribute for="HTMLDetailsElement" data-x="dom-details-name">name</dfn>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute boolean <dfn attribute for="HTMLDetailsElement" data-x="dom-details-open">open</dfn>;
+};</code></pre>
+   </dd>
+   <dd w-dev>Uses <code>HTMLDetailsElement</code>.</dd>
+  </dl>
+
+  <p>The <code>details</code> element <span>represents</span> a disclosure widget from which the
+  user can obtain additional information or controls.</p>
+
+  <p class="note">As with all HTML elements, it is not conforming to use the <code>details</code>
+  element when attempting to represent another type of control. For example, tab widgets and
+  menu widgets are not disclosure widgets, so abusing the <code>details</code> element to
+  implement these patterns is incorrect.</p>
+
+  <p class="note">The <code>details</code> element is not appropriate for footnotes. Please see <a
+  href="#footnotes">the section on footnotes</a> for details on how to mark up footnotes.</p>
+
+  <p>The <span w-nodev>first</span> <code>summary</code> element child of the element, if any,
+  <span>represents</span> the summary or legend of the details. <span w-nodev>If there is no
+  child <code>summary</code> element, the user agent should provide its own legend (e.g.
+  "Details").</span></p>
+
+  <p>The rest of the element's contents <span>represents</span> the additional information or
+  controls.</p>
+
+  <p>The <dfn element-attr for="details"><code data-x="attr-details-name">name</code></dfn> content
+  attribute gives the name of the group of related <code>details</code> elements that the element is
+  a member of. Opening one member of this group causes other members of the group to close. If the
+  attribute is specified, its value must not be the empty string.</p>
+
+  <p>Before using this feature, authors should consider whether this grouping of related
+  <code>details</code> elements into an exclusive accordion is helpful or harmful to users.
+  While using an exclusive accordion can reduce the maximum amount of space that a set of content
+  can occupy, it can also frustrate users who have to open many items to find what they want or
+  users who want to look at the contents of multiple items at the same time.</p>
+
+  <p>A document must not contain more than one <code>details</code> element in the same
+  <span>details name group</span> that has the <code data-x="attr-details-open">open</code>
+  attribute present.  Authors must not use script to add <code>details</code> elements to a document
+  in a way that would cause a <span>details name group</span> to have more than one
+  <code>details</code> element with the <code data-x="attr-details-open">open</code> attribute
+  present.</p>
+
+  <p class="note">The group of elements that is created by a common <code
+  data-x="attr-details-name">name</code> attribute is exclusive, meaning that at most one of the
+  <code>details</code> elements can be open at once.  While this exclusivity is enforced by user
+  agents, the resulting enforcement immediately changes the <code
+  data-x="attr-details-open">open</code> attributes in the markup.  This requirement on authors
+  forbids such misleading markup.</p>
+
+  <p>A document must not contain a <code>details</code> element that is a descendant of another
+  <code>details</code> element in the same <span>details name group</span>.</p>
+
+  <p>Documents that use the <code data-x="attr-details-name">name</code> attribute to group multiple
+  related <code>details</code> elements should keep those related elements together in a containing
+  element (such as a <code>section</code> element or <code>article</code> element). When it makes
+  sense for the group to be introduced with a heading, authors should put that heading in a <span
+  data-x="concept-heading">heading</span> element at the start of the containing element.</p>
+
+  <p class="note">Visually and programmatically grouping related elements together can be important
+  for accessible user experiences. This can help users understand the relationship between such
+  elements. When related elements are in disparate sections of a web page rather than being grouped,
+  the elements' relationships to each other can be less discoverable or understandable.</p>
+
+  <p>The <dfn element-attr for="details"><code data-x="attr-details-open">open</code></dfn> content
+  attribute is a <span>boolean attribute</span>. If present, it indicates that both the summary and
+  the additional information is to be shown to the user. If the attribute is absent, only the
+  summary is to be shown.</p>
+
+  <div w-nodev>
+
+  <p>When the element is created, if the attribute is absent, the additional information should be
+  hidden; if the attribute is present, that information should be shown. Subsequently, if the
+  attribute is removed, then the information should be hidden; if the attribute is added, the
+  information should be shown.</p>
+
+  <p>The user agent should allow the user to request that the additional information be shown or
+  hidden. To honor a request for the details to be shown, the user agent must <span
+  data-x="concept-element-attributes-set-value">set</span> the <code
+  data-x="attr-details-open">open</code> attribute on the element to the empty string. To honor a
+  request for the information to be hidden, the user agent must <span
+  data-x="concept-element-attributes-remove">remove</span> the <code
+  data-x="attr-details-open">open</code> attribute from the element.</p>
+
+  <p class="note">This ability to request that additional information be shown or hidden
+  <!--non-normative-->may simply be the <span>activation behavior</span> of the appropriate
+  <code>summary</code> element, in the case such an element exists. However, if no such element
+  exists, user agents can still provide this ability through some other user interface
+  affordance.</p>
+
+  <div algorithm>
+  <p>The <dfn>details name group</dfn> that contains a <code>details</code> element <var>a</var>
+  also contains all the other <code>details</code> elements <var>b</var> that fulfill all of the
+  following conditions:</p>
+
+  <ul>
+   <li>Both <var>a</var> and <var>b</var> are in the same <span>tree</span>.</li>
+
+   <li>They both have a <code data-x="attr-details-name">name</code> attribute, their <code
+   data-x="attr-details-name">name</code> attributes are not the empty string, and the value of
+   <var>a</var>'s <code data-x="attr-details-name">name</code> attribute equals the value of
+   <var>b</var>'s <code data-x="attr-details-name">name</code> attribute.</li>
+  </ul>
+  </div>
+
+  <p>Every <code>details</code> element has a <dfn>details toggle task tracker</dfn>, which is a
+  <span>toggle task tracker</span> or null, initially null.</p>
+
+  <div algorithm>
+  <p>The following <span data-x="concept-element-attributes-change-ext">attribute change
+  steps</span>, given <var>element</var>, <var>localName</var>, <var>oldValue</var>,
+  <var>value</var>, and <var>namespace</var>, are used for all <code>details</code> elements:</p>
+
+  <ol>
+   <li><p>If <var>namespace</var> is not null, then return.</p></li>
+
+   <li><p>If <var>localName</var> is <code data-x="attr-details-name">name</code>, then <span>ensure
+   details exclusivity by closing the given element if needed</span> given
+   <var>element</var>.</p></li>
+
+   <li><p>If <var>localName</var> is <code data-x="attr-details-open">open</code>:
+    <ol>
+     <li>
+      <p>If one of <var>oldValue</var> or <var>value</var> is null and the other is not null,
+      run the following steps, which are known as the <dfn>details notification task steps</dfn>, for
+      this <code>details</code> element:</p>
+
+      <p class="note">When the <code data-x="attr-details-open">open</code> attribute is toggled
+      several times in succession, the resulting tasks essentially get coalesced so that only one
+      event is fired.</p>
+
+      <ol>
+        <li><p>If <var>oldValue</var> is null, <span>queue a details toggle event task</span> given
+        the <code>details</code> element, "<code data-x="">closed</code>", and "<code
+        data-x="">open</code>".</p></li>
+
+        <li><p>Otherwise, <span>queue a details toggle event task</span> given the
+        <code>details</code> element, "<code data-x="">open</code>", and "<code
+        data-x="">closed</code>".</p></li>
+      </ol>
+     </li>
+
+     <li><p>If <var>oldValue</var> is null and <var>value</var> is not null, then <span>ensure
+     details exclusivity by closing other elements if needed</span> given
+     <var>element</var>.</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <code>details</code> <span data-x="html element insertion steps">HTML element insertion
+  steps</span>, given <var>insertedNode</var>, are:</p>
+
+  <ol>
+   <li><p><span>Ensure details exclusivity by closing the given element if needed</span> given
+   <var>insertedNode</var>.</p></li>
+  </ol>
+  </div>
+
+  <p class="note">To be clear, these attribute change and insertion steps also run when an attribute
+  or element is inserted via the parser.</p>
+
+  <div algorithm>
+  <p>To <dfn>queue a details toggle event task</dfn> given a <code>details</code> element
+  <var>element</var>, a string <var>oldState</var>, and a string <var>newState</var>:
+
+  <ol>
+   <li>
+    <p>If <var>element</var>'s <span>details toggle task tracker</span> is not null:</p>
+
+    <ol>
+     <li><p>Set <var>oldState</var> to <var>element</var>'s <span>details toggle task
+     tracker</span>'s <span data-x="toggle-task-old-state">old state</span>.</p></li>
+
+     <li><p>Remove <var>element</var>'s <span>details toggle task tracker</span>'s <span
+     data-x="toggle-task-task">task</span> from its <span>task queue</span>.</p></li>
+
+     <li><p>Set <var>element</var>'s <span>details toggle task tracker</span> to null.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p><span>Queue an element task</span> given the <span>DOM manipulation task source</span> and
+    <var>element</var> to run the following steps:</p>
+
+    <ol>
+     <li><p><span data-x="concept-event-fire">Fire an event</span> named <code
+     data-x="event-toggle">toggle</code> at <var>element</var>, using <code>ToggleEvent</code>, with
+     the <code data-x="dom-ToggleEvent-oldState">oldState</code> attribute initialized to
+     <var>oldState</var> and the <code data-x="dom-ToggleEvent-newState">newState</code> attribute
+     initialized to <var>newState</var>.</p></li>
+
+     <li><p>Set <var>element</var>'s <span>details toggle task tracker</span> to null.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Set <var>element</var>'s <span>details toggle task tracker</span> to a struct with <span
+   data-x="toggle-task-task">task</span> set to the just-queued <span
+   data-x="concept-task">task</span> and <span data-x="toggle-task-old-state">old state</span> set
+   to <var>oldState</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>ensure details exclusivity by closing other elements if needed</dfn> given a
+  <code>details</code> element <var>element</var>:</p>
+
+  <ol>
+   <li><p><span>Assert</span>: <var>element</var> has an <code
+   data-x="attr-details-open">open</code> attribute.</p></li>
+
+   <!-- This step is an optimization, but it may also make things clearer. -->
+   <li><p>If <var>element</var> does not have a <code data-x="attr-details-name">name</code>
+   attribute, or its <code data-x="attr-details-name">name</code> attribute is the empty string,
+   then return.</p></li>
+
+   <li><p>Let <var>groupMembers</var> be a list of elements, containing all elements in
+   <var>element</var>'s <span>details name group</span> except for <var>element</var>, in <span>tree
+   order</span>.</p></li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> element <var>otherElement</var> of
+    <var>groupMembers</var>:</p>
+    <ol>
+     <li>
+      <p>If the <code data-x="attr-details-open">open</code> attribute is set on
+      <var>otherElement</var>:</p>
+
+      <ol>
+       <li><p><span>Assert</span>: <var>otherElement</var> is the only element in
+       <var>groupMembers</var> that has the <code data-x="attr-details-open">open</code> attribute
+       set.</p></li>
+
+       <li><p><span data-x="concept-element-attributes-remove">Remove</span> the <code
+       data-x="attr-details-open">open</code> attribute on <var>otherElement</var>.</p></li>
+
+       <li><p><span>Break</span>.</p></li>
+      </ol>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>ensure details exclusivity by closing the given element if needed</dfn> given a
+  <code>details</code> element <var>element</var>:</p>
+
+  <ol>
+   <li><p>If <var>element</var> does not have an <code data-x="attr-details-open">open</code>
+   attribute, then return.</p></li>
+
+   <!-- This step is an optimization, but it may also make things clearer. -->
+   <li><p>If <var>element</var> does not have a <code data-x="attr-details-name">name</code>
+   attribute, or its <code data-x="attr-details-name">name</code> attribute is the empty string,
+   then return.</p></li>
+
+   <li><p>Let <var>groupMembers</var> be a list of elements, containing all elements in
+   <var>element</var>'s <span>details name group</span> except for <var>element</var>, in <span>tree
+   order</span>.</p></li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> element <var>otherElement</var> of
+    <var>groupMembers</var>:</p>
+
+    <ol>
+     <li>
+      <p>If the <code data-x="attr-details-open">open</code> attribute is set on
+      <var>otherElement</var>:</p>
+
+      <ol>
+       <li><p><span data-x="concept-element-attributes-remove">Remove</span> the <code
+       data-x="attr-details-open">open</code> attribute on <var>element</var>.</p></li>
+
+       <li><p><span>Break</span>.</p></li>
+      </ol>
+     </li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  </div>
+
+  <div class="example">
+
+   <p>The following example shows the <code>details</code> element being used to hide technical
+   details in a progress report.</p>
+
+   <pre><code class="html">&lt;section class="progress window">
+ &lt;h1>Copying "Really Achieving Your Childhood Dreams"&lt;/h1>
+ &lt;details>
+  &lt;summary>Copying... &lt;progress max="375505392" value="97543282">&lt;/progress> 25%&lt;/summary>
+  &lt;dl>
+   &lt;dt>Transfer rate:&lt;/dt> &lt;dd>452KB/s&lt;/dd>
+   &lt;dt>Local filename:&lt;/dt> &lt;dd>/home/rpausch/raycd.m4v&lt;/dd>
+   &lt;dt>Remote filename:&lt;/dt> &lt;dd>/var/www/lectures/raycd.m4v&lt;/dd>
+   &lt;dt>Duration:&lt;/dt> &lt;dd>01:16:27&lt;/dd>
+   &lt;dt>Color profile:&lt;/dt> &lt;dd>SD (6-1-6)&lt;/dd>
+   &lt;dt>Dimensions:&lt;/dt> &lt;dd>320&times;240&lt;/dd>
+  &lt;/dl>
+ &lt;/details>
+&lt;/section></code></pre>
+
+  </div>
+
+  <div class="example">
+
+   <p>The following shows how a <code>details</code> element can be used to hide some controls by
+   default:</p>
+
+   <pre><code class="html">&lt;details>
+ &lt;summary>&lt;label for=fn>Name &amp; Extension:&lt;/label>&lt;/summary>
+ &lt;p>&lt;input type=text id=fn name=fn value="Pillar Magazine.pdf">
+ &lt;p>&lt;label>&lt;input type=checkbox name=ext checked> Hide extension&lt;/label>
+&lt;/details></code></pre>
+
+   <p>One could use this in conjunction with other <code>details</code> in a list to allow the user
+   to collapse a set of fields down to a small set of headings, with the ability to open each
+   one.</p>
+
+   <p class="details-example"><img loading="lazy" src="/images/sample-details-1.png" width="345" height="611" alt=""><img loading="lazy" src="/images/sample-details-2.png" width="345" height="666" alt=""></p>
+
+   <p>In these examples, the summary really just summarizes what the controls can change, and not
+   the actual values, which is less than ideal.</p>
+
+  </div>
+
+  <div class="example" id="example-details-exclusive-accordion">
+   <p>The following example shows the <code data-x="attr-details-name">name</code> attribute of the
+   <code>details</code> element being used to create an exclusive accordion, a set of
+   <code>details</code> elements where a user action to open one <code>details</code> element causes
+   any open <code>details</code> to close.</p>
+
+   <pre><code class="html">&lt;section class="characteristics">
+ &lt;details name="frame-characteristics">
+  &lt;summary>Material&lt;/summary>
+  The picture frame is made of solid oak wood.
+ &lt;/details>
+ &lt;details name="frame-characteristics">
+  &lt;summary>Size&lt;/summary>
+  The picture frame fits a photo 40cm tall and 30cm wide.
+  The frame is 45cm tall, 35cm wide, and 2cm thick.
+ &lt;/details>
+ &lt;details name="frame-characteristics">
+  &lt;summary>Color&lt;/summary>
+  The picture frame is available in its natural wood
+  color, or with black stain.
+ &lt;/details>
+&lt;/section></code></pre>
+  </div>
+
+  <div class="example" id="example-details-exclusive-accordion-setting-open">
+   <p>The following example shows what happens when the <code data-x="attr-details-open">open</code>
+   attribute is set on a <code>details</code> element that is part of a set of elements using the
+   <code data-x="attr-details-name">name</code> attribute to create an exclusive accordion.</p>
+
+   <p>Given the initial markup:</p>
+
+   <pre><code class="html">&lt;section class="characteristics">
+ &lt;details name="frame-characteristics" id="d1" open>...&lt;/details>
+ &lt;details name="frame-characteristics" id="d2">...&lt;/details>
+ &lt;details name="frame-characteristics" id="d3">...&lt;/details>
+&lt;/section></code></pre>
+
+   <p>and the script:</p>
+
+   <pre><code class="js">document.getElementById("d2").setAttribute("open", "");</code></pre>
+
+   <p>then the resulting tree after the script executes will be equivalent to the markup:</p>
+
+   <pre><code class="html">&lt;section class="characteristics">
+ &lt;details name="frame-characteristics" id="d1">...&lt;/details>
+ &lt;details name="frame-characteristics" id="d2" open>...&lt;/details>
+ &lt;details name="frame-characteristics" id="d3">...&lt;/details>
+&lt;/section></code></pre>
+
+   <p>because setting the <code data-x="attr-details-open">open</code> attribute on <code
+   data-x="">d2</code> removes it from <code data-x="">d1</code>.</p>
+
+   <p>The same happens when the user activates the <code>summary</code> element inside of <code
+   data-x="">d2</code>.</p>
+  </div>
+
+  <div class="example">
+
+   <p>Because the <code data-x="attr-details-open">open</code> attribute is added and removed
+   automatically as the user interacts with the control, it can be used in CSS to style the element
+   differently based on its state. Here, a style sheet is used to animate the color of the summary
+   when the element is opened or closed:</p>
+
+   <pre><code class="html">&lt;style>
+ details > summary { transition: color 1s; color: black; }
+ details[open] > summary { color: red; }
+&lt;/style>
+&lt;details>
+ &lt;summary>Automated Status: Operational&lt;/summary>
+ &lt;p>Velocity: 12m/s&lt;/p>
+ &lt;p>Direction: North&lt;/p>
+&lt;/details></code></pre>
+
+  </div>
+
+

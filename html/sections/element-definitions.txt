@@ -1,0 +1,92 @@
+WHATWG HTML — section element-definitions — Element definitions
+
+  <h4>Element definitions</h4>
+
+  <p>Each element in this specification has a definition that includes the following
+  information:</p>
+
+  <dl>
+   <dt><dfn data-x="concept-element-categories">Categories</dfn></dt>
+
+   <dd><p>A list of <span data-x="content categories">categories</span> to which the element belongs.
+   These are used when defining the <span>content models</span> for each element.</p></dd>
+
+
+   <dt><dfn data-x="concept-element-contexts">Contexts in which this element can be used</dfn></dt>
+
+   <dd>
+    <p>A <em>non-normative</em> description of where the element can be used. This information is
+    redundant with the content models of elements that allow this one as a child, and is provided
+    only as a convenience.</p>
+
+    <div class="note">
+     <p>For simplicity, only the most specific expectations are listed.</p>
+
+     <p>For example, all <span>phrasing content</span> is <span>flow content</span>. Thus, elements
+     that are <span>phrasing content</span> will only be listed as "where <span>phrasing
+     content</span> is expected", since this is the more-specific expectation. Anywhere that expects
+     <span>flow content</span> also expects <span>phrasing content</span>, and thus also meets this
+     expectation.</p>
+    </div>
+   </dd>
+
+
+   <dt><dfn data-x="concept-element-content-model">Content model</dfn></dt>
+
+   <dd><p>A normative description of what content must be included as children and descendants of
+   the element.</p></dd>
+
+
+   <dt><dfn data-x="concept-element-tag-omission">Tag omission in text/html</dfn></dt>
+
+   <dd><p>A <em>non-normative</em> description of whether, in the <code>text/html</code> syntax, the
+   <span data-x="syntax-start-tag">start</span> and <span data-x="syntax-end-tag">end</span> tags can
+   be omitted. This information is redundant with the normative requirements given in the <span
+   data-x="syntax-tag-omission">optional tags</span> section, and is provided in the element
+   definitions only as a convenience.</p></dd>
+
+
+   <dt><dfn data-x="concept-element-attributes">Content attributes</dfn></dt>
+
+   <dd><p>A normative list of attributes that may be specified on the element (except where
+   otherwise disallowed), along with non-normative descriptions of those attributes. (The content to
+   the left of the dash is normative, the content to the right of the dash is not.)</p></dd>
+
+
+   <dt><dfn
+   data-x="concept-element-accessibility-considerations">Accessibility considerations</dfn></dt>
+
+   <dd>
+    <p>For authors: Conformance requirements for use of <cite>ARIA</cite> <code
+    data-x="attr-aria-role">role</code> and <code data-x="attr-aria-*">aria-*</code> attributes are
+    defined in <cite>ARIA in HTML</cite>. <ref>ARIA</ref> <ref>ARIAHTML</ref></p>
+
+    <p>For implementers: User agent requirements for implementing accessibility API semantics are
+    defined in <cite>HTML Accessibility API Mappings</cite>. <ref>HTMLAAM</ref></p>
+   </dd>
+
+   <dt><dfn data-x="concept-element-sanitization">Sanitization</dfn></dt>
+
+   <dd><p>The <span data-x="concept-element-sanitization">Sanitization</span> information for each
+   element defines its <span>sanitization category</span>, which affects how the element is
+   processed during sanitization. It can also define one or more of the element's attributes as
+   <span>navigating URL attributes</span>.</p></dd>
+
+   <dt><dfn data-x="concept-element-dom">DOM interface</dfn></dt>
+
+   <dd><p>A normative definition of a DOM interface that such elements must implement.</p></dd>
+  </dl>
+
+  <p>This is then followed by a description of what the element <span>represents</span>, along with
+  any additional normative conformance criteria that may apply to authors<span data-x=""
+  w-nodev> and implementations</span>. Examples are sometimes also included.</p>
+
+
+  <h5>Attributes</h5>
+
+  <p id="attribute-text">An attribute value is a string. Except where otherwise specified,
+  attribute values on <span>HTML elements</span> may be any string value, including the empty
+  string, and there is no restriction on what text can be specified in such attribute values.</p>
+
+
+

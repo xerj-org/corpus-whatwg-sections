@@ -1,0 +1,1250 @@
+WHATWG HTML — section the-meta-element — The <dfn element id="meta"><code>meta</code></dfn> element
+
+  <h4 id="the-meta-element">The <dfn element id="meta"><code>meta</code></dfn>
+  element</h4>
+
+  <dl class="element">
+   <dt><span data-x="concept-element-categories">Categories</span>:</dt>
+   <dd><span>Metadata content</span>.</dd>
+   <dd>If the <code data-x="attr-itemprop">itemprop</code> attribute is present: <span>flow content</span>.</dd>
+   <dd>If the <code data-x="attr-itemprop">itemprop</code> attribute is present: <span>phrasing content</span>.</dd>
+   <dt><span data-x="concept-element-contexts">Contexts in which this element can be used</span>:</dt>
+   <dd>If the <code data-x="attr-meta-charset">charset</code> attribute is present, or if the element's <code data-x="attr-meta-http-equiv">http-equiv</code> attribute is in the <span data-x="attr-meta-http-equiv-content-type">Encoding declaration state</span>: in a <code>head</code> element.</dd>
+   <dd>If the <code data-x="attr-meta-http-equiv">http-equiv</code> attribute is present but not in the <span data-x="attr-meta-http-equiv-content-type">Encoding declaration state</span>: in a <code>head</code> element.</dd>
+   <dd>If the <code data-x="attr-meta-http-equiv">http-equiv</code> attribute is present but not in the <span data-x="attr-meta-http-equiv-content-type">Encoding declaration state</span>: in a <code>noscript</code> element that is a child of a <code>head</code> element.</dd>
+   <dd>If the <code data-x="attr-meta-name">name</code> attribute is present: where <span>metadata content</span> is expected.</dd>
+   <dd>If the <code data-x="attr-itemprop">itemprop</code> attribute is present: where <span>metadata content</span> is expected.</dd>
+   <dd>If the <code data-x="attr-itemprop">itemprop</code> attribute is present: where <span>phrasing content</span> is expected.</dd>
+   <dt><span data-x="concept-element-content-model">Content model</span>:</dt>
+   <dd><span data-x="concept-content-nothing">Nothing</span>.</dd>
+   <dt><span data-x="concept-element-attributes">Content attributes</span>:</dt>
+   <dd><span>Global attributes</span></dd>
+   <dd><code data-x="attr-meta-name">name</code></dd>
+   <dd><code data-x="attr-meta-http-equiv">http-equiv</code></dd>
+   <dd><code data-x="attr-meta-content">content</code></dd>
+   <dd><code data-x="attr-meta-charset">charset</code></dd>
+   <dd><code data-x="attr-meta-media">media</code></dd>
+   <dt><span
+   data-x="concept-element-accessibility-considerations">Accessibility considerations</span>:</dt>
+   <dd><a href="https://w3c.github.io/html-aria/#el-meta">For authors</a>.</dd>
+   <dd><a href="https://w3c.github.io/html-aam/#el-meta">For implementers</a>.</dd>
+   <dt><span data-x="concept-element-sanitization">Sanitization</span>:</dt>
+   <dd><span data-x="sanitizer-uncategorized">Uncategorized</span>.</dd>
+   <dt><span data-x="concept-element-dom">DOM interface</span>:</dt>
+   <dd w-nodev>
+    <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>HTMLMetaElement</dfn> : <span>HTMLElement</span> {
+  [<span>HTMLConstructor</span>] constructor();
+
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute DOMString <dfn attribute for="HTMLMetaElement" data-x="dom-meta-name">name</dfn>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>="<span data-x="attr-meta-http-equiv">http-equiv</span>"] attribute DOMString <dfn attribute for="HTMLMetaElement" data-x="dom-meta-httpEquiv">httpEquiv</dfn>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute DOMString <dfn attribute for="HTMLMetaElement" data-x="dom-meta-content">content</dfn>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute DOMString <dfn attribute for="HTMLMetaElement" data-x="dom-meta-media">media</dfn>;
+
+  // <a href="#HTMLMetaElement-partial">also has obsolete members</a>
+};</code></pre>
+   </dd>
+   <dd w-dev>Uses <code>HTMLMetaElement</code>.</dd>
+  </dl>
+
+  <p>The <code>meta</code> element <span>represents</span> various kinds of metadata that cannot be
+  expressed using the <code>title</code>, <code>base</code>, <code>link</code>, <code>style</code>,
+  and <code>script</code> elements.</p>
+
+  <p>The <code>meta</code> element can represent document-level metadata with the <code
+  data-x="attr-meta-name">name</code> attribute, pragma directives with the <code
+  data-x="attr-meta-http-equiv">http-equiv</code> attribute, and the file's <span>character encoding
+  declaration</span> when an HTML document is serialized to string form (e.g. for transmission over
+  the network or for disk storage) with the <code data-x="attr-meta-charset">charset</code>
+  attribute.</p>
+
+  <p>Exactly one of the <code data-x="attr-meta-name">name</code>, <code
+  data-x="attr-meta-http-equiv">http-equiv</code>, <code data-x="attr-meta-charset">charset</code>,
+  and <code data-x="attr-itemprop">itemprop</code> attributes must be specified.</p>
+
+  <p>If either <code data-x="attr-meta-name">name</code>, <code
+  data-x="attr-meta-http-equiv">http-equiv</code>, or <code data-x="attr-itemprop">itemprop</code> is
+  specified, then the <code data-x="attr-meta-content">content</code> attribute must also be
+  specified. Otherwise, it must be omitted.</p>
+
+  <p>The <dfn element-attr for="meta"><code data-x="attr-meta-charset">charset</code></dfn>
+  attribute specifies the <span data-x="encoding">character encoding</span> used by the document.
+  This is a <span>character encoding declaration</span>. If the attribute is present, its value must
+  be an <span>ASCII case-insensitive</span> match for the string "<code data-x="">utf-8</code>".</p>
+
+  <p class="note">The <code data-x="attr-meta-charset">charset</code> attribute on the
+  <code>meta</code> element has no effect in XML documents, but is allowed in XML documents in order
+  to facilitate migration to and from XML.</p>
+
+  <p>There must not be more than one <code>meta</code> element with a <code
+  data-x="attr-meta-charset">charset</code> attribute per document.</p>
+
+  <p>The <dfn for="meta" element-attr><code data-x="attr-meta-content">content</code></dfn>
+  attribute gives the value of the document metadata or pragma directive when the element is used
+  for those purposes. The allowed values depend on the exact context, as described in subsequent
+  sections of this specification.</p>
+
+  <p>If a <code>meta</code> element has a <dfn element-attr for="meta"><code
+  data-x="attr-meta-name">name</code></dfn> attribute, it sets document metadata. Document metadata
+  is expressed in terms of name-value pairs, the <code data-x="attr-meta-name">name</code> attribute
+  on the <code>meta</code> element giving the name, and the <code
+  data-x="attr-meta-content">content</code> attribute on the same element giving the value. The name
+  specifies what aspect of metadata is being set; valid names and the meaning of their values are
+  described in the following sections. If a <code>meta</code> element has no <code
+  data-x="attr-meta-content">content</code> attribute, then the value part of the metadata
+  name-value pair is the empty string.</p>
+
+  <p>The <dfn element-attr for="meta"><code data-x="attr-meta-media">media</code></dfn> attribute
+  says which media the metadata applies to. The value must be a <span>valid media query list</span>.
+  Unless the <code data-x="attr-meta-name">name</code> is <code
+  data-x="meta-theme-color">theme-color</code>, the <code data-x="attr-meta-media">media</code>
+  attribute has no effect on the processing model and must not be used by authors.</p>
+
+
+  <h5>Standard metadata names</h5>
+
+  <p>This specification defines a few names for the <code data-x="attr-meta-name">name</code>
+  attribute of the <code>meta</code> element.</p>
+
+  <p>Names are case-insensitive<span class=impl>, and must be compared in an <span>ASCII
+  case-insensitive</span> manner</span>.</p>
+
+  <dl>
+   <dt><dfn attr-value for="meta/name"><code
+   data-x="meta-application-name">application-name</code></dfn></dt>
+
+   <dd>
+    <p>The value must be a short free-form string giving the name of the web application that the
+    page represents. If the page is not a web application, the <code
+    data-x="meta-application-name">application-name</code> metadata name must not be used.
+    Translations of the web application's name may be given, using the <code
+    data-x="attr-lang">lang</code> attribute to specify the language of each name.</p>
+
+    <p>There must not be more than one <code>meta</code> element with a given <span>language</span>
+    and where the <code data-x="attr-meta-name">name</code> attribute value is an
+    <span>ASCII case-insensitive</span> match for
+    <code data-x="meta-application-name">application-name</code> per document.</p>
+
+    <div w-nodev>
+
+    <p>User agents may use the application name in UI in preference to the page's
+    <code>title</code>, since the title might include status messages and the like relevant to the
+    status of the page at a particular moment in time instead of just being the name of the
+    application.</p>
+
+    <div algorithm>
+    <p>To find the application name to use given an ordered list of languages (e.g. British English,
+    American English, and English), user agents must run the following steps:</p>
+
+    <ol>
+     <li><p>Let <var>languages</var> be the list of languages.</p></li>
+
+     <li><p>Let <var>default language</var> be the <span>language</span> of the
+     <code>Document</code>'s <span>document element</span>, if any, and if that language is not
+     unknown.</p>
+
+     <li><p>If there is a <var>default language</var>, and if it is not the same language
+     as any of the languages in <var>languages</var>, append it to <var>languages</var>.</p></li>
+
+     <li>
+      <p>Let <var>winning language</var> be the first language in <var>languages</var> for which
+      there is a <code>meta</code> element in the <code>Document</code> where the
+      <code data-x="attr-meta-name">name</code> attribute value is an
+      <span>ASCII case-insensitive</span> match for
+      <code data-x="meta-application-name">application-name</code> and whose
+      <span>language</span> is the language in question.</p>
+
+      <p>If none of the languages have such a <code>meta</code> element, then return;
+      there's no given application name.</p>
+     </li>
+
+     <li>
+      <p>Return the value of the <code data-x="attr-meta-content">content</code> attribute of the
+      first <code>meta</code> element in the <code>Document</code> in <span>tree order</span> where the
+      <code data-x="attr-meta-name">name</code> attribute value is an
+      <span>ASCII case-insensitive</span> match for <code data-x="meta-application-name">application-name</code>
+      and whose <span>language</span> is <var>winning language</var>.</p>
+     </li>
+    </ol>
+    </div>
+
+    <p class="note">This algorithm would be used by a browser when it needs a name for the page, for
+    instance, to label a bookmark. The languages it would provide to the algorithm would be the
+    user's preferred languages.</p>
+
+    </div>
+   </dd>
+
+   <dt><dfn attr-value for="meta/name"><code data-x="meta-author">author</code></dfn></dt>
+
+   <dd><p>The value must be a free-form string giving the name of one of the page's
+   authors.</p></dd>
+
+   <dt><dfn attr-value for="meta/name"><code data-x="meta-description">description</code></dfn></dt>
+
+   <dd><p>The value must be a free-form string that describes the page. The value must be
+   appropriate for use in a directory of pages, e.g. in a search engine. There must not be more than
+   one <code>meta</code> element where the <code data-x="attr-meta-name">name</code> attribute value
+   is an <span>ASCII case-insensitive</span> match for
+   <code data-x="meta-description">description</code> per document.</p></dd>
+
+   <dt><dfn attr-value for="meta/name"><code data-x="meta-generator">generator</code></dfn></dt>
+
+   <dd>
+    <p>The value must be a free-form string that identifies one of the software packages used to
+    generate the document. This value must not be used on pages whose markup is not generated by
+    software, e.g. pages whose markup was written by a user in a text editor.</p>
+
+    <div class="example">
+
+     <p>Here is what a tool called "Frontweaver" could include in its output, in the page's
+     <code>head</code> element, to identify itself as the tool used to generate the page:</p>
+
+     <pre><code class="html">&lt;meta name=generator content="Frontweaver 8.2"></code></pre>
+
+    </div>
+   </dd>
+
+   <dt><dfn attr-value for="meta/name"><code data-x="meta-keywords">keywords</code></dfn></dt>
+
+   <dd>
+    <p>The value must be a <span>set of comma-separated tokens</span>, each of which is a keyword
+    relevant to the page.</p>
+
+    <div class="example">
+
+     <p>This page about typefaces on British motorways uses a <code>meta</code> element to specify
+     some keywords that users might use to look for the page:</p>
+
+     <pre><code class="html">&lt;!DOCTYPE HTML>
+&lt;html lang="en-GB">
+ &lt;head>
+  &lt;title>Typefaces on UK motorways&lt;/title>
+  &lt;meta name="keywords" content="british,type face,font,fonts,highway,highways">
+ &lt;/head>
+ &lt;body>
+  ...</code></pre>
+
+    </div>
+
+    <p class="note">Many search engines do not consider such keywords, because this feature has
+    historically been used unreliably and even misleadingly as a way to spam search engine results
+    in a way that is not helpful for users.</p>
+
+    <div w-nodev>
+
+    <div algorithm>
+    <p>To obtain the list of keywords that the author has specified as applicable to the page, the
+    user agent must run the following steps:</p>
+
+    <ol>
+     <li><p>Let <var>keywords</var> be an empty list.</p></li>
+
+     <li>
+      <p>For each <code>meta</code> element with a <code data-x="attr-meta-name">name</code>
+      attribute and a <code data-x="attr-meta-content">content</code> attribute and where the <code
+      data-x="attr-meta-name">name</code> attribute value is an <span>ASCII case-insensitive</span>
+      match for <code data-x="meta-keywords">keywords</code>:</p>
+
+      <ol>
+       <li><p><span data-x="split a string on commas">Split the value of the element's <code
+       data-x="attr-meta-content">content</code> attribute on commas</span>.</p></li>
+
+       <li><p>Add the resulting tokens, if any, to <var>keywords</var>.</p></li>
+      </ol>
+     </li>
+
+     <li><p>Remove any duplicates from <var>keywords</var>.</p></li>
+
+     <li><p>Return <var>keywords</var>. This is the list of keywords that the author has
+     specified as applicable to the page.</p></li>
+    </ol>
+    </div>
+
+    <p>User agents should not use this information when there is insufficient confidence in the
+    reliability of the value.</p>
+
+    <p class="example">For instance, it would be reasonable for a content management system to use
+    the keyword information of pages within the system to populate the index of a site-specific
+    search engine, but a large-scale content aggregator that used this information would likely find
+    that certain users would try to game its ranking mechanism through the use of inappropriate
+    keywords.</p>
+
+    </div>
+   </dd>
+
+   <dt><dfn attr-value for="meta/name"><code data-x="meta-referrer">referrer</code></dfn></dt>
+
+   <dd>
+    <p>The value must be a <span>referrer policy</span>, which defines the default <span>referrer
+    policy</span> for the <code>Document</code>. <ref>REFERRERPOLICY</ref></p>
+
+    <div w-nodev>
+
+    <div algorithm>
+    <p>If any <code>meta</code> element <var>element</var> is <span data-x="node is inserted into a
+    document">inserted into the document</span>, or has its <code
+    data-x="attr-meta-name">name</code> or <code data-x="attr-meta-content">content</code>
+    attributes changed, user agents must run the following algorithm:</p>
+
+    <ol>
+     <li><p>If <var>element</var> is not <span>in a document tree</span>, then return.</p></li>
+
+     <li><p>If <var>element</var> does not have a <code data-x="attr-meta-name">name</code>
+     attribute whose value is an <span>ASCII case-insensitive</span> match for "<code
+     data-x="meta-referrer">referrer</code>", then return.</p></li>
+
+     <li><p>If <var>element</var> does not have a <code data-x="attr-meta-content">content</code>
+     attribute, or that attribute's value is the empty string, then return.</p></li>
+
+     <li><p>Let <var>value</var> be the value of <var>element</var>'s <code
+     data-x="attr-meta-content">content</code> attribute, <span>converted to ASCII
+     lowercase</span>.</p></li>
+
+     <li>
+      <p>If <var>value</var> is one of the values given in the first column of the following table,
+      then set <var>value</var> to the value given in the second column:</p>
+
+      <table>
+       <thead>
+        <tr>
+         <th>Legacy value
+         <th>Referrer policy
+       <tbody>
+        <tr>
+         <td><code data-x="">never</code>
+         <td><code data-x="referrer-policy-no-referrer">no-referrer</code>
+        <tr>
+         <td><code data-x="">default</code>
+         <td>the <span>default referrer policy</span>
+        <tr>
+         <td><code data-x="">always</code>
+         <td><code data-x="referrer-policy-unsafe-url">unsafe-url</code>
+        <tr>
+         <td><code data-x="">origin-when-crossorigin</code>
+         <td><code data-x="referrer-policy-origin-when-cross-origin">origin-when-cross-origin</code>
+      </table>
+     </li>
+
+     <li><p>If <var>value</var> is a <span>referrer policy</span>, then set <var>element</var>'s
+     <span>node document</span>'s <span data-x="concept-document-policy-container">policy
+     container</span>'s <span data-x="policy-container-referrer-policy">referrer policy</span> to
+     <var>policy</var>.</p></li>
+    </ol>
+    </div>
+
+    <p class="note">For historical reasons, unlike other standard metadata names, the processing
+    model for <code data-x="meta-referrer">referrer</code> is not responsive to element removals,
+    and does not use <span>tree order</span>. Only the most-recently-inserted or
+    most-recently-modified <code>meta</code> element in this state has an effect.</p>
+
+    </div>
+   </dd>
+
+   <dt><dfn attr-value for="meta/name"><code data-x="meta-theme-color">theme-color</code></dfn></dt>
+
+   <dd>
+    <p>The value must be a string that matches the CSS <span>&lt;color></span> production, defining
+    a suggested color that user agents should use to customize the display of the page or of the
+    surrounding user interface. For example, a browser might color the page's title bar with the
+    specified value, or use it as a color highlight in a tab bar or task switcher.</p>
+
+    <p>Within an HTML document, the <code data-x="attr-meta-media">media</code> attribute value must
+    be unique amongst all the <code>meta</code> elements with their <code
+    data-x="attr-meta-name">name</code> attribute value set to an <span>ASCII
+    case-insensitive</span> match for <code data-x="meta-theme-color">theme-color</code>.</p>
+
+    <div class="example">
+
+     <p>This standard itself uses "WHATWG green" as its theme color:</p>
+
+     <pre><code class="html">&lt;!DOCTYPE HTML>
+&lt;title>HTML Standard&lt;/title>
+&lt;meta name="theme-color" content="#3c790a">
+...</code></pre>
+
+    </div>
+
+    <p>The <code data-x="attr-meta-media">media</code> attribute may be used to describe the context
+    in which the provided color should be used.</p>
+
+    <div class="example">
+     <p>If we only wanted to use "WHATWG green" as this standard's theme color in dark mode,
+     we could use the <code data-x="">prefers-color-scheme</code> media feature:</p>
+
+     <pre><code class="html">&lt;!DOCTYPE HTML>
+&lt;title>HTML Standard&lt;/title>
+&lt;meta name="theme-color" content="#3c790a" media="(prefers-color-scheme: dark)">
+...</code></pre>
+    </div>
+
+    <div w-nodev>
+
+     <div algorithm>
+     <p>To obtain a page's theme color, user agents must run the following steps:</p>
+
+     <ol>
+      <li>
+       <p>Let <var>candidate elements</var> be the list of all <code>meta</code> elements that
+       meet the following criteria, in <span>tree order</span>:</p>
+
+       <ul>
+        <li><p>the element is <span>in a document tree</span>;</p></li>
+
+        <li><p>the element has a <code data-x="attr-meta-name">name</code> attribute, whose value
+        is an <span>ASCII case-insensitive</span> match for <code
+        data-x="meta-theme-color">theme-color</code>; and</p></li>
+
+        <li><p>the element has a <code data-x="attr-meta-content">content</code> attribute.</p></li>
+       </ul>
+      </li>
+
+      <li>
+       <p>For each <var>element</var> in <var>candidate elements</var>:</p>
+
+       <ol>
+        <li><p>If <var>element</var> has a <code data-x="attr-link-media">media</code> attribute
+        and the value of <var>element</var>'s <code data-x="attr-meta-media">media</code>
+        attribute does not <span data-x="matches the environment">match the environment</span>, then
+        <span>continue</span>.</p></li>
+
+        <li><p>Let <var>value</var> be the result of <span data-x="strip leading and trailing ASCII
+        whitespace">stripping leading and trailing ASCII whitespace</span> from the value of
+        <var>element</var>'s <code data-x="attr-meta-content">content</code> attribute.</p></li>
+
+        <li><p>Let <var>color</var> be the result of <span data-x="parse a CSS &lt;color>
+        value">parsing</span> <var>value</var>.</p></li>
+
+        <li><p>If <var>color</var> is not failure, then return <var>color</var>.</p></li>
+       </ol>
+      </li>
+
+      <li><p>Return nothing (the page has no theme color).</p></li>
+     </ol>
+     </div>
+
+     <p>If any <code>meta</code> elements are <span data-x="node is inserted into a
+     document">inserted into the document</span> or <span data-x="node is removed from a
+     document">removed from the document</span>, or existing <code>meta</code> elements have their
+     <code data-x="attr-meta-name">name</code>, <code data-x="attr-meta-content">content</code>, or
+     <code data-x="attr-link-media">media</code> attributes changed, or if the environment changes
+     such that any <code>meta</code> element's <code data-x="attr-link-media">media</code>
+     attribute's value may now or may no longer <span data-x="matches the environment">match the
+     environment</span>, user agents must re-run the above algorithm and apply the result to any
+     affected UI.</p>
+
+    </div>
+
+    <p>When using the theme color in UI, user agents may adjust it in implementation-specific ways
+    to make it more suitable for the UI in question. For example, if a user agent intends to use
+    the theme color as a background and display white text over it, it might use a darker variant of
+    the theme color in that part of the UI, to ensure adequate contrast.</p>
+   </dd>
+
+   <dt><dfn attr-value for="meta/name"><code
+   data-x="meta-color-scheme">color-scheme</code></dfn></dt>
+
+   <dd>
+    <p>To aid user agents in rendering the page background with the desired color scheme immediately
+    (rather than waiting for all CSS in the page to load), a <span>'color-scheme'</span> value can
+    be provided in a <code>meta</code> element.</p>
+
+    <p>The value must be a string that matches the syntax for the CSS <span>'color-scheme'</span>
+    property value. It determines the <span>page's supported color-schemes</span>.</p>
+
+    <p>There must not be more than one <code>meta</code> element with its <code
+    data-x="attr-meta-name">name</code> attribute value set to an
+    <span>ASCII case-insensitive</span> match for <code
+    data-x="meta-color-scheme">color-scheme</code> per document.</p>
+
+    <div class="example">
+     <p>The following declaration indicates that the page is aware of and can handle a color scheme
+     with dark background colors and light foreground colors:</p>
+
+     <pre><code class="html">&lt;meta name="color-scheme" content="dark"></code></pre>
+    </div>
+
+    <div w-nodev>
+
+     <div algorithm>
+     <p>To obtain a <span>page's supported color-schemes</span>, user agents must run the following steps:</p>
+
+     <ol>
+      <li>
+       <p>Let <var>candidate elements</var> be the list of all <code>meta</code> elements that
+       meet the following criteria, in <span>tree order</span>:</p>
+
+       <ul>
+        <li><p>the element is <span>in a document tree</span>;</p></li>
+
+        <li><p>the element has a <code data-x="attr-meta-name">name</code> attribute, whose value
+        is an <span>ASCII case-insensitive</span> match for <code
+        data-x="meta-color-scheme">color-scheme</code>; and</p></li>
+
+        <li><p>the element has a <code data-x="attr-meta-content">content</code> attribute.</p></li>
+       </ul>
+      </li>
+
+      <li>
+       <p>For each <var>element</var> in <var>candidate elements</var>:</p>
+
+       <ol>
+        <li>Let <var>parsed</var> be the result of <span data-x="parse a list of component
+        values">parsing a list of component values</span> given the value of <var>element</var>'s
+        <code data-x="attr-meta-content">content</code> attribute.</li>
+
+        <li>If <var>parsed</var> is a valid CSS <span>'color-scheme'</span> property value, then
+        return <var>parsed</var>.</li>
+       </ol>
+      </li>
+
+      <li><p>Return null.</p></li>
+     </ol>
+     </div>
+
+     <p>If any <code>meta</code> elements are <span data-x="node is inserted into a
+     document">inserted into the document</span> or <span data-x="node is removed from a
+     document">removed from the document</span>, or existing <code>meta</code> elements have their
+     <code data-x="attr-meta-name">name</code> or <code data-x="attr-meta-content">content</code>
+     attributes changed, user agents must re-run the above algorithm.</p>
+
+    </div>
+
+    <p class="note">Because these rules check successive elements until they find a match, an
+    author can provide multiple such values to handle fallback for legacy user agents. Opposite to
+    how CSS fallback works for properties, the multiple meta elements needs to be arranged with the
+    legacy values after the newer values.</p>
+   </dd>
+  </dl>
+
+
+
+  <h5>Other metadata names</h5>
+
+  <p>Anyone can create and use their own <dfn data-x="concept-meta-extensions">extensions to the
+  predefined set of metadata names</dfn>. There is no requirement to register such extensions.</p>
+
+  <p>However, a new metadata name should not be created in any of the following cases:</p>
+
+  <ul>
+   <li><p>If either the name is a <span>URL</span>, or the value of its accompanying <code
+   data-x="attr-meta-content">content</code> attribute is a <span>URL</span>; in those cases,
+   registering it as an <span data-x="concept-rel-extensions">extension to the predefined set of
+   link types</span> is encouraged (rather than creating a new metadata name).</p></li>
+
+   <li><p>If the name is for something expected to have processing requirements in user agents; in
+   that case it ought to be standardized.</p></li>
+  </ul>
+
+  <p>Also, before creating and using a new metadata name, consulting the <a
+  href="https://wiki.whatwg.org/wiki/MetaExtensions">WHATWG Wiki MetaExtensions page</a> is
+  encouraged — to avoid choosing a metadata name that's already in use, and to avoid duplicating the
+  purpose of any metadata names that are already in use, and to avoid new standardized names
+  clashing with your chosen name. <ref>WHATWGWIKI</ref></p>
+
+  <p>Anyone is free to edit the WHATWG Wiki MetaExtensions page at any time to add a metadata name.
+  New metadata names can be specified with the following information:</p>
+
+  <dl>
+   <dt>Keyword</dt>
+
+   <dd><p>The actual name being defined. The name should not be confusingly similar to any other
+   defined name (e.g. differing only in case).</p></dd>
+
+
+   <dt>Brief description</dt>
+
+   <dd><p>A short non-normative description of what the metadata name's meaning is, including the
+   format the value is required to be in.</p></dd>
+
+
+   <dt>Specification</dt>
+
+   <dd>A link to a more detailed description of the metadata name's semantics and requirements. It
+   could be another page on the wiki, or a link to an external page.</dd>
+
+
+   <dt>Synonyms</dt>
+
+   <dd><p>A list of other names that have exactly the same processing requirements. Authors should
+   not use the names defined to be synonyms (they are only intended to allow user agents to support
+   legacy content). Anyone may remove synonyms that are not used in practice; only names that need to
+   be processed as synonyms for compatibility with legacy content are to be registered in this
+   way.</p></dd>
+
+
+   <dt>Status</dt>
+
+   <dd>
+    <p>One of the following:</p>
+
+    <dl>
+     <dt>Proposed</dt>
+
+     <dd>The name has not received wide peer review and approval. Someone has proposed it and is, or
+     soon will be, using it.</dd>
+
+     <dt>Ratified</dt>
+
+     <dd>The name has received wide peer review and approval. It has a specification that
+     unambiguously defines how to handle pages that use the name, including when they use it in
+     incorrect ways.</dd>
+
+     <dt>Discontinued</dt>
+
+     <dd>The metadata name has received wide peer review and it has been found wanting. Existing
+     pages are using this metadata name, but new pages should avoid it. The "brief description" and
+     "specification" entries will give details of what authors should use instead, if anything.</dd>
+    </dl>
+
+    <p>If a metadata name is found to be redundant with existing values, it should be removed and
+    listed as a synonym for the existing value.</p>
+
+    <p>If a metadata name is added in the "proposed" state for a period of a month or more without
+    being used or specified, then it may be removed from the WHATWG Wiki MetaExtensions page.</p>
+
+    <p>If a metadata name is added with the "proposed" status and found to be redundant with
+    existing values, it should be removed and listed as a synonym for the existing value. If a
+    metadata name is added with the "proposed" status and found to be harmful, then it should be
+    changed to "discontinued" status.</p>
+
+    <p>Anyone can change the status at any time, but should only do so in accordance with the
+    definitions above.</p>
+   </dd>
+  </dl>
+
+
+
+  <h5>Pragma directives</h5>
+
+  <p>When the <dfn for="meta" element-attr><code
+  data-x="attr-meta-http-equiv">http-equiv</code></dfn> attribute is specified on a
+  <code>meta</code> element, the element is a pragma directive.</p>
+
+  <div class="warning" id="warning-http-equiv-unrelated-to-http-headers">
+   <p>Despite the name <code data-x="attr-meta-http-equiv">http-equiv</code>, pragma directives are
+   almost entirely unrelated to HTTP headers. Implementers and web developers are best off thinking
+   of them as entirely separate, and the name as being a historical accident.</p>
+
+   <p>In more detail, although the <code data-x="attr-meta-http-equiv-refresh">refresh</code>
+   keyword has the same processing model as the corresponding `<code>Refresh</code>` header, every
+   other standardized pragma directive has at least slightly different behavior than the
+   similarly-named header. (And usually dramatically-different behavior.)</p>
+
+   <p>Implementers or specification writers contemplating adding new document-level pragmas or HTTP
+   header-controlled switches should be cautious about this mismatch, and avoid perpetuating the
+   existing confusion by adding the same or similar behavior to both an HTTP header and an <code
+   data-x="attr-meta-http-equiv">http-equiv</code> pragma. Instead, consider providing only an HTTP
+   header, or if an in-document pragma is needed, consider adding a new attribute to
+   <code>meta</code> similar to the model used by the <code
+   data-x="attr-meta-charset">charset</code> attribute. (Note that avoiding in-document pragmas is
+   often the better choice, since the DOM is mutable. Thus, even in the simple case where the
+   developer does not add, remove, or mutate <code>meta</code> elements, the policy will go from
+   un-applied to applied during parsing, which can have complex implications.)</p>
+  </div>
+
+  <p>The <code data-x="attr-meta-http-equiv">http-equiv</code> attribute is an <span>enumerated
+  attribute</span> with the following keywords and states:</p>
+
+  <table class="yesno" id="table-http-equiv">
+   <thead>
+    <tr>
+     <th>Keyword
+     <th w-nodev>Conforming
+     <th>State
+     <th>Brief description
+   <tbody>
+    <tr w-nodev>
+     <td><dfn attr-value for="meta/http-equiv"><code
+     data-x="attr-meta-http-equiv-keyword-content-language">content-language</code></dfn>
+     <td class="no">No
+     <td><span data-x="attr-meta-http-equiv-content-language">Content language</span>
+     <td>Sets the <span data-x="pragma-set default language">pragma-set default language</span>.
+    <tr>
+     <td><dfn attr-value for="meta/http-equiv"><code
+     data-x="attr-meta-http-equiv-keyword-content-type">content-type</code></dfn>
+     <td w-nodev>
+     <td><span data-x="attr-meta-http-equiv-content-type">Encoding declaration</span>
+     <td>An alternative form of setting the <code data-x="attr-meta-charset">charset</code>.
+    <tr>
+     <td><dfn attr-value for="meta/http-equiv"><code
+     data-x="attr-meta-http-equiv-keyword-default-style">default-style</code></dfn>
+     <td w-nodev>
+     <td><span data-x="attr-meta-http-equiv-default-style">Default style</span>
+     <td>Sets the <span data-x="CSS style sheet set name">name</span> of the default
+     <span>CSS style sheet set</span>.
+    <tr>
+     <td><dfn attr-value for="meta/http-equiv"><code
+     data-x="attr-meta-http-equiv-keyword-refresh">refresh</code></dfn>
+     <td w-nodev>
+     <td><span data-x="attr-meta-http-equiv-refresh">Refresh</span>
+     <td>Acts as a timed redirect.
+    <tr w-nodev>
+     <td><dfn attr-value for="meta/http-equiv"><code
+     data-x="attr-meta-http-equiv-keyword-set-cookie">set-cookie</code></dfn>
+     <td class="no">No
+     <td><span data-x="attr-meta-http-equiv-set-cookie">Set-Cookie</span>
+     <td>Has no effect.
+    <tr>
+     <td><dfn attr-value for="meta/http-equiv"><code
+     data-x="attr-meta-http-equiv-keyword-x-ua-compatible">x-ua-compatible</code></dfn>
+     <td w-nodev>
+     <td><span data-x="attr-meta-http-equiv-x-ua-compatible">X-UA-Compatible</span>
+     <td>In practice, encourages Internet Explorer to more closely follow the specifications.
+    <tr>
+     <td><dfn attr-value for="meta/http-equiv"><code
+     data-x="attr-meta-http-equiv-keyword-content-security-policy">content-security-policy</code></dfn>
+     <td w-nodev>
+     <td><span data-x="attr-meta-http-equiv-content-security-policy">Content security policy</span>
+     <td><span data-x="enforce the policy">Enforces</span> a <span>Content Security
+     Policy</span> on a <code>Document</code>.
+  </table>
+
+<!--
+Content-Script-Type and Content-Style-Type don't do anything (and are non-conforming).
+
+DATA: According to Henri's validator stats, here are common
+non-conforming values used by people who validate (sample of 400
+pages):
+
+COUNT ERROR
+   20 Bad value "Content-Language" for attribute "http-equiv" on element "meta".
+   17 Bad value "Content-Style-Type" for attribute "http-equiv" on element "meta".
+   12 Bad value "Expires" for attribute "http-equiv" on element "meta".
+   11 Bad value "Pragma" for attribute "http-equiv" on element "meta".
+   11 Bad value "imagetoolbar" for attribute "http-equiv" on element "meta".
+   10 Bad value "Content-Script-Type" for attribute "http-equiv" on element "meta".
+   10 Bad value "content-language" for attribute "http-equiv" on element "meta".
+ [...]
+https://hsivonen.com/test/moz/analysis.txt
+
+Here's some more data, this time from Philip`, on a sample of 15k pages.
+
+  COUNT VALUE
+   1181 Content-Language
+    430 Content-Style-Type
+    342 imagetoolbar
+    276 content-language
+    269 Pragma
+    260 expires
+    227 Expires
+    211 pragma
+    146 Content-Script-Type
+    132 keywords
+    119 Page-Enter
+    116 description
+    106 reply-to
+    102 Cache-Control
+   [...]
+https://philip.html5.org/data/meta-http-equiv.txt
+
+These numbers are low; further study is required to establish what
+people expect to have work and what is necessary.
+-->
+
+  <div algorithm>
+
+  <div w-nodev>
+
+  <p>When a <code>meta</code> element is <span data-x="node is inserted into a document">inserted
+  into the document</span>, if its <code data-x="attr-meta-http-equiv">http-equiv</code> attribute is
+  present and represents one of the above states, then the user agent must run the algorithm
+  appropriate for that state, as described in the following list:</p>
+
+  </div>
+
+  <dl>
+   <dt w-nodev><dfn data-x="attr-meta-http-equiv-content-language">Content language state</dfn>
+   (<code data-x="">http-equiv="<code data-x="attr-meta-http-equiv-keyword-content-language">content-language</code>"</code>)
+
+   <dd w-nodev>
+
+    <p class="note">This feature is non-conforming. Authors are encouraged to use the <code
+    data-x="attr-lang">lang</code> attribute instead.</p>
+
+    <p>This pragma sets the <dfn>pragma-set default language</dfn>. Until such a pragma is
+    successfully processed, there is no <span>pragma-set default language</span>.</p>
+
+    <!-- https://www.hixie.ch/tests/adhoc/html/meta/content-language/ -->
+
+    <ol>
+     <li><p>If the <code>meta</code> element has no <code data-x="attr-meta-content">content</code>
+     attribute, then return.</p></li>
+
+     <li><p>If the element's <code data-x="attr-meta-content">content</code> attribute contains a
+     U+002C COMMA character (,), then return.</p></li><!-- if you remove this,
+     un-comment-out the corresponding bits in the step below. -->
+
+     <li><p>Let <var>input</var> be the value of the element's <code
+     data-x="attr-meta-content">content</code> attribute.</p></li>
+
+     <li><p>Let <var>position</var> point at the first character of <var>input</var>.</p></li>
+
+     <li><p><span>Skip ASCII whitespace</span> within <var>input</var> given
+     <var>position</var>.</p></li>
+
+     <li><p><span>Collect a sequence of code points</span> that are not <span>ASCII
+     whitespace</span> from <var>input</var> given <var>position</var>.</p></li>
+
+     <li><p>Let <var>candidate</var> be the string that resulted from the previous
+     step.</p></li>
+
+     <li><p>If <var>candidate</var> is the empty string, return.</p></li>
+
+     <li>
+      <p>Set the <span>pragma-set default language</span> to <var>candidate</var>.</p>
+
+      <p class="note">If the value consists of multiple space-separated tokens, tokens after the
+      first are ignored.</p>
+     </li>
+    </ol>
+
+    <p class="note">This pragma is almost, but not quite, entirely unlike the HTTP `<code
+    data-x="http-content-language">Content-Language</code>` header of the same name.
+    <ref>HTTP</ref></p>
+   </dd>
+
+   <dt><dfn data-x="attr-meta-http-equiv-content-type">Encoding declaration state</dfn> (<code data-x="">http-equiv="<code data-x="attr-meta-http-equiv-keyword-content-type">content-type</code>"</code>)
+
+   <dd>
+    <p>The <span data-x="attr-meta-http-equiv-content-type">Encoding declaration state</span> is
+    just an alternative form of setting the <code data-x="attr-meta-charset">charset</code>
+    attribute: it is a <span>character encoding declaration</span>. <span w-nodev>This state's user
+    agent requirements are all handled by the parsing section of the specification.</span></p>
+
+    <p>For <code>meta</code> elements with an <code data-x="attr-meta-http-equiv">http-equiv</code>
+    attribute in the <span data-x="attr-meta-http-equiv-content-type">Encoding declaration
+    state</span>, the <code data-x="attr-meta-content">content</code> attribute must have a value
+    that is an <span>ASCII case-insensitive</span> match for a string that consists of:
+    "<code data-x="">text/html;</code>", optionally followed by any number of <span>ASCII
+    whitespace</span>, followed by "<code data-x="">charset=utf-8</code>".</p>
+
+    <p>A document must not contain both a <code>meta</code> element with an <code
+    data-x="attr-meta-http-equiv">http-equiv</code> attribute in the <span
+    data-x="attr-meta-http-equiv-content-type">Encoding declaration state</span> and a
+    <code>meta</code> element with the <code data-x="attr-meta-charset">charset</code> attribute
+    present.</p>
+
+    <p>The <span data-x="attr-meta-http-equiv-content-type">Encoding declaration state</span> may be
+    used in <span>HTML documents</span>, but elements with an <code
+    data-x="attr-meta-http-equiv">http-equiv</code> attribute in that state must not be used in
+    <span>XML documents</span>.</p>
+   </dd>
+
+   <dt><dfn data-x="attr-meta-http-equiv-default-style">Default style state</dfn> (<code data-x="">http-equiv="<code data-x="attr-meta-http-equiv-keyword-default-style">default-style</code>"</code>)
+
+   <dd>
+    <p>This pragma sets the <span data-x="CSS style sheet set name">name</span> of the default
+    <span>CSS style sheet set</span>.</p>
+
+    <div w-nodev>
+
+    <ol>
+     <li><p>If the <code>meta</code> element has no <code data-x="attr-meta-content">content</code>
+     attribute, or if that attribute's value is the empty string, then return.</p></li>
+
+     <li><p><span>Change the preferred CSS style sheet set name</span> with the name being the value
+     of the element's <code data-x="attr-meta-content">content</code> attribute.
+     <ref>CSSOM</ref></p></li>
+    </ol>
+
+    </div>
+   </dd>
+
+   <dt><dfn data-x="attr-meta-http-equiv-refresh">Refresh state</dfn> (<code data-x="">http-equiv="<code data-x="attr-meta-http-equiv-keyword-refresh">refresh</code>"</code>)
+
+   <dd>
+    <p>This pragma acts as a timed redirect.</p>
+
+    <p>A <code>Document</code> object has an associated <dfn for="Document">will declaratively
+    refresh</dfn> (a boolean). It is initially false.</p>
+
+    <div w-nodev>
+
+    <ol>
+     <li><p>If the <code>meta</code> element has no <code data-x="attr-meta-content">content</code>
+     attribute, or if that attribute's value is the empty string, then return.</p></li>
+
+     <li><p>Let <var>input</var> be the value of the element's <code
+     data-x="attr-meta-content">content</code> attribute.</p></li>
+
+     <li><p>Run the <span>shared declarative refresh steps</span> with the <code>meta</code>
+     element's <span>node document</span>, <var>input</var>, and the <code>meta</code>
+     element.</p></li>
+    </ol>
+
+    <p>The <dfn>shared declarative refresh steps</dfn>, given a <code>Document</code> object
+    <var>document</var>, string <var>input</var>, and optionally a <code>meta</code> element
+    <var>meta</var>, are as follows:</p>
+
+    <ol>
+     <li><p>If <var>document</var>'s <span>will declaratively refresh</span> is true, then
+     return.</p></li>
+
+     <li><p>Let <var>position</var> point at the first <span>code point</span> of
+     <var>input</var>.</p></li>
+
+     <li><p><span>Skip ASCII whitespace</span> within <var>input</var> given
+     <var>position</var>.</p></li>
+
+     <li><p>Let <var>time</var> be 0.</p></li>
+
+     <li><p><span>Collect a sequence of code points</span> that are <span>ASCII digits</span> from
+     <var>input</var> given <var>position</var>, and let <var>timeString</var> be the
+     result.</p></li>
+
+     <li>
+      <p>If <var>timeString</var> is the empty string:</p>
+
+      <ol>
+       <li><p>If the <span>code point</span> in <var>input</var> pointed to by <var>position</var>
+       is not U+002E (.), then return.</p></li>
+      </ol>
+     </li>
+
+     <li><p>Otherwise, set <var>time</var> to the result of parsing <var>timeString</var> using the
+     <span>rules for parsing non-negative integers</span>.</p></li>
+
+     <li><p><span>Collect a sequence of code points</span> that are <span>ASCII digits</span> and
+     U+002E FULL STOP characters (.) from <var>input</var> given <var>position</var>. Ignore any
+     collected characters.</p></li>
+
+     <li><p>Let <var>urlRecord</var> be <var>document</var>'s <span
+     data-x="concept-document-URL">URL</span>.</p></li>
+
+     <li>
+      <p>If <var>position</var> is not past the end of <var>input</var>:</p>
+
+      <ol>
+       <li><p>If the <span>code point</span> in <var>input</var> pointed to by <var>position</var>
+       is not U+003B (;), U+002C (,), or <span>ASCII whitespace</span>, then return.</p></li>
+
+       <li><p><span>Skip ASCII whitespace</span> within <var>input</var> given
+       <var>position</var>.</p></li>
+
+       <li><p>If the <span>code point</span> in <var>input</var> pointed to by <var>position</var>
+       is U+003B (;) or U+002C (,), then advance <var>position</var> to the next <span>code
+       point</span>.</p></li>
+
+       <li><p><span>Skip ASCII whitespace</span> within <var>input</var> given
+       <var>position</var>.</p></li>
+      </ol>
+     </li>
+
+     <li>
+      <p>If <var>position</var> is not past the end of <var>input</var>:</p>
+
+      <ol>
+       <li><p>Let <var>urlString</var> be the substring of <var>input</var> from the
+       <span>code point</span> at <var>position</var> to the end of the string.</p></li>
+
+       <li><p>If the <span>code point</span> in <var>input</var> pointed to by <var>position</var>
+       is U+0055 (U) or U+0075 (u), then advance <var>position</var> to the next <span>code
+       point</span>. Otherwise, jump to the step labeled <i>skip quotes</i>.</p></li>
+
+       <li><p>If the <span>code point</span> in <var>input</var> pointed to by <var>position</var>
+       is U+0052 (R) or U+0072 (r), then advance <var>position</var> to the next <span>code
+       point</span>. Otherwise, jump to the step labeled <i>parse</i>.</p></li>
+
+       <li><p>If the <span>code point</span> in <var>input</var> pointed to by <var>position</var>
+       is U+004C (L) or U+006C (l), then advance <var>position</var> to the next <span>code
+       point</span>. Otherwise, jump to the step labeled <i>parse</i>.</p></li>
+
+       <li><p><span>Skip ASCII whitespace</span> within <var>input</var> given
+       <var>position</var>.</p></li>
+
+       <li><p>If the <span>code point</span> in <var>input</var> pointed to by <var>position</var>
+       is U+003D (=), then advance <var>position</var> to the next <span>code point</span>.
+       Otherwise, jump to the step labeled <i>parse</i>.</p></li>
+
+       <li><p><span>Skip ASCII whitespace</span> within <var>input</var> given
+       <var>position</var>.</p></li>
+
+       <li><p><i>Skip quotes</i>: If the <span>code point</span> in <var>input</var> pointed to by
+       <var>position</var> is U+0027 (') or U+0022 ("), then let <var>quote</var> be that <span>code
+       point</span>, and advance <var>position</var> to the next <span>code point</span>. Otherwise,
+       let <var>quote</var> be the empty string.</p></li>
+
+       <li><p>Set <var>urlString</var> to the substring of <var>input</var> from the <span>code
+       point</span> at <var>position</var> to the end of the string.</p></li>
+
+       <li><p>If <var>quote</var> is not the empty string, and there is a <span>code point</span> in
+       <var>urlString</var> equal to <var>quote</var>, then truncate <var>urlString</var> at that
+       <span>code point</span>, so that it and all subsequent <span data-x="code point">code
+       points</span> are removed.</p>
+
+       <li><p><i>Parse</i>: Set <var>urlRecord</var> to the result of <span>encoding-parsing a
+       URL</span> given <var>urlString</var>, relative to <var>document</var>.</p></li>
+
+       <li><p>If <var>urlRecord</var> is failure, then return.</p></li>
+
+       <li><p>If <var>urlRecord</var>'s <span data-x="concept-url-scheme">scheme</span> is "<code
+       data-x="javascript protocol">javascript</code>", then return.</p></li>
+      </ol>
+     </li>
+
+     <li><p>Set <var>document</var>'s <span>will declaratively refresh</span> to true.</p></li>
+
+     <li>
+      <p>Perform one or more of the following steps:</p>
+
+      <ul>
+       <li>
+        <p>After the refresh has come due (as defined below), if the user has not canceled the
+        redirect and, if <var>meta</var> is given, <var>document</var>'s <span>active sandboxing
+        flag set</span> does not have the <span>sandboxed automatic features browsing context
+        flag</span> set, then <span data-x="navigate">navigate</span><!--DONAV meta refresh-->
+        <var>document</var>'s <span>node navigable</span> to <var>urlRecord</var> using
+        <var>document</var>, with <i data-x="navigation-hh">historyHandling</i> set to "<code
+        data-x="NavigationHistoryBehavior-replace">replace</code>".</p>
+
+        <p>For the purposes of the previous paragraph, a refresh is said to have come due as soon as
+        the <em>later</em> of the following two conditions occurs:</p>
+
+        <ul>
+         <li>At least <var>time</var> seconds have elapsed since <var>document</var>'s
+         <span>completely loaded time</span>, adjusted to take into account user or user agent
+         preferences.</li>
+         <!-- https://software.hixie.ch/utilities/js/live-dom-viewer/?saved=774 -->
+
+         <li>If <var>meta</var> is given, at least <var>time</var> seconds have elapsed since
+         <var>meta</var> was <span data-x="node is inserted into a document">inserted into the
+         document</span> <var>document</var>, adjusted to take into account user or user agent
+         preferences.</li>
+         <!-- https://software.hixie.ch/utilities/js/live-dom-viewer/?saved=772 -->
+        </ul>
+
+        <p class="note">It is important to use <var>document</var> here, and not <var>meta</var>'s
+        <span>node document</span>, as that might have changed between the initial set of steps and
+        the refresh coming due and <var>meta</var> is not always given (in case of the HTTP
+        `<code>Refresh</code>` header).</p>
+       </li>
+
+       <li><p>Provide the user with an interface that, when selected, <span
+       data-x="navigate">navigates</span><!--DONAV meta refresh--> <var>document</var>'s <span>node
+       navigable</span> to <var>urlRecord</var> using <var>document</var>.</p></li>
+
+       <li><p>Do nothing.</p></li>
+      </ul>
+
+      <p>In addition, the user agent may, as with anything, inform the user of any and all aspects
+      of its operation, including the state of any timers, the destinations of any timed redirects,
+      and so forth.</p>
+     </li>
+    </ol>
+
+    </div>
+
+    <p id="conformance-attr-meta-http-equiv-refresh">For <code>meta</code> elements with an <code
+    data-x="attr-meta-http-equiv">http-equiv</code> attribute in the <span
+    data-x="attr-meta-http-equiv-refresh">Refresh state</span>, the <code
+    data-x="attr-meta-content">content</code> attribute must have a value consisting either of:</p>
+
+    <ul>
+     <li>just a <span>valid non-negative integer</span>, or</li>
+
+     <li>a <span>valid non-negative integer</span>, followed by a U+003B SEMICOLON character
+     (;)<!--(add this at some point once the browsers all support it) or a U+002C COMMA character
+     (,)-->, followed by one or more <span>ASCII whitespace</span>, followed by a substring that is
+     an <span>ASCII case-insensitive</span> match for the string "<code data-x="">URL</code>",
+     followed by a U+003D EQUALS SIGN character (=), followed by a <span>valid URL string</span>
+     that does not start with a literal U+0027 APOSTROPHE (') or U+0022 QUOTATION MARK (")
+     character.</li>
+    </ul>
+
+    <p>In the former case, the integer represents a number of seconds before the page is to be
+    reloaded; in the latter case the integer represents a number of seconds before the page is to be
+    replaced by the page at the given <span>URL</span>.</p>
+
+    <div class="example">
+     <p>A news organization's front page could include the following markup in the page's
+     <code>head</code> element, to ensure that the page automatically reloads from the server every
+     five minutes:</p>
+
+     <pre><code class="html">&lt;meta http-equiv="Refresh" content="300"></code></pre>
+    </div>
+
+    <div class="example">
+     <p>A sequence of pages could be used as an automated slide show by making each page refresh to
+     the next page in the sequence, using markup such as the following:</p>
+
+     <pre><code class="html">&lt;meta http-equiv="Refresh" content="20; URL=page4.html"></code></pre>
+    </div>
+   </dd>
+
+   <dt w-nodev><dfn data-x="attr-meta-http-equiv-set-cookie">Set-Cookie state</dfn> (<code data-x="">http-equiv="<code data-x="attr-meta-http-equiv-keyword-set-cookie">set-cookie</code>"</code>)
+
+   <dd w-nodev>
+    <p>This pragma is non-conforming and has no effect.</p>
+
+    <p>User agents are required to ignore this pragma.</p>
+   </dd>
+
+
+   <dt><dfn data-x="attr-meta-http-equiv-x-ua-compatible">X-UA-Compatible state</dfn> (<code data-x="">http-equiv="<code data-x="attr-meta-http-equiv-keyword-x-ua-compatible">x-ua-compatible</code>"</code>)
+
+   <dd>
+    <p>In practice, this pragma encourages Internet Explorer to more closely follow the
+    specifications.</p>
+
+    <p>For <code>meta</code> elements with an <code data-x="attr-meta-http-equiv">http-equiv</code>
+    attribute in the <span data-x="attr-meta-http-equiv-x-ua-compatible">X-UA-Compatible state</span>, the
+    <code data-x="attr-meta-content">content</code> attribute must have a value that is an
+    <span>ASCII case-insensitive</span> match for the string "<code data-x="">IE=edge</code>".</p>
+
+    <p>User agents are required to ignore this pragma.</p>
+   </dd>
+
+
+   <dt><dfn export data-x="attr-meta-http-equiv-content-security-policy">Content security policy state</dfn> (<code data-x="">http-equiv="<code data-x="attr-meta-http-equiv-keyword-content-security-policy">content-security-policy</code>"</code>)
+
+   <dd>
+    <p>This pragma <span data-x="enforce the policy">enforces</span> a <span>Content Security
+    Policy</span> on a <code>Document</code>. <ref>CSP</ref></p>
+
+    <div w-nodev>
+
+    <ol>
+     <li><p>If the <code>meta</code> element is not a child of a <code>head</code> element,
+     return.</p></li>
+
+     <li><p>If the <code>meta</code> element has no <code data-x="attr-meta-content">content</code>
+     attribute, or if that attribute's value is the empty string, then return.</p></li>
+
+     <li><p>Let <var>policy</var> be the result of executing Content Security Policy's <span>parse
+     a serialized Content Security Policy</span> algorithm on the <code>meta</code> element's
+     <code data-x="attr-meta-content">content</code> attribute's value, with a source of "meta",
+     and a disposition of "enforce".</p></li>
+
+     <li><p>Remove all occurrences of the <code
+     data-x="report-uri directive">report-uri</code>, <code
+     data-x="frame-ancestors directive">frame-ancestors</code>, and <code
+     data-x="sandbox directive">sandbox</code> <span data-x="Content Security Policy
+     directive">directives</span> from <var>policy</var>.</p></li>
+
+     <li><p><span>Enforce the policy</span> <var>policy</var>.</p></li>
+    </ol>
+
+    </div>
+
+    <p>For <code>meta</code> elements with an <code data-x="attr-meta-http-equiv">http-equiv</code>
+    attribute in the <span data-x="attr-meta-http-equiv-content-security-policy">Content security
+    policy state</span>, the <code data-x="attr-meta-content">content</code> attribute must have a
+    value consisting of a <span data-x="Content Security Policy syntax">valid Content Security
+    Policy</span>, but must not contain any <code data-x="report-uri directive">report-uri</code>,
+    <code data-x="frame-ancestors directive">frame-ancestors</code>, or <code data-x="sandbox
+    directive">sandbox</code> <span data-x="Content Security Policy directive">directives</span>.
+    The <span>Content Security Policy</span> given in the <code
+    data-x="attr-meta-content">content</code> attribute will be <span data-x="enforce the
+    policy">enforced</span> upon the current document. <ref>CSP</ref></p>
+
+    <p class="note">At the time of inserting the <code>meta</code> element to the document, it is
+    possible that some resources have already been fetched. For example, images might be stored in
+    the <span>list of available images</span> prior to dynamically inserting a <code>meta</code>
+    element with an <code data-x="attr-meta-http-equiv">http-equiv</code> attribute in the <span
+    data-x="attr-meta-http-equiv-content-security-policy">Content security policy state</span>.
+    Resources that have already been fetched are not guaranteed to be blocked by a <span>Content
+    Security Policy</span> that's <span data-x="enforce the policy">enforced</span> late.</p>
+
+    <div class="example">
+
+     <p>A page might choose to mitigate the risk of cross-site scripting attacks by preventing the
+     execution of inline JavaScript, as well as blocking all plugin content, using a policy such
+     as the following:
+
+     <pre><code class="html">&lt;meta http-equiv="Content-Security-Policy" content="script-src 'self'; object-src 'none'"></code></pre>
+
+    </div>
+   </dd>
+  </dl>
+
+  </div>
+
+  <p>There must not be more than one <code>meta</code> element with any particular state in the
+  document at a time.</p>
+
+
+  <h5 id="charset">Specifying the document's character encoding</h5>
+
+  <!-- READ ME WHEN EDITING: if we ever move this to the "writing HTML" section, then we have to
+  duplicate the requirements in the parsing section for conformance checkers, and we have to make
+  sure that the requirements for charset="" apply even in XML, for the <meta charset=""> polyglot
+  hack. -->
+
+  <p>A <dfn>character encoding declaration</dfn> is a mechanism by which the <span
+  data-x="encoding">character encoding</span> used to store or transmit a document is specified.</p>
+
+  <p>The Encoding standard requires use of the <span>UTF-8</span> <span data-x="encoding">character
+  encoding</span> and requires use of the "<code data-x="">utf-8</code>" <span>encoding label</span>
+  to identify it. Those requirements necessitate that the document's <span>character encoding
+  declaration</span>, if it exists, specifies an <span>encoding label</span> using an <span>ASCII
+  case-insensitive</span> match for "<code data-x="">utf-8</code>". Regardless of whether a
+  <span>character encoding declaration</span> is present or not, the actual <span data-x="document's
+  character encoding">character encoding</span> used to encode the document must be
+  <span>UTF-8</span>. <ref>ENCODING</ref></p>
+
+  <p w-nodev>To enforce the above rules, authoring tools must default to using <span>UTF-8</span>
+  for newly-created documents.</p>
+
+  <p>The following restrictions also apply:</p>
+
+  <ul>
+   <li>The character encoding declaration must be serialized without the use of <span
+   data-x="syntax-charref">character references</span> or character escapes of any kind.</li>
+
+   <li id="charset1024"><span data-x="" id="charset512">The element containing the character encoding
+   declaration must be serialized completely within the first 1024 bytes of the
+   document.</span></li> <!-- span is for historical reasons, to keep an old ID alive -->
+  </ul>
+
+  <p>In addition, due to a number of restrictions on <code>meta</code> elements, there can only be
+  one <code>meta</code>-based character encoding declaration per document.</p> <!-- conformance
+  criteria for this one are given in the XML spec, the <meta> section just after defining
+  charset="", and the character encoding pragma section. Note that you _can_ have two character
+  encoding declarations per document, if the document is an XML document and one is an XML
+  declaration, the other is <meta charset>, and the encoding is UTF-8. -->
+
+  <div algorithm>
+  <p>If an <span data-x="HTML documents">HTML document</span> does not start with a BOM, and its
+  <span>encoding</span> is not explicitly given by <span data-x="Content-Type">Content-Type
+  metadata</span>, and the document is not <span>an <code>iframe</code> <code
+  data-x="attr-iframe-srcdoc">srcdoc</code> document</span>, then the encoding must be specified
+  using a <code>meta</code> element with a <code data-x="attr-meta-charset">charset</code> attribute
+  or a <code>meta</code> element with an <code data-x="attr-meta-http-equiv">http-equiv</code>
+  attribute in the <span data-x="attr-meta-http-equiv-content-type">Encoding declaration
+  state</span>.</p>
+  </div>
+
+  <div class="note">
+   <p>A character encoding declaration is required (either in the <span
+   data-x="Content-Type">Content-Type metadata</span> or explicitly in the file) even when all
+   characters are in the ASCII range, because a character encoding is needed to process non-ASCII
+   characters entered by the user in forms, in URLs generated by scripts, and so forth.</p>
+
+   <p>Using non-UTF-8 encodings can have unexpected results on form submission and URL encodings,
+   which use the <span>document's character encoding</span> by default.</p>
+  </div>
+
+  <p>If the document is <span>an <code>iframe</code> <code data-x="attr-iframe-srcdoc">srcdoc</code>
+  document</span>, the document must not have a <span>character encoding declaration</span>. (In
+  this case, the source is already decoded, since it is part of the document that contained the
+  <code>iframe</code>.)</p>
+
+  <p>In XML, the XML declaration should be used for inline character encoding information, if
+  necessary.</p>
+
+  <div class="example">
+
+   <p>In HTML, to declare that the character encoding is <span>UTF-8</span>, the author could
+   include the following markup near the top of the document (in the <code>head</code> element):</p>
+
+   <pre><code class="html">&lt;meta charset="utf-8"></code></pre>
+
+   <p>In XML, the XML declaration would be used instead, at the very top of the markup:</p>
+
+   <pre><code class="html">&lt;?xml version="1.0" encoding="utf-8"?></code></pre>
+
+  </div>
+
+
+

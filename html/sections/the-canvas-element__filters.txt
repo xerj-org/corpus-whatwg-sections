@@ -1,0 +1,98 @@
+WHATWG HTML — section the-canvas-element/filters — Filters
+
+  <h6>Filters</h6>
+
+  <p>All drawing operations on an object which implements the <code>CanvasFilters</code>
+  interface are affected by the global <dfn attribute for="CanvasFilters"><code
+  data-x="dom-context-2d-filter">filter</code></dfn> attribute.</p>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>context</var>.<span subdfn data-x="dom-context-2d-filter">filter</span> [ = <var>value</var> ]</code></dt>
+
+   <dd>
+    <p>Returns the current filter.</p>
+
+
+    <p>Can be set, to change the filter. Values can either be the string "<code
+    data-x="">none</code>" or a string parseable as a <span>&lt;filter-value-list&gt;</span>. Other
+    values are ignored.</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <p>Such objects have an associated <dfn data-x="concept-canvas-current-filter">current
+  filter</dfn>, which is a string. Initially the <span
+  data-x="concept-canvas-current-filter">current filter</span> is set to the string "<code
+  data-x="">none</code>". Whenever the value of the <span
+  data-x="concept-canvas-current-filter">current filter</span> is the string "<code
+  data-x="">none</code>" filters will be disabled for the context.</p>
+
+  <div algorithm>
+  <p>The <code data-x="dom-context-2d-filter">filter</code> getter steps are to return
+  <span>this</span>'s <span data-x="concept-canvas-current-filter">current filter</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <code data-x="dom-context-2d-filter">filter</code> setter steps are:</p>
+
+  <ol>
+   <li><p>If the given value is "<code data-x="">none</code>", then set <span>this</span>'s <span
+   data-x="concept-canvas-current-filter">current filter</span> to "<code data-x="">none</code>"
+   and return.</p></li>
+
+   <li><p>Let <var>parsedValue</var> be the result of <span data-x="parse something according to a
+   CSS grammar">parsing</span> the given values as a <span>&lt;filter-value-list&gt;</span>. If any
+   property-independent style sheet syntax like 'inherit' or 'initial' is present, then this
+   parsing must return failure.</p></li>
+
+   <li><p>If <var>parsedValue</var> is failure, then return.</p></li>
+
+   <li><p>Set <span>this</span>'s <span data-x="concept-canvas-current-filter">current
+   filter</span> to the given value.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+  <p class="note" var-scope>Though <code data-x=""><var>context</var>.<code
+  data-x="dom-context-2d-filter">filter</code> = "<code data-x="">none</code>"</code> will disable
+  filters for the context, <code data-x=""><var>context</var>.<code
+  data-x="dom-context-2d-filter">filter</code> = ""</code>, <code
+  data-x=""><var>context</var>.<code data-x="dom-context-2d-filter">filter</code> = null</code>,
+  and <code data-x=""><var>context</var>.<code data-x="dom-context-2d-filter">filter</code> =
+  undefined</code> are all treated as unparseable inputs and the value of the <span
+  data-x="concept-canvas-current-filter">current filter</span> is left unchanged.</p>
+
+  <p>Coordinates used in the value of the <span data-x="concept-canvas-current-filter">current
+  filter</span> are interpreted such that one pixel is equivalent to one SVG user space unit and to
+  one canvas coordinate space unit. Filter coordinates are not affected by the <span
+  data-x="dom-context-2d-transformation">current transformation matrix</span>. The current
+  transformation matrix affects only the input to the filter. Filters are applied in the
+  <span>output bitmap</span>'s coordinate space.</p>
+
+  <div w-nodev>
+
+  <p>When the value of the <span data-x="concept-canvas-current-filter">current filter</span> is a
+  string parsable as a <span>&lt;filter-value-list&gt;</span> which defines lengths using
+  percentages or using <span>'em'</span> or <span>'ex'</span> units, these must be interpreted
+  relative to the <span>computed value</span> of the <span>'font-size'</span> property of the
+  <span>font style source object</span> at the time that the attribute is set. If the <span
+  data-x="computed value">computed values</span> are undefined for a particular case (e.g. because
+  the <span>font style source object</span> is not an element or is not <span>being
+  rendered</span>), then the relative keywords must be interpreted relative to the default value of
+  the <code data-x="dom-context-2d-font">font</code> attribute. The 'larger' and 'smaller' keywords
+  are not supported.</p>
+
+  <p>If the value of the <span data-x="concept-canvas-current-filter">current filter</span> is a
+  string parseable as a <span>&lt;filter-value-list&gt;</span> with a reference to an SVG filter in
+  the same document, and this SVG filter changes, then the changed filter is used for the next draw
+  operation.</p>
+
+  <p>If the value of the <span data-x="concept-canvas-current-filter">current filter</span> is a
+  string parseable as a <span>&lt;filter-value-list&gt;</span> with a reference to an SVG filter in
+  an external resource document and that document is not loaded when a drawing operation is
+  invoked, then the drawing operation must proceed with no filtering.</p>
+
+  </div>
+

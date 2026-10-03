@@ -1,0 +1,13 @@
+WHATWG HTML — section navigation-api/the-navigate-event — The <code data-x="event-navigate">navigate</code> event
+
+  <h5>The <code data-x="event-navigate">navigate</code> event</h5>
+
+  <p>A major feature of the navigation API is the <code data-x="event-navigate">navigate</code>
+  event. This event is fired on any navigation (in the <span data-x="NavigationType">broad sense of
+  the word</span>), allowing web developers to monitor such outgoing navigations. In many cases, the
+  event is <code data-x="dom-Event-cancelable">cancelable</code>, which allows preventing the
+  navigation from happening. And in others, the navigation can be intercepted and replaced with a
+  same-document navigation by using the <code
+  data-x="dom-NavigateEvent-intercept">intercept()</code> method of the <code>NavigateEvent</code>
+  class.</p>
+

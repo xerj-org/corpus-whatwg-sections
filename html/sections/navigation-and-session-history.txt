@@ -1,0 +1,92 @@
+WHATWG HTML — section navigation-and-session-history — <span id="history"></span>Navigation and session history
+
+  <h3 split-filename="browsing-the-web"><span id="history"></span>Navigation and session
+  history</h3>
+
+  <p>Welcome to the dragon's maw. Navigation, session history, and the traversal through that
+  session history are some of the most complex parts of this standard.</p>
+
+  <p>The basic concept may not seem so difficult:</p>
+
+  <ul>
+   <li><p>The user is looking at a <span>navigable</span> that is presenting its <span
+   data-x="nav-document">active document</span>. They <span>navigate</span> it to another
+   <span>URL</span>.</p></li>
+
+   <li><p>The browser fetches the given URL from the network, using it to <span data-x="attempt to
+   populate the history entry's document">populate</span> a new <span>session history entry</span>
+   with a newly-<span data-x="create-the-document-object">created</span>
+   <code>Document</code>.</p></li>
+
+   <li><p>The browser updates the <span>navigable</span>'s <span
+   data-x="nav-active-history-entry">active session history entry</span> to the newly-populated
+   one, and thus updates the <span data-x="nav-document">active document</span> that it is showing
+   to the user.</p></li>
+
+   <li><p>At some point later, the user <span data-x="traverse the history by a delta">presses the
+   browser back button</span> to go back to the previous <span>session history
+   entry</span>.</p></li>
+
+   <li><p>The browser looks at the <span data-x="she-url">URL</span> stored in that <span>session
+   history entry</span>, and uses it to re-fetch and <span data-x="attempt to populate the history
+   entry's document">populate</span> that entry's <span
+   data-x="she-document">document</span>.</p></li>
+
+   <li><p>The browser again updates the <span>navigable</span>'s <span
+   data-x="nav-active-history-entry">active session history entry</span>.</p></li>
+  </ul>
+
+  <p>You can see some of the intertwined complexity peeking through here, in how traversal can
+  cause a navigation (i.e., a network fetch to a stored URL), and how a navigation necessarily
+  needs to interface with the session history list to ensure that when it finishes the user is
+  looking at the right thing. But the real problems come in with the various edge cases and
+  interacting web platform features:</p>
+
+  <ul>
+   <li><p><span data-x="child navigable">Child navigables</span> (e.g., those contained in
+   <code>iframe</code>s) can also navigate and traverse, but those navigations need to be
+   linearized into <span data-x="tn-session-history-entries">a single session history list</span>
+   since the user only has a single back/forward interface for the entire <span>traversable
+   navigable</span> (e.g., browser tab).</p></li>
+
+   <li><p>Since the user can traverse back more than a single step in the session history (e.g., by
+   holding down their back button), they can end up traversing multiple <span
+   data-x="navigable">navigables</span> at the same time when <span data-x="child
+   navigable">child navigables</span> are involved. This needs to be synchronized across all of
+   the involved navigables, which might involve multiple <span data-x="event loop">event
+   loops</span> or even <span data-x="agent cluster">agent clusters</span>.</p></li>
+
+   <li><p>During navigation, servers can respond with 204 or 205 status codes or with `<code
+   data-x="http-content-disposition">Content-Disposition: attachment</code>` headers, which cause
+   navigation to abort and the <span>navigable</span> to stay on its original <span data-x="active
+   document">active document</span>. (This is much worse if it happens during a traversal-initiated
+   navigation!)</p></li>
+
+   <li><p>Various other HTTP headers, such as `<code data-x="">Location</code>`,
+   `<code>Refresh</code>`, `<code>X-Frame-Options</code>`, and those for Content Security Policy,
+   contribute to either the <span data-x="create navigation params by fetching">fetching
+   process</span>, or the <span data-x="create-the-document-object"><code>Document</code>-creation
+   process</span>, or both. The `<code>Cross-Origin-Opener-Policy</code>` header even contributes
+   to the <a href="#browsing-context-group-switches-due-to-cross-origin-opener-policy">browsing
+   context selection and creation</a> process!</p></li>
+
+   <li><p>Some navigations (namely <a href="#scroll-to-fragid">fragment navigations</a> and <a
+   href="#navigate-non-frag-sync">single-page app navigations</a>) are synchronous, meaning that
+   JavaScript code expects to observe the navigation's results instantly. This then needs to be
+   synchronized with the view of the session history that all other <span
+   data-x="navigable">navigables</span> in the tree see, which can be subject to race conditions
+   and necessitate resolving conflicting views of the session history.</p></li>
+
+   <li><p>The platform has accumulated various exciting navigation-related features that need
+   special-casing, such as <code data-x="javascript protocol">javascript:</code> URLs, <code
+   data-x="attr-iframe-srcdoc">srcdoc</code> <code>iframe</code>s, and the <code
+   data-x="event-beforeunload">beforeunload</code> event.</p></li>
+  </ul>
+
+  <p>In what follows, we have attempted to guide the reader through these complexities by
+  appropriately cordoning them off into labeled sections and algorithms, and giving appropriate
+  words of introduction where possible. Nevertheless, if you wish to truly understand navigation
+  and session history, <a href="#how-to-read-this-specification">the usual advice</a> will be
+  invaluable.</p>
+
+

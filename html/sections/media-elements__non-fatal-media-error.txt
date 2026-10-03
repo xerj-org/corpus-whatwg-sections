@@ -1,0 +1,14 @@
+WHATWG HTML — section media-elements/non-fatal-media-error — If the <span>media data</span> can be fetched but has non-fatal errors or uses, in part, codecs that are unsupported, preventing the user agent from rendering the content completely correctly but not preventing playback altogether
+
+     <dt id="non-fatal-media-error">If the <span>media data</span> can be fetched but has non-fatal
+     errors or uses, in part, codecs that are unsupported, preventing the user agent from rendering
+     the content completely correctly but not preventing playback altogether</dt>
+
+     <dd>
+      <p>The server returning data that is partially usable but cannot be optimally rendered must
+      cause the user agent to render just the bits it can handle, and ignore the rest.</p>
+
+      <!-- v2: fire a 'warning' event and set the 'error' flag to 'MEDIA_ERR_SUBOPTIMAL' or something -->
+     </dd>
+
+

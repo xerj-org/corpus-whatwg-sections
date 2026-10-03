@@ -1,0 +1,14 @@
+WHATWG HTML — section dependencies/web-app-manifest — Web App Manifest
+
+   <dt>Web App Manifest</dt>
+
+   <dd>
+    <p>The following features are defined in <cite>Web App Manifest</cite>: <ref>MANIFEST</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://w3c.github.io/manifest/#dfn-manifest">application manifest</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/manifest/#dfn-installed-web-application">installed web application</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/manifest/#dfn-processing-a-manifest">process the manifest</dfn></li>
+    </ul>
+   </dd>
+

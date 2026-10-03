@@ -1,0 +1,12 @@
+WHATWG HTML — section dependencies/web-midi-api — Web MIDI API
+
+  <dt>Web MIDI API</dt>
+
+  <dd>
+   <p>The following terms are defined in <cite>Web MIDI API</cite>:</p>
+
+   <ul class="brief">
+    <li><dfn data-x-href="https://webaudio.github.io/web-midi-api/#dom-navigator-requestmidiaccess" data-x="dom-Navigator-requestMIDIAccess"><code>requestMIDIAccess()</code></dfn></li>
+   </ul>
+  </dd>
+

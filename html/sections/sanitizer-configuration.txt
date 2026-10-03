@@ -1,0 +1,303 @@
+WHATWG HTML — section sanitizer-configuration — Sanitizer configuration
+
+  <h4>Sanitizer configuration</h4>
+
+  <pre><code class="idl">dictionary <dfn dictionary>SanitizerElementNamespace</dfn> {
+  required DOMString <dfn dict-member for="SanitizerElementNamespace" data-x="dom-SanitizerElementNamespace-name">name</dfn>;
+  DOMString? <dfn dict-member for="SanitizerElementNamespace" data-x="dom-SanitizerElementNamespace-namespace">_namespace</dfn> = "http://www.w3.org/1999/xhtml";
+};
+
+// Used by "elements"
+dictionary <dfn dictionary>SanitizerElementNamespaceWithAttributes</dfn> : <span>SanitizerElementNamespace</span> {
+  sequence&lt;<span>SanitizerAttribute</span>> <dfn dict-member for="SanitizerElementNamespaceWithAttributes" data-x="dom-SanitizerElementNamespaceWithAttributes-attributes">attributes</dfn>;
+  sequence&lt;<span>SanitizerAttribute</span>> <dfn dict-member for="SanitizerElementNamespaceWithAttributes" data-x="dom-SanitizerElementNamespaceWithAttributes-removeAttributes">removeAttributes</dfn>;
+};
+
+dictionary <dfn dictionary>SanitizerAttributeNamespace</dfn> {
+  required DOMString <dfn dict-member for="SanitizerAttributeNamespace" data-x="dom-SanitizerAttributeNamespace-name">name</dfn>;
+  DOMString? <dfn dict-member for="SanitizerAttributeNamespace" data-x="dom-SanitizerAttributeNamespace-namespace">_namespace</dfn> = null;
+};
+
+dictionary <dfn dictionary>SanitizerProcessingInstruction</dfn> {
+  required DOMString <dfn dict-member for="SanitizerProcessingInstruction"  data-x="dom-SanitizerProcessingInstruction-target">target</dfn>;
+};
+
+typedef (DOMString or <span>SanitizerElementNamespace</span>) <dfn typedef>SanitizerElement</dfn>;
+typedef (DOMString or <span>SanitizerElementNamespaceWithAttributes</span>) <dfn typedef>SanitizerElementWithAttributes</dfn>;
+typedef (DOMString or <span>SanitizerProcessingInstruction</span>) <dfn typedef>SanitizerPI</dfn>;
+typedef (DOMString or <span>SanitizerAttributeNamespace</span>) <dfn typedef>SanitizerAttribute</dfn>;
+
+dictionary <dfn dictionary>SanitizerConfig</dfn> {
+  sequence&lt;<span>SanitizerElementWithAttributes</span>> <dfn dict-member for="SanitizerConfig" data-x="dom-SanitizerConfig-elements">elements</dfn>;
+  sequence&lt;<span>SanitizerElement</span>> <dfn dict-member for="SanitizerConfig" data-x="dom-SanitizerConfig-removeElements">removeElements</dfn>;
+  sequence&lt;<span>SanitizerElement</span>> <dfn dict-member for="SanitizerConfig"  data-x="dom-SanitizerConfig-replaceWithChildrenElements">replaceWithChildrenElements</dfn>;
+
+  sequence&lt;<span>SanitizerPI</span>> <dfn dict-member for="SanitizerConfig" data-x="dom-SanitizerConfig-processingInstructions">processingInstructions</dfn>;
+  sequence&lt;<span>SanitizerPI</span>> <dfn dict-member for="SanitizerConfig" data-x="dom-SanitizerConfig-removeProcessingInstructions">removeProcessingInstructions</dfn>;
+
+  sequence&lt;<span>SanitizerAttribute</span>> <dfn dict-member for="SanitizerConfig"  data-x="dom-SanitizerConfig-attributes">attributes</dfn>;
+  sequence&lt;<span>SanitizerAttribute</span>> <dfn dict-member for="SanitizerConfig" data-x="dom-SanitizerConfig-removeAttributes">removeAttributes</dfn>;
+
+  boolean <dfn dict-member for="SanitizerConfig" data-x="dom-SanitizerConfig-comments">comments</dfn>;
+  boolean <dfn dict-member for="SanitizerConfig" data-x="dom-SanitizerConfig-dataAttributes">dataAttributes</dfn>;
+  boolean <dfn dict-member for="SanitizerConfig" data-x="dom-SanitizerConfig-javascriptURLs">javascriptURLs</dfn>;
+};</code></pre>
+
+  <p><code>SanitizerElementNamespace</code>, <code>SanitizerAttributeNamespace</code>,
+  <code>SanitizerElementNamespaceWithAttributes</code>, and
+  <code>SanitizerProcessingInstruction</code> dictionaries are considered equal when all of their
+  members are equal.</p>
+
+  <p class="XXX">Equality should be defined in the infra spec instead. See <a
+  href="https://github.com/whatwg/infra/issues/664">issue #664</a>.</p>
+
+  <h5>Configuration invariants</h5>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>Configurations can and ought to be modified by developers to suit their purposes. Options are
+  to write a new <code>SanitizerConfig</code> dictionary from scratch, to modify an existing
+  <code>Sanitizer</code>'s configuration by using the modifier methods, or to <code
+  data-x="dom-Sanitizer-get">get()</code> an existing <code>Sanitizer</code>'s
+  <span>configuration</span> as a dictionary and modify the dictionary and then create a new
+  <code>Sanitizer</code> with it.</p>
+
+  <p>An empty configuration allows everything (when called with the "unsafe" methods like <code
+  data-x="dom-Element-setHTMLUnsafe">setHTMLUnsafe()</code>). A configuration "<dfn enum-value
+  for="SanitizerPresets" data-x="dom-SanitizerPresets-default">default</dfn>" contains a
+  <span>built-in safe default configuration</span>. Note that "safe" and "unsafe" sanitizer methods
+  have different defaults.</p>
+
+  <p>Not all configuration dictionaries are valid. A valid configuration avoids redundancy (like
+  specifying the same element to be allowed twice) and contradictions (like specifying an element to
+  be both removed and allowed.)</p>
+
+  <p>Several conditions need to hold for a configuration to be valid:</p>
+
+  <ul>
+   <li>
+    <p>Mixing global allow- and remove-lists:</p>
+
+    <ul>
+     <li><p><code data-x="dom-SanitizerConfig-elements">elements</code> or <code
+     data-x="dom-SanitizerConfig-removeElements">removeElements</code> can exist, but not both. If
+     both are missing, this is equivalent to <code
+     data-x="dom-SanitizerConfig-removeElements">removeElements</code> being an empty list.</p></li>
+
+     <li><p><code data-x="dom-SanitizerConfig-attributes">attributes</code> or <code
+     data-x="dom-SanitizerConfig-removeAttributes">removeAttributes</code> can exist, but not both.
+     If both are missing, this is equivalent to <code
+     data-x="dom-SanitizerConfig-removeAttributes">removeAttributes</code> being an empty
+     list.</p></li>
+
+     <li><p><code data-x="dom-SanitizerConfig-dataAttributes">dataAttributes</code> is conceptually
+     an extension of the <code data-x="dom-SanitizerConfig-attributes">attributes</code> allow-list.
+     The <code data-x="dom-SanitizerConfig-dataAttributes">dataAttributes</code> member is only
+     allowed when an <code data-x="dom-SanitizerConfig-attributes">attributes</code> list is
+     used.</p></li>
+    </ul>
+   </li>
+
+   <li>
+    <p>Duplicate entries between different global lists:</p>
+
+    <ul>
+     <li><p>There are no duplicate entries (i.e., no same elements) between <code
+     data-x="dom-SanitizerConfig-elements">elements</code>, <code
+     data-x="dom-SanitizerConfig-removeElements">removeElements</code>, or <code
+     data-x="dom-SanitizerConfig-replaceWithChildrenElements">replaceWithChildrenElements</code>.</p></li>
+
+     <li><p>There are no duplicate entries (i.e., no same attributes) between <code
+     data-x="dom-SanitizerConfig-attributes">attributes</code> or <code
+     data-x="dom-SanitizerConfig-removeAttributes">removeAttributes</code>.</p></li>
+    </ul>
+   </li>
+
+   <li>
+    <p>Mixing local allow- and remove-lists on the same element:</p>
+
+    <ul>
+     <li><p>When an <code data-x="dom-SanitizerConfig-attributes">attributes</code> list exists,
+     both, either or none of the <code
+     data-x="dom-SanitizerElementNamespaceWithAttributes-attributes">attributes</code> and <code
+     data-x="dom-SanitizerElementNamespaceWithAttributes-removeAttributes">removeAttributes</code>
+     lists are allowed on the same element.</p></li>
+
+     <li><p>When a <code data-x="dom-SanitizerConfig-removeAttributes">removeAttributes</code> list
+     exists, either or none of the <code
+     data-x="dom-SanitizerElementNamespaceWithAttributes-attributes">attributes</code> and <code
+     data-x="dom-SanitizerElementNamespaceWithAttributes-removeAttributes">removeAttributes</code>
+     lists are allowed on the same element, but not both.</p></li>
+    </ul>
+   </li>
+
+   <li>
+    <p>Duplicate entries on the same element:</p>
+
+    <ul>
+     <li><p>There are no duplicate entries between <code
+     data-x="dom-SanitizerElementNamespaceWithAttributes-attributes">attributes</code> and <code
+     data-x="dom-SanitizerElementNamespaceWithAttributes-removeAttributes">removeAttributes</code>
+     on the same element.</p></li>
+    </ul>
+   </li>
+
+   <li><p>No element from the <span>built-in non-replaceable elements list</span> appears in <code
+   data-x="dom-SanitizerConfig-replaceWithChildrenElements">replaceWithChildrenElements</code>,
+   since replacing these elements with their children could lead to re-parsing issues or invalid
+   node trees.</p></li>
+  </ul>
+
+  <p>The <code data-x="dom-SanitizerConfig-elements">elements</code> element allow-list can also
+  specify allowing or removing attributes for a given element. This is meant to mirror this
+  standard's structure, which knows both <span>global attributes</span> as well as local attributes
+  that apply to a specific element. Global and local attributes can be mixed, but note that
+  ambiguous configurations where a particular attribute would be allowed by one list and forbidden
+  by another, are generally invalid.</p>
+
+  <table class="data">
+   <thead>
+    <tr>
+     <td></td>
+     <th>global <code data-x="dom-SanitizerConfig-attributes">attributes</code></th>
+     <th>global <code data-x="dom-SanitizerConfig-removeAttributes">removeAttributes</code></th>
+    </tr>
+   </thead>
+   <tbody>
+    <tr>
+     <th>local <code
+     data-x="dom-SanitizerElementNamespaceWithAttributes-attributes">attributes</code></th>
+     <td>An attribute is allowed if it matches either list. No duplicates are allowed.</td>
+     <td>An attribute is only allowed if it's in the local allow list. No duplicate entries between
+     global remove and local allow lists are allowed. Note that the global remove list has no
+     function for this particular element, but can apply to other elements that do not have a
+     local allow list.</td>
+    </tr>
+    <tr>
+     <th>local <code
+     data-x="dom-SanitizerElementNamespaceWithAttributes-removeAttributes">removeAttributes</code></th>
+     <td>An attribute is allowed if it's in the global allow-list, but not in the local remove-list.
+     Local remove has to be a subset of the global allow lists.</td>
+     <td>An attribute is allowed if it is in neither list. No duplicate entries between global
+     remove and local remove lists are allowed.</td>
+    </tr>
+   </tbody>
+  </table>
+
+  <p>Please note the asymmetry where mostly no duplicates between global and per-element lists are
+  permitted, but in the case of a global allow-list and a per-element remove-list the latter has to
+  be a subset of the former. An excerpt of the table above, only focusing on duplicates, is as
+  follows:</p>
+
+  <table class="data">
+   <thead>
+    <tr>
+     <td></td>
+     <th>global <code data-x="dom-SanitizerConfig-attributes">attributes</code></th>
+     <th>global <code data-x="dom-SanitizerConfig-removeAttributes">removeAttributes</code></th>
+    </tr>
+   </thead>
+   <tbody>
+    <tr>
+     <th>local <code
+     data-x="dom-SanitizerElementNamespaceWithAttributes-attributes">attributes</code></th>
+     <td>No duplicates are allowed.</td>
+     <td>No duplicates are allowed.</td>
+    </tr>
+    <tr>
+     <th>local <code
+     data-x="dom-SanitizerElementNamespaceWithAttributes-removeAttributes">removeAttributes</code></th>
+     <td>Local remove has to be a subset of the global allow lists.</td>
+     <td>No duplicates are allowed.</td>
+    </tr>
+   </tbody>
+  </table>
+
+  <p>The <code data-x="dom-SanitizerConfig-dataAttributes">dataAttributes</code> setting allows
+  <span data-x="custom data attribute">custom data attributes</span>. The rules above easily extends
+  to <span data-x="custom data attribute">custom data attributes</span> if one considers <code
+  data-x="dom-SanitizerConfig-dataAttributes">dataAttributes</code> to be an allow-list:</p>
+
+  <table class="data">
+   <thead>
+    <tr>
+     <td></td>
+     <th>global <code data-x="dom-SanitizerConfig-attributes">attributes</code> and <code
+     data-x="dom-SanitizerConfig-dataAttributes">dataAttributes</code> set</th>
+    </tr>
+   </thead>
+   <tbody>
+    <tr>
+     <th>local <code
+     data-x="dom-SanitizerElementNamespaceWithAttributes-attributes">attributes</code></th>
+     <td>All <span data-x="custom data attribute">custom data attributes</span> are allowed. No
+     <span data-x="custom data attribute">custom data attributes</span> can be listed in any
+     allow-list, as that would mean a duplicate entry.</td>
+    </tr>
+    <tr>
+     <th>local <code
+     data-x="dom-SanitizerElementNamespaceWithAttributes-removeAttributes">removeAttributes</code></th>
+     <td>A <span data-x="custom data attribute">custom data attribute</span> is allowed, unless it's
+     listed in the local remove-list. No <span data-x="custom data attribute">custom data
+     attribute</span> can be listed in the global allow-list, as that would mean a duplicate
+     entry.</td>
+    </tr>
+   </tbody>
+  </table>
+
+  <p>Putting these rules in words:</p>
+
+  <ul>
+   <li>
+    <p>Duplicates and interactions between global and local lists:</p>
+
+    <ul>
+     <li>
+      <p>If a global <code data-x="dom-SanitizerConfig-attributes">attributes</code> allow list
+      exists, then all element's local lists:</p>
+
+      <ul>
+       <li><p>If a local <code
+       data-x="dom-SanitizerElementNamespaceWithAttributes-attributes">attributes</code> allow list
+       exists, there can be no duplicate entries between these lists.</p></li>
+
+       <li><p>If a local <code
+       data-x="dom-SanitizerElementNamespaceWithAttributes-removeAttributes">removeAttributes</code>
+       remove list exists, then all its entries also need to be listed in the global <code
+       data-x="dom-SanitizerConfig-attributes">attributes</code> allow list.</p></li>
+
+       <li><p>If <code data-x="dom-SanitizerConfig-dataAttributes">dataAttributes</code> is true,
+       then no <span data-x="custom data attribute">custom data attributes</span> can be listed in
+       any of the allow-lists.</p></li>
+      </ul>
+     </li>
+
+     <li>
+      <p>If a global <code data-x="dom-SanitizerConfig-removeAttributes">removeAttributes</code>
+      remove list exists:</p>
+
+      <ul>
+       <li><p>If a local <code
+       data-x="dom-SanitizerElementNamespaceWithAttributes-attributes">attributes</code> allow list
+       exists, there can be no duplicate entries between these lists.</p></li>
+
+       <li><p>If a local <code
+       data-x="dom-SanitizerElementNamespaceWithAttributes-removeAttributes">removeAttributes</code>
+       remove list exists, there can be no duplicate entries between these lists.</p></li>
+
+       <li><p>Not both a local <code
+       data-x="dom-SanitizerElementNamespaceWithAttributes-attributes">attributes</code> allow list
+       and local <code
+       data-x="dom-SanitizerElementNamespaceWithAttributes-removeAttributes">removeAttributes</code>
+       remove list exists.</p></li>
+
+       <li><p><code data-x="dom-SanitizerConfig-dataAttributes">dataAttributes</code> has to be
+       false.</p></li>
+      </ul>
+     </li>
+    </ul>
+   </li>
+  </ul>
+
+  <div w-nodev>
+

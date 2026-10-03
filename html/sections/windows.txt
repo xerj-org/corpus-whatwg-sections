@@ -1,0 +1,597 @@
+WHATWG HTML — section windows — Browsing contexts
+
+  <h4 id="windows">Browsing contexts</h4>
+
+  <p>A <dfn export>browsing context</dfn> is a programmatic representation of a series of documents,
+  multiple of which can live within a single <span>navigable</span>. Each <span>browsing
+  context</span> has a corresponding <code>WindowProxy</code> object, as well as the following:</p>
+
+  <ul>
+   <li><p>An <dfn>active document</dfn>, a <code>Document</code> or null, initially null.</p></li>
+
+   <li><p>An <dfn export>opener browsing context</dfn>, a <span>browsing context</span> or null,
+   initially null.</p></li>
+
+   <li><p>An <dfn data-x="opener-origin-at-creation">opener origin at creation</dfn>, an
+   <span>origin</span> or null, initially null.</p>
+
+   <li>
+    <p>An <dfn>is popup</dfn> boolean, initially false.</p>
+
+    <p class="note">The only mandatory impact in this specification of <span>is popup</span> is on
+    the <code data-x="dom-BarProp-visible">visible</code> getter of the relevant
+    <code>BarProp</code> objects. However, user agents might also use it for <a
+    href="#nav-traversal-ui">user interface considerations</a>.</p>
+   </li>
+
+   <li><p>An <dfn>is auxiliary</dfn> boolean, initially false.</p></li>
+
+   <li><p>An <dfn data-x="browsing-context-initial-url">initial URL</dfn>, a <span>URL</span> or
+   null, initially null.</p></li>
+
+   <li><p>A <dfn data-x="virtual-browsing-context-group-id">virtual browsing context group ID</dfn>
+   integer, initially 0. This is used by <span data-x="coop-struct-report-only-value">opener policy
+   reporting</span>, to keep track of the browsing context group switches that would have happened
+   if the report-only policy had been enforced.</p></li>
+  </ul>
+
+  <div algorithm>
+  <p>A <span>browsing context</span>'s <dfn>active window</dfn> is its <code>WindowProxy</code>
+  object's <span data-x="concept-windowproxy-window">[[Window]]</span> internal slot value.</p>
+  </div>
+
+  <div algorithm>
+  <p>A <span>browsing context</span>'s <dfn export for="browsing context"
+  data-x="bc-traversable">top-level traversable</dfn> is its <span>active document</span>'s
+  <span>node navigable</span>'s <span data-x="nav-top">top-level traversable</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>A <span>browsing context</span> whose <span>is auxiliary</span> is true is known as an <dfn
+  export>auxiliary browsing context</dfn>. Auxiliary browsing contexts are always <span
+  data-x="top-level browsing context">top-level browsing contexts</span>.</p>
+  </div>
+
+  <p class="XXX">It's unclear whether a separate <span>is auxiliary</span> concept is necessary. In
+  <a href="https://github.com/whatwg/html/issues/5680">issue #5680</a>, it is indicated that we may
+  be able to simplify this by using whether or not the <span>opener browsing context</span> is
+  null.</p>
+
+  <p class="warning" id="warning-avoid-using-bcs">Modern specifications should avoid using the
+  <span>browsing context</span> concept in most cases, unless they are dealing with the subtleties
+  of <a href="#browsing-context-group-switches-due-to-cross-origin-opener-policy">browsing context
+  group switches</a> and <span data-x="agent cluster map">agent cluster allocation</span>. Instead,
+  the <code>Document</code> and <span>navigable</span> concepts are usually more appropriate.</p>
+
+  <hr>
+
+  <p>A <dfn data-x="concept-document-bc" data-lt="browsing context" for="Document"
+  export><code>Document</code>'s browsing context</dfn> is a <span>browsing context</span> or null,
+  initially null.</p>
+
+  <p class="note">A <code>Document</code> does not necessarily have a non-null <span
+  data-x="concept-document-bc">browsing context</span>. In particular, data mining tools are likely
+  to never instantiate browsing contexts. A <code>Document</code> created using an API such as <code
+  data-x="dom-DOMImplementation-createDocument">createDocument()</code> never has a non-null <span
+  data-x="concept-document-bc">browsing context</span>. And the <code>Document</code> originally
+  created for an <code>iframe</code> element, which has since been <span data-x="node is removed
+  from a document">removed from the document</span>, has no associated browsing context, since that
+  browsing context was <span data-x="destroy a document">nulled out</span>.</p>
+
+  <p class="note">In general, there is a 1-to-1 mapping from the <code>Window</code> object to the
+  <code>Document</code> object, as long as the <code>Document</code> object has a non-null <span
+  data-x="concept-document-bc">browsing context</span>. There is one exception. A
+  <code>Window</code> can be reused for the presentation of a second <code>Document</code> in the
+  same <span>browsing context</span>, such that the mapping is then 1-to-2. This occurs when a
+  <span>browsing context</span> is <span data-x="navigate">navigated</span> from the <span
+  data-x="is initial about:blank">initial <code>about:blank</code></span> <code>Document</code> to
+  another, which will be done with <span
+  data-x="NavigationHistoryBehavior-replace">replacement</span>.</p>
+
+  <h5>Creating browsing contexts</h5>
+
+  <div algorithm>
+  <p>To <dfn id="creating-a-new-browsing-context" data-x="creating a new browsing context and
+  document">create a new browsing context and document</dfn>, given null or a <code>Document</code>
+  object <var>creator</var>, null or an element <var>embedder</var>, and a <span>browsing context
+  group</span> <var>group</var>:</p>
+
+  <!-- Note: Do not append the new browsing context to group as we might be creating a nested
+       browsing context and not a top level browsing context -->
+
+  <ol>
+   <li><p>Let <var>browsingContext</var> be a new <span>browsing context</span>.</p></li>
+
+   <li><p>Let <var>unsafeContextCreationTime</var> be the
+   <span>unsafe shared current time</span>.</p></li>
+
+   <li><p>Let <var>creatorOrigin</var> be null.</p>
+
+   <li><p>Let <var>creatorBaseURL</var> be null.</p></li>
+
+   <li id="creator-browsing-context">
+    <p>If <var>creator</var> is non-null:</p>
+
+    <ol>
+     <li><p>Set <var>creatorOrigin</var> to <var>creator</var>'s <span
+     data-x="concept-document-origin">origin</span>.</p></li>
+
+     <li><p>Set <var>creatorBaseURL</var> to <var>creator</var>'s <span>document base
+     URL</span>.</p></li>
+
+     <li><p>Set <var>browsingContext</var>'s <span
+     data-x="virtual-browsing-context-group-id">virtual browsing context group ID</span> to
+     <var>creator</var>'s <span data-x="concept-document-bc">browsing context</span>'s <span
+     data-x="bc-tlbc">top-level browsing context</span>'s <span
+     data-x="virtual-browsing-context-group-id">virtual browsing context group ID</span>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Let <var>sandboxFlags</var> be the result of <span>determining the creation sandboxing
+   flags</span> given <var>browsingContext</var> and <var>embedder</var>.</p></li>
+
+   <li id="about-blank-origin"><p>Let <var>origin</var> be the result of <span>determining the
+   origin</span> given <code>about:blank</code>, <var>sandboxFlags</var>, and
+   <var>creatorOrigin</var>.</p></li>
+
+   <li>
+    <p>Let <var>permissionsPolicy</var> be the result of <span>creating a permissions policy</span>
+    given <var>embedder</var> and <var>origin</var>. <ref>PERMISSIONSPOLICY</ref></p>
+   </li>
+
+   <li><p>Let <var>agent</var> be the result of <span
+   data-x="obtain-similar-origin-window-agent">obtaining a similar-origin window agent</span> given
+   <var>origin</var>, <var>group</var>, and false.</p></li>
+
+   <li>
+    <p>Let <var>realm execution context</var> be the result of <span>creating a new realm</span>
+    given <var>agent</var> and the following customizations:</p>
+
+    <ul>
+     <li><p>For the global object, create a new <code>Window</code> object.</p></li>
+
+     <li><p>For the global <b>this</b> binding, use <var>browsingContext</var>'s
+     <code>WindowProxy</code> object.</li>
+    </ul>
+   </li>
+
+   <li><p>Let <var>topLevelCreationURL</var> be <code>about:blank</code> if <var>embedder</var> is
+   null; otherwise <var>embedder</var>'s <span>relevant settings object</span>'s <span>top-level
+   creation URL</span>.</p></li>
+
+   <li><p>Let <var>topLevelOrigin</var> be <var>origin</var> if <var>embedder</var> is null;
+   otherwise <var>embedder</var>'s <span>relevant settings object</span>'s <span>top-level
+   origin</span>.</p></li>
+
+   <li><p><span>Set up a window environment settings object</span> with <code>about:blank</code>,
+   <var>realm execution context</var>, null, <var>topLevelCreationURL</var>, and
+   <var>topLevelOrigin</var>.</p></li>
+
+   <li><p>Let <var>loadTimingInfo</var> be a new <span>document load timing info</span> with
+   its <span>navigation start time</span> set to the result of calling <span>coarsen time</span>
+   with <var>unsafeContextCreationTime</var> and the new <span>environment settings object</span>'s
+   <span data-x="concept-settings-object-cross-origin-isolated-capability">cross-origin isolated
+   capability</span>.</p></li>
+
+   <li>
+    <p>Let <var>document</var> be a new <code>Document</code>, with:</p>
+
+    <dl class="props">
+     <dt><span data-x="concept-document-type">type</span></dt>
+     <dd>"<code data-x="">html</code>"</dd>
+
+     <dt><span data-x="concept-document-content-type">content type</span></dt>
+     <dd>"<code>text/html</code>"</dd>
+
+     <dt><span data-x="concept-document-mode">mode</span></dt>
+     <dd>"<code data-x="">quirks</code>"</dd>
+
+     <dt><span data-x="concept-document-origin">origin</span></dt>
+     <dd><var>origin</var></dd>
+
+     <dt><span data-x="concept-document-bc">browsing context</span></dt>
+     <dd><var>browsingContext</var>
+
+     <dt><span data-x="concept-document-permissions-policy">permissions policy</span></dt>
+     <dd><var>permissionsPolicy</var></dd>
+
+     <dt><span>active sandboxing flag set</span></dt>
+     <dd><var>sandboxFlags</var></dd>
+
+     <dt><span>load timing info</span></dt>
+     <dd><var>loadTimingInfo</var></dd>
+
+     <dt><span>is initial <code>about:blank</code></span></dt>
+     <dd>true</dd>
+
+     <dt><span data-x="concept-document-about-base-URL">about base URL</span></dt>
+     <dd><var>creatorBaseURL</var></dd>
+
+     <dt><span data-x="concept-document-allow-declarative-shadow-roots">allow declarative shadow
+     roots</span></dt>
+     <dd>true</dd>
+
+     <dt><span data-x="document-custom-element-registry">custom element registry</span></dt>
+     <dd>a new <code>CustomElementRegistry</code> object</dd>
+    </dl>
+   </li>
+
+   <li><p>Let <var>iframeReferrerPolicy</var> be the result of <span>determining the
+   <code>iframe</code> element referrer policy</span> given <var>embedder</var>.</p></li>
+
+   <li><p>Set <var>document</var>'s <span
+   data-x="concept-document-internal-ancestor-origin-objects-list">internal ancestor origin objects
+   list</span> to the result of running the <span>internal ancestor origin objects list creation
+   steps</span> given <var>document</var> and <var>iframeReferrerPolicy</var>.</p></li>
+
+   <li><p>Set <var>document</var>'s <span data-x="concept-document-ancestor-origins-list">ancestor
+   origins list</span> to the result of running the <span>ancestor origins list creation
+   steps</span> given <var>document</var>.</p></li>
+
+   <li>
+    <p>If <var>creator</var> is non-null:</p>
+
+    <ol>
+     <li><p>Set <var>document</var>'s <span data-x="the document's referrer">referrer</span> to the
+     <span data-x="concept-url-serializer">serialization</span> of <var>creator</var>'s <span
+     data-x="concept-document-url">URL</span>.</p></li>
+
+     <li><p>Set <var>document</var>'s <span data-x="concept-document-policy-container">policy
+     container</span> to a <span data-x="clone a policy container">clone</span> of
+     <var>creator</var>'s <span data-x="concept-document-policy-container">policy
+     container</span>.</p></li>
+
+     <li><p>If <var>creator</var>'s <span data-x="concept-document-origin">origin</span> is
+     <span>same origin</span> with <var>creator</var>'s <span>relevant settings object</span>'s
+     <span>top-level origin</span>, then set <var>document</var>'s <span
+     data-x="concept-document-coop">opener policy</span> to <var>creator</var>'s <span
+     data-x="concept-document-bc">browsing context</span>'s <span data-x="bc-tlbc">top-level
+     browsing context</span>'s <span>active document</span>'s <span
+     data-x="concept-document-coop">opener policy</span>.</p></li>
+    </ol>
+   </li>
+
+   <li><p><span>Assert</span>: <var>document</var>'s <span data-x="concept-document-url">URL</span>
+   and <var>document</var>'s <span>relevant settings object</span>'s <span
+   data-x="concept-environment-creation-url">creation URL</span> are
+   <code>about:blank</code>.</p></li>
+
+   <li><p>Mark <var>document</var> as <span>ready for post-load tasks</span>.</p></li>
+
+   <li><p><span>Populate with <code>html</code>/<code>head</code>/<code>body</code></span> given
+   <var>document</var>.</p></li>
+
+   <li><p><span>Make active</span> <var>document</var>.</p></li>
+
+   <li><p><span>Completely finish loading</span> <var>document</var>.</p></li>
+
+   <li><p>Return <var>browsingContext</var> and <var>document</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn id="creating-a-new-top-level-browsing-context" data-x="creating a new top-level
+  browsing context and document">create a new top-level browsing context and document</dfn>:</p>
+
+  <ol>
+   <li><p>Let <var>group</var> and <var>document</var> be the result of <span>creating a new
+   browsing context group and document</span>.</p></li>
+
+   <li><p>Return <var>group</var>'s <span>browsing context set</span>[0] and
+   <var>document</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn id="creating-a-new-auxiliary-browsing-context" data-x="creating a new auxiliary
+  browsing context and document">create a new auxiliary browsing context and document</dfn>, given
+  a <span>browsing context</span> <var>opener</var>:</p>
+
+  <ol>
+   <li><p>Let <var>openerTopLevelBrowsingContext</var> be <var>opener</var>'s <span
+   data-x="bc-traversable">top-level traversable</span>'s <span data-x="nav-bc">active browsing
+   context</span>.</p></li>
+
+   <li><p>Let <var>group</var> be <var>openerTopLevelBrowsingContext</var>'s <span data-x="tlbc
+   group">group</span>.</p></li>
+
+   <li><p><span>Assert</span>: <var>group</var> is non-null, as <span
+   data-x="navigate">navigating</span> invokes this directly.</p></li>
+
+   <li><p>Let <var>browsingContext</var> and <var>document</var> be the result of <span>creating a
+   new browsing context and document</span> with <var>opener</var>'s <span
+   data-x="nav-document">active document</span>, null, and <var>group</var>.</p></li>
+
+   <li><p>Set <var>browsingContext</var>'s <span>is auxiliary</span> to true.</p></li>
+
+   <li><p><span data-x="bcg append">Append</span> <var>browsingContext</var> to
+   <var>group</var>.</p></li>
+
+   <li><p>Set <var>browsingContext</var>'s <span>opener browsing context</span> to
+   <var>opener</var>.</p></li>
+
+   <li><p>Set <var>browsingContext</var>'s <span data-x="virtual-browsing-context-group-id">virtual
+   browsing context group ID</span> to <var>openerTopLevelBrowsingContext</var>'s <span
+   data-x="virtual-browsing-context-group-id">virtual browsing context group ID</span>.</p></li>
+
+   <li><p>Set <var>browsingContext</var>'s <span data-x="opener-origin-at-creation">opener origin
+   at creation</span> to <var>opener</var>'s <span data-x="nav-document">active document</span>'s
+   <span data-x="concept-document-origin">origin</span>.</p></li>
+
+   <li><p>Return <var>browsingContext</var> and <var>document</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="determining the origin">determine the origin</dfn>, given a <span>URL</span>
+  <var>url</var>, a <span>sandboxing flag set</span> <var>sandboxFlags</var>, and an
+  <span>origin</span>-or-null <var>sourceOrigin</var>:</p>
+
+  <ol>
+   <li id="sandboxOrigin"><p>If <var>sandboxFlags</var> has its <span>sandboxed origin browsing
+   context flag</span> set, then return a new <span data-x="concept-origin-opaque">opaque
+   origin</span>.</p></li>
+
+   <li><p>If <var>url</var> is null, then return a new <span data-x="concept-origin-opaque">opaque
+   origin</span>.</p></li>
+
+   <li>
+    <p>If <var>url</var> is <code>about:srcdoc</code>:</p>
+
+    <ol>
+     <li><p><span>Assert</span>: <var>sourceOrigin</var> is non-null.</p></li>
+
+     <li><p>Return <var>sourceOrigin</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>If <var>url</var> <span>matches <code>about:blank</code></span> and
+   <var>sourceOrigin</var> is non-null, then return <var>sourceOrigin</var>.</p></li>
+
+   <li><p>Return <var>url</var>'s <span data-x="concept-url-origin">origin</span>.</p></li>
+  </ol>
+
+  <p class="note">The cases that return <var>sourceOrigin</var> result in two
+  <code>Document</code>s that end up with the same underlying <span
+  data-x="concept-document-origin">origin</span>, meaning that <code
+  data-x="dom-document-domain">document.domain</code> affects both.</p>
+  </div>
+
+
+  <h5 id="nested-browsing-contexts">Related browsing contexts</h5>
+
+  <div algorithm>
+  <p>A <span>browsing context</span> <var>potentialDescendant</var> is said to be an <dfn
+  data-x="ancestor browsing context">ancestor</dfn> of a browsing context
+  <var>potentialAncestor</var> if the following algorithm returns true:</p>
+
+  <ol>
+   <li><p>Let <var>potentialDescendantDocument</var> be <var>potentialDescendant</var>'s
+   <span>active document</span>.</p></li>
+
+   <li><p>If <var>potentialDescendantDocument</var> is not <span>fully active</span>, then return
+   false.</p></li>
+
+   <li><p>Let <var>ancestorBCs</var> be the list obtained by taking the <span
+   data-x="concept-document-bc">browsing context</span> of the <span data-x="nav-document">active
+   document</span> of each member of <var>potentialDescendantDocument</var>'s <span>ancestor
+   navigables</span>.</p></li>
+
+   <li><p>If <var>ancestorBCs</var> <span data-x="list contains">contains</span>
+   <var>potentialAncestor</var>, then return true.</p></li>
+
+   <li><p>Return false.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>A <dfn export>top-level browsing context</dfn> is a <span>browsing context</span> whose
+  <span>active document</span>'s <span>node navigable</span> is a <span>traversable
+  navigable</span>.</p>
+  </div>
+
+  <p class="note">It is <em>not</em> required to be a <span>top-level traversable</span>.</p>
+
+  <div algorithm>
+  <p>The <dfn data-x="bc-tlbc">top-level browsing context</dfn> of a <span>browsing context</span>
+  <var>start</var> is the result of the following algorithm:</p>
+
+  <ol>
+   <li><p>If <var>start</var>'s <span>active document</span> is not <span>fully active</span>, then
+   return null.</p></li>
+
+   <li><p>Let <var>navigable</var> be <var>start</var>'s <span>active document</span>'s <span>node
+   navigable</span>.</p></li>
+
+   <li><p>While <var>navigable</var>'s <span data-x="nav-parent">parent</span> is not null, set
+   <var>navigable</var> to <var>navigable</var>'s <span data-x="nav-parent">parent</span>.</p></li>
+
+   <li><p>Return <var>navigable</var>'s <span data-x="nav-bc">active browsing
+   context</span>.</p></li>
+  </ol>
+  </div>
+
+  <div class="warning" id="warning-avoid-related-bc-terms">
+   <p>The terms <span>ancestor browsing context</span> and <span>top-level browsing context</span>
+   are rarely useful, since <span data-x="browsing context">browsing contexts</span> in general are
+   <a href="#warning-avoid-using-bcs">usually the inappropriate specification concept to use</a>.
+   Note in particular that when a <span>browsing context</span>'s <span>active document</span> is
+   not <span>fully active</span>, it never counts as an ancestor or top-level browsing context, and
+   as such these concepts are not useful when <a href="#note-bfcache">bfcache</a> is in play.</p>
+
+   <p>Instead, use concepts such as the <span>ancestor navigables</span> collection, the <span
+   data-x="nav-parent">parent navigable</span>, or a navigable's <span
+   data-x="nav-traversable">top-level traversable</span>.</p>
+  </div>
+
+  <hr>
+
+  <div algorithm>
+  <p id="security-1"><span id="security-nav"></span>A <span>browsing context</span> <var>A</var> is
+  <dfn>familiar with</dfn> a second <span>browsing context</span> <var>B</var> if the following
+  algorithm returns true:</p>
+
+  <ol>
+   <li><p>If <var>A</var>'s <span>active document</span>'s <span
+   data-x="concept-document-origin">origin</span> is <span>same origin</span> with <var>B</var>'s
+   <span>active document</span>'s <span data-x="concept-document-origin">origin</span>, then return
+   true.</p></li>
+
+   <li><p>If <var>A</var>'s <span data-x="bc-tlbc">top-level browsing context</span> is
+   <var>B</var>, then return true.</p></li>
+
+   <li><p>If <var>B</var> is an <span>auxiliary browsing context</span> and <var>A</var> is
+   <span>familiar with</span> <var>B</var>'s <span>opener browsing context</span>, then return
+   true.</p></li>
+
+   <li>
+    <p>If there exists an <span>ancestor browsing context</span> of <var>B</var> whose <span>active
+    document</span> has the <span data-x="same origin">same</span> <span
+    data-x="concept-document-origin">origin</span> as the <span>active document</span> of
+    <var>A</var>, then return true.</p>
+
+    <p class="note">This includes the case where <var>A</var> is an <span>ancestor browsing
+    context</span> of <var>B</var>.</p>
+   </li>
+
+   <li><p>Return false.</p></li>
+  </ol>
+  </div>
+
+  <h5>Groupings of browsing contexts</h5>
+
+  <p>A <span>top-level browsing context</span> has an associated <dfn data-x="tlbc
+  group">group</dfn> (null or a <span>browsing context group</span>). It is initially null.</p>
+
+  <p>A user agent holds a <dfn>browsing context group set</dfn> (a <span>set</span> of <span
+  data-x="browsing context group">browsing context groups</span>).</p>
+
+  <p>A <dfn>browsing context group</dfn> holds a <dfn>browsing context set</dfn> (a <span>set</span>
+  of <span data-x="top-level browsing context">top-level browsing contexts</span>).</p>
+
+  <p class="note">A <span>top-level browsing context</span> is added to the <span data-x="browsing
+  context group">group</span> when the group is <span data-x="creating a new browsing context group
+  and document">created</span>. All subsequent <span data-x="top-level browsing context">top-level
+  browsing contexts</span> added to the <span data-x="browsing context group">group</span> will be
+  <span data-x="auxiliary browsing context">auxiliary browsing contexts</span>.</p>
+
+  <p>A <span>browsing context group</span> has an associated <dfn>agent cluster map</dfn> (a weak
+  <span data-x="ordered map">map</span> of <span data-x="agent cluster key">agent cluster
+  keys</span> to <span data-x="agent cluster">agent clusters</span>). User agents are responsible
+  for collecting agent clusters when it is deemed that nothing can access them anymore.</p>
+
+  <p>A <span>browsing context group</span> has an associated <dfn>historical agent cluster key
+  map</dfn>, which is a <span data-x="ordered map">map</span> of <span
+  data-x="origin">origins</span> to <span data-x="agent cluster key">agent cluster keys</span>. This
+  map is used to ensure the consistency of the <a href="#origin-keyed-agent-clusters">origin-keyed
+  agent clusters</a> feature by recording what agent cluster keys were previously used for a given
+  origin.</p>
+
+  <p class="note">The <span>historical agent cluster key map</span> only ever gains entries over the
+  lifetime of the browsing context group.</p>
+
+  <p>A <span>browsing context group</span> has a <dfn
+  data-x="bcg-cross-origin-isolation">cross-origin isolation mode</dfn>, which is a
+  <span>cross-origin isolation mode</span>. It is initially "<code
+  data-x="cross-origin-isolation-none">none</code>".</p>
+
+  <p>A <dfn>cross-origin isolation mode</dfn> is one of three possible values: "<dfn><code
+  data-x="cross-origin-isolation-none">none</code></dfn>", "<dfn><code
+  data-x="cross-origin-isolation-logical">logical</code></dfn>", or "<dfn><code
+  data-x="cross-origin-isolation-concrete">concrete</code></dfn>".</p>
+
+  <div class="note">
+   <p>"<code data-x="cross-origin-isolation-logical">logical</code>" and "<code
+   data-x="cross-origin-isolation-concrete">concrete</code>" are similar. They are both used for
+   <span data-x="browsing context group">browsing context groups</span> where:</p>
+
+   <ul>
+    <li><p>every top-level <code>Document</code> has `<code
+    data-x=""><span>Cross-Origin-Opener-Policy</span>: <span
+    data-x="coop-same-origin">same-origin</span></code>`, and</p></li>
+
+    <li><p>every <code>Document</code> has a `<code>Cross-Origin-Embedder-Policy</code>` header
+    whose value is <span>compatible with cross-origin isolation</span>.</p></li>
+   </ul>
+
+   <p>On some platforms, it is difficult to provide the security properties required to grant safe
+   access to the APIs gated by the <span
+   data-x="concept-settings-object-cross-origin-isolated-capability">cross-origin isolated
+   capability</span>. As a result, only "<code
+   data-x="cross-origin-isolation-concrete">concrete</code>" can grant access that capability.
+   "<code data-x="cross-origin-isolation-logical">logical</code>" is used on platform not supporting
+   this capability, where various restrictions imposed by cross-origin isolation will still apply,
+   but the capability is not granted.</p>
+  </div>
+
+  <div algorithm>
+  <p id="creating-a-new-browsing-context-group">To <dfn data-x="creating a new browsing context
+  group and document">create a new browsing context group and document</dfn>:</p>
+
+  <ol>
+   <li><p>Let <var>group</var> be a new <span>browsing context group</span>.</p></li>
+
+   <li><p><span data-x="set append">Append</span> <var>group</var> to the user agent's
+   <span>browsing context group set</span>.</p></li>
+
+   <li><p>Let <var>browsingContext</var> and <var>document</var> be the result of <span>creating a
+   new browsing context and document</span> with null, null, and <var>group</var>.</p></li>
+
+   <li><p><span data-x="bcg append">Append</span> <var>browsingContext</var> to
+   <var>group</var>.</p></li>
+
+   <li><p>Return <var>group</var> and <var>document</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="bcg append">append</dfn> a <span>top-level browsing context</span>
+  <var>browsingContext</var> to a <span>browsing context group</span> <var>group</var>:</p>
+
+  <ol>
+   <li><p><span data-x="set append">Append</span> <var>browsingContext</var> to <var>group</var>'s
+   <span>browsing context set</span>.</p></li>
+
+   <li><p>Set <var>browsingContext</var>'s <span data-x="tlbc group">group</span> to
+   <var>group</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="bcg remove">remove</dfn> a <span>top-level browsing context</span>
+  <var>browsingContext</var>:</p>
+
+  <ol>
+   <li><p><span>Assert</span>: <var>browsingContext</var>'s <span data-x="tlbc group">group</span>
+   is non-null.</p></li>
+
+   <li><p>Let <var>group</var> be <var>browsingContext</var>'s <span data-x="tlbc
+   group">group</span>.</p></li>
+
+   <li><p>Set <var>browsingContext</var>'s <span data-x="tlbc group">group</span> to null.</p></li>
+
+   <li><p><span data-x="list remove">Remove</span> <var>browsingContext</var> from
+   <var>group</var>'s <span>browsing context set</span>.</p></li>
+
+   <li><p>If <var>group</var>'s <span>browsing context set</span> <span data-x="list is empty">is
+   empty</span>, then <span data-x="list remove">remove</span> <var>group</var> from the user
+   agent's <span>browsing context group set</span>.</p></li>
+  </ol>
+  </div>
+
+  <p class="note"><span data-x="bcg append">Append</span> and <span data-x="bcg
+  remove">remove</span> are primitive operations that help define the lifetime of a <span>browsing
+  context group</span>. They are called by higher-level creation and destruction operations for
+  <code>Document</code>s and <span data-x="browsing context">browsing contexts</span>.</p>
+
+  <div algorithm>
+  <p id="a-browsing-context-is-discarded">When there are no <code>Document</code> objects whose
+  <span data-x="concept-document-bc">browsing context</span> equals a given <span>browsing
+  context</span> (i.e., all such <code>Document</code>s have been <span data-x="destroy a
+  document">destroyed</span>), and that <span>browsing context</span>'s <code>WindowProxy</code> is
+  eligible for garbage collection, then the <span>browsing context</span> will never be accessed
+  again. If it is a <span>top-level browsing context</span>, then at this point the user agent must
+  <span data-x="bcg remove">remove</span> it.</p>
+  </div>
+
+

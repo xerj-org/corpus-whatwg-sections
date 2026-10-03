@@ -1,0 +1,43 @@
+WHATWG HTML — section media-elements/found-another-audio-track — If the <span>media resource</span> is found to have an audio track
+
+     <dt id="found-another-audio-track">If the <span>media resource</span> is found to have an audio
+     track</dt>
+
+     <dd>
+      <ol>
+       <li><p>Create an <code>AudioTrack</code> object to represent the audio track.</p></li>
+
+       <li><p>Update the <span>media element</span>'s <code
+       data-x="dom-media-audioTracks">audioTracks</code> attribute's <code>AudioTrackList</code>
+       object with the new <code>AudioTrack</code> object.</p></li>
+
+       <li><p>Let <var>enable</var> be <i>unknown</i>.</p></li>
+
+       <li>
+        <p>If either the <span>media resource</span> or the <span>URL</span> of the <var>current
+        media resource</var> indicate a particular set of audio tracks to enable, or if the user
+        agent has information that would facilitate the selection of specific audio tracks to
+        improve the user's experience: if this audio track is one of the ones to enable, then
+        set <var>enable</var> to <i>true</i>, otherwise, set <var>enable</var>
+        to <i>false</i>.</p>
+
+        <p class="example">This could be triggered by <span>media fragment syntax</span>, but it
+        could also be triggered e.g. by the user agent selecting a 5.1 surround sound audio track
+        over a stereo audio track.</p>
+       </li>
+
+       <li><p>If <var>enable</var> is still <i>unknown</i>, then, if the <span>media
+       element</span> does not yet have an <span data-x="dom-AudioTrack-enabled">enabled</span>
+       audio track, then set <var>enable</var> to <i>true</i>, otherwise, set <var>enable</var> to <i>false</i>.</p></li>
+
+       <li><p>If <var>enable</var> is <i>true</i>, then enable this audio track,
+       otherwise, do not enable this audio track.</p></li>
+
+       <li><p><span data-x="concept-event-fire">Fire an event</span> named <code
+       data-x="event-media-addtrack">addtrack</code> at this <code>AudioTrackList</code> object,
+       using <code>TrackEvent</code>, with the <code data-x="dom-TrackEvent-track">track</code>
+       attribute initialized to the new <code>AudioTrack</code> object.</p></li>
+      </ol>
+     </dd>
+
+

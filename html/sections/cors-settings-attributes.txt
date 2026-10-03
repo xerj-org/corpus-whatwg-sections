@@ -1,0 +1,61 @@
+WHATWG HTML — section cors-settings-attributes — CORS settings attributes
+
+  <h4>CORS settings attributes</h4>
+
+  <p>A <dfn>CORS settings attribute</dfn> is an <span>enumerated attribute</span> with the following
+  keywords and states:</p>
+
+  <table>
+   <thead>
+    <tr>
+     <th> Keyword
+     <th> State
+     <th> Brief description
+   <tbody>
+    <tr>
+     <td><dfn attr-value for="audio/crossorigin,video/crossorigin,img/crossorigin,link/crossorigin,script/crossorigin"><code data-x="attr-crossorigin-anonymous-keyword">anonymous</code></dfn>
+     <td><dfn data-x="attr-crossorigin-anonymous">Anonymous</dfn>
+     <td><span data-x="concept-request">Requests</span> for the element will have their
+     <span data-x="concept-request-mode">mode</span> set to "<code data-x="">cors</code>" and their
+     <span data-x="concept-request-credentials-mode">credentials mode</span> set to "<code
+     data-x="">same-origin</code>".
+    <tr>
+     <td><dfn attr-value for="audio/crossorigin,video/crossorigin,img/crossorigin,link/crossorigin,script/crossorigin"><code data-x="attr-crossorigin-use-credentials-keyword">use-credentials</code></dfn>
+     <td><dfn data-x="attr-crossorigin-use-credentials">Use Credentials</dfn>
+     <td><span data-x="concept-request">Requests</span> for the element will have their <span
+     data-x="concept-request-mode">mode</span> set to "<code data-x="">cors</code>" and their <span
+     data-x="concept-request-credentials-mode">credentials mode</span> set to "<code
+     data-x="">include</code>".
+  </table>
+
+  <div algorithm>
+  <p>The attribute's <i data-x="missing value default">missing value default</i> is the <dfn
+  data-x="attr-crossorigin-none">No CORS</dfn> state, and its <i data-x="invalid value
+  default">invalid value default</i> and <i data-x="empty value default">empty value default</i> are
+  both the <span data-x="attr-crossorigin-anonymous">Anonymous</span> state.</p>
+  </div>
+
+  <p>The majority of fetches governed by <span data-x="CORS settings attribute">CORS settings
+  attributes</span> will be done via the <span>create a potential-CORS request</span> algorithm.</p>
+
+  <div algorithm>
+  <p id="module-script-credentials-mode">For more modern features, where the request's <span
+  data-x="concept-request-mode">mode</span> is always "<code data-x="">cors</code>", certain <span
+  data-x="CORS settings attribute">CORS settings attributes</span> have been repurposed to have a
+  slightly different meaning, wherein they only impact the <span
+  data-x="concept-request">request</span>'s <span
+  data-x="concept-request-credentials-mode">credentials mode</span>. To perform this translation, we
+  define the <dfn export>CORS settings attribute credentials mode</dfn> for a given <span>CORS
+  settings attribute</span> to be determined by switching on the attribute's state:</p>
+
+  <dl class="switch">
+   <dt><span data-x="attr-crossorigin-none">No CORS</span></dt>
+   <dt><span data-x="attr-crossorigin-anonymous">Anonymous</span></dt>
+   <dd>"<code data-x="">same-origin</code>"</dd>
+
+   <dt><span data-x="attr-crossorigin-none">Use Credentials</span></dt>
+   <dd>"<code data-x="">include</code>"</dd>
+  </dl>
+  </div>
+
+

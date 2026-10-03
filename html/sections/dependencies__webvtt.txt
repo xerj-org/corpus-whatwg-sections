@@ -1,0 +1,23 @@
+WHATWG HTML — section dependencies/webvtt — WebVTT
+
+   <dt>WebVTT</dt>
+
+   <dd>
+    <p>Implementations may support WebVTT as a text track format for subtitles, captions, metadata,
+    etc., for media resources. <ref>WEBVTT</ref></p>
+
+    <p>The following terms, used in this specification, are defined in <cite>WebVTT</cite>:</p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://w3c.github.io/webvtt/#webvtt-file">WebVTT file</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/webvtt/#webvtt-file-using-caption-or-subtitle-cue-text">WebVTT file using caption or subtitle cue text</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/webvtt/#webvtt-file-using-only-nested-cues">WebVTT file using only nested cues</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/webvtt/#webvtt-parser">WebVTT parser</dfn></li>
+     <li>The <dfn data-x-href="https://w3c.github.io/webvtt/#rules-for-updating-the-display-of-webvtt-text-tracks">rules for updating the display of WebVTT text tracks</dfn></li>
+     <li>The WebVTT <dfn data-x-href="https://w3c.github.io/webvtt/#webvtt-cue-writing-direction">text track cue writing direction</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/webvtt/#vttcue"><code>VTTCue</code></dfn> interface</li>
+    </ul>
+   </dd>
+
+
+

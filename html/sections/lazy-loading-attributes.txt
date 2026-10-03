@@ -1,0 +1,233 @@
+WHATWG HTML — section lazy-loading-attributes — Lazy loading attributes
+
+  <h4>Lazy loading attributes</h4>
+
+  <p>A <dfn>lazy loading attribute</dfn> is an <span>enumerated attribute</span> with the following
+  keywords and states:</p>
+
+  <table>
+   <thead>
+    <tr>
+     <th>Keyword
+     <th>State
+     <th>Brief description
+   <tbody>
+    <tr>
+     <td><dfn attr-value for="img/loading,audio/loading,video/loading,iframe/loading"><code data-x="attr-loading-lazy">lazy</code></dfn>
+     <td><dfn data-x="attr-loading-lazy-state">Lazy</dfn>
+     <td>Used to defer fetching a resource until some conditions are met.
+    <tr>
+     <td><dfn attr-value for="img/loading,audio/loading,video/loading,iframe/loading"><code data-x="attr-loading-eager">eager</code></dfn>
+     <td><dfn data-x="attr-loading-eager-state">Eager</dfn>
+     <td>Used to fetch a resource immediately; the default state.
+  </table>
+
+  <p>The attribute directs the user agent to fetch a resource immediately or to defer fetching until
+  some conditions associated with the element are met, according to the attribute's current
+  state.</p>
+
+  <div algorithm>
+  <p>The attribute's <i data-x="missing value default">missing value default</i> and <i
+  data-x="invalid value default">invalid value default</i> are both the <span
+  data-x="attr-loading-eager-state">Eager</span> state.</p>
+  </div>
+
+  <hr>
+
+  <div algorithm>
+  <p>The <dfn>will lazy load element steps</dfn>, given an element <var>element</var>,
+  are as follows:</p>
+
+  <ol>
+   <li>
+    <p>If <span data-x="concept-n-noscript">scripting is disabled</span> for <var>element</var>,
+    then return false.</p>
+
+    <p class="note">This is an anti-tracking measure, because if a user agent supported lazy loading
+    when scripting is disabled, it would still be possible for a site to track a user's approximate
+    scroll position throughout a session, by strategically placing images in a page's markup such
+    that a server can track how many images are requested and when.</p>
+   </li>
+
+   <li><p>If <var>element</var>'s <span>lazy loading attribute</span> is in the <span
+   data-x="attr-loading-lazy-state">Lazy</span> state, then return true.</p></li>
+
+   <li><p>Return false.</p></li>
+  </ol>
+  </div>
+
+  <p>Each <code>img</code>, <code>audio</code>, <code>video</code>, and <code>iframe</code> element has associated
+  <dfn>lazy load resumption steps</dfn>, initially null.</p>
+
+  <p>Each <code>video</code> element also has associated <dfn>poster lazy load resumption steps</dfn>,
+  initially null.</p>
+
+  <p class="note">For <code>img</code>, <code>audio</code>, <code>video</code>, and <code>iframe</code> elements that
+  <span data-x="will lazy load element steps">will lazy load</span>, these steps are run from the
+  <span>lazy load intersection observer</span>'s callback or when their <span>lazy loading
+  attribute</span> is set to the <span data-x="attr-loading-eager-state">Eager</span> state. This
+  causes the element to continue loading. For <code>video</code> elements, <span>poster lazy load
+  resumption steps</span> are also run at the same time.</p>
+
+  <p>Each <code>Document</code> has a <dfn>lazy load intersection observer</dfn>, initially set to
+  null but can be set to an <code>IntersectionObserver</code> instance.</p>
+
+  <div algorithm>
+  <p>To <dfn>start intersection-observing a lazy loading element</dfn> <var>element</var>, run these
+  steps:</p>
+
+  <ol>
+   <li><p>Let <var>doc</var> be <var>element</var>'s <span>node document</span>.</p></li>
+
+   <li>
+    <p>If <var>doc</var>'s <span>lazy load intersection observer</span> is null, set it to a new
+    <code>IntersectionObserver</code> instance, initialized as follows:</p>
+
+    <p class="XXX">The intention is to use the original value of the
+    <code>IntersectionObserver</code> constructor. However, we're forced to use the
+    JavaScript-exposed constructor in this specification, until <cite>Intersection Observer</cite>
+    exposes low-level hooks for use in specifications. See bug <a
+    href="https://github.com/w3c/IntersectionObserver/issues/464">w3c/IntersectionObserver#464</a>
+    which tracks this. <ref>INTERSECTIONOBSERVER</ref></p>
+
+    <ul>
+     <li>
+      <p>The <var>callback</var> is these steps, with arguments <var>entries</var> and
+      <var>observer</var>:</p>
+
+      <ol>
+       <li>
+        <p>For each <var>entry</var> in <var>entries</var> <span class="XXX">using a method of
+        iteration which does not trigger developer-modifiable array accessors or
+        iteration hooks</span>:</p>
+
+        <ol>
+         <li><p>Let <var>resumptionSteps</var> be null.</p></li>
+
+         <li><p>If <var>entry</var>.<code
+         data-x="dom-IntersectionObserverEntry-isIntersecting">isIntersecting</code> is true, then
+         set <var>resumptionSteps</var> to <var>entry</var>.<code
+         data-x="dom-IntersectionObserverEntry-target">target</code>'s
+         <span>lazy load resumption steps</span>.</p></li>
+
+         <li><p>Let <var>posterResumptionSteps</var> be null.</p></li>
+
+         <li><p>If <var>entry</var>.<code
+         data-x="dom-IntersectionObserverEntry-isIntersecting">isIntersecting</code> is true and <var>entry</var>.<code data-x="dom-IntersectionObserverEntry-target">target</code> is a
+         <code>video</code> element, then set <var>posterResumptionSteps</var> to the <code>video</code>
+         element's <span>poster lazy load resumption steps</span>.</p></li>
+
+         <li><p>If <var>resumptionSteps</var> is null and <var>posterResumptionSteps</var> is null,
+         then continue.</p></li>
+
+         <li><p><span>Stop intersection-observing a lazy loading element</span> for
+         <var>entry</var>.<code data-x="dom-IntersectionObserverEntry-target">target</code>.</p></li>
+
+         <li><p>If <var>resumptionSteps</var> is not null:</p>
+
+         <ol>
+          <li><p>Set <var>entry</var>.<code
+          data-x="dom-IntersectionObserverEntry-target">target</code>'s <span>lazy load resumption
+          steps</span> to null.</p></li>
+
+          <li><p>Invoke <var>resumptionSteps</var>.</p></li>
+         </ol>
+         </li>
+
+         <li><p>If <var>posterResumptionSteps</var> is not null:</p>
+
+         <ol>
+          <li><p>Set the <code>video</code> element's <span>poster lazy load resumption steps</span>
+          to null.</p></li>
+
+          <li><p>Invoke <var>posterResumptionSteps</var>.</p></li>
+         </ol>
+         </li>
+        </ol>
+
+        <p class="XXX">The intention is to use the original value of the
+        <code data-x="dom-IntersectionObserverEntry-isIntersecting">isIntersecting</code> and
+        <code data-x="dom-IntersectionObserverEntry-target">target</code> getters. See <a
+        href="https://github.com/w3c/IntersectionObserver/issues/464">w3c/IntersectionObserver#464</a>.
+        <ref>INTERSECTIONOBSERVER</ref></p>
+       </li>
+      </ol>
+     </li>
+
+     <li>
+      <p>The <var>options</var> is an <code>IntersectionObserverInit</code> dictionary with the
+      following dictionary members: «[ "<code data-x="">scrollMargin</code>" → <span>lazy load scroll
+      margin</span> ]»</p>
+
+      <p class="note">This allows for fetching the image during scrolling, when it does not yet —
+      but is about to — intersect the viewport.</p>
+
+      <p class="XXX">The <span>lazy load scroll margin</span> suggestions imply dynamic changes to the
+      value, but the <code>IntersectionObserver</code> API does not support changing the scroll
+      margin. See issue <a
+      href="https://github.com/w3c/IntersectionObserver/issues/428">w3c/IntersectionObserver#428</a>.</p>
+     </li>
+    </ul>
+   </li>
+
+   <li>
+    <p>Call <var>doc</var>'s <span>lazy load intersection observer</span>'s <code
+    data-x="dom-IntersectionObserver-observe">observe</code> method with <var>element</var> as the
+    argument.</p>
+
+    <p class="XXX">The intention is to use the original value of the <code
+    data-x="dom-IntersectionObserver-observe">observe</code> method. See <a
+    href="https://github.com/w3c/IntersectionObserver/issues/464">w3c/IntersectionObserver#464</a>.
+    <ref>INTERSECTIONOBSERVER</ref></p>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>stop intersection-observing a lazy loading element</dfn> <var>element</var>, run these
+  steps:</p>
+
+  <ol>
+   <li><p>Let <var>doc</var> be <var>element</var>'s <span>node document</span>.</p></li>
+
+   <li><p><span>Assert</span>: <var>doc</var>'s <span>lazy load intersection observer</span> is not
+   null.</p></li>
+
+   <li>
+    <p>Call <var>doc</var>'s <span>lazy load intersection observer</span>'s <code
+    data-x="dom-IntersectionObserver-unobserve">unobserve</code> method with <var>element</var> as
+    the argument.</p>
+
+    <p class="XXX">The intention is to use the original value of the <code
+    data-x="dom-IntersectionObserver-unobserve">unobserve</code> method. See <a
+    href="https://github.com/w3c/IntersectionObserver/issues/464">w3c/IntersectionObserver#464</a>.
+    <ref>INTERSECTIONOBSERVER</ref></p>
+   </li>
+  </ol>
+  </div>
+
+  <p>
+  <!--INSERT TRACKING-->
+  The <dfn id="lazy-load-root-margin">lazy load scroll margin</dfn> is an
+  <span>implementation-defined</span> value, but with the following suggestions to consider:</p>
+
+  <ul>
+   <li><p>Set a minimum value that most often results in the resources being loaded before they
+   intersect the viewport under normal usage patterns for the given device.</p></li>
+
+   <li><p>The typical scrolling speed: increase the value for devices with faster typical scrolling
+   speeds.</p></li>
+
+   <li><p>The current scrolling speed or momentum: the UA can attempt to predict where the scrolling
+   will likely stop, and adjust the value accordingly.</p></li>
+
+   <li><p>The network quality: increase the value for slow or high-latency connections.</p></li>
+
+   <li><p>User preferences can influence the value.</p></li>
+  </ul>
+
+  <p class="note">It is important <span data-x="tracking vector">for privacy</span> that the
+  <span>lazy load scroll margin</span> not leak additional information. For example, the typical
+  scrolling speed on the current device could be imprecise so as to not introduce a new
+  fingerprinting vector.</p>
+

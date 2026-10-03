@@ -1,0 +1,12 @@
+WHATWG HTML — section dependencies/screen-orientation — Screen Orientation
+
+   <dt>Screen Orientation</dt>
+   <dd>
+    <p>The following terms are defined in <cite>Screen Orientation</cite>:
+    <ref>SCREENORIENTATION</ref></p>
+
+    <ul>
+     <li><dfn data-x-href="https://w3c.github.io/screen-orientation/#dfn-screen-orientation-change-steps">screen orientation change steps</dfn></li>
+    </ul>
+   </dd>
+

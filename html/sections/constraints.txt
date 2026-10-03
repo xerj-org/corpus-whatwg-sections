@@ -1,0 +1,627 @@
+WHATWG HTML — section constraints — Constraints
+
+  <h4>Constraints</h4>
+
+  <div w-nodev>
+
+  <h5>Definitions</h5>
+
+  <div algorithm>
+  <p>A <span data-x="category-submit">submittable element</span> is a <dfn>candidate for constraint
+  validation</dfn> except when a condition has <dfn data-x="barred from constraint validation">barred
+  the element from constraint validation</dfn>. (For example, an element is <span>barred from
+  constraint validation</span> if it has a <code>datalist</code> element ancestor.)</p>
+  </div>
+
+  <p>An element can have a <dfn>custom validity error message</dfn> defined. Initially, an element
+  must have its <span>custom validity error message</span> set to the empty string. When its value
+  is not the empty string, the element is <span>suffering from a custom error</span>. It can be set
+  using the <code data-x="dom-cva-setCustomValidity">setCustomValidity()</code> method, except for
+  <span data-x="form-associated custom element">form-associated custom elements</span>. <span
+  data-x="form-associated custom element">Form-associated custom elements</span> can have a
+  <span>custom validity error message</span> set via their <code>ElementInternals</code> object's
+  <code data-x="dom-ElementInternals-setValidity">setValidity()</code> method. The user agent should use the
+  <span>custom validity error message</span> when alerting the user to the problem with the
+  control.</p>
+
+  <p>An element can be constrained in various ways. The following is the list of <dfn>validity
+  states</dfn> that a form control can be in, making the control invalid for the purposes of
+  constraint validation. (The definitions below are non-normative; other parts of this specification
+  define more precisely when each state applies or does not.)</p>
+
+  <dl>
+   <dt> <dfn>Suffering from being missing</dfn> </dt>
+
+   <dd>
+    <p>When a control has no <span data-x="concept-fe-value">value</span> but has a <code
+    data-x="">required</code> attribute (<code>input</code> <code
+    data-x="attr-input-required">required</code>, <code>textarea</code> <code
+    data-x="attr-textarea-required">required</code>); or, more complicated rules for
+    <code>select</code> elements and controls in <span data-x="radio button group">radio button
+    groups</span>, as specified in their sections.</p>
+
+    <p>When the <code data-x="dom-ElementInternals-setValidity">setValidity()</code> method sets
+    <code data-x="">valueMissing</code> flag to true for a
+    <span>form-associated custom element</span>.</p>
+   </dd>
+
+   <dt> <dfn>Suffering from a type mismatch</dfn> </dt>
+
+   <dd>
+    <p>When a control that allows arbitrary user input has a <span
+    data-x="concept-fe-value">value</span> that is not in the correct syntax (<span
+    data-x="attr-input-type-email">Email</span>, <span data-x="attr-input-type-url">URL</span>).
+    </p>
+
+    <p>When the <code data-x="dom-ElementInternals-setValidity">setValidity()</code> method sets
+    <code data-x="">typeMismatch</code> flag to true for a
+    <span>form-associated custom element</span>.</p>
+   </dd>
+
+   <dt> <dfn>Suffering from a pattern mismatch</dfn> </dt>
+
+   <dd>
+    <p>When a control has a <span data-x="concept-fe-value">value</span> that doesn't satisfy the
+    <code data-x="attr-input-pattern">pattern</code> attribute.</p>
+
+    <p>When the <code data-x="dom-ElementInternals-setValidity">setValidity()</code> method sets
+    <code data-x="">patternMismatch</code> flag to true for a
+    <span>form-associated custom element</span>.</p>
+   </dd>
+
+   <dt> <dfn>Suffering from being too long</dfn> </dt>
+
+   <dd>
+    <p>When a control has a <span data-x="concept-fe-value">value</span> that is too long for the
+    <span data-x="attr-fe-maxlength">form control <code data-x="">maxlength</code> attribute</span>
+    (<code>input</code> <code data-x="attr-input-maxlength">maxlength</code>, <code>textarea</code>
+    <code data-x="attr-textarea-maxlength">maxlength</code>). </p>
+
+    <p>When the <code data-x="dom-ElementInternals-setValidity">setValidity()</code> method sets
+    <code data-x="">tooLong</code> flag to true for a
+    <span>form-associated custom element</span>.</p>
+   </dd>
+
+   <dt> <dfn>Suffering from being too short</dfn> </dt>
+
+   <dd>
+    <p>When a control has a <span data-x="concept-fe-value">value</span> that is too short for the
+    <span data-x="attr-fe-minlength">form control <code data-x="">minlength</code> attribute</span>
+    (<code>input</code> <code data-x="attr-input-minlength">minlength</code>, <code>textarea</code>
+    <code data-x="attr-textarea-minlength">minlength</code>). </p>
+
+    <p>When the <code data-x="dom-ElementInternals-setValidity">setValidity()</code> method sets
+    <code data-x="">tooShort</code> flag to true for a
+    <span>form-associated custom element</span>.</p>
+   </dd>
+
+   <dt> <dfn>Suffering from an underflow</dfn> </dt>
+
+   <dd>
+    <p>When a control has a <span data-x="concept-fe-value">value</span> that is not the empty
+    string and is too low for the <code data-x="attr-input-min">min</code> attribute.</p>
+
+    <p>When the <code data-x="dom-ElementInternals-setValidity">setValidity()</code> method sets
+    <code data-x="">rangeUnderflow</code> flag to true for a
+    <span>form-associated custom element</span>.</p>
+  </dd>
+
+   <dt> <dfn>Suffering from an overflow</dfn> </dt>
+
+   <dd>
+    <p>When a control has a <span data-x="concept-fe-value">value</span> that is not the empty
+    string and is too high for the <code data-x="attr-input-max">max</code> attribute.</p>
+
+    <p>When the <code data-x="dom-ElementInternals-setValidity">setValidity()</code> method sets
+    <code data-x="">rangeOverflow</code> flag to true for a
+    <span>form-associated custom element</span>.</p>
+  </dd>
+
+   <dt> <dfn>Suffering from a step mismatch</dfn> </dt>
+
+   <dd>
+    <p>When a control has a <span data-x="concept-fe-value">value</span> that doesn't fit the
+    rules given by the <code data-x="attr-input-step">step</code> attribute.</p>
+
+    <p>When the <code data-x="dom-ElementInternals-setValidity">setValidity()</code> method sets
+    <code data-x="">stepMismatch</code> flag to true for a
+    <span>form-associated custom element</span>.</p>
+  </dd>
+
+   <dt> <dfn>Suffering from bad input</dfn> </dt>
+
+   <dd>
+    <p>When a control has incomplete input and the user agent does not think the user ought to
+    be able to submit the form in its current state.</p>
+
+    <p>When the <code data-x="dom-ElementInternals-setValidity">setValidity()</code> method sets
+    <code data-x="">badInput</code> flag to true for a <span>form-associated custom element</span>.
+    </p>
+   </dd>
+
+   <dt> <dfn>Suffering from a custom error</dfn> </dt>
+
+   <dd> <p>When a control's <span>custom validity error message</span> (as set by the element's
+   <code data-x="dom-cva-setCustomValidity">setCustomValidity()</code> method or
+   <code>ElementInternals</code>'s <code data-x="dom-ElementInternals-setValidity">setValidity()</code> method) is
+   not the empty string.</p> </dd>
+  </dl>
+
+  <p class="note">An element can still suffer from these states even when the element is <span
+  data-x="concept-fe-disabled">disabled</span>; thus these states can be represented in the DOM even
+  if validating the form during submission wouldn't indicate a problem to the user.</p>
+
+  <div algorithm>
+  <p>An element <dfn data-x="concept-fv-valid">satisfies its constraints</dfn> if it is not suffering
+  from any of the above <span>validity states</span>.</p>
+  </div>
+
+  </div>
+
+
+
+  <div w-nodev>
+
+  <h5>Constraint validation</h5>
+
+  <div algorithm>
+  <p>When the user agent is required to <dfn>statically validate the constraints</dfn> of
+  <code>form</code> element <var>form</var>, it must run the following steps, which return
+  either a <i>positive</i> result (all the controls in the form are valid) or a <i>negative</i>
+  result (there are invalid controls) along with a (possibly empty) list of elements that are
+  invalid and for which no script has claimed responsibility:</p>
+
+  <ol>
+   <li><p>Let <var>controls</var> be a list of all the <span
+   data-x="category-submit">submittable elements</span> whose <span>form owner</span> is <var>form</var>, in <span>tree order</span>.</p></li>
+
+   <li><p>Let <var>invalid controls</var> be an initially empty list of elements.</p></li>
+
+   <li>
+    <p>For each element <var>field</var> in <var>controls</var>, in <span>tree order</span>:</p>
+
+    <ol>
+     <li><p>If <var>field</var> is not a <span>candidate for constraint validation</span>,
+     then move on to the next element.</p></li>
+
+     <li><p>Otherwise, if <var>field</var> <span data-x="concept-fv-valid">satisfies its
+     constraints</span>, then move on to the next element.</p></li>
+
+     <li><p>Otherwise, add <var>field</var> to <var>invalid
+     controls</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>If <var>invalid controls</var> is empty, then return a <i>positive</i> result.</p></li>
+
+   <li><p>Let <var>unhandled invalid controls</var> be an initially empty list of
+   elements.</p></li>
+
+   <li>
+    <p>For each element <var>field</var> in <var>invalid controls</var>, if any, in <span>tree
+    order</span>:</p>
+
+    <ol>
+     <li><p>Let <var>notCanceled</var> be the result of <span data-x="concept-event-fire">firing an
+     event</span> named <code data-x="event-invalid">invalid</code> at <var>field</var>, with the
+     <code data-x="dom-Event-cancelable">cancelable</code> attribute initialized to true.</p></li>
+
+     <li><p>If <var>notCanceled</var> is true, then add <var>field</var> to <var>unhandled invalid
+     controls</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Return a <i>negative</i> result with the list of elements in the <var>unhandled
+   invalid controls</var> list.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>If a user agent is to <dfn>interactively validate the constraints</dfn> of <code>form</code>
+  element <var>form</var>, then the user agent must run the following steps:</p>
+
+  <ol>
+   <li><p><span>Statically validate the constraints</span> of <var>form</var>, and let
+   <var>unhandled invalid controls</var> be the list of elements returned if the result was
+   <i>negative</i>.</p></li>
+
+   <li><p>If the result was <i>positive</i>, then return that result.</p></li>
+
+   <li>
+    <p>Report the problems with the constraints of at least one of the elements given in
+    <var>unhandled invalid controls</var> to the user.</p>
+
+    <ul>
+     <li><p>User agents may focus one of those elements in the process, by running the
+     <span>focusing steps</span> for that element, and may change the scrolling position of the
+     document, or perform some other action that brings the element to the user's attention. For
+     elements that are <span data-x="form-associated custom element">form-associated custom
+     elements</span>, user agents should use their <span data-x="face-validation-anchor">validation
+     anchor</span> instead, for the purposes of these actions.</p></li>
+
+     <li><p>User agents may report more than one constraint violation.</p></li>
+
+     <li><p>User agents may coalesce related constraint violation reports if appropriate (e.g. if
+     multiple radio buttons in a <span data-x="radio button group">group</span> are marked as
+     required, only one error need be reported).</p></li>
+
+     <li><p>If one of the controls is not <span>being rendered</span> (e.g. it has the <code
+     data-x="attr-hidden">hidden</code> attribute set), then user agents may report a script
+     error.</p></li>
+    </ul>
+   </li>
+
+   <li><p>Return a <i>negative</i> result.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+
+
+  <h5>The <dfn>constraint validation API</dfn></h5>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>element</var>.<span subdfn data-x="dom-cva-willValidate">willValidate</span></code></dt>
+
+   <dd>
+    <p>Returns true if the element will be validated when the form is submitted; false
+    otherwise.</p>
+   </dd>
+
+   <dt><code data-x=""><var>element</var>.<span subdfn data-x="dom-cva-setCustomValidity">setCustomValidity</span>(<var>message</var>)</code></dt>
+
+   <dd>
+    <p>Sets a custom error, so that the element would fail to validate. The given message is the
+    message to be shown to the user when reporting the problem to the user.</p>
+
+    <p>If the argument is the empty string, clears the custom error.</p>
+   </dd>
+
+   <dt><code data-x=""><var>element</var>.<span data-x="dom-cva-validity">validity</span>.<span subdfn data-x="dom-validitystate-valueMissing">valueMissing</span></code></dt>
+
+   <dd><p>Returns true if the element has no value but is a required field; false
+   otherwise.</p></dd>
+
+   <dt><code data-x=""><var>element</var>.<span data-x="dom-cva-validity">validity</span>.<span subdfn data-x="dom-validitystate-typeMismatch">typeMismatch</span></code></dt>
+
+   <dd><p>Returns true if the element's value is not in the correct syntax; false
+   otherwise.</p></dd>
+
+   <dt><code data-x=""><var>element</var>.<span data-x="dom-cva-validity">validity</span>.<span subdfn data-x="dom-validitystate-patternMismatch">patternMismatch</span></code></dt>
+
+   <dd><p>Returns true if the element's value doesn't match the provided pattern; false
+   otherwise.</p></dd>
+
+   <dt><code data-x=""><var>element</var>.<span data-x="dom-cva-validity">validity</span>.<span subdfn data-x="dom-validitystate-tooLong">tooLong</span></code></dt>
+
+   <dd>
+    <p>Returns true if the element's value is longer than the provided maximum length; false
+    otherwise.</p>
+   </dd>
+
+   <dt><code data-x=""><var>element</var>.<span data-x="dom-cva-validity">validity</span>.<span subdfn data-x="dom-validitystate-tooShort">tooShort</span></code></dt>
+
+   <dd>
+    <p>Returns true if the element's value, if it is not the empty string, is shorter than the
+    provided minimum length; false otherwise.</p>
+   </dd>
+
+   <dt><code data-x=""><var>element</var>.<span data-x="dom-cva-validity">validity</span>.<span subdfn data-x="dom-validitystate-rangeUnderflow">rangeUnderflow</span></code></dt>
+
+   <dd><p>Returns true if the element's value is lower than the provided minimum; false
+   otherwise.</p></dd>
+
+   <dt><code data-x=""><var>element</var>.<span data-x="dom-cva-validity">validity</span>.<span subdfn data-x="dom-validitystate-rangeOverflow">rangeOverflow</span></code></dt>
+
+   <dd><p>Returns true if the element's value is higher than the provided maximum; false
+   otherwise.</p></dd>
+
+   <dt><code data-x=""><var>element</var>.<span data-x="dom-cva-validity">validity</span>.<span subdfn data-x="dom-validitystate-stepMismatch">stepMismatch</span></code></dt>
+
+   <dd><p>Returns true if the element's value doesn't fit the rules given by the <code
+   data-x="attr-input-step">step</code> attribute; false otherwise.</p></dd>
+
+   <dt><code data-x=""><var>element</var>.<span data-x="dom-cva-validity">validity</span>.<span subdfn data-x="dom-validitystate-badInput">badInput</span></code></dt>
+
+   <dd>
+    <p>Returns true if the user has provided input in the user interface that the user agent is
+    unable to convert to a value; false otherwise.</p>
+   </dd>
+
+   <dt><code data-x=""><var>element</var>.<span data-x="dom-cva-validity">validity</span>.<span subdfn data-x="dom-validitystate-customError">customError</span></code></dt>
+
+   <dd><p>Returns true if the element has a custom error; false otherwise.</p></dd>
+
+   <dt><code data-x=""><var>element</var>.<span data-x="dom-cva-validity">validity</span>.<span subdfn data-x="dom-validitystate-valid">valid</span></code></dt>
+
+   <dd><p>Returns true if the element's value has no validity problems; false otherwise.</p></dd>
+
+   <dt><code data-x=""><var>valid</var> = <var>element</var>.<span subdfn data-x="dom-cva-checkValidity">checkValidity</span>()</code></dt>
+
+   <dd><p>Returns true if the element's value has no validity problems; false otherwise. Fires an
+   <code data-x="event-invalid">invalid</code> event at the element in the latter case.</p></dd>
+
+   <dt><code data-x=""><var>valid</var> = <var>element</var>.<span subdfn data-x="dom-cva-reportValidity">reportValidity</span>()</code></dt>
+
+   <dd>
+    <p>Returns true if the element's value has no validity problems; otherwise, returns false, fires
+    an <code data-x="event-invalid">invalid</code> event at the element, and (if the event isn't
+    canceled) reports the problem to the user.</p>
+   </dd>
+
+   <dt><code data-x=""><var>element</var>.<span subdfn data-x="dom-cva-validationMessage">validationMessage</span></code></dt>
+
+   <dd>
+    <p>Returns the error message that would be shown to the user if the element was to be checked
+    for validity.</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn attribute
+  for="HTMLObjectElement,HTMLInputElement,HTMLButtonElement,HTMLSelectElement,HTMLTextAreaElement,HTMLOutputElement,HTMLFieldSetElement"><code
+  data-x="dom-cva-willValidate">willValidate</code></dfn> attribute's getter must return true, if
+  this element is a <span>candidate for constraint validation</span>, and false otherwise (i.e.,
+  false if any conditions are <span data-x="barred from constraint validation">barring it from
+  constraint validation</span>).</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="ElementInternals"><code
+  data-x="dom-ElementInternals-willValidate">willValidate</code></dfn> attribute of
+  <code>ElementInternals</code> interface, on getting, must throw a
+  <span>"<code>NotSupportedError</code>"</span> <code>DOMException</code> if the <span
+  data-x="internals-target">target element</span> is not a <span>form-associated custom
+  element</span>. Otherwise, it must return true if the <span data-x="internals-target">target
+  element</span> is a <span>candidate for constraint validation</span>, and false otherwise.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method
+  for="HTMLObjectElement,HTMLInputElement,HTMLButtonElement,HTMLSelectElement,HTMLTextAreaElement,HTMLOutputElement,HTMLFieldSetElement"><code
+  data-x="dom-cva-setCustomValidity">setCustomValidity(<var>error</var>)</code></dfn> method steps
+  are:</p>
+
+  <ol>
+   <li><p>Set <var>error</var> to the result of <span data-x="normalize newlines">normalizing
+   newlines</span> given <var>error</var>.</p></li>
+
+   <li><p>Set the <span>custom validity error message</span> to <var>error</var>.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+  <div class="example">
+
+   <p>In the following example, a script checks the value of a form control each time it is edited,
+   and whenever it is not a valid value, uses the <code
+   data-x="dom-cva-setCustomValidity">setCustomValidity()</code> method to set an appropriate
+   message.</p>
+
+   <pre><code class="html">&lt;label>Feeling: &lt;input name=f type="text" oninput="check(this)">&lt;/label>
+&lt;script>
+ function check(input) {
+   if (input.value == "good" ||
+       input.value == "fine" ||
+       input.value == "tired") {
+     input.setCustomValidity('"' + input.value + '" is not a feeling.');
+<!--   } else if (input.value == "...") {
+     input.setCustomValidity('...');
+-->   } else {
+     // input is fine -- reset the error message
+     input.setCustomValidity('');
+   }
+ }
+&lt;/script></code></pre>
+
+  </div>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn attribute
+  for="HTMLObjectElement,HTMLInputElement,HTMLButtonElement,HTMLSelectElement,HTMLTextAreaElement,HTMLOutputElement,HTMLFieldSetElement"><code
+  data-x="dom-cva-validity">validity</code></dfn> attribute's getter must return a
+  <code>ValidityState</code> object that represents the <span>validity states</span> of this
+  element. This object is <span>live</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="ElementInternals"><code
+  data-x="dom-ElementInternals-validity">validity</code></dfn> attribute of
+  <code>ElementInternals</code> interface, on getting, must throw a
+  <span>"<code>NotSupportedError</code>"</span> <code>DOMException</code> if the <span
+  data-x="internals-target">target element</span> is not a <span>form-associated custom
+  element</span>. Otherwise, it must return a <code>ValidityState</code> object that represents the
+  <span>validity states</span> of the <span data-x="internals-target">target element</span>. This
+  object is <span>live</span>.</p>
+  </div>
+
+<pre><code class="idl">[Exposed=Window]
+interface <dfn interface>ValidityState</dfn> {
+  readonly attribute boolean <span data-x="dom-ValidityState-valueMissing">valueMissing</span>;
+  readonly attribute boolean <span data-x="dom-ValidityState-typeMismatch">typeMismatch</span>;
+  readonly attribute boolean <span data-x="dom-ValidityState-patternMismatch">patternMismatch</span>;
+  readonly attribute boolean <span data-x="dom-ValidityState-tooLong">tooLong</span>;
+  readonly attribute boolean <span data-x="dom-ValidityState-tooShort">tooShort</span>;
+  readonly attribute boolean <span data-x="dom-ValidityState-rangeUnderflow">rangeUnderflow</span>;
+  readonly attribute boolean <span data-x="dom-ValidityState-rangeOverflow">rangeOverflow</span>;
+  readonly attribute boolean <span data-x="dom-ValidityState-stepMismatch">stepMismatch</span>;
+  readonly attribute boolean <span data-x="dom-ValidityState-badInput">badInput</span>;
+  readonly attribute boolean <span data-x="dom-ValidityState-customError">customError</span>;
+  readonly attribute boolean <span data-x="dom-ValidityState-valid">valid</span>;
+};</code></pre>
+
+  <div algorithm>
+  <p>A <code>ValidityState</code> object has the following attributes. On getting, they must return
+  true if the corresponding condition given in the following list is true, and false otherwise.</p>
+
+  <dl>
+   <dt><dfn attribute for="ValidityState"><code data-x="dom-ValidityState-valueMissing">valueMissing</code></dfn></dt>
+   <dd> <p>The control is <span>suffering from being missing</span>.</p> </dd>
+
+   <dt><dfn attribute for="ValidityState"><code data-x="dom-ValidityState-typeMismatch">typeMismatch</code></dfn></dt>
+   <dd> <p>The control is <span>suffering from a type mismatch</span>.</p> </dd>
+
+   <dt><dfn attribute for="ValidityState"><code data-x="dom-ValidityState-patternMismatch">patternMismatch</code></dfn></dt>
+   <dd> <p>The control is <span>suffering from a pattern mismatch</span>.</p> </dd>
+
+   <dt><dfn attribute for="ValidityState"><code data-x="dom-ValidityState-tooLong">tooLong</code></dfn></dt>
+   <dd> <p>The control is <span>suffering from being too long</span>.</p> </dd>
+
+   <dt><dfn attribute for="ValidityState"><code data-x="dom-ValidityState-tooShort">tooShort</code></dfn></dt>
+   <dd> <p>The control is <span>suffering from being too short</span>.</p> </dd>
+
+   <dt><dfn attribute for="ValidityState"><code data-x="dom-ValidityState-rangeUnderflow">rangeUnderflow</code></dfn></dt>
+   <dd> <p>The control is <span>suffering from an underflow</span>.</p> </dd>
+
+   <dt><dfn attribute for="ValidityState"><code data-x="dom-ValidityState-rangeOverflow">rangeOverflow</code></dfn></dt>
+   <dd> <p>The control is <span>suffering from an overflow</span>.</p> </dd>
+
+   <dt><dfn attribute for="ValidityState"><code data-x="dom-ValidityState-stepMismatch">stepMismatch</code></dfn></dt>
+   <dd> <p>The control is <span>suffering from a step mismatch</span>.</p> </dd>
+
+   <dt><dfn attribute for="ValidityState"><code data-x="dom-ValidityState-badInput">badInput</code></dfn></dt>
+   <dd> <p>The control is <span>suffering from bad input</span>.</p> </dd>
+
+   <dt><dfn attribute for="ValidityState"><code data-x="dom-ValidityState-customError">customError</code></dfn></dt>
+   <dd> <p>The control is <span>suffering from a custom error</span>.</p> </dd>
+
+   <dt><dfn attribute for="ValidityState"><code data-x="dom-ValidityState-valid">valid</code></dfn></dt>
+   <dd> <p>None of the other conditions are true.</p> </dd>
+  </dl>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn>check validity steps</dfn> for an element <var>element</var> are:</p>
+
+  <ol>
+   <li>
+    <p>If <var>element</var> is a <span>candidate for constraint validation</span> and does not
+    <span data-x="concept-fv-valid">satisfy its constraints</span>:</p>
+
+    <ol>
+     <li><p><span data-x="concept-event-fire">Fire an event</span> named <code
+     data-x="event-invalid">invalid</code> at <var>element</var>, with the <code
+     data-x="dom-Event-cancelable">cancelable</code> attribute initialized to true (though canceling
+     has no effect).</p></li>
+
+     <li><p>Return false.</p></li>
+    </ol>
+
+   <li><p>Return true.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method
+  for="HTMLObjectElement,HTMLInputElement,HTMLButtonElement,HTMLSelectElement,HTMLTextAreaElement,HTMLOutputElement,HTMLFieldSetElement"><code
+  data-x="dom-cva-checkValidity">checkValidity()</code></dfn> method, when invoked, must run the
+  <span>check validity steps</span> on this element.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="ElementInternals"><code
+  data-x="dom-ElementInternals-checkValidity">checkValidity()</code></dfn> method of the
+  <code>ElementInternals</code> interface must run these steps:</p>
+
+  <ol>
+   <li><p>Let <var>element</var> be this <code>ElementInternals</code>'s <span
+   data-x="internals-target">target element</span>.</p></li>
+
+   <li><p>If <var>element</var> is not a <span>form-associated custom element</span>, then throw a
+   <span>"<code>NotSupportedError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>Run the <span>check validity steps</span> on <var>element</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn>report validity steps</dfn> for an element <var>element</var> are:</p>
+
+  <ol>
+   <li>
+    <p>If <var>element</var> is a <span>candidate for constraint validation</span> and does not
+    <span data-x="concept-fv-valid">satisfy its constraints</span>:
+
+    <ol>
+     <li><p>Let <var>report</var> be the result of <span data-x="concept-event-fire">firing an
+     event</span> named <code data-x="event-invalid">invalid</code> at <var>element</var>, with the
+     <code data-x="dom-Event-cancelable">cancelable</code> attribute initialized to true.</p></li>
+
+     <li><p>If <var>report</var> is true, then report the problems with the constraints of this
+     element to the user. When reporting the problem with the constraints to the user, the user
+     agent may run the <span>focusing steps</span> for <var>element</var>, and may change the
+     scrolling position of the document, or perform some other action that brings <var>element</var>
+     to the user's attention. User agents may report more than one constraint violation, if
+     <var>element</var> suffers from multiple problems at once.</p>
+
+     <li><p>Return false.</p></li>
+    </ol>
+
+   <li><p>Return true.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method
+  for="HTMLObjectElement,HTMLInputElement,HTMLButtonElement,HTMLSelectElement,HTMLTextAreaElement,HTMLOutputElement,HTMLFieldSetElement"><code
+  data-x="dom-cva-reportValidity">reportValidity()</code></dfn> method, when invoked, must run the
+  <span>report validity steps</span> on this element.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="ElementInternals"><code
+  data-x="dom-ElementInternals-reportValidity">reportValidity()</code></dfn> method of the
+  <code>ElementInternals</code> interface must run these steps:</p>
+
+  <ol>
+   <li><p>Let <var>element</var> be this <code>ElementInternals</code>'s <span
+   data-x="internals-target">target element</span>.</p></li>
+
+   <li><p>If <var>element</var> is not a <span>form-associated custom element</span>, then throw a
+   <span>"<code>NotSupportedError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>Run the <span>report validity steps</span> on <var>element</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute
+  for="HTMLObjectElement,HTMLInputElement,HTMLButtonElement,HTMLSelectElement,HTMLTextAreaElement,HTMLOutputElement,HTMLFieldSetElement"><code
+  data-x="dom-cva-validationMessage">validationMessage</code></dfn> attribute's getter must run
+  these steps:</p>
+
+  <ol>
+   <li><p>If this element is not a <span>candidate for constraint validation</span> or if this
+   element <span data-x="concept-fv-valid">satisfies its constraints</span>, then return the empty
+   string.</p></li>
+
+   <li><p>Return a suitably localized message that the user agent would show the user if this were
+   the only form control with a validity constraint problem. If the user agent would not actually
+   show a textual message in such a situation (e.g., it would show a graphical cue instead), then
+   return a suitably localized message that expresses (one or more of) the validity constraint(s)
+   that the control does not satisfy. If the element is a <span>candidate for constraint
+   validation</span> and is <span>suffering from a custom error</span>, then the
+   <span>custom validity error message</span> should be present in the return value.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+
+  <h5 id="security-forms">Security</h5>
+
+  <p id="security-0">Servers should not rely on client-side validation. Client-side validation can
+  be intentionally bypassed by hostile users, and unintentionally bypassed by users of older user
+  agents or automated tools that do not implement these features. The constraint validation features
+  are only intended to improve the user experience, not to provide any kind of security
+  mechanism.</p>
+
+
+
+

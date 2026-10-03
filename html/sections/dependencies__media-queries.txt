@@ -1,0 +1,11 @@
+WHATWG HTML — section dependencies/media-queries — Media Queries
+
+   <dt>Media Queries</dt>
+
+   <dd>
+    <p>Implementations must support <cite>Media Queries</cite>. The <dfn
+    data-x-href="https://drafts.csswg.org/mediaqueries/#typedef-media-condition">&lt;media-condition></dfn>
+    feature is defined therein. <ref>MQ</ref></p>
+   </dd>
+
+

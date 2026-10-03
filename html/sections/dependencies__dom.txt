@@ -1,0 +1,328 @@
+WHATWG HTML — section dependencies/dom — DOM
+
+   <dt>DOM</dt>
+
+   <dd>
+    <p>The Document Object Model (DOM) is a representation &mdash; a model &mdash; of a document and
+    its content. The DOM is not just an API; the conformance criteria of HTML implementations are
+    defined, in this specification, in terms of operations on the DOM. <ref>DOM</ref></p>
+
+    <p>Implementations must support DOM and the events defined in UI Events, because this
+    specification is defined in terms of the DOM, and some of the features are defined as extensions
+    to the DOM interfaces. <ref>DOM</ref> <ref>UIEVENTS</ref></p>
+
+    <p>In particular, the following features are defined in <cite>DOM</cite>: <ref>DOM</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://dom.spec.whatwg.org/#interface-attr"><code>Attr</code></dfn> interface</li>
+     <li><dfn data-x-href="https://dom.spec.whatwg.org/#interface-characterdata"><code>CharacterData</code></dfn> interface</li>
+     <li><dfn data-x-href="https://dom.spec.whatwg.org/#interface-comment"><code>Comment</code></dfn> interface</li>
+     <li><dfn data-x-href="https://dom.spec.whatwg.org/#interface-domimplementation"><code>DOMImplementation</code></dfn> interface</li>
+     <li><dfn data-x="DOM Document" data-x-href="https://dom.spec.whatwg.org/#interface-document"><code>Document</code></dfn> interface and its
+         <dfn data-x="dom-Document-doctype" data-x-href="https://dom.spec.whatwg.org/#dom-document-doctype"><code>doctype</code></dfn> attribute
+     </li>
+     <li><dfn data-x="DOM DocumentOrShadowRoot" data-x-href="https://dom.spec.whatwg.org/#documentorshadowroot"><code>DocumentOrShadowRoot</code></dfn> interface</li>
+     <li><dfn data-x-href="https://dom.spec.whatwg.org/#interface-documentfragment"><code>DocumentFragment</code></dfn> interface</li>
+     <li><dfn data-x-href="https://dom.spec.whatwg.org/#interface-documenttype"><code>DocumentType</code></dfn> interface</li>
+     <li><dfn data-x-href="https://dom.spec.whatwg.org/#interface-childnode"><code>ChildNode</code></dfn> interface</li>
+     <li><dfn data-x-href="https://dom.spec.whatwg.org/#interface-element"><code>Element</code></dfn> interface</li>
+     <li><dfn data-x="dom-Element-attachShadow" data-x-href="https://dom.spec.whatwg.org/#dom-element-attachshadow"><code>attachShadow()</code></dfn> method.</li>
+     <li>An element's <dfn data-x="concept-element-shadow-root" data-x-href="https://dom.spec.whatwg.org/#concept-element-shadow-root">shadow root</dfn></li>
+     <li>A <span data-x="concept-element-shadow-root">shadow root</span>'s <dfn data-x="concept-shadow-root-mode" data-x-href="https://dom.spec.whatwg.org/#shadowroot-mode">mode</dfn></li>
+     <li>A <span data-x="concept-element-shadow-root">shadow root</span>'s <dfn data-x="concept-shadow-root-declarative" data-x-href="https://dom.spec.whatwg.org/#shadowroot-declarative">declarative</dfn> member</li>
+     <li>The <dfn data-x="concept-attach-a-shadow-root" data-x-href="https://dom.spec.whatwg.org/#concept-attach-a-shadow-root">attach a shadow root</dfn> algorithm</li>
+     <li>The <dfn data-x="dom-retarget" data-x-href="https://dom.spec.whatwg.org/#retarget">retargeting algorithm</dfn></li>
+     <li><dfn data-x-href="https://dom.spec.whatwg.org/#interface-node"><code>Node</code></dfn> interface</li>
+     <li><dfn data-x-href="https://dom.spec.whatwg.org/#interface-nodelist"><code>NodeList</code></dfn> interface</li>
+     <li><dfn data-x-href="https://dom.spec.whatwg.org/#interface-processinginstruction"><code>ProcessingInstruction</code></dfn> interface, its
+         <dfn data-x="concept-pi-target" data-x-href="https://dom.spec.whatwg.org/#concept-pi-target">target</dfn> concept, and the
+         <dfn data-x="get-a-processing-instruction-attribute" data-x-href="https://dom.spec.whatwg.org/#get-a-processing-instruction-attribute">get a processing instruction attribute</dfn> algorithm</li>
+     <li><dfn data-x-href="https://dom.spec.whatwg.org/#interface-shadowroot"><code>ShadowRoot</code></dfn> interface</li>
+     <li><dfn data-x-href="https://dom.spec.whatwg.org/#interface-text"><code>Text</code></dfn> interface</li>
+     <li><dfn data-x-href="https://dom.spec.whatwg.org/#interface-range"><code>Range</code></dfn> interface</li>
+
+     <li><dfn data-x-href="https://dom.spec.whatwg.org/#concept-node-document">node document</dfn> concept</li>
+     <li><dfn data-x="concept-document-type" data-x-href="https://dom.spec.whatwg.org/#concept-document-type">document type</dfn> concept</li>
+     <li><dfn data-x="concept-DocumentFragment-host" data-x-href="https://dom.spec.whatwg.org/#concept-documentfragment-host">host</dfn> concept</li>
+     <li>The <dfn data-x-href="https://dom.spec.whatwg.org/#concept-shadow-root">shadow root</dfn> concept, and its <dfn data-x-href="https://dom.spec.whatwg.org/#shadowroot-delegates-focus">delegates focus</dfn>, <dfn data-x-href="https://dom.spec.whatwg.org/#shadowroot-available-to-element-internals">available to element internals</dfn>, <dfn data-x="shadow-serializable" data-x-href="https://dom.spec.whatwg.org/#shadowroot-serializable">serializable</dfn>, <dfn data-x-href="https://dom.spec.whatwg.org/#shadowroot-clonable">clonable</dfn>, <dfn data-x="shadow-root-custom-element-registry" data-x-href="https://dom.spec.whatwg.org/#shadowroot-custom-element-registry">custom element registry</dfn>, and <dfn data-x-href="https://dom.spec.whatwg.org/#shadowroot-keep-custom-element-registry-null">keep custom element registry null</dfn>.</li>
+     <li>The <dfn data-x-href="https://dom.spec.whatwg.org/#element-shadow-host">shadow host</dfn> concept</li>
+     <li><dfn data-x-href="https://dom.spec.whatwg.org/#interface-htmlcollection"><code>HTMLCollection</code></dfn> interface, its
+         <dfn data-x="dom-HTMLCollection-length" data-x-href="https://dom.spec.whatwg.org/#dom-htmlcollection-length"><code>length</code></dfn> attribute, and its
+         <dfn data-x="dom-HTMLCollection-item" data-x-href="https://dom.spec.whatwg.org/#dom-htmlcollection-item"><code>item()</code></dfn> and
+         <dfn data-x="dom-HTMLCollection-namedItem" data-x-href="https://dom.spec.whatwg.org/#dom-htmlcollection-nameditem"><code>namedItem()</code></dfn> methods</li>
+     <li>The terms <dfn data-x="concept-collection" data-x-href="https://dom.spec.whatwg.org/#concept-collection">collection</dfn> and <dfn data-x-href="https://dom.spec.whatwg.org/#represented-by-the-collection">represented by the collection</dfn></li>
+
+     <li><dfn data-x-href="https://dom.spec.whatwg.org/#interface-domtokenlist"><code>DOMTokenList</code></dfn> interface, and its
+         <dfn data-x="dom-DOMTokenList-value" data-x-href="https://dom.spec.whatwg.org/#dom-domtokenlist-value"><code>value</code></dfn> attribute and
+         <dfn data-x="dom-DOMTokenList-supports" data-x-href="https://dom.spec.whatwg.org/#dom-domtokenlist-supports"><code>supports</code></dfn> operation</li>
+
+     <li><dfn data-x="dom-DOMImplementation-createDocument" data-x-href="https://dom.spec.whatwg.org/#dom-domimplementation-createdocument"><code>createDocument()</code></dfn> method</li>
+     <li><dfn data-x="dom-DOMImplementation-createHTMLDocument" data-x-href="https://dom.spec.whatwg.org/#dom-domimplementation-createhtmldocument"><code>createHTMLDocument()</code></dfn> method</li>
+     <li><dfn data-x="dom-Document-createElement" data-x-href="https://dom.spec.whatwg.org/#dom-document-createelement"><code>createElement()</code></dfn> method</li>
+     <li><dfn data-x="dom-Document-createElementNS" data-x-href="https://dom.spec.whatwg.org/#dom-document-createelementns"><code>createElementNS()</code></dfn> method</li>
+     <li><dfn data-x="dom-Document-getElementById" data-x-href="https://dom.spec.whatwg.org/#dom-nonelementparentnode-getelementbyid"><code>getElementById()</code></dfn> method</li>
+     <li><dfn data-x="dom-document-getElementsByClassName" data-x-href="https://dom.spec.whatwg.org/#dom-document-getelementsbyclassname"><code>getElementsByClassName()</code></dfn> method</li>
+     <li><dfn data-x="dom-Node-append" data-x-href="https://dom.spec.whatwg.org/#dom-node-append"><code>append()</code></dfn> method</li>
+     <li><dfn data-x="dom-Node-appendChild" data-x-href="https://dom.spec.whatwg.org/#dom-node-appendchild"><code>appendChild()</code></dfn> method</li>
+     <li><dfn data-x="dom-Node-cloneNode" data-x-href="https://dom.spec.whatwg.org/#dom-node-clonenode"><code>cloneNode()</code></dfn> method</li>
+     <li><dfn data-x="dom-ParentNode-moveBefore" data-x-href="https://dom.spec.whatwg.org/#dom-parentnode-movebefore"><code>moveBefore()</code></dfn> method</li>
+     <li><dfn data-x="dom-Document-importNode" data-x-href="https://dom.spec.whatwg.org/#dom-document-importnode"><code>importNode()</code></dfn> method</li>
+     <li><dfn data-x="dom-Event-preventDefault" data-x-href="https://dom.spec.whatwg.org/#dom-event-preventdefault"><code>preventDefault()</code></dfn> method</li>
+     <li><dfn data-x="dom-Element-id" data-x-href="https://dom.spec.whatwg.org/#dom-element-id"><code>id</code></dfn> attribute</li>
+     <li><dfn data-x="dom-Element-setAttribute" data-x-href="https://dom.spec.whatwg.org/#dom-element-setattribute"><code>setAttribute()</code></dfn> method</li>
+     <li><dfn data-x-href="https://dom.spec.whatwg.org/#dom-node-textcontent"><code>textContent</code></dfn> attribute</li>
+     <li><dfn data-x="dom-ParentNode-children" data-x-href="https://dom.spec.whatwg.org/#dom-parentnode-children"><code>children</code></dfn> attribute</li>
+
+     <li>The <dfn data-x-href="https://dom.spec.whatwg.org/#concept-tree">tree</dfn>, <dfn data-x-href="https://dom.spec.whatwg.org/#concept-shadow-tree">shadow tree</dfn>, and <dfn data-x-href="https://dom.spec.whatwg.org/#concept-node-tree">node tree</dfn> concepts</li>
+     <li>The <dfn data-x-href="https://dom.spec.whatwg.org/#concept-tree-order">tree order</dfn> and <dfn data-x-href="https://dom.spec.whatwg.org/#concept-shadow-including-tree-order">shadow-including tree order</dfn> concepts</li>
+     <li>The <dfn data-x-href="https://dom.spec.whatwg.org/#concept-element" data-x="concept-element">element</dfn> concept</li>
+     <li>The <dfn data-x-href="https://dom.spec.whatwg.org/#concept-tree-child" data-x="concept-tree-child">child</dfn> concept</li>
+     <li>The <dfn data-x-href="https://dom.spec.whatwg.org/#concept-tree-root">root</dfn> and <dfn data-x-href="https://dom.spec.whatwg.org/#concept-shadow-including-root">shadow-including root</dfn> concepts</li>
+     <li>The <dfn data-x-href="https://dom.spec.whatwg.org/#concept-tree-inclusive-ancestor">inclusive ancestor</dfn>,
+             <dfn data-x-href="https://dom.spec.whatwg.org/#concept-tree-ancestor">ancestor</dfn>,
+             <dfn data-x-href="https://dom.spec.whatwg.org/#concept-tree-descendant">descendant</dfn>,
+             <dfn data-x="concept-shadow-including-ancestor" data-x-href="https://dom.spec.whatwg.org/#concept-shadow-including-ancestor">shadow-including ancestor</dfn>,
+             <dfn data-x-href="https://dom.spec.whatwg.org/#concept-shadow-including-descendant">shadow-including descendant</dfn>,
+             <dfn data-x-href="https://dom.spec.whatwg.org/#concept-shadow-including-inclusive-descendant">shadow-including inclusive descendant</dfn>,
+             <dfn data-x-href="https://dom.spec.whatwg.org/#concept-shadow-including-inclusive-ancestor">shadow-including inclusive ancestor</dfn>, and
+             <dfn data-x-href="https://dom.spec.whatwg.org/#concept-tree-host-including-inclusive-ancestor">host-including inclusive ancestor</dfn> concepts</li>
+     <li>The <dfn data-x-href="https://dom.spec.whatwg.org/#concept-tree-first-child">first child</dfn>,
+             <dfn data-x-href="https://dom.spec.whatwg.org/#concept-tree-last-child">last child</dfn>,
+             <dfn data-x-href="https://dom.spec.whatwg.org/#concept-tree-next-sibling">next sibling</dfn>,
+             <dfn data-x-href="https://dom.spec.whatwg.org/#concept-tree-previous-sibling">previous sibling</dfn>, and
+             <dfn data-x-href="https://dom.spec.whatwg.org/#concept-tree-parent">parent</dfn> concepts</li>
+     <li>The <dfn data-x-href="https://dom.spec.whatwg.org/#parent-element">parent element</dfn> concept</li>
+     <li>The <dfn data-x-href="https://dom.spec.whatwg.org/#document-element">document element</dfn> concept</li>
+     <li>The <dfn data-x-href="https://dom.spec.whatwg.org/#in-a-document-tree">in a document tree</dfn>, <dfn data-x-href="https://dom.spec.whatwg.org/#in-a-document">in a document</dfn> (legacy), and <dfn data-x-href="https://dom.spec.whatwg.org/#connected">connected</dfn> concepts</li>
+     <li>The <dfn data-x="concept-slot" data-x-href="https://dom.spec.whatwg.org/#concept-slot">slot</dfn> concept, and its <dfn data-x="slot-name" data-x-href="https://dom.spec.whatwg.org/#slot-name">name</dfn> and <dfn data-x-href="https://dom.spec.whatwg.org/#slot-assigned-nodes">assigned nodes</dfn></li>
+     <li>The <dfn data-x-href="https://dom.spec.whatwg.org/#slotable-assigned-slot">assigned slot</dfn> concept</li>
+     <li>The <dfn data-x-href="https://dom.spec.whatwg.org/#shadowroot-slot-assignment">slot assignment</dfn> concept</li>
+     <li>The <dfn data-x-href="https://dom.spec.whatwg.org/#concept-slotable">slottable</dfn> concept</li>
+     <li>The <dfn data-x-href="https://dom.spec.whatwg.org/#assign-slotables-for-a-tree">assign slottables for a tree</dfn> algorithm</li>
+     <li>The <dfn data-x="event-slotchange" data-x-href="https://dom.spec.whatwg.org/#eventdef-htmlslotelement-slotchange"><code>slotchange</code></dfn> event</li>
+     <li>The <dfn data-x-href="https://dom.spec.whatwg.org/#concept-tree-inclusive-descendant">inclusive descendant</dfn> concept</li>
+     <li>The <dfn data-x="finding flattened slottables" data-x-href="https://dom.spec.whatwg.org/#find-flattened-slotables">find flattened slottables</dfn> algorithm</li>
+     <li>The <dfn data-x-href="https://dom.spec.whatwg.org/#slottable-manual-slot-assignment">manual slot assignment</dfn> concept</li>
+     <li>The <dfn data-x-href="https://dom.spec.whatwg.org/#assign-a-slot">assign a slot</dfn> algorithm</li>
+     <li>The <dfn data-x-href="https://dom.spec.whatwg.org/#concept-node-pre-insert">pre-insert</dfn>, <dfn data-x-href="https://dom.spec.whatwg.org/#concept-node-ensure-pre-insertion-validity">ensure pre-insert validity</dfn>, <dfn data-x="concept-node-insert" data-x-href="https://dom.spec.whatwg.org/#concept-node-insert">insert</dfn>, <dfn data-x="concept-node-append" data-x-href="https://dom.spec.whatwg.org/#concept-node-append">append</dfn>, <dfn data-x="concept-node-replace" data-x-href="https://dom.spec.whatwg.org/#concept-node-replace">replace</dfn>, <dfn data-x="concept-node-replace-all" data-x-href="https://dom.spec.whatwg.org/#concept-node-replace-all">replace all</dfn>, <dfn data-x-href="https://dom.spec.whatwg.org/#string-replace-all">string replace all</dfn>, <dfn data-x="concept-node-remove" data-x-href="https://dom.spec.whatwg.org/#concept-node-remove">remove</dfn>, and <dfn data-x="concept-node-adopt" data-x-href="https://dom.spec.whatwg.org/#concept-node-adopt">adopt</dfn> algorithms for nodes</li>
+     <li>The <dfn data-x="concept-node-insert-ext" data-x-href="https://dom.spec.whatwg.org/#concept-node-insert-ext">insertion steps</dfn>,
+     <li>The <dfn data-x="concept-node-post-connection-ext" data-x-href="https://dom.spec.whatwg.org/#concept-node-post-connection-ext">post-connection steps</dfn>,
+             <dfn data-x="concept-node-remove-ext" data-x-href="https://dom.spec.whatwg.org/#concept-node-remove-ext">removing steps</dfn>,
+             <dfn data-x="concept-node-move-ext" data-x-href="https://dom.spec.whatwg.org/#concept-node-move-ext">moving steps</dfn>,
+             <dfn data-x="concept-node-adopt-ext" data-x-href="https://dom.spec.whatwg.org/#concept-node-adopt-ext">adopting steps</dfn>, and
+             <dfn data-x-href="https://dom.spec.whatwg.org/#concept-node-children-changed-ext">children changed steps</dfn> hooks for elements</li>
+     <li>The <dfn data-x="concept-element-attributes-change" data-x-href="https://dom.spec.whatwg.org/#concept-element-attributes-change">change</dfn>, <dfn data-x="concept-element-attributes-append" data-x-href="https://dom.spec.whatwg.org/#concept-element-attributes-append">append</dfn>, <dfn data-x="concept-element-attributes-remove" data-x-href="https://dom.spec.whatwg.org/#concept-element-attributes-remove">remove</dfn>, <dfn data-x="concept-element-attributes-replace" data-x-href="https://dom.spec.whatwg.org/#concept-element-attributes-replace">replace</dfn>, <dfn data-x="concept-element-attributes-get-by-namespace" data-x-href="https://dom.spec.whatwg.org/#concept-element-attributes-get-by-namespace">get an attribute by namespace and local name</dfn>, <dfn data-x="concept-element-attributes-set-value" data-x-href="https://dom.spec.whatwg.org/#concept-element-attributes-set-value">set value</dfn>, and <dfn data-x="concept-element-attributes-remove-by-namespace" data-x-href="https://dom.spec.whatwg.org/#concept-element-attributes-remove-by-namespace">remove an attribute by namespace and local name</dfn> algorithms for attributes</li>
+     <li>The <dfn data-x="concept-element-attributes-change-ext" data-x-href="https://dom.spec.whatwg.org/#concept-element-attributes-change-ext">attribute change steps</dfn> hook for attributes</li>
+     <li>The <dfn data-x="concept-attribute-value" data-x-href="https://dom.spec.whatwg.org/#concept-attribute-value">value</dfn> concept for attributes</li>
+     <li>The <dfn data-x="concept-attribute-local-name" data-x-href="https://dom.spec.whatwg.org/#concept-attribute-local-name">local name</dfn> concept for attributes</li>
+     <li>The <dfn data-x="concept-attribute-namespace" data-x-href="https://dom.spec.whatwg.org/#concept-attribute-namespace">namespace</dfn> concept for attributes</li>
+     <li>The <dfn data-x-href="https://dom.spec.whatwg.org/#concept-element-attribute">attribute list</dfn> concept</li>
+     <li>The <dfn data-x="concept-cd-data" data-x-href="https://dom.spec.whatwg.org/#concept-cd-data">data</dfn> of a <code>CharacterData</code> node and its
+             <dfn data-x-href="https://dom.spec.whatwg.org/#concept-cd-replace">replace data</dfn> algorithm</li>
+     <li>The <dfn data-x-href="https://dom.spec.whatwg.org/#concept-child-text-content">child text content</dfn> of a node</li>
+     <li>The <dfn data-x-href="https://dom.spec.whatwg.org/#concept-descendant-text-content">descendant text content</dfn> of a node</li>
+     <li>The <dfn data-x="concept-doctype-name" data-x-href="https://dom.spec.whatwg.org/#concept-doctype-name">name</dfn>,
+             <dfn data-x="concept-doctype-publicid" data-x-href="https://dom.spec.whatwg.org/#concept-doctype-publicid">public ID</dfn>, and
+             <dfn data-x="concept-doctype-systemid" data-x-href="https://dom.spec.whatwg.org/#concept-doctype-systemid">system ID</dfn> of a doctype</li>
+     <li><dfn data-x-href="https://dom.spec.whatwg.org/#interface-event"><code>Event</code></dfn> interface</li>
+     <li><dfn data-x="dom-Event-constructor" data-x-href="https://dom.spec.whatwg.org/#concept-event-constructor"><code>Event</code> and derived interfaces constructor behavior</dfn></li>
+     <li><dfn data-x-href="https://dom.spec.whatwg.org/#interface-eventtarget"><code>EventTarget</code></dfn> interface</li>
+     <li>The <!--en-GB--><dfn id="activation-behaviour" data-x-href="https://dom.spec.whatwg.org/#eventtarget-activation-behavior">activation behavior</dfn> hook</li>
+     <li>The <dfn data-x-href="https://dom.spec.whatwg.org/#eventtarget-legacy-pre-activation-behavior">legacy-pre-activation behavior</dfn> hook</li>
+     <li>The <dfn data-x-href="https://dom.spec.whatwg.org/#eventtarget-legacy-canceled-activation-behavior">legacy-canceled-activation behavior</dfn> hook</li>
+     <li>The <dfn data-x="creating an event" data-x-href="https://dom.spec.whatwg.org/#concept-event-create">create an event</dfn> algorithm</li>
+     <li>The <dfn data-x="concept-event-fire" data-x-href="https://dom.spec.whatwg.org/#concept-event-fire">fire an event</dfn> algorithm</li>
+     <li>The <dfn data-x-href="https://dom.spec.whatwg.org/#canceled-flag">canceled flag</dfn></li>
+     <li>The <dfn data-x-href="https://dom.spec.whatwg.org/#dispatch-flag">dispatch flag</dfn></li>
+     <li>The <dfn data-x="concept-event-dispatch" data-x-href="https://dom.spec.whatwg.org/#concept-event-dispatch">dispatch</dfn> algorithm</li>
+     <li><dfn data-x-href="https://dom.spec.whatwg.org/#dictdef-eventinit"><code>EventInit</code></dfn> dictionary type</li>
+     <li><dfn data-x="dom-Event-type" data-x-href="https://dom.spec.whatwg.org/#dom-event-type"><code>type</code></dfn> attribute</li>
+     <li>An event's <dfn data-x="concept-event-target" data-x-href="https://dom.spec.whatwg.org/#event-target">target</dfn></li>
+     <li><dfn data-x="dom-Event-currentTarget" data-x-href="https://dom.spec.whatwg.org/#dom-event-currenttarget"><code>currentTarget</code></dfn> attribute</li>
+     <li><dfn data-x="dom-Event-bubbles" data-x-href="https://dom.spec.whatwg.org/#dom-event-bubbles"><code>bubbles</code></dfn> attribute</li>
+     <li><dfn data-x="dom-Event-cancelable" data-x-href="https://dom.spec.whatwg.org/#dom-event-cancelable"><code>cancelable</code></dfn> attribute</li>
+     <li><dfn data-x="dom-Event-composed" data-x-href="https://dom.spec.whatwg.org/#dom-event-composed"><code>composed</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://dom.spec.whatwg.org/#composed-flag">composed flag</dfn></li>
+     <li><dfn data-x="dom-Event-isTrusted" data-x-href="https://dom.spec.whatwg.org/#dom-event-istrusted"><code>isTrusted</code></dfn> attribute</li>
+     <li><dfn data-x="dom-Event-initEvent" data-x-href="https://dom.spec.whatwg.org/#dom-event-initevent"><code>initEvent()</code></dfn> method</li>
+     <li><dfn data-x-href="https://dom.spec.whatwg.org/#add-an-event-listener">add an event listener</dfn></li>
+     <li><dfn data-x="dom-EventTarget-addEventListener" data-x-href="https://dom.spec.whatwg.org/#dom-eventtarget-addeventlistener"><code>addEventListener()</code></dfn> method</li>
+     <li>The <dfn data-x-href="https://dom.spec.whatwg.org/#remove-an-event-listener">remove an event listener</dfn> and
+             <dfn data-x-href="https://dom.spec.whatwg.org/#remove-all-event-listeners">remove all event listeners</dfn> algorithms</li>
+     <li><dfn data-x="dom-EventListener" data-x-href="https://dom.spec.whatwg.org/#callbackdef-eventlistener"><code>EventListener</code></dfn> callback interface</li>
+     <li>The <dfn data-x="concept-event-type" data-x-href="https://dom.spec.whatwg.org/#dom-event-type">type</dfn> of an event</li>
+     <li>An <dfn data-x-href="https://dom.spec.whatwg.org/#concept-event-listener">event listener</dfn> and its
+            <dfn data-x="event listener type" data-x-href="https://dom.spec.whatwg.org/#event-listener-type">type</dfn> and
+            <dfn data-x="event listener callback" data-x-href="https://dom.spec.whatwg.org/#event-listener-callback">callback</dfn></li>
+
+     <li>The <dfn data-x="document's character encoding" data-x-href="https://dom.spec.whatwg.org/#concept-document-encoding">encoding</dfn> (herein the <i>character encoding</i>),
+             <dfn data-x="concept-document-mode" data-x-href="https://dom.spec.whatwg.org/#concept-document-mode">mode</dfn>,
+             <dfn data-x="document-custom-element-registry" data-x-href="https://dom.spec.whatwg.org/#document-custom-element-registry">custom element registry</dfn>,
+             <dfn data-x="concept-document-allow-declarative-shadow-roots" data-x-href="https://dom.spec.whatwg.org/#concept-document-allow-declarative-shadow-roots">allow declarative shadow roots</dfn>, and
+             <dfn data-x="concept-document-content-type" data-x-href="https://dom.spec.whatwg.org/#concept-document-content-type">content type</dfn> of a <code>Document</code></li>
+     <li>The distinction between <dfn data-x-href="https://dom.spec.whatwg.org/#xml-document">XML documents</dfn> and
+                                 <dfn data-x-href="https://dom.spec.whatwg.org/#html-document">HTML documents</dfn></li>
+     <li>The terms <dfn data-x-href="https://dom.spec.whatwg.org/#concept-document-quirks">quirks mode</dfn>,
+                   <dfn data-x-href="https://dom.spec.whatwg.org/#concept-document-limited-quirks">limited-quirks mode</dfn>, and
+                   <dfn data-x-href="https://dom.spec.whatwg.org/#concept-document-no-quirks">no-quirks mode</dfn></li>
+     <li var-scope>The algorithm <dfn data-x="concept-node-clone" data-x-href="https://dom.spec.whatwg.org/#concept-node-clone">clone a node</dfn> with its arguments
+                       <dfn data-x="concept-node-clone-document" data-x-href="https://dom.spec.whatwg.org/#clone-a-node-document"><var>document</var></dfn>,
+                       <dfn data-x="concept-node-clone-subtree" data-x-href="https://dom.spec.whatwg.org/#clone-a-node-subtree"><var>subtree</var></dfn>,
+                       <dfn data-x="concept-node-clone-parent" data-x-href="https://dom.spec.whatwg.org/#clone-a-node-parent"><var>parent</var></dfn>, and
+                       <dfn data-x="concept-node-clone-fallbackRegistry" data-x-href="https://dom.spec.whatwg.org/#clone-a-node-fallbackregistry"><var>fallbackRegistry</var></dfn>, and the concept of
+                       <dfn data-x="concept-node-clone-ext" data-x-href="https://dom.spec.whatwg.org/#concept-node-clone-ext">cloning steps</dfn></li>
+     <li>The concept of an element's <dfn data-x="concept-id" data-x-href="https://dom.spec.whatwg.org/#concept-id">unique identifier (ID)</dfn></li>
+     <li>The concept of an element's <dfn data-x="concept-class" data-x-href="https://dom.spec.whatwg.org/#concept-class">classes</dfn></li>
+     <li>The term <dfn data-x="concept-supported-tokens" data-x-href="https://dom.spec.whatwg.org/#concept-supported-tokens">supported tokens</dfn></li>
+
+     <li>The concept of a DOM <dfn data-x="concept-range" data-x-href="https://dom.spec.whatwg.org/#concept-range">range</dfn>, and the terms
+                              <dfn data-x="concept-range-start-node" data-x-href="https://dom.spec.whatwg.org/#concept-range-start-node">start node</dfn>,
+                              <dfn data-x="concept-range-start" data-x-href="https://dom.spec.whatwg.org/#concept-range-start">start</dfn>,
+                              <dfn data-x="concept-range-end" data-x-href="https://dom.spec.whatwg.org/#concept-range-end">end</dfn>, and
+                              <dfn data-x="concept-range-bp" data-x-href="https://dom.spec.whatwg.org/#concept-range-bp">boundary point</dfn> as applied to ranges.</li>
+
+     <li>The <dfn data-x="create an element" data-x-href="https://dom.spec.whatwg.org/#concept-create-element">create an element</dfn> algorithm</li>
+     <li>The <dfn data-x-href="https://dom.spec.whatwg.org/#create-a-document">create a document</dfn>,
+                 <dfn data-x-href="https://dom.spec.whatwg.org/#create-a-text-node">create a text node</dfn>,
+                 <dfn data-x-href="https://dom.spec.whatwg.org/#create-a-doctype">create a doctype</dfn>,
+                 <dfn data-x-href="https://dom.spec.whatwg.org/#create-a-comment-node">create a comment node</dfn>,
+                 <dfn data-x-href="https://dom.spec.whatwg.org/#create-a-processing-instruction-node">create a processing instruction node</dfn>, and
+                 <dfn data-x-href="https://dom.spec.whatwg.org/#create-a-document-fragment">create a document fragment</dfn> algorithms</li>
+     <li>The <dfn data-x="element interface" data-x-href="https://dom.spec.whatwg.org/#concept-element-interface">element interface</dfn> concept</li>
+     <li>The concepts of <dfn data-x-href="https://dom.spec.whatwg.org/#concept-element-custom-element-state">custom element state</dfn>, and of
+                         <dfn data-x="concept-element-defined" data-x-href="https://dom.spec.whatwg.org/#concept-element-defined">defined</dfn> and
+                         <dfn data-x="concept-element-custom" data-x-href="https://dom.spec.whatwg.org/#concept-element-custom">custom</dfn> elements</li>
+     <li>An element's <dfn data-x="concept-element-namespace" data-x-href="https://dom.spec.whatwg.org/#concept-element-namespace">namespace</dfn>,
+                      <dfn data-x="concept-element-namespace-prefix" data-x-href="https://dom.spec.whatwg.org/#concept-element-namespace-prefix">namespace prefix</dfn>,
+                      <dfn data-x="concept-element-local-name" data-x-href="https://dom.spec.whatwg.org/#concept-element-local-name">local name</dfn>,
+                      <dfn data-x="element-custom-element-registry" data-x-href="https://dom.spec.whatwg.org/#element-custom-element-registry">custom element registry</dfn>,
+                      <dfn data-x="concept-element-custom-element-definition" data-x-href="https://dom.spec.whatwg.org/#concept-element-custom-element-definition">custom element definition</dfn>, and
+                      <dfn data-x="concept-element-is-value" data-x-href="https://dom.spec.whatwg.org/#concept-element-is-value"><code data-x="">is</code> value</dfn></li>
+
+     <li><dfn data-x-href="https://dom.spec.whatwg.org/#mutationobserver"><code>MutationObserver</code></dfn> interface and <dfn data-x-href="https://dom.spec.whatwg.org/#mutation-observers">mutation observers</dfn> in general</li>
+     <li><dfn data-x-href="https://dom.spec.whatwg.org/#abortcontroller"><code>AbortController</code></dfn> and its
+         <dfn data-x="concept-AbortController-signal" data-x-href="https://dom.spec.whatwg.org/#abortcontroller-signal">signal</dfn></li>
+     <li><dfn data-x-href="https://dom.spec.whatwg.org/#abortsignal"><code>AbortSignal</code></dfn></li>
+     <li><dfn data-x-href="https://dom.spec.whatwg.org/#abortsignal-aborted" data-x="AbortSignal-aborted">aborted</dfn></li>
+     <li><dfn data-x-href="https://dom.spec.whatwg.org/#abortcontroller-signal-abort">signal abort</dfn></li>
+     <li><dfn data-x="AbortSignal-add" data-x-href="https://dom.spec.whatwg.org/#abortsignal-add">add</dfn></li>
+     <li><dfn data-x-href="https://dom.spec.whatwg.org/#valid-attribute-local-name">valid attribute local name</dfn></li>
+     <li><dfn data-x-href="https://dom.spec.whatwg.org/#valid-element-local-name">valid element local name</dfn></li>
+     <li><dfn data-x-href="https://dom.spec.whatwg.org/#is-a-global-custom-element-registry">is a global custom element registry</dfn></li>
+    </ul>
+
+    <p>The following features are defined in <cite>UI Events</cite>: <ref>UIEVENTS</ref></p>
+
+    <ul class="brief">
+     <li>The <dfn data-x-href="https://w3c.github.io/uievents/#focusevent"><code>FocusEvent</code></dfn> interface</li>
+     <li>The <code>FocusEvent</code> interface's <dfn data-x="dom-FocusEvent-relatedTarget" data-x-href="https://w3c.github.io/uievents/#dom-focusevent-relatedtarget"><code>relatedTarget</code></dfn> attribute</li>
+
+     <li>The <dfn data-x-href="https://w3c.github.io/uievents/#uievent"><code>UIEvent</code></dfn> interface</li>
+     <li>The <code>UIEvent</code> interface's <dfn data-x="dom-UIEvent-view" data-x-href="https://w3c.github.io/uievents/#dom-uievent-view"><code>view</code></dfn> attribute</li>
+
+     <li><dfn data-x="event-beforeinput" data-x-href="https://w3c.github.io/uievents/#event-type-beforeinput"><code>beforeinput</code></dfn> event</li>
+     <li><dfn data-x="event-contextmenu" data-x-href="https://w3c.github.io/uievents/#event-type-contextmenu"><code>contextmenu</code></dfn> event</li>
+     <li><dfn data-x="event-input" data-x-href="https://w3c.github.io/uievents/#event-type-input"><code>input</code></dfn> event</li>
+
+     <li><dfn data-x="event-keydown" data-x-href="https://w3c.github.io/uievents/#event-type-keydown"><code>keydown</code></dfn> event</li>
+     <li><dfn data-x="event-keypress" data-x-href="https://w3c.github.io/uievents/#event-type-keypress"><code>keypress</code></dfn> event</li>
+     <li><dfn data-x="event-keyup" data-x-href="https://w3c.github.io/uievents/#event-type-keyup"><code>keyup</code></dfn> event</li>
+    </ul>
+
+    <p>The following features are defined in <cite>Touch Events</cite>: <ref>TOUCH</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://w3c.github.io/touch-events/#touch-interface"><code>Touch</code></dfn> interface</li>
+     <li><dfn data-x-href="https://w3c.github.io/touch-events/#dfn-touch-point">Touch point</dfn> concept</li>
+     <li><dfn data-x="event-touchend" data-x-href="https://w3c.github.io/touch-events/#event-touchend"><code>touchend</code></dfn> event</li>
+    </ul>
+
+    <p>The following features are defined in <cite>Pointer Events</cite>:
+    <ref>POINTEREVENTS</ref></p>
+
+    <ul class="brief">
+     <li>The <dfn data-x-href="https://w3c.github.io/pointerevents/#dom-mouseevent"><code>MouseEvent</code></dfn> interface</li>
+     <li>The <code>MouseEvent</code> interface's <dfn data-x="dom-MouseEvent-relatedTarget" data-x-href="https://w3c.github.io/pointerevents/#dom-mouseevent-relatedtarget"><code>relatedTarget</code></dfn> attribute</li>
+     <li>The <code>MouseEvent</code> interface's <dfn data-x="dom-MouseEvent-button" data-x-href="https://w3c.github.io/pointerevents/#dom-mouseevent-button"><code>button</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/pointerevents/#dom-mouseeventinit"><code>MouseEventInit</code></dfn> dictionary type</li>
+
+     <li>The <dfn data-x-href="https://w3c.github.io/pointerevents/#pointerevent-interface"><code>PointerEvent</code></dfn> interface</li>
+     <li>The <code>PointerEvent</code> interface's <dfn data-x-href="https://w3c.github.io/pointerevents/#dom-pointerevent-pointertype"><code>pointerType</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/pointerevents/#dfn-fire-a-pointer-event">fire a pointer event</dfn></li>
+
+     <li><dfn data-x="event-auxclick" data-x-href="https://w3c.github.io/pointerevents/#auxclick"><code>auxclick</code></dfn> event</li>
+     <li><dfn data-x="event-click" data-x-href="https://w3c.github.io/pointerevents/#click"><code>click</code></dfn> event</li>
+     <li><dfn data-x="event-dblclick" data-x-href="https://w3c.github.io/pointerevents/#dblclick"><code>dblclick</code></dfn> event</li>
+     <li><dfn data-x="event-mousedown" data-x-href="https://w3c.github.io/pointerevents/#mousedown"><code>mousedown</code></dfn> event</li>
+     <li><dfn data-x="event-mouseenter" data-x-href="https://w3c.github.io/pointerevents/#mouseenter"><code>mouseenter</code></dfn> event</li>
+     <li><dfn data-x="event-mouseleave" data-x-href="https://w3c.github.io/pointerevents/#mouseleave"><code>mouseleave</code></dfn> event</li>
+     <li><dfn data-x="event-mousemove" data-x-href="https://w3c.github.io/pointerevents/#mousemove"><code>mousemove</code></dfn> event</li>
+     <li><dfn data-x="event-mouseout" data-x-href="https://w3c.github.io/pointerevents/#mouseout"><code>mouseout</code></dfn> event</li>
+     <li><dfn data-x="event-mouseover" data-x-href="https://w3c.github.io/pointerevents/#mouseover"><code>mouseover</code></dfn> event</li>
+     <li><dfn data-x="event-mouseup" data-x-href="https://w3c.github.io/pointerevents/#mouseup"><code>mouseup</code></dfn> event</li>
+     <li><dfn data-x="event-pointerdown" data-x-href="https://w3c.github.io/pointerevents/#the-pointerdown-event"><code>pointerdown</code></dfn> event</li>
+     <li><dfn data-x="event-pointerup" data-x-href="https://w3c.github.io/pointerevents/#the-pointerup-event"><code>pointerup</code></dfn> event</li>
+     <li><dfn data-x="event-pointercancel" data-x-href="https://w3c.github.io/pointerevents/#the-pointercancel-event"><code>pointercancel</code></dfn> event</li>
+     <li><dfn data-x="event-wheel" data-x-href="https://w3c.github.io/pointerevents/#wheel"><code>wheel</code></dfn> event</li>
+    </ul>
+
+    <p>The following events are defined in <cite>Clipboard API and events</cite>:
+    <ref>CLIPBOARD-APIS</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x="event-copy" data-x-href="https://w3c.github.io/clipboard-apis/#clipboard-event-copy"><code>copy</code></dfn> event</li>
+     <li><dfn data-x="event-cut" data-x-href="https://w3c.github.io/clipboard-apis/#clipboard-event-cut"><code>cut</code></dfn> event</li>
+     <li><dfn data-x="event-paste" data-x-href="https://w3c.github.io/clipboard-apis/#clipboard-event-paste"><code>paste</code></dfn> event</li>
+    </ul>
+
+    <p>This specification sometimes uses the term <dfn data-x="">name</dfn> to refer to the event's
+    <span data-x="concept-event-type">type</span>; as in, "an event named <code
+    data-x="">click</code>" or "if the event name is <code data-x="">keypress</code>". The terms
+    "name" and "type" for events are synonymous.</p>
+
+    <p>The following features are defined in <cite>DOM Parsing and Serialization</cite>:
+    <ref>DOMPARSING</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x="xml-serialization" data-x-href="https://w3c.github.io/DOM-Parsing/#dfn-xml-serialization"><code>XML serialization</code></dfn></li>
+    </ul>
+
+    <p>The following features are defined in <cite>Selection API</cite>: <ref>SELECTION</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x="document-selection" data-x-href="https://w3c.github.io/selection-api/#dfn-selection">selection</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/selection-api/#selection-interface"><code>Selection</code></dfn></li>
+    </ul>
+
+    <p class="note">User agents are encouraged to implement the features described in
+    <cite>execCommand</cite>. <ref>EXECCOMMAND</ref></p>
+
+    <p>The following features are defined in <cite>Fullscreen API</cite>: <ref>FULLSCREEN</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x="dom-element-requestFullscreen" data-x-href="https://fullscreen.spec.whatwg.org/#dom-element-requestfullscreen"><code>requestFullscreen()</code></dfn></li>
+     <li><dfn data-x="event-fullscreenchange" data-x-href="https://fullscreen.spec.whatwg.org/#eventdef-document-fullscreenchange"><code>fullscreenchange</code></dfn></li>
+     <li><dfn data-x-href="https://fullscreen.spec.whatwg.org/#run-the-fullscreen-steps">run the fullscreen steps</dfn></li>
+     <li><dfn data-x-href="https://fullscreen.spec.whatwg.org/#fully-exit-fullscreen">fully exit fullscreen</dfn></li>
+     <li><dfn data-x-href="https://fullscreen.spec.whatwg.org/#fullscreen-element">fullscreen element</dfn></li>
+     <li><dfn data-x-href="https://fullscreen.spec.whatwg.org/#fullscreen-flag">fullscreen flag</dfn></li>
+    </ul>
+
+    <p><cite>High Resolution Time</cite> provides the following features: <ref>HRT</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://w3c.github.io/hr-time/#dfn-current-high-resolution-time">current high resolution time</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/hr-time/#dfn-relative-high-resolution-time">relative high resolution time</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/hr-time/#dfn-unsafe-shared-current-time">unsafe shared current time</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/hr-time/#dfn-shared-monotonic-clock">shared monotonic clock</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/hr-time/#dfn-unsafe-moment">unsafe moment</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/hr-time/#dfn-duration-from">duration from</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/hr-time/#dfn-coarsen-time">coarsen time</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/hr-time/#dfn-current-wall-time">current wall time</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/hr-time/#dfn-unix-epoch">Unix epoch</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/hr-time/#dom-domhighrestimestamp"><code>DOMHighResTimeStamp</code></dfn></li>
+    </ul>
+   </dd>
+
+
+

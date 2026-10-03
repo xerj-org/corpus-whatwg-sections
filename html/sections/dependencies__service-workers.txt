@@ -1,0 +1,24 @@
+WHATWG HTML — section dependencies/service-workers — Service Workers
+
+   <dt>Service Workers</dt>
+
+   <dd>
+    <p>The following terms are defined in <cite>Service Workers</cite>: <ref>SW</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x="dfn-active-worker" data-x-href="https://w3c.github.io/ServiceWorker/#dfn-active-worker">active worker</dfn></li>
+     <li><dfn data-x="dfn-client-message-queue" data-x-href="https://w3c.github.io/ServiceWorker/#dfn-client-message-queue">client message queue</dfn></li>
+     <li><dfn data-x="dfn-control" data-x-href="https://w3c.github.io/ServiceWorker/#dfn-control">control</dfn></li>
+     <li><dfn data-x="on-fetch-request-algorithm" data-x-href="https://w3c.github.io/ServiceWorker/#on-fetch-request-algorithm">handle fetch</dfn></li>
+     <li><dfn data-x="scope-match-algorithm" data-x-href="https://w3c.github.io/ServiceWorker/#scope-match-algorithm">match service worker registration</dfn></li>
+     <li><dfn data-x="dfn-service-worker" data-x-href="https://w3c.github.io/ServiceWorker/#dfn-service-worker">service worker</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/ServiceWorker/#dfn-service-worker-client">service worker client</dfn></li>
+     <li><dfn data-x="serviceworkercontainer-service-worker-client" data-x-href="https://w3c.github.io/ServiceWorker/#serviceworkercontainer-service-worker-client">service worker client</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/service-workers/#dfn-service-worker-registration">service worker registration</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/ServiceWorker/#serviceworker"><code>ServiceWorker</code></dfn> interface</li>
+     <li><dfn data-x-href="https://w3c.github.io/ServiceWorker/#serviceworkercontainer"><code>ServiceWorkerContainer</code></dfn> interface</li>
+     <li><dfn data-x-href="https://w3c.github.io/ServiceWorker/#serviceworkerglobalscope"><code>ServiceWorkerGlobalScope</code></dfn> interface</li>
+     <li><dfn data-x="service-worker-unregister" data-x-href="https://w3c.github.io/service-workers/#navigator-service-worker-unregister"><code>unregister</code></dfn></li>
+    </ul>
+   </dd>
+

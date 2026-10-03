@@ -1,0 +1,122 @@
+WHATWG HTML — section read-ua-inline — <span id="read-ua-plugin"></span><span id="navigate-plugin"></span>Loading a document for inline content that doesn't have a DOM
+
+  <h4 id="read-ua-inline"><span id="read-ua-plugin"></span><span id="navigate-plugin"></span>Loading
+  a document for inline content that doesn't have a DOM</h4>
+
+  <div algorithm>
+  <p>When the user agent is to <dfn data-x="navigate-ua-inline">create a document to display a user
+  agent page or PDF viewer inline</dfn>,
+  provided a <span>navigable</span> <var>navigable</var>, a <span>navigation ID</span>
+  <var>navigationId</var>, a <code>NavigationTimingType</code> <var>navTimingType</var>, and a
+  <span>user navigation involvement</span> <var>userInvolvement</var>, the user agent should:</p>
+
+  <ol>
+   <li><p>Let <var>origin</var> be a new <span data-x="concept-origin-opaque">opaque
+   origin</span>.</p></li>
+
+   <li><p>Let <var>coop</var> be a new <span>opener policy</span>.</p></li>
+
+   <li>
+    <p>Let <var>coopEnforcementResult</var> be a new <span data-x="coop-enforcement-result">opener
+    policy enforcement result</span> with</p>
+
+    <dl class="props">
+     <dt><span data-x="coop-enforcement-url">url</span></dt>
+     <dd><var>response</var>'s <span data-x="concept-response-url">URL</span></dd>
+
+     <dt><span data-x="coop-enforcement-origin">origin</span></dt>
+     <dd><var>origin</var></dd>
+
+     <dt><span data-x="coop-enforcement-coop">opener policy</span></dt>
+     <dd><var>coop</var></dd>
+    </dl>
+   </li>
+
+   <li>
+    <p>Let <var>navigationParams</var> be a new <span>navigation params</span> with</p>
+
+    <dl class="props">
+     <dt><span data-x="navigation-params-id">id</span></dt>
+     <dd><var>navigationId</var></dd>
+
+     <dt><span data-x="navigation-params-navigable">navigable</span></dt>
+     <dd><var>navigable</var></dd>
+
+     <dt><span data-x="navigation-params-request">request</span></dt>
+     <dd>null</dd>
+
+     <dt><span data-x="navigation-params-response">response</span></dt>
+     <dd>a new <span data-x="concept-response">response</span></dd>
+
+     <dt><span data-x="navigation-params-origin">origin</span></dt>
+     <dd><var>origin</var></dd>
+
+     <dt><span data-x="navigation-params-fetch-controller">fetch controller</span></dt>
+     <dd>null</dd>
+
+     <dt><span data-x="navigation-params-commit-early-hints">commit early hints</span></dt>
+     <dd>null</dd>
+
+     <dt><span data-x="navigation-params-coop-enforcement-result">COOP enforcement result</span></dt>
+     <dd><var>coopEnforcementResult</var></dd>
+
+     <dt><span data-x="navigation-params-reserved-environment">reserved environment</span></dt>
+     <dd>null</dd>
+
+     <dt><span data-x="navigation-params-policy-container">policy container</span></dt>
+     <dd>a new <span>policy container</span></dd>
+
+     <dt><span data-x="navigation-params-sandboxing">final sandboxing flag set</span></dt>
+     <dd>an empty set</dd>
+
+     <dt><span data-x="navigation-params-iframe-referrer-policy"><code>iframe</code> element referrer policy</span></dt>
+     <dd>the empty string</dd>
+
+     <dt><span data-x="navigation-params-coop">opener policy</span></dt>
+     <dd><var>coop</var></dd>
+
+     <dt><span data-x="navigation-params-nav-timing-type">navigation timing type</span></dt>
+     <dd><var>navTimingType</var></dd>
+
+     <dt><span data-x="navigation-params-about-base-url">about base URL</span></dt>
+     <dd>null</dd>
+
+     <dt><span data-x="navigation-params-user-involvement">user involvement</span></dt>
+     <dd><var>userInvolvement</var></dd>
+    </dl>
+   </li>
+
+   <li><p>Let <var>document</var> be the result of <span
+   data-x="create-the-document-object">creating and initializing a <code>Document</code>
+   object</span> given "<code data-x="">html</code>", "<code data-x="">text/html</code>", and
+   <var>navigationParams</var>.</p></li>
+
+   <li><p>Either associate <var>document</var> with a custom rendering that is not rendered using
+   the normal <code>Document</code> rendering rules, or mutate <var>document</var> until it
+   represents the content the user agent wants to render.</p></li>
+
+   <li>
+    <p>Act as if the user agent had <span data-x="stop parsing">stopped parsing</span>
+    <var>document</var>.</p>
+
+    <p class="note">This is done to avoid leaking information to the parent page about whether a
+    navigation has been blocked by CSP, or if the response was a <span>network error</span>. In the
+    case where the container is an <code>iframe</code> element, <span data-x="stop parsing">stopping
+    parsing</span> causes the <span>iframe load event steps</span> to run.</p>
+   </li>
+
+   <li><p>Return <var>document</var>.</p></li>
+  </ol>
+
+  <p class="note">Because we ensure the resulting <code>Document</code>'s <span
+  data-x="concept-document-origin">origin</span> is <span
+  data-x="concept-origin-opaque">opaque</span>, and the resulting <code>Document</code> cannot run
+  script with access to the DOM, the existence and properties of this <code>Document</code> are not
+  observable to web developer code. This means that most of the above values, e.g., the
+  <code>text/html</code> <span data-x="concept-document-type">type</span>, do not matter.
+  Similarly, most of the items in <var>navigationParams</var> don't have any observable effect,
+  besides preventing the <span data-x="create-the-document-object"><code>Document</code>-creation
+  algorithm</span> from getting confused, and so are set to default values.</p>
+  </div>
+
+

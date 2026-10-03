@@ -1,0 +1,57 @@
+WHATWG HTML — section the-xmlserializer-interface — The <code>XMLSerializer</code> interface (+html-sanitization)
+
+  <h4>The <code>XMLSerializer</code> interface</h4>
+
+  <p class="XXX">The <code>XMLSerializer</code> interface has a number of outstanding issues in the
+  <cite>DOM Parsing and Serialization</cite> <a
+  href="https://github.com/w3c/DOM-Parsing/issues">issue tracker</a>, documenting various problems
+  with its specification. The remainder of <cite>DOM Parsing and Serialization</cite> will be
+  gradually upstreamed to this specification.</p>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>xmlSerializer</var> = new <span subdfn data-x="dom-XMLSerializer-constructor">XMLSerializer</span>()</code></dt>
+   <dd><p>Constructs a new <code>XMLSerializer</code> object.</p></dd>
+
+   <dt><code data-x=""><var>string</var> = <var>xmlSerializer</var>.<span subdfn data-x="dom-XMLSerializer-serializeToString">serializeToString</span>(<var>root</var>)</code></dt>
+   <dd>
+    <p>Returns the result of serializing <var>root</var> to XML.</p>
+
+    <p>Throws an <span>"<code>InvalidStateError</code>"</span> <code>DOMException</code> if
+    <var>root</var> cannot be serialized to XML.</p>
+   </dd>
+  </dl>
+
+  <p class="note">The design of <code>XMLSerializer</code>, as a class that needs to be constructed
+  and then have its <code data-x="dom-XMLSerializer-serializeToString">serializeToString()</code>
+  method called, is an unfortunate historical artifact. If we were designing this functionality
+  today it would be a standalone function.</p>
+
+  <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>XMLSerializer</dfn> {
+  <span data-x="dom-XMLSerializer-constructor">constructor</span>();
+
+  DOMString <span data-x="dom-XMLSerializer-serializeToString">serializeToString</span>(<code>Node</code> root);
+};</code></pre>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn data-x="dom-XMLSerializer-constructor"><code>new XMLSerializer()</code></dfn>
+  constructor steps are to do nothing.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="XMLSerializer"
+  data-x="dom-XMLSerializer-serializeToString"><code>serializeToString(<var>root</var>)</code></dfn>
+  method steps are:</p>
+
+  <ol>
+   <li><p>Return the <span data-x="xml-serialization">XML serialization</span> of <var>root</var>
+   given false.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+  <h3>HTML sanitization</h3>
+

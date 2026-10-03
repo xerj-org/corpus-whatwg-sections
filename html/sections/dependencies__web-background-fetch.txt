@@ -1,0 +1,13 @@
+WHATWG HTML — section dependencies/web-background-fetch — Web Background Fetch
+
+  <dt>Web Background Fetch</dt>
+
+  <dd>
+   <p>The following terms are defined in <cite>Background Fetch</cite>:</p>
+
+   <ul class="brief">
+    <li><dfn data-x-href="https://wicg.github.io/background-fetch/#backgroundfetchmanager"><code>BackgroundFetchManager</code></dfn></li>
+    <li><dfn data-x-href="https://wicg.github.io/background-fetch/#dom-backgroundfetchmanager-fetch" data-x="dom-BackgroundFetchManager-fetch"><code>fetch()</code></dfn></li>
+   </ul>
+  </dd>
+

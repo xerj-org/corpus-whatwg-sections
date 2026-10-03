@@ -1,0 +1,202 @@
+WHATWG HTML — section the-a-element — The <dfn element><code>a</code></dfn> element
+
+  <h4>The <dfn element><code>a</code></dfn> element</h4>
+
+  <dl class="element">
+   <dt><span data-x="concept-element-categories">Categories</span>:</dt>
+   <dd><span>Flow content</span>.</dd>
+   <dd><span>Phrasing content</span>.</dd>
+   <dd>If the element has an <code data-x="attr-hyperlink-href">href</code> attribute: <span>Interactive content</span>.</dd>
+   <dd><span>Palpable content</span>.</dd>
+   <dt><span data-x="concept-element-contexts">Contexts in which this element can be used</span>:</dt>
+   <dd>Where <span>phrasing content</span> is expected.</dd>
+   <dt><span data-x="concept-element-content-model">Content model</span>:</dt>
+   <dd><span>Transparent</span>, but there must be no <span>interactive content</span> descendant,
+   <code>a</code> element descendant, or descendant with the <code
+   data-x="attr-tabindex">tabindex</code> attribute specified.</dd>
+   <dt><span data-x="concept-element-attributes">Content attributes</span>:</dt>
+   <dd><span>Global attributes</span></dd>
+   <dd><code data-x="attr-hyperlink-href">href</code></dd>
+   <dd><code data-x="attr-hyperlink-target">target</code></dd>
+   <dd><code data-x="attr-hyperlink-download">download</code></dd>
+   <dd><code data-x="attr-hyperlink-ping">ping</code></dd>
+   <dd><code data-x="attr-hyperlink-rel">rel</code></dd>
+   <dd><code data-x="attr-hyperlink-hreflang">hreflang</code></dd>
+   <dd><code data-x="attr-hyperlink-type">type</code></dd>
+   <dd><code data-x="attr-hyperlink-referrerpolicy">referrerpolicy</code></dd>
+   <dt><span
+   data-x="concept-element-accessibility-considerations">Accessibility considerations</span>:</dt>
+   <dd>If the element has an <code data-x="attr-hyperlink-href">href</code> attribute: <a
+   href="https://w3c.github.io/html-aria/#el-a">for authors</a>; <a
+   href="https://w3c.github.io/html-aam/#el-a">for implementers</a>.</dd>
+   <dd>Otherwise: <a
+   href="https://w3c.github.io/html-aria/#el-a-no-href">for authors</a>; <a
+   href="https://w3c.github.io/html-aam/#el-a-no-href">for implementers</a>.</dd>
+   <dt><span data-x="concept-element-sanitization">Sanitization</span>:</dt>
+   <dd><span data-x="sanitizer-category-default">Default</span> with attributes <code
+   data-x="attr-hyperlink-href">href</code>, <code data-x="attr-hyperlink-hreflang">hreflang</code>,
+   and <code data-x="attr-hyperlink-type">type</code>, and <span>navigating URL attributes</span>
+   <code data-x="attr-hyperlink-href">href</code>.</dd>
+   <dt><span data-x="concept-element-dom">DOM interface</span>:</dt>
+   <dd w-nodev>
+    <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>HTMLAnchorElement</dfn> : <span>HTMLElement</span> {
+  [<span>HTMLConstructor</span>] constructor();
+
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute DOMString <dfn attribute for="HTMLAnchorElement" data-x="dom-a-download">download</dfn>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute USVString <dfn attribute for="HTMLAnchorElement" data-x="dom-a-ping">ping</dfn>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute DOMString <dfn attribute for="HTMLAnchorElement" data-x="dom-a-rel">rel</dfn>;
+  [SameObject, PutForwards=<span data-x="dom-DOMTokenList-value">value</span>, <span data-x="xattr-Reflect">Reflect</span>="<span data-x="attr-hyperlink-rel">rel</span>"] readonly attribute <span>DOMTokenList</span> <dfn attribute for="HTMLAnchorElement" data-x="dom-a-relList">relList</dfn>;
+
+  [<span>CEReactions</span>] attribute DOMString <span data-x="dom-a-text">text</span>;
+
+  [<span>CEReactions</span>] attribute DOMString <span data-x="dom-a-referrerPolicy">referrerPolicy</span>;
+
+  // <a href="#HTMLAnchorElement-partial">also has obsolete members</a>
+};
+<span>HTMLAnchorElement</span> includes <span>HyperlinkElementUtils</span>;
+<span>HTMLAnchorElement</span> includes <span>HTMLHyperlinkElementUtils</span>;</code></pre>
+   </dd>
+   <dd w-dev>Uses <code>HTMLAnchorElement</code>.</dd>
+  </dl>
+
+  <p>If the <code>a</code> element has an <code data-x="attr-hyperlink-href">href</code> attribute,
+  then it <span>represents</span> a <span>hyperlink</span> (a hypertext anchor) labeled by its
+  contents.</p>
+
+  <!-- v2: Eric Meyer requests the ability to nest links so that a big hyperlink, e.g. representing
+  a calendar event, can be clickable, while within it there are subareas that represent links to
+  distinct areas, e.g. a link to see photos of the event, or to edit the event, or some such. -->
+
+  <p>If the <code>a</code> element has no <code data-x="attr-hyperlink-href">href</code> attribute,
+  then the element <span>represents</span> a placeholder for where a link might otherwise have been
+  placed, if it had been relevant, consisting of just the element's contents.</p>
+
+  <p>The <code data-x="attr-hyperlink-target">target</code>, <code
+  data-x="attr-hyperlink-download">download</code>, <code data-x="attr-hyperlink-ping">ping</code>,
+  <code data-x="attr-hyperlink-rel">rel</code>, <code
+  data-x="attr-hyperlink-hreflang">hreflang</code>, <code data-x="attr-hyperlink-type">type</code>,
+  and <code data-x="attr-hyperlink-referrerpolicy">referrerpolicy</code> attributes must be omitted
+  if the <code data-x="attr-hyperlink-href">href</code> attribute is not present.</p>
+
+  <p>If the <code data-x="attr-itemprop">itemprop</code> attribute is specified on an <code>a</code> element,
+  then the <code data-x="attr-hyperlink-href">href</code> attribute must also be specified.</p>
+
+  <div class="example">
+
+   <p>If a site uses a consistent navigation toolbar on every page, then the link that would
+   normally link to the page itself could be marked up using an <code>a</code> element:</p>
+
+   <pre><code class="html">&lt;nav>
+ &lt;ul>
+  &lt;li> &lt;a href="/">Home&lt;/a> &lt;/li>
+  &lt;li> &lt;a href="/news">News&lt;/a> &lt;/li>
+  &lt;li> &lt;a>Examples&lt;/a> &lt;/li>
+  &lt;li> &lt;a href="/legal">Legal&lt;/a> &lt;/li>
+ &lt;/ul>
+&lt;/nav></code></pre>
+
+  </div>
+
+  <div w-nodev>
+
+  <p>The <code data-x="attr-hyperlink-href">href</code>, <code
+  data-x="attr-hyperlink-target">target</code>, <code
+  data-x="attr-hyperlink-download">download</code>, <code data-x="attr-hyperlink-ping">ping</code>,
+  and <code data-x="attr-hyperlink-referrerpolicy">referrerpolicy</code> attributes affect what
+  happens when users <span data-x="following hyperlinks">follow hyperlinks</span> or <span
+  data-x="downloading hyperlinks">download hyperlinks</span> created using the <code>a</code>
+  element. The <code data-x="attr-hyperlink-rel">rel</code>, <code
+  data-x="attr-hyperlink-hreflang">hreflang</code>, and <code data-x="attr-hyperlink-type">type</code>
+  attributes may be used to indicate to the user the likely nature of the target resource before the
+  user follows the link.</p>
+
+  </div>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>a</var>.<span subdfn data-x="dom-a-text">text</span></code></dt>
+
+   <dd><p>Same as <code>textContent</code>.</p></dd>
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The IDL attribute <dfn attribute for="HTMLAnchorElement"><code
+  data-x="dom-a-referrerPolicy">referrerPolicy</code></dfn> must <span>reflect</span> the <code
+  data-x="attr-hyperlink-referrerpolicy">referrerpolicy</code> content attribute, <span>limited to
+  only known values</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLAnchorElement"><code data-x="dom-a-text">text</code></dfn>
+  attribute's getter must return this element's <span>descendant text content</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <code data-x="dom-a-text">text</code> attribute's setter must <span>string replace
+  all</span> with the given value within this element.</p>
+  </div>
+
+  </div>
+
+  <div class="example">
+   <p>The <code>a</code> element can be wrapped around entire paragraphs, lists, tables, and so
+   forth, even entire sections, so long as there is no interactive content within (e.g., buttons or
+   other links). This example shows how this can be used to make an entire advertising block into a
+   link:</p>
+
+   <pre><code class="html">&lt;aside class="advertising">
+ &lt;h1>Advertising&lt;/h1>
+ &lt;a href="https://ad.example.com/?adid=1929&amp;amp;pubid=1422">
+  &lt;section>
+   &lt;h1>Mellblomatic 9000!&lt;/h1>
+   &lt;p>Turn all your widgets into mellbloms!&lt;/p>
+   &lt;p>Only $9.99 plus shipping and handling.&lt;/p>
+  &lt;/section>
+ &lt;/a>
+ &lt;a href="https://ad.example.com/?adid=375&amp;amp;pubid=1422">
+  &lt;section>
+   &lt;h1>The Mellblom Browser&lt;/h1>
+   &lt;p>Web browsing at the speed of light.&lt;/p>
+   &lt;p>No other browser goes faster!&lt;/p>
+  &lt;/section>
+ &lt;/a>
+&lt;/aside></code></pre>
+  </div>
+
+  <div class="example">
+   <p>The following example shows how a bit of script can be used to effectively make an entire row
+   in a job listing table a hyperlink:</p>
+
+   <pre><code class="html">&lt;table>
+ &lt;tr>
+  &lt;th>Position
+  &lt;th>Team
+  &lt;th>Location
+ &lt;tr>
+  &lt;td>&lt;a href="/jobs/manager">Manager&lt;/a>
+  &lt;td>Remotees
+  &lt;td>Remote
+ &lt;tr>
+  &lt;td>&lt;a href="/jobs/director">Director&lt;/a>
+  &lt;td>Remotees
+  &lt;td>Remote
+ &lt;tr>
+  &lt;td>&lt;a href="/jobs/astronaut">Astronaut&lt;/a>
+  &lt;td>Architecture
+  &lt;td>Remote
+&lt;/table>
+&lt;script>
+document.querySelector("table").onclick = ({ target }) => {
+  if (target.parentElement.localName === "tr") {
+    const link = target.parentElement.querySelector("a");
+    if (link) {
+      link.click();
+    }
+  }
+}
+&lt;/script></code></pre>
+  </div>
+
+

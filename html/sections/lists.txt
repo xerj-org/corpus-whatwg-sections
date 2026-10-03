@@ -1,0 +1,117 @@
+WHATWG HTML — section lists — Lists
+
+  <h4>Lists</h4>
+
+  <pre><code class="css">@namespace "http://www.w3.org/1999/xhtml";
+
+dir, dd, dl, dt, menu, ol, ul { display: block; }<!-- see also unicode-bidi:isolate rules -->
+li { display: list-item; text-align: match-parent; }<!-- see also unicode-bidi:isolate rules -->
+
+dir, dl, menu, ol, ul { margin-block: 1em; }
+
+:is(dir, dl, menu, ol, ul) :is(dir, dl, menu, ol, ul) {
+  margin-block: 0;
+}
+
+dd { margin-inline-start: 40px; }
+dir, menu, ol, ul { padding-inline-start: 40px; }
+
+ol, ul, menu { counter-reset: list-item; }
+ol { list-style-type: decimal; }
+
+dir, menu, ul {
+  list-style-type: disc;
+}
+:is(dir, menu, ol, ul) :is(dir, menu, ul) {
+  list-style-type: circle;
+}
+:is(dir, menu, ol, ul) :is(dir, menu, ol, ul) :is(dir, menu, ul) {
+  list-style-type: square;
+}</code></pre>
+
+  <p id="decohints">The following rules are also <span>expected</span> to apply, as
+  <span>presentational hints</span>:</p>
+
+  <pre><code class="css">@namespace "http://www.w3.org/1999/xhtml";
+
+ol[type="1"], li[type="1"] { list-style-type: decimal; }
+ol[type=a <!--grammar-check-override-->s], li[type=a <!--grammar-check-override-->s] { list-style-type: lower-alpha; }
+ol[type=A <!--grammar-check-override-->s], li[type=A <!--grammar-check-override-->s] { list-style-type: upper-alpha; }
+ol[type=i s], li[type=i s] { list-style-type: lower-roman; }
+ol[type=I s], li[type=I s] { list-style-type: upper-roman; }
+ul[type=none i], li[type=none i] { list-style-type: none; }
+ul[type=disc i], li[type=disc i] { list-style-type: disc; }
+ul[type=circle i], li[type=circle i] { list-style-type: circle; }
+ul[type=square i], li[type=square i] { list-style-type: square; }</code></pre>
+
+  <p>In <span>quirks mode</span>, the following rules are also <span>expected</span> to apply:</p>
+
+  <pre><code class="css">@namespace "http://www.w3.org/1999/xhtml";
+
+li { list-style-position: inside; }
+li :is(dir, menu, ol, ul) { list-style-position: outside; }
+:is(dir, menu, ol, ul) :is(dir, menu, ol, ul, li) { list-style-position: unset; }</code></pre>
+
+  <p>When rendering <code>li</code> elements, non-CSS user agents are <span>expected</span> to use
+  the <span>ordinal value</span> of the <code>li</code> element to render the counter in the list
+  item marker.</p>
+
+  <p id="css-list-rendering">For CSS user agents, some aspects of rendering <span
+  data-x="css-list-item">list items</span> are defined by the <cite>CSS Lists</cite> specification.
+  Additionally, the following attribute mappings are <span>expected</span> to apply:
+  <ref>CSSLISTS</ref></p>
+
+  <div algorithm>
+  <p>When an <code>li</code> element has a <code
+  data-x="attr-li-value">value</code> attribute, and parsing that attribute's value using the
+  <span>rules for parsing integers</span> doesn't generate an error, the user agent is
+  <span>expected</span> to use the parsed value <var>value</var> as a <span data-x="presentational
+  hints">presentational hint</span> for the <span>'counter-set'</span> property of the form <code
+  data-x="">list-item <var>value</var></code>.</p>
+  </div>
+
+  <div algorithm>
+  <p>When an <code>ol</code> element has a <code data-x="attr-ol-start">start</code>
+  attribute or a <code data-x="attr-ol-reversed">reversed</code> attribute, or both, the user agent
+  is <span>expected</span> to use the following steps to treat the attributes as a <span
+  data-x="presentational hints">presentational hint</span> for the <span>'counter-reset'</span>
+  property:</p>
+
+  <ol>
+   <li><p>Let <var>value</var> be null.</p></li>
+
+   <li><p>If the element has a <code data-x="attr-ol-start">start</code> attribute, then set
+   <var>value</var> to the result of parsing the attribute's value using the <span>rules for
+   parsing integers</span>.</p></li>
+
+   <li>
+    <p>If the element has a <code data-x="attr-ol-reversed">reversed</code> attribute:</p>
+
+    <ol>
+     <li><p>If <var>value</var> is an integer, then increment <var>value</var> by 1 and return
+     <code data-x="">reversed(list-item) <var>value</var></code>.</p></li>
+
+     <li>
+      <p>Otherwise, return <code data-x="">reversed(list-item)</code>.</p>
+
+      <p class="note">Either the <code data-x="attr-ol-start">start</code> attribute was absent, or
+      parsing its value resulted in an error.</p>
+     </li>
+    </ol>
+   </li>
+
+   <li>
+    <p>Otherwise:</p>
+
+    <ol>
+     <li><p>If <var>value</var> is an integer, then decrement <var>value</var> by 1 and return
+     <code data-x="">list-item <var>value</var></code>.</p></li>
+
+     <li><p>Otherwise, there is no <span data-x="presentational hints">presentational
+     hint</span>.</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+

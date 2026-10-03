@@ -1,0 +1,239 @@
+WHATWG HTML — section ancestor-origins — Ancestor origins
+
+  <h4>Ancestor origins</h4>
+
+  <div algorithm>
+  <p>A <code>Document</code> object has an associated <dfn export for="Document"
+  data-x="concept-document-internal-ancestor-origin-objects-list">internal ancestor origin objects
+  list</dfn>, initially null.</p>
+
+  <p>The <dfn>internal ancestor origin objects list creation steps</dfn> given a
+  <code>Document</code> object <var>document</var> and a <span>referrer policy</span>
+  <var>referrerPolicy</var> are:</p>
+
+  <ol>
+   <li><p>Let <var>output</var> be « ».</p></li>
+
+   <li><p>Let <var>parentDoc</var> be <var>document</var>'s <span
+   data-x="doc-container-document">container document</span>.</p></li>
+
+   <li><p>If <var>parentDoc</var> is null, then return <var>output</var>.</p></li>
+
+   <li><p><span>Assert</span>: <var>parentDoc</var> is <span>fully active</span>.</p></li>
+
+   <li><p>Let <var>ancestorOrigins</var> be <var>parentDoc</var>'s <span
+   data-x="concept-document-internal-ancestor-origin-objects-list">internal ancestor origin objects
+   list</span>.</p></li>
+
+   <li><p><span>Assert</span>: <var>ancestorOrigins</var> is not null.</p></li>
+
+   <li><p>Let <var>masked</var> be false.</p></li>
+
+   <li><p>If <var>referrerPolicy</var> is "<code data-x="">no-referrer</code>", then set
+   <var>masked</var> to true.</p></li>
+
+   <li>
+    <p>Otherwise, if <var>referrerPolicy</var> is "<code data-x="">same-origin</code>" and
+    <var>parentDoc</var>'s <span data-x="concept-document-origin">origin</span> is not <span>same
+    origin</span> with <var>document</var>'s <span data-x="concept-document-origin">origin</span>,
+    then set <var>masked</var> to true.</p>
+
+    <p class="note">Since <span>mixed content</span> checks prevent <span>non-secure context</span>
+    <span data-x="environment">environments</span> in <span>secure context</span> <span
+    data-x="environment">environments</span>, there's no need to check for <span data-x="secure
+    context">secure contexts</span> for "<code data-x="">strict-origin</code>", "<code
+    data-x="">strict-origin-when-cross-origin</code>", and "<code
+    data-x="">no-referrer-when-downgrade</code>". The "<code data-x="">origin</code>" and "<code
+    data-x="">origin-when-cross-origin</code>" values also don't need special treatment since we're
+    at most exposing an <span data-x="concept-document-origin">origin</span> here.</p>
+   </li>
+
+   <li><p>If <var>masked</var> is true, then <span data-x="list append">append</span> a new <span
+   data-x="concept-origin-opaque">opaque origin</span> to <var>output</var>.</p></li>
+
+   <li><p>Otherwise, <span data-x="list append">append</span> <var>parentDoc</var>'s <span
+   data-x="concept-document-origin">origin</span> to <var>output</var>.</p></li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>ancestorOrigin</var> of
+    <var>ancestorOrigins</var>:</p>
+
+    <ol>
+     <li><p>If <var>masked</var> is true and <var>ancestorOrigin</var> is <span>same origin</span>
+     with <var>parentDoc</var>'s <span data-x="concept-document-origin">origin</span>, then <span
+     data-x="list append">append</span> a new <span data-x="concept-origin-opaque">opaque
+     origin</span> to <var>output</var> and <span>continue</span>.</p></li>
+
+     <li>
+      <p><span data-x="list append">Append</span> <var>ancestorOrigin</var> to <var>output</var> and
+      set <var>masked</var> to false.</p>
+
+      <p class="note">Setting <var>masked</var> to false here doesn't imply that all further
+      ancestors' origins are necessarily exposed. They might have been previously masked when an
+      ancestor document ran these steps, and the resulting list is used as a starting point when a
+      child document is created (see step 5 above).</p>
+     </li>
+    </ol>
+   </li>
+
+   <li><p>Return <var>output</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>A <code>Document</code> object has an associated <dfn export for="Document"
+  data-x="concept-document-ancestor-origins-list">ancestor origins list</dfn>, initially null.</p>
+
+  <p>The <dfn>ancestor origins list creation steps</dfn> given a <code>Document</code> object
+  <var>document</var> are:</p>
+
+  <ol>
+   <li><p>Let <var>ancestorOrigins</var> be <var>document</var>'s <span
+   data-x="concept-document-internal-ancestor-origin-objects-list">internal ancestor origin objects
+   list</span>.</p></li>
+
+   <li><p><span>Assert</span>: <var>ancestorOrigins</var> is not null.</p></li>
+
+   <li><p>Let <var>output</var> be « ».</p></li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>origin</var> of
+    <var>ancestorOrigins</var>:</p>
+
+    <ol>
+     <li><p><span data-x="list append">Append</span> the <span data-x="serialization of an
+     origin">serialization</span> of <var>origin</var> to <var>output</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Return a new <code>DOMStringList</code> object whose associated list is
+   <var>output</var>.</p></li>
+  </ol>
+  </div>
+
+  <div class="example">
+   <p>Consider a <span>top-level browsing context</span> document with the URL <code
+   data-x="">https://a.example/top</code>:</p>
+
+   <pre><code class="html">&lt;!doctype html>
+&lt;title>top&lt;/title>
+&lt;iframe referrerpolicy="no-referrer" src="https://a.example/child">&lt;/iframe></code></pre>
+
+   <p>The child document:</p>
+
+   <pre><code class="html">&lt;!doctype html>
+&lt;title>child&lt;/title>
+&lt;iframe src="https://b.example/grandchild">&lt;/iframe>
+&lt;script>
+ console.log([...location.ancestorOrigins]);
+&lt;/script></code></pre>
+
+   <p>The grandchild document:</p>
+
+   <pre><code class="html">&lt;!doctype html>
+&lt;title>grandchild&lt;/title>
+&lt;script>
+ console.log([...location.ancestorOrigins]);
+&lt;/script></code></pre>
+
+   <p>When the child's <code>Document</code> object is created, its parent's origin is masked
+   because the <code>iframe</code> element's <code
+   data-x="attr-iframe-referrerpolicy">referrerpolicy</code> attribute's value is "<code
+   data-x="">no-referrer</code>", even though the documents are <span>same origin</span>. The value
+   logged is « "<code data-x="">null</code>" ».</p>
+
+   <p>When the grandchild's <code>Document</code> object is created, the child's
+   <code>Document</code> object's <span
+   data-x="concept-document-internal-ancestor-origin-objects-list">internal ancestor origin objects
+   list</span> (which contains a single <span data-x="concept-origin-opaque">opaque origin</span>)
+   is used as a starting point, and the child's <span data-x="concept-document-origin">origin</span>
+   is added to the list. The value logged is thus « "<code data-x="">https://a.example</code>",
+   "<code data-x="">null</code>" ».</p>
+  </div>
+
+  <div class="example">
+   <p>If we consider the previous example but the <code>iframe</code> element in the top document
+   has no <code data-x="attr-iframe-referrerpolicy">referrerpolicy</code> attribute, and instead the
+   <code>iframe</code> element in the child document has <code
+   data-x="">referrerpolicy="no-referrer"</code>.</p>
+
+   <p>In this case, the top document's <span data-x="concept-document-origin">origin</span> is added
+   to the child's <code>Document</code> object's <span
+   data-x="concept-document-internal-ancestor-origin-objects-list">internal ancestor origin objects
+   list</span>. The value logged is « "<code data-x="">https://a.example</code>" ».</p>
+
+   <p>For the grandchild, the child's <span data-x="concept-document-origin">origin</span> is masked
+   as an <span data-x="concept-origin-opaque">opaque origin</span>. Since the top document's <span
+   data-x="concept-document-origin">origin</span> is <span>same origin</span> with the child
+   document's <span data-x="concept-document-origin">origin</span>, it is also masked. The value
+   logged is thus « "<code data-x="">null</code>", "<code data-x="">null</code>" ».</p>
+  </div>
+
+  <div class="example">
+   <p>In this example, we show that the top-level document's origin is not masked even though
+   there's a descendant same-origin document whose origin <em>is</em> masked, since there's a
+   cross-origin document in between.</p>
+
+   <ul>
+    <li>
+     <p>Top-level with URL <code data-x="">https://a.example/top</code></p>
+
+     <pre><code class="html">&lt;iframe src="https://b.example/child">&lt;/iframe></code></pre>
+
+     <p>The <span data-x="concept-document-ancestor-origins-list">ancestor origins list</span>
+     associated list is « ».</p>
+    </li>
+
+    <li>
+     <p>Child with URL <code data-x="">https://b.example/child</code></p>
+
+     <pre><code class="html">&lt;iframe src="https://a.example/grandchild">&lt;/iframe></code></pre>
+
+     <p>The <span data-x="concept-document-ancestor-origins-list">ancestor origins list</span>
+     associated list is « "<code data-x="">https://a.example</code>" ».</p>
+    </li>
+
+    <li>
+     <p>Grandchild with URL <code data-x="">https://a.example/grandchild</code></p>
+
+     <pre><code class="html">&lt;iframe src="https://c.example/great-grandchild"
+        referrerpolicy="no-referrer">&lt;/iframe></code></pre>
+
+     <p>The <span data-x="concept-document-ancestor-origins-list">ancestor origins list</span>
+     associated list is « "<code data-x="">https://b.example</code>", "<code
+     data-x="">https://a.example</code>" ».</p>
+    </li>
+
+    <li>
+     <p>Great-grandchild with URL <code data-x="">https://c.example/great-grandchild</code></p>
+
+     <p>The <span data-x="concept-document-ancestor-origins-list">ancestor origins list</span>
+     associated list is « "<code data-x="">null</code>", "<code data-x="">https://b.example</code>",
+     "<code data-x="">https://a.example</code>" ». The top-level origin is not masked.</p>
+    </li>
+   </ul>
+  </div>
+
+  <div class="example">
+   <p>If we consider the previous example but the top-level document's <code>iframe</code> also has
+   <code data-x="">referrerpolicy="no-referrer"</code>, then the resulting <span
+   data-x="concept-document-ancestor-origins-list">ancestor origins list</span> associated list for
+   each document would be:</p>
+
+   <ul>
+    <li><p>Top-level: « »</p></li>
+
+    <li><p>Child: « "<code data-x="">null</code>" »</p></li>
+
+    <li><p>Grandchild: « "<code data-x="">https://b.example</code>", "<code data-x="">null</code>"
+    »</p></li>
+
+    <li><p>Great-grandchild: « "<code data-x="">null</code>", "<code
+    data-x="">https://b.example</code>", "<code data-x="">null</code>" ». The top-level origin is
+    masked because it was masked when the child document ran the <span>internal ancestor origin
+    objects list creation steps</span>, and that result is passed on to the grandchild document's
+    <span>internal ancestor origin objects list creation steps</span>, and so on.</p></li>
+   </ul>
+  </div>
+
+

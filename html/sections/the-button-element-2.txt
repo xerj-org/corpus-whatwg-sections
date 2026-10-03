@@ -1,0 +1,11 @@
+WHATWG HTML — section the-button-element — The <code>button</code> element
+
+  <h4>The <code>button</code> element</h4>
+
+  <p>The <code>button</code> element, when it generates a <span>CSS box</span>, is
+  <span>expected</span> to depict a button and to use <span>button layout</span>.</p>
+
+  </div>
+
+  <div w-nodev>
+

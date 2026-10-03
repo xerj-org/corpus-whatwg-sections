@@ -1,0 +1,17 @@
+WHATWG HTML — section dependencies/storage — Storage
+
+   <dt>Storage</dt>
+   <dd>
+    <p>The following terms are defined in <cite>Storage</cite>: <ref>STORAGE</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://storage.spec.whatwg.org/#storage-key">storage key</dfn></li>
+     <li><dfn data-x-href="https://storage.spec.whatwg.org/#obtain-a-local-storage-bottle-map">obtain a local storage bottle map</dfn></li>
+     <li><dfn data-x-href="https://storage.spec.whatwg.org/#obtain-a-session-storage-bottle-map">obtain a session storage bottle map</dfn></li>
+     <li><dfn data-x-href="https://storage.spec.whatwg.org/#obtain-a-storage-key-for-non-storage-purposes">obtain a storage key for non-storage purposes</dfn></li>
+     <li><dfn data-x-href="https://storage.spec.whatwg.org/#storage-key-equal">storage key equal</dfn></li>
+     <li><dfn data-x-href="https://storage.spec.whatwg.org/#storage-proxy-map">storage proxy map</dfn></li>
+     <li><dfn data-x-href="https://storage.spec.whatwg.org/#legacy-clone-a-traversable-storage-shed">legacy-clone a traversable storage shed</dfn></li>
+    </ul>
+   </dd>
+

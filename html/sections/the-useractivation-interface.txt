@@ -1,0 +1,58 @@
+WHATWG HTML — section the-useractivation-interface — The <code>UserActivation</code> interface
+
+  <h4>The <code>UserActivation</code> interface</h4>
+
+  <div algorithm>
+  <p>Each <code>Window</code> has an <dfn>associated <code>UserActivation</code></dfn>, which is a
+  <code>UserActivation</code> object. Upon creation of the <code>Window</code> object, its
+  <span>associated <code>UserActivation</code></span> must be set to a <span>new</span>
+  <code>UserActivation</code> object created in the <code>Window</code> object's <span
+  data-x="concept-relevant-realm">relevant realm</span>.</p>
+  </div>
+
+  <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>UserActivation</dfn> {
+  readonly attribute boolean <span data-x="dom-UserActivation-hasBeenActive">hasBeenActive</span>;
+  readonly attribute boolean <span data-x="dom-UserActivation-isActive">isActive</span>;
+};
+
+partial interface <span id="NavigatorUserActivation-partial">Navigator</span> {
+  [SameObject] readonly attribute <code>UserActivation</code> <span data-x="dom-Navigator-userActivation">userActivation</span>;
+};</code></pre>
+
+  <dl class="domintro">
+   <dt><code data-x=""><span data-x="dom-navigator">navigator</span>.<span subdfn data-x="dom-Navigator-userActivation">userActivation</span>.<span subdfn data-x="dom-UserActivation-hasBeenActive">hasBeenActive</span></code></dt>
+   <dd>
+    <p>Returns whether the window has <span>sticky activation</span>.</p>
+   </dd>
+
+   <dt><code data-x=""><span data-x="dom-navigator">navigator</span>.<span data-x="dom-Navigator-userActivation">userActivation</span>.<span subdfn data-x="dom-UserActivation-isActive">isActive</span></code></dt>
+   <dd>
+    <p>Returns whether the window has <span>transient activation</span>.</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn attribute for="Navigator"><code
+  data-x="dom-Navigator-userActivation">userActivation</code></dfn> getter steps are to return
+  <span>this</span>'s <span>relevant global object</span>'s <span>associated
+  <code>UserActivation</code></span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="UserActivation"><code
+  data-x="dom-UserActivation-hasBeenActive">hasBeenActive</code></dfn> getter steps are to return
+  true if <span>this</span>'s <span>relevant global object</span> has <span>sticky
+  activation</span>, and false otherwise.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="UserActivation"><code
+  data-x="dom-UserActivation-isActive">isActive</code></dfn> getter steps are to return true if
+  <span>this</span>'s <span>relevant global object</span> has <span>transient activation</span>,
+  and false otherwise.</p>
+  </div>
+
+

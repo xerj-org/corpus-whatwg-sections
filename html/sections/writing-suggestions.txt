@@ -1,0 +1,148 @@
+WHATWG HTML — section writing-suggestions — Writing suggestions
+
+  <h4>Writing suggestions</h4>
+
+  <p>User agents offer writing suggestions as users type into editable regions, either in form
+  controls (e.g., the <code>textarea</code> element) or in elements in an <span  data-x="editing
+  host"> editing host</span>.</p>
+
+  <p>The <dfn element-attr for="html-global"><code
+  data-x="attr-writingsuggestions">writingsuggestions</code></dfn> content attribute is an
+  <span>enumerated attribute</span> with the following keywords and states:</p>
+
+  <table>
+   <thead>
+    <tr>
+     <th>Keyword
+     <th>State
+     <th>Brief description
+   <tbody>
+    <tr>
+     <td><dfn attr-value for="html-global/writingsuggestions"><code
+     data-x="attr-writingsuggestions-true">true</code></dfn>
+     <td><dfn data-x="attr-writingsuggestions-true-state">True</dfn>
+     <td>Writing suggestions should be offered on this element.
+    </tr>
+    <tr>
+     <td><dfn attr-value for="html-global/writingsuggestions"><code
+      data-x="attr-writingsuggestions-false">false</code></dfn>
+     <td><dfn data-x="attr-writingsuggestions-false-state">False</dfn>
+     <td>Writing suggestions should not be offered on this element.
+    </tr>
+  </table>
+
+  <div algorithm>
+  <p>The attribute's <i data-x="missing value default">missing value default</i> is the <dfn
+  data-x="attr-writingsuggestions-default-state">Default</dfn> state. The default state indicates
+  that the element is to act according to a default behavior, possibly based on the parent
+  element's own <code data-x="attr-writingsuggestions">writingsuggestions</code> state, as defined
+  below.</p>
+  </div>
+
+  <div algorithm>
+  <p>The attribute's <i data-x="invalid value default">invalid value default</i> and <i
+  data-x="empty value default">empty value default</i> are both the <span
+  data-x="attr-writingsuggestions-true-state">True</span> state.</p>
+  </div>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>element</var>.<span subdfn data-x="dom-writingSuggestions">writingSuggestions</span> [ = <var>value</var> ]</code></dt>
+
+   <dd>
+    <p>Returns "<code data-x="">true</code>" if the user agent is to offer writing suggestions under
+    the scope of the element; otherwise, returns "<code data-x="">false</code>".</p>
+
+    <p>Can be set, to override the default and set the <code data-x="attr-writingsuggestions">
+    writingsuggestions</code> content attribute.</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+  <div algorithm>
+  <p>The <dfn>computed writing suggestions value</dfn> of a given <var>element</var> is
+  determined by running the following steps:</p>
+
+  <ol>
+   <li><p>If <var>element</var>'s <code data-x="attr-writingsuggestions">writingsuggestions</code>
+   content attribute is in the <span data-x="attr-writingsuggestions-false-state">False</span>
+   state, return "<code data-x="">false</code>".</p></li>
+
+   <li><p>If <var>element</var>'s <code
+   data-x="attr-writingsuggestions">writingsuggestions</code> content attribute is in the <span
+   data-x="attr-writingsuggestions-default-state">Default</span> state, <var>element</var> has a
+   parent element, and the <span>computed writing suggestions value</span> of
+   <var>element</var>'s parent element is "<code data-x="">false</code>", then return
+   "<code data-x="">false</code>".</p></li>
+
+   <li><p>Return "<code data-x="">true</code>".</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLElement"><code
+  data-x="dom-writingSuggestions">writingSuggestions</code></dfn> getter steps are:</p>
+
+  <ol>
+   <li><p>Return <span>this</span>'s <span>computed writing suggestions value</span>.</p></li>
+  </ol>
+  </div>
+
+  <p class="note">The <code data-x="dom-writingSuggestions">writingSuggestions</code> IDL
+  attribute is not affected by user preferences that override the <code
+  data-x="attr-writingsuggestions">writingsuggestions</code> content attribute, and therefore
+  might not reflect the actual writing suggestions state.</p>
+  </div>
+
+  <hr>
+
+  <div algorithm>
+  <p>User agents should only offer suggestions within an element's scope if the
+  result of running the following algorithm given <var>element</var> returns true:</p>
+
+  <ol>
+   <!-- user override -->
+
+   <li><p>If the user has disabled writing suggestions, then return false.</p></li>
+
+   <!-- element type -->
+   <li>
+    <p>If none of the following conditions are true:</p>
+
+    <ul>
+     <li><p><var>element</var> is an <code>input</code> element whose <code
+     data-x="attr-input-type">type</code> attribute is in either the <span
+     data-x="attr-input-type-text">Text</span>, <span
+     data-x="attr-input-type-search">Search</span>, <span
+     data-x="attr-input-type-tel">Telephone</span>, <span data-x="attr-input-type-url">URL</span>,
+     or <span data-x="attr-input-type-email">Email</span> state and <var>element</var> is <span
+     data-x="concept-fe-mutable">mutable</span>;</p></li>
+
+     <li><p><var>element</var> is a <code>textarea</code> element that is <span
+     data-x="concept-fe-mutable">mutable</span>; or</p></li>
+
+     <li><p><var>element</var> is an <span data-x="editing host">editing host</span> or is
+     <span>editable</span>,</p></li>
+    </ul>
+
+    <p>then return false.</p>
+   </li>
+
+   <!--
+    content attribute: false on this element, or inherit if there is an ancestor to inherit from
+   -->
+
+   <li><p>If <var>element</var> has an <span>inclusive ancestor</span> with a <code
+   data-x="attr-writingsuggestions">writingsuggestions</code> content attribute that's not in the
+   <span data-x="attr-writingsuggestions-default-state">Default</span> and the nearest such
+   ancestor's <code data-x="attr-writingsuggestions">writingsuggestions</code> content attribute is
+   in the <span data-x="attr-writingsuggestions-false-state">False</span> state, then return
+   false.</p></li>
+
+   <li><p>Otherwise, return true.</p></li>
+  </ol>
+  </div>
+
+  <p class="note">This specification does not define the user interface for writing suggestions.
+  A user agent could offer on-demand suggestions, continuous suggestions as the user types, inline
+  suggestions, autofill-like suggestions in a popup, or could use other interfaces.</p>
+

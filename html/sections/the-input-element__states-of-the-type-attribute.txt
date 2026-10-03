@@ -1,0 +1,5 @@
+WHATWG HTML — section the-input-element/states-of-the-type-attribute — States of the <code data-x="attr-input-type">type</code> attribute
+
+  <h5>States of the <code data-x="attr-input-type">type</code> attribute</h5>
+
+

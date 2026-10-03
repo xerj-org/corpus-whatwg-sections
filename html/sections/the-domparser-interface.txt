@@ -1,0 +1,177 @@
+WHATWG HTML — section the-domparser-interface — The <code>DOMParser</code> interface
+
+  <h4>The <code>DOMParser</code> interface</h4>
+
+  <p>The <code>DOMParser</code> interface allows authors to create new <code>Document</code> objects
+  by parsing strings, as either HTML or XML.</p>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>parser</var> = new <span subdfn data-x="dom-DOMParser-constructor">DOMParser</span>()</code></dt>
+   <dd><p>Constructs a new <code>DOMParser</code> object.</p></dd>
+
+   <dt><code data-x=""><var>document</var> = <var>parser</var>.<span subdfn data-x="dom-DOMParser-parseFromString">parseFromString</span>(<var>string</var>, <var>type</var>)</code></dt>
+   <dd>
+    <p>Parses <var>string</var> using either the HTML or XML parser, according to <var>type</var>,
+    and returns the resulting <code>Document</code>. <var>type</var> can be "<code>text/html</code>"
+    (which will invoke the HTML parser), or any of "<code>text/xml</code>",
+    "<code>application/xml</code>", "<code>application/xhtml+xml</code>", or
+    "<code>image/svg+xml</code>" (which will invoke the XML parser).</p>
+
+    <p>For the XML parser, if <var>string</var> cannot be parsed, then the returned
+    <code>Document</code> will contain elements describing the resulting error.</p>
+
+    <p>Note that <code>script</code> elements are not evaluated during parsing, and the resulting
+    document's <span data-x="document's character encoding">encoding</span> will always be
+    <span>UTF-8</span>. The document's <span data-x="concept-document-url">URL</span> will be
+    inherited from <var>parser</var>'s <span>relevant global object</span>.</p>
+
+    <p>Values other than the above for <var>type</var> will cause a <code>TypeError</code> exception
+    to be thrown.</p>
+   </dd>
+  </dl>
+
+  <p class="note">The design of <code>DOMParser</code>, as a class that needs to be constructed and
+  then have its <code data-x="dom-DOMParser-parseFromString">parseFromString()</code> method
+  called, is an unfortunate historical artifact. If we were designing this functionality today it
+  would be a standalone function. For parsing HTML, the modern alternative is <code
+  data-x="dom-parseHTMLUnsafe">Document.parseHTMLUnsafe()</code>.</p>
+
+  <p class="warning">This method performs no sanitization to remove potentially-dangerous elements
+  and attributes like <code>script</code> or <span>event handler content attributes</span>.</p>
+
+  <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>DOMParser</dfn> {
+  <span data-x="dom-DOMParser-constructor">constructor</span>();
+
+  [NewObject] <code>Document</code> <span data-x="dom-DOMParser-parseFromString">parseFromString</span>((<code data-x="tt-trustedhtml">TrustedHTML</code> or DOMString) string, <span>DOMParserSupportedType</span> type);
+};
+
+enum <dfn enum>DOMParserSupportedType</dfn> {
+  "<span data-x="dom-DOMParserSupportedType-texthtml">text/html</span>",
+  "<span data-x="dom-DOMParserSupportedType-otherwise">text/xml</span>",
+  "<span data-x="dom-DOMParserSupportedType-otherwise">application/xml</span>",
+  "<span data-x="dom-DOMParserSupportedType-otherwise">application/xhtml+xml</span>",
+  "<span data-x="dom-DOMParserSupportedType-otherwise">image/svg+xml</span>"
+};</code></pre>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn data-x="dom-DOMParser-constructor"><code>new DOMParser()</code></dfn> constructor
+  steps are to do nothing.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="DOMParser"
+  data-x="dom-DOMParser-parseFromString"><code>parseFromString(<var>string</var>,
+  <var>type</var>)</code></dfn> method steps are:</p>
+
+  <ol>
+   <li><p>Let <var>compliantString</var> be the result of invoking the <span
+   data-x="tt-getcompliantstring">get trusted type compliant string</span> algorithm with <code
+   data-x="tt-trustedhtml">TrustedHTML</code>, <span>this</span>'s <span>relevant global
+   object</span>, <var>string</var>, "<code data-x="">DOMParser parseFromString</code>", and "<code
+   data-x="">script</code>".</p></li>
+
+   <li><p>Let <var>relevantDocument</var> be <span>this</span>'s <span>relevant global
+   object</span>'s <span data-x="concept-document-window">associated
+   <code>Document</code></span>.</p></li>
+
+   <li>
+    <p>Let <var>document</var> be a new <code>Document</code>, whose <span
+    data-x="concept-document-content-type">content type</span> is <var>type</var>, <span
+    data-x="concept-document-origin">origin</span> is <var>relevantDocument</var>'s <span
+    data-x="concept-document-origin">origin</span>, and <span
+    data-x="concept-document-URL">URL</span> is <var>relevantDocument</var>'s <span
+    data-x="concept-document-URL">URL</span>.</p>
+    <!-- When https://github.com/whatwg/html/issues/4792 gets fixed we need to investigate which of
+         HTMLDocument vs. XMLDocument gets returned, and when, with tests. In particular we'll want
+         to check the application/xhtml+xml case as even for navigation it seems like browsers
+         diverge there: https://github.com/whatwg/html/issues/5157#issuecomment-573052638. -->
+
+    <p class="note">The document's <span data-x="document's character encoding">encoding</span> will
+    be left as its default, of <span>UTF-8</span>. In particular, any XML declarations or
+    <code>meta</code> elements found while parsing <var>compliantString</var> will have no effect.</p>
+   </li>
+
+   <li>
+    <p>Switch on <var>type</var>:</p>
+
+    <dl class="switch">
+     <dt>"<dfn enum-value for="DOMParserSupportedType"
+     data-x="dom-DOMParserSupportedType-texthtml"><code>text/html</code></dfn>"</dt>
+     <dd>
+      <ol>
+       <li><p><span>Parse HTML from a string</span> given <var>document</var> and
+       <var>compliantString</var>.</p></li>
+      </ol>
+
+      <p class="note">Since <var>document</var> does not have a <span
+      data-x="concept-document-bc">browsing context</span>, <span
+      data-x="concept-n-script">scripting is disabled</span>.</p>
+     </dd>
+
+     <dt><dfn data-x="dom-DOMParserSupportedType-otherwise">Otherwise</dfn></dt>
+     <dd>
+      <ol>
+       <li><p>Create an <span>XML parser</span> <var>parser</var>, associated with
+       <var>document</var>, and with <span>XML scripting support disabled</span>.</p></li>
+
+       <li><p>Parse <var>compliantString</var> using <var>parser</var>.</p>
+
+       <li>
+        <p>If the previous step resulted in an XML well-formedness or XML namespace well-formedness
+        error:</p>
+
+        <ol>
+         <li><p><span>Assert</span>: <var>document</var> has no child nodes.</p></li>
+
+         <li><p>Let <var>root</var> be the result of <span data-x="create an element">creating an
+         element</span> given <var>document</var>, "<code data-x="">parsererror</code>", and "<code
+         data-x="">http://www.mozilla.org/newlayout/xml/parsererror.xml</code>".</p></li>
+
+         <li><p>Optionally, add attributes or children to <var>root</var> to describe the nature of
+         the parsing error.</p></li>
+
+         <li><p><span data-x="concept-node-append">Append</span> <var>root</var> to
+         <var>document</var>.</p></li>
+        </ol>
+       </li>
+      </ol>
+     </dd>
+    </dl>
+   </li>
+
+   <li><p>Return <var>document</var>.</p>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>parse HTML from a string</dfn>, given a <code>Document</code> <var>document</var> and a
+  <span>string</span> <var>html</var>:</p>
+
+  <ol>
+   <li><p>Set <var>document</var>'s <span data-x="concept-document-type">type</span> to "<code
+   data-x="">html</code>".</p></li>
+
+   <li><p>Let <var>parser</var> be a new <span>HTML parser</span> whose <span>allow declarative
+   shadow roots</span> is <var>document</var>'s <span
+   data-x="concept-document-allow-declarative-shadow-roots">allow declarative shadow roots</span>,
+   associated with <var>document</var>.</p></li>
+
+   <li><p>Place <var>html</var> into the <span>input stream</span> for <var>parser</var>. The
+   encoding <span data-x="concept-encoding-confidence">confidence</span> is
+   <i>irrelevant</i>.</p></li>
+
+   <li>
+    <p>Start <var>parser</var> and let it run until it has consumed all the characters just
+    inserted into the input stream.</p>
+
+    <p class="note">This might mutate the document's <span
+    data-x="concept-document-mode">mode</span>.</p>
+   </li>
+  </ol>
+  </div>
+
+  </div>
+

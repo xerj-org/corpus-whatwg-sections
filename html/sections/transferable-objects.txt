@@ -1,0 +1,71 @@
+WHATWG HTML — section transferable-objects — <dfn>Transferable objects</dfn>
+
+  <h4 export data-lt="transferable object"><dfn>Transferable objects</dfn></h4>
+
+  <p><span>Transferable objects</span> support being transferred across <span
+  data-x="agent">agents</span>. Transferring is effectively recreating the object while sharing a
+  reference to the underlying data and then detaching the object being transferred. This is useful
+  to transfer ownership of expensive resources. Not all objects are <span>transferable
+  objects</span> and not all aspects of objects that are <span>transferable objects</span> are
+  necessarily preserved when transferred.</p>
+
+  <p class="note">Transferring is an irreversible and non-idempotent operation. Once an object has
+  been transferred, it cannot be transferred, or indeed used, again.</p>
+
+  <div w-nodev>
+
+  <p><span data-x="platform object">Platform objects</span> can be <span>transferable objects</span>
+  if their <span>primary interface</span> is decorated with the <dfn extended-attribute
+  data-lt="Transferable" data-x="Transferable"><code>[Transferable]</code></dfn> IDL <span>extended
+  attribute</span>. Such interfaces must also define the following algorithms:</p>
+
+  <dl>
+   <div var-scope><!-- algo-declaration -->
+   <dt><dfn export>transfer steps</dfn>, taking a <span>platform object</span>
+   <var>value</var> and a <span>Record</span> <var>dataHolder</var></dt>
+   <dd>
+    <p>A set of steps that transfers the data in <var>value</var> into fields of
+    <var>dataHolder</var>. The resulting data held in <var>dataHolder</var> must be
+    independent of any <span>realm</span>.</p>
+
+    <p>These steps may throw an exception if transferral is not possible.</p>
+   </dd>
+   </div>
+
+   <div var-scope><!-- algo-declaration -->
+   <dt><dfn export>transfer-receiving steps</dfn>, taking a <span>Record</span>
+   <var>dataHolder</var> and a <span>platform object</span> <var>value</var></dt>
+   <dd>
+    <p>A set of steps that receives the data in <var>dataHolder</var>, using it to set up
+    <var>value</var> as appropriate. <var>value</var> will be a newly-created instance of the
+    <span>platform object</span> type in question, with none of its internal data set up; setting
+    that up is the job of these steps.</p>
+
+    <p>These steps may throw an exception if it is not possible to receive the transfer.</p>
+   </dd>
+   </div>
+  </dl>
+
+  <p>It is up to the definition of individual platform objects to determine what data is transferred
+  by these steps. Typically the steps are very symmetric.</p>
+
+  <p>The <code data-x="Transferable">[Transferable]</code> extended attribute must take no
+  arguments, and must only appear on an interface. It must not appear more than once on an
+  interface.</p>
+
+  <p>For a given <span>platform object</span>, only the object's <span>primary interface</span> is
+  considered during the transferring process. Thus, if inheritance is involved in defining the
+  interface, each <code data-x="Transferable">[Transferable]</code>-annotated interface in the
+  inheritance chain needs to define standalone <span>transfer steps</span> and
+  <span>transfer-receiving steps</span>, including taking into account any important data that might
+  come from inherited interfaces.</p>
+
+  <p><span data-x="platform object">Platform objects</span> that are <span>transferable
+  objects</span> have a <dfn for="platform object" attribute>[[Detached]]</dfn> internal slot. This
+  is used to ensure that once a platform object has been transferred, it cannot be transferred
+  again.</p>
+
+  <p>Objects defined in the JavaScript specification are handled by the
+  <span>StructuredSerializeWithTransfer</span> abstract operation directly.</p>
+
+  <div algorithm>

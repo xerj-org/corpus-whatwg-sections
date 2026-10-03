@@ -1,0 +1,13 @@
+WHATWG HTML — section dependencies/webtransport — WebTransport
+
+   <dt>WebTransport</dt>
+
+   <dd>
+    <p>The following terms are defined in <cite>WebTransport</cite>: <ref>WEBTRANSPORT</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://w3c.github.io/webtransport/#webtransport"><code>WebTransport</code></dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/webtransport/#context-cleanup-steps"><code>context cleanup steps</code></dfn></li>
+    </ul>
+   </dd>
+

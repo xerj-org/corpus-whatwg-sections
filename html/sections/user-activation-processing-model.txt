@@ -1,0 +1,121 @@
+WHATWG HTML — section user-activation-processing-model — Processing model
+
+  <h4 id="user-activation-processing-model">Processing model</h4>
+
+  <div algorithm>
+  <p>When a user interaction causes firing of an <span>activation triggering input
+  event</span> in a <code>Document</code> <var>document</var>, the user agent must perform the
+  following <dfn>activation notification</dfn> steps <em>before</em> <span
+  data-x="concept-event-dispatch">dispatching</span> the event:</p>
+
+  <ol>
+   <li><p><span>Assert</span>: <var>document</var> is <span>fully active</span>.</p></li>
+
+   <li><p>Let <var>windows</var> be « <var>document</var>'s <span>relevant global object</span>
+   ».</p></li>
+
+   <li><p><span data-x="list extend">Extend</span> <var>windows</var> with the <span
+   data-x="nav-window">active window</span> of each of <var>document</var>'s <span>ancestor
+   navigables</span>.</p></li>
+
+   <li><p><span data-x="list extend">Extend</span> <var>windows</var> with the <span
+   data-x="nav-window">active window</span> of each of <var>document</var>'s <span>descendant
+   navigables</span>, filtered to include only those <span data-x="navigable">navigables</span>
+   whose <span data-x="nav-document">active document</span>'s <span
+   data-x="concept-document-origin">origin</span> is <span>same origin</span> with
+   <var>document</var>'s <span data-x="concept-document-origin">origin</span>.</p></li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>window</var> in <var>windows</var>:</p>
+
+    <ol>
+     <li><p>Set <var>window</var>'s <span>last activation timestamp</span> to the <span>current
+     high resolution time</span>.</p></li>
+
+     <li><p><span>Notify the close watcher manager about user activation</span> given
+     <var>window</var>.</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>An <dfn>activation triggering input event</dfn> is any event whose <code
+  data-x="dom-Event-isTrusted">isTrusted</code> attribute is true and whose <code
+  data-x="dom-Event-type">type</code> is one of:</p>
+
+  <ul>
+   <li><p>"<code data-x="event-keydown">keydown</code>", provided the key is neither the
+   <kbd>Esc</kbd> key nor a shortcut key reserved by the user agent;</li>
+
+   <li><p>"<code data-x="event-mousedown">mousedown</code>";</p></li>
+
+   <li><p>"<code data-x="event-pointerdown">pointerdown</code>", provided the event's
+   <code>pointerType</code> is "<code data-x="">mouse</code>";</p></li>
+
+   <li><p>"<code data-x="event-pointerup">pointerup</code>", provided the event's
+   <code>pointerType</code> is not "<code data-x="">mouse</code>"; or</p></li>
+
+   <li><p>"<code data-x="event-touchend">touchend</code>".</p></li>
+  </ul>
+  </div>
+
+  <div algorithm>
+  <p><span data-x="activation consuming API">Activation consuming APIs</span> defined in this and
+  other specifications can <dfn export>consume user activation</dfn> by performing the following
+  steps, given a <code>Window</code> <var>W</var>:</p>
+
+  <ol>
+   <li><p>If <var>W</var>'s <span data-x="window navigable">navigable</span> is null, then
+   return.</p></li>
+
+   <li><p>Let <var>top</var> be <var>W</var>'s <span data-x="window navigable">navigable</span>'s
+   <span data-x="nav-top">top-level traversable</span>.</p></li>
+
+   <li><p>Let <var>navigables</var> be the <span>inclusive descendant navigables</span> of
+   <var>top</var>'s <span data-x="nav-document">active document</span>.</p></li>
+
+   <li><p>Let <var>windows</var> be the list of <code>Window</code> objects constructed by taking
+   the <span data-x="nav-window">active window</span> of each item in
+   <var>navigables</var>.</p></li>
+
+   <li><p><span data-x="list iterate">For each</span> <var>window</var> in <var>windows</var>, if
+   <var>window</var>'s <span>last activation timestamp</span> is not positive infinity, then set
+   <var>window</var>'s <span>last activation timestamp</span> to negative infinity.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p><span data-x="history-action activation-consuming API">History-action activation-consuming
+  APIs</span> can <dfn>consume history-action user activation</dfn> by performing the following
+  steps, given a <code>Window</code> <var>W</var>:</p>
+
+  <ol>
+   <li><p>If <var>W</var>'s <span data-x="window navigable">navigable</span> is null, then
+   return.</p></li>
+
+   <li><p>Let <var>top</var> be <var>W</var>'s <span data-x="window navigable">navigable</span>'s
+   <span data-x="nav-top">top-level traversable</span>.</p></li>
+
+   <li><p>Let <var>navigables</var> be the <span>inclusive descendant navigables</span> of
+   <var>top</var>'s <span data-x="nav-document">active document</span>.</p></li>
+
+   <li><p>Let <var>windows</var> be the list of <code>Window</code> objects constructed by taking
+   the <span data-x="nav-window">active window</span> of each item in
+   <var>navigables</var>.</p></li>
+
+   <li><p><span data-x="list iterate">For each</span> <var>window</var> in <var>windows</var>, set
+   <var>window</var>'s <span>last history-action activation timestamp</span> to <var>window</var>'s
+   <span>last activation timestamp</span>.</p></li>
+  </ol>
+  </div>
+
+  <p class="note">Note the asymmetry in the sets of <span data-x="browsing context">browsing
+  contexts</span> in the page that are affected by an <span>activation notification</span> vs an
+  <span data-x="consume user activation">activation consumption</span>: an activation consumption
+  changes (to false) the <span>transient activation</span> states for all browsing contexts in the
+  page, but an activation notification changes (to true) the states for a subset of those browsing
+  contexts. The exhaustive nature of consumption here is deliberate: it prevents malicious sites
+  from making multiple calls to an <span>activation consuming API</span> from a single user
+  activation (possibly by exploiting a deep hierarchy of <code>iframe</code>s).</p>
+

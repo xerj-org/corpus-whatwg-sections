@@ -1,0 +1,12 @@
+WHATWG HTML — section dependencies/resource-timing — Resource Timing
+
+   <dt>Resource Timing</dt>
+
+   <dd>
+    <p>The following terms are defined in <cite>Resource Timing</cite>:
+    <ref>RESOURCETIMING</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://w3c.github.io/resource-timing/#dfn-mark-resource-timing">Mark resource timing</dfn></li>
+    </ul>
+

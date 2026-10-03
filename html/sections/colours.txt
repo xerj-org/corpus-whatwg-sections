@@ -1,0 +1,92 @@
+WHATWG HTML — section colours — Legacy colors
+
+  <!--en-GB--><h4 id="colours">Legacy colors</h4>
+
+  <div algorithm>
+  <p>Some obsolete legacy attributes parse colors using the
+  <!--en-GB--><dfn id="rules-for-parsing-a-legacy-colour-value">rules for parsing a legacy color
+  value</dfn>, given a string <var>input</var>. They will return either a CSS color or failure.</p>
+
+  <ol>
+   <li><p>If <var>input</var> is the empty string, then return failure.</p></li>
+
+   <li><p><span>Strip leading and trailing ASCII whitespace</span> from <var>input</var>.</p></li>
+
+   <li><p>If <var>input</var> is an <span>ASCII case-insensitive</span> match for "<code
+   data-x="">transparent</code>", then return failure.</p></li>
+
+   <li>
+    <p>If <var>input</var> is an <span>ASCII case-insensitive</span> match for one of the <span
+    data-x="named color">named colors</span>, then return the CSS color corresponding to that
+    keyword. <ref>CSSCOLOR</ref></p>
+
+    <p class="note"><a
+    href="https://www.w3.org/TR/css3-color/#css2-system">CSS2 System
+    Colors</a> are not recognized.</p>
+   </li>
+
+   <li>
+    <p>If <var>input</var>'s <span>code point length</span> is four, and the first character in
+    <var>input</var> is U+0023 (#), and the last three characters of <var>input</var> are all
+    <span>ASCII hex digits</span>:</p>
+
+    <ol>
+     <li><p>Let <var>result</var> be a CSS color.</p>
+
+     <li><p>Interpret the second character of <var>input</var> as a hexadecimal digit; let
+     the red component of <var>result</var> be the resulting number multiplied by 17.</p>
+
+     <li><p>Interpret the third character of <var>input</var> as a hexadecimal digit; let
+     the green component of <var>result</var> be the resulting number multiplied by 17.</p>
+
+     <li><p>Interpret the fourth character of <var>input</var> as a hexadecimal digit; let
+     the blue component of <var>result</var> be the resulting number multiplied by 17.</p>
+
+     <li><p>Return <var>result</var>.</p>
+    </ol>
+   </li>
+
+   <li><p>Replace any <span data-x="code point">code points</span> greater than U+FFFF in
+   <var>input</var> (i.e., any characters that are not in the basic multilingual plane) with "<code
+   data-x="">00</code>".</p></li>
+
+   <li><p>If <var>input</var>'s <span>code point length</span> is greater than 128, truncate
+   <var>input</var>, leaving only the first 128 characters.</p></li>
+
+   <li><p>If the first character in <var>input</var> is U+0023 (#), then remove it.</p></li>
+
+   <li><p>Replace any character in <var>input</var> that is not an <span data-x="ASCII hex
+   digits">ASCII hex digit</span> with U+0030 (0).</p></li>
+
+   <li><p>While <var>input</var>'s <span>code point length</span> is zero or not a multiple of
+   three, append U+0030 (0) to <var>input</var>.</p></li>
+
+   <li><p>Split <var>input</var> into three strings of equal <span>code point length</span>, to
+   obtain three components. Let <var>length</var> be the <span>code point length</span> that all of
+   those components have (one third the <span>code point length</span> of <var>input</var>).</p></li>
+
+   <li><p>If <var>length</var> is greater than 8, then remove the leading <span
+   data-x=""><var>length</var>-8</span> characters in each component, and let <var>length</var> be 8.</p></li>
+
+   <li><p>While <var>length</var> is greater than two and the first character in each
+   component is U+0030 (0), remove that character and reduce <var>length</var> by one.</p></li>
+
+   <li><p>If <var>length</var> is <em>still</em> greater than two, truncate each component,
+   leaving only the first two characters in each.</p></li>
+
+   <li><p>Let <var>result</var> be a CSS color.</p>
+
+   <li><p>Interpret the first component as a hexadecimal number; let the red component of <var>result</var> be the resulting number.</p></li>
+
+   <li><p>Interpret the second component as a hexadecimal number; let the green component of <var>result</var> be the resulting number.</p></li>
+
+   <li><p>Interpret the third component as a hexadecimal number; let the blue component of <var>result</var> be the resulting number.</p></li>
+
+   <li><p>Return <var>result</var>.</p>
+  </ol>
+  </div>
+
+  </div>
+
+
+

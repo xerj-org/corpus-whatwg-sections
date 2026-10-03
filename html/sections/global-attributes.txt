@@ -1,0 +1,1349 @@
+WHATWG HTML — section global-attributes — <dfn>Global attributes</dfn>
+
+  <h4><dfn>Global attributes</dfn></h4>
+
+  <p>The following attributes are common to and may be specified on all <span>HTML
+  elements</span><span w-nodev> (even those not defined in this specification)</span>:</p>
+
+  <ul class="brief">
+   <li><code data-x="attr-accesskey">accesskey</code></li>
+   <li><code data-x="attr-autocapitalize">autocapitalize</code></li>
+   <li><code data-x="attr-autocorrect">autocorrect</code></li>
+   <li><code data-x="attr-fe-autofocus">autofocus</code></li>
+   <li><code data-x="attr-contenteditable">contenteditable</code></li>
+   <li><code data-x="attr-dir">dir</code></li>
+   <li><code data-x="attr-draggable">draggable</code></li>
+   <li><code data-x="attr-enterkeyhint">enterkeyhint</code></li>
+   <li><code data-x="attr-headingoffset">headingoffset</code></li>
+   <li><code data-x="attr-headingreset">headingreset</code></li>
+   <li><code data-x="attr-hidden">hidden</code></li>
+   <li><code data-x="attr-inert">inert</code></li>
+   <li><code data-x="attr-inputmode">inputmode</code></li>
+   <li><code data-x="attr-is">is</code></li>
+   <li><code data-x="attr-itemid">itemid</code></li>
+   <li><code data-x="attr-itemprop">itemprop</code></li>
+   <li><code data-x="attr-itemref">itemref</code></li>
+   <li><code data-x="attr-itemscope">itemscope</code></li>
+   <li><code data-x="attr-itemtype">itemtype</code></li>
+   <li><code data-x="attr-lang">lang</code></li>
+   <li><code data-x="attr-nonce">nonce</code></li>
+   <li><code data-x="attr-popover">popover</code></li>
+   <li><code data-x="attr-spellcheck">spellcheck</code></li>
+   <li><code data-x="attr-style">style</code></li>
+   <li><code data-x="attr-tabindex">tabindex</code></li>
+   <li><code data-x="attr-title">title</code></li>
+   <li><code data-x="attr-translate">translate</code></li>
+   <li><code data-x="attr-writingsuggestions">writingsuggestions</code></li>
+  </ul>
+
+  <div w-nodev>
+
+  <p>These attributes are only defined by this specification as attributes for <span>HTML
+  elements</span>. When this specification refers to elements having these attributes, elements from
+  namespaces that are not defined as having these attributes must not be considered as being
+  elements with these attributes.</p>
+
+  <div class="example">
+
+   <p>For example, in the following XML fragment, the "<code data-x="">bogus</code>" element does not
+   have a <code data-x="attr-dir">dir</code> attribute as defined in this specification, despite
+   having an attribute with the literal name "<code data-x="">dir</code>". Thus, <span>the
+   directionality</span> of the inner-most <code>span</code> element is '<span
+   data-x="concept-rtl">rtl</span>', inherited from the <code>div</code> element indirectly through
+   the "<code data-x="">bogus</code>" element.</p>
+
+   <pre class="bad"><code class="html">&lt;div xmlns="http://www.w3.org/1999/xhtml" dir="rtl">
+ &lt;bogus xmlns="https://example.net/ns" dir="ltr">
+  &lt;span xmlns="http://www.w3.org/1999/xhtml">
+  &lt;/span>
+ &lt;/bogus>
+&lt;/div></code></pre>
+
+  </div>
+
+  </div>
+
+  <hr>
+
+  <p><cite>DOM</cite> defines the user agent requirements for the <dfn element-attr for="global"
+  data-x="attr-class" id="classes"><code>class</code></dfn>, <dfn element-attr for="global"
+  data-x="attr-id" id="the-id-attribute"><code>id</code></dfn>, and <dfn element-attr for="global"
+  data-x="attr-slot"><code>slot</code></dfn> attributes for any element in any namespace.
+  <ref>DOM</ref></p>
+
+  <p>The <code data-x="attr-class">class</code>, <code data-x="attr-id">id</code>, and <code
+  data-x="attr-slot">slot</code> attributes may be specified on all <span>HTML elements</span>.</p>
+
+  <p>When specified on <span>HTML elements</span>, the <code data-x="attr-class">class</code>
+  attribute must have a value that is a <span>set of space-separated tokens</span> representing the
+  various classes that the element belongs to.</p>
+
+  <div class="note">
+
+  <p>Assigning classes to an element affects class matching in selectors in CSS, the <code
+  data-x="dom-document-getElementsByClassName">getElementsByClassName()</code> method in the DOM,
+  and other such features.</p>
+
+  <p>There are no additional restrictions on the tokens authors can use in the <code
+  data-x="attr-class">class</code> attribute, but authors are encouraged to use values that describe
+  the nature of the content, rather than values that describe the desired presentation of the
+  content.</p>
+
+  </div>
+
+  <p>When specified on <span>HTML elements</span>, the <code data-x="attr-id">id</code> attribute
+  value must be unique amongst all the <span data-x="concept-id">IDs</span> in the element's
+  <span>tree</span> and must contain at least one character. The value must not contain any
+  <span>ASCII whitespace</span>.</p>
+
+  <!-- ASCII whitespace is disallowed because space-separated lists of IDs otherwise would not be
+  able to reach all valid IDs -->
+
+  <div class="note">
+
+  <p>The <code data-x="attr-id">id</code> attribute specifies its element's <span
+  data-x="concept-id">unique identifier (ID)</span>.</p>
+
+  <p>There are no other restrictions on what form an ID can take; in particular, IDs can consist of
+  just digits, start with a digit, start with an underscore, consist of just punctuation, etc.</p>
+
+  <p>An element's <span data-x="concept-id">unique identifier</span> can be used for a variety of
+  purposes, most notably as a way to link to specific parts of a document using <span
+  data-x="concept-url-fragment">fragments</span>, as a way to target an element when scripting, and
+  as a way to style a specific element from CSS.</p>
+
+  </div>
+
+  <div w-nodev>
+
+  <p>Identifiers are opaque strings. Particular meanings should not be derived from the value of the
+  <code data-x="attr-id">id</code> attribute.</p>
+
+  </div>
+
+  <p>There are no conformance requirements for the <code data-x="attr-slot">slot</code> attribute
+  specific to <span>HTML elements</span>.</p>
+
+  <p class="note">The <code data-x="attr-slot">slot</code> attribute is used to <span>assign a
+  slot</span> to an element: an element with a <code data-x="attr-slot">slot</code> attribute is
+  <span data-x="assign a slot">assigned</span> to the <span data-x="concept-slot">slot</span>
+  created by the <code>slot</code> element whose <span data-x="attr-slot-name">name</span>
+  attribute's value matches that <code data-x="attr-slot">slot</code> attribute's value — but only
+  if that <code>slot</code> element finds itself in the <span>shadow tree</span> whose
+  <span>root</span>'s <span data-x="concept-DocumentFragment-host">host</span> has the corresponding
+  <code data-x="attr-slot">slot</code> attribute value.</p>
+
+  <hr>
+
+  <p>To enable assistive technology products to expose a more fine-grained interface than is
+  otherwise possible with HTML elements and attributes, a set of <a href="#wai-aria">annotations
+  for assistive technology products</a> can be specified (the ARIA <code
+  data-x="attr-aria-role">role</code> and <code data-x="attr-aria-*">aria-*</code> attributes).
+  <ref>ARIA</ref></p>
+
+  <hr>
+
+  <p>The following <span>event handler content attributes</span> may be specified on any <span
+  data-x="HTML elements">HTML element</span>:</p>
+
+  <ul class="brief">
+   <li><code data-x="handler-onauxclick">onauxclick</code></li>
+   <li><code data-x="handler-onbeforeinput">onbeforeinput</code></li>
+   <li><code data-x="handler-onbeforematch">onbeforematch</code></li>
+   <li><code data-x="handler-onbeforetoggle">onbeforetoggle</code></li>
+   <li><code data-x="handler-onblur">onblur</code>*</li>
+   <li><code data-x="handler-oncancel">oncancel</code></li>
+   <li><code data-x="handler-oncanplay">oncanplay</code></li>
+   <li><code data-x="handler-oncanplaythrough">oncanplaythrough</code></li>
+   <li><code data-x="handler-onchange">onchange</code></li>
+   <li><code data-x="handler-onclick">onclick</code></li>
+   <li><code data-x="handler-onclose">onclose</code></li>
+   <li><code data-x="handler-oncommand">oncommand</code></li>
+   <li><code data-x="handler-oncontextlost">oncontextlost</code></li>
+   <li><code data-x="handler-oncontextmenu">oncontextmenu</code></li>
+   <li><code data-x="handler-oncontextrestored">oncontextrestored</code></li>
+   <li><code data-x="handler-oncopy">oncopy</code></li>
+   <li><code data-x="handler-oncuechange">oncuechange</code></li>
+   <li><code data-x="handler-oncut">oncut</code></li>
+   <li><code data-x="handler-ondblclick">ondblclick</code></li>
+   <li><code data-x="handler-ondrag">ondrag</code></li>
+   <li><code data-x="handler-ondragend">ondragend</code></li>
+   <li><code data-x="handler-ondragenter">ondragenter</code></li>
+   <li><code data-x="handler-ondragleave">ondragleave</code></li>
+   <li><code data-x="handler-ondragover">ondragover</code></li>
+   <li><code data-x="handler-ondragstart">ondragstart</code></li>
+   <li><code data-x="handler-ondrop">ondrop</code></li>
+   <li><code data-x="handler-ondurationchange">ondurationchange</code></li>
+   <li><code data-x="handler-onemptied">onemptied</code></li>
+   <li><code data-x="handler-onended">onended</code></li>
+   <li><code data-x="handler-onerror">onerror</code>*</li>
+   <li><code data-x="handler-onfocus">onfocus</code>*</li>
+   <li><code data-x="handler-onformdata">onformdata</code></li>
+   <li><code data-x="handler-oninput">oninput</code></li>
+   <li><code data-x="handler-oninvalid">oninvalid</code></li>
+   <li><code data-x="handler-onkeydown">onkeydown</code></li>
+   <li><code data-x="handler-onkeypress">onkeypress</code></li>
+   <li><code data-x="handler-onkeyup">onkeyup</code></li>
+   <li><code data-x="handler-onload">onload</code>*</li>
+   <li><code data-x="handler-onloadeddata">onloadeddata</code></li>
+   <li><code data-x="handler-onloadedmetadata">onloadedmetadata</code></li>
+   <li><code data-x="handler-onloadstart">onloadstart</code></li>
+   <li><code data-x="handler-onmousedown">onmousedown</code></li>
+   <li><code data-x="handler-onmouseenter">onmouseenter</code></li>
+   <li><code data-x="handler-onmouseleave">onmouseleave</code></li>
+   <li><code data-x="handler-onmousemove">onmousemove</code></li>
+   <li><code data-x="handler-onmouseout">onmouseout</code></li>
+   <li><code data-x="handler-onmouseover">onmouseover</code></li>
+   <li><code data-x="handler-onmouseup">onmouseup</code></li>
+   <li><code data-x="handler-onpaste">onpaste</code></li>
+   <li><code data-x="handler-onpause">onpause</code></li>
+   <li><code data-x="handler-onplay">onplay</code></li>
+   <li><code data-x="handler-onplaying">onplaying</code></li>
+   <li><code data-x="handler-onprogress">onprogress</code></li>
+   <li><code data-x="handler-onratechange">onratechange</code></li>
+   <li><code data-x="handler-onreset">onreset</code></li>
+   <li><code data-x="handler-onresize">onresize</code>*</li>
+   <li><code data-x="handler-onscroll">onscroll</code>*</li>
+   <li><code data-x="handler-onscrollend">onscrollend</code>*</li>
+   <li><code data-x="handler-onsecuritypolicyviolation">onsecuritypolicyviolation</code></li>
+   <li><code data-x="handler-onseeked">onseeked</code></li>
+   <li><code data-x="handler-onseeking">onseeking</code></li>
+   <li><code data-x="handler-onselect">onselect</code></li>
+   <li><code data-x="handler-onslotchange">onslotchange</code></li>
+   <li><code data-x="handler-onstalled">onstalled</code></li>
+   <li><code data-x="handler-onsubmit">onsubmit</code></li>
+   <li><code data-x="handler-onsuspend">onsuspend</code></li>
+   <li><code data-x="handler-ontimeupdate">ontimeupdate</code></li>
+   <li><code data-x="handler-ontoggle">ontoggle</code></li>
+   <li><code data-x="handler-onvolumechange">onvolumechange</code></li>
+   <li><code data-x="handler-onwaiting">onwaiting</code></li>
+   <li><code data-x="handler-onwheel">onwheel</code></li>
+  </ul>
+
+  <p class="note">The attributes marked with an asterisk have a different meaning when specified on
+  <code>body</code> elements as those elements expose <span>event handlers</span> of the
+  <code>Window</code> object with the same names.</p>
+
+  <p class="note">While these attributes apply to all elements, they are not useful on all elements.
+  For example, only <span data-x="media element">media elements</span> will ever receive a <code
+  data-x="event-media-volumechange">volumechange</code> event fired by the user agent.</p>
+
+  <hr>
+
+  <p><span data-x="custom data attribute">Custom data attributes</span> (e.g. <code
+  data-x="">data-foldername</code> or <code data-x="">data-msgid</code>) can be specified on any
+  <span data-x="HTML elements">HTML element</span>, to store custom data, state, annotations, and
+  similar, specific to the page.</p>
+
+  <hr>
+
+  <p>In <span>HTML documents</span>, elements in the <span>HTML namespace</span> may have an <code
+  data-x="">xmlns</code> attribute specified, if, and only if, it has the exact value "<code
+  data-x="">http://www.w3.org/1999/xhtml</code>". This does not apply to <span>XML
+  documents</span>.</p>
+
+  <p class="note">In HTML, the <code data-x="">xmlns</code> attribute has absolutely no effect. It
+  is basically a talisman. It is allowed merely to make migration to and from XML mildly easier.
+  When parsed by an <span>HTML parser</span>, the attribute ends up in no namespace. In XML, the
+  attribute is part of the namespace declaration mechanism and always ends up in the "<code
+  data-x="">http://www.w3.org/2000/xmlns/</code>" namespace.</p>
+
+  <hr>
+
+  <p><cite>XML</cite> also allows the use of the <code data-x="attr-xml-space">xml:space</code>
+  attribute in the <span>XML namespace</span> on any element in an <span data-x="XML documents">XML
+  document</span>. This attribute has no effect on <span>HTML elements</span>, as the default
+  behavior in HTML is to preserve whitespace. <ref>XML</ref></p>
+
+  <p class="note">There is no way to serialize the <code data-x="attr-xml-space">xml:space</code>
+  attribute on <span>HTML elements</span> in the <code>text/html</code> syntax.</p>
+
+
+
+  <h5>The <code data-x="attr-title">title</code> attribute</h5>
+
+  <p>The <dfn element-attr for="html-global"><code data-x="attr-title">title</code></dfn> attribute
+  <span>represents</span> advisory information for the element, such as would be appropriate for a
+  tooltip. On a link, this could be the title or a description of the target resource; on an image,
+  it could be the image credit or a description of the image; on a paragraph, it could be a footnote
+  or commentary on the text; on a citation, it could be further information about the source; on
+  <span>interactive content</span>, it could be a label for, or instructions for, use of the
+  element; and so forth.  The value is text.</p>
+
+  <!-- search for title-warning if modifying this paragraph -->
+  <p class="note">Relying on the <code data-x="attr-title">title</code> attribute is currently
+  discouraged as many user agents do not expose the attribute in an accessible manner as required by
+  this specification (e.g., requiring a pointing device such as a mouse to cause a tooltip to
+  appear, which excludes keyboard-only users and touch-only users, such as anyone with a modern
+  phone or tablet).</p>
+
+  <p>If this attribute is omitted from an element, then it implies that the <code
+  data-x="attr-title">title</code> attribute of the nearest ancestor <span data-x="HTML
+  elements">HTML element</span> with a <code data-x="attr-title">title</code> attribute set is also
+  relevant to this element. Setting the attribute overrides this, explicitly stating that the
+  advisory information of any ancestors is not relevant to this element. Setting the attribute to
+  the empty string indicates that the element has no advisory information.</p>
+
+  <p>If the <code data-x="attr-title">title</code> attribute's value contains U+000A LINE FEED (LF)
+  characters, the content is split into multiple lines. Each U+000A LINE FEED (LF) character
+  represents a line break.</p>
+
+  <div class="example">
+   <p>Caution is advised with respect to the use of newlines in <code
+   data-x="attr-title">title</code> attributes.</p>
+
+   <p>For instance, the following snippet actually defines an abbreviation's expansion <em>with a
+   line break in it</em>:</p>
+
+   <pre class="bad"><code class="html">&lt;p>My logs show that there was some interest in &lt;abbr title="Hypertext
+Transport Protocol">HTTP&lt;/abbr> today.&lt;/p></code></pre> <!-- DO NOT REWRAP THIS LINE -->
+  </div>
+
+  <p>Some elements, such as <code>link</code>, <code>abbr</code>, and <code>input</code>, define
+  additional semantics for the <code data-x="attr-title">title</code> attribute beyond the semantics
+  described above.</p> <!-- the other two are <code>style</code> and <code>dfn</code> -->
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn>advisory information</dfn> of an element is the value that the following algorithm
+  returns, with the algorithm being aborted once a value is returned. When the algorithm returns the
+  empty string, then there is no advisory information.</p>
+
+  <ol>
+   <li><p>If the element has a <code data-x="attr-title">title</code> attribute, then return the
+   result of running <span>normalize newlines</span> on its value.</p></li>
+
+   <li><p>If the element has a parent element, then return the parent element's <span>advisory
+   information</span>.</p></li>
+
+   <li><p>Return the empty string.</p></li>
+  </ol>
+  </div>
+
+  <p>User agents should inform the user when elements have <span>advisory information</span>,
+  otherwise the information would not be discoverable.</p>
+
+  <hr>
+
+  </div>
+
+
+
+  <h5>The <code data-x="attr-lang">lang</code> and <code data-x="attr-xml-lang">xml:lang</code>
+  attributes</h5>
+
+  <p>The <dfn element-attr for="html-global"><code data-x="attr-lang">lang</code></dfn> attribute
+  (in no namespace) specifies the primary language for the element's contents and for any of the
+  element's attributes that contain text. Its value must be a valid BCP 47 language tag, or the
+  empty string. Setting the attribute to the empty string indicates that the primary language is
+  unknown<!-- UA conformance requirements for this are below -->. <ref>BCP47</ref></p>
+
+  <p>The <dfn data-x="attr-xml-lang" data-x-href="https://www.w3.org/TR/xml/#sec-lang-tag"><code
+  data-x="">lang</code></dfn> attribute in the <span>XML namespace</span> is defined in XML.
+  <ref>XML</ref></p>
+
+  <p>If these attributes are omitted from an element, then the language of this element is the same
+  as the language of its parent element, if any (except for <code>slot</code> elements in a
+  <span>shadow tree</span>).</p>
+
+  <p>The <code data-x="attr-lang">lang</code> attribute in no namespace may be used on any <span
+  data-x="HTML elements">HTML element</span>.</p>
+
+  <p>The <span data-x="attr-xml-lang"><code data-x="">lang</code> attribute in the <span>XML
+  namespace</span></span> may be used on <span>HTML elements</span> in <span>XML documents</span>,
+  as well as elements in other namespaces if the relevant specifications allow it (in particular,
+  MathML and SVG allow <span data-x="attr-xml-lang"><code data-x="">lang</code> attributes in the
+  <span>XML namespace</span></span> to be specified on their elements). If both the <code
+  data-x="attr-lang">lang</code> attribute in no namespace and the <span data-x="attr-xml-lang"><code
+  data-x="">lang</code> attribute in the <span>XML namespace</span></span> are specified on the same
+  element, they must have exactly the same value when compared in an <span>ASCII
+  case-insensitive</span> manner.</p>
+
+  <p>Authors must not use the <span data-x="attr-xml-lang"><code data-x="">lang</code> attribute in
+  the <span>XML namespace</span></span> on <span>HTML elements</span> in <span>HTML
+  documents</span>. To ease migration to and from XML, authors may specify an attribute in no
+  namespace with no prefix and with the literal localname "<code data-x="">xml:lang</code>" on
+  <span>HTML elements</span> in <span>HTML documents</span>, but such attributes must only be
+  specified if a <code data-x="attr-lang">lang</code> attribute in no namespace is also specified,
+  and both attributes must have the same value when compared in an <span>ASCII
+  case-insensitive</span> manner.</p>
+
+  <p class="note">The attribute in no namespace with no prefix and with the literal localname "<code
+  data-x="">xml:lang</code>" has no effect on language processing.</p>
+
+  <div w-nodev>
+
+  <hr>
+
+  <div algorithm>
+  <p>To determine the <dfn export for="Node">language</dfn> of a node, user agents must use the
+  first appropriate step in the following list:</p>
+
+  <dl class="switch">
+   <dt>If the node is an element that has a <span data-x="attr-xml-lang"><code data-x="">lang</code>
+   attribute in the <span>XML namespace</span></span> set</dt>
+   <dd><p>Use the value of that attribute.</p></dd>
+
+   <dt>If the node is an <span data-x="HTML elements">HTML element</span> or an element in the
+   <span>SVG namespace</span>, and it has a <code data-x="attr-lang">lang</code> in no namespace
+   attribute set</dt>
+   <dd><p>Use the value of that attribute.</p></dd>
+
+   <dt>If the node's parent is a <span>shadow root</span></dt>
+   <dd><p>Use the <span>language</span> of that <span>shadow root</span>'s <span
+   data-x="concept-DocumentFragment-host">host</span>.</p></dd>
+
+   <!-- this assumes that if there's an ancestor element, the parent must be an element -->
+   <dt>If the node's <span>parent element</span> is not null</dt>
+   <dd><p>Use the <span>language</span> of that <span>parent element</span>.</p></dd>
+
+   <dt>Otherwise</dt>
+   <dd><p>If there is a <span>pragma-set default language</span> set, then that is the language of
+   the node. If there is no <span>pragma-set default language</span> set, then language information
+   from a higher-level protocol (such as HTTP), if any, must be used as the final fallback language
+   instead. In the absence of any such language information, and in cases where the higher-level
+   protocol reports multiple languages, the language of the node is unknown, and the corresponding
+   language tag is the empty string.</p></dd>
+  </dl>
+  </div>
+
+  <p>If the resulting value is not a recognized language tag, then it must be treated as an unknown
+  language having the given language tag, distinct from all other languages. For the purposes of
+  roundtripping or communicating with other services that expect language tags, user agents should
+  pass unknown language tags through unmodified, and tagged as being BCP 47 language tags, so that
+  subsequent services do not interpret the data as another type of language description.
+  <ref>BCP47</ref></p>
+
+  <p class="example">Thus, for instance, an element with <code data-x="">lang="xyzzy"</code> would be
+  matched by the selector <code data-x="">:lang(xyzzy)</code> (e.g. in CSS), but it would not be
+  matched by <code data-x="">:lang(abcde)</code>, even though both are equally invalid. Similarly, if
+  a web browser and screen reader working in unison communicated about the language of the element,
+  the browser would tell the screen reader that the language was "xyzzy", even if it knew it was
+  invalid, just in case the screen reader actually supported a language with that tag after all.
+  Even if the screen reader supported both BCP 47 and another syntax for encoding language names,
+  and in that other syntax the string "xyzzy" was a way to denote the Belarusian language, it would
+  be <em>incorrect</em> for the screen reader to then start treating text as Belarusian, because
+  "xyzzy" is not how Belarusian is described in BCP 47 codes (BCP 47 uses the code "be" for
+  Belarusian).</p>
+
+  <p>If the resulting value is the empty string, then it must be interpreted as meaning that the
+  language of the node is <dfn data-x="concept-explicitly-unknown">explicitly unknown</dfn>.</p>
+
+  <hr>
+
+  <p>User agents may use the element's language to determine proper processing or rendering (e.g. in
+  the selection of appropriate fonts or pronunciations, for dictionary selection, or for the user
+  interfaces of form controls such as date pickers). <!--User agents must not use the element's
+  language to determine text directionality. (commented out because text directionality is a
+  rendering-level concern.)--></p>
+
+  <!-- Date pickers would use the language information for determining the language of months, for
+  example. They should use the page's _locale_ to figure out the format itself, not the language.
+  There's currently no way to determine the page's locale except by guessing from the charset and
+  language... -->
+
+  </div>
+
+
+
+  <h5>The <code data-x="attr-translate">translate</code> attribute</h5>
+
+  <!-- v2: a way to translate the declensions of the word(s), but keep the actual roots the same
+           for examples, see https://www.w3.org/Bugs/Public/show_bug.cgi?id=17954 -->
+
+  <p>The <dfn element-attr for="html-global"><code data-x="attr-translate">translate</code></dfn>
+  attribute is used to specify whether an element's attribute values and the values of its
+  <code>Text</code> node children are to be translated when the page is localized, or whether to
+  leave them unchanged. It is an <span>enumerated attribute</span> with the
+  following keywords and states:</p>
+
+  <table>
+   <thead>
+    <tr>
+     <th>Keyword
+     <th>State
+     <th>Brief description
+   <tbody>
+    <tr>
+     <td><dfn attr-value for="html-global/translate"><code
+     data-x="attr-translate-yes-keyword">yes</code></dfn>
+     <td><dfn data-x="attr-translate-yes-state">Yes</dfn>
+     <td>Sets <span>translation mode</span> to <span>translate-enabled</span>.
+    <tr>
+     <td><dfn attr-value for="html-global/translate"><code
+     data-x="attr-translate-no-keyword">no</code></dfn>
+     <td><dfn data-x="attr-translate-no-state">No</dfn>
+     <td>Sets <span>translation mode</span> to <span>no-translate</span>.
+  </table>
+
+  <div algorithm>
+  <p>The attribute's <i data-x="missing value default">missing value default</i> and <i
+  data-x="invalid value default">invalid value default</i> are both the <dfn
+  data-x="attr-translate-inherit-state">Inherit</dfn> state, and its <i data-x="empty value
+  default">empty value default</i> is the <span data-x="attr-translate-yes-state">Yes</span>
+  state.</p>
+  </div>
+
+  <div algorithm>
+  <p>Each element (even non-HTML elements) has a <dfn>translation mode</dfn>, which is in either the
+  <span>translate-enabled</span> state or the <span>no-translate</span> state. If an <span
+  data-x="HTML elements">HTML element</span>'s <code data-x="attr-translate">translate</code>
+  attribute is in the <span data-x="attr-translate-yes-state">Yes</span> state, then the element's
+  <span>translation mode</span> is in the <span>translate-enabled</span> state; otherwise, if the
+  element's <code data-x="attr-translate">translate</code> attribute is in the <span
+  data-x="attr-translate-no-state">No</span> state, then the element's <span>translation mode</span>
+  is in the <span>no-translate</span> state. Otherwise, either the element's <code
+  data-x="attr-translate">translate</code> attribute is in the <span
+  data-x="attr-translate-inherit-state">Inherit</span> state, or the element is not an <span
+  data-x="HTML elements">HTML element</span> and thus does not have a <code
+  data-x="attr-translate">translate</code> attribute; in either case, the element's
+  <span>translation mode</span> is in the same state as its <span>parent element</span>'s, if any,
+  or in the <span>translate-enabled</span> state, if the element's <span>parent element</span> is
+  null.</p>
+  </div>
+
+  <p>When an element is in the <dfn>translate-enabled</dfn> state, the element's <span>translatable
+  attributes</span> and the values of its <code>Text</code> node children are to be translated when
+  the page is localized.</p>
+
+  <p>When an element is in the <dfn>no-translate</dfn> state, the element's attribute values and the
+  values of its <code>Text</code> node children are to be left as-is when the page is localized,
+  e.g. because the element contains a person's name or a name of a computer program.</p>
+
+  <div algorithm>
+  <p>The following attributes are <dfn>translatable attributes</dfn>:</p>
+
+  <ul class="brief">
+   <li><code data-x="attr-th-abbr">abbr</code> on <code>th</code> elements</li>
+   <li><code data-x="">alt</code> on <code data-x="attr-area-alt">area</code>,
+                                     <code data-x="attr-img-alt">img</code>, and
+                                     <code data-x="attr-input-alt">input</code> elements</li>
+   <li><code data-x="attr-meta-content">content</code> on <code>meta</code> elements, if the <code data-x="attr-meta-name">name</code> attribute specifies a metadata name whose value is known to be translatable</li>
+   <li><code data-x="attr-hyperlink-download">download</code> on <code>a</code> and
+                                                                 <code>area</code> elements</li>
+   <li><code data-x="">label</code> on <code data-x="attr-optgroup-label">optgroup</code>,
+                                       <code data-x="attr-option-label">option</code>, and
+                                       <code data-x="attr-track-label">track</code> elements</li>
+   <li><code data-x="attr-lang">lang</code> on <span>HTML elements</span>; must be "translated" to match the language used in the translation</li>
+   <li><code data-x="">placeholder</code> on <code data-x="attr-input-placeholder">input</code> and
+                                             <code data-x="attr-textarea-placeholder">textarea</code> elements</li>
+   <li><code data-x="attr-iframe-srcdoc">srcdoc</code> on <code>iframe</code> elements; must be parsed and recursively processed</li>
+   <li><code data-x="attr-style">style</code> on <span>HTML elements</span>; must be parsed and
+   recursively processed (e.g. for the values of <span>'content'</span> properties)</li>
+   <li><code data-x="attr-title">title</code> on all <span>HTML elements</span></li>
+   <li><code data-x="attr-input-value">value</code> on <code>input</code> elements with a
+       <code data-x="attr-input-type">type</code> attribute in the <span data-x="attr-input-type-button">Button</span> state
+       or the <span data-x="attr-input-type-reset">Reset Button</span> state</li>
+       <!-- <input value> on other types is excluded since we can't predict if it interferes with server-side processing -->
+  </ul>
+  </div>
+
+  <p>Other specifications may define other attributes that are also <span>translatable
+  attributes</span>. For example, <cite>ARIA</cite> would define the <code
+  data-x="attr-aria-label">aria-label</code> attribute as translatable.</p>
+
+  <div w-nodev>
+
+  <hr>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLElement"><code data-x="dom-translate">translate</code></dfn> IDL
+  attribute must, on getting, return true if the element's <span>translation mode</span> is
+  <span>translate-enabled</span>, and false otherwise. On setting, it must set the content
+  attribute's value to "<code data-x="">yes</code>" if the new value is true, and set the content
+  attribute's value to "<code data-x="">no</code>" otherwise.</p>
+  </div>
+
+  </div>
+
+  <div class="example">
+
+   <p>In this example, everything in the document is to be translated when the page is localized,
+   except the sample keyboard input and sample program output:</p>
+
+   <pre><code class="html">&lt;!DOCTYPE HTML>
+&lt;html lang=en> &lt;!-- default on the document element is translate=yes -->
+ &lt;head>
+  &lt;title>The Bee Game&lt;/title> &lt;!-- implied translate=yes inherited from ancestors -->
+ &lt;/head>
+ &lt;body>
+  &lt;p>The Bee Game is a text adventure game in English.&lt;/p>
+  &lt;p>When the game launches, the first thing you should do is type
+  &lt;kbd <strong>translate=no</strong>>eat honey&lt;/kbd>. The game will respond with:&lt;/p>
+  &lt;pre>&lt;samp <strong>translate=no</strong>>Yum yum! That was some good honey!&lt;/samp>&lt;/pre>
+ &lt;/body>
+&lt;/html></code></pre>
+
+  </div>
+
+
+
+  <h5>The <code data-x="attr-dir">dir</code> attribute</h5>
+
+  <p>The <dfn element-attr for="html-global"><code data-x="attr-dir">dir</code></dfn> attribute
+  is an <span>enumerated attribute</span> with the following keywords and states:</p>
+
+  <table>
+   <thead>
+    <tr>
+     <th>Keyword
+     <th>State
+     <th>Brief description
+   <tbody>
+    <tr>
+     <td><dfn attr-value for="html-global/dir"><code data-x="attr-dir-ltr">ltr</code></dfn>
+     <td><dfn data-x="attr-dir-ltr-state">LTR</dfn>
+     <td>The contents of the element are explicitly directionally isolated left-to-right text.
+    <tr>
+     <td><dfn attr-value for="html-global/dir"><code data-x="attr-dir-rtl">rtl</code></dfn>
+     <td><dfn data-x="attr-dir-rtl-state">RTL</dfn>
+     <td>The contents of the element are explicitly directionally isolated right-to-left text.
+    <tr>
+     <td><dfn attr-value for="html-global/dir"><code data-x="attr-dir-auto">auto</code></dfn>
+     <td><dfn data-x="attr-dir-auto-state">Auto</dfn>
+     <td>The contents of the element are explicitly directionally isolated text, but the direction
+     is to be determined programmatically using the contents of the element (as described
+     below).
+  </table>
+
+  <div class="note">
+   <p>The heuristic used by the <span data-x="attr-dir-auto-state">Auto</span> state is very crude
+   (it just looks at the first character with a strong directionality, in a manner analogous to the
+   Paragraph Level determination in the bidirectional algorithm). Authors are urged to only use this
+   value as a last resort when the direction of the text is truly unknown and no better server-side
+   heuristic can be applied. <ref>BIDI</ref></p>
+
+   <p>For <code>textarea</code> and <code>pre</code> elements, the heuristic is applied on a
+   per-paragraph level.</p>
+  </div>
+
+  <div algorithm>
+  <p>The attribute's <i data-x="missing value default">missing value default</i> and <i
+  data-x="invalid value default">invalid value default</i> are both the <dfn
+  data-x="attr-dir-undefined-state">Undefined</dfn> state.</p>
+  </div>
+
+  <hr>
+
+  <div algorithm>
+  <p>The <dfn data-x="the directionality">directionality</dfn> of an element (any element, not just
+  an <span data-x="HTML elements">HTML element</span>) is either '<dfn
+  data-x="concept-ltr">ltr</dfn>' or '<dfn data-x="concept-rtl">rtl</dfn>'. To compute the <span
+  data-x="the directionality">directionality</span> given an element <var>element</var>, switch on
+  <var>element</var>'s <code data-x="attr-dir">dir</code> attribute state:</p>
+
+  <dl class="switch">
+   <dt><span data-x="attr-dir-ltr-state">LTR</span></dt>
+   <dd><p>Return '<span data-x="concept-ltr">ltr</span>'.</p></dd>
+
+   <dt><span data-x="attr-dir-rtl-state">RTL</span></dt>
+   <dd><p>Return '<span data-x="concept-rtl">rtl</span>'.</p></dd>
+
+   <dt><span data-x="attr-dir-auto-state">Auto</span></dt>
+   <dd>
+    <ol>
+     <li><p>Let <var>result</var> be the <span>auto directionality</span> of
+     <var>element</var>.</p></li>
+
+     <li><p>If <var>result</var> is null, then return '<span
+     data-x="concept-ltr">ltr</span>'.</p></li>
+
+     <li><p>Return <var>result</var>.</p></li>
+    </ol>
+   </dd>
+
+   <dt><span data-x="attr-dir-undefined-state">Undefined</span></dt>
+   <dd>
+    <dl class="switch">
+     <dt>If <var>element</var> is a <code>bdi</code> element</dt>
+     <dd>
+      <ol>
+       <li><p>Let <var>result</var> be the <span>auto directionality</span> of
+       <var>element</var>.</p></li>
+
+       <li><p>If <var>result</var> is null, then return '<span
+       data-x="concept-ltr">ltr</span>'.</p></li>
+
+       <li><p>Return <var>result</var>.</p></li>
+      </ol>
+     </dd>
+
+     <dt>If <var>element</var> is an <code>input</code> element whose <code
+     data-x="attr-input-type">type</code> attribute is in the <span
+     data-x="attr-input-type-tel">Telephone</span> state</dt>
+     <dd><p>Return '<span data-x="concept-ltr">ltr</span>'.</p></dd>
+     <!-- This looks odd, but is very much deliberate:
+          https://www.w3.org/Bugs/Public/show_bug.cgi?id=17835 -->
+
+     <dt>Otherwise</dt>
+     <dd><p>Return the <span>parent directionality</span> of <var>element</var>.</p></dd>
+    </dl>
+   </dd>
+  </dl>
+  </div>
+
+  <p class="note">Since the <code data-x="attr-dir">dir</code> attribute is only defined for
+  <span>HTML elements</span>, it cannot be present on elements from other namespaces. Thus, elements
+  from other namespaces always end up using the <span>parent directionality</span>.</p>
+
+  <div algorithm>
+  <p>The <dfn>auto-directionality form-associated elements</dfn> are:
+
+  <ul>
+   <li><p><code>input</code> elements whose <code data-x="attr-input-type">type</code> attribute is
+   in the <span data-x="attr-input-type-hidden">Hidden</span>, <span
+   data-x="attr-input-type-text">Text</span>, <span data-x="attr-input-type-search">Search</span>,
+   <span data-x="attr-input-type-tel">Telephone</span>, <span
+   data-x="attr-input-type-url">URL</span>, <span data-x="attr-input-type-email">Email</span>, <span
+   data-x="attr-input-type-password">Password</span>, <span data-x="attr-input-type-submit">Submit
+   Button</span>, <span data-x="attr-input-type-reset">Reset Button</span>, or <span
+   data-x="attr-input-type-button">Button</span> state, and</p></li>
+
+   <li><p><code>textarea</code> elements.</p></li>
+  </ul>
+  </div>
+
+  <div algorithm>
+  <p>To compute the <dfn>auto directionality</dfn> given an element <var>element</var>:</p>
+
+  <ol>
+   <li>
+    <p>If <var>element</var> is an <span data-x="auto-directionality form-associated
+    elements">auto-directionality form-associated element</span>:
+
+    <ol>
+     <li><p>If <var>element</var>'s <span data-x="concept-fe-value">value</span> contains a
+     character of bidirectional character type AL or R, and there is no character of bidirectional
+     character type L anywhere before it in the element's <span
+     data-x="concept-fe-value">value</span>, then return '<span data-x="concept-rtl">rtl</span>'.
+     <ref>BIDI</ref></p></li>
+
+     <li><p>If <var>element</var>'s <span data-x="concept-fe-value">value</span> is not the empty
+     string, then return '<span data-x="concept-ltr">ltr</span>'.</p></li>
+
+     <li><p>Return null.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p>If <var>element</var> is a <code>slot</code> element whose <span>root</span> is a
+    <span>shadow root</span> and <var>element</var>'s <span>assigned nodes</span> are not empty:</p>
+
+    <ol>
+     <li>
+      <p><span data-x="list iterate">For each</span> node <var>child</var> of <var>element</var>'s
+      <span>assigned nodes</span>:</p>
+
+      <ol>
+       <li><p>Let <var>childDirection</var> be null.</p></li>
+
+       <li><p>If <var>child</var> is a <code>Text</code> node, then set <var>childDirection</var> to
+       the <span>text node directionality</span> of <var>child</var>.</p></li>
+
+       <li>
+        <p>Otherwise:</p>
+
+        <ol>
+         <li><p><span>Assert</span>: <var>child</var> is an <code>Element</code> node.</p></li>
+
+         <li><p>Set <var>childDirection</var> to the <span>contained text auto directionality</span>
+         of <var>child</var> with <i><span
+         data-x="auto-directionality-can-exclude-root">canExcludeRoot</span></i> set to
+         true.</p></li>
+        </ol>
+       </li>
+
+       <li><p>If <var>childDirection</var> is not null, then return
+       <var>childDirection</var>.</p></li>
+      </ol>
+     </li>
+
+     <li><p>Return null.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Return the <span>contained text auto directionality</span> of <var>element</var> with
+   <i><span data-x="auto-directionality-can-exclude-root">canExcludeRoot</span></i> set to
+   false.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To compute the <dfn>contained text auto directionality</dfn> of an element
+  <var>element</var> with a boolean <dfn
+  data-x="auto-directionality-can-exclude-root"><var>canExcludeRoot</var></dfn>:</p>
+
+  <ol>
+   <li>
+    <p><span data-x="list iterate">For each</span> node <var>descendant</var> of
+    <var>element</var>'s <span data-x="descendant">descendants</span>, in <span>tree
+    order</span>:</p>
+
+    <ol>
+     <li>
+      <p>If any of</p>
+
+      <ul class="brief">
+       <li><var>descendant</var></li>
+       <li>any ancestor element of <var>descendant</var> that is a descendant of <var>element</var></li>
+       <li>if <var>canExcludeRoot</var> is true, <var>element</var></li>
+      </ul>
+
+      <p>is one of</p>
+
+      <ul class="brief">
+       <li>a <code>bdi</code> element</li>
+       <li>a <code>script</code> element</li>
+       <li>a <code>style</code> element</li>
+       <li>a <code>textarea</code> element</li>
+       <li>an element whose <code data-x="attr-dir">dir</code> attribute is not in the <span
+       data-x="attr-dir-undefined-state">Undefined</span> state</li>
+      </ul>
+
+      <p>then <span>continue</span>.</p>
+     </li>
+
+     <li><p>If <var>descendant</var> is a <code>slot</code> element whose <span>root</span> is a
+     <span>shadow root</span>, then return the <span data-x="the
+     directionality">directionality</span> of that <span>shadow root</span>'s <span
+     data-x="concept-DocumentFragment-host">host</span>.</p></li>
+
+     <li><p>If <var>descendant</var> is not a <code>Text</code> node, then
+     <span>continue</span>.</p></li>
+
+     <li><p>Let <var>result</var> be the <span>text node directionality</span> of
+     <var>descendant</var>.</li>
+
+     <li><p>If <var>result</var> is not null, then return <var>result</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Return null.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To compute the <dfn>text node directionality</dfn> given a <code>Text</code> node
+  <var>text</var>:</p>
+
+  <ol>
+   <li><p>If <var>text</var>'s <span data-x="concept-cd-data">data</span> does not contain a code
+   point whose bidirectional character type is L, AL, or R, then return null.
+   <ref>BIDI</ref></p></li>
+
+   <li><p>Let <var>codePoint</var> be the first code point in <var>text</var>'s <span
+   data-x="concept-cd-data">data</span> whose bidirectional character type is L, AL, or R.</p></li>
+
+   <li><p>If <var>codePoint</var> is of bidirectional character type AL or R, then return '<span
+   data-x="concept-rtl">rtl</span>'.</p></li>
+
+   <li><p>If <var>codePoint</var> is of bidirectional character type L, then return '<span
+   data-x="concept-ltr">ltr</span>'.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To compute the <dfn>parent directionality</dfn> given an element <var>element</var>:</p>
+
+  <ol>
+   <li><p>Let <var>parentNode</var> be <var>element</var>'s parent node.</p></li>
+
+   <li><p>If <var>parentNode</var> is a <span>shadow root</span>, then return the <span data-x="the
+   directionality">directionality</span> of <var>parentNode</var>'s <span
+   data-x="concept-DocumentFragment-host">host</span>.</p></li>
+
+   <li><p>If <var>parentNode</var> is an element, then return the <span data-x="the
+   directionality">directionality</span> of <var>parentNode</var>.</p></li>
+
+   <li><p>Return '<span data-x="concept-ltr">ltr</span>'.</p></li>
+  </ol>
+  </div>
+
+  <div w-nodev>
+
+  <p class="note">This attribute <a href="#bidireq">has rendering requirements involving the
+  bidirectional algorithm</a>.</p>
+
+  </div>
+
+  <hr>
+
+  <div algorithm>
+  <p>The <dfn data-x="directionality of the attribute">directionality of an attribute</dfn> of an
+  <span data-x="HTML elements">HTML element</span>, which is used when the text of that attribute is
+  to be included in the rendering in some manner, is determined as per the first appropriate set of
+  steps from the following list:</p>
+
+  <dl class="switch">
+
+   <dt>If the attribute is a <span>directionality-capable attribute</span> and the element's <code
+   data-x="attr-dir">dir</code> attribute is in the <span data-x="attr-dir-auto-state">Auto</span>
+   state</dt>
+
+   <dd>
+    <p>Find the first character (in logical order) of the attribute's value that is of bidirectional
+    character type L, AL, or R. <ref>BIDI</ref></p>
+
+    <p>If such a character is found and it is of bidirectional character type AL or R, the
+    <span>directionality of the attribute</span> is '<span data-x="concept-rtl">rtl</span>'.</p>
+
+    <p>Otherwise, the <span>directionality of the attribute</span> is '<span
+    data-x="concept-ltr">ltr</span>'.</p>
+   </dd>
+
+   <dt>Otherwise</dt>
+
+   <dd>The <span>directionality of the attribute</span> is the same as <span data-x="the
+   directionality">the element's directionality</span>.</dd>
+  </dl>
+  </div>
+
+  <div algorithm>
+  <p>The following attributes are <dfn data-x="directionality-capable
+  attribute">directionality-capable attributes</dfn>:</p>
+
+  <ul class="brief">
+   <li><code data-x="attr-th-abbr">abbr</code> on <code>th</code> elements</li>
+   <li><code data-x="">alt</code> on <code data-x="attr-area-alt">area</code>,
+                                    <code data-x="attr-img-alt">img</code>, and
+                                    <code data-x="attr-input-alt">input</code> elements</li>
+   <li><code data-x="attr-meta-content">content</code> on <code>meta</code> elements, if the <code data-x="attr-meta-name">name</code> attribute specifies a metadata name whose value is primarily intended to be human-readable rather than machine-readable</li>
+   <li><code data-x="">label</code> on <code data-x="attr-optgroup-label">optgroup</code>,
+                                       <code data-x="attr-option-label">option</code>, and
+                                       <code data-x="attr-track-label">track</code> elements</li>
+   <li><code data-x="">placeholder</code> on <code data-x="attr-input-placeholder">input</code> and
+                                            <code data-x="attr-textarea-placeholder">textarea</code> elements</li>
+   <li><code data-x="attr-title">title</code> on all <span>HTML elements</span></li>
+  </ul>
+  </div>
+
+  <hr>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>document</var>.<span subdfn data-x="dom-dir">dir</span> [ = <var>value</var> ]</code></dt>
+   <dd>
+    <p>Returns <span>the <code>html</code> element</span>'s <code data-x="attr-dir">dir</code>
+    attribute's value, if any.</p>
+
+    <p>Can be set, to either "<code data-x="">ltr</code>", "<code data-x="">rtl</code>", or "<code
+    data-x="">auto</code>" to replace <span>the <code>html</code> element</span>'s <code
+    data-x="attr-dir">dir</code> attribute's value.</p>
+
+    <p>If there is no <span data-x="the html element"><code>html</code> element</span>, returns the
+    empty string and ignores new values.</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLElement"><code data-x="dom-dir">dir</code></dfn> IDL attribute on
+  an element must <span>reflect</span> the <code data-x="attr-dir">dir</code> content attribute of
+  that element, <span>limited to only known values</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="Document"><code data-x="dom-document-dir">dir</code></dfn> IDL
+  attribute on <code>Document</code> objects must <span>reflect</span> the <code
+  data-x="attr-dir">dir</code> content attribute of <span>the <code>html</code> element</span>, if
+  any, <span>limited to only known values</span>. If there is no such element, then the attribute
+  must return the empty string and do nothing on setting.</p>
+  </div>
+
+  </div>
+
+  <p class="note">Authors are strongly encouraged to use the <code data-x="attr-dir">dir</code>
+  attribute to indicate text direction rather than using CSS, since that way their documents will
+  continue to render correctly even in the absence of CSS (e.g. as interpreted by search
+  engines).</p>
+
+  <div class="example">
+
+   <p>This markup fragment is of an IM conversation.</p>
+
+   <pre><code class="html">&lt;p dir=auto class="u1">&lt;b>&lt;bdi>Student&lt;/bdi>:&lt;/b> How do you write "What's your name?" in Arabic?&lt;/p>
+&lt;p dir=auto class="u2">&lt;b>&lt;bdi>Teacher&lt;/bdi>:&lt;/b> &#x645;&#x627; &#x627;&#x633;&#x645;&#x643;&#x61f;&lt;/p>
+&lt;p dir=auto class="u1">&lt;b>&lt;bdi>Student&lt;/bdi>:&lt;/b> Thanks.&lt;/p>
+&lt;p dir=auto class="u2">&lt;b>&lt;bdi>Teacher&lt;/bdi>:&lt;/b> That's written "&#x634;&#x643;&#x631;&#x64b;&#x627;".&lt;/p>
+&lt;p dir=auto class="u2">&lt;b>&lt;bdi>Teacher&lt;/bdi>:&lt;/b> Do you know how to write "Please"?&lt;/p>
+&lt;p dir=auto class="u1">&lt;b>&lt;bdi>Student&lt;/bdi>:&lt;/b> "&#x645;&#x646; &#x641;&#x636;&#x644;&#x643;", right?&lt;/p></code></pre>
+
+<!--
+<!DOCTYPE html>
+<style>
+ div { border: groove #FFFF99; padding: 0.25em; width: 22em; background: #FFFFEE; color: black; }
+ p { margin: 0.25em 0; font: 1em/1 InaiMathi; color: purple; }
+ .u1 { color: teal; }
+</style>
+<div>
+<p dir=ltr class="u1"><b><bdi>Student</bdi>:</b> How do you write "What's your name?" in Arabic?</p>
+<p dir=rtl class="u2"><b><bdi>Teacher</bdi>:</b> &#x645;&#x627; &#x627;&#x633;&#x645;&#x643;&#x61f;</p>
+<p dir=ltr class="u1"><b><bdi>Student</bdi>:</b> Thanks.</p>
+<p dir=ltr class="u2"><b><bdi>Teacher</bdi>:</b> That's written "&#x634;&#x643;&#x631;&#x64b;&#x627;".</p>
+<p dir=ltr class="u2"><b><bdi>Teacher</bdi>:</b> Do you know how to write "Please"?</p>
+<p dir=rtl class="u1"><b><bdi>Student</bdi>:</b> "&#x645;&#x646; &#x641;&#x636;&#x644;&#x643;", right?</p>
+-->
+
+   <p>Given a suitable style sheet and the default alignment styles for the <code>p</code> element,
+   namely to align the text to the <i>start edge</i> of the paragraph, the resulting rendering could
+   be as follows:</p>
+
+   <p><img loading="lazy" src="/images/im.png" alt="Each paragraph rendered as a separate block, with the paragraphs left-aligned except the second paragraph and the last one, which would be right aligned, with the usernames ('Student' and 'Teacher' in this example) flush right, with a colon to their left, and the text first to the left of that." width=366 height=157></p>
+
+   <p>As noted earlier, the <code data-x="attr-dir-auto">auto</code> value is not a panacea. The
+   final paragraph in this example is misinterpreted as being right-to-left text, since it begins
+   with an Arabic character, which causes the "right?" to be to the left of the Arabic text.</p>
+
+  </div>
+
+
+
+  <h5>The <code data-x="attr-style">style</code> attribute</h5>
+
+  <p>All <span>HTML elements</span> may have the <dfn element-attr for="html-global"><code
+  data-x="attr-style">style</code></dfn> content attribute set. This is a <span
+  data-x="css-styling-attribute">style attribute</span> as defined by <cite>CSS Style
+  Attributes</cite>. <ref>CSSATTR</ref></p>
+
+  <div w-nodev>
+
+  <p>In user agents that support CSS, the attribute's value must be parsed when the attribute is
+  added or has its value changed<!-- so dynamic changes to the base URL don't affect the CSS -->,
+  according to the rules given for <span data-x="css-styling-attribute">style attributes</span>.
+  <ref>CSSATTR</ref></p>
+
+  <p>However, if the <span>Should element's inline behavior be blocked by Content Security
+  Policy?</span> algorithm returns "<code data-x="">Blocked</code>" when executed upon the
+  attribute's <span>element</span>, "<code data-x="">style attribute</code>", and the attribute's
+  value, then the style rules defined in the attribute's value must not be applied to the
+  <span>element</span>. <ref>CSP</ref></p>
+
+  </div>
+
+  <p>Documents that use <code data-x="attr-style">style</code> attributes on any of their elements
+  must still be comprehensible and usable if those attributes were removed.</p>
+
+  <p class="note">In particular, using the <code data-x="attr-style">style</code> attribute to hide
+  and show content, or to convey meaning that is otherwise not included in the document, is
+  non-conforming. (To hide and show content, use the <code data-x="attr-hidden">hidden</code>
+  attribute.)</p>
+
+  <hr>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>element</var>.<span subdfn data-x="dom-style">style</span></code></dt>
+   <dd><p>Returns a <code>CSSStyleDeclaration</code> object for the element's <code
+   data-x="attr-style">style</code> attribute.</p></dd>
+  </dl>
+
+  <div w-nodev>
+
+  <p>The <code data-x="dom-style">style</code> IDL attribute is defined in <cite>CSS Object
+  Model</cite>. <ref>CSSOM</ref></p>
+
+  </div>
+
+  <div class="example">
+
+   <p>In the following example, the words that refer to colors are marked up using the
+   <code>span</code> element and the <code data-x="attr-style">style</code> attribute to make those
+   words show up in the relevant colors in visual media.</p>
+
+   <pre><code class="html">&lt;p>My sweat suit is &lt;span style="color: green; background:
+transparent">green&lt;/span> and my eyes are &lt;span style="color: blue;
+background: transparent">blue&lt;/span>.&lt;/p></code></pre>
+
+  </div>
+
+
+
+  <h5><dfn>Embedding custom non-visible data</dfn> with the <code data-x="attr-data-*">data-*</code> attributes</h5>
+
+  <div algorithm>
+  <p>A <dfn>custom data attribute</dfn> is an attribute in no namespace whose name starts with the
+  string "<dfn><code data-x="attr-data-*">data-</code></dfn>", has at least one character after the
+  hyphen, is a <span>valid attribute local name</span>, and contains no <span
+  data-x="ASCII upper alpha">ASCII upper alphas</span>.</p>
+  </div>
+
+  <p class="note">All attribute names on <span>HTML elements</span> in <span>HTML documents</span>
+  get ASCII-lowercased automatically, so the restriction on ASCII uppercase letters doesn't affect
+  such documents.</p>
+
+  <p><span data-x="custom data attribute">Custom data attributes</span> are intended to store custom
+  data, state, annotations, and similar, private to the page or application, for which there are no
+  more appropriate attributes or elements.</p>
+
+  <p>These attributes are not intended for use by software that is not known to the administrators
+  of the site that uses the attributes. For generic extensions that are to be used by multiple
+  independent tools, either this specification should be extended to provide the feature explicitly,
+  or a technology like <span>microdata</span> should be used (with a standardized vocabulary).</p>
+
+  <div class="example">
+
+   <p>For instance, a site about music could annotate list items representing tracks in an album
+   with custom data attributes containing the length of each track. This information could then be
+   used by the site itself to allow the user to sort the list by track length, or to filter the list
+   for tracks of certain lengths.</p>
+
+   <pre><code class="html">&lt;ol>
+ &lt;li data-length="2m11s">Beyond The Sea&lt;/li>
+ ...
+&lt;/ol></code></pre>
+
+   <p>It would be inappropriate, however, for the user to use generic software not associated with
+   that music site to search for tracks of a certain length by looking at this data.</p>
+
+   <p>This is because these attributes are intended for use by the site's own scripts, and are not a
+   generic extension mechanism for publicly-usable metadata.</p>
+
+  </div>
+
+  <div class="example">
+
+   <p>Similarly, a page author could write markup that provides information for a translation tool
+   that they are intending to use:</p>
+
+   <pre><code class="html">&lt;p>The third &lt;span data-mytrans-de="Anspruch">claim&lt;/span> covers the case of &lt;span
+translate="no">HTML&lt;/span> markup.&lt;/p></code></pre>
+
+   <p>In this example, the "<code data-x="">data-mytrans-de</code>" attribute gives specific text
+   for the MyTrans product to use when translating the phrase "claim" to German. However, the
+   standard <code data-x="attr-translate">translate</code> attribute is used to tell it that in all
+   languages, "HTML" is to remain unchanged. When a standard attribute is available, there is no
+   need for a <span>custom data attribute</span> to be used.</p>
+
+  </div>
+
+  <div class="example">
+
+   <p>In this example, custom data attributes are used to store the result of a feature detection
+   for <code>PaymentRequest</code>, which could be used in CSS to style a checkout page
+   differently.</p>
+
+   <pre><code class="html">&lt;script>
+ if ('PaymentRequest' in window) {
+   document.documentElement.dataset.hasPaymentRequest = '';
+ }
+&lt;/script></code></pre>
+
+   <p>Here, the <code data-x="">data-has-payment-request</code> attribute is effectively being used
+   as a <span>boolean attribute</span>; it is enough to check the presence of the attribute.
+   However, if the author so wishes, it could later be populated with some value, maybe to indicate
+   limited functionality of the feature.</p>
+
+  </div>
+
+  <p>Every <span data-x="HTML elements">HTML element</span> may have any number of <span
+  data-x="custom data attribute">custom data attributes</span> specified, with any value.</p>
+
+  <p>Authors should carefully design such extensions so that when the attributes are ignored and any
+  associated CSS dropped, the page is still usable.</p>
+
+  <div w-nodev>
+
+  <p>User agents must not derive any implementation behavior from these attributes or values.
+  Specifications intended for user agents must not define these attributes to have any meaningful
+  values.</p>
+
+  </div>
+
+  <p>JavaScript libraries may use the <span data-x="custom data attribute">custom data
+  attributes</span>, as they are considered to be part of the page on which they are used. Authors
+  of libraries that are reused by many authors are encouraged to include their name in the attribute
+  names, to reduce the risk of clashes. Where it makes sense, library authors are also encouraged to
+  make the exact name used in the attribute names customizable, so that libraries whose authors
+  unknowingly picked the same name can be used on the same page, and so that multiple versions of a
+  particular library can be used on the same page even when those versions are not mutually
+  compatible.</p>
+
+  <div class="example">
+
+   <p>For example, a library called "DoQuery" could use attribute names like <code
+   data-x="">data-doquery-range</code>, and a library called "jJo" could use attributes names like
+   <code data-x="">data-jjo-range</code>. The jJo library could also provide an API to set which
+   prefix to use (e.g. <code data-x="">J.setDataPrefix('j2')</code>, making the attributes have names
+   like <code data-x="">data-j2-range</code>).</p>
+
+  </div>
+
+  <hr>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>element</var>.<span subdfn data-x="dom-dataset">dataset</span></code></dt>
+   <dd>
+    <p>Returns a <code>DOMStringMap</code> object for the element's <code
+    data-x="attr-data-*">data-*</code> attributes.</p>
+
+    <p>Hyphenated names become camel-cased. For example, <code data-x="">data-foo-bar=""</code>
+    becomes <code data-x="">element.dataset.fooBar</code>.</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLOrSVGOrMathMLElement"><code data-x="dom-dataset">dataset</code></dfn> IDL
+  attribute provides convenient accessors for all the <code data-x="attr-data-*">data-*</code>
+  attributes on an element. On getting, the <code data-x="dom-dataset">dataset</code> IDL attribute
+  must return a <code>DOMStringMap</code> whose associated element is this element.</p>
+  </div>
+
+  </div>
+
+  <p>The <code>DOMStringMap</code> interface is used for the <code
+  data-x="dom-dataset">dataset</code> attribute. Each <code>DOMStringMap</code> has an <dfn
+  data-x="concept-DOMStringMap-element">associated element</dfn>.</p>
+
+  <pre><code class="idl">[Exposed=Window,
+ <span>LegacyOverrideBuiltIns</span>]
+interface <dfn interface>DOMStringMap</dfn> {
+  <a href="#dom-domstringmap-nameditem">getter</a> DOMString (DOMString name);
+  [<span>CEReactions</span>] <a href="#dom-domstringmap-setitem">setter</a> undefined (DOMString name, DOMString value);
+  [<span>CEReactions</span>] <a href="#dom-domstringmap-removeitem">deleter</a> undefined (DOMString name);
+};</code></pre>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>To <dfn data-x="concept-DOMStringMap-pairs">get a <code>DOMStringMap</code>'s name-value
+  pairs</dfn>, run the following algorithm:</p>
+
+  <ol>
+   <li><p>Let <var>list</var> be an empty list of name-value pairs.</p></li>
+
+   <li><p>For each content attribute on the <code>DOMStringMap</code>'s <span
+   data-x="concept-DOMStringMap-element">associated element</span> whose first five characters are
+   the string "<code data-x="">data-</code>" and whose remaining characters (if any) do not include
+   any <span data-x="ASCII upper alpha">ASCII upper alphas</span>, in the order that those
+   attributes are listed in the element's <span>attribute list</span>, add a name-value pair to
+   <var>list</var> whose name is the attribute's name with the first five characters removed and
+   whose value is the attribute's value.</p></li>
+
+   <li><p>For each name in <var>list</var>, for each U+002D HYPHEN-MINUS character (-) in the name
+   that is followed by an <span>ASCII lower alpha</span>, remove the U+002D HYPHEN-MINUS character
+   (-) and replace the character that followed it by the same character <span>converted to ASCII
+   uppercase</span>.</p></li>
+
+   <li><p>Return <var>list</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <span>supported property names</span> on a <code>DOMStringMap</code> object at any instant
+  are the names of each pair returned from <span data-x="concept-DOMStringMap-pairs">getting the
+  <code>DOMStringMap</code>'s name-value pairs</span> at that instant, in the order returned.</p>
+  </div>
+
+  <div algorithm>
+  <p id="dom-domstringmap-nameditem">To <span>determine the value of a named property</span>
+  <var>name</var> for a <code>DOMStringMap</code>, return the value component of the name-value pair
+  whose name component is <var>name</var> in the list returned from <span
+  data-x="concept-DOMStringMap-pairs">getting the <code>DOMStringMap</code>'s name-value
+  pairs</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p id="dom-domstringmap-setitem">To <span>set the value of a new named property</span> or
+  <span>set the value of an existing named property</span> for a <code>DOMStringMap</code>, given a
+  property name <var>name</var> and a new value <var>value</var>, run the following steps:</p>
+
+  <ol>
+   <li><p>If <var>name</var> contains a U+002D HYPHEN-MINUS character (-) followed by an <span>ASCII
+   lower alpha</span>, then throw a <span>"<code>SyntaxError</code>"</span>
+   <code>DOMException</code>.</p></li>
+
+   <li><p>For each <span>ASCII upper alpha</span> in <var>name</var>, insert a U+002D HYPHEN-MINUS
+   character (-) before the character and replace the character with the same character
+   <span>converted to ASCII lowercase</span>.</p></li>
+
+   <li><p>Insert the string <code data-x="">data-</code> at the front of <var>name</var>.</p></li>
+
+   <li><p>If <var>name</var> is not a <span>valid attribute local name</span>, then throw an
+   <span>"<code>InvalidCharacterError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p><span data-x="concept-element-attributes-set-value">Set an attribute value</span> for the
+   <code>DOMStringMap</code>'s <span data-x="concept-DOMStringMap-element">associated element</span>
+   using <var>name</var> and <var>value</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p id="dom-domstringmap-removeitem">To <span>delete an existing named property</span>
+  <var>name</var> for a <code>DOMStringMap</code>, run the following steps:</p>
+
+  <ol>
+<!--(can't happen while the DOMStringMap deleter has no name)
+   <li><p>If <var>name</var> contains a U+002D HYPHEN-MINUS character (-) followed by an <span>ASCII
+   lower alpha</span>, then throw a <span>"<code>SyntaxError</code>"</span>
+   <code>DOMException</code>.</p></li>
+-->
+
+   <li><p>For each <span>ASCII upper alpha</span> in <var>name</var>, insert a U+002D HYPHEN-MINUS
+   character (-) before the character and replace the character with the same character
+   <span>converted to ASCII lowercase</span>.</p></li>
+
+   <li><p>Insert the string <code data-x="">data-</code> at the front of <var>name</var>.</p></li>
+
+   <li><p><span data-x="concept-element-attributes-remove">Remove an attribute by name</span> given
+   <var>name</var> and the <code>DOMStringMap</code>'s <span
+   data-x="concept-DOMStringMap-element">associated element</span>.</p></li>
+  </ol>
+  </div>
+
+  <p class="note">This algorithm will only get invoked by <cite>Web IDL</cite> for names that
+  are given by the earlier algorithm for <span data-x="concept-DOMStringMap-pairs">getting the
+  <code>DOMStringMap</code>'s name-value pairs</span>. <ref>WEBIDL</ref></p>
+
+  </div>
+
+  <div class="example">
+
+   <p>If a web page wanted an element to represent a space ship, e.g. as part of a game, it would
+   have to use the <code data-x="attr-class">class</code> attribute along with <code
+   data-x="attr-data-*">data-*</code> attributes:</p>
+
+   <pre><code class="html">&lt;div class="spaceship" data-ship-id="92432"
+     data-weapons="laser 2" data-shields="50%"
+     data-<!---->x="30" data-y="10" data-z="90">
+ &lt;button class="fire"
+         onclick="spaceships[this.parentNode.dataset.shipId].fire()">
+  Fire
+ &lt;/button>
+&lt;/div></code></pre>
+
+   <p>Notice how the hyphenated attribute name becomes camel-cased in the API.</p>
+
+  </div>
+
+  <div class="example">
+
+   <p>Given the following fragment and elements with similar constructions:</p>
+
+   <pre><code class="html">&lt;img class="tower" id="tower5" data-<!---->x="12" data-y="5"
+     data-ai="robotarget" data-hp="46" data-ability="flames"
+     src="towers/rocket.png" alt="Rocket Tower"></code></pre>
+
+   <p>...one could imagine a function <code
+   data-x="">splashDamage()</code> that takes some arguments, the first
+   of which is the element to process:</p>
+
+   <pre><code class="js">function splashDamage(node, x, y, damage) {
+  if (node.classList.contains('tower') && // checking the 'class' attribute
+      node.dataset.x == x && // reading the 'data-x' attribute
+      node.dataset.y == y) { // reading the 'data-y' attribute
+    var hp = parseInt(node.dataset.hp); // reading the 'data-hp' attribute
+    hp = hp - damage;
+    if (hp &lt; 0) {
+      hp = 0;
+      node.dataset.ai = 'dead'; // setting the 'data-ai' attribute
+      delete node.dataset.ability; // removing the 'data-ability' attribute
+    }
+    node.dataset.hp = hp; // setting the 'data-hp' attribute
+  }
+}</code></pre>
+
+  </div>
+
+

@@ -1,0 +1,154 @@
+WHATWG HTML — section animation-frames — Animation frames
+
+  <h3>Animation frames</h3>
+
+  <p>Some objects include the <code>AnimationFrameProvider</code> interface mixin.</p>
+
+  <pre><code class="idl">callback <dfn callback>FrameRequestCallback</dfn> = undefined (<span>DOMHighResTimeStamp</span> time);
+
+interface mixin <dfn interface>AnimationFrameProvider</dfn> {
+  unsigned long <span data-x="dom-AnimationFrameProvider-requestAnimationFrame">requestAnimationFrame</span>(<span>FrameRequestCallback</span> callback);
+  undefined <span data-x="AnimationFrameProvider-cancelAnimationFrame">cancelAnimationFrame</span>(unsigned long handle);
+};
+<span>Window</span> includes <span>AnimationFrameProvider</span>;
+<span>DedicatedWorkerGlobalScope</span> includes <span>AnimationFrameProvider</span>;</code></pre>
+
+  <div algorithm>
+  <p>Each <code>AnimationFrameProvider</code> object also has a <dfn
+  data-x="concept-AnimationFrameProvider-target-object">target object</dfn> that stores the
+  provider's internal state. It is defined as follows:</p>
+
+  <dl>
+   <dt>If the <code>AnimationFrameProvider</code> is a <code>Window</code></dt>
+   <dd>The <code>Window</code>'s <span data-x="concept-document-window">associated
+   <code>Document</code></span></dd>
+
+   <dt>If the <code>AnimationFrameProvider</code> is a <code>DedicatedWorkerGlobalScope</code></dt>
+   <dd>The <code>DedicatedWorkerGlobalScope</code></dd>
+  </dl>
+  </div>
+
+  <p>Each <span data-x="concept-AnimationFrameProvider-target-object">target object</span> has a
+  <dfn id="list-of-animation-frame-callbacks">map of animation frame callbacks</dfn>, which is an
+  <span>ordered map</span> that must be initially empty, and an <dfn>animation frame callback
+  identifier</dfn>, which is a number that must initially be zero.</p>
+
+  <div algorithm>
+  <p>An <code>AnimationFrameProvider</code> <var>provider</var> is considered <dfn
+  data-x="concept-AnimationFrameProvider-supported">supported</dfn> if any of the following are
+  true:</p>
+
+  <ul>
+   <li><p><var>provider</var> is a <code>Window</code>.</p></li>
+
+   <li><p><var>provider</var>'s <span>owner set</span> <span data-x="list contains">contains</span>
+   a <code>Document</code> object.</p></li>
+
+   <li><p>Any of the <code>DedicatedWorkerGlobalScope</code> objects in <var>provider</var>'s
+   <span>owner set</span> are <span
+   data-x="concept-AnimationFrameProvider-supported">supported</span>.</p></li>
+  </ul>
+  </div>
+
+  <hr>
+
+  <div algorithm>
+  <p>The <dfn method for="AnimationFrameProvider"><code
+  data-x="dom-AnimationFrameProvider-requestAnimationFrame">requestAnimationFrame(<var>callback</var>)</code></dfn>
+  method steps are:</p>
+
+  <ol>
+   <li><p>If <span>this</span> is not <span
+   data-x="concept-AnimationFrameProvider-supported">supported</span>, then throw a
+   <span>"<code>NotSupportedError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>Let <var>target</var> be <span>this</span>'s <span
+   data-x="concept-AnimationFrameProvider-target-object">target object</span>.</p></li>
+
+   <li><p>Increment <var>target</var>'s <span>animation frame callback identifier</span> by one,
+   and let <var>handle</var> be the result.</p></li>
+
+   <li><p>Let <var>callbacks</var> be <var>target</var>'s <span>map of animation frame
+   callbacks</span>.</p></li>
+
+   <li><p><span data-x="map set">Set</span> <var>callbacks</var>[<var>handle</var>] to
+   <var>callback</var>.</p></li>
+
+   <li><p>Return <var>handle</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="AnimationFrameProvider"><code
+  data-x="AnimationFrameProvider-cancelAnimationFrame">cancelAnimationFrame(<var>handle</var>)</code></dfn>
+  method steps are:</p>
+
+  <ol>
+   <li><p>If <span>this</span> is not <span
+   data-x="concept-AnimationFrameProvider-supported">supported</span>, then throw a
+   <span>"<code>NotSupportedError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>Let <var>callbacks</var> be <span>this</span>'s <span
+   data-x="concept-AnimationFrameProvider-target-object">target object</span>'s <span>map of
+   animation frame callbacks</span>.</p></li>
+
+   <li><p><span data-x="map remove">Remove</span> <var>callbacks</var>[<var>handle</var>].</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>run the animation frame callbacks</dfn> for a <span
+  data-x="concept-AnimationFrameProvider-target-object">target object</span> <var>target</var> with
+  a timestamp <var>now</var>:</p>
+
+  <ol>
+   <li><p>Let <var>callbacks</var> be <var>target</var>'s <span>map of animation frame
+   callbacks</span>.</p></li>
+
+   <li><p>Let <var>callbackHandles</var> be the result of <span data-x="map get the keys">getting
+   the keys</span> of <var>callbacks</var>.</p></li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>handle</var> in
+    <var>callbackHandles</var>, if <var>handle</var> <span data-x="map exists">exists</span> in
+    <var>callbacks</var>:</p>
+
+    <ol>
+     <li><p>Let <var>callback</var> be <var>callbacks</var>[<var>handle</var>].</p></li>
+
+     <li><p><span data-x="map remove">Remove</span>
+     <var>callbacks</var>[<var>handle</var>].</p></li>
+
+     <li><p><span data-x="es-invoking-callback-functions">Invoke</span> <var>callback</var> with «
+     <var>now</var> » and "<code data-x="">report</code>".</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <div class="example">
+   <p>Inside workers, <code
+   data-x="dom-AnimationFrameProvider-requestAnimationFrame">requestAnimationFrame()</code> can be
+   used together with an <code>OffscreenCanvas</code> transferred from a <code>canvas</code>
+   element. First, in the document, transfer control to the worker:</p>
+
+   <pre><code class="js">const offscreenCanvas = document.getElementById("c").transferControlToOffscreen();
+worker.postMessage(offscreenCanvas, [offscreenCanvas]);</code></pre>
+
+   <p>Then, in the worker, the following code will draw a rectangle moving from left to right:</p>
+
+   <pre><code class="js">let ctx, pos = 0;
+function draw(dt) {
+  ctx.clearRect(0, 0, 100, 100);
+  ctx.fillRect(pos, 0, 10, 10);
+  pos += 10 * dt;
+  requestAnimationFrame(draw);
+}
+
+self.onmessage = function(ev) {
+  const transferredCanvas = ev.data;
+  ctx = transferredCanvas.getContext("2d");
+  draw();
+};</code></pre>
+  </div>
+

@@ -1,0 +1,40 @@
+WHATWG HTML — section dependencies/webdriver-bidi — WebDriver BiDi
+
+   <dt>WebDriver BiDi</dt>
+
+   <dd>
+    <p>The following terms are defined in <cite>WebDriver BiDi</cite>: <ref>WEBDRIVERBIDI</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://w3c.github.io/webdriver-bidi/#webdriver-bidi-navigation-status">WebDriver BiDi navigation status</dfn></li>
+     <li><dfn data-x="navigation-status-id" data-x-href="https://w3c.github.io/webdriver-bidi/#navigation-status-id">navigation status id</dfn></li>
+     <li><dfn data-x="navigation-status-status" data-x-href="https://w3c.github.io/webdriver-bidi/#navigation-status-status">navigation status status</dfn></li>
+     <li><dfn data-x="navigation-status-canceled" data-x-href="https://w3c.github.io/webdriver-bidi/#navigation-status-canceled">navigation status canceled</dfn></li>
+     <li><dfn data-x="navigation-status-committed" data-x-href="https://w3c.github.io/webdriver-bidi/#navigation-status-committed">navigation status committed</dfn></li>
+     <li><dfn data-x="navigation-status-pending" data-x-href="https://w3c.github.io/webdriver-bidi/#navigation-status-pending">navigation status pending</dfn></li>
+     <li><dfn data-x="navigation-status-complete" data-x-href="https://w3c.github.io/webdriver-bidi/#navigation-status-complete">navigation status complete</dfn></li>
+     <li><dfn data-x="navigation-status-url" data-x-href="https://w3c.github.io/webdriver-bidi/#navigation-status-url">navigation status url</dfn></li>
+     <li><dfn data-x="navigation-status-suggested-filename" data-x-href="https://w3c.github.io/webdriver-bidi/#navigation-status-suggested-filename">navigation status suggested filename</dfn></li>
+     <li><dfn data-x="download-behavior-struct-allowed" data-x-href="https://w3c.github.io/webdriver-bidi/#download-behavior-struct-allowed">download behavior allowed</dfn></li>
+     <li><dfn data-x="download-behavior-struct-destination-folder" data-x-href="https://w3c.github.io/webdriver-bidi/#download-behavior-struct-destination-folder">download behavior destination folder</dfn></li>
+     <li><dfn data-x="navigation-status-downloaded-filepath" data-x-href="https://w3c.github.io/webdriver-bidi/#navigation-status-downloaded-filepath">navigation status downloaded filepath</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/webdriver-bidi/#webdriver-bidi-navigation-aborted">WebDriver BiDi navigation aborted</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/webdriver-bidi/#webdriver-bidi-navigation-committed">WebDriver BiDi navigation committed</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/webdriver-bidi/#webdriver-bidi-navigation-failed">WebDriver BiDi navigation failed</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/webdriver-bidi/#webdriver-bidi-navigation-started">WebDriver BiDi navigation started</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/webdriver-bidi/#webdriver-bidi-download-end">WebDriver BiDi download end</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/webdriver-bidi/#webdriver-bidi-download-will-begin">WebDriver BiDi download will begin</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/webdriver-bidi/#webdriver-bidi-fragment-navigated">WebDriver BiDi fragment navigated</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/webdriver-bidi/#webdriver-bidi-dom-content-loaded">WebDriver BiDi DOM content loaded</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/webdriver-bidi/#webdriver-bidi-load-complete">WebDriver BiDi load complete</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/webdriver-bidi/#webdriver-bidi-history-updated">WebDriver BiDi history updated</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/webdriver-bidi/#webdriver-bidi-navigable-created">WebDriver BiDi navigable created</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/webdriver-bidi/#webdriver-bidi-navigable-destroyed">WebDriver BiDi navigable destroyed</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/webdriver-bidi/#webdriver-bidi-user-prompt-closed">WebDriver BiDi user prompt closed</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/webdriver-bidi/#webdriver-bidi-user-prompt-opened">WebDriver BiDi user prompt opened</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/webdriver-bidi/#webdriver-bidi-file-dialog-opened">WebDriver BiDi file dialog opened</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/webdriver-bidi/#webdriver-bidi-emulated-language">WebDriver BiDi emulated language</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/webdriver-bidi/#webdriver-bidi-scripting-is-enabled">WebDriver BiDi scripting is enabled</dfn></li>
+    </ul>
+   </dd>
+

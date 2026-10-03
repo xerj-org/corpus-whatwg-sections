@@ -1,0 +1,22 @@
+WHATWG HTML — section dependencies/permissions-policy — Permissions Policy
+
+   <dt>Permissions Policy</dt>
+
+   <dd>
+    <p>The following terms are defined in <cite>Permissions Policy</cite>:
+    <ref>PERMISSIONSPOLICY</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x="concept-permissions-policy" data-x-href="https://w3c.github.io/webappsec-feature-policy/#permissions-policy">permissions policy</dfn></li>
+     <li><dfn data-x="concept-policy-controlled-feature" data-x-href="https://w3c.github.io/webappsec-feature-policy/#policy-controlled-feature">policy-controlled feature</dfn></li>
+     <li><dfn data-x="concept-container-policy" data-x-href="https://w3c.github.io/webappsec-feature-policy/#container-policy">container policy</dfn></li>
+     <li><dfn data-x="concept-serialized-permissions-policy" data-x-href="https://w3c.github.io/webappsec-feature-policy/#serialized-permissions-policy">serialized permissions policy</dfn></li>
+     <li><dfn data-x="concept-default-allowlist" data-x-href="https://w3c.github.io/webappsec-feature-policy/#default-allowlist">default allowlist</dfn></li>
+     <li>The <dfn data-x-href="https://w3c.github.io/webappsec-feature-policy/#create-for-navigable">creating a permissions policy</dfn> algorithm</li>
+     <li>The <dfn data-x-href="https://w3c.github.io/webappsec-feature-policy/#create-from-response">creating a permissions policy from a response</dfn> algorithm</li>
+     <li>The <dfn data-x="is-feature-enabled" data-x-href="https://w3c.github.io/webappsec-feature-policy/#is-feature-enabled">is feature enabled by policy for origin</dfn> algorithm</li>
+     <li>The <dfn data-x="process-permissions-policy-attributes" data-x-href="https://w3c.github.io/webappsec-feature-policy/#process-policy-attributes">process permissions policy attributes</dfn> algorithm</li>
+    </ul>
+   </dd>
+
+

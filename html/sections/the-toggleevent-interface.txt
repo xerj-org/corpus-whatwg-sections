@@ -1,0 +1,77 @@
+WHATWG HTML — section the-toggleevent-interface — The <code>ToggleEvent</code> interface
+
+  <h4>The <code>ToggleEvent</code> interface</h4>
+
+  <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>ToggleEvent</dfn> : <span>Event</span> {
+  constructor(DOMString type, optional <span>ToggleEventInit</span> eventInitDict = {});
+  readonly attribute DOMString <span data-x="dom-ToggleEvent-oldState">oldState</span>;
+  readonly attribute DOMString <span data-x="dom-ToggleEvent-newState">newState</span>;
+  readonly attribute Element? <span data-x="dom-ToggleEvent-source">source</span>;
+};
+
+dictionary <dfn dictionary>ToggleEventInit</dfn> : <span>EventInit</span> {
+  DOMString oldState = "";
+  DOMString newState = "";
+  Element? source = null;
+};</code></pre>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>event</var>.<span subdfn
+   data-x="dom-ToggleEvent-oldState">oldState</span></code></dt>
+
+   <dd>
+    <p>Set to "<code data-x="">closed</code>" when transitioning from closed to open, or set to
+    "<code data-x="">open</code>" when transitioning from open to closed.</p>
+   </dd>
+
+   <dt><code data-x=""><var>event</var>.<span subdfn
+   data-x="dom-ToggleEvent-newState">newState</span></code></dt>
+
+   <dd>
+    <p>Set to "<code data-x="">open</code>" when transitioning from closed to open, or set to "<code
+    data-x="">closed</code>" when transitioning from open to closed.</p>
+   </dd>
+
+   <dt><code data-x=""><var>event</var>.<span subdfn
+   data-x="dom-ToggleEvent-source">source</span></code></dt>
+
+   <dd>
+    <p>Set to the element which initiated the toggle, which can be set up with the <code
+    data-x="attr-popovertarget">popovertarget</code> and <code
+    data-x="attr-button-commandfor">commandfor</code> attributes. If there is no source element,
+    then it is set to null.</p>
+   </dd>
+  </dl>
+
+  <div algorithm>
+  <p>The <dfn attribute for="ToggleEvent"><code
+  data-x="dom-ToggleEvent-oldState">oldState</code></dfn> and <dfn attribute for="ToggleEvent"><code
+  data-x="dom-ToggleEvent-newState">newState</code></dfn> attributes must return the values they are
+  initialized to.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="ToggleEvent"><code
+  data-x="dom-ToggleEvent-source">source</code></dfn> getter steps are to return the result of
+  <span data-x="dom-retarget">retargeting</span> <code
+  data-x="dom-ToggleEvent-source">source</code> against <span>this</span>'s <code
+  data-x="dom-Event-currentTarget">currentTarget</code>.</p>
+  </div>
+
+  <p class="XXX"><a href="https://github.com/whatwg/dom/issues/1328">DOM standard issue #1328</a>
+  tracks how to better standardize associated event data in a way which makes sense on Events.
+  Currently an event attribute initialized to a value cannot also have a getter, and so an internal
+  slot (or map of additional fields) is required to properly specify this.</p>
+
+  <p>A <dfn>toggle task tracker</dfn> is a <span>struct</span> which has:</p>
+
+  <dl>
+   <dt><dfn data-x="toggle-task-task">task</dfn></dt>
+   <dd>A <span data-x="concept-task">task</span> which fires a <code>ToggleEvent</code>.</dd>
+
+   <dt><dfn data-x="toggle-task-old-state">old state</dfn></dt>
+   <dd>A string which represents the <span data-x="toggle-task-task">task</span>'s event's value for
+   the <code data-x="dom-ToggleEvent-oldState">oldState</code> attribute.</dd>
+  </dl>
+

@@ -1,0 +1,54 @@
+WHATWG HTML — section the-menu-element — The <dfn element id="menus"><code>menu</code></dfn> element
+
+  <h4 id="the-menu-element">The <dfn element id="menus"><code>menu</code></dfn> element</h4>
+
+  <dl class=element>
+   <dt><span data-x="concept-element-categories">Categories</span>:</dt>
+   <dd><span>Flow content</span>.</dd>
+   <dd>If the element's children include at least one <code>li</code> element: <span>Palpable content</span>.</dd>
+   <dt><span data-x="concept-element-contexts">Contexts in which this element can be used</span>:</dt>
+   <dd>Where <span>flow content</span> is expected.</dd>
+   <dt><span data-x="concept-element-content-model">Content model</span>:</dt>
+   <dd>Zero or more <code>li</code> and <span data-x="script-supporting elements">script-supporting</span> elements.</dd>
+   <dt><span data-x="concept-element-attributes">Content attributes</span>:</dt>
+   <dd><span>Global attributes</span></dd>
+   <dt><span
+   data-x="concept-element-accessibility-considerations">Accessibility considerations</span>:</dt>
+   <dd><a href="https://w3c.github.io/html-aria/#el-menu">For authors</a>.</dd>
+   <dd><a href="https://w3c.github.io/html-aam/#el-menu">For implementers</a>.</dd>
+   <dt><span data-x="concept-element-sanitization">Sanitization</span>:</dt>
+   <dd><span data-x="sanitizer-category-default">Default</span>.</dd>
+   <dt><span data-x="concept-element-dom">DOM interface</span>:</dt>
+   <dd w-nodev>
+<pre><code class="idl">[Exposed=Window]
+interface <dfn interface>HTMLMenuElement</dfn> : <span>HTMLElement</span> {
+  [<span>HTMLConstructor</span>] constructor();
+
+  // <a href="#HTMLMenuElement-partial">also has obsolete members</a>
+};</code></pre>
+   </dd>
+   <dd w-dev>Uses <code>HTMLMenuElement</code>.</dd>
+  </dl>
+
+  <p>The <code>menu</code> element <span>represents</span> a toolbar consisting of its contents, in
+  the form of an unordered list of items (represented by <code>li</code> elements), each of
+  which represents a command that the user can perform or activate.</p>
+
+  <p class="note">The <code>menu</code> element is simply a semantic alternative to <code>ul</code>
+  to express an unordered list of commands (a "toolbar").</p>
+
+  <div class="example">
+   <p>In this example, a text-editing application uses a <code>menu</code> element to provide a
+   series of editing commands:</p>
+
+   <pre><code class="html">&lt;menu>
+ &lt;li>&lt;button onclick="copy()">&lt;img src="copy.svg" alt="Copy">&lt;/button>&lt;/li>
+ &lt;li>&lt;button onclick="cut()">&lt;img src="cut.svg" alt="Cut">&lt;/button>&lt;/li>
+ &lt;li>&lt;button onclick="paste()">&lt;img src="paste.svg" alt="Paste">&lt;/button>&lt;/li>
+&lt;/menu></code></pre>
+
+   <p>Note that the styling to make this look like a conventional toolbar menu is up to the
+   application.</p>
+  </div>
+
+

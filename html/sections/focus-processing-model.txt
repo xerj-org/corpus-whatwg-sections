@@ -1,0 +1,477 @@
+WHATWG HTML — section focus-processing-model — <span id="processing-model-5"></span>Processing model
+
+  <h4 id="focus-processing-model"><span id="processing-model-5"></span>Processing model</h4>
+
+  <div algorithm>
+  <p>To <dfn>get the focusable area</dfn> for a <var>focus target</var> that is either an element
+  that is not a <span>focusable area</span>, or is a <span>navigable</span>, given an
+  optional string <var>focus trigger</var> (default "<code data-x="">other</code>"), run the first
+  matching set of steps from the following list:</p>
+
+  <dl class="switch">
+   <dt>If <var>focus target</var> is an <code>area</code> element with one or more shapes that are
+   <span data-x="focusable area">focusable areas</span></dt>
+
+   <dd><p>Return the shape corresponding to the first <code>img</code> element in <span>tree
+   order</span> that uses the image map to which the <code>area</code> element belongs.</p></dd>
+
+   <dt>If <var>focus target</var> is an element with one or more scrollable regions that are <span
+   data-x="focusable area">focusable areas</span></dt>
+
+   <dd><p>Return the element's first scrollable region, according to a pre-order, depth-first
+   traversal of the <span>flat tree</span>. <ref>CSSSCOPING</ref></p></dd>
+
+   <dt>If <var>focus target</var> is the <span>document element</span> of its
+   <code>Document</code></dt>
+
+   <dd><p>Return the <code>Document</code>'s <span>viewport</span>.</p></dd>
+
+   <dt>If <var>focus target</var> is a <span>navigable</span></dt>
+
+   <dd><p>Return the <span>navigable</span>'s <span data-x="nav-document">active
+   document</span>.</p></dd>
+
+   <dt>If <var>focus target</var> is a <span>navigable container</span> with a non-null
+   <span>content navigable</span></dt>
+
+   <dd><p>Return the <span>navigable container</span>'s <span>content navigable</span>'s <span
+   data-x="nav-document">active document</span>.</p></dd>
+
+   <dt>If <var>focus target</var> is a <span>shadow host</span> whose <span
+   data-x="concept-element-shadow-root">shadow root</span>'s <span>delegates focus</span> is
+   true</dt>
+
+   <dd>
+    <ol>
+     <li><p>Let <var>focusedElement</var> be the <span>currently focused area of a top-level
+     traversable</span>'s <span>DOM anchor</span>.</p></li>
+
+     <li><p>If <var>focus target</var> is a <span>shadow-including inclusive ancestor</span> of
+     <var>focusedElement</var>, then return <var>focusedElement</var>.</p></li>
+
+     <li><p>Return the <span>focus delegate</span> for <var>focus target</var> given <var>focus
+     trigger</var>.</p></li>
+    </ol>
+
+    <p class="note">For <span data-x="sequentially focusable">sequential focusability</span>, the
+    handling of <span data-x="shadow host">shadow hosts</span> and <span>delegates focus</span> is
+    done when constructing the <span>sequential focus navigation order</span>. That is, the
+    <span>focusing steps</span> will never be called on such <span data-x="shadow host">shadow
+    hosts</span> as part of sequential focus navigation.</p>
+   </dd>
+
+   <dt>Otherwise</dt>
+
+   <dd><p>Return null.</p></dd>
+  </dl>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn>focus delegate</dfn> for a <var>focusTarget</var>, given an optional string
+  <var>focusTrigger</var> (default "<code data-x="">other</code>"), is given by the following steps:</p>
+
+  <ol>
+   <li><p>If <var>focusTarget</var> is a <span>shadow host</span> and its <span
+   data-x="concept-element-shadow-root">shadow root</span>'s <span>delegates focus</span> is false,
+   then return null.</p></li>
+
+   <li><p>Let <var>whereToLook</var> be <var>focusTarget</var>.</p></li>
+
+   <li><p>If <var>whereToLook</var> is a <span>shadow host</span>, then set <var>whereToLook</var>
+   to <var>whereToLook</var>'s <span data-x="concept-element-shadow-root">shadow
+   root</span>.</p></li>
+
+   <li><p>Let <var>autofocusDelegate</var> be the <span>autofocus delegate</span> for
+   <var>whereToLook</var> given <var>focusTrigger</var>.</p></li>
+
+   <li><p>If <var>autofocusDelegate</var> is not null, then return
+   <var>autofocusDelegate</var>.</p></li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>descendant</var> of
+    <var>whereToLook</var>'s <span data-x="descendant">descendants</span>, in <span>tree
+    order</span>:</p>
+
+    <ol>
+     <li><p>Let <var>focusableArea</var> be null.</p></li>
+
+     <li><p>If <var>focusTarget</var> is a <code>dialog</code> element and <var>descendant</var> is
+     <span>sequentially focusable</span>, then set <var>focusableArea</var> to
+     <var>descendant</var>.</p></li>
+
+     <li><p>Otherwise, if <var>focusTarget</var> is not a <code>dialog</code> and
+     <var>descendant</var> is a <span>focusable area</span>, set <var>focusableArea</var> to
+     <var>descendant</var>.</p></li>
+
+     <li>
+      <p>Otherwise, set <var>focusableArea</var> to the result of <span data-x="get the focusable
+      area">getting the focusable area</span> for <var>descendant</var> given
+      <var>focusTrigger</var>.</p>
+
+      <p class="note">This step can end up recursing, i.e., the <span>get the focusable area</span>
+      steps might return the <span>focus delegate</span> of <var>descendant</var>.</p>
+     </li>
+
+     <li><p>If <var>focusableArea</var> is not null, then return <var>focusableArea</var>.</p></li>
+    </ol>
+
+    <p class="note">It's important that we are <em>not</em> looking at the <span
+    data-x="shadow-including descendant">shadow-including descendants</span> here, but instead only
+    at the <span data-x="descendant">descendants</span>. <span data-x="shadow host">Shadow
+    hosts</span> are instead handled by the recursive case mentioned above.</p>
+   </li>
+
+   <li><p>Return null.</p></li>
+  </ol>
+
+  <p class="note">The above algorithm essentially returns the first suitable <span>focusable
+  area</span> where the path between its <span>DOM anchor</span> and <var>focusTarget</var>
+  delegates focus at any shadow tree boundaries.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn>autofocus delegate</dfn> for a <var>focus target</var> given a <var>focus
+  trigger</var> is given by the following steps:</p>
+
+  <ol>
+   <li>
+    <p>For each <span>descendant</span> <var>descendant</var> of <var>focus target</var>, in
+    <span>tree order</span>:</p>
+
+    <ol>
+     <li><p>If <var>descendant</var> does not have an <code
+     data-x="attr-fe-autofocus">autofocus</code> content attribute, then
+     <span>continue</span>.</p></li>
+
+     <li><p>Let <var>focusable area</var> be <var>descendant</var>, if <var>descendant</var> is a
+     <span>focusable area</span>; otherwise let <var>focusable area</var> be the result of <span
+     data-x="get the focusable area">getting the focusable area</span> for <var>descendant</var>
+     given <var>focus trigger</var>.</p></li>
+
+     <li><p>If <var>focusable area</var> is null, then <span>continue</span>.</p></li>
+
+     <li><p>If <var>focusable area</var> is not <span>click focusable</span> and <var>focus
+     trigger</var> is "<code data-x="">click</code>", then <span>continue</span>.</p></li>
+
+     <li><p>Return <var>focusable area</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Return null.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn export>focusing steps</dfn> for an object <var>new focus target</var> that is either a
+  <span>focusable area</span>, or an element that is not a <span>focusable area</span>, or a
+  <span>navigable</span>, are as follows. They can optionally be run with a <var>fallback
+  target</var> and a string <var>focus trigger</var>.</p>
+
+  <ol>
+   <!-- https://software.hixie.ch/utilities/js/live-dom-viewer/?saved=2816 div.focus() when it's got a scroll region -->
+   <!-- https://software.hixie.ch/utilities/js/live-dom-viewer/?saved=2817 img.focus() when it's got an image map -->
+
+   <li><p>If <var>new focus target</var> is not a <span>focusable area</span>, then set <var>new
+   focus target</var> to the result of <span data-x="get the focusable area">getting the focusable
+   area</span> for <var>new focus target</var>, given <var>focus trigger</var> if it was
+   passed.</p></li>
+
+   <li>
+    <p>If <var>new focus target</var> is null:</p>
+
+    <ol>
+     <li><p>If no <var>fallback target</var> was specified, then return.</p></li>
+
+     <li><p>Otherwise, set <var>new focus target</var> to the <var>fallback
+     target</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>If <var>new focus target</var> is a <span>navigable container</span> with non-null
+   <span>content navigable</span>, then set <var>new focus target</var> to the <span>content
+   navigable</span>'s <span data-x="nav-document">active document</span>.</p></li>
+   <!-- https://software.hixie.ch/utilities/js/live-dom-viewer/?saved=2818 -->
+
+   <li><p>If <var>new focus target</var> is a <span>focusable area</span> and its <span>DOM
+   anchor</span> is <span>inert</span>, then return.</p></li>
+
+   <li><p>If <var>new focus target</var> is the <span>currently focused area of a top-level
+   traversable</span>, then return.</p></li>
+
+   <li><p>Let <var>old chain</var> be the <span data-x="current focus chain of a top-level
+   traversable">current focus chain of the top-level traversable</span> in which <var>new focus
+   target</var> finds itself.</p></li>
+
+   <li><p>Let <var>new chain</var> be the <span>focus chain</span> of <var>new
+   focus target</var>.</p></li>
+
+   <li><p>Run the <span>focus update steps</span> with <var>old chain</var>, <var>new chain</var>,
+   and <var>new focus target</var> respectively.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>User agents must <span>immediately</span> run the <span>focusing steps</span> for a
+  <span>focusable area</span> or <span>navigable</span> <var>candidate</var> whenever the
+  user attempts to move the focus to <var>candidate</var>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn>unfocusing steps</dfn> for an object <var>old focus target</var> that is
+  either a <span>focusable area</span> or an element that is not a <span>focusable area</span> are as
+  follows:</p>
+
+  <ol>
+   <!-- https://software.hixie.ch/utilities/js/live-dom-viewer/?saved=2819 -->
+   <!-- https://software.hixie.ch/utilities/js/live-dom-viewer/?saved=2822 -->
+
+   <li><p>If <var>old focus target</var> is a <span>shadow host</span> whose <span
+   data-x="concept-element-shadow-root">shadow root</span>'s <span>delegates focus</span> is true,
+   and <var>old focus target</var>'s <span data-x="concept-element-shadow-root">shadow root</span>
+   is a <span>shadow-including inclusive ancestor</span> of the <span>currently focused area of a
+   top-level traversable</span>'s <span>DOM anchor</span>, then set <var>old focus target</var> to
+   that <span>currently focused area of a top-level traversable</span>.</p></li>
+
+   <li><p>If <var>old focus target</var> is <span>inert</span>, then return.</p></li>
+
+   <li><p>If <var>old focus target</var> is an <code>area</code> element and one of its shapes is
+   the <span>currently focused area of a top-level traversable</span>, or, if <var>old focus
+   target</var> is an element with one or more scrollable regions, and one of them is the
+   <span>currently focused area of a top-level traversable</span>, then let <var>old focus
+   target</var> be that <span>currently focused area of a top-level traversable</span>.</p></li>
+
+   <li><p>Let <var>old chain</var> be the <span data-x="current focus chain of a top-level
+   traversable">current focus chain of the top-level traversable</span> in which <var>old focus
+   target</var> finds itself.</p></li>
+
+   <li><p>If <var>old focus target</var> is not one of the entries in <var>old
+   chain</var>, then return.</p></li>
+
+   <li><p>If <var>old focus target</var> is not a <span>focusable area</span>, then return.</p></li>
+
+   <li><p>Let <var>topDocument</var> be <var>old chain</var>'s last entry.</p></li>
+
+   <li>
+    <p>If <var>topDocument</var>'s <span>node navigable</span> has <span>system focus</span>, then
+    run the <span>focusing steps</span> for <var>topDocument</var>'s <span>viewport</span>.</p>
+
+    <p>Otherwise, apply any relevant platform-specific conventions for removing <span>system
+    focus</span> from <var>topDocument</var>'s <span>node navigable</span>, and run the <span>focus
+    update steps</span> given <var>old chain</var>, an empty list, and null.</p>
+   </li>
+  </ol>
+  </div>
+
+  <p class="note">The <span>unfocusing steps</span> do not always result in the focus changing, even
+  when applied to the <span>currently focused area of a top-level traversable</span>. For
+  example, if the <span>currently focused area of a top-level traversable</span> is a
+  <span>viewport</span>, then it will usually keep its focus regardless until another
+  <span>focusable area</span> is explicitly focused with the <span>focusing steps</span>.</p>
+
+  <hr>
+
+  <div algorithm>
+  <p>The <dfn>focus update steps</dfn>, given an <var>old chain</var>, a <var>new chain</var>, and a <var>new focus target</var> respectively, are as
+  follows:</p>
+
+  <ol>
+   <!-- focusin/focusout?: https://software.hixie.ch/utilities/js/live-dom-viewer/?saved=723 -->
+
+   <li><p>If the last entry in <var>old chain</var> and the last entry in <var>new chain</var> are the same, pop the last entry from <var>old chain</var>
+   and the last entry from <var>new chain</var> and redo this step.</p></li>
+
+   <li>
+    <p>For each entry <var>entry</var> in <var>old chain</var>, in order, run
+    these substeps:</p>
+
+    <ol>
+     <li>
+      <p>If <var>entry</var> is an <code>input</code> element, and the <code
+      data-x="event-change">change</code> event <span data-x="concept-input-apply">applies</span>
+      to the element, and the element does not have a defined <span>activation behavior</span>, and
+      the user has changed the element's <span data-x="concept-fe-value">value</span> or its list
+      of <span data-x="concept-input-type-file-selected">selected files</span> while the control
+      was focused without committing that change (such that it is different to what it was when the
+      control was first focused):</p>
+
+      <ol>
+       <li><p>Set <var>entry</var>'s <span>user validity</span> to true.</p></li>
+
+       <li id="unfocus-causes-change-event"><p><span data-x="concept-event-fire">Fire an
+       event</span> named <code data-x="event-change">change</code> at the element, with the <code
+       data-x="dom-Event-bubbles">bubbles</code> attribute initialized to true.</p></li>
+      </ol>
+     </li>
+
+     <li>
+      <p>If <var>entry</var> is an element, let <var>blur event target</var> be
+      <var>entry</var>.</p>
+
+      <p>If <var>entry</var> is a <code>Document</code> object, let <var>blur event target</var> be
+      that <code>Document</code> object's <span>relevant global object</span>.</p>
+
+      <p>Otherwise, let <var>blur event target</var> be null.</p>
+     </li>
+
+     <li><p>If <var>entry</var> is the last entry in <var>old chain</var>, and
+     <var>entry</var> is an <code>Element</code>, and the last entry in <var>new
+     chain</var> is also an <code>Element</code>, then let <var>related blur target</var>
+     be the last entry in <var>new chain</var>. Otherwise, let <var>related blur
+     target</var> be null.</p></li>
+
+     <li>
+      <p>If <var>blur event target</var> is not null, <span>fire a focus event</span>
+      named <code data-x="event-blur">blur</code> at <var>blur event target</var>, with
+      <var>related blur target</var> as the related target.</p>
+
+      <p class="note" id="note-sometimes-no-blur-event">In some cases, e.g., if <var>entry</var> is
+      an <code>area</code> element's shape, a scrollable region, or a <span>viewport</span>, no
+      event is fired.</p>
+     </li>
+    </ol>
+   </li>
+
+   <li><p>Apply any relevant platform-specific conventions for focusing <var>new focus target</var>.
+   (For example, some platforms select the contents of a text control when that control is
+   focused.)</p></li>
+
+   <li>
+    <p>For each entry <var>entry</var> in <var>new chain</var>, in reverse
+    order, run these substeps:</p>
+
+    <ol>
+     <li>
+      <p>If <var>entry</var> is a <span>focusable area</span>, and the <span>focused area of the
+      document</span> is not <var>entry</var>:</p>
+
+      <ol>
+       <li><p>Set <var>document</var>'s <span>relevant global object</span>'s <span
+       data-x="window-navigation-api">navigation API</span>'s <span>focus changed during ongoing
+       navigation</span> to true.</p></li>
+
+       <li><p>Designate <var>entry</var> as the <span>focused area of the document</span>.</p>
+      </ol>
+     </li>
+
+     <li>
+      <p>If <var>entry</var> is an element, let <var>focus event target</var> be
+      <var>entry</var>.</p>
+
+      <p>If <var>entry</var> is a <code>Document</code> object, let <var>focus event target</var> be
+      that <code>Document</code> object's <span>relevant global object</span>.</p>
+
+      <p>Otherwise, let <var>focus event target</var> be null.</p>
+     </li>
+
+     <li><p>If <var>entry</var> is the last entry in <var>new chain</var>, and
+     <var>entry</var> is an <code>Element</code>, and the last entry in <var>old
+     chain</var> is also an <code>Element</code>, then let <var>related focus target</var>
+     be the last entry in <var>old chain</var>. Otherwise, let <var>related
+     focus target</var> be null.</p></li>
+
+     <li>
+      <p>If <var>focus event target</var> is not null, <span>fire a focus event</span>
+      named <code data-x="event-focus">focus</code> at <var>focus event target</var>, with
+      <var>related focus target</var> as the related target.</p>
+
+      <p class="note">In some cases, e.g. if <var>entry</var> is an <code>area</code>
+      element's shape, a scrollable region, or a <span>viewport</span>, no event is fired.</p>
+     </li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>fire a focus event</dfn> named <var>e</var> at an element or a <code>Window</code>
+  object <var>target</var> given a related target <var>relatedTarget</var>:</p>
+
+  <ol>
+   <li><p>Let <var>view</var> be <var>target</var> if <var>target</var> is a <code>Window</code>
+   object; otherwise <var>target</var>'s <span>node document</span>'s <span>relevant global
+   object</span>.</p></li>
+
+   <li><p><span data-x="concept-event-fire">Fire an event</span> named <var>e</var> at
+   <var>target</var>, using <code>FocusEvent</code>, with the <code
+   data-x="dom-FocusEvent-relatedTarget">relatedTarget</code> attribute initialized to
+   <var>relatedTarget</var>, the <code data-x="dom-UIEvent-view">view</code> attribute initialized
+   to <var>view</var>, and the <span>composed flag</span> set.</p></li>
+  </ol>
+  </div>
+
+  <hr>
+
+  <div algorithm>
+  <p>When a key event is to be routed in a <span>top-level traversable</span>, the user agent must
+  run the following steps:</p>
+
+  <!-- interaction event spec point -->
+
+  <ol>
+   <li><p>Let <var>target area</var> be the <span data-x="currently focused area of a top-level
+   traversable">currently focused area of the top-level traversable</span>.</p></li>
+
+   <li><p><span>Assert</span>: <var>target area</var> is not null, since key events are only routed
+   to <span data-x="top-level traversable">top-level traversables</span> that have <span>system
+   focus</span>. Therefore, <var>target area</var> is a <span>focusable area</span>.</p></li>
+
+   <li><p>Let <var>target node</var> be <var>target area</var>'s <span>DOM anchor</span>.</p></li>
+
+   <li>
+    <p>If <var>target node</var> is a <code>Document</code> that has a <span data-x="the
+    body element">body element</span>, then let <var>target node</var> be <span>the body
+    element</span> of that <code>Document</code>.</p>
+
+    <p>Otherwise, if <var>target node</var> is a <code>Document</code> object that has a non-null
+    <span>document element</span>, then let <var>target node</var> be that <span>document
+    element</span>.</p>
+   </li>
+
+   <li>
+    <p>If <var>target node</var> is not <span>inert</span>:</p>
+    <ol>
+     <li><p>Let <var>canHandle</var> be the result of <span
+     data-x="concept-event-dispatch">dispatching</span> the key event at <var>target
+     node</var>.</p></li>
+
+     <li><p>If <var>canHandle</var> is true, then let <var>target area</var> handle the key event.
+     This might include <span data-x="fire a click event">firing a <code
+     data-x="event-click">click</code> event</span> at <var>target node</var>.</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <hr>
+
+  <div algorithm>
+  <p>The <dfn export>has focus steps</dfn>, given a <code>Document</code> object <var>target</var>,
+  are as follows:</p>
+
+  <ol>
+   <li><p>If <var>target</var>'s <span>node navigable</span>'s <span data-x="nav-top">top-level
+   traversable</span> does not have <span>system focus</span>, then return false.</p></li>
+
+   <li><p>Let <var>candidate</var> be <var>target</var>'s <span>node navigable</span>'s <span
+   data-x="nav-top">top-level traversable</span>'s <span>active document</span>.</p></li>
+
+   <li>
+    <p>While true:</p>
+
+    <ol>
+     <li><p>If <var>candidate</var> is <var>target</var>, then return true.</p></li>
+
+     <li><p>If the <span data-x="focused area of the document">focused area</span> of
+     <var>candidate</var> is a <span>navigable container</span> with a non-null <span>content
+     navigable</span>, then set <var>candidate</var> to the <span data-x="nav-document">active
+     document</span> of that <span>navigable container</span>'s <span>content
+     navigable</span>.</p></li>
+
+     <li><p>Otherwise, return false.</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+
+

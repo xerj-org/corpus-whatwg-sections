@@ -1,0 +1,213 @@
+WHATWG HTML — section html-parsing-methods — HTML parsing methods
+
+  <h4>HTML parsing methods</h4>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>element</var>.<span subdfn data-x="dom-Element-setHTML">setHTML</span>(<var>html</var>, <var>options</var>)</code></dt>
+   <dd><p>Parses <var>html</var> using the HTML parser with options <var>options</var>, and replaces
+   the children of <var>element</var> with the result. <var>element</var> provides context for the
+   HTML parser. The parsed fragment is <span data-x="sanitize">sanitized</span> based on the
+   <var>options</var>'s "<code data-x="dom-SetHTMLOptions-sanitizer">sanitizer</code>" member, and
+   <span data-x="dom-Sanitizer-removeUnsafe">unsafe content is removed</span>.</p></dd>
+
+   <dt><code data-x=""><var>shadowRoot</var>.<span subdfn data-x="dom-ShadowRoot-setHTML">setHTML</span>(<var>html</var>, <var>options</var>)</code></dt>
+   <dd><p>Parses <var>html</var> using the HTML parser with options <var>options</var>, and replaces
+   the children of <var>shadowRoot</var> with the result. <var>shadowRoot</var>'s <span
+   data-x="concept-DocumentFragment-host">host</span> provides context for the HTML parser. The
+   parsed fragment is <span data-x="sanitize">sanitized</span> based on the <var>options</var>'s
+   "<code data-x="dom-SetHTMLOptions-sanitizer">sanitizer</code>" member, and <span
+   data-x="dom-Sanitizer-removeUnsafe">unsafe content is removed</span>.</p></dd>
+
+   <dt><code data-x=""><var>element</var>.<span subdfn data-x="dom-Element-setHTMLUnsafe">setHTMLUnsafe</span>(<var>html</var>, <var>options</var>)</code></dt>
+   <dd><p>Parses <var>html</var> using the HTML parser with options <var>options</var>, and replaces
+   the children of <var>element</var> with the result. <var>element</var> provides context for the
+   HTML parser. If the <var>options</var> dictionary contains a "<code
+   data-x="dom-SetHTMLUnsafeOptions-sanitizer">sanitizer</code>" member, it is used to
+   <span>sanitize</span> the parsed fragment before it is inserted into <var>element</var>. If the
+   <var>options</var> dictionary's "<code
+   data-x="dom-SetHTMLUnsafeOptions-runScripts">runScripts</code>" member is true, scripts contained
+   in <var>html</var> will be executed immediately after the node tree is updated.</p></dd>
+
+   <dt><code data-x=""><var>shadowRoot</var>.<span subdfn data-x="dom-ShadowRoot-setHTMLUnsafe">setHTMLUnsafe</span>(<var>html</var>, <var>options</var>)</code></dt>
+   <dd><p>Parses <var>html</var> using the HTML parser with options <var>options</var>, and replaces
+   the children of <var>shadowRoot</var> with the result. <var>shadowRoot</var>'s <span
+   data-x="concept-DocumentFragment-host">host</span> provides context for the HTML parser. If the
+   <var>options</var> dictionary contains a "<code
+   data-x="dom-SetHTMLUnsafeOptions-sanitizer">sanitizer</code>" member, it is used to
+   <span>sanitize</span> the parsed fragment before it is inserted into <var>shadowRoot</var>. If
+   the <var>options</var> dictionary's "<code
+   data-x="dom-SetHTMLUnsafeOptions-runScripts">runScripts</code>" member is true, scripts contained
+   in <var>html</var> will be executed immediately after the node tree is updated.</p>
+   </dd>
+
+   <dt><code data-x=""><var>doc</var> = Document.<span subdfn data-x="dom-parseHTML">parseHTML</span>(<var>html</var>, <var>options</var>)</code></dt>
+   <dd><p>Parses <var>html</var> using the HTML parser with options <var>options</var>, and returns
+   a new <code>Document</code> containing the result. The resulting document is <span
+   data-x="sanitize">sanitized</span> based on the <var>options</var>'s "<code
+   data-x="dom-SetHTMLOptions-sanitizer">sanitizer</code>" member, and <span
+   data-x="dom-Sanitizer-removeUnsafe">unsafe content is removed</span>.</p></dd>
+
+   <dt><code data-x=""><var>doc</var> = Document.<span data-x="dom-parseHTMLUnsafe">parseHTMLUnsafe</span>(<var>html</var>, <var>options</var>)</code></dt>
+
+   <dd>
+    <p>Parses <var>html</var> using the HTML parser with options <var>options</var>, and returns the
+    resulting <code>Document</code>.</p>
+
+    <p>Note that <code>script</code> elements are not evaluated during parsing, and the resulting
+    document's <span data-x="document's character encoding">encoding</span> will always be
+    <span>UTF-8</span>. The document's <span data-x="concept-document-url">URL</span> will be
+    <code>about:blank</code>. If the <var>options</var> dictionary contains a "<code
+    data-x="dom-ParseHTMLUnsafeOptions-sanitizer">sanitizer</code>" member, it is used to
+    <span>sanitize</span> the resulting DOM.</p>
+   </dd>
+  </dl>
+
+  <p class="warning">The methods with an <code data-x="">Unsafe</code> suffix perform no
+  sanitization to remove potentially-dangerous elements and attributes like <code>script</code> or
+  <span>event handler content attributes</span>.</p>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p><code>Element</code>'s <dfn method for="Element"><code
+  data-x="dom-Element-setHTML">setHTML(<var>html</var>, <var>options</var>)</code></dfn> method
+  steps are:</p>
+
+  <ol>
+   <li><p>Let <var>target</var> be <span>this</span>'s <span>template contents</span> if
+   <span>this</span> is a <code>template</code> element; otherwise <span>this</span>.</p></li>
+
+   <li><p><span>Set and filter HTML</span> given <var>target</var>, <var>html</var>,
+   <var>options</var>, and true.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p><code>ShadowRoot</code>'s <dfn method for="ShadowRoot"><code
+  data-x="dom-ShadowRoot-setHTML">setHTML(<var>html</var>, <var>options</var>)</code></dfn> method
+  steps are:</p>
+
+  <ol>
+   <li><p><span>Set and filter HTML</span> given <span>this</span>, <var>html</var>,
+   <var>options</var>, and true.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p><code>Element</code>'s <dfn method for="Element"><code
+  data-x="dom-Element-setHTMLUnsafe">setHTMLUnsafe(<var>html</var>, <var>options</var>)</code></dfn>
+  method steps are:</p>
+
+  <ol>
+   <li><p>Let <var>compliantHTML</var> be the result of invoking the <span
+   data-x="tt-getcompliantstring">get trusted type compliant string</span> algorithm with <code
+   data-x="tt-trustedhtml">TrustedHTML</code>, <span>this</span>'s <span>relevant global
+   object</span>, <var>html</var>, "<code data-x="">Element setHTMLUnsafe</code>", and "<code
+   data-x="">script</code>".</p></li>
+
+   <li><p>Let <var>target</var> be <span>this</span>'s <span>template contents</span> if
+   <span>this</span> is a <code>template</code> element; otherwise <span>this</span>.</p></li>
+
+   <li><p><span>Set and filter HTML</span> given <var>target</var>, <var>compliantHTML</var>,
+   <var>options</var>, and false.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p><code>ShadowRoot</code>'s <dfn method for="ShadowRoot"><code
+  data-x="dom-ShadowRoot-setHTMLUnsafe">setHTMLUnsafe(<var>html</var>,
+  <var>options</var>)</code></dfn> method steps are:</p>
+
+  <ol>
+   <li><p>Let <var>compliantHTML</var> be the result of invoking the <span
+   data-x="tt-getcompliantstring">get trusted type compliant string</span> algorithm with <code
+   data-x="tt-trustedhtml">TrustedHTML</code>, <span>this</span>'s <span>relevant global
+   object</span>, <var>html</var>, "<code data-x="">ShadowRoot setHTMLUnsafe</code>", and "<code
+   data-x="">script</code>".</p></li>
+
+   <li><p><span>Set and filter HTML</span> given <span>this</span>, <var>compliantHTML</var>,
+   <var>options</var>, and false.</p></li>
+  </ol>
+  </div>
+
+  <hr>
+
+  <div algorithm>
+  <p>The static <dfn method for="Document"><code data-x="dom-parseHTML">parseHTML(<var>html</var>,
+  <var>options</var>)</code></dfn> method steps are:</p>
+
+  <ol>
+   <li>
+    <p>Let <var>document</var> be a new <code>Document</code>, whose <span
+    data-x="concept-document-content-type">content type</span> is "<code
+    data-x="">text/html</code>" and <span data-x="concept-document-origin">origin</span> is
+    <span>this</span>'s <span>relevant global object</span>'s <span
+    data-x="concept-document-window">associated <code>Document</code></span>'s <span
+    data-x="concept-document-origin">origin</span>.</p>
+
+    <p class="note">Since <var>document</var> does not have a <span
+    data-x="concept-document-bc">browsing context</span>, <span data-x="concept-n-script">scripting
+    is disabled</span>.</p>
+   </li>
+
+   <li><p>Set <var>document</var>'s <span
+   data-x="concept-document-allow-declarative-shadow-roots">allow declarative shadow roots</span> to
+   true.</p></li>
+
+   <li><p><span>Parse HTML from a string</span> given <var>document</var> and
+   <var>html</var>.</p></li>
+
+   <li><p>Let <var>sanitizer</var> be the result of calling <span>get a sanitizer instance from
+   options</span> with <var>options</var> and true.</p></li>
+
+   <li><p>Call <span>sanitize</span> on <var>document</var> with <var>sanitizer</var> and
+   true.</p></li>
+
+   <li><p>Return <var>document</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The static <dfn method for="Document"><code
+  data-x="dom-parseHTMLUnsafe">parseHTMLUnsafe(<var>html</var>, <var>options</var>)</code></dfn>
+  method steps are:</p>
+
+  <ol>
+   <li><p>Let <var>compliantHTML</var> be the result of invoking the <span
+   data-x="tt-getcompliantstring">get trusted type compliant string</span> algorithm with <code
+   data-x="tt-trustedhtml">TrustedHTML</code>, the <span>current global object</span>,
+   <var>html</var>, "<code data-x="">Document parseHTMLUnsafe</code>", and "<code
+   data-x="">script</code>".</p></li>
+
+   <li>
+    <p>Let <var>document</var> be a new <code>Document</code>, whose <span
+    data-x="concept-document-content-type">content type</span> is "<code
+    data-x="">text/html</code>" and <span data-x="concept-document-origin">origin</span> is
+    <span>this</span>'s <span>relevant global object</span>'s <span
+    data-x="concept-document-window">associated <code>Document</code></span>'s <span
+    data-x="concept-document-origin">origin</span>.</p>
+
+    <p class="note">Since <var>document</var> does not have a <span
+    data-x="concept-document-bc">browsing context</span>, <span data-x="concept-n-script">scripting
+    is disabled</span>.</p>
+   </li>
+
+   <li><p>Set <var>document</var>'s <span
+   data-x="concept-document-allow-declarative-shadow-roots">allow declarative shadow roots</span> to
+   true.</p></li>
+
+   <li><p><span>Parse HTML from a string</span> given <var>document</var> and
+   <var>compliantHTML</var>.</p></li>
+
+   <li><p>Let <var>sanitizer</var> be the result of calling <span>get a sanitizer instance from
+   options</span> with <var>options</var> and false.</p></li>
+
+   <li><p>Call <span>sanitize</span> on <var>document</var> with <var>sanitizer</var> and
+   false.</p></li>
+
+   <li><p>Return <var>document</var>.</p></li>
+  </ol>
+  </div>
+
+  </div>
+

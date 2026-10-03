@@ -1,0 +1,249 @@
+WHATWG HTML — section worklets-worklet — The <code>Worklet</code> class
+
+  <h4 id="worklets-worklet">The <code>Worklet</code> class</h4>
+
+  <p>The <code subdfn>Worklet</code> class provides the capability to add module scripts into its
+  associated <code>WorkletGlobalScope</code>s. The user agent can then create classes registered on
+  the <code>WorkletGlobalScope</code>s and invoke their methods.</p>
+
+  <pre><code class="idl">[Exposed=Window, SecureContext]
+interface <dfn interface>Worklet</dfn> {
+  [NewObject] <span data-x="idl-Promise">Promise</span>&lt;undefined> <span data-x="dom-Worklet-addModule">addModule</span>(USVString moduleURL, optional <span>WorkletOptions</span> options = {});
+};
+
+dictionary <dfn dictionary>WorkletOptions</dfn> {
+  <span>RequestCredentials</span> <dfn dict-member for="WorkletOptions" data-x="dom-WorkletOptions-credentials">credentials</dfn> = "same-origin";
+};</code></pre>
+
+  <p>Specifications that create <code>Worklet</code> instances must specify the following for a
+  given instance:</p>
+
+  <ul>
+   <li><p>its <dfn export>worklet global scope type</dfn>, which must be a Web IDL type that <span
+   data-x="inherit">inherits</span> from <code>WorkletGlobalScope</code>; and</p></li>
+
+   <li><p>its <dfn export>worklet destination type</dfn>, which must be a <span
+   data-x="concept-request-destination">destination</span>, and is used when fetching
+   scripts.</p></li>
+  </ul>
+
+  <dl class="domintro">
+   <dt><code data-x="">await <var>worklet</var>.<span subdfn data-x="dom-Worklet-addModule">addModule</span>(<var>moduleURL</var>[, { <span data-x="dom-WorkletOptions-credentials">credentials</span> }])</code></dt>
+   <dd>
+    <p>Loads and executes the <span>module script</span> given by <var>moduleURL</var> into all of
+    <var>worklet</var>'s <span data-x="concept-Worklet-global-scopes">global scopes</span>. It can
+    also create additional global scopes as part of this process, depending on the worklet type. The
+    returned promise will fulfill once the script has been successfully loaded and run in all global
+    scopes.</p>
+
+    <p>The <code data-x="dom-WorkletOptions-credentials">credentials</code> option can be set to a
+    <span data-x="concept-request-credentials-mode">credentials mode</span> to modify the
+    script-fetching process. It defaults to "<code data-x="">same-origin</code>".</p>
+
+    <p>Any failures in <span data-x="fetch a worklet script graph">fetching</span> the script or its
+    dependencies will cause the returned promise to be rejected with an
+    <span>"<code>AbortError</code>"</span> <code>DOMException</code>. Any errors in parsing the
+    script or its dependencies will cause the returned promise to be rejected with the exception
+    generated during parsing.</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <p>A <code>Worklet</code> has a <span>list</span> of <dfn
+  data-x="concept-Worklet-global-scopes" export for="Worklet">global scopes</dfn>, which contains
+  instances of the <code>Worklet</code>'s <span>worklet global scope type</span>. It is initially
+  empty.</p>
+
+  <p>A <code>Worklet</code> has an <dfn data-x="concept-Worklet-added-modules-list">added modules
+  list</dfn>, which is a <span>list</span> of <span data-x="URL">URLs</span>, initially empty.
+  Access to this list should be thread-safe.</p>
+
+  <p>A <code>Worklet</code> has a <dfn data-x="concept-Worklet-module-responses-map">module
+  responses map</dfn>, which is an <span>ordered map</span> from <span data-x="URL">URLs</span> to
+  either "<code data-x="">fetching</code>" or <span data-x="tuple">tuples</span> consisting of a
+  <span data-x="concept-response">response</span> and either null, failure, or a <span>byte
+  sequence</span> representing the response body. This map is initially empty, and access to it
+  should be thread-safe.</p>
+
+  <div class="note">
+   <p>The <span data-x="concept-Worklet-added-modules-list">added modules list</span> and <span
+   data-x="concept-Worklet-module-responses-map">module responses map</span> exist to ensure that
+   <code>WorkletGlobalScope</code>s created at different times get equivalent <span data-x="module
+   script">module scripts</span> run in them, based on the same source text. This allows the
+   creation of additional <code>WorkletGlobalScope</code>s to be transparent to the author.</p>
+
+   <p>In practice, user agents are not expected to implement these data structures, and the
+   algorithms that consult them, using thread-safe programming techniques. Instead, when <code
+   data-x="dom-Worklet-addModule">addModule()</code> is called, user agents can fetch the module
+   graph on the main thread, and send the fetched source text (i.e., the important data contained in
+   the <span data-x="concept-Worklet-module-responses-map">module responses map</span>) to each
+   thread which has a <code>WorkletGlobalScope</code>.</p>
+
+   <p>Then, when a user agent <span data-x="create a worklet global scope">creates</span> a new
+   <code>WorkletGlobalScope</code> for a given <code>Worklet</code>, it can simply send the map of
+   fetched source text and the list of entry points from the main thread to the thread containing
+   the new <code>WorkletGlobalScope</code>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="Worklet"
+  data-x="dom-Worklet-addModule"><code>addModule(<var>moduleURL</var>,
+  <var>options</var>)</code></dfn> method steps are:</p>
+
+  <ol>
+   <li><p>Let <var>outsideSettings</var> be the <span>relevant settings object</span> of
+   <span>this</span>.</p></li>
+
+   <li><p>Let <var>moduleURLRecord</var> be the result of <span>encoding-parsing a URL</span> given
+   <var>moduleURL</var>, relative to <var>outsideSettings</var>.</p></li>
+
+   <li><p>If <var>moduleURLRecord</var> is failure, then return <span>a promise rejected with</span>
+   a <span>"<code>SyntaxError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>Let <var>promise</var> be a new promise.</p></li>
+
+   <li><p>Let <var>workletInstance</var> be <span>this</span>.</p></li>
+
+   <li>
+    <p>Run the following steps <span>in parallel</span>:</p>
+
+    <ol>
+     <li>
+      <p>If <var>workletInstance</var>'s <span data-x="concept-Worklet-global-scopes">global
+      scopes</span> <span data-x="list is empty">is empty</span>:</p>
+
+      <ol>
+       <li><p><span>Create a worklet global scope</span> given <var>workletInstance</var>.</p></li>
+
+       <li><p>Optionally, <span data-x="create a worklet global scope">create</span> additional
+       global scope instances given <var>workletInstance</var>, depending on the specific worklet in
+       question and its specification.</p></li>
+
+       <li><p>Wait for all steps of the <span data-x="create a worklet global scope">creation</span>
+       process(es) — including those taking place within the <span data-x="worklet agent">worklet
+       agents</span> — to complete, before moving on.</p></li>
+      </ol>
+     </li>
+
+     <li><p>Let <var>pendingTasks</var> be <var>workletInstance</var>'s <span
+     data-x="concept-Worklet-global-scopes">global scopes</span>'s <span data-x="list
+     size">size</span>.</p></li>
+
+     <li><p>Let <var>addedSuccessfully</var> be false.</p></li>
+
+     <li>
+      <p><span data-x="list iterate">For each</span> <var>workletGlobalScope</var> of
+      <var>workletInstance</var>'s <span data-x="concept-Worklet-global-scopes">global
+      scopes</span>, <span>queue a global task</span> on the <span>networking task source</span>
+      given <var>workletGlobalScope</var> to <span>fetch a worklet script graph</span> given
+      <var>moduleURLRecord</var>, <var>outsideSettings</var>, <var>workletInstance</var>'s
+      <span>worklet destination type</span>, <var>options</var>["<code
+      data-x="dom-WorkletOptions-credentials">credentials</code>"], <var>workletGlobalScope</var>'s
+      <span>relevant settings object</span>, <var>workletInstance</var>'s <span
+      data-x="concept-Worklet-module-responses-map">module responses map</span>, and the following
+      steps given <var>script</var>:</p>
+
+      <p class="note">Only the first of these fetches will actually perform a network request; the
+      ones for other <code>WorkletGlobalScope</code>s will reuse <span
+      data-x="concept-response">responses</span> from <var>workletInstance</var>'s <span
+      data-x="concept-Worklet-module-responses-map">module responses map</span>.</p>
+
+      <ol>
+       <li>
+        <p>If <var>script</var> is null:</p>
+
+        <ol>
+         <li>
+          <p><span>Queue a global task</span> on the <span>networking task source</span> given
+          <var>workletInstance</var>'s <span>relevant global object</span> to perform the following
+          steps:</p>
+
+          <ol>
+           <li>
+            <p>If <var>pendingTasks</var> is not &#x2212;1:</p>
+
+            <ol>
+             <li><p>Set <var>pendingTasks</var> to &#x2212;1.</p></li>
+
+             <li><p>Reject <var>promise</var> with an <span>"<code>AbortError</code>"</span>
+             <code>DOMException</code>.</p></li>
+            </ol>
+           </li>
+          </ol>
+         </li>
+
+         <li><p>Abort these steps.</p></li>
+        </ol>
+       </li>
+
+       <li>
+        <p>If <var>script</var>'s <span data-x="concept-script-error-to-rethrow">error to
+        rethrow</span> is not null:</p>
+
+        <ol>
+         <li>
+          <p><span>Queue a global task</span> on the <span>networking task source</span> given
+          <var>workletInstance</var>'s <span>relevant global object</span> to perform the following
+          steps:</p>
+
+          <ol>
+           <li>
+            <p>If <var>pendingTasks</var> is not &#x2212;1:</p>
+
+            <ol>
+             <li><p>Set <var>pendingTasks</var> to &#x2212;1.</p></li>
+
+             <li><p>Reject <var>promise</var> with <var>script</var>'s <span
+             data-x="concept-script-error-to-rethrow">error to rethrow</span>.</p></li>
+            </ol>
+           </li>
+          </ol>
+         </li>
+
+         <li><p>Abort these steps.</p></li>
+        </ol>
+       </li>
+
+       <li>
+        <p>If <var>addedSuccessfully</var> is false:</p>
+
+        <ol>
+         <li><p><span data-x="list append">Append</span> <var>moduleURLRecord</var> to
+         <var>workletInstance</var>'s <span data-x="concept-Worklet-added-modules-list">added
+         modules list</span>.</p></li>
+
+         <li><p>Set <var>addedSuccessfully</var> to true.</p></li>
+        </ol>
+       </li>
+
+       <li><p><span>Run a module script</span> given <var>script</var>.</p></li>
+
+       <li>
+        <p><span>Queue a global task</span> on the <span>networking task source</span> given
+        <var>workletInstance</var>'s <span>relevant global object</span> to perform the following
+        steps:</p>
+
+        <ol>
+         <li>
+          <p>If <var>pendingTasks</var> is not &#x2212;1:</p>
+
+          <ol>
+           <li><p>Set <var>pendingTasks</var> to <var>pendingTasks</var> &#x2212; 1.</p></li>
+
+           <li><p>If <var>pendingTasks</var> is 0, then resolve <var>promise</var>.</p></li>
+          </ol>
+         </li>
+        </ol>
+       </li>
+      </ol>
+     </li>
+    </ol>
+   </li>
+
+   <li><p>Return <var>promise</var>.</p></li>
+  </ol>
+  </div>
+
+  </div>
+

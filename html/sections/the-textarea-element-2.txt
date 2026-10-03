@@ -1,0 +1,62 @@
+WHATWG HTML — section the-textarea-element — The <code>textarea</code> element
+
+  <h4>The <code>textarea</code> element</h4>
+
+  <div algorithm>
+  <p>The <code>textarea</code> element is a <span>devolvable widget</span> <span>expected</span> to
+  render as an <span>'inline-block'</span> box depicting a multiline text control. If this
+  multiline text control provides a selection, then, when the user changes the current selection,
+  the user agent is <span>expected</span> to <span>queue an element task</span> on the <span>user
+  interaction task source</span> given the <code>textarea</code> element to <span
+  data-x="concept-event-fire">fire an event</span> named <code data-x="event-select">select</code>
+  at the element, with the <code data-x="dom-Event-bubbles">bubbles</code> attribute initialized to
+  true.</p>
+  </div>
+
+  <p>The <code>textarea</code> element is an <span>element with default preferred size</span>, and
+  user agents are <span>expected</span> to apply the <span>'field-sizing'</span> CSS property to
+  <code>textarea</code> elements.
+
+  <p>If the <span>'field-sizing'</span> property on the element has a <span>computed value</span>
+  of <span data-x="field-sizing-content">'content'</span>, the <span>intrinsic size</span> is
+  determined from the text which the element shows. The text is either a
+  <span data-x="concept-textarea-raw-value">raw value</span> or a short hint specified by the
+  <code data-x="attr-textarea-placeholder">placeholder</code> attribute. User agents may take the
+  text caret size into account in the <span>intrinsic size</span>. Otherwise, its
+  <span>intrinsic size</span> is computed from <span>textarea effective width</span> and
+  <span>textarea effective height</span> (as defined below).</p>
+
+  <div algorithm>
+  <p>The <dfn>textarea effective width</dfn> of a <code>textarea</code> element is <span
+  data-x=""><var>size</var>&times;<var>avg</var>&nbsp;+&nbsp;<var>sbw</var></span>, where
+  <var>size</var> is the element's <span data-x="attr-textarea-cols-value">character width</span>,
+  <var>avg</var> is the average character width of the primary font of the element, in <span
+  data-x="'px'">CSS pixels</span>, and <var>sbw</var> is the width of a scrollbar, in <span
+  data-x="'px'">CSS pixels</span>. (The element's <span>'letter-spacing'</span> property does not
+  affect the result.)</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn>textarea effective height</dfn> of a <code>textarea</code> element is the height in
+  <span data-x="'px'">CSS pixels</span> of the number of lines given by the element's <span
+  data-x="attr-textarea-rows-value">character height</span>, plus the height of a scrollbar in <span
+  data-x="'px'">CSS pixels</span>.</p>
+  </div>
+
+  <p>User agents are <span>expected</span> to apply the <span>'white-space'</span> CSS property to
+  <code>textarea</code> elements. For historical reasons, if the element has a <code
+  data-x="attr-textarea-wrap">wrap</code> attribute whose value is an <span>ASCII
+  case-insensitive</span> match for the string "<code data-x="attr-textarea-wrap-off"
+  undefined>off</code>", then the user agent is <span>expected</span> to treat the attribute as a
+  <span data-x="presentational hints">presentational hint</span> setting the element's
+  <span>'white-space'</span> property to 'pre'.</p>
+
+  <p class="XXX">Need to detail the <span>native appearance</span> and <span>primitive
+  appearance</span>.</p>
+
+  </div>
+
+
+
+  <div w-nodev>
+

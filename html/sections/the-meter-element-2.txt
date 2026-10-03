@@ -1,0 +1,36 @@
+WHATWG HTML — section the-meter-element — The <code>meter</code> element
+
+  <h4>The <code>meter</code> element</h4>
+
+  <pre><code class="css" data-x="">@namespace "http://www.w3.org/1999/xhtml";
+
+meter { appearance: auto; }</code></pre>
+
+  <div algorithm>
+  <p>The <code>meter</code> element is a <span>devolvable widget</span>. Its <span>native
+  appearance</span> is <span>expected</span> to render as an <span>'inline-block'</span> box with a
+  <span>'block-size'</span> of '1em' and an <span>'inline-size'</span> of '5em', a
+  <span>'vertical-align'</span> of '-0.2em', and with its contents depicting a gauge.</p>
+  </div>
+
+  <p>When this element has a <span>horizontal writing mode</span>, the depiction is
+  <span>expected</span> to be of a horizontal gauge. Its minimum value is on the right if the
+  <span>'direction'</span> property has a <span>computed value</span> of 'rtl', and on the left
+  otherwise. When this element has a <span>vertical writing mode</span>, it is
+  <span>expected</span> to depict a vertical gauge. Its minimum value is on the bottom if the
+  <span>'direction'</span> property has a <span>computed value</span> of 'rtl', and on the top
+  otherwise.</p>
+
+  <p>User agents are <span>expected</span> to use a presentation consistent with platform
+  conventions for gauges, if any.</p>
+
+  <p class="note">Requirements for what <!--non-normative-->must be depicted in the gauge are
+  included in the definition of the <code>meter</code> element.</p>
+
+  <p class="XXX">Need to detail the <span>primitive appearance</span>.</p>
+
+  </div>
+
+
+  <div w-nodev>
+

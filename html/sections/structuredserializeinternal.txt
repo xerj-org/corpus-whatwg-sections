@@ -1,0 +1,436 @@
+WHATWG HTML — section structuredserializeinternal — <dfn>StructuredSerializeInternal</dfn> ( <var>value</var>, <var>forStorage</var> [ , <var>memory</var> ] )
+
+  <h4 id="structuredserializeinternal" noexport data-lt="StructuredSerializeInternal"
+  abstract-op><dfn>StructuredSerializeInternal</dfn> ( <var>value</var>, <var>forStorage</var> [ ,
+  <var>memory</var> ] )</h4>
+
+  <p>The <span>StructuredSerializeInternal</span> abstract operation takes as input a JavaScript
+  value <var>value</var> and serializes it to a <span>realm</span>-independent form, represented
+  here as a <span>Record</span>. This serialized form has all the information necessary to later
+  deserialize into a new JavaScript value in a different realm.</p>
+
+  <p>This process can throw an exception, for example when trying to serialize un-serializable
+  objects.</p>
+
+  <ol>
+   <li>
+    <p>If <var>memory</var> was not supplied, let <var>memory</var> be an empty <span
+    data-x="ordered map">map</span>.</p>
+
+    <p class="note">The purpose of the <var>memory</var> map is to avoid serializing objects twice.
+    This ends up preserving cycles and the identity of duplicate objects in graphs.</p>
+   </li>
+
+   <li><p>If <var>memory</var>[<var>value</var>] <span data-x="map exists">exists</span>, then
+   return <var>memory</var>[<var>value</var>].</p></li>
+
+   <li><p>Let <var>deep</var> be false.</p></li>
+
+   <li><p>If <var>value</var> is undefined, null, <span data-x="js-Boolean">a Boolean</span>, <span
+   data-x="js-Number">a Number</span>, <span data-x="js-BigInt">a BigInt</span>, or <span
+   data-x="js-String">a String</span>, then return { [[Type]]: "primitive", [[Value]]:
+   <var>value</var> }.</p></li>
+
+   <li><p>If <var>value</var> <span data-x="js-Symbol">is a Symbol</span>, then throw a
+   <span>"<code>DataCloneError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>Let <var>serialized</var> be an uninitialized value.</p></li>
+
+   <li><p>If <var>value</var> has a [[BooleanData]] internal slot, then set <var>serialized</var> to
+   { [[Type]]: "Boolean", [[BooleanData]]: <var>value</var>.[[BooleanData]] }.</p></li>
+
+   <li><p>Otherwise, if <var>value</var> has a [[NumberData]] internal slot, then set
+   <var>serialized</var> to { [[Type]]: "Number", [[NumberData]]: <var>value</var>.[[NumberData]]
+   }.</p></li>
+
+   <li><p>Otherwise, if <var>value</var> has a [[BigIntData]]
+   internal slot, then set <var>serialized</var> to { [[Type]]: "BigInt", [[BigIntData]]:
+   <var>value</var>.[[BigIntData]] }.</p></li>
+
+   <li><p>Otherwise, if <var>value</var> has a [[StringData]] internal slot, then set
+   <var>serialized</var> to { [[Type]]: "String", [[StringData]]: <var>value</var>.[[StringData]]
+   }.</p></li>
+
+   <li><p>Otherwise, if <var>value</var> has a [[DateValue]] internal slot, then set
+   <var>serialized</var> to { [[Type]]: "Date", [[DateValue]]: <var>value</var>.[[DateValue]]
+   }.</p></li>
+
+   <li><p>Otherwise, if <var>value</var> has a [[RegExpMatcher]] internal slot, then set
+   <var>serialized</var> to { [[Type]]: "RegExp", [[RegExpMatcher]]:
+   <var>value</var>.[[RegExpMatcher]], [[OriginalSource]]: <var>value</var>.[[OriginalSource]],
+   [[OriginalFlags]]: <var>value</var>.[[OriginalFlags]] }.</p></li>
+
+   <li>
+    <p>Otherwise, if <var>value</var> has an [[ArrayBufferData]] internal slot:</p>
+
+    <ol>
+     <li>
+      <p>If <span>IsSharedArrayBuffer</span>(<var>value</var>) is true:
+
+      <ol>
+       <li>
+        <p>If the <span>current settings object</span>'s <span
+        data-x="concept-settings-object-cross-origin-isolated-capability">cross-origin isolated
+        capability</span> is false, then throw a <span>"<code>DataCloneError</code>"</span>
+        <code>DOMException</code>.</p>
+
+        <p class="note">This check is only needed when serializing (and not when deserializing) as
+        the <span data-x="concept-settings-object-cross-origin-isolated-capability">cross-origin
+        isolated capability</span> cannot change over time and a <code>SharedArrayBuffer</code>
+        cannot leave an <span>agent cluster</span>.</p>
+       </li>
+
+       <li><p>If <var>forStorage</var> is true, then throw a
+       <span>"<code>DataCloneError</code>"</span> <code>DOMException</code>.</p></li>
+
+       <li><p>If <var>value</var> has an [[ArrayBufferMaxByteLength]] internal slot, then set
+       <var>serialized</var> to { [[Type]]: "GrowableSharedArrayBuffer", [[ArrayBufferData]]:
+       <var>value</var>.[[ArrayBufferData]], [[ArrayBufferByteLengthData]]:
+       <var>value</var>.[[ArrayBufferByteLengthData]], [[ArrayBufferMaxByteLength]]:
+       <var>value</var>.[[ArrayBufferMaxByteLength]], [[AgentCluster]]: the <span>surrounding
+       agent</span>'s <span>agent cluster</span> }.</p></li>
+
+       <li><p>Otherwise, set <var>serialized</var> to { [[Type]]: "SharedArrayBuffer",
+       [[ArrayBufferData]]: <var>value</var>.[[ArrayBufferData]], [[ArrayBufferByteLength]]:
+       <var>value</var>.[[ArrayBufferByteLength]], [[AgentCluster]]: the <span>surrounding
+       agent</span>'s <span>agent cluster</span> }.</p></li>
+      </ol>
+     </li>
+
+     <li>
+      <p>Otherwise:</p>
+
+      <ol>
+       <li><p>If <span>IsDetachedBuffer</span>(<var>value</var>) is true, then throw a
+       <span>"<code>DataCloneError</code>"</span> <code>DOMException</code>.</p></li>
+
+       <li><p>Let <var>size</var> be <var>value</var>.[[ArrayBufferByteLength]].</li>
+
+       <li>
+        <p>Let <var>dataCopy</var> be ? <span>CreateByteDataBlock</span>(<var>size</var>).</p>
+
+        <p class="note">This can throw a <code data-x="js-RangeError">RangeError</code> exception
+        upon allocation failure.</p>
+       </li>
+
+       <li><p>Perform <span>CopyDataBlockBytes</span>(<var>dataCopy</var>, 0,
+       <var>value</var>.[[ArrayBufferData]], 0, <var>size</var>).</p></li>
+
+       <li><p>If <var>value</var> has an [[ArrayBufferMaxByteLength]] internal slot, then set
+       <var>serialized</var> to { [[Type]]: "ResizableArrayBuffer", [[ArrayBufferData]]:
+       <var>dataCopy</var>, [[ArrayBufferByteLength]]: <var>size</var>,
+       [[ArrayBufferMaxByteLength]]: <var>value</var>.[[ArrayBufferMaxByteLength]] }.</p></li>
+
+       <li><p>Otherwise, set <var>serialized</var> to { [[Type]]: "ArrayBuffer",
+       [[ArrayBufferData]]: <var>dataCopy</var>, [[ArrayBufferByteLength]]: <var>size</var>
+       }.</p></li>
+      </ol>
+     </li>
+    </ol>
+   </li>
+
+   <li>
+    <p>Otherwise, if <var>value</var> has a [[ViewedArrayBuffer]] internal slot:</p>
+
+    <ol>
+     <li><p>If <span>IsArrayBufferViewOutOfBounds</span>(<var>value</var>) is true, then throw a
+     <span>"<code>DataCloneError</code>"</span> <code>DOMException</code>.</p></li>
+
+     <li><p>Let <var>buffer</var> be the value of <var>value</var>'s [[ViewedArrayBuffer]] internal
+     slot.</p></li>
+
+     <li><p>Let <var>bufferSerialized</var> be ?
+     <span>StructuredSerializeInternal</span>(<var>buffer</var>, <var>forStorage</var>,
+     <var>memory</var>).</p></li>
+
+     <li><p><span>Assert</span>: <var>bufferSerialized</var>.[[Type]] is "ArrayBuffer",
+     "ResizableArrayBuffer", "SharedArrayBuffer", or "GrowableSharedArrayBuffer".</p></li>
+
+     <li><p>If <var>value</var> has a [[DataView]] internal slot, then set <var>serialized</var> to
+     { [[Type]]: "ArrayBufferView", [[Constructor]]: "DataView", [[ArrayBufferSerialized]]:
+     <var>bufferSerialized</var>, [[ByteLength]]: <var>value</var>.[[ByteLength]], [[ByteOffset]]:
+     <var>value</var>.[[ByteOffset]] }.</p></li>
+
+     <li>
+      <p>Otherwise:</p>
+
+      <ol>
+       <li><p><span>Assert</span>: <var>value</var> has a [[TypedArrayName]] internal slot.</p></li>
+
+       <li><p>Set <var>serialized</var> to { [[Type]]: "ArrayBufferView", [[Constructor]]:
+       <var>value</var>.[[TypedArrayName]], [[ArrayBufferSerialized]]: <var>bufferSerialized</var>,
+       [[ByteLength]]: <var>value</var>.[[ByteLength]], [[ByteOffset]]:
+       <var>value</var>.[[ByteOffset]], [[ArrayLength]]: <var>value</var>.[[ArrayLength]] }.</p></li>
+      </ol>
+     </li>
+    </ol>
+   </li>
+
+   <li>
+    <p>Otherwise, if <var>value</var> has a [[MapData]] internal slot:</p>
+
+    <ol>
+     <li><p>Set <var>serialized</var> to { [[Type]]: "Map", [[MapData]]: a new empty <span
+     data-x="js-List">List</span> }.</p></li>
+
+     <li><p>Set <var>deep</var> to true.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p>Otherwise, if <var>value</var> has a [[SetData]] internal slot:</p>
+
+    <ol>
+     <li><p>Set <var>serialized</var> to { [[Type]]: "Set", [[SetData]]: a new empty <span
+     data-x="js-List">List</span> }.</p></li>
+
+     <li><p>Set <var>deep</var> to true.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p>Otherwise, if <var>value</var> has an [[ErrorData]] internal slot and <var>value</var> is not
+    a <span>platform object</span>:</p>
+    <!-- "is not a platform object" check is needed because DOMExceptions can have [[ErrorData]]
+         too -->
+
+    <ol>
+     <li><p>Let <var>name</var> be ? <span data-x="js-Get">Get</span>(<var>value</var>,
+     "name").</p></li>
+
+     <li><p>If <var>name</var> is not one of "Error", "EvalError", "RangeError", "ReferenceError",
+     "SyntaxError", "TypeError", or "URIError", then set <var>name</var> to "Error".</p></li>
+
+     <li><p>Let <var>valueMessageDesc</var> be ? <var>value</var>.[[GetOwnProperty]]("<code
+     data-x="">message</code>").</p></li>
+
+     <li><p>Let <var>message</var> be undefined if
+     <span>IsDataDescriptor</span>(<var>valueMessageDesc</var>) is false, and
+     ? <span>ToString</span>(<var>valueMessageDesc</var>.[[Value]]) otherwise.</p></li>
+
+     <li><p>Let <var>stack</var> be an <span>implementation-defined</span> string that
+     represents <var>value</var>.[[Stack]]. <ref>JSERRORSTACKACCESSOR</ref>
+     <ref>JSERRORSTACKS</ref></p></li>
+
+     <li><p>Set <var>serialized</var> to { [[Type]]: "Error", [[Name]]: <var>name</var>,
+     [[Message]]: <var>message</var>, [[Stack]]: <var>stack</var> }.</p></li>
+
+     <li><p>User agents should attach a serialized representation of any interesting accompanying
+     data which are not yet specified to <var>serialized</var>.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p>Otherwise, if <var>value</var> is an Array exotic object:</p>
+    <!-- IsArray supports proxies too, which we cannot -->
+
+    <ol>
+     <li><p>Let <var>valueLenDescriptor</var> be ?
+     <span>OrdinaryGetOwnProperty</span>(<var>value</var>, "<code data-x="">length</code>").</p></li>
+
+     <li><p>Let <var>valueLen</var> be <var>valueLenDescriptor</var>.[[Value]].</p></li>
+
+     <li><p>Set <var>serialized</var> to { [[Type]]: "Array", [[Length]]: <var>valueLen</var>,
+     [[Properties]]: a new empty <span data-x="js-List">List</span> }.</p></li>
+
+     <li><p>Set <var>deep</var> to true.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p>Otherwise, if <var>value</var> is a <span>platform object</span> that is a <span
+    data-x="serializable objects">serializable object</span>:</p>
+
+    <ol>
+     <li><p>If <var>value</var> has a <span>[[Detached]]</span> internal slot whose value is true,
+     then throw a <span>"<code>DataCloneError</code>"</span> <code>DOMException</code>.</p></li>
+
+     <li><p>Let <var>typeString</var> be the identifier of the <span>primary interface</span> of
+     <var>value</var>.</p></li>
+
+     <li><p>Set <var>serialized</var> to { [[Type]]: <var>typeString</var> }.</p></li>
+
+     <li><p>Set <var>deep</var> to true.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Otherwise, if <var>value</var> is a <span>platform object</span>, then throw a
+   <span>"<code>DataCloneError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>Otherwise, if <span>IsCallable</span>(<var>value</var>) is true, then throw a
+   <span>"<code>DataCloneError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li>
+    <p>Otherwise, if <var>value</var> has any internal slot other than [[Prototype]],
+    [[Extensible]], or [[PrivateElements]], then throw a <span>"<code>DataCloneError</code>"</span>
+    <code>DOMException</code>.</p>
+
+    <p class="example">For instance, a [[PromiseState]] or [[WeakMapData]] internal slot.</p>
+   </li>
+
+   <li>
+    <p>Otherwise, if <var>value</var> is an exotic object and <var>value</var> is not the
+    <span>%Object.prototype%</span> intrinsic object associated with any <span>realm</span>, then
+    throw a <span>"<code>DataCloneError</code>"</span> <code>DOMException</code>.</p>
+
+    <p class="example">For instance, a proxy object.</p>
+   </li>
+
+   <li>
+    <p>Otherwise:</p>
+
+    <ol>
+     <li><p>Set <var>serialized</var> to { [[Type]]: "Object", [[Properties]]: a new empty <span
+     data-x="js-List">List</span> }.</p></li>
+
+     <li><p>Set <var>deep</var> to true.</p></li>
+    </ol>
+
+    <p class="note"><span>%Object.prototype%</span> will end up being handled via this step and
+    subsequent steps. The end result is that its exoticness is ignored, and after deserialization
+    the result will be an empty object (not an <span>immutable prototype exotic object</span>).
+   </li>
+
+   <li><p><span data-x="map set">Set</span> <var>memory</var>[<var>value</var>] to
+   <var>serialized</var>.</p></li>
+
+   <li>
+    <p>If <var>deep</var> is true:</p>
+
+    <ol>
+     <li>
+      <p>If <var>value</var> has a [[MapData]] internal slot:
+
+      <ol>
+       <li><p>Let <var>copiedList</var> be a new empty <span data-x="js-List">List</span>.
+
+       <li>
+        <p><span data-x="list iterate">For each</span> <span>Record</span> { [[Key]], [[Value]] }
+        <var>entry</var> of <var>value</var>.[[MapData]]:</p>
+
+        <ol>
+         <li><p>Let <var>copiedEntry</var> be a new <span>Record</span> { [[Key]]:
+         <var>entry</var>.[[Key]], [[Value]]: <var>entry</var>.[[Value]] }.</p></li>
+
+         <li><p>If <var>copiedEntry</var>.[[Key]] is not the special value <i>empty</i>, <span
+         data-x="list append">append</span> <var>copiedEntry</var> to <var>copiedList</var>.</p></li>
+        </ol>
+       </li>
+
+       <li>
+        <p><span data-x="list iterate">For each</span> <span>Record</span> { [[Key]], [[Value]] }
+        <var>entry</var> of <var>copiedList</var>:</p>
+
+        <ol>
+         <li><p>Let <var>serializedKey</var> be ?
+         <span>StructuredSerializeInternal</span>(<var>entry</var>.[[Key]], <var>forStorage</var>,
+         <var>memory</var>).</p></li>
+
+         <li><p>Let <var>serializedValue</var> be ?
+         <span>StructuredSerializeInternal</span>(<var>entry</var>.[[Value]], <var>forStorage</var>,
+         <var>memory</var>).</p></li>
+
+         <li><p><span data-x="list append">Append</span> { [[Key]]: <var>serializedKey</var>,
+         [[Value]]: <var>serializedValue</var> } to <var>serialized</var>.[[MapData]].</p></li>
+        </ol>
+       </li>
+      </ol>
+     </li>
+
+     <li>
+      <p>Otherwise, if <var>value</var> has a [[SetData]] internal slot:</p>
+
+      <ol>
+       <li><p>Let <var>copiedList</var> be a new empty <span data-x="js-List">List</span>.
+
+       <li>
+        <p><span data-x="list iterate">For each</span> <var>entry</var> of <var>value</var>.[[SetData]]:</p>
+
+        <ol>
+         <li><p>If <var>entry</var> is not the special value <i>empty</i>, <span data-x="list
+         append">append</span> <var>entry</var> to <var>copiedList</var>.</p></li>
+        </ol>
+       </li>
+
+       <li>
+        <p><span data-x="list iterate">For each</span> <var>entry</var> of <var>copiedList</var>:</p>
+
+        <ol>
+         <li><p>Let <var>serializedEntry</var> be ?
+         <span>StructuredSerializeInternal</span>(<var>entry</var>, <var>forStorage</var>,
+         <var>memory</var>).</p></li>
+
+         <li><p><span data-x="list append">Append</span> <var>serializedEntry</var> to
+         <var>serialized</var>.[[SetData]].</p></li>
+        </ol>
+       </li>
+      </ol>
+     </li>
+
+     <li>
+      <p>Otherwise, if <var>value</var> is a <span>platform object</span> that is a <span
+      data-x="serializable objects">serializable object</span>, then perform the <span>serialization
+      steps</span> for <var>value</var>'s <span>primary interface</span>, given <var>value</var>,
+      <var>serialized</var>, and <var>forStorage</var>.</p>
+
+      <p>The <span>serialization steps</span> may need to perform a <dfn
+      export>sub-serialization</dfn>. This is an operation which takes as input a value
+      <var>subValue</var>, and returns <span>StructuredSerializeInternal</span>(<var>subValue</var>,
+      <var>forStorage</var>, <var>memory</var>). (In other words, a <span>sub-serialization</span>
+      is a specialization of <span>StructuredSerializeInternal</span> to be consistent within this
+      invocation.)</p>
+     </li>
+
+     <li>
+      <p>Otherwise, for each <var>key</var> in !
+      <span>EnumerableOwnProperties</span>(<var>value</var>, key):</p>
+
+      <ol>
+       <li>
+        <p>If ! <span>HasOwnProperty</span>(<var>value</var>, <var>key</var>) is true:</p>
+
+        <ol>
+         <li><p>Let <var>inputValue</var> be ? <var>value</var>.[[Get]](<var>key</var>,
+         <var>value</var>).</p></li>
+
+         <li><p>Let <var>outputValue</var> be ?
+         <span>StructuredSerializeInternal</span>(<var>inputValue</var>, <var>forStorage</var>,
+         <var>memory</var>).</p></li>
+
+         <li><p><span data-x="list append">Append</span> { [[Key]]: <var>key</var>, [[Value]]:
+         <var>outputValue</var> } to <var>serialized</var>.[[Properties]].</p></li>
+        </ol>
+       </li>
+      </ol>
+     </li>
+    </ol>
+   </li>
+
+   <li><p>Return <var>serialized</var>.</p></li>
+  </ol>
+  </div>
+
+  <div class="example">
+   <p>It's important to realize that the <span data-x="Record">Records</span>
+   produced by <span>StructuredSerializeInternal</span> might contain "pointers" to other records
+   that create circular references. For example, when we pass the following JavaScript object into
+   <span>StructuredSerializeInternal</span>:</p>
+
+  <pre><code class="js">const o = {};
+o.myself = o;</code></pre>
+
+  <p>it produces the following result:</p>
+
+  <pre><samp>{
+  [[Type]]: "Object",
+  [[Properties]]: «
+    {
+      [[Key]]: "myself",
+      [[Value]]: <i>&lt;a pointer to this whole structure></i>
+    }
+  »
+}</samp></pre>
+  </div>
+
+
+  <div algorithm>

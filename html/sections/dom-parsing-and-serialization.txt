@@ -1,0 +1,39 @@
+WHATWG HTML — section dom-parsing-and-serialization — DOM parsing and serialization APIs
+
+  <h3 id="dom-parsing-and-serialization">DOM parsing and serialization APIs</h3>
+
+  <pre><code class="idl">partial interface <span id="Element-partial">Element</span> {
+  [<span>CEReactions</span>] undefined <span data-x="dom-Element-setHTML">setHTML</span>(DOMString html, optional <span>SetHTMLOptions</span> options = {});
+  [<span>CEReactions</span>] undefined <span data-x="dom-Element-setHTMLUnsafe">setHTMLUnsafe</span>((<code data-x="tt-trustedhtml">TrustedHTML</code> or DOMString) html, optional <span>SetHTMLUnsafeOptions</span> options = {});
+  DOMString <span data-x="dom-Element-getHTML">getHTML</span>(optional <span>GetHTMLOptions</span> options = {});
+
+  [<span>CEReactions</span>] attribute (<code data-x="tt-trustedhtml">TrustedHTML</code> or [<span>LegacyNullToEmptyString</span>] DOMString) <span data-x="dom-Element-innerHTML">innerHTML</span>;
+  [<span>CEReactions</span>] attribute (<code data-x="tt-trustedhtml">TrustedHTML</code> or [<span>LegacyNullToEmptyString</span>] DOMString) <span data-x="dom-Element-outerHTML">outerHTML</span>;
+  [<span>CEReactions</span>] undefined <span data-x="dom-Element-insertAdjacentHTML">insertAdjacentHTML</span>(DOMString position, (<code data-x="tt-trustedhtml">TrustedHTML</code> or DOMString) string);
+};
+
+partial interface <span id="ShadowRoot-partial">ShadowRoot</span> {
+  [<span>CEReactions</span>] undefined <span data-x="dom-ShadowRoot-setHTML">setHTML</span>(DOMString html, optional <span>SetHTMLOptions</span> options = {});
+  [<span>CEReactions</span>] undefined <span data-x="dom-ShadowRoot-setHTMLUnsafe">setHTMLUnsafe</span>((<code data-x="tt-trustedhtml">TrustedHTML</code> or DOMString) html, optional <span>SetHTMLUnsafeOptions</span> options = {});
+  DOMString <span data-x="dom-ShadowRoot-getHTML">getHTML</span>(optional <span>GetHTMLOptions</span> options = {});
+
+  [<span>CEReactions</span>] attribute (<code data-x="tt-trustedhtml">TrustedHTML</code> or [<span>LegacyNullToEmptyString</span>] DOMString) <span data-x="dom-ShadowRoot-innerHTML">innerHTML</span>;
+};
+
+enum <dfn enum>SanitizerPresets</dfn> { "<span data-x="dom-SanitizerPresets-default">default</span>" };
+dictionary <dfn dictionary>SetHTMLOptions</dfn> {
+  (<span>Sanitizer</span> or <span>SanitizerConfig</span> or <span>SanitizerPresets</span>) <dfn dict-member for="SetHTMLOptions" data-x="dom-SetHTMLOptions-sanitizer">sanitizer</dfn> = "<span data-x="dom-SanitizerPresets-default">default</span>";
+};
+dictionary <dfn dictionary>SetHTMLUnsafeOptions</dfn> {
+  (<span>Sanitizer</span> or <span>SanitizerConfig</span> or <span>SanitizerPresets</span>) <dfn dict-member for="SetHTMLUnsafeOptions" data-x="dom-SetHTMLUnsafeOptions-sanitizer">sanitizer</dfn> = {};
+  boolean <dfn dict-member for="SetHTMLUnsafeOptions" data-x="dom-SetHTMLUnsafeOptions-runScripts">runScripts</dfn> = false;
+};
+dictionary <dfn dictionary>ParseHTMLUnsafeOptions</dfn> {
+  (<span>Sanitizer</span> or <span>SanitizerConfig</span> or <span>SanitizerPresets</span>) <dfn dict-member for="ParseHTMLUnsafeOptions" data-x="dom-ParseHTMLUnsafeOptions-sanitizer">sanitizer</dfn> = {};
+};
+
+dictionary <dfn dictionary>GetHTMLOptions</dfn> {
+  boolean <dfn dict-member for="GetHTMLOptions" data-x="dom-GetHTMLOptions-serializableShadowRoots">serializableShadowRoots</dfn> = false;
+  sequence&lt;ShadowRoot> <dfn dict-member for="GetHTMLOptions" data-x="dom-GetHTMLOptions-shadowRoots">shadowRoots</dfn> = [];
+};</code></pre>
+

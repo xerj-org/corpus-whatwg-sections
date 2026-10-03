@@ -1,0 +1,720 @@
+WHATWG HTML — section origin — Origins
+
+  <h4 id="origin">Origins</h4>
+  <!-- Hallowed are the Ori -->
+
+  <p>Origins are the fundamental currency of the web's security model. Two actors in the web
+  platform that share an origin are assumed to trust each other and to have the same authority.
+  Actors with differing origins are considered potentially hostile versus each other, and are
+  isolated from each other to varying degrees.</p>
+
+  <p class="example">For example, if Example Bank's web site, hosted at <code
+  data-x="">bank.example.com</code>, tries to examine the DOM of Example Charity's web site, hosted
+  at <code data-x="">charity.example.org</code>, a <span>"<code>SecurityError</code>"</span>
+  <code>DOMException</code> will be raised.</p>
+
+  <hr>
+
+  <p id="origin-2">An <dfn id="concept-origin" export>origin</dfn> is one of the following:</p>
+
+  <dl>
+   <dt>An <dfn export data-x="concept-origin-opaque">opaque origin</dfn></dt>
+   <dd><p>An internal value, with no serialization it can be recreated from (it is serialized as
+   "<code data-x="">null</code>" per <span>serialization of an origin</span>), for which the only
+   meaningful operation is testing for equality.</p></dd>
+
+   <dt>A <dfn export data-x="concept-origin-tuple">tuple origin</dfn></dt>
+   <dd>
+    <p>A <span>tuple</span> consisting of:
+
+    <ul class="brief">
+     <li>A <dfn export for="origin" data-x="concept-origin-scheme">scheme</dfn> (an <span>ASCII
+     string</span>).</li>
+     <li>A <dfn export for="origin" data-x="concept-origin-host">host</dfn> (a <span
+     data-x="concept-host">host</span>).</li>
+     <li>A <dfn export for="origin" data-x="concept-origin-port">port</dfn> (null or a 16-bit
+     unsigned integer).</li>
+     <li>A <dfn export for="origin" data-x="concept-origin-domain">domain</dfn> (null or a <span
+     data-x="concept-host">host</span>). Null unless stated otherwise.</li>
+    </ul>
+   </dd>
+  </dl>
+
+  <p class="note"><span data-x="origin">Origins</span> can be shared, e.g., among multiple
+  <code>Document</code> objects. Furthermore, <span data-x="origin">origins</span> are generally
+  immutable. Only the <span data-x="concept-origin-domain">domain</span> of a <span
+  data-x="concept-origin-tuple">tuple origin</span> can be changed, and only through the <code
+  data-x="dom-document-domain">document.domain</code> API.</p>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn export data-x="concept-origin-effective-domain">effective domain</dfn> of an
+  <span>origin</span> <var>origin</var> is computed as follows:</p>
+
+  <ol>
+   <li><p>If <var>origin</var> is an <span data-x="concept-origin-opaque">opaque origin</span>,
+   then return null.</p></li>
+
+   <li><p>If <var>origin</var>'s <span data-x="concept-origin-domain">domain</span> is non-null,
+   then return <var>origin</var>'s <span data-x="concept-origin-domain">domain</span>.</p></li>
+
+   <li><p>Return <var>origin</var>'s <span data-x="concept-origin-host">host</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <!--en-GB--><dfn id="ascii-serialisation-of-an-origin" export data-lt="serialization of an
+  origin|ASCII serialization of an origin">serialization of an origin</dfn> is the string obtained
+  by applying the following algorithm to the given <span>origin</span> <var>origin</var>:</p>
+
+  <ol>
+   <li><p>If <var>origin</var> is an <span data-x="concept-origin-opaque">opaque origin</span>,
+   then return "<code data-x="">null</code>".</p></li>
+
+   <li><p>Otherwise, let <var>result</var> be <var>origin</var>'s <span
+   data-x="concept-origin-scheme">scheme</span>.</p></li>
+
+   <li><p>Append "<code data-x="">://</code>" to <var>result</var>.</p></li>
+
+   <li><p>Append <var>origin</var>'s <span data-x="concept-origin-host">host</span>, <span
+   data-x="host serializer">serialized</span>, to <var>result</var>.</p></li>
+
+   <li><p>If <var>origin</var>'s <span data-x="concept-origin-port">port</span> is non-null, append
+   a U+003A COLON character (:), and <var>origin</var>'s <span
+   data-x="concept-origin-port">port</span>, <span data-x="serialize an integer">serialized</span>,
+   to <var>result</var>.</p></li>
+
+   <li><p>Return <var>result</var>.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+  <p class="example">The <span data-x="serialization of an origin">serialization</span> of ("<code
+  data-x="">https</code>", "<code data-x="">xn--maraa-rta.example</code>", null, null) is "<code
+  data-x="">https://xn--maraa-rta.example</code>".</p>
+
+  <div w-nodev>
+
+  <!--en-GB--><p class="note" id="unicode-serialisation-of-an-origin">There used to also be a
+  <i>Unicode serialization of an origin</i>. However, it was never widely adopted.</p>
+
+  <hr>
+
+  <div algorithm>
+  <p>Two <span data-x="origin">origins</span>, <var>A</var> and <var>B</var>, are said to be <dfn
+  export>same origin</dfn> if the following algorithm returns true:</p>
+
+  <ol>
+   <li><p>If <var>A</var> and <var>B</var> are the same <span data-x="concept-origin-opaque">opaque
+   origin</span>, then return true.</p></li>
+
+   <li><p>If <var>A</var> and <var>B</var> are both <span data-x="concept-origin-tuple">tuple
+   origins</span> and their <span data-x="concept-origin-scheme">schemes</span>, <span
+   data-x="concept-origin-host">hosts</span>, and <span data-x="concept-origin-port">port</span>
+   are identical, then return true.</p></li>
+
+   <li><p>Return false.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>Two <span data-x="origin">origins</span>, <var>A</var> and <var>B</var>, are said to be <dfn
+  export>same origin-domain</dfn> if the following algorithm returns true:</p>
+
+  <ol>
+   <li><p>If <var>A</var> and <var>B</var> are the same <span data-x="concept-origin-opaque">opaque
+   origin</span>, then return true.</p></li>
+
+   <li>
+    <p>If <var>A</var> and <var>B</var> are both <span data-x="concept-origin-tuple">tuple
+    origins</span>:</p>
+
+    <ol>
+     <li><p>If <var>A</var> and <var>B</var>'s <span data-x="concept-origin-scheme">schemes</span>
+     are identical, and their <span data-x="concept-origin-domain">domains</span> are identical and
+     non-null, then return true.</p></li>
+
+     <li><p>Otherwise, if <var>A</var> and <var>B</var> are <span>same origin</span> and their
+     <span data-x="concept-origin-domain">domains</span> are both null, return true.</p></li>
+    </ol>
+
+   <li><p>Return false.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+  <div class="example">
+   <p w-dev>The following table shows examples of when two <span data-x="concept-origin-tuple">tuple
+   origins</span> are <span subdfn>same origin</span> and <span subdfn>same
+   origin-domain</span>.</p>
+
+   <table>
+    <tr>
+     <th><var ignore>A</var>
+     <th><var ignore>B</var>
+     <th><span>same origin</span>
+     <th><span>same origin-domain</span>
+    <tr>
+     <td>("<code data-x="">https</code>", "<code data-x="">example.org</code>", null, null)
+     <td>("<code data-x="">https</code>", "<code data-x="">example.org</code>", null, null)
+     <td>✅
+     <td>✅
+    <tr>
+     <td>("<code data-x="">https</code>", "<code data-x="">example.org</code>", 314, null)
+     <td>("<code data-x="">https</code>", "<code data-x="">example.org</code>", 420, null)
+     <td>❌
+     <td>❌
+    <tr>
+     <td>("<code data-x="">https</code>", "<code data-x="">example.org</code>", 314, "<code data-x="">example.org</code>")
+     <td>("<code data-x="">https</code>", "<code data-x="">example.org</code>", 420, "<code data-x="">example.org</code>")
+     <td>❌
+     <td>✅
+    <tr>
+     <td>("<code data-x="">https</code>", "<code data-x="">example.org</code>", null, null)
+     <td>("<code data-x="">https</code>", "<code data-x="">example.org</code>", null, "<code data-x="">example.org</code>")
+     <td>✅
+     <td>❌
+    <tr>
+     <td>("<code data-x="">https</code>", "<code data-x="">example.org</code>", null, "<code data-x="">example.org</code>")
+     <td>("<code data-x="">http</code>", "<code data-x="">example.org</code>", null, "<code data-x="">example.org</code>")
+     <td>❌
+     <td>❌
+   </table>
+  </div>
+
+
+  <h5>Sites</h5>
+
+  <p>A <dfn>scheme-and-host</dfn> is a <span>tuple</span> of a <dfn
+  data-x="concept-scheme-and-host-scheme">scheme</dfn> (an <span>ASCII string</span>) and a <dfn
+  data-x="concept-scheme-and-host-host">host</dfn> (a <span data-x="concept-host">host</span>).</p>
+
+  <p>A <dfn export>site</dfn> is an <span data-x="concept-origin-opaque">opaque origin</span> or a
+  <span>scheme-and-host</span>.</p>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>To <dfn export>obtain a site</dfn>, given an origin <var>origin</var>, run these steps:</p>
+
+  <ol>
+   <li><p>If <var>origin</var> is an <span data-x="concept-origin-opaque">opaque origin</span>,
+   then return <var>origin</var>.</p></li>
+
+   <li><p>If <var>origin</var>'s <span data-x="concept-origin-host">host</span>'s <span>registrable
+   domain</span> is null, then return (<var>origin</var>'s <span
+   data-x="concept-origin-scheme">scheme</span>, <var>origin</var>'s <span
+   data-x="concept-origin-host">host</span>).</p></li>
+
+   <li><p>Return (<var>origin</var>'s <span data-x="concept-origin-scheme">scheme</span>,
+   <var>origin</var>'s <span data-x="concept-origin-host">host</span>'s <span>registrable
+   domain</span>).</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>Two <span data-x="site">sites</span>, <var>A</var> and <var>B</var>, are said to be <dfn
+  export for="site" data-x="concept-site-same-site">same site</dfn> if the following algorithm
+  returns true:</p>
+
+  <ol>
+   <li><p>If <var>A</var> and <var>B</var> are the same <span data-x="concept-origin-opaque">opaque
+   origin</span>, then return true.</p></li>
+
+   <li><p>If <var>A</var> or <var>B</var> is an <span data-x="concept-origin-opaque">opaque
+   origin</span>, then return false.</p></li>
+
+   <li><p>If <var>A</var>'s and <var>B</var>'s <span
+   data-x="concept-scheme-and-host-scheme">scheme</span> values are different, then return
+   false.</p></li>
+
+   <li><p>If <var>A</var>'s and <var>B</var>'s <span
+   data-x="concept-scheme-and-host-host">host</span> values are not <span data-x="host
+   equals">equal</span>, then return false.</p></li>
+
+   <li><p>Return true.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn export>serialization of a site</dfn> is the string obtained by applying the following
+  algorithm to the given <span>site</span> <var>site</var>:</p>
+
+  <ol>
+   <li><p>If <var>site</var> is an <span data-x="concept-origin-opaque">opaque origin</span>, then
+   return "<code data-x="">null</code>".</p></li>
+
+   <li><p>Let <var>result</var> be <var>site</var>[0].</p></li>
+
+   <li><p>Append "<code data-x="">://</code>" to <var>result</var>.</p></li>
+
+   <li><p>Append <var>site</var>[1], <span data-x="host serializer">serialized</span>, to
+   <var>result</var>.</p></li>
+
+   <li><p>Return <var>result</var>.</p></li>
+  </ol>
+  </div>
+
+  <p class="warning">It needs to be clear from context that the serialized value is a site, not an
+  origin, as there is not necessarily a syntactic difference between the two. For example, the
+  origin ("<code data-x="">https</code>", "<code data-x="">shop.example</code>", null, null) and
+  the site ("<code data-x="">https</code>", "<code data-x="">shop.example</code>") have the same
+  serialization: "<code data-x="">https://shop.example</code>".</p>
+
+  <div algorithm>
+  <p>Two <span data-x="origin">origins</span>, <var>A</var> and <var>B</var>, are said to be <dfn
+  export>schemelessly same site</dfn> if the following algorithm returns true:</p>
+
+  <ol>
+   <li><p>If <var>A</var> and <var>B</var> are the same <span data-x="concept-origin-opaque">opaque
+   origin</span>, then return true.</p></li>
+
+   <li>
+    <p>If <var>A</var> and <var>B</var> are both <span data-x="concept-origin-tuple">tuple
+    origins</span>:</p>
+
+    <ol>
+     <li><p>Let <var>hostA</var> be <var>A</var>'s <span data-x="concept-origin-host">host</span>,
+     and let <var>hostB</var> be <var>B</var>'s <span
+     data-x="concept-origin-host">host</span>.</p></li>
+
+     <li><p>If <var>hostA</var> <span data-x="host equals">equals</span> <var>hostB</var> and
+     <var>hostA</var>'s <span>registrable domain</span> is null, then return true.</p></li>
+
+     <li><p>If <var>hostA</var>'s <span>registrable domain</span> <span data-x="host
+     equals">equals</span> <var>hostB</var>'s <span>registrable domain</span> and is non-null, then
+     return true.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Return false.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>Two <span data-x="origin">origins</span>, <var>A</var> and <var>B</var>, are said to be <dfn
+  export>same site</dfn> if the following algorithm returns true:</p>
+
+  <ol>
+   <li><p>Let <var>siteA</var> be the result of <span data-x="obtain a site">obtaining a
+   site</span> given <var>A</var>.</p></li>
+
+   <li><p>Let <var>siteB</var> be the result of <span data-x="obtain a site">obtaining a
+   site</span> given <var>B</var>.</p></li>
+
+   <li><p>If <var>siteA</var> is <span data-x="concept-site-same-site">same site</span> with
+   <var>siteB</var>, then return true.</p></li>
+
+   <li><p>Return false.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+  <p class="note">Unlike the <span>same origin</span> and <span>same origin-domain</span> concepts,
+  for <span>schemelessly same site</span> and <span>same site</span>, the <span
+  data-x="concept-origin-port">port</span> and <span data-x="concept-origin-domain">domain</span>
+  components are ignored.</p>
+
+  <p class="warning">For the reasons <a
+  href="https://url.spec.whatwg.org/#warning-avoid-psl">explained in <cite>URL</cite></a>, the
+  <span>same site</span> and <span>schemelessly same site</span> concepts should be avoided when
+  possible, in favor of <span>same origin</span> checks.</p>
+
+  <div class="example" id="example-same-site">
+   <p w-dev>The following table shows examples of when two <span data-x="concept-origin-tuple">tuple
+   origins</span> are <span subdfn>schemelessly same site</span> and <span subdfn>same
+   site</span>.</p>
+
+  <p>Given that <code data-x="">wildlife.museum</code>, <code data-x="">museum</code>, and <code
+  data-x="">com</code> are <span data-x="public suffix">public suffixes</span> and that <code
+  data-x="">example.com</code> is not:</p>
+
+   <table>
+    <tr>
+     <th><var ignore>A</var>
+     <th><var ignore>B</var>
+     <th><span>schemelessly same site</span>
+     <th><span>same site</span>
+    <tr>
+     <td>("<code data-x="">https</code>", "<code data-x="">example.com</code>")
+     <td>("<code data-x="">https</code>", "<code data-x="">sub.example.com</code>")
+     <td>✅
+     <td>✅
+    <tr>
+     <td>("<code data-x="">https</code>", "<code data-x="">example.com</code>")
+     <td>("<code data-x="">https</code>", "<code data-x="">sub.other.example.com</code>")
+     <td>✅
+     <td>✅
+    <tr>
+     <td>("<code data-x="">https</code>", "<code data-x="">example.com</code>")
+     <td>("<code data-x="">http</code>", "<code data-x="">non-secure.example.com</code>")
+     <td>✅
+     <td>❌
+    <tr>
+     <td>("<code data-x="">https</code>", "<code data-x="">r.wildlife.museum</code>")
+     <td>("<code data-x="">https</code>", "<code data-x="">sub.r.wildlife.museum</code>")
+     <td>✅
+     <td>✅
+    <tr>
+     <td>("<code data-x="">https</code>", "<code data-x="">r.wildlife.museum</code>")
+     <td>("<code data-x="">https</code>", "<code data-x="">sub.other.r.wildlife.museum</code>")
+     <td>✅
+     <td>✅
+    <tr>
+     <td>("<code data-x="">https</code>", "<code data-x="">r.wildlife.museum</code>")
+     <td>("<code data-x="">https</code>", "<code data-x="">other.wildlife.museum</code>")
+     <td>❌
+     <td>❌
+    <tr>
+     <td>("<code data-x="">https</code>", "<code data-x="">r.wildlife.museum</code>")
+     <td>("<code data-x="">https</code>", "<code data-x="">wildlife.museum</code>")
+     <td>❌
+     <td>❌
+    <tr>
+     <td>("<code data-x="">https</code>", "<code data-x="">wildlife.museum</code>")
+     <td>("<code data-x="">https</code>", "<code data-x="">wildlife.museum</code>")
+     <td>✅
+     <td>✅
+    <tr>
+     <td>("<code data-x="">https</code>", "<code data-x="">example.com</code>")
+     <td>("<code data-x="">https</code>", "<code data-x="">example.com.</code>")
+     <td>❌
+     <td>❌
+   </table>
+
+   <p>(Here we have omitted the <span data-x="concept-origin-port">port</span> and <span
+   data-x="concept-origin-domain">domain</span> components since they are not considered.)</p>
+  </div>
+
+
+  <h5>Relaxing the same-origin restriction</h5>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>document</var>.<span subdfn data-x="dom-document-domain">domain</span> [ = <var>domain</var> ]</code></dt>
+
+   <dd>
+    <p>Returns the current domain used for security checks.</p>
+
+    <p>Can be set to a value that removes subdomains, to change the <span>origin</span>'s <span
+    data-x="concept-origin-domain">domain</span> to allow pages on other subdomains of the same
+    domain (if they do the same thing) to access each other. This enables pages on different hosts
+    of a domain to synchronously access each other's DOMs.</p>
+
+    <p>In sandboxed <code>iframe</code>s, <code>Document</code>s with <span
+    data-x="concept-origin-opaque">opaque origins</span>, and <code>Document</code>s without a <span
+    data-x="concept-document-bc">browsing context</span>, the setter will
+    throw a <span>"<code>SecurityError</code>"</span> exception. In cases where <code
+    data-x="dom-crossOriginIsolated">crossOriginIsolated</code> or <code
+    data-x="dom-originAgentCluster">originAgentCluster</code> return true, the setter will do
+    nothing.</p>
+   </dd>
+  </dl>
+
+  <div class="critical">
+   <p>Avoid using the <code data-x="dom-document-domain">document.domain</code> setter. It
+   undermines the security protections provided by the same-origin policy. This is especially acute
+   when using shared hosting; for example, if an untrusted third party is able to host an HTTP
+   server at the same IP address but on a different port, then the same-origin protection that
+   normally protects two different sites on the same host will fail, as the ports are ignored when
+   comparing origins after the <code data-x="dom-document-domain">document.domain</code> setter has
+   been used.</p>
+
+   <p>Because of these security pitfalls, this feature is in the process of being removed from the
+   web platform. (This is a long process that takes many years.)</p>
+
+   <p>Instead, use <code data-x="dom-window-postMessage">postMessage()</code> or
+   <code>MessageChannel</code> objects to communicate across origins in a safe manner.</p>
+  </div>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn attribute for="Document"><code data-x="dom-document-domain">domain</code></dfn>
+  getter steps are:</p>
+
+  <ol>
+   <li><p>Let <var>effectiveDomain</var> be <span>this</span>'s <span
+   data-x="concept-document-origin">origin</span>'s <span
+   data-x="concept-origin-effective-domain">effective domain</span>.
+
+   <li><p>If <var>effectiveDomain</var> is null, then return the empty string.</p></li>
+
+   <li><p>Return <var>effectiveDomain</var>, <span data-x="host
+   serializer">serialized</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <code data-x="dom-document-domain">domain</code> setter steps are:</p>
+
+  <ol>
+   <li><p>If <span>this</span>'s <span data-x="concept-document-bc">browsing context</span> is
+   null, then throw a <span>"<code>SecurityError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>If <span>this</span>'s <span>active sandboxing flag set</span> has its <span>sandboxed
+   <code data-x="dom-document-domain">document.domain</code> browsing context flag</span> set, then
+   throw a <span>"<code>SecurityError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>Let <var>effectiveDomain</var> be <span>this</span>'s <span
+   data-x="concept-document-origin">origin</span>'s <span
+   data-x="concept-origin-effective-domain">effective domain</span>.
+
+   <li><p>If <var>effectiveDomain</var> is null, then throw a
+   <span>"<code>SecurityError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>If the given value <span data-x="is a registrable domain suffix of or is equal to">is not
+   a registrable domain suffix of and is not equal to</span> <var>effectiveDomain</var>, then throw
+   a <span>"<code>SecurityError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>If the <span>surrounding agent</span>'s <span>agent cluster</span>'s <span>is
+   origin-keyed</span> is true, then return.</p></li>
+
+   <li><p>Set <span>this</span>'s <span data-x="concept-document-origin">origin</span>'s <span
+   data-x="concept-origin-domain">domain</span> to the result of <span data-x="host
+   parser">parsing</span> the given value.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To determine if a <span>scalar value string</span> <var>hostSuffixString</var> <dfn export
+  data-lt="is a registrable domain suffix of or is equal to|is not a registrable domain suffix of
+  and is not equal to">is a registrable domain suffix of or is equal to</dfn> a <span
+  data-x="concept-host">host</span> <var>originalHost</var>:</p>
+  <!-- web platform usage: document.domain, Cookies, web Authentication -->
+
+  <ol>
+   <li><p>If <var>hostSuffixString</var> is the empty string, then return false.</p></li>
+
+   <li><p>Let <var>hostSuffix</var> be the result of <span data-x="host parser">parsing</span>
+   <var>hostSuffixString</var>.</p></li>
+
+   <li><p>If <var>hostSuffix</var> is failure, then return false.</p></li>
+
+   <li>
+    <p>If <var>hostSuffix</var> does not <span data-x="host equals">equal</span>
+    <var>originalHost</var>:</p>
+
+    <ol>
+     <li>
+      <p>If <var>hostSuffix</var> or <var>originalHost</var> is not a <span
+      data-x="concept-domain">domain</span>, then return false.</p>
+
+      <p class="note">This excludes <span data-x="concept-host">hosts</span> that are <span
+      data-x="IP address">IP addresses</span>.</p>
+     </li>
+
+     <li><p>If <var>hostSuffix</var>, prefixed by U+002E (.), does not match the end of
+     <var>originalHost</var>, then return false.</p></li>
+     <!-- It would be cleaner to avoid string manipulation on domains. -->
+
+     <li>
+      <p>If any of the following are true:</p>
+
+      <ul>
+       <li><p><var>hostSuffix</var> <span data-x="host equals">equals</span>
+       <var>hostSuffix</var>'s <span>public suffix</span>; or</p></li>
+
+       <li><p><var>hostSuffix</var>, prefixed by U+002E (.), matches the end of
+       <var>originalHost</var>'s <span>public suffix</span>,</p></li>
+       <!-- It would be cleaner to avoid string manipulation on domains. -->
+      </ul>
+
+      <p>then return false. <ref>URL</ref></p>
+     </li>
+
+     <li><p><span>Assert</span>: <var>originalHost</var>'s <span>public suffix</span>, prefixed by
+     U+002E (.), matches the end of <var>hostSuffix</var>.</p></li>
+     <!-- It would be cleaner to avoid string manipulation on domains. -->
+    </ol>
+   </li>
+
+   <li><p>Return true.</p></li>
+  </ol>
+  </div>
+
+  <div class="example" id="example-registrable-domain-suffix">
+   <table>
+    <tr>
+     <th><var ignore>hostSuffixString</var></th>
+     <th><var ignore>originalHost</var></th>
+     <th>Outcome of <span>is a registrable domain suffix of or is equal to</span></th>
+     <th>Notes</th>
+    </tr>
+    <tr>
+     <td>"<code data-x="">0.0.0.0</code>"</td>
+     <td><code data-x="">0.0.0.0</code></td>
+     <td>✅</td>
+     <td></td>
+    </tr>
+    <tr>
+     <td>"<code data-x="">0x10203</code>"</td>
+     <td><code data-x="">0.1.2.3</code></td>
+     <td>✅</td>
+     <td></td>
+    </tr>
+    <tr>
+     <td>"<code data-x="">[0::1]</code>"</td>
+     <td><code data-x="">::1</code></td>
+     <td>✅</td>
+     <td></td>
+    </tr>
+    <tr>
+     <td>"<code data-x="">example.com</code>"</td>
+     <td><code data-x="">example.com</code></td>
+     <td>✅</td>
+     <td></td>
+    </tr>
+    <tr>
+     <td>"<code data-x="">example.com</code>"</td>
+     <td><code data-x="">example.com.</code></td>
+     <td>❌</td>
+     <td rowspan="2">Trailing dot is significant.</td>
+    </tr>
+    <tr>
+     <td>"<code data-x="">example.com.</code>"</td>
+     <td><code data-x="">example.com</code></td>
+     <td>❌</td>
+    </tr>
+    <tr>
+     <td>"<code data-x="">example.com</code>"</td>
+     <td><code data-x="">www.example.com</code></td>
+     <td>✅</td>
+     <td></td>
+    </tr>
+    <tr>
+     <td>"<code data-x="">com</code>"</td>
+     <td><code data-x="">example.com</code></td>
+     <td>❌</td>
+     <td>At the time of writing, <code data-x="">com</code> is a public suffix.</td>
+    </tr>
+    <tr>
+     <td>"<code data-x="">example</code>"</td>
+     <td><code data-x="">example</code></td>
+     <td>✅</td>
+     <td></td>
+    </tr>
+    <tr>
+     <td>"<code data-x="">compute.amazonaws.com</code>"</td>
+     <td><code data-x="">example.compute.amazonaws.com</code></td>
+     <td>❌</td>
+     <td rowspan="3">At the time of writing, <code data-x=""><var ignore>*</var>.compute.amazonaws.com</code> is a public suffix.</td>
+    </tr>
+    <tr>
+     <td>"<code data-x="">example.compute.amazonaws.com</code>"</td>
+     <td><code data-x="">www.example.compute.amazonaws.com</code></td>
+     <td>❌</td>
+    </tr>
+    <tr>
+     <td>"<code data-x="">amazonaws.com</code>"</td>
+     <td><code data-x="">www.example.compute.amazonaws.com</code></td>
+     <td>❌</td>
+    </tr>
+    <tr>
+     <td>"<code data-x="">amazonaws.com</code>"</td>
+     <td><code data-x="">test.amazonaws.com</code></td>
+     <td>✅</td>
+     <td>At the time of writing, <code data-x="">amazonaws.com</code> is a registrable domain.</td>
+    </tr>
+   </table>
+  </div>
+
+  </div>
+
+  <h5>The <code data-x="dom-Origin-interface">Origin</code> interface</h5>
+
+  <p>The <code data-x="dom-Origin-interface">Origin</code> interface represents an
+  <span>origin</span>, allowing robust <span>same origin</span> and <span>same site</span>
+  comparisons.</p>
+
+  <pre><code class="idl">[Exposed=*]
+interface <dfn interface data-x="dom-Origin-interface">Origin</dfn> {
+  <span data-x="dom-Origin-constructor">constructor</span>();
+
+  static <span data-x="dom-Origin-interface">Origin</span> <span data-x="dom-Origin-from">from</span>(any <var ignore>value</var>);
+
+  readonly attribute boolean <span data-x="dom-Origin-opaque">opaque</span>;
+
+  boolean <span data-x="dom-Origin-isSameOrigin">isSameOrigin</span>(<span data-x="dom-Origin-interface">Origin</span> <var ignore>other</var>);
+  boolean <span data-x="dom-Origin-isSameSite">isSameSite</span>(<span data-x="dom-Origin-interface">Origin</span> <var ignore>other</var>);
+};</code></pre>
+
+  <p><code data-x="dom-Origin-interface">Origin</code> objects have an associated <dfn for="Origin"
+  data-x="concept-Origin-origin">origin</dfn>, which holds an <span>origin</span>.</p>
+
+  <p><span data-x="platform object">Platform objects</span> have an <dfn for="platform object"
+  export>extract an origin</dfn> operation, which returns null unless otherwise specified.</p>
+
+  <div algorithm>
+  <p>Objects implementing the <code data-x="dom-Origin-interface">Origin</code> interface's
+  <span>extract an origin</span> steps are to return <span>this</span>'s <span
+  data-x="concept-Origin-origin">origin</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn constructor for="Origin"><code
+  data-x="dom-Origin-constructor">new Origin()</code></dfn> constructor steps are to set
+  <span>this</span>'s <span data-x="concept-Origin-origin">origin</span> to a unique <span
+  data-x="concept-origin-opaque">opaque origin</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The static <dfn method for="Origin"><code
+  data-x="dom-Origin-from">from(<var>value</var>)</code></dfn> method steps are:</p>
+
+  <ol>
+   <li>
+    <p>If <var>value</var> is a <span>platform object</span>:</p>
+    <ol>
+     <li><p>Let <var>origin</var> be the result of executing <var>value</var>'s <span>extract an
+     origin</span> operation.</p></li>
+
+     <li><p>If <var>origin</var> is not null, then return a new <code
+     data-x="dom-Origin-interface">Origin</code> object whose <span
+     data-x="concept-Origin-origin">origin</span> is <var>origin</var>.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p>If <var>value</var> is a <span>string</span>:</p>
+    <ol>
+     <li><p>Let <var>parsedURL</var> be the result of <span data-x="basic url parser">basic URL
+     parsing</span> <var>value</var>.</p></li>
+
+     <li><p>If <var>parsedURL</var> is not failure, then return a new <code
+     data-x="dom-Origin-interface">Origin</code> object whose <span
+     data-x="concept-Origin-origin">origin</span> is set to <var>parsedURL</var>'s <span
+     data-x="concept-url-origin">origin</span>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Throw a <code>TypeError</code>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="Origin"><code data-x="dom-Origin-opaque">opaque</code></dfn> getter
+  steps are to return true if <span>this</span>'s <span data-x="concept-Origin-origin">origin</span>
+  is an <span data-x="concept-origin-opaque">opaque origin</span>; otherwise false.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="Origin"><code
+  data-x="dom-Origin-isSameOrigin">isSameOrigin(<var>other</var>)</code></dfn> method steps are to
+  return true if <span>this</span>'s <span data-x="concept-Origin-origin">origin</span> is
+  <span>same origin</span> with <var>other</var>'s <span
+  data-x="concept-Origin-origin">origin</span>; otherwise false.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="Origin"><code
+  data-x="dom-Origin-isSameSite">isSameSite(<var>other</var>)</code></dfn> method steps are to
+  return true if <span>this</span>'s <span data-x="concept-Origin-origin">origin</span> is
+  <span>same site</span> with <var>other</var>'s <span data-x="concept-Origin-origin">origin</span>;
+  otherwise false.</p>
+  </div>
+
+

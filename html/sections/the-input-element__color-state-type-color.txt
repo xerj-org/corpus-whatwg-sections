@@ -1,0 +1,255 @@
+WHATWG HTML — section the-input-element/color-state-(type=color) — <dfn element-state for="input" data-x="attr-input-type-color">Color</dfn> state (<code data-x="">type=color</code>)
+
+  <h6 id="color-state-(type=color)"><dfn element-state for="input" data-x="attr-input-type-color">Color</dfn> state (<code data-x="">type=color</code>)</h6>
+
+  <div w-nodev>
+
+  <p>When an <code>input</code> element's <code data-x="attr-input-type">type</code> attribute is in
+  the <span data-x="attr-input-type-color">Color</span> state, the rules in this section apply.</p>
+
+  </div>
+
+  <p>The <code>input</code> element <span>represents</span> a color well control, for setting the
+  element's <span data-x="concept-fe-value">value</span> to a string representing the serialization
+  of a CSS color.</p>
+
+  <p class="note">In this state, there is always a CSS color picked, and there is no way for the end
+  user to set the value to the empty string.</p>
+
+  <p>The <dfn element-attr for="input"><code data-x="attr-input-alpha">alpha</code></dfn> attribute
+  is a <span>boolean attribute</span>. If present, it indicates the CSS color's alpha component can
+  be manipulated by the end user and does not have to be fully opaque.</p>
+
+  <p>The <dfn element-attr for="input"><code data-x="attr-input-colorspace">colorspace</code></dfn>
+  attribute indicates the color space of the serialized CSS color. It also hints at the desired user
+  interface for selecting a CSS color. It is an <span>enumerated attribute</span> with the following
+  keywords and states:</p>
+
+  <table>
+   <thead>
+    <tr>
+     <th> Keyword
+     <th> State
+     <th> Brief description
+   <tbody>
+    <tr>
+     <td><dfn attr-value for="input/colorspace"><code
+     data-x="attr-input-colorspace-limited-srgb">limited-srgb</code></dfn>
+     <td><dfn data-x="attr-input-colorspace-limited-srgb-state">Limited sRGB</dfn>
+     <td>The CSS color is converted to the <span>'srgb'</span> color space and limited to 8-bits per
+     component, e.g., "<code data-x="">#123456</code>" or "<code
+     data-x="">color(srgb 0 1 0 / 0.5)</code>".
+    <tr>
+     <td><dfn attr-value for="input/colorspace"><code
+     data-x="attr-input-colorspace-display-p3">display-p3</code></dfn>
+     <td><dfn data-x="attr-input-colorspace-display-p3-state">Display P3</dfn>
+     <td>The CSS color is converted to the <span>'display-p3'</span> color space, e.g., "<code
+     data-x="">color(display-p3 1.84 -0.19 0.72 / 0.6)</code>".
+  </table>
+
+  <div algorithm>
+  <p>The attribute's <i data-x="missing value default">missing value default</i> and <i
+  data-x="invalid value default">invalid value default</i> are both the <span
+  data-x="attr-input-colorspace-limited-srgb-state">Limited sRGB</span> state.</p>
+  </div>
+
+  <div w-nodev>
+
+  <p>Whenever the element's <code data-x="attr-input-alpha">alpha</code> or <code
+  data-x="attr-input-colorspace">colorspace</code> attributes are changed, the user agent must run
+  <span>update a color well control color</span> given the element.</p>
+  <!-- As per the statement earlier in this section this only applies when the type attribute is in
+       the Color state. -->
+
+  <p>If the element is <span data-x="concept-fe-mutable">mutable</span>, the user agent should allow the
+  user to change the color represented by its <span data-x="concept-fe-value">value</span>, as
+  obtained from <span data-x="parse a CSS &lt;color> value">parsing</span> it. User agents must not
+  allow the user to set the <span data-x="concept-fe-value">value</span> to a string that running
+  <span>update a color well control color</span> for the element would not set it to. If the user
+  agent provides a user interface for selecting a CSS color, then the <span
+  data-x="concept-fe-value">value</span> must be set to the result of <span data-x="serialize a
+  color well control color">serializing a color well control color</span> given the element and the
+  end user's selection.</p>
+
+  <div algorithm>
+  <p>The <span>input activation behavior</span> for such an element <var>element</var> is to
+  <span>show the picker, if applicable</span>, for <var>element</var>.</p>
+  </div>
+
+  <div algorithm>
+  <p><strong>Constraint validation</strong>: While the element's <span
+  data-x="concept-fe-value">value</span> is not the empty string and <span data-x="parse a CSS
+  &lt;color> value">parsing</span> it returns failure, the control is <span>suffering from bad
+  input</span>.</p>
+  </div>
+
+  </div>
+
+  <p>The <code data-x="attr-input-value">value</code> attribute, if specified and not the empty
+  string, must have a value that is a CSS color.</p>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p><strong>The <span>value sanitization algorithm</span> is as follows</strong>: Run <span>update
+  a color well control color</span> for the element.</p>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>update a color well control color</dfn>, given an element <var>element</var>:</p>
+
+  <ol>
+   <li><p><span>Assert</span>: <var>element</var> is an <code>input</code> element whose <code
+   data-x="attr-input-type">type</code> attribute is in the <span
+   data-x="attr-input-type-color">Color</span> state.</p></li>
+
+   <li>
+    <p>Let <var>value</var> be the result of running these steps:
+
+    <ol>
+     <li><p>If <var>element</var>'s <span data-x="concept-fe-dirty">dirty value flag</span> is
+     false, then return the result of <span
+     data-x="concept-element-attributes-get-by-namespace">getting an attribute by namespace and
+     local name</span> given null, "<code data-x="">value</code>", and <var>element</var>.</p></li>
+
+     <li><p>Return <var>element</var>'s <span data-x="concept-fe-value">value</span>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Let <var>color</var> be the result of
+   <span data-x="parse a CSS &lt;color> value">parsing</span> <var>value</var>.</p></li>
+
+   <li><p>If <var>color</var> is failure, then set <var>color</var> to <span>opaque
+   black</span>.</p></li>
+
+   <li><p>Set <var>element</var>'s <span data-x="concept-fe-value">value</span> to the result of <span
+   data-x="serialize a color well control color">serializing a color well control color</span> given
+   <var>element</var> and <var>color</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>serialize a color well control color</dfn>, given an element <var>element</var> and a
+  CSS color <var>color</var>:</p>
+
+  <ol>
+   <li><p><span>Assert</span>: <var>element</var> is an <code>input</code> element whose <code
+   data-x="attr-input-type">type</code> attribute is in the <span
+   data-x="attr-input-type-color">Color</span> state.</p></li>
+
+   <li><p>Let <var>htmlCompatible</var> be false.</p></li>
+
+   <li><p>If <var>element</var>'s <code data-x="attr-input-alpha">alpha</code> attribute is not
+   specified, then set <var>color</var>'s alpha component to be fully opaque.</p></li>
+
+   <li>
+    <p>If <var>element</var>'s <code data-x="attr-input-colorspace">colorspace</code> attribute is
+    in the <span data-x="attr-input-colorspace-limited-srgb-state">Limited sRGB</span> state:</p>
+
+    <ol>
+     <li><p>Set <var>color</var> to <var>color</var> <span data-x="Converting
+     Colors">converted</span> to the <span>'srgb'</span> color space.</p></li>
+
+     <li><p>Round each of <var>color</var>'s components so they are in the range 0 to 255,
+     inclusive. Components are to be <a
+     href="https://drafts.csswg.org/css-values-4/#combine-integers">rounded towards +∞</a>.</p></li>
+     <!-- This matches similar wording in CSS Color. -->
+
+     <li>
+      <p>If <var>element</var>'s <code data-x="attr-input-alpha">alpha</code> attribute is not
+      specified, then set <var>htmlCompatible</var> to true.</p>
+
+      <p class="note">This intentionally uses a different serialization path for compatibility with
+      an earlier version of the color well control.</p>
+     </li>
+
+     <li><p>Otherwise, set <var>color</var> to <var>color</var> converted using the
+     <span>'color()'</span> function.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p>Otherwise:</p>
+
+    <ol>
+     <li><p><span>Assert</span>: <var>element</var>'s <code
+     data-x="attr-input-colorspace">colorspace</code> attribute is in the <span
+     data-x="attr-input-colorspace-display-p3-state">Display P3</span> state.</p></li>
+
+     <li><p>Set <var>color</var> to <var>color</var> <span data-x="Converting
+     Colors">converted</span> to the <span>'display-p3'</span> color space.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Return the result of <span data-x="serialize a CSS &lt;color> value">serializing</span>
+   <var>color</var>. If <var>htmlCompatible</var> is true, then do so with <span
+   data-x="HTML-compatible serialization is requested">HTML-compatible serialization
+   requested</span>.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+  <div class="bookkeeping">
+
+   <p>The following common <code>input</code> element content attributes and IDL attributes <span
+   data-x="concept-input-apply">apply</span> to the element:
+   <code data-x="attr-input-alpha">alpha</code>,
+   <code data-x="attr-fe-autocomplete">autocomplete</code>,
+   <code data-x="attr-input-colorspace">colorspace</code>, and
+   <code data-x="attr-input-list">list</code> content attributes;
+   <code data-x="dom-input-list">list</code> and
+   <code data-x="dom-input-value">value</code> IDL attributes;
+   <code data-x="dom-textarea/input-select">select()</code> method.</p>
+
+   <p>The <code data-x="dom-input-value">value</code> IDL attribute is in mode <span
+   data-x="dom-input-value-value">value</span>.</p>
+
+   <p>The <code data-x="event-input">input</code> and <code
+   data-x="event-change">change</code> events <span
+   data-x="concept-input-apply">apply</span>.</p>
+
+   <p>The following content attributes must not be specified and <span>do not apply</span> to the
+   element:
+   <code data-x="attr-input-accept">accept</code>,
+   <code data-x="attr-input-alt">alt</code>,
+   <code data-x="attr-input-checked">checked</code>,
+   <code data-x="attr-fe-dirname">dirname</code>,
+   <code data-x="attr-fs-formaction">formaction</code>,
+   <code data-x="attr-fs-formenctype">formenctype</code>,
+   <code data-x="attr-fs-formmethod">formmethod</code>,
+   <code data-x="attr-fs-formnovalidate">formnovalidate</code>,
+   <code data-x="attr-fs-formtarget">formtarget</code>,
+   <code data-x="attr-dim-height">height</code>,
+   <code data-x="attr-input-max">max</code>,
+   <code data-x="attr-input-maxlength">maxlength</code>,
+   <code data-x="attr-input-min">min</code>,
+   <code data-x="attr-input-minlength">minlength</code>,
+   <code data-x="attr-input-multiple">multiple</code>,
+   <code data-x="attr-input-pattern">pattern</code>,
+   <code data-x="attr-input-placeholder">placeholder</code>,
+   <code data-x="attr-popovertarget">popovertarget</code>,
+   <code data-x="attr-popovertargetaction">popovertargetaction</code>,
+   <code data-x="attr-input-readonly">readonly</code>,
+   <code data-x="attr-input-required">required</code>,
+   <code data-x="attr-input-size">size</code>,
+   <code data-x="attr-input-src">src</code>,
+   <code data-x="attr-input-step">step</code>, and
+   <code data-x="attr-dim-width">width</code>.</p>
+
+   <p>The following IDL attributes and methods <span>do not apply</span> to the element:
+   <code data-x="dom-input-checked">checked</code>,
+   <code data-x="dom-input-files">files</code>,
+   <code data-x="dom-textarea/input-selectionStart">selectionStart</code>,
+   <code data-x="dom-textarea/input-selectionEnd">selectionEnd</code>,
+   <code data-x="dom-textarea/input-selectionDirection">selectionDirection</code>,
+   <code data-x="dom-input-valueAsDate">valueAsDate</code> and,
+   <code data-x="dom-input-valueAsNumber">valueAsNumber</code> IDL attributes;
+   <code data-x="dom-textarea/input-setRangeText">setRangeText()</code>,
+   <code data-x="dom-textarea/input-setSelectionRange">setSelectionRange()</code>,
+   <code data-x="dom-input-stepDown">stepDown()</code>, and
+   <code data-x="dom-input-stepUp">stepUp()</code> methods.</p>
+
+  </div>
+
+

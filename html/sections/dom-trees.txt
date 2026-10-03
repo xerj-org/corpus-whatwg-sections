@@ -1,0 +1,161 @@
+WHATWG HTML — section dom-trees — DOM trees
+
+  <h4>DOM trees</h4>
+
+  <p>When it is stated that some element or attribute is <dfn data-x="ignore">ignored</dfn>, or
+  treated as some other value, or handled as if it was something else, this refers only to the
+  processing of the node after it is in the DOM. <span w-nodev>A user agent must not mutate the
+  DOM in such situations.</span></p>
+
+  <p>A content attribute is said to <dfn data-x="">change</dfn> value only if its new value is
+  different than its previous value; setting an attribute to a value it already has does not change
+  it.</p>
+
+  <p>The term <dfn data-x="">empty</dfn>, when used for an attribute value, <code>Text</code> node,
+  or string, means that the <span>length</span> of the text is zero (i.e., not even containing <span
+  data-x="control">controls</span> or U+0020 SPACE).</p>
+
+  <p>An HTML element can have specific <dfn>HTML element insertion steps</dfn>, <dfn>HTML element
+  post-connection steps</dfn>, <dfn>HTML element removing steps</dfn>, and <dfn>HTML element moving
+  steps</dfn> all defined for the element's <span data-x="concept-element-local-name">local
+  name</span>.</p>
+
+  <div algorithm>
+  <p>The <span data-x="concept-node-insert-ext">insertion steps</span> for the HTML Standard, given
+  <var>insertedNode</var>, are defined as the following:</p>
+
+  <ol>
+   <li><p>If <var>insertedNode</var> is an element whose <span
+   data-x="concept-element-namespace">namespace</span> is the <span>HTML namespace</span>, and this
+   standard defines <span data-x="html element insertion steps">HTML element insertion steps</span>
+   for <var>insertedNode</var>'s <span data-x="concept-element-local-name">local name</span>, then
+   run the corresponding <span>HTML element insertion steps</span> given
+   <var>insertedNode</var>.</p></li>
+
+   <li>
+    <p>If <var>insertedNode</var> is a <span>form-associated element</span> or the ancestor of a
+    <span>form-associated element</span>:</p>
+
+    <ol>
+     <li><p>If the <span>form-associated element</span>'s <span>parser inserted flag</span> is set,
+     then return.</p></li>
+
+     <li><p><span>Reset the form owner</span> of the <span>form-associated element</span>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>If <var>insertedNode</var> is an <code>Element</code> that is not on the
+   <span>stack of open elements</span> of an <span>HTML parser</span>, then
+   <span>process internal resource links</span> given <var>insertedNode</var>'s
+   <span>node document</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <span data-x="concept-node-post-connection-ext">post-connection steps</span> for the HTML
+  Standard, given <var>insertedNode</var>, are defined as the following:</p>
+
+  <ol>
+   <li><p>If <var>insertedNode</var> is an element whose <span
+   data-x="concept-element-namespace">namespace</span> is the <span>HTML namespace</span>, and this
+   standard defines <span data-x="html element post-connection steps">HTML element post-connection
+   steps</span> for <var>insertedNode</var>'s <span data-x="concept-element-local-name">local
+   name</span>, then run the corresponding <span>HTML element post-connection steps</span> given
+   <var>insertedNode</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <span data-x="concept-node-remove-ext">removing steps</span> for the HTML Standard, given
+  <var>removedNode</var>, <var>isSubtreeRoot</var>, and <var>oldAncestor</var>, are defined as the
+  following:</p>
+
+  <ol>
+   <li><p>Let <var>document</var> be <var>removedNode</var>'s <span>node document</span>.</p></li>
+
+   <li id="node-remove-focus-fixup">
+    <p>If <var>document</var>'s <span data-x="focused area of the document">focused area</span> is
+    <var>removedNode</var>, then set <var>document</var>'s <span data-x="focused area of the
+    document">focused area</span> to <var>document</var>'s <span>viewport</span>, and set
+    <var>document</var>'s <span>relevant global object</span>'s <span
+    data-x="window-navigation-api">navigation API</span>'s <span>focus changed during ongoing
+    navigation</span> to false.</p>
+
+    <p class="note">This does <em>not</em> perform the <span>unfocusing steps</span>,
+    <span>focusing steps</span>, or <span>focus update steps</span>, and thus no <code
+    data-x="event-blur">blur</code> or <code data-x="event-change">change</code> events are
+    fired.</p>
+   </li>
+
+   <li><p>If <var>removedNode</var> is an element whose <span
+   data-x="concept-element-namespace">namespace</span> is the <span>HTML namespace</span>, and this
+   standard defines <span data-x="html element removing steps">HTML element removing steps</span>
+   for <var>removedNode</var>'s <span data-x="concept-element-local-name">local name</span>, then
+   run the corresponding <span>HTML element removing steps</span> given <var>removedNode</var>,
+   <var>isSubtreeRoot</var>, and <var>oldAncestor</var>.</p></li>
+
+   <li><p>If <var>removedNode</var> is a <span>form-associated element</span> with a non-null
+   <span>form owner</span> and <var>removedNode</var> and its <span>form owner</span> are no longer
+   in the same <span>tree</span>, then <span>reset the form owner</span> of
+   <var>removedNode</var>.</p></li>
+
+   <li><p>If <var>removedNode</var>'s <code data-x="attr-popover">popover</code> attribute is not in
+   the <span data-x="attr-popover-none-state">No Popover</span> state, then run the <span>hide
+   popover algorithm</span> given <var>removedNode</var>, false, false, false, and null.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <span data-x="concept-node-move-ext">moving steps</span> for the HTML Standard, given
+  <var>movedNode</var>, <var>isSubtreeRoot</var>, and <var>oldAncestor</var>, are defined as the
+  following:</p>
+
+  <ol>
+   <li><p>If <var>movedNode</var> is an element whose <span
+   data-x="concept-element-namespace">namespace</span> is the <span>HTML namespace</span>, and this
+   standard defines <span>HTML element moving steps</span> for <var>movedNode</var>'s <span
+   data-x="concept-element-local-name">local name</span>, then run the corresponding <span>HTML
+   element moving steps</span> given <var>movedNode</var>, <var>isSubtreeRoot</var>, and
+   <var>oldAncestor</var>.</p></li>
+
+   <li><p>If <var>movedNode</var> is a <span>form-associated element</span> with a non-null
+   <span>form owner</span> and <var>movedNode</var> and its <span>form owner</span> are no longer in
+   the same <span>tree</span>, then <span>reset the form owner</span> of
+   <var>movedNode</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>A <dfn id="insert-an-element-into-a-document" data-x="node is inserted into a document"
+  data-lt="inserted into a document|node is inserted into a document" export>node is inserted into a
+  document</dfn> when the <span data-x="concept-node-insert-ext">insertion steps</span> are invoked
+  with it as the argument and it is now <span>in a document tree</span>.  Analogously, a <dfn
+  id="remove-an-element-from-a-document" data-x="node is removed from a document" data-lt="removed
+  from a document|node is removed from a document" export>node is removed from a document</dfn> when
+  the <span data-x="concept-node-remove-ext">removing steps</span> are invoked with it as the
+  argument and it is now no longer <span>in a document tree</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>A node <dfn export>becomes connected</dfn> when the <span
+  data-x="concept-node-insert-ext">insertion steps</span> are invoked with it as the argument and it
+  is now <span>connected</span>. Analogously, a node <dfn data-lt="become disconnected"
+  export>becomes disconnected</dfn> when the <span data-x="concept-node-remove-ext">removing
+  steps</span> are invoked with it as the argument and it is now no longer
+  <span>connected</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>A node is <dfn export>browsing-context connected</dfn> when it is <span>connected</span> and
+  its <span data-x="shadow-including root">shadow-including root</span>'s <span
+  data-x="concept-document-bc">browsing context</span> is non-null. A node <dfn data-lt="become
+  browsing-context connected" export>becomes browsing-context connected</dfn> when the <span
+  data-x="concept-node-insert-ext">insertion steps</span> are invoked with it as the argument and it
+  is now <span>browsing-context connected</span>. A node <dfn data-lt="become browsing-context
+  disconnected" export>becomes browsing-context disconnected</dfn> either when the <span
+  data-x="concept-node-remove-ext">removing steps</span> are invoked with it as the argument and it
+  is now no longer <span>browsing-context connected</span>, or when its <span>shadow-including
+  root</span>'s <span data-x="concept-document-bc">browsing context</span> becomes null.
+  </div>
+
+

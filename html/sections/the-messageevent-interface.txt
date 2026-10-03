@@ -1,0 +1,160 @@
+WHATWG HTML — section the-messageevent-interface — The <code>MessageEvent</code> interface (+server-sent-events)
+
+  <h3>The <code>MessageEvent</code> interface</h3>
+
+  <p>Messages in <span>server-sent events</span>, <span>cross-document messaging</span>,
+  <span>channel messaging</span>, <span>broadcast channels</span>, and <cite>WebSockets</cite> use
+  the <code>MessageEvent</code> interface for their <code data-x="event-message">message</code>
+  events: <ref>WEBSOCKETS</ref></p>
+
+  <pre><code class="idl">[Exposed=(Window,Worker,AudioWorklet)]
+interface <dfn interface>MessageEvent</dfn> : <span>Event</span> {
+  <span data-x="dom-Event-constructor">constructor</span>(DOMString type, optional <span>MessageEventInit</span> eventInitDict = {});
+
+  readonly attribute any <span data-x="dom-MessageEvent-data">data</span>;
+  readonly attribute USVString <span data-x="dom-MessageEvent-origin">origin</span>;
+  readonly attribute DOMString <span data-x="dom-MessageEvent-lastEventId">lastEventId</span>;
+  readonly attribute <span>MessageEventSource</span>? <span data-x="dom-MessageEvent-source">source</span>;
+  readonly attribute FrozenArray&lt;<span>MessagePort</span>&gt; <span data-x="dom-MessageEvent-ports">ports</span>;
+
+  undefined <span data-x="dom-MessageEvent-initMessageEvent">initMessageEvent</span>(DOMString type, optional boolean bubbles = false, optional boolean cancelable = false, optional any data = null, optional USVString origin = "", optional DOMString lastEventId = "", optional <span>MessageEventSource</span>? source = null, optional sequence&lt;<span>MessagePort</span>&gt; ports = []);
+};
+
+dictionary <dfn dictionary>MessageEventInit</dfn> : <span>EventInit</span> {
+  any <dfn dict-member for="MessageEventInit" data-x="dom-MessageEventInit-data">data</dfn> = null;
+  USVString <dfn dict-member for="MessageEventInit" data-x="dom-MessageEventInit-origin">origin</dfn> = "";
+  DOMString <dfn dict-member for="MessageEventInit" data-x="dom-MessageEventInit-lastEventId">lastEventId</dfn> = "";
+  <span>MessageEventSource</span>? <dfn dict-member for="MessageEventInit" data-x="dom-MessageEventInit-source">source</dfn> = null;
+  sequence&lt;<span>MessagePort</span>&gt; <dfn dict-member for="MessageEventInit" data-x="dom-MessageEventInit-ports">ports</dfn> = [];
+};
+
+typedef (<span>WindowProxy</span> or <span>MessagePort</span> or <span>ServiceWorker</span>) <dfn typedef>MessageEventSource</dfn>;</code></pre>
+
+  <p>Each <code>MessageEvent</code> has an <dfn data-x="concept-MessageEvent-origin"
+  for="MessageEvent" export>origin</dfn> (an <span>origin</span>, a string, or null), initially
+  null.</p>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>event</var>.<span subdfn data-x="dom-MessageEvent-data">data</span></code></dt>
+
+   <dd><p>Returns the data of the message.</p></dd>
+
+   <dt><code data-x=""><var>event</var>.<span subdfn data-x="dom-MessageEvent-origin">origin</span></code></dt>
+
+   <dd>
+    <p>Returns the origin of the message, for <span>server-sent events</span> and
+    <span>cross-document messaging</span>.</p>
+   </dd>
+
+   <dt><code data-x=""><var>event</var>.<span subdfn data-x="dom-MessageEvent-lastEventId">lastEventId</span></code></dt>
+
+   <dd>
+    <p>Returns the <span data-x="concept-event-stream-last-event-id">last event ID string</span>,
+    for <span>server-sent events</span>.</p>
+   </dd>
+
+   <dt><code data-x=""><var>event</var>.<span subdfn data-x="dom-MessageEvent-source">source</span></code></dt>
+
+   <dd>
+    <p>Returns the <code>WindowProxy</code> of the source window, for <span>cross-document
+    messaging</span>, and the <code>MessagePort</code> being attached, in the <code
+    data-x="event-WorkerGlobalScope-connect">connect</code> event fired at
+    <code>SharedWorkerGlobalScope</code> objects.</p>
+   </dd>
+
+   <dt><code data-x=""><var>event</var>.<span subdfn data-x="dom-MessageEvent-ports">ports</span></code></dt>
+
+   <dd>
+    <p>Returns the <code>MessagePort</code> array sent with the message, for <span>cross-document
+    messaging</span> and <span>channel messaging</span>.</p>
+   </dd>
+
+   <!-- initMessageEvent is deprecated -->
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn attribute for="MessageEvent"><code data-x="dom-MessageEvent-data">data</code></dfn>
+  attribute must return the value it was initialized to. It represents the message being sent.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="MessageEvent"><code
+  data-x="dom-MessageEvent-origin">origin</code></dfn> attribute represents, in <span>server-sent
+  events</span> and <span>cross-document messaging</span>, the <span
+  data-x="concept-document-origin">origin</span> of the document that sent the message (typically
+  the scheme, hostname, and port of the document, but not its path or <span
+  data-x="concept-url-fragment">fragment</span>).</p>
+
+  <p>The <code data-x="dom-MessageEvent-origin">origin</code> getter steps are:</p>
+
+  <ol>
+   <li><p>If <span>this</span>'s <span data-x="concept-MessageEvent-origin">origin</span> is
+   an <span>origin</span>, then return the <span
+   data-x="serialization of an origin">serialization</span> of <span>this</span>'s <span
+   data-x="concept-MessageEvent-origin">origin</span>.</p></li>
+
+   <li><p>If <span>this</span>'s <span data-x="concept-MessageEvent-origin">origin</span> is
+   null, then return the empty string.</p></li>
+
+   <li><p>Return <span>this</span>'s <span
+   data-x="concept-MessageEvent-origin">origin</span>.</p></li>
+  </ol>
+
+  <p>When the <code data-x="dom-MessageEvent-origin">origin</code> attribute is "initialized"
+  (during <code>MessageEvent</code>'s <span data-x="dom-Event-constructor">constructor</span>, for
+  example), the initialization value is placed into the object's <span
+  data-x="concept-MessageEvent-origin">origin</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>Objects implementing the <code>MessageEvent</code> interface's <span>extract an origin</span>
+  steps are to return <span>this</span>'s <span data-x="concept-MessageEvent-origin">origin</span>
+  if it is an <span>origin</span>; otherwise null.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="MessageEvent"><code
+  data-x="dom-MessageEvent-lastEventId">lastEventId</code></dfn> attribute must return the value it
+  was initialized to. It represents, in <span>server-sent events</span>, the <span
+  data-x="concept-event-stream-last-event-id">last event ID string</span> of the event source.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="MessageEvent"><code
+  data-x="dom-MessageEvent-source">source</code></dfn> attribute must return the value it was
+  initialized to. It represents, in <span>cross-document messaging</span>, the
+  <code>WindowProxy</code> of the <span>browsing context</span> of the <code>Window</code> object
+  from which the message came; and in the <code
+  data-x="event-WorkerGlobalScope-connect">connect</code> events used by <span
+  data-x="SharedWorkerGlobalScope">shared workers</span>, the newly connecting
+  <code>MessagePort</code>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="MessageEvent"><code data-x="dom-MessageEvent-ports">ports</code></dfn>
+  attribute must return the value it was initialized to. It represents, in <span>cross-document
+  messaging</span> and <span>channel messaging</span>, the <code>MessagePort</code> array being
+  sent.</p>
+  </div>
+
+  <!-- handwavy, file bugs if there are interop issues -->
+  <div algorithm>
+  <p>The <dfn method for="MessageEvent"><code
+  data-x="dom-MessageEvent-initMessageEvent">initMessageEvent(<var>type</var>, <var>bubbles</var>,
+  <var>cancelable</var>, <var>data</var>, <var>origin</var>, <var>lastEventId</var>,
+  <var>source</var>, <var>ports</var>)</code></dfn> method must initialize the event in a manner
+  analogous to the similarly-named <code data-x="dom-Event-initEvent">initEvent()</code> method.
+  <ref>DOM</ref></p>
+  </div>
+
+  </div>
+
+  <p class="note">Various APIs (e.g., <code>WebSocket</code>, <code>EventSource</code>) use the
+  <code>MessageEvent</code> interface for their <code data-x="event-message">message</code> event
+  without using the <code>MessagePort</code> API.</p>
+
+
+  <h3 split-filename="server-sent-events" id="server-sent-events"><dfn>Server-sent events</dfn></h3>
+

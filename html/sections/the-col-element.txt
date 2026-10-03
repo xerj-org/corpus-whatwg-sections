@@ -1,0 +1,44 @@
+WHATWG HTML — section the-col-element — The <dfn element><code>col</code></dfn> element
+
+  <h4>The <dfn element><code>col</code></dfn> element</h4>
+
+  <dl class="element">
+   <dt><span data-x="concept-element-categories">Categories</span>:</dt>
+   <dd>None.</dd>
+   <dt><span data-x="concept-element-contexts">Contexts in which this element can be used</span>:</dt>
+   <dd>As a child of a <code>colgroup</code> element that doesn't have
+   a <code data-x="attr-col-span">span</code> attribute.</dd>
+   <dt><span data-x="concept-element-content-model">Content model</span>:</dt>
+   <dd><span data-x="concept-content-nothing">Nothing</span>.</dd>
+   <dt><span data-x="concept-element-attributes">Content attributes</span>:</dt>
+   <dd><span>Global attributes</span></dd>
+   <dd><code data-x="attr-col-span">span</code></dd>
+   <!-- v2: char, to specify the decimal character used in numeric data cells in the column (not header cells) -->
+   <dt><span
+   data-x="concept-element-accessibility-considerations">Accessibility considerations</span>:</dt>
+   <dd><a href="https://w3c.github.io/html-aria/#el-col">For authors</a>.</dd>
+   <dd><a href="https://w3c.github.io/html-aam/#el-col">For implementers</a>.</dd>
+   <dt><span data-x="concept-element-sanitization">Sanitization</span>:</dt>
+   <dd><span data-x="sanitizer-category-default">Default</span> with attributes <code
+   data-x="attr-col-span">span</code>.</dd>
+   <dt><span data-x="concept-element-dom">DOM interface</span>:</dt>
+   <dd>Uses <code>HTMLTableColElement</code>, as defined for <code>colgroup</code> elements.</dd>
+  </dl>
+
+  <p>If a <code>col</code> element has a parent and that is a <code>colgroup</code> element that
+  itself has a parent that is a <code>table</code> element, then the <code>col</code> element
+  <span>represents</span> one or more <span data-x="concept-column">columns</span> in the <span
+  data-x="concept-column-group">column group</span> represented by that <code>colgroup</code>.</p>
+
+  <p>The element may have a <dfn element-attr for="col"><code
+  data-x="attr-col-span">span</code></dfn> content attribute specified, whose value must be a
+  <span>valid non-negative integer</span> greater than zero and less than or equal to 1000.</p>
+
+  <div w-nodev>
+
+  <p>The <code>col</code> element and its <code data-x="attr-col-span">span</code> attribute take
+  part in the <span>table model</span>.</p>
+
+  </div>
+
+

@@ -1,0 +1,49 @@
+WHATWG HTML — section documents — Documents
+
+  <h3>Documents</h3>
+
+  <p>Every XML and HTML document in an HTML UA is represented by a <code>Document</code> object.
+  <ref>DOM</ref></p>
+
+  <p>The <code>Document</code> object's <dfn id="the-document's-address"
+  data-x="concept-document-url"
+  data-x-href="https://dom.spec.whatwg.org/#concept-document-url">URL</dfn> is defined in
+  <cite>DOM</cite>. It is initially set when the <code>Document</code> object is created, but can
+  change during the lifetime of the <code>Document</code> object; for example, it changes when the
+  user <span data-x="navigate">navigates</span> to a <span data-x="navigate-fragid">fragment</span>
+  on the page and when the <code data-x="dom-history-pushState">pushState()</code> method is called
+  with a new <span>URL</span>. <ref>DOM</ref></p>
+  <!--
+    https://www.hixie.ch/tests/adhoc/dom/level0/history/pushState/002/
+    https://www.hixie.ch/tests/adhoc/html/navigation/fragids/016.html
+  -->
+
+  <p class="warning">Interactive user agents typically expose the <code>Document</code> object's
+  <span data-x="concept-document-url">URL</span> in their user interface. This is the primary
+  mechanism by which a user can tell if a site is attempting to impersonate another.</p>
+
+  <p>The <code>Document</code> object's <dfn data-x="concept-document-origin"
+  data-x-href="https://dom.spec.whatwg.org/#concept-document-origin">origin</dfn> is defined in
+  <cite>DOM</cite>. It is initially set when the <code>Document</code> object is created, and can
+  change during the lifetime of the <code>Document</code> only upon setting <code
+  data-x="dom-document-domain">document.domain</code>. A <code>Document</code>'s <span
+  data-x="concept-document-origin">origin</span> can differ from the <span
+  data-x="concept-url-origin">origin</span> of its <span data-x="concept-document-url">URL</span>;
+  for example when a <span>child navigable</span> is <span data-x="create a new child
+  navigable">created</span>, its <span data-x="nav-document">active document</span>'s <span
+  data-x="concept-document-origin">origin</span> is inherited from its <span
+  data-x="nav-parent">parent</span>'s <span data-x="nav-document">active document</span>'s <span
+  data-x="concept-document-origin">origin</span>, even though its <span
+  data-x="nav-document">active document</span>'s <span data-x="concept-document-url">URL</span> is
+  <code>about:blank</code>. <ref>DOM</ref></p>
+
+  <p>When a <code>Document</code> is created by a <span data-x="concept-script">script</span> using
+  the <code data-x="dom-DOMImplementation-createDocument">createDocument()</code> or <code
+  data-x="dom-DOMImplementation-createHTMLDocument">createHTMLDocument()</code> methods, the
+  <code>Document</code> is <span>ready for post-load tasks</span> immediately.</p>
+
+  <p><dfn export>The document's referrer</dfn> is a string (representing a <span>URL</span>) that
+  can be set when the <code>Document</code> is created. If it is not explicitly set, then its value
+  is the empty string.</p>
+
+

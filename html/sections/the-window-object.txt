@@ -1,0 +1,1298 @@
+WHATWG HTML — section the-window-object — The <code>Window</code> object
+
+  <h4>The <code>Window</code> object</h4>
+
+  <pre><code class="idl">[Global=Window,
+ Exposed=Window,
+ <span>LegacyUnenumerableNamedProperties</span>]
+interface <dfn interface>Window</dfn> : <span>EventTarget</span> {
+  // the current browsing context
+  [<span>LegacyUnforgeable</span>] readonly attribute <span>WindowProxy</span> <span data-x="dom-window">window</span>;
+  [Replaceable] readonly attribute <span>WindowProxy</span> <span data-x="dom-self">self</span>;
+  [<span>LegacyUnforgeable</span>] readonly attribute <span>Document</span> <span data-x="dom-document">document</span>;
+  attribute DOMString <span data-x="dom-name">name</span>; <!-- not [Replaceable] per WebKit and IE8 -->
+  [PutForwards=<span data-x="dom-location-href">href</span>, <span>LegacyUnforgeable</span>] readonly attribute <span>Location</span> <span data-x="dom-location">location</span>;
+  readonly attribute <span>History</span> <span data-x="dom-history">history</span>;
+  [Replaceable] readonly attribute <span>Navigation</span> <span data-x="dom-navigation">navigation</span>;
+  readonly attribute <span>CustomElementRegistry</span> <span data-x="dom-window-customElements">customElements</span>;
+  [Replaceable] readonly attribute <span>BarProp</span> <span data-x="dom-window-locationbar">locationbar</span>;
+  [Replaceable] readonly attribute <span>BarProp</span> <span data-x="dom-window-menubar">menubar</span>;
+  [Replaceable] readonly attribute <span>BarProp</span> <span data-x="dom-window-personalbar">personalbar</span>;
+  [Replaceable] readonly attribute <span>BarProp</span> <span data-x="dom-window-scrollbars">scrollbars</span>;
+  [Replaceable] readonly attribute <span>BarProp</span> <span data-x="dom-window-statusbar">statusbar</span>;
+  [Replaceable] readonly attribute <span>BarProp</span> <span data-x="dom-window-toolbar">toolbar</span>;
+  attribute DOMString <span data-x="dom-window-status">status</span>;
+  undefined <span data-x="dom-window-close">close</span>();
+  readonly attribute boolean <span data-x="dom-window-closed">closed</span>;
+  undefined <span data-x="dom-window-stop">stop</span>();
+  undefined <span data-x="dom-window-focus">focus</span>();
+  undefined <span data-x="dom-window-blur">blur</span>();
+
+  // other browsing contexts
+  [Replaceable] readonly attribute <span>WindowProxy</span> <span data-x="dom-frames">frames</span>;
+  [Replaceable] readonly attribute unsigned long <span data-x="dom-length">length</span>;
+  [<span>LegacyUnforgeable</span>] readonly attribute <span>WindowProxy</span>? <span data-x="dom-top">top</span>;
+  attribute any <span data-x="dom-opener">opener</span>;
+  [Replaceable] readonly attribute <span>WindowProxy</span>? <span data-x="dom-parent">parent</span>;
+  readonly attribute <span>Element</span>? <span data-x="dom-frameElement">frameElement</span>;
+  <span>WindowProxy</span>? <span data-x="dom-open">open</span>(optional USVString url = "", optional DOMString target = "_blank", optional [<span>LegacyNullToEmptyString</span>] DOMString features = "");
+
+  // Since this is the global object, the IDL named getter adds a NamedPropertiesObject exotic
+  // object on the prototype chain. Indeed, this does not make the global object an exotic object.
+  // Indexed access is taken care of by the <span>WindowProxy</span> exotic object.
+  <a href="#dom-window-nameditem">getter</a> <span data-x="idl-object">object</span> (DOMString name);
+
+  // the user agent
+  readonly attribute <span>Navigator</span> <span data-x="dom-navigator">navigator</span>;
+  [Replaceable] readonly attribute <span>Navigator</span> <span data-x="dom-clientInformation">clientInformation</span>; // legacy alias of .navigator
+  readonly attribute boolean <span data-x="dom-originAgentCluster">originAgentCluster</span>;
+
+  // user prompts
+  undefined <span data-x="dom-alert-noargs">alert</span>();
+  undefined <span data-x="dom-alert">alert</span>(DOMString message);
+  boolean <span data-x="dom-confirm">confirm</span>(optional DOMString message = "");
+  DOMString? <span data-x="dom-prompt">prompt</span>(optional DOMString message = "", optional DOMString default = "");
+  undefined <span data-x="dom-print">print</span>();
+
+  undefined <span data-x="dom-window-postMessage">postMessage</span>(any message, USVString targetOrigin, optional sequence&lt;<span data-x="idl-object">object</span>&gt; transfer = []);
+  undefined <span data-x="dom-window-postMessage-options">postMessage</span>(any message, optional <span>WindowPostMessageOptions</span> options = {});
+
+  // <a href="#Window-partial">also has obsolete members</a>
+};
+<span>Window</span> includes <span>GlobalEventHandlers</span>;
+<span>Window</span> includes <span>WindowEventHandlers</span>;
+
+dictionary <dfn dictionary>WindowPostMessageOptions</dfn> : <span>StructuredSerializeOptions</span> {
+  USVString <dfn dict-member for="WindowPostMessageOptions" data-x="dom-WindowPostMessageOptions-targetOrigin">targetOrigin</dfn> = "/";
+};</code></pre>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>window</var>.<span subdfn data-x="dom-window">window</span></code></dt>
+   <dt><code data-x=""><var>window</var>.<span subdfn data-x="dom-frames">frames</span></code></dt>
+   <dt><code data-x=""><var>window</var>.<span subdfn data-x="dom-self">self</span></code></dt>
+   <dd><p>These attributes all return <var>window</var>.</p></dd>
+
+
+   <dt><code data-x=""><var>window</var>.<span subdfn data-x="dom-document">document</span></code></dt>
+   <dd><p>Returns the <code>Document</code> associated with <var>window</var>.</p></dd>
+
+
+   <dt><code data-x=""><var>document</var>.<span subdfn data-x="dom-document-defaultView">defaultView</span></code></dt>
+   <dd><p>Returns the <code>Window</code> associated with <var>document</var>, if there is one, or null otherwise.</p></dd>
+  </dl>
+
+  <div w-nodev>
+
+  <p>The <code>Window</code> object has an <dfn export data-x="concept-document-window">associated
+  <code>Document</code></dfn>, which is a <code>Document</code> object. It is set when the
+  <code>Window</code> object is created, and only ever changed during <span
+  data-x="navigate">navigation</span> from the <span data-x="is initial about:blank">initial
+  <code>about:blank</code></span> <code>Document</code>.</p>
+
+  <div algorithm>
+  <p>A <code>Window</code>'s <dfn export for="Window" data-x="window bc">browsing context</dfn> is
+  its <span data-x="concept-document-window">associated <code>Document</code></span>'s <span
+  data-x="concept-document-bc">browsing context</span>. <span class="note">It is either null or a
+  <span>browsing context</span>.</span></p>
+  </div>
+
+  <div algorithm>
+  <p>A <code>Window</code>'s <dfn export for="Window" data-x="window navigable">navigable</dfn> is
+  the <span>navigable</span> whose <span data-x="nav-document">active document</span> is the
+  <code>Window</code>'s <span data-x="concept-document-window">associated
+  <code>Document</code></span>'s, or null if there is no such <span>navigable</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="Window"><code data-x="dom-window">window</code></dfn>, <dfn attribute
+  for="Window"><code data-x="dom-frames">frames</code></dfn>, and <dfn attribute for="Window"><code
+  data-x="dom-self">self</code></dfn> getter steps are to return <span>this</span>'s <span
+  data-x="concept-relevant-realm">relevant realm</span>.[[GlobalEnv]].[[GlobalThisValue]].</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="Window"><code data-x="dom-document">document</code></dfn> getter steps
+  are to return <span>this</span>'s <span data-x="concept-document-window">associated
+  <code>Document</code></span>.</p>
+  </div>
+
+  <p class="note">The <code>Document</code> object associated with a <code>Window</code> object can
+  change in exactly one case: when the <span>navigate</span> algorithm <span
+  data-x="create-the-document-object">creates a new <code>Document</code> object</span> for the
+  first page loaded in a <span>browsing context</span>. In that specific case, the
+  <code>Window</code> object of the <span data-x="is initial about:blank">initial
+  <code>about:blank</code></span> page is reused and gets a new <code>Document</code> object.</p>
+
+  <div algorithm>
+  <p>The <dfn attribute for="Document"><code
+  data-x="dom-document-defaultView">defaultView</code></dfn> getter steps are:</p>
+
+  <ol>
+   <li><p>If <span>this</span>'s <span data-x="concept-document-bc">browsing context</span> is null,
+   then return null.</p></li>
+
+   <li><p>Return <span>this</span>'s <span data-x="concept-document-bc">browsing context</span>'s
+   <code>WindowProxy</code> object.</p></li>
+  </ol>
+  </div>
+
+  <hr>
+
+  <p>For historical reasons, <code>Window</code> objects must also have a writable, configurable,
+  non-enumerable property named <dfn><code>HTMLDocument</code></dfn> whose value is the
+  <code>Document</code> <span>interface object</span>.</p>
+
+  </div>
+
+
+  <h5 id="apis-for-creating-and-navigating-browsing-contexts-by-name">Opening and closing windows</h5>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>window</var> = <var>window</var>.<span subdfn data-x="dom-open">open</span>([ <var>url</var> [, <var>target</var> [, <var>features</var> ] ] ])</code></dt>
+   <dd>
+    <p>Opens a window to show <var>url</var> (defaults to "<code>about:blank</code>"), and returns
+    it. <var>target</var> (defaults to "<code data-x="">_blank</code>") gives the name of the new
+    window. If a window already exists with that name, it is reused. The <var>features</var>
+    argument can contain a <span>set of comma-separated tokens</span>:</p>
+
+    <dl>
+     <dt>"<code data-x="">noopener</code>"</dt>
+     <dt>"<code data-x="">noreferrer</code>"</dt>
+     <dd><p>These behave equivalently to the <code data-x="rel-noopener">noopener</code> and <code
+     data-x="rel-noreferrer">noreferrer</code> link types on <span
+     data-x="hyperlink">hyperlinks</span>.</p></dd>
+
+     <dt>"<code data-x="">popup</code>"</dt>
+     <dd><p>Encourages user agents to provide a minimal web browser user interface for the new
+     window. (Impacts the <code data-x="dom-BarProp-visible">visible</code> getter on all
+     <code>BarProp</code> objects as well.)</p></dd>
+    </dl>
+
+    <pre class="example"><code class="js">globalThis.open("https://email.example/message/CAOOOkFcWW97r8yg=SsWg7GgCmp4suVX9o85y8BvNRqMjuc5PXg", undefined, "noopener,popup");</code></pre>
+   </dd>
+
+   <dt><code data-x=""><var>window</var>.<span subdfn data-x="dom-name">name</span> [ = <var>value</var> ]</code></dt>
+   <dd>
+    <p>Returns the name of the window.</p>
+
+    <p>Can be set, to change the name.</p>
+   </dd>
+
+   <dt><code data-x=""><var>window</var>.<span subdfn data-x="dom-window-close">close</span>()</code></dt>
+   <dd><p>Closes the window.</p></dd>
+
+   <dt><code data-x=""><var>window</var>.<span subdfn data-x="dom-window-closed">closed</span></code></dt>
+   <dd><p>Returns true if the window has been closed, false otherwise.</p></dd>
+
+   <dt><code data-x=""><var>window</var>.<span subdfn data-x="dom-window-stop">stop</span>()</code></dt>
+   <dd><p>Cancels the document load.</p></dd>
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>To <dfn>get noopener for window open</dfn>, given a <code>Document</code>
+  <var>sourceDocument</var>, an <span>ordered map</span> <var>tokenizedFeatures</var>, and a
+  <span>URL record</span>-or-null <var>url</var>, perform the following steps. They return a
+  boolean.</p>
+
+  <ol>
+   <li>
+    <p>If <var>url</var> is not null and <var>url</var>'s <span
+    data-x="concept-url-blob-entry">blob URL entry</span> is not null:</p>
+
+    <ol>
+     <li><p>Let <var>blobOrigin</var> be <var>url</var>'s <span
+     data-x="concept-url-blob-entry">blob URL entry</span>'s <span
+     data-x="blob-url-entry-environment">environment</span>'s <span
+     data-x="concept-settings-object-origin">origin</span>.</p></li>
+
+     <li><p>Let <var>topLevelOrigin</var> be <var>sourceDocument</var>'s <span>relevant settings
+     object</span>'s <span>top-level origin</span>.</p></li>
+
+     <li><p>If <var>blobOrigin</var> is not <span>same site</span> with <var>topLevelOrigin</var>,
+     then return true.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Let <var>noopener</var> be false.</p></li>
+
+   <li><p>If <var>tokenizedFeatures</var>["<code data-x="">noopener</code>"] <span data-x="map
+   exists">exists</span>, then set <var>noopener</var> to the result of <span
+   data-x="concept-window-open-features-parse-boolean">parsing <var>tokenizedFeatures</var>["<code
+   data-x="">noopener</code>"] as a boolean feature</span>.</p></li>
+
+   <li><p>Return <var>noopener</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn>window open steps</dfn>, given a string <var>url</var>, a string <var>target</var>,
+  and a string <var>features</var>, are as follows:</p>
+
+  <ol>
+   <li><p>If the <span>event loop</span>'s <span>termination nesting level</span> is nonzero,
+   then return null.</p></li>
+
+   <li><p>Let <var>sourceDocument</var> be the <span>entry global object</span>'s <span
+   data-x="concept-document-window">associated <code>Document</code></span>.</p></li>
+
+   <li><p>Let <var>urlRecord</var> be null.</p></li>
+
+   <li>
+    <p>If <var>url</var> is not the empty string:</p>
+
+    <ol>
+     <li><p>Set <var>urlRecord</var> to the result of <span>encoding-parsing a URL</span> given
+     <var>url</var>, relative to <var>sourceDocument</var>.</p></li>
+
+     <li><p>If <var>urlRecord</var> is failure, then throw a <span>"<code>SyntaxError</code>"</span>
+     <code>DOMException</code>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>If <var>target</var> is the empty string, then set <var>target</var> to "<code
+   data-x="">_blank</code>".</p></li>
+
+   <li><p>Let <var>tokenizedFeatures</var> be the result of <span
+   data-x="concept-window-open-features-tokenize">tokenizing</span> <var>features</var>.</p></li>
+
+   <li><p>Let <var>noreferrer</var> be false.</p></li>
+
+   <li><p>If <var>tokenizedFeatures</var>["<code data-x="">noreferrer</code>"] <span data-x="map
+   exists">exists</span>, then set <var>noreferrer</var> to the result of <span
+   data-x="concept-window-open-features-parse-boolean">parsing <var>tokenizedFeatures</var>["<code
+   data-x="">noreferrer</code>"] as a boolean feature</span>.</p></li>
+
+   <li><p>Let <var>noopener</var> be the result of <span
+   data-x="get noopener for window open">getting noopener for window open</span> with
+   <var>sourceDocument</var>, <var>tokenizedFeatures</var>, and <var>urlRecord</var>.</p></li>
+
+   <li><p><span data-x="map remove">Remove</span> <var>tokenizedFeatures</var>["<code
+   data-x="">noopener</code>"] and <var>tokenizedFeatures</var>["<code
+   data-x="">noreferrer</code>"].</p></li>
+
+   <li><p>Let <var>referrerPolicy</var> be the empty string.</p></li>
+
+   <li><p>If <var>noreferrer</var> is true, then set <var>noopener</var> to true and set
+   <var>referrerPolicy</var> to "<code data-x="">no-referrer</code>".</p></li>
+
+   <li>
+    <p>Let <var>targetNavigable</var> and <var>windowType</var> be the result of applying <span>the
+    rules for choosing a navigable</span> given <var>target</var>, <var>sourceDocument</var>'s
+    <span>node navigable</span>, and <var>noopener</var>.</p>
+
+    <p class="example">If there is a user agent that supports control-clicking a link to open it in
+    a new tab, and the user control-clicks on an element whose <code
+    data-x="handler-onclick">onclick</code> handler uses the <code
+    data-x="dom-open">window.open()</code> API to open a page in an <code>iframe</code> element,
+    the user agent could override the selection of the target browsing context to instead target a
+    new tab.</p>
+   </li>
+
+   <li><p>If <var>targetNavigable</var> is null, then return null.</p></li>
+
+   <li>
+    <p>If <var>windowType</var> is either "<code data-x="">new and unrestricted</code>" or "<code
+    data-x="">new with no opener</code>":</p>
+
+    <ol>
+     <li><p>Set <var>targetNavigable</var>'s <span data-x="nav-bc">active browsing context</span>'s
+     <span>is popup</span> to the result of <span data-x="popup-window-is-requested">checking if a
+     popup window is requested</span>, given <var>tokenizedFeatures</var>.</p></li>
+
+     <li><p><span>Set up browsing context features</span> for <var>targetNavigable</var>'s <span
+     data-x="nav-bc">active browsing context</span> given
+     <var>tokenizedFeatures</var>. <ref>CSSOMVIEW</ref></p></li>
+
+     <li><p>If <var>urlRecord</var> is null, then set <var>urlRecord</var> to a <span>URL
+     record</span> representing <code>about:blank</code>.</p></li>
+
+     <li>
+      <p>If <var>urlRecord</var> <span>matches <code>about:blank</code></span>, then perform the
+      <span>URL and history update steps</span> given <var>targetNavigable</var>'s <span
+      data-x="nav-document">active document</span> and <var>urlRecord</var>.</p>
+
+      <p class="note">This is necessary in case <var>url</var> is something like <code
+      data-x="">about:blank?foo</code>. If <var>url</var> is just plain <code
+      data-x="">about:blank</code>, this will do nothing.</p>
+     </li>
+
+     <li><p>Otherwise, <span>navigate</span><!--DONAV window.open()--> <var>targetNavigable</var>
+     to <var>urlRecord</var> using <var>sourceDocument</var>, with <i
+     data-x="navigation-referrer-policy">referrerPolicy</i> set to <var>referrerPolicy</var> and
+     <i><span>exceptionsEnabled</span></i> set to true.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p>Otherwise:</p>
+
+    <ol>
+     <li><!--DONAV window.open()--><p>If <var>urlRecord</var> is not null, then
+     <span>navigate</span> <var>targetNavigable</var> to <var>urlRecord</var> using
+     <var>sourceDocument</var>, with <i data-x="navigation-referrer-policy">referrerPolicy</i> set
+     to <var>referrerPolicy</var> and <i><span>exceptionsEnabled</span></i> set to true.</p></li>
+
+     <li><p>If <var>noopener</var> is false, then set <var>targetNavigable</var>'s <span
+     data-x="nav-bc">active browsing context</span>'s <span>opener browsing context</span> to
+     <var>sourceDocument</var>'s <span data-x="concept-document-bc">browsing
+     context</span>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>If <var>windowType</var> is "<code data-x="">new with no opener</code>", then return
+   null.</p></li>
+
+   <li><p>If <var>noopener</var> is true and <var>target</var> is not an <span>ASCII
+   case-insensitive</span> match for "<code data-x="">_self</code>", "<code
+   data-x="">_parent</code>", or "<code data-x="">_top</code>", then return null.</p></li>
+
+   <li><p>Return <var>targetNavigable</var>'s <span data-x="nav-wp">active
+   <code>WindowProxy</code></span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn for="Window" method><code data-x="dom-open">open(<var>url</var>, <var>target</var>,
+  <var>features</var>)</code></dfn> method steps are to run the <span>window open steps</span> with
+  <var>url</var>, <var>target</var>, and <var>features</var>.</p>
+  </div>
+
+  <p class="note">The method provides a mechanism for <span data-x="navigate">navigating</span> an
+  existing <span>browsing context</span> or opening and navigating an <span>auxiliary browsing
+  context</span>.</p>
+
+  <hr>
+
+  <div algorithm>
+  <p>To <dfn data-x="concept-window-open-features-tokenize">tokenize the <var>features</var>
+  argument</dfn>:</p>
+
+  <ol>
+   <li><p>Let <var>tokenizedFeatures</var> be a new <span>ordered map</span>.</p></li>
+
+   <li><p>Let <var>position</var> point at the first code point of <var>features</var>.</p></li>
+
+   <li>
+    <p><span>While</span> <var>position</var> is not past the end of <var>features</var>:</p>
+
+    <ol>
+     <li><p>Let <var>name</var> be the empty string.</p></li>
+
+     <li><p>Let <var>value</var> be the empty string.</p></li>
+
+     <li><p><span>Collect a sequence of code points</span> that are <span data-x="feature
+     separator">feature separators</span> from <var>features</var> given <var>position</var>. This
+     skips past leading separators before the name.</p></li>
+
+     <li><p><span>Collect a sequence of code points</span> that are not <span data-x="feature
+     separator">feature separators</span> from <var>features</var> given <var>position</var>. Set
+     <var>name</var> to the collected characters, <span>converted to ASCII lowercase</span>.</p></li>
+
+     <li><p>Set <var>name</var> to the result of <span>normalizing the feature name</span>
+     <var>name</var>.</p></li>
+
+     <li>
+      <p><span>While</span> <var>position</var> is not past the end of <var>features</var> and the
+      code point at <var>position</var> in <var>features</var> is not U+003D (=):</p>
+
+      <ol>
+       <li><p>If the code point at <var>position</var> in <var>features</var> is U+002C (,), or if
+       it is not a <span>feature separator</span>, then <span>break</span>.</p></li>
+
+       <li><p>Advance <var>position</var> by 1.</p></li>
+      </ol>
+
+      <p class="note">This skips to the first U+003D (=) but does not skip past a U+002C (,) or a
+      non-separator.</p>
+     </li>
+
+     <li>
+      <p>If the code point at <var>position</var> in <var>features</var> is a <span>feature
+      separator</span>:</p>
+
+      <ol>
+       <li>
+        <p>While <var>position</var> is not past the end of <var>features</var> and the code point
+        at <var>position</var> in <var>features</var> is a <span>feature separator</span>:</p>
+
+        <ol>
+         <li><p>If the code point at <var>position</var> in <var>features</var> is U+002C (,), then
+         <span>break</span>.</p></li>
+
+         <li><p>Advance <var>position</var> by 1.</p></li>
+        </ol>
+
+        <p class="note">This skips to the first non-separator but does not skip past a U+002C
+        (,).</p>
+       </li>
+
+       <li><p><span>Collect a sequence of code points</span> that are not <span data-x="feature
+       separator">feature separators</span> code points from <var>features</var> given
+       <var>position</var>. Set <var>value</var> to the collected code points, <span>converted to
+       ASCII lowercase</span>.</p></li>
+      </ol>
+     </li>
+
+     <li><p>If <var>name</var> is not the empty string, then set
+     <var>tokenizedFeatures</var>[<var>name</var>] to <var>value</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Return <var>tokenizedFeatures</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="window-feature-is-set">check if a window feature is set</dfn>, given
+  <var>tokenizedFeatures</var>, <var>featureName</var>, and <var>defaultValue</var>:</p>
+
+  <ol>
+   <li><p>If <var>tokenizedFeatures</var>[<var>featureName</var>] <span data-x="map
+   exists">exists</span>, then return the result of <span
+   data-x="concept-window-open-features-parse-boolean">parsing
+   <var>tokenizedFeatures</var>[<var>featureName</var>] as a boolean feature</span>.</p></li>
+
+   <li><p>Return <var>defaultValue</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="popup-window-is-requested">check if a popup window is requested</dfn>, given
+  <var>tokenizedFeatures</var>:</p>
+
+  <ol>
+   <li><p>If <var>tokenizedFeatures</var> is <span data-x="map empty">empty</span>, then return
+   false.</p></li>
+
+   <li><p>If <var>tokenizedFeatures</var>["<code data-x="">popup</code>"] <span data-x="map
+   exists">exists</span>, then return the result of <span
+   data-x="concept-window-open-features-parse-boolean">parsing
+   <var>tokenizedFeatures</var>["<code data-x="">popup</code>"] as a boolean
+   feature</span>.</p></li>
+
+   <li><p>Let <var>location</var> be the result of <span data-x="window-feature-is-set">checking if
+   a window feature is set</span>, given <var>tokenizedFeatures</var>, "<code
+   data-x="">location</code>", and false.</p></li>
+
+   <li><p>Let <var>toolbar</var> be the result of <span data-x="window-feature-is-set">checking if
+   a window feature is set</span>, given <var>tokenizedFeatures</var>, "<code
+   data-x="">toolbar</code>", and false.</p></li>
+
+   <li><p>If <var>location</var> and <var>toolbar</var> are both false, then return true.</p></li>
+
+   <li><p>Let <var>menubar</var> be the result of <span data-x="window-feature-is-set">checking if
+   a window feature is set</span>, given <var>tokenizedFeatures</var>, "<code
+   data-x="">menubar</code>", and false.</p></li>
+
+   <li><p>If <var>menubar</var> is false, then return true.</p></li>
+
+   <li><p>Let <var>resizable</var> be the result of <span data-x="window-feature-is-set">checking if
+   a window feature is set</span>, given <var>tokenizedFeatures</var>, "<code
+   data-x="">resizable</code>", and true.</p></li>
+
+   <li><p>If <var>resizable</var> is false, then return true.</p></li>
+
+   <li><p>Let <var>scrollbars</var> be the result of <span data-x="window-feature-is-set">checking
+   if a window feature is set</span>, given <var>tokenizedFeatures</var>, "<code
+   data-x="">scrollbars</code>", and false.</p></li>
+
+   <li><p>If <var>scrollbars</var> is false, then return true.</p></li>
+
+   <li><p>Let <var>status</var> be the result of <span data-x="window-feature-is-set">checking if
+   a window feature is set</span>, given <var>tokenizedFeatures</var>, "<code
+   data-x="">status</code>", and false.</p></li>
+
+   <li><p>If <var>status</var> is false, then return true.</p></li>
+
+   <li><p>Return false.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>A code point is a <dfn>feature separator</dfn> if it is <span>ASCII whitespace</span>, U+003D
+  (=), or U+002C (,).</p>
+  </div>
+
+  <div algorithm>
+  <p>For legacy reasons, there are some aliases of some feature names. To <dfn data-x="normalizing
+  the feature name">normalize a feature name</dfn> <var>name</var>, switch on <var>name</var>:</p>
+
+  <dl class="switch">
+   <dt>"<code data-x="">screenx</code>"
+   <dd>Return "<code data-x="">left</code>".
+   <dt>"<code data-x="">screeny</code>"
+   <dd>Return "<code data-x="">top</code>".
+   <dt>"<code data-x="">innerwidth</code>"
+   <dd>Return "<code data-x="">width</code>".
+   <dt>"<code data-x="">innerheight</code>"
+   <dd>Return "<code data-x="">height</code>".
+   <dt>Anything else
+   <dd>Return <var>name</var>.
+  </dl>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="concept-window-open-features-parse-boolean">parse a boolean feature</dfn> given
+  a string <var>value</var>:</p>
+
+  <ol>
+   <li><p>If <var>value</var> is the empty string, then return true.</p></li>
+
+   <li><p>If <var>value</var> <span>is</span> "<code data-x="">yes</code>", then return
+   true.</p></li>
+
+   <li><p>If <var>value</var> <span>is</span> "<code data-x="">true</code>", then return
+   true.</p></li>
+
+   <li><p>Let <var>parsed</var> be the result of <span data-x="rules for parsing integers">parsing
+   <var>value</var> as an integer</span>.</p></li>
+
+   <li><p>If <var>parsed</var> is an error, then set it to 0.</p></li>
+
+   <li><p>Return false if <var>parsed</var> is 0, and true otherwise.</p></li>
+  </ol>
+  </div>
+
+  <hr>
+
+  <div algorithm>
+  <p>The <dfn attribute for="Window"><code data-x="dom-name">name</code></dfn> getter steps are:</p>
+
+  <ol>
+   <li><p>If <span>this</span>'s <span data-x="window navigable">navigable</span> is null, then
+   return the empty string.</p></li>
+
+   <li><p>Return <span>this</span>'s <span data-x="window navigable">navigable</span>'s <span
+   data-x="nav-target">target name</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <code data-x="dom-name">name</code> setter steps are:</p>
+
+  <ol>
+   <li><p>If <span>this</span>'s <span data-x="window navigable">navigable</span> is null, then
+   return.</p></li>
+
+   <li><p>Set <span>this</span>'s <span data-x="window navigable">navigable</span>'s <span
+   data-x="nav-active-history-entry">active session history entry</span>'s <span
+   data-x="she-document-state">document state</span>'s <span
+   data-x="document-state-nav-target-name">navigable target name</span> to the given value.</p></li>
+  </ol>
+  </div>
+
+  <p class="note">The name <a href="#resetBCName">gets reset</a> when the navigable is <span
+  data-x="navigate">navigated</span> to another <span>origin</span>.</p>
+
+  <hr>
+
+  <div algorithm>
+  <p>The <dfn method for="Window"><code data-x="dom-window-close">close()</code></dfn> method steps
+  are:</p>
+
+  <ol>
+   <li><p>Let <var>thisTraversable</var> be <span>this</span>'s <span data-x="window
+   navigable">navigable</span>.</p></li>
+
+   <li><p>If <var>thisTraversable</var> is not a <span>top-level traversable</span>, then
+   return.</p></li>
+
+   <li><p>If <var>thisTraversable</var>'s <span>is closing</span> is true, then return.</p></li>
+
+   <li><p>Let <var>browsingContext</var> be <var>thisTraversable</var>'s <span
+   data-x="nav-bc">active browsing context</span>.</p></li>
+
+   <li><p>Let <var>sourceSnapshotParams</var> be the result of <span>snapshotting source snapshot
+   params</span> given <var>thisTraversable</var>'s <span data-x="nav-document">active
+   document</span>.</p></li>
+
+   <li>
+    <p>If all the following are true:</p>
+
+    <ul>
+     <li><p><var>thisTraversable</var> is <span>script-closable</span>;</p></li>
+
+     <li><p>the <span data-x="concept-incumbent-global">incumbent global object</span>'s <span
+     data-x="window bc">browsing context</span> is <span>familiar with</span>
+     <var>browsingContext</var>; and</p></li>
+
+     <li id="sandboxClose"><p>the <span data-x="concept-incumbent-global">incumbent global
+     object</span>'s <span data-x="window navigable">navigable</span> is <span>allowed by
+     sandboxing to navigate</span> <var>thisTraversable</var>, given
+     <var>sourceSnapshotParams</var>,</p></li>
+    </ul>
+
+    <p>then:</p>
+
+    <ol>
+     <li><p>Set <var>thisTraversable</var>'s <span>is closing</span> to true.</p></li>
+
+     <li><p><span>Queue a task</span> on the <span>DOM manipulation task source</span> to <span
+     data-x="definitely close a top-level traversable">definitely close</span>
+     <var>thisTraversable</var>.</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>A <span>navigable</span> is <dfn>script-closable</dfn> if it is a <span>top-level
+  traversable</span>, and any of the following are true:</p>
+
+  <ul>
+   <li>its <span>is created by web content</span> is true; or</li>
+
+   <li>its <span data-x="tn-session-history-entries">session history entries</span>'s <span
+   data-x="list size">size</span> is 1.</li>
+  </ul>
+  </div>
+
+  <!--
+    https://source.chromium.org/chromium/chromium/src/+/b20d6a654f6891ed49373d9f535d8618ded1e2e2
+    The session history check is a special case for one-off windows that need to open other windows
+    and then dispose of themselves. This use case might not be necessary anymore.
+  -->
+
+  <div algorithm>
+  <p>The <dfn attribute for="Window"><code data-x="dom-window-closed">closed</code></dfn> getter
+  steps are to return true if <span>this</span>'s <span data-x="window navigable">navigable</span>
+  is null or its <span>is closing</span> is true; otherwise false.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="Window"><code data-x="dom-window-stop">stop()</code></dfn> method steps
+  are:</p>
+
+  <ol>
+   <li><p>If <span>this</span>'s <span data-x="window navigable">navigable</span> is null, then
+   return.</p></li>
+
+   <li><p><span data-x="nav-stop">Stop loading</span> <span>this</span>'s <span data-x="window
+   navigable">navigable</span>.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+
+  <h5 id="accessing-other-browsing-contexts">Indexed access on the <code>Window</code> object</h5>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>window</var>.<span subdfn data-x="dom-length">length</span></code></dt>
+
+   <dd><p>Returns the number of <span>document-tree child navigables</span>.</p></dd>
+
+   <dt><code data-x=""><var>window</var>[<var>index</var>]</code></dt>
+
+   <dd><p>Returns the <code>WindowProxy</code> corresponding to the indicated <span
+   data-x="document-tree child navigables">document-tree child navigables</span>.</p></dd>
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn attribute for="Window"><code data-x="dom-length">length</code></dfn> getter steps are
+  to return <span>this</span>'s <span data-x="concept-document-window">associated
+  <code>Document</code></span>'s <span>document-tree child navigables</span>'s <span data-x="list
+  size">size</span>.</p>
+  </div>
+
+  <p class="note">Indexed access to <span>document-tree child navigables</span> is defined through
+  the <a href="#windowproxy-getownproperty">[[GetOwnProperty]]</a> internal method of the
+  <code>WindowProxy</code> object.</p>
+
+  </div>
+
+
+  <h5>Named access on the <code>Window</code> object</h5>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>window</var>[<var>name</var>]</code></dt>
+
+   <dd>
+    <p>Returns the indicated element or collection of elements.</p>
+
+    <p>As a general rule, relying on this will lead to brittle code. Which IDs end up mapping to
+    this API can vary over time, as new features are added to the web platform, for example. Instead
+    of this, use <code data-x="">document.getElementById()</code> or <code
+    data-x="">document.querySelector()</code>.</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p id="child-browsing-context-name-property-set"><span
+  id="document-tree-child-browsing-context-name-property-set"></span>The <dfn>document-tree child
+  navigable target name property set</dfn> of a <code>Window</code> object <var>window</var> is the
+  return value of running these steps:</p>
+
+  <ol>
+   <li><p>Let <var>children</var> be the <span>document-tree child navigables</span> of
+   <var>window</var>'s <span data-x="concept-document-window">associated
+   <code>Document</code></span>.</p></li>
+
+   <li><p>Let <var>firstNamedChildren</var> be an empty <span data-x="set">ordered
+   set</span>.</p></li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>navigable</var> of <var>children</var>:</p>
+
+    <ol>
+     <li><p>Let <var>name</var> be <var>navigable</var>'s <span
+     data-x="nav-target">target name</span>.</p></li>
+
+     <li><p>If <var>name</var> is the empty string, then <span>continue</span>.</p></li>
+
+     <li><p>If <var>firstNamedChildren</var> <span data-x="list contains">contains</span> a
+     <span>navigable</span> whose <span data-x="nav-target">target name</span> is <var>name</var>,
+     then <span>continue</span>.</p></li>
+
+     <li><p><span data-x="list append">Append</span> <var>navigable</var> to
+     <var>firstNamedChildren</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Let <var>names</var> be an empty <span data-x="set">ordered set</span>.</p></li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>navigable</var> of
+    <var>firstNamedChildren</var>:</p>
+
+    <ol>
+     <li><p>Let <var>name</var> be <var>navigable</var>'s <span
+     data-x="nav-target">target name</span>.</p></li>
+
+     <li><p>If <var>navigable</var>'s <span data-x="nav-document">active document</span>'s <span
+     data-x="concept-document-origin">origin</span> is <span>same origin</span> with
+     <var>window</var>'s <span>relevant settings object</span>'s <span
+     data-x="concept-settings-object-origin">origin</span>, then <span data-x="list
+     append">append</span> <var>name</var> to <var>names</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Return <var>names</var>.</p></li>
+  </ol>
+  </div>
+
+  <div class="example">
+   <p>The two separate iterations mean that in the following example, hosted on <code
+   data-x="">https://example.org/</code>, assuming <code data-x="">https://elsewhere.example/</code>
+   sets <code data-x="dom-name">window.name</code> to "<code data-x="">spices</code>", evaluating
+   <code data-x="">window.spices</code> after everything has loaded will yield undefined:</p>
+
+   <pre><code class="html">&lt;iframe src=https://elsewhere.example.com/>&lt;/iframe>
+&lt;iframe name=spices>&lt;/iframe></code></pre>
+  </div>
+
+  <div algorithm>
+  <p>The <code>Window</code> object <span data-x="support named properties">supports named
+  properties</span>. The <span>supported property names</span> of a <code>Window</code> object
+  <var>window</var> at any moment consist of the following, in <span>tree order</span> according to
+  the element that contributed them, ignoring later duplicates:</p>
+
+  <!-- KEEP THIS LIST IN SYNC WITH "NAMED OBJECTS" BELOW -->
+  <ul>
+   <li><p><var>window</var>'s <span>document-tree child navigable target name property
+   set</span>;</p></li>
+
+   <li><p>the value of the <code data-x="">name</code> content attribute for all <code>embed</code>,
+   <code>form</code>, <code>img</code>, and <code>object</code> elements that
+   have a non-empty <code data-x="">name</code> content attribute and are <span>in a document
+   tree</span> with <var>window</var>'s <span data-x="concept-document-window">associated
+   <code>Document</code></span> as their <span>root</span>; and</p></li>
+
+   <li><p>the <span data-x="concept-id">ID</span> of all elements that have an <span
+   data-x="concept-id">ID</span> and are <span>in a document tree</span> with <var>window</var>'s
+   <span data-x="concept-document-window">associated <code>Document</code></span> as their
+   <span>root</span>.</p></li>
+  </ul>
+  </div>
+
+  <div algorithm>
+  <p id="dom-window-nameditem">To <span>determine the value of a named property</span>
+  <var>name</var> in a <code>Window</code> object <var>window</var>, the user agent must return the
+  value obtained using the following steps:</p>
+
+  <ol>
+   <!-- https://software.hixie.ch/utilities/js/live-dom-viewer/?saved=1716 -->
+   <li>
+    <p>Let <var>objects</var> be the list of <span data-x="dom-window-namedItem-filter">named
+    objects</span> of <var>window</var> with the name <var>name</var>.</p>
+
+    <p class="note">There will be at least one such object, since the algorithm would otherwise not
+    have been <span data-x="named-properties-object-getownproperty">invoked by Web IDL</span>.</p>
+   </li>
+
+   <li>
+    <p>If <var>objects</var> contains a <span>navigable</span>:</p>
+
+    <ol>
+     <li><p>Let <var>container</var> be the first <span>navigable container</span> in
+     <var>window</var>'s <span data-x="concept-document-window">associated
+     <code>Document</code></span>'s <span data-x="descendant">descendants</span> whose
+     <span>content navigable</span> is in <var>objects</var>.</p></li>
+
+     <li><p>Return <var>container</var>'s <span>content navigable</span>'s <span
+     data-x="nav-wp">active <code>WindowProxy</code></span>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Otherwise, if <var>objects</var> has only one element, return that element.</p></li>
+
+   <li><p>Otherwise, return an <code>HTMLCollection</code> rooted at <var>window</var>'s <span
+   data-x="concept-document-window">associated <code>Document</code></span>, whose filter matches
+   only <span data-x="dom-window-namedItem-filter">named objects</span> of <var>window</var> with
+   the name <var>name</var>. (By definition, these will all be elements.)</p></li>
+   <!-- the same one each time is returned, because of the rule under collections -->
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p><dfn data-x="dom-window-nameditem-filter">Named objects</dfn> of <code>Window</code> object
+  <var>window</var> with the name <var>name</var>, for the purposes of the above algorithm, consist
+  of the following:</p>
+
+  <!-- KEEP THIS LIST IN SYNC WITH SUPPORTED PROPERTY NAMES ABOVE -->
+  <ul>
+   <li><p><span>document-tree child navigables</span> of <var>window</var>'s <span
+   data-x="concept-document-window">associated <code>Document</code></span> whose <span
+   data-x="nav-target">target name</span> is <var>name</var>;</p></li>
+
+   <li><p><code>embed</code>, <code>form</code>, <code>img</code>, or
+   <code>object</code> elements that have a <code data-x="">name</code> content attribute whose
+   value is <var>name</var> and are <span>in a document tree</span> with <var>window</var>'s <span
+   data-x="concept-document-window">associated <code>Document</code></span> as their
+   <span>root</span>; and</p></li>
+
+   <li><p>elements whose <span data-x="concept-id">ID</span> is <var>name</var> and that are
+   <span>in a document tree</span> with <var>window</var>'s <span
+   data-x="concept-document-window">associated <code>Document</code></span> as their
+   <span>root</span>.</p></li>
+  </ul>
+  </div>
+
+  <p class="note">Since the <code>Window</code> interface has the <code
+  data-x="Global">[Global]</code> extended attribute, its named properties follow the rules for
+  <span data-x="named properties object">named properties objects</span> rather than <span
+  data-x="legacy platform object">legacy platform objects</span>.</p>
+
+  </div>
+
+
+  <h5 id="navigating-nested-browsing-contexts-in-the-dom">Accessing related windows</h5>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>window</var>.<span subdfn data-x="dom-top">top</span></code></dt>
+   <dd><p>Returns the <code>WindowProxy</code> for the <span>top-level traversable</span>.</p></dd>
+
+   <dt><code data-x=""><var>window</var>.<span subdfn data-x="dom-opener">opener</span> [ = <var>value</var> ]</code></dt>
+   <dd>
+    <p>Returns the <code>WindowProxy</code> for the <span>opener browsing context</span>.</p>
+
+    <p>Returns null if there isn't one or if it has been set to null.</p>
+
+    <p>Can be set to null.</p>
+   </dd>
+
+   <dt><code data-x=""><var>window</var>.<span subdfn data-x="dom-parent">parent</span></code></dt>
+   <dd><p>Returns the <code>WindowProxy</code> for the <span data-x="nav-parent">parent
+   navigable</span>.</p></dd>
+
+   <dt><code data-x=""><var>window</var>.<span subdfn data-x="dom-frameElement">frameElement</span></code></dt>
+   <dd>
+    <p>Returns the <span>navigable container</span> element.</p>
+
+    <p>Returns null if there isn't one, and in cross-origin situations.</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn attribute for="Window"><code data-x="dom-top">top</code></dfn> getter steps are:</p>
+
+  <ol>
+   <li><p>If <span>this</span>'s <span data-x="window navigable">navigable</span> is null, then
+   return null.</p></li>
+
+   <li><p>Return <span>this</span>'s <span data-x="window navigable">navigable</span>'s <span
+   data-x="nav-top">top-level traversable</span>'s <span data-x="nav-wp">active
+   <code>WindowProxy</code></span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="Window"><code data-x="dom-opener">opener</code></dfn> getter steps
+  are:</p>
+
+  <ol>
+   <li><p>Let <var>current</var> be <span>this</span>'s <span data-x="window bc">browsing
+   context</span>.</p></li>
+
+   <li><p>If <var>current</var> is null, then return null.</p></li>
+
+   <li><p>If <var>current</var>'s <span>opener browsing context</span> is null, then return
+   null.</p></li>
+
+   <li><p>Return <var>current</var>'s <span>opener browsing context</span>'s
+   <code>WindowProxy</code> object.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <code data-x="dom-opener">opener</code> setter steps are:</p>
+
+  <ol>
+   <li><p>If the given value is null and <span>this</span>'s <span data-x="window bc">browsing
+   context</span> is non-null, then set <span>this</span>'s <span data-x="window bc">browsing
+   context</span>'s <span>opener browsing context</span> to null.</p></li>
+
+   <li><p>If the given value is non-null, then perform ?
+   <span>DefinePropertyOrThrow</span>(<span>this</span>, "<code data-x="">opener</code>", {
+   [[Value]]: the given value, [[Writable]]: true, [[Enumerable]]: true, [[Configurable]]: true
+   }).</p></li>
+  </ol>
+  </div>
+
+  <div class="note">
+   <p>Setting <code data-x="dom-opener">window.opener</code> to null clears the <span>opener
+   browsing context</span> reference. In practice, this prevents future scripts from accessing their
+   <span>opener browsing context</span>'s <code>Window</code> object.</p>
+
+   <p>By default, scripts can access their <span>opener browsing context</span>'s
+   <code>Window</code> object through the <code data-x="dom-opener">window.opener</code> getter.
+   E.g., a script can set <code data-x="">window.opener.location</code>, causing the <span>opener
+   browsing context</span> to navigate.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="Window"><code data-x="dom-parent">parent</code></dfn> getter steps
+  are:</p>
+
+  <ol>
+   <li><p>Let <var>navigable</var> be <span>this</span>'s <span data-x="window
+   navigable">navigable</span>.</p></li>
+
+   <li><p>If <var>navigable</var> is null, then return null.</p></li>
+
+   <li><p>If <var>navigable</var>'s <span data-x="nav-parent">parent</span> is not null, then set
+   <var>navigable</var> to <var>navigable</var>'s <span data-x="nav-parent">parent</span>.</p></li>
+
+   <li><p>Return <var>navigable</var>'s <span data-x="nav-wp">active
+   <code>WindowProxy</code></span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="Window"><code data-x="dom-frameElement">frameElement</code></dfn>
+  getter steps are:</p>
+
+  <ol>
+   <li><p>Let <var>current</var> be <span>this</span>'s <span>node navigable</span>.</p></li>
+
+   <li><p>If <var>current</var> is null, then return null.</p></li>
+
+   <li><p>Let <var>container</var> be <var>current</var>'s <span
+   data-x="nav-container">container</span>.</p></li>
+
+   <li><p>If <var>container</var> is null, then return null.</p></li>
+
+   <li><p>If <var>container</var>'s <span>node document</span>'s <span
+   data-x="concept-document-origin">origin</span> is not <span>same origin-domain</span> with the
+   <span>current settings object</span>'s <span
+   data-x="concept-settings-object-origin">origin</span>, then return null.</p></li>
+
+   <li><p>Return <var>container</var>.</p></li>
+  </ol>
+  </div>
+
+  <div class="example">
+   <p>An example of when these properties can return null is as follows:</p>
+
+   <pre><code class="html">&lt;!DOCTYPE html>
+&lt;iframe>&lt;/iframe>
+
+&lt;script>
+"use strict";
+const element = document.querySelector("iframe");
+const iframeWindow = element.contentWindow;
+element.remove();
+
+console.assert(iframeWindow.top === null);
+console.assert(iframeWindow.parent === null);
+console.assert(iframeWindow.frameElement === null);
+&lt;/script></code></pre>
+
+   <p>Here the <span>browsing context</span> corresponding to <code data-x="">iframeWindow</code>
+   was <span data-x="destroy a document">nulled out</span> when <code data-x="">element</code> was
+   removed from the document.</p>
+  </div>
+
+  </div>
+
+
+  <h5 id="browser-interface-elements">Historical browser interface element APIs</h5>
+
+  <p>For historical reasons, the <code>Window</code> interface had some properties that represented
+  the visibility of certain web browser interface elements.</p>
+
+  <p w-nodev>For privacy and interoperability reasons, those properties now return values that
+  represent whether the <code>Window</code>'s <span data-x="window bc">browsing context</span>'s
+  <span>is popup</span> property is true or false.</p>
+
+  <p w-dev>For privacy and interoperability reasons, those properties now return all return the same value:
+  whether or not the window represents a popup window.</p>
+
+  <p w-nodev>Each interface element is represented by a <code>BarProp</code> object:</p>
+
+  <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>BarProp</dfn> {
+  readonly attribute boolean <span data-x="dom-BarProp-visible">visible</span>;
+};</code></pre>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>window</var>.<span subdfn data-x="dom-window-locationbar">locationbar</span>.<span subdfn data-x="dom-BarProp-visible">visible</span></code></dt>
+   <dt><code data-x=""><var>window</var>.<span subdfn data-x="dom-window-menubar">menubar</span>.<span data-x="dom-BarProp-visible">visible</span></code></dt>
+   <dt><code data-x=""><var>window</var>.<span subdfn data-x="dom-window-personalbar">personalbar</span>.<span data-x="dom-BarProp-visible">visible</span></code></dt>
+   <dt><code data-x=""><var>window</var>.<span subdfn data-x="dom-window-scrollbars">scrollbars</span>.<span data-x="dom-BarProp-visible">visible</span></code></dt>
+   <dt><code data-x=""><var>window</var>.<span subdfn data-x="dom-window-statusbar">statusbar</span>.<span data-x="dom-BarProp-visible">visible</span></code></dt>
+   <dt><code data-x=""><var>window</var>.<span subdfn data-x="dom-window-toolbar">toolbar</span>.<span data-x="dom-BarProp-visible">visible</span></code></dt>
+   <dd><p>Returns true if the <code>Window</code> is not a popup; otherwise, returns false.</p></dd>
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn attribute for="BarProp"><code data-x="dom-BarProp-visible">visible</code></dfn> getter
+  steps are:</p>
+
+  <ol>
+   <li><p>Let <var>browsingContext</var> be <span>this</span>'s <span>relevant global
+   object</span>'s <span data-x="window bc">browsing context</span>.</p></li>
+
+   <li><p>If <var>browsingContext</var> is null, then return true.</p></li>
+
+   <li><p>Return the negation of <var>browsingContext</var>'s <span data-x="bc-tlbc">top-level
+   browsing context</span>'s <span>is popup</span>.</p></li>
+  </ol>
+  </div>
+
+  <p>The following <code>BarProp</code> objects must exist for each <code>Window</code> object:</p>
+
+  <dl>
+   <dt><dfn>The location bar <code>BarProp</code> object</dfn></dt>
+   <dd>Historically represented the user interface element that contains a control that displays the
+   browser's location bar.</dd>
+
+   <dt><dfn>The menu bar <code>BarProp</code> object</dfn></dt>
+   <dd>Historically represented the user interface element that contains a list of commands in menu
+   form, or some similar interface concept.</dd>
+
+   <dt><dfn>The personal bar <code>BarProp</code> object</dfn></dt>
+   <dd>Historically represented the user interface element that contains links to the user's
+   favorite pages, or some similar interface concept.</dd>
+
+   <dt><dfn>The scrollbar <code>BarProp</code> object</dfn></dt>
+   <dd>Historically represented the user interface element that contains a scrolling mechanism, or
+   some similar interface concept.</dd>
+
+   <dt><dfn>The status bar <code>BarProp</code> object</dfn></dt>
+   <dd>Historically represented a user interface element found immediately below or after the
+   document, as appropriate for the user's media, which typically provides information about ongoing
+   network activity or information about elements that the user's pointing device is currently
+   indicating.</dd>
+
+   <dt><dfn>The toolbar <code>BarProp</code> object</dfn></dt>
+   <dd>Historically represented the user interface element found immediately above or before the
+   document, as appropriate for the user's media, which typically provides <span data-x="apply the
+   traverse history step">session history traversal</span> controls (back and forward buttons,
+   reload buttons, etc.).</dd>
+  </dl>
+
+  <div algorithm>
+  <p>The <dfn attribute for="Window"><code data-x="dom-window-locationbar">locationbar</code></dfn>
+  attribute must return <span>the location bar <code>BarProp</code> object</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="Window"><code data-x="dom-window-menubar">menubar</code></dfn>
+  attribute must return <span>the menu bar <code>BarProp</code> object</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="Window"><code data-x="dom-window-personalbar">personalbar</code></dfn>
+  attribute must return <span>the personal bar <code>BarProp</code> object</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="Window"><code data-x="dom-window-scrollbars">scrollbars</code></dfn>
+  attribute must return <span>the scrollbar <code>BarProp</code> object</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="Window"><code data-x="dom-window-statusbar">statusbar</code></dfn>
+  attribute must return <span>the status bar <code>BarProp</code> object</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="Window"><code data-x="dom-window-toolbar">toolbar</code></dfn>
+  attribute must return <span>the toolbar <code>BarProp</code> object</span>.</p>
+  </div>
+
+  <hr>
+
+  <div algorithm>
+  <p>For historical reasons, the <dfn attribute for="Window"><code
+  data-x="dom-window-status">status</code></dfn> attribute on the <code>Window</code> object must,
+  on getting, return the last string it was set to, and on setting, must set itself to the new
+  value. When the <code>Window</code> object is created, the attribute must be set to the empty
+  string. It does not do anything else.</p>
+  </div>
+
+
+  <h5>Script settings for <code>Window</code> objects</h5>
+
+  <div algorithm>
+  <p>To <dfn>set up a window environment settings object</dfn>, given a <span>URL</span>
+  <var>creationURL</var>, a <span>JavaScript execution context</span> <var>execution context</var>,
+  null or an <span>environment</span> <var>reservedEnvironment</var>, a <span>URL</span>
+  <var>topLevelCreationURL</var>, and an <span>origin</span> <var>topLevelOrigin</var>, run these
+  steps:</p>
+
+  <ol>
+   <li><p>Let <var>realm</var> be the value of <var>execution context</var>'s Realm
+   component.</p></li>
+
+   <li><p>Let <var>window</var> be <var>realm</var>'s <span data-x="concept-realm-global">global
+   object</span>.</p></li>
+
+   <li>
+    <p>Let <var>settings object</var> be a new <span>environment settings object</span> whose
+    algorithms are defined as follows:</p>
+
+    <dl>
+     <dt>The <span>realm execution context</span></dt>
+     <dd>
+      <p>Return <var>execution context</var>.</p>
+     </dd>
+
+     <dt>The <span data-x="concept-settings-object-module-map">module map</span></dt>
+     <dd>
+      <p>Return the <span data-x="concept-document-module-map">module map</span> of
+      <var>window</var>'s <span data-x="concept-document-window">associated
+      <code>Document</code></span>.</p>
+     </dd>
+
+     <dt>The <span>API base URL</span></dt>
+     <dd>
+      <p>Return the current <span data-x="document base URL">base URL</span> of <var>window</var>'s
+      <span data-x="concept-document-window">associated <code>Document</code></span>.</p>
+     </dd>
+
+     <dt>The <span data-x="concept-settings-object-origin">origin</span></dt>
+     <dd>
+      <p>Return the <span data-x="concept-document-origin">origin</span> of <var>window</var>'s
+      <span data-x="concept-document-window">associated <code>Document</code></span>.</p>
+     </dd>
+
+     <dt>The <span data-x="concept-settings-object-has-cross-site-ancestor">has cross-site
+     ancestor</span></dt>
+     <dd>
+      <ol>
+       <li><p>If <var>window</var>'s <span>navigable</span>'s <span
+       data-x="nav-parent">parent</span> is null, then return false.</p></li>
+
+       <li><p>Let <var>parentDocument</var> be <var>window</var>'s <span>navigable</span>'s <span
+       data-x="nav-parent">parent</span>'s <span data-x="nav-document">active
+       document</span>.</p></li>
+
+       <li><p>If <var>parentDocument</var>'s <span>relevant settings object</span>'s <span
+       data-x="concept-settings-object-has-cross-site-ancestor">has cross-site ancestor</span> is
+       true, then return true.</p></li>
+
+       <li><p>If <var>parentDocument</var>'s <span data-x="concept-document-origin">origin</span>
+       is not <span>same site</span> with <var>window</var>'s <span
+       data-x="concept-document-window">associated <code>Document</code></span>'s <span
+       data-x="concept-document-origin">origin</span>, then return true.</p></li>
+
+       <li><p>Return false.</p></li>
+      </ol>
+     </dd>
+
+     <dt>The <span data-x="concept-settings-object-policy-container">policy container</span></dt>
+     <dd>
+      <p>Return the <span data-x="concept-document-policy-container">policy container</span> of
+      <var>window</var>'s <span data-x="concept-document-window">associated
+      <code>Document</code></span>.</p>
+     </dd>
+
+     <dt>The <span data-x="concept-settings-object-cross-origin-isolated-capability">cross-origin
+     isolated capability</span></dt>
+     <dd>
+      <p>Return true if both of the following hold, and false otherwise:</p>
+      <ul>
+       <li><p><var>realm</var>'s <span>agent cluster</span>'s <span
+       data-x="agent-cluster-cross-origin-isolation">cross-origin-isolation mode</span> is "<code
+       data-x="cross-origin-isolation-concrete">concrete</code>", and</p></li>
+
+       <li><p><var>window</var>'s <span data-x="concept-document-window">associated
+       <code>Document</code></span> is <span>allowed to use</span> the "<code
+       data-x="cross-origin-isolated-feature">cross-origin-isolated</code>" feature.</p></li>
+      </ul>
+     </dd>
+
+     <dt>The <span data-x="concept-settings-object-time-origin">time origin</span></dt>
+     <dd>
+      <p>Return <var>window</var>'s <span data-x="concept-document-window">associated
+      <code>Document</code></span>'s <span>load timing info</span>'s <span>navigation start
+      time</span>.</p>
+     </dd>
+    </dl>
+   </li>
+
+   <li>
+    <p>If <var>reservedEnvironment</var> is non-null:</p>
+
+    <ol>
+     <li><p>Set <var>settings object</var>'s <span data-x="concept-environment-id">id</span> to
+     <var>reservedEnvironment</var>'s <span data-x="concept-environment-id">id</span>, <span
+     data-x="concept-environment-target-browsing-context">target browsing context</span> to
+     <var>reservedEnvironment</var>'s <span
+     data-x="concept-environment-target-browsing-context">target browsing context</span>, and <span
+     data-x="concept-environment-active-service-worker">active service worker</span> to
+     <var>reservedEnvironment</var>'s <span
+     data-x="concept-environment-active-service-worker">active service worker</span>.</p></li>
+
+     <li>
+      <p>Set <var>reservedEnvironment</var>'s <span data-x="concept-environment-id">id</span> to
+      the empty string.</p>
+
+      <p class="note">The identity of the reserved environment is considered to be fully
+      transferred to the created <span>environment settings object</span>. The reserved environment
+      is not searchable by the <span>environment</span>’s <span
+      data-x="concept-environment-id">id</span> from this point on.</p>
+     </li>
+    </ol>
+   </li>
+
+   <li><p>Otherwise, set <var>settings object</var>'s <span
+   data-x="concept-environment-id">id</span> to a new unique opaque string, <var>settings
+   object</var>'s <span data-x="concept-environment-target-browsing-context">target browsing
+   context</span> to null, and <var>settings object</var>'s <span
+   data-x="concept-environment-active-service-worker">active service worker</span> to null.</p></li>
+
+   <li><p>Set <var>settings object</var>'s <span data-x="concept-environment-creation-url">creation
+   URL</span> to <var>creationURL</var>, <var>settings object</var>'s <span>top-level creation
+   URL</span> to <var>topLevelCreationURL</var>, and <var>settings object</var>'s <span>top-level
+   origin</span> to <var>topLevelOrigin</var>.</p></li>
+
+   <li><p>Set <var>realm</var>'s [[HostDefined]] field to <var>settings object</var>.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+

@@ -1,0 +1,12 @@
+WHATWG HTML — section infrastructure — Infrastructure
+
+  <h3>Infrastructure</h3>
+
+  <p>This standard defines two kinds of workers: dedicated workers, and shared workers. Dedicated
+  workers, once created, are linked to their creator, but message ports can be used to communicate
+  from a dedicated worker to multiple other browsing contexts or workers. Shared workers, on the
+  other hand, are named, and once created any script running in the same <span>origin</span> can
+  obtain a reference to that worker and communicate with it. <cite>Service Workers</cite> defines a
+  third kind. <ref>SW</ref></p>
+
+

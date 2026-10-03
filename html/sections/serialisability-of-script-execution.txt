@@ -1,0 +1,22 @@
+WHATWG HTML — section serialisability-of-script-execution — Serializability of script execution
+
+  <!--en-GB--><h4 id="serialisability-of-script-execution">Serializability of script execution</h4>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>To avoid exposing web authors to the complexities of multithreading, the HTML and DOM APIs are
+  designed such that no script can ever detect the simultaneous execution of other scripts. Even
+  with <span data-x="Worker">workers</span>, the intent is that the behavior of implementations can
+  be thought of as completely serializing the execution of all scripts in all globals.</p>
+
+  <p>The exception to this general design principle is the JavaScript <code>SharedArrayBuffer</code>
+  class. Using <code>SharedArrayBuffer</code> objects, it can in fact be observed that scripts in
+  other <span data-x="agent">agents</span> are executing simultaneously. Furthermore, due to the
+  JavaScript memory model, there are situations which not only are un-representable via serialized
+  <em>script</em> execution, but also un-representable via serialized <em>statement</em> execution
+  among those scripts.</p>
+
+  </div>
+
+
+

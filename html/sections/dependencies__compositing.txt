@@ -1,0 +1,15 @@
+WHATWG HTML — section dependencies/compositing — Compositing
+
+   <dt>Compositing</dt>
+
+   <dd>
+    <p>The following features are defined in <cite>Compositing and Blending</cite>:
+    <ref>COMPOSITE</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://drafts.csswg.org/compositing/#ltblendmodegt">&lt;blend-mode&gt;</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/compositing/#compositemode">&lt;composite-mode&gt;</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/compositing/#porterduffcompositingoperators_srcover" data-x="gcop-source-over">source-over</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/compositing/#porterduffcompositingoperators_src" data-x="gcop-copy">copy</dfn></li>
+    </ul>
+   </dd>

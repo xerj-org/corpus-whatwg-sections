@@ -1,0 +1,151 @@
+WHATWG HTML — section parallelism — Parallelism
+
+  <h4>Parallelism</h4>
+
+  <p>To run steps <dfn export>in parallel</dfn> means those steps are to be run, one after another,
+  at the same time as other logic in the standard (e.g., at the same time as the <span>event
+  loop</span>). This standard does not define the precise mechanism by which this is achieved, be it
+  time-sharing cooperative multitasking, fibers, threads, processes, using different hyperthreads,
+  cores, CPUs, machines, etc. By contrast, an operation that is to run <dfn>immediately</dfn> must
+  interrupt the currently running task, run itself, and then resume the previously running task.</p>
+
+  <p class="note">For guidance on writing specifications that leverage parallelism, see <a
+  href="#event-loop-for-spec-authors">Dealing with the event loop from other specifications</a>.</p>
+
+  <p>To avoid race conditions between different <span>in parallel</span> algorithms that operate on
+  the same data, a <span>parallel queue</span> can be used.</p>
+
+  <p>A <dfn export>parallel queue</dfn> represents a queue of algorithm steps that must be run in
+  series.</p>
+
+  <p>A <span>parallel queue</span> has an <dfn>algorithm queue</dfn> (a <span>queue</span>),
+  initially empty.</p>
+
+  <div algorithm>
+  <p>To <dfn data-x="enqueue the following steps" data-lt="enqueue steps|enqueue the following
+  steps" export for="parallel queue">enqueue steps</dfn> to a <span>parallel queue</span>,
+  <span>enqueue</span> the algorithm steps to the <span>parallel queue</span>'s <span>algorithm
+  queue</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="starting a new parallel queue" data-lt="start a new parallel queue|starting a
+  new parallel queue" export>start a new parallel queue</dfn>, run the following steps:</p>
+
+  <ol>
+   <li><p>Let <var>parallelQueue</var> be a new <span>parallel queue</span>.</p></li>
+
+   <li>
+    <p>Run the following steps <span>in parallel</span>:</p>
+
+    <ol>
+     <li>
+      <p>While true:</p>
+
+      <ol>
+       <li><p>Let <var>steps</var> be the result of <span data-x="dequeue">dequeuing</span> from
+       <var>parallelQueue</var>'s <span>algorithm queue</span>.</p></li>
+
+       <li><p>If <var>steps</var> is not nothing, then run <var>steps</var>.</p></li>
+
+       <li><p><span>Assert</span>: running <var>steps</var> did not throw an exception, as steps
+       running <span>in parallel</span> are not allowed to throw.</p></li>
+      </ol>
+
+      <p class="note">Implementations are not expected to implement this as a continuously running
+      loop. Algorithms in standards are to be easy to understand and are not necessarily great for
+      battery life or performance.</p>
+     </li>
+    </ol>
+   </li>
+
+   <li><p>Return <var>parallelQueue</var>.</p></li>
+  </ol>
+  </div>
+
+  <p class="note">Steps running <span>in parallel</span> can themselves run other steps in <span>in
+  parallel</span>. E.g., inside a <span>parallel queue</span> it can be useful to run a series of
+  steps in parallel with the queue.</p>
+
+  <div class="example" var-scope>
+   <p>Imagine a standard defined <var>nameList</var> (a <span>list</span>), along with a method to
+   add a <var>name</var> to <var>nameList</var>, unless <var>nameList</var> already <span
+   data-x="list contains">contains</span> <var>name</var>, in which case it rejects.</p>
+
+   <p>The following solution suffers from race conditions:</p>
+
+   <div algorithm>
+   <ol>
+    <li><p>Let <var>p</var> be a new promise created in <span>this</span>'s <span
+    data-x="concept-relevant-realm">relevant realm</span>.</p></li>
+
+    <li><p>Let <var>global</var> be <span>this</span>'s <span>relevant global
+    object</span>.</p></li>
+
+    <li>
+     <p>Run the following steps <span>in parallel</span>:</p>
+
+     <ol>
+      <li><p>If <var>nameList</var> <span data-x="list contains">contains</span> <var>name</var>,
+      then <span>queue a global task</span> on the <span>DOM manipulation task source</span> given
+      <var>global</var> to reject <var>p</var> with a <code>TypeError</code>, and abort these
+      steps.</p></li>
+
+      <li><p>Do some potentially lengthy work.</p></li>
+
+      <li><p><span data-x="list append">Append</span> <var>name</var> to
+      <var>nameList</var>.</p></li>
+
+      <li><p><span>Queue a global task</span> on the <span>DOM manipulation task source</span> given
+      <var>global</var> to resolve <var>p</var> with undefined.</p></li>
+     </ol>
+    </li>
+
+    <li><p>Return <var>p</var>.</p></li>
+   </ol>
+   </div>
+
+   <p>Two invocations of the above could run simultaneously, meaning <var>name</var> isn't in
+   <var>nameList</var> during step 3.1, but it <em>might be added</em> before step 3.3 runs,
+   meaning <var>name</var> ends up in <var>nameList</var> twice.</p>
+
+   <p>Parallel queues solve this. The standard would let <var>nameListQueue</var> be the result of
+   <span>starting a new parallel queue</span> and define the name-adding steps as follows:</p>
+
+   <div algorithm>
+   <ol>
+    <li><p>Let <var>p</var> be a new promise created in <span>this</span>'s <span
+    data-x="concept-relevant-realm">relevant realm</span>.</p></li>
+
+    <li><p>Let <var>global</var> be <span>this</span>'s <span>relevant global
+    object</span>.</p></li>
+
+    <li>
+     <p><mark><span>Enqueue the following steps</span> to <var>nameListQueue</var>:</mark></p>
+
+     <ol>
+      <li><p>If <var>nameList</var> <span data-x="list contains">contains</span> <var>name</var>,
+      then <span>queue a global task</span> on the <span>DOM manipulation task source</span> given
+      <var>global</var> to reject <var>p</var> with a <code>TypeError</code>, and abort these
+      steps.</p></li>
+
+      <li><p>Do some potentially lengthy work.</p></li>
+
+      <li><p><span data-x="list append">Append</span> <var>name</var> to
+      <var>nameList</var>.</p></li>
+
+      <li><p><span>Queue a global task</span> on the <span>DOM manipulation task source</span> given
+      <var>global</var> to resolve <var>p</var> with undefined.</p></li>
+     </ol>
+    </li>
+
+    <li><p>Return <var>p</var>.</p></li>
+   </ol>
+   </div>
+
+   <p>The steps would now queue and the race is avoided.</p>
+  </div>
+
+  </div>
+
+

@@ -1,0 +1,117 @@
+WHATWG HTML — section attributes-for-embedded-content-and-images — Attributes for embedded content and images
+
+  <h4>Attributes for embedded content and images</h4>
+
+  <p>The following CSS rules are <span>expected</span> to apply as <span>presentational
+  hints</span>:</p>
+
+  <pre><code class="css">@namespace "http://www.w3.org/1999/xhtml";
+
+embed[align=left i], iframe[align=left i], img[align=left i],
+input[type=image i][align=left i], object[align=left i] {
+  float: left;
+}
+
+embed[align=right i], iframe[align=right i], img[align=right i],
+input[type=image i][align=right i], object[align=right i] {
+  float: right;
+}
+
+embed[align=top i], iframe[align=top i], img[align=top i],
+input[type=image i][align=top i], object[align=top i] {
+  vertical-align: top;
+}
+
+embed[align=baseline i], iframe[align=baseline i], img[align=baseline i],
+input[type=image i][align=baseline i], object[align=baseline i] {
+  vertical-align: baseline;
+}
+
+embed[align=texttop i], iframe[align=texttop i], img[align=texttop i],
+input[type=image i][align=texttop i], object[align=texttop i] {
+  vertical-align: text-top;
+}
+
+embed[align=absmiddle i], iframe[align=absmiddle i], img[align=absmiddle i],
+input[type=image i][align=absmiddle i], object[align=absmiddle i],
+embed[align=abscenter i], iframe[align=abscenter i], img[align=abscenter i],
+input[type=image i][align=abscenter i], object[align=abscenter i] {
+  vertical-align: middle;
+}
+
+embed[align=bottom i], iframe[align=bottom i], img[align=bottom i],
+input[type=image i][align=bottom i], object[align=bottom i] {
+  vertical-align: bottom;
+}</code></pre>
+
+  <p>When an <code>embed</code>, <code>iframe</code>, <code>img</code>, or <code>object</code>
+  element, or an <code>input</code> element whose <code data-x="attr-input-type">type</code>
+  attribute is in the <span data-x="attr-input-type-image">Image Button</span> state, has an <code
+  data-x="">align</code> attribute whose value is an <span>ASCII case-insensitive</span> match for
+  the string "<code data-x="">center</code>" or the string "<code data-x="">middle</code>", the user
+  agent is <span>expected</span> to act as if the element's <span>'vertical-align'</span> property
+  was set to a value that aligns the vertical middle of the element with the parent element's
+  baseline.</p>
+
+  <p>The <code data-x="">hspace</code> attribute of <code>embed</code>,
+  <code>img</code>, or <code>object</code> elements, and <code>input</code> elements with a <code
+  data-x="attr-input-type">type</code> attribute in the <span data-x="attr-input-type-image">Image
+  Button</span> state, <span data-x="maps to the dimension property">maps to the dimension
+  properties</span> <span>'margin-left'</span> and <span>'margin-right'</span> on the element.</p>
+
+  <p>The <code data-x="">vspace</code> attribute of <code>embed</code>,
+  <code>img</code>, or <code>object</code> elements, and <code>input</code> elements with a <code
+  data-x="attr-input-type">type</code> attribute in the <span data-x="attr-input-type-image">Image
+  Button</span> state, <span data-x="maps to the dimension property">maps to the dimension
+  properties</span> <span>'margin-top'</span> and <span>'margin-bottom'</span> on the element.</p>
+
+  <p>When an <code>iframe</code> element has a <code
+  data-x="attr-iframe-frameborder">frameborder</code> attribute whose value, when parsed using the
+  <span>rules for parsing integers</span>, is zero or an error, the user agent is
+  <span>expected</span> to have <span>presentational hints</span> setting the element's
+  <span>'border-top-width'</span>, <span>'border-right-width'</span>,
+  <span>'border-bottom-width'</span>, and <span>'border-left-width'</span> properties to zero.</p>
+
+  <p>When an <code>img</code> element, <code>object</code> element, or <code>input</code> element
+  with a <code data-x="attr-input-type">type</code> attribute in the <span
+  data-x="attr-input-type-image">Image Button</span> state has a <code
+  data-x="">border</code> attribute whose value, when parsed using the <span>rules for
+  parsing non-negative integers</span>, is found to be a number greater than zero, the user agent is
+  <span>expected</span> to use the parsed value for eight <span>presentational hints</span>: four
+  setting the parsed value as a pixel length for the element's <span>'border-top-width'</span>,
+  <span>'border-right-width'</span>, <span>'border-bottom-width'</span>, and
+  <span>'border-left-width'</span> properties, and four setting the element's
+  <span>'border-top-style'</span>, <span>'border-right-style'</span>,
+  <span>'border-bottom-style'</span>, and <span>'border-left-style'</span> properties to the value
+  'solid'.</p>
+
+  <p id="dimRendering">The <code data-x="attr-dim-width">width</code> and <code
+  data-x="attr-dim-height">height</code> attributes on an <code>img</code> element's <span
+  data-x="concept-img-dimension-attribute-source">dimension attribute source</span> <span
+  data-x="maps to the dimension property">map to the dimension properties</span>
+  <span>'width'</span> and <span>'height'</span> on the <code>img</code> element respectively. They
+  similarly <span>map to the aspect-ratio property (using dimension rules)</span> of the
+  <code>img</code> element.</p>
+
+  <p>The <code data-x="attr-dim-width">width</code> and <code data-x="attr-dim-height">height</code>
+  attributes on <code>embed</code>, <code>iframe</code>, <code>object</code>, and <code>video</code>
+  elements, and <code>input</code> elements with a <code data-x="attr-input-type">type</code>
+  attribute in the <span data-x="attr-input-type-image">Image Button</span> state and that either
+  represents an image or that the user expects will eventually represent an image, <span
+  data-x="maps to the dimension property">map to the dimension properties</span>
+  <span>'width'</span> and <span>'height'</span> on the element respectively.</p>
+
+  <p>The <code data-x="attr-dim-width">width</code> and <code data-x="attr-dim-height">height</code>
+  attributes <span>map to the aspect-ratio property (using dimension rules)</span> on
+  <code>img</code> and <code>video</code> elements, and <code>input</code> elements with a <code
+  data-x="attr-input-type">type</code> attribute in the <span data-x="attr-input-type-image">Image
+  Button</span> state.</p>
+
+  <p>The <code data-x="attr-canvas-width">width</code> and <code
+  data-x="attr-canvas-height">height</code> attributes <span>map to the aspect-ratio property</span>
+  on <code>canvas</code> elements.</p>
+  </div>
+
+
+  <div w-nodev>
+

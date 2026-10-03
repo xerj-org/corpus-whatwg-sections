@@ -1,0 +1,13 @@
+WHATWG HTML — section dependencies/web-locks-api — Web Locks API
+
+   <dt>Web Locks API</dt>
+
+   <dd>
+    <p>The following terms are defined in <cite>Web Locks API</cite>: <ref>WEBLOCKS</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://w3c.github.io/web-locks/#lock-concept">locks</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/web-locks/#lock-request">lock requests</dfn></li>
+    </ul>
+   </dd>
+

@@ -1,0 +1,13 @@
+WHATWG HTML — section dependencies/web-periodic-background-synchronization — Web Periodic Background Synchronization
+
+  <dt>Web Periodic Background Synchronization</dt>
+
+  <dd>
+   <p>The following terms are defined in <cite>Web Periodic Background Synchronization</cite>:</p>
+
+   <ul class="brief">
+    <li><dfn data-x-href="https://wicg.github.io/periodic-background-sync/#periodicsyncmanager"><code>PeriodicSyncManager</code></dfn></li>
+    <li><dfn data-x-href="https://wicg.github.io/periodic-background-sync/#dom-periodicsyncmanager-register" data-x="dom-PeriodicSyncManager-register"><code>register()</code></dfn></li>
+   </ul>
+  </dd>
+

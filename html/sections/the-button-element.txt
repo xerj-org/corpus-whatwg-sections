@@ -1,0 +1,554 @@
+WHATWG HTML — section the-button-element — The <dfn element><code>button</code></dfn> element
+
+  <h4 split-filename="form-elements">The <dfn element><code>button</code></dfn> element</h4>
+
+  <dl class="element">
+   <dt><span data-x="concept-element-categories">Categories</span>:</dt>
+   <dd><span>Flow content</span>.</dd>
+   <dd><span>Phrasing content</span>.</dd>
+   <dd><span>Interactive content</span>.</dd>
+   <dd><span data-x="category-listed">Listed</span>, <span data-x="category-label">labelable</span>, <span data-x="category-submit">submittable</span>, and <span data-x="category-autocapitalize-and-autocorrect">autocapitalize-and-autocorrect inheriting</span> <span>form-associated element</span>.</dd>
+   <dd><span>Palpable content</span>.</dd>
+   <dt><span data-x="concept-element-contexts">Contexts in which this element can be used</span>:</dt>
+   <dd>Where <span>phrasing content</span> is expected.</dd>
+   <dd>As the first child of a <code>select</code> element.</dd>
+   <dt><span data-x="concept-element-content-model">Content model</span>:</dt>
+   <dd><span>Phrasing content</span>, but there must be no <span>interactive content</span>
+   descendant and no descendant with the <code data-x="attr-tabindex">tabindex</code> attribute
+   specified. If the element is the first child of a <code>select</code> element, then it may also
+   have one descendant <code>selectedcontent</code> element.</dd>
+   <dt><span data-x="concept-element-attributes">Content attributes</span>:</dt>
+   <dd><span>Global attributes</span></dd>
+   <dd><code data-x="attr-button-command">command</code></dd>
+   <dd><code data-x="attr-button-commandfor">commandfor</code></dd>
+   <dd><code data-x="attr-fe-disabled">disabled</code></dd>
+   <dd><code data-x="attr-fae-form">form</code></dd>
+   <dd><code data-x="attr-fs-formaction">formaction</code></dd>
+   <dd><code data-x="attr-fs-formenctype">formenctype</code></dd>
+   <dd><code data-x="attr-fs-formmethod">formmethod</code></dd>
+   <dd><code data-x="attr-fs-formnovalidate">formnovalidate</code></dd>
+   <dd><code data-x="attr-fs-formtarget">formtarget</code></dd>
+   <dd><code data-x="attr-fe-name">name</code></dd>
+   <dd><code data-x="attr-popovertarget">popovertarget</code></dd>
+   <dd><code data-x="attr-popovertargetaction">popovertargetaction</code></dd>
+   <dd><code data-x="attr-button-type">type</code></dd>
+   <dd><code data-x="attr-button-value">value</code></dd>
+   <dt><span
+   data-x="concept-element-accessibility-considerations">Accessibility considerations</span>:</dt>
+   <dd><a href="https://w3c.github.io/html-aria/#el-button">For authors</a>.</dd>
+   <dd><a href="https://w3c.github.io/html-aam/#el-button">For implementers</a>.</dd>
+   <dt><span data-x="concept-element-sanitization">Sanitization</span>:</dt>
+   <dd><span data-x="sanitizer-uncategorized">Uncategorized</span> with <span>navigating URL
+   attributes</span> <code data-x="attr-fs-formaction">formaction</code>.</dd>
+   <dt><span data-x="concept-element-dom">DOM interface</span>:</dt>
+   <dd w-nodev>
+    <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>HTMLButtonElement</dfn> : <span>HTMLElement</span> {
+  [<span>HTMLConstructor</span>] constructor();
+
+  [<span>CEReactions</span>, <span data-x="xattr-ReflectSetter">ReflectSetter</span>] attribute DOMString <span data-x="dom-button-command">command</span>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>="<span data-x="attr-button-commandfor">commandfor</span>"] attribute Element? <dfn attribute for="HTMLButtonElement" data-x="dom-button-commandForElement">commandForElement</dfn>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute boolean <dfn attribute for="HTMLButtonElement" data-x="dom-button-disabled">disabled</dfn>;
+  readonly attribute <span>HTMLFormElement</span>? <span data-x="dom-fae-form">form</span>;
+  [<span>CEReactions</span>, <span data-x="xattr-ReflectSetter">ReflectSetter</span>] attribute USVString <span data-x="dom-fs-formAction">formAction</span>;
+  [<span>CEReactions</span>] attribute DOMString <span data-x="dom-fs-formEnctype">formEnctype</span>;
+  [<span>CEReactions</span>] attribute DOMString <span data-x="dom-fs-formMethod">formMethod</span>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute boolean <dfn attribute for="HTMLButtonElement" data-x="dom-button-formNoValidate">formNoValidate</dfn>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute DOMString <dfn attribute for="HTMLButtonElement" data-x="dom-button-formTarget">formTarget</dfn>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute DOMString <dfn attribute for="HTMLButtonElement" data-x="dom-button-name">name</dfn>;
+  [<span>CEReactions</span>, <span data-x="xattr-ReflectSetter">ReflectSetter</span>] attribute DOMString <span data-x="dom-button-type">type</span>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute DOMString <dfn attribute for="HTMLButtonElement" data-x="dom-button-value">value</dfn>;
+
+  readonly attribute boolean <span data-x="dom-cva-willValidate">willValidate</span>;
+  readonly attribute <span>ValidityState</span> <span data-x="dom-cva-validity">validity</span>;
+  readonly attribute DOMString <span data-x="dom-cva-validationMessage">validationMessage</span>;
+  boolean <span data-x="dom-cva-checkValidity">checkValidity</span>();
+  boolean <span data-x="dom-cva-reportValidity">reportValidity</span>();
+  undefined <span data-x="dom-cva-setCustomValidity">setCustomValidity</span>(DOMString error);
+
+  readonly attribute <span>NodeList</span> <span data-x="dom-lfe-labels">labels</span>;
+};
+<span>HTMLButtonElement</span> includes <span>PopoverTargetAttributes</span>;</code></pre>
+   </dd>
+   <dd w-dev>Uses <code>HTMLButtonElement</code>.</dd>
+  </dl>
+
+  <p>The <code>button</code> element <span>represents</span> a button labeled by its contents.</p>
+
+  <p>The element is a <span data-x="concept-button">button</span>.</p>
+
+  <p>The <dfn element-attr for="button"><code data-x="attr-button-type">type</code></dfn> attribute
+  controls the behavior of the button when it is activated. It is an <span>enumerated
+  attribute</span> with the following keywords and states:</p>
+
+  <table>
+   <thead>
+    <tr>
+     <th> Keyword
+     <th> State
+     <th> Brief description
+   <tbody>
+    <tr>
+     <td><dfn attr-value for="button/type"><code
+     data-x="attr-button-type-submit">submit</code></dfn>
+     <td><dfn data-x="attr-button-type-submit-state">Submit Button</dfn>
+     <td>Submits the form.
+    <tr>
+     <td><dfn attr-value for="button/type"><code data-x="attr-button-type-reset">reset</code></dfn>
+     <td><dfn data-x="attr-button-type-reset-state">Reset Button</dfn>
+     <td>Resets the form.
+    <tr>
+     <td><dfn attr-value for="button/type"><code
+     data-x="attr-button-type-button">button</code></dfn>
+     <td><dfn data-x="attr-button-type-button-state">Button</dfn>
+     <td>Does nothing.
+  </table>
+
+  <div algorithm>
+  <p>The attribute's <i data-x="missing value default">missing value default</i> and <i
+  data-x="invalid value default">invalid value default</i> are both the <dfn
+  data-x="attr-button-type-auto-state">Auto</dfn> state.</p>
+  </div>
+
+  <div algorithm>
+  <p>A <code>button</code> element is said to be a <span
+  data-x="concept-submit-button">submit button</span> if any of the following are true:</p>
+
+  <ul>
+   <li><p>the <code data-x="attr-button-type">type</code> attribute is in the <span
+   data-x="attr-button-type-auto-state">Auto</span> state, both the <code
+   data-x="attr-button-command">command</code> and <code
+   data-x="attr-button-commandfor">commandfor</code> content attributes are not present, and the
+   <span>parent</span> node is not a <code>select</code> element;
+   or</p></li>
+
+   <li><p>the <code data-x="attr-button-type">type</code> attribute is in the <span
+   data-x="attr-button-type-submit-state">Submit Button</span> state.</p></li>
+  </ul>
+  </div>
+
+  <div algorithm>
+  <p><strong>Constraint validation</strong>: If the element is not a <span
+  data-x="concept-submit-button">submit button</span>, the element is <span>barred from constraint
+  validation</span>.</p>
+  </div>
+
+  <p>If a <code>button</code> element is the first <span data-x="concept-tree-child">child</span>
+  which is an <span>element</span> of a <code>select</code> element, then it is
+  <span>inert</span>.</p>
+
+  <p>If specified, the <dfn element-attr for="button"><code
+  data-x="attr-button-commandfor">commandfor</code></dfn> attribute value must be the <span
+  data-x="concept-ID">ID</span> of an element in the same <span>tree</span> as the <span
+  data-x="concept-button">button</span> with the <code
+  data-x="attr-button-commandfor">commandfor</code> attribute.</p>
+
+  <p>The <dfn element-attr for="button"><code data-x="attr-button-command">command</code></dfn>
+  attribute is an <span>enumerated attribute</span> with the following keywords and states:</p>
+
+  <table>
+   <thead>
+    <tr>
+     <th>Keyword
+     <th>State
+     <th>Brief description
+   <tbody>
+    <tr>
+     <td><dfn attr-value for="html-global/command"
+     data-x="attr-button-command-toggle-popover"><code>toggle-popover</code></dfn>
+     <td><dfn data-x="attr-button-command-toggle-popover-state">Toggle Popover</dfn>
+     <td>Shows or hides the targeted <code data-x="attr-popover">popover</code> element.
+    <tr>
+     <td><dfn attr-value for="html-global/command"
+     data-x="attr-button-command-show-popover"><code>show-popover</code></dfn>
+     <td><dfn data-x="attr-button-command-show-popover-state">Show Popover</dfn>
+     <td>Shows the targeted <code data-x="attr-popover">popover</code> element.
+    <tr>
+     <td><dfn attr-value for="html-global/command"
+     data-x="attr-button-command-hide-popover"><code>hide-popover</code></dfn>
+     <td><dfn data-x="attr-button-command-hide-popover-state">Hide Popover</dfn>
+     <td>Hides the targeted <code data-x="attr-popover">popover</code> element.
+    <tr>
+     <td><dfn attr-value for="html-global/command"
+     data-x="attr-button-command-close"><code>close</code></dfn>
+     <td><dfn data-x="attr-button-command-close-state">Close</dfn>
+     <td>Closes the targeted <code>dialog</code> element.
+    <tr>
+     <td><dfn attr-value for="html-global/command"
+     data-x="attr-button-command-request-close"><code>request-close</code></dfn>
+     <td><dfn data-x="attr-button-command-request-close-state">Request Close</dfn>
+     <td>Requests to close the targeted <code>dialog</code> element.
+    <tr>
+     <td><dfn attr-value for="html-global/command"
+     data-x="attr-button-command-show-modal"><code>show-modal</code></dfn>
+     <td><dfn data-x="attr-button-command-show-modal-state">Show Modal</dfn>
+     <td>Opens the targeted <code>dialog</code> element as modal.
+    <tr>
+     <td>A <span data-x="attr-button-command-custom">custom command keyword</span>
+     <td><dfn data-x="attr-button-command-custom-state">Custom</dfn>
+     <td>Only dispatches the <code data-x="event-command">command</code> event on the targeted
+     element.
+  </table>
+
+  <div algorithm>
+  <p>The attribute's <i data-x="missing value default">missing value default</i> and <i
+  data-x="invalid value default">invalid value default</i> are both the <dfn
+  data-x="attr-button-command-unknown-state">Unknown</dfn> state.</p>
+  </div>
+
+  <div algorithm>
+  <p>A <dfn data-x="attr-button-command-custom">custom command keyword</dfn> is a string that
+  <span>starts with</span> "<code data-x="">--</code>".</p>
+  </div>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>To <dfn data-x="determine-if-command-is-valid">determine if a command is valid for a
+  target</dfn> given a <code data-x="attr-button-command">command</code> attribute
+  <var>command</var> and an element <var>target</var>:</p>
+
+  <ol>
+   <li><p>If <var>command</var> is in the <span
+   data-x="attr-button-command-unknown-state">Unknown</span> state, then return false.</p></li>
+
+   <li><p>If <var>command</var> is in the <span
+   data-x="attr-button-command-custom-state">Custom</span> state, then return true.</p></li>
+
+   <li><p>If <var>target</var> is not an <span data-x="html elements">HTML element</span>, then
+   return false.</p></li>
+
+   <li>
+    <p>If <var>command</var> is in any of the following states:</p>
+
+    <ul>
+     <li><p><span data-x="attr-button-command-toggle-popover-state">Toggle Popover</span></p></li>
+
+     <li><p><span data-x="attr-button-command-show-popover-state">Show Popover</span></p></li>
+
+     <li><p><span data-x="attr-button-command-hide-popover-state">Hide Popover</span></p></li>
+    </ul>
+
+    <p>then return true.</p>
+   </li>
+
+   <li><p>If this standard does not define <span>is valid command steps</span> for
+   <var>target</var>'s <span data-x="concept-element-local-name">local name</span>, then return
+   false.</p></li>
+
+   <li><p>Otherwise, return the result of running <var>target</var>'s corresponding <span>is valid
+   command steps</span> given <var>command</var>.</p></li>
+  </ol>
+
+  <div class="note">
+   <p>The intent is to avoid dispatching a command event on an element type that does not support
+   that command.</p>
+
+   <p>However, element state is not considered. If an element can support a particular command, the
+   event is dispatched, even if that element is in a state where it cannot execute that command.</p>
+
+   <p>This means, for example, that command events are dispatched for popover commands on all <span
+   data-x="html elements">HTML elements</span>, even if they do not have a <code
+   data-x="attr-popover">popover</code> attribute.</p>
+  </div>
+
+  </div>
+
+  <div algorithm>
+  <p>A <code>button</code> element <var>element</var>'s <span>activation behavior</span> given
+  <var>event</var> is:</p>
+
+  <ol>
+   <li><p>If <var>element</var> is <span data-x="concept-fe-disabled">disabled</span>, then
+   return.</p></li>
+
+   <li><p>If <var>element</var>'s <span>node document</span> is not <span>fully active</span>, then
+   return.</p></li>
+
+   <li>
+    <p>If <var>element</var> has a <span>form owner</span>:</p>
+
+    <ol>
+     <li><p>If <var>element</var> is a <span data-x="concept-submit-button">submit button</span>,
+     then <span data-x="concept-form-submit">submit</span> <var>element</var>'s
+     <span>form owner</span> from <var>element</var> with <i
+     data-x="submit-user-involvement">userInvolvement</i> set to <var>event</var>'s <span
+     data-x="event-uni">user navigation involvement</span>, and return.</p></li>
+
+     <li><p>If <var>element</var>'s <code data-x="attr-button-type">type</code> attribute is in the
+     <span data-x="attr-button-type-reset-state">Reset Button</span> state, then <span
+     data-x="concept-form-reset">reset</span> <var>element</var>'s <span>form owner</span>, and
+     return.</p></li>
+
+     <li><p>If <var>element</var>'s <code data-x="attr-button-type">type</code> attribute is in the
+     <span data-x="attr-button-type-auto-state">Auto</span> state, then return.</p></li>
+     <!-- We do this for compatability and plan to remove this restriction in future, see
+          https://github.com/whatwg/html/issues/10832 -->
+    </ol>
+   </li>
+
+   <li><p>Let <var>target</var> be the result of running <var>element</var>'s <span
+   data-x="get the attr-associated element">get the <code data-x="">commandfor</code>-associated
+   element</span>.</p></li>
+
+   <li>
+    <p>If <var>target</var> is not null:</p>
+
+    <ol>
+     <li><p>Let <var>command</var> be <var>element</var>'s <code
+     data-x="attr-button-command">command</code> attribute.</p></li>
+
+     <li><p>If the result of <span data-x="determine-if-command-is-valid">determining if a command
+     is valid for a target</span> given <var>command</var> and <var>target</var> is false, then
+     return.</p></li>
+
+     <li>
+      <p>Let <var>continue</var> be the result of <span data-x="concept-event-fire">firing an
+      event</span> named <code data-x="event-command">command</code> at <var>target</var>, using
+      <code>CommandEvent</code>, with its <code data-x="dom-CommandEvent-command">command</code>
+      attribute initialized to <var>command</var>, its <code
+      data-x="dom-CommandEvent-source">source</code> attribute initialized to <var>element</var>,
+      and its <code data-x="dom-Event-cancelable">cancelable</code> attribute initialized to
+      true.</p>
+
+      <p class="XXX"><a href="https://github.com/whatwg/dom/issues/1328">DOM standard issue
+      #1328</a> tracks how to better standardize associated event data in a way which makes sense on
+      Events. Currently an event attribute initialized to a value cannot also have a getter, and so
+      an internal slot (or map of additional fields) is required to properly specify this.</p>
+     </li>
+
+     <li><p>If <var>continue</var> is false, then return.</p></li>
+
+     <li><p>If <var>target</var> is not <span>connected</span>, then return.</p></li>
+
+     <li><p>If <var>command</var> is in the <span
+     data-x="attr-button-command-custom-state">Custom</span> state, then return.</p></li>
+
+     <li>
+      <p>If <var>command</var> is in the <span
+      data-x="attr-button-command-hide-popover-state">Hide Popover</span> state:</p>
+
+      <ol>
+       <li><p>Let <var>validity</var> be the result of running <span>check popover validity</span>
+       given <var>target</var>, true, and null. If this throws an exception, catch it, and let
+       <var>validity</var> be false.</p></li>
+
+       <li><p>If <var>validity</var> is true, then run the <span>hide popover algorithm</span> given
+       <var>target</var>, true, true, false, and <var>element</var>.</p></li>
+      </ol>
+     </li>
+
+     <li>
+      <p>Otherwise, if <var>command</var> is in the <span
+      data-x="attr-button-command-toggle-popover-state">Toggle Popover</span> state:</p>
+
+      <ol>
+       <li><p>Let <var>validity</var> be the result of running <span>check popover validity</span>
+       given <var>target</var>, false, and null. If this throws an exception, catch it, and let
+       <var>validity</var> be false.</p></li>
+
+       <li><p>If <var>validity</var> is true, then run the <span data-x="show popover">show popover
+       algorithm</span> given <var>target</var>, false, and <var>element</var>.</p></li>
+
+       <li>
+        <p>Otherwise:</p>
+
+        <ol>
+         <li><p>Let <var>validity</var> be the result of running <span>check popover validity</span>
+         given <var>target</var>, true, and null. If this throws an exception, catch it, and let
+         <var>validity</var> be false.</p></li>
+
+         <li><p>If <var>validity</var> is true, then run the <span>hide popover algorithm</span>
+         given <var>target</var>, true, true, false, and <var>element</var>.</p></li>
+        </ol>
+       </li>
+      </ol>
+     </li>
+
+     <li>
+      <p>Otherwise, if <var>command</var> is in the <span
+      data-x="attr-button-command-show-popover-state">Show Popover</span> state:</p>
+
+      <ol>
+       <li><p>Let <var>validity</var> be the result of running <span>check popover validity</span>
+       given <var>target</var>, false, and null. If this throws an exception, catch it, and let
+       <var>validity</var> be false.</p></li>
+
+       <li><p>If <var>validity</var> is true, then run the <span data-x="show popover">show popover
+       algorithm</span> given <var>target</var>, false, and <var>element</var>.</p></li>
+      </ol>
+     </li>
+
+     <li><p>Otherwise, if this standard defines <span>command steps</span> for
+     <var>target</var>'s <span data-x="concept-element-local-name">local name</span>, then run the
+     corresponding <span>command steps</span> given <var>target</var>, <var>element</var>,
+     and <var>command</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Otherwise, run the <span>popover target attribute activation behavior</span> given
+   <var>element</var> and <var>event</var>'s <span
+   data-x="concept-event-target">target</span>.</p></li>
+  </ol>
+  </div>
+
+  <p>An <span data-x="HTML Elements">HTML element</span> can have specific
+  <dfn>is valid command steps</dfn> and <dfn>command steps</dfn> defined for the
+  element's <span data-x="concept-element-local-name">local name</span>.</p>
+
+  </div>
+
+  <p>The <code data-x="attr-fae-form">form</code> attribute is used to explicitly associate the
+  <code>button</code> element with its <span>form owner</span>. The <code
+  data-x="attr-fe-name">name</code> attribute represents the element's name. The <code
+  data-x="attr-fe-disabled">disabled</code> attribute is used to make the control non-interactive and
+  to prevent its value from being submitted. The <code data-x="attr-fs-formaction">formaction</code>,
+  <code data-x="attr-fs-formenctype">formenctype</code>, <code
+  data-x="attr-fs-formmethod">formmethod</code>, <code
+  data-x="attr-fs-formnovalidate">formnovalidate</code>, and <code
+  data-x="attr-fs-formtarget">formtarget</code> attributes are <span>attributes for form
+  submission</span>.</p>
+
+  <p class="note">The <code data-x="attr-fs-formnovalidate">formnovalidate</code> attribute can be
+  used to make submit buttons that do not trigger the constraint validation.</p>
+
+  <p>The <code data-x="attr-fs-formaction">formaction</code>, <code
+  data-x="attr-fs-formenctype">formenctype</code>, <code
+  data-x="attr-fs-formmethod">formmethod</code>, <code
+  data-x="attr-fs-formnovalidate">formnovalidate</code>, and <code
+  data-x="attr-fs-formtarget">formtarget</code> must not be specified if the element is not
+  a <span data-x="concept-submit-button">submit button</span>.</p>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLButtonElement"><code
+  data-x="dom-button-command">command</code></dfn> getter steps are:</p>
+
+  <ol>
+   <li><p>Let <var>command</var> be <span>this</span>'s <code
+   data-x="attr-button-command">command</code> attribute.</p></li>
+
+   <li><p>If <var>command</var> is in the <span
+   data-x="attr-button-command-custom-state">Custom</span> state, then return <var>command</var>'s
+   value.</p></li>
+
+   <li><p>If <var>command</var> is in the <span
+   data-x="attr-button-command-unknown-state">Unknown</span> state, then return the empty
+   string.</p></li>
+
+   <li><p>Return the keyword corresponding to the value of <var>command</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn element-attr for="button"><code data-x="attr-button-value">value</code></dfn>
+  attribute gives the element's value for the purposes of form submission. The element's <span
+  data-x="concept-fe-value">value</span> is the value of the element's <code
+  data-x="attr-button-value">value</code> attribute, if there is one; otherwise the empty string.
+  The element's <span data-x="concept-fe-optional-value">optional value</span> is the value of the
+  element's <code data-x="attr-button-value">value</code> attribute, if there is one; otherwise
+  null.</p>
+  </div>
+
+  <p class="note">A button (and its value) is only included in the form submission if the button
+  itself was used to initiate the form submission.</p>
+
+  <hr>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLButtonElement"><code data-x="dom-button-type">type</code></dfn>
+  getter steps are:</p>
+
+  <ol>
+   <li><p>If <span>this</span> is a <span data-x="concept-submit-button">submit button</span>, then
+   return "<code data-x="">submit</code>".</p></li>
+
+   <li><p>Let <var>state</var> be <span>this</span>'s <code data-x="attr-button-type">type</code>
+   attribute.</p></li>
+
+   <li><p><span>Assert</span>: <var>state</var> is not in the <span
+   data-x="attr-button-type-submit-state">Submit Button</span> state.</p></li>
+
+   <li><p>If <var>state</var> is in the <span data-x="attr-button-type-auto-state">Auto</span>
+   state, then return "<code data-x="">button</code>".</p></li>
+
+   <li><p>Return the keyword value corresponding to <var>state</var>.</p></li>
+  </ol>
+  </div>
+
+  <p>The <code data-x="dom-cva-willValidate">willValidate</code>, <code
+  data-x="dom-cva-validity">validity</code>, and <code
+  data-x="dom-cva-validationMessage">validationMessage</code> IDL attributes, and the <code
+  data-x="dom-cva-checkValidity">checkValidity()</code>, <code
+  data-x="dom-cva-reportValidity">reportValidity()</code>, and <code
+  data-x="dom-cva-setCustomValidity">setCustomValidity()</code> methods, are part of the
+  <span>constraint validation API</span>. The <code data-x="dom-lfe-labels">labels</code> IDL
+  attribute provides a list of the element's <code>label</code>s. The <code
+  data-x="dom-button-disabled">disabled</code>, <code data-x="dom-fae-form">form</code>, and <code
+  data-x="dom-button-name">name</code> IDL attributes are part of the element's forms API.</p>
+
+  </div>
+
+  <div class="example">
+
+   <p>The following button is labeled "Show hint" and pops up a dialog box when activated:</p>
+
+   <pre><code class="html">&lt;button type=button
+        onclick="alert('This 15-20 minute piece was composed by George Gershwin.')">
+ Show hint
+&lt;/button></code></pre>
+
+  </div>
+
+  <div class="example">
+   <p>The following shows how <span data-x="concept-button">buttons</span> can use <code
+   data-x="attr-button-commandfor">commandfor</code> to show and hide an element with
+   the <code data-x="attr-popover">popover</code> attribute when activated:</p>
+
+   <pre><code class="html">&lt;button type=button
+        commandfor="the-popover"
+        command="show-popover">
+ Show menu
+&lt;/button>
+&lt;div popover
+     id="the-popover">
+ &lt;button commandfor="the-popover"
+         command="hide-popover">
+  Hide menu
+ &lt;/button>
+&lt;/div>
+    </code></pre>
+  </div>
+
+  <div class="example">
+   <p>The following shows how buttons can use <code
+   data-x="attr-button-commandfor">commandfor</code> with a <span
+   data-x="attr-button-command-custom">custom command keyword</span> on an element, demonstrating
+   how one could use custom commands for unspecified behavior:</p>
+
+   <pre><code class="html">&lt;button type=button
+        commandfor="the-image"
+        command="--rotate-landscape">
+ Rotate Left
+&lt;/button>
+&lt;button type=button
+        commandfor="the-image"
+        command="--rotate-portrait">
+ Rotate Right
+&lt;/button>
+&lt;img id="the-image"
+     src="photo.jpg">
+&lt;script>
+  const image = document.getElementById("the-image");
+  image.addEventListener("command", (event) => {
+   if ( event.command == "--rotate-landscape" ) {
+    event.target.style.rotate = "-90deg"
+   } else if ( event.command == "--rotate-portrait" ) {
+    event.target.style.rotate = "0deg"
+   }
+  });
+&lt;/script>
+    </code></pre>
+  </div>
+

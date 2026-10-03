@@ -1,0 +1,85 @@
+WHATWG HTML — section form-controls — Form controls
+
+  <h4>Form controls</h4>
+
+  <pre><code class="css">@namespace "http://www.w3.org/1999/xhtml";
+
+input, button, textarea {
+  letter-spacing: initial;
+  word-spacing: initial;
+  line-height: initial;
+}
+
+input, select, button, textarea {
+  text-transform: initial;
+  text-indent: initial;
+  text-shadow: initial;
+  appearance: auto;
+}
+
+input:not([type=range i], [type=checkbox i], [type=radio i]) {
+  overflow: clip !important;
+  overflow-clip-margin: 0 !important;
+}
+
+input[type=image i] {
+  overflow-clip-margin: content-box !important;
+}
+
+input, select, textarea {
+  text-align: initial;
+}
+
+:autofill {
+  field-sizing: fixed !important;
+}
+
+input:is([type=reset i], [type=button i], [type=submit i]), button {
+  text-align: center;
+}
+
+input, button {
+  display: inline-block;
+}
+
+input[type=hidden i], input[type=file i], input[type=image i] {
+  appearance: none;
+}
+
+input:is([type=radio i], [type=checkbox i], [type=reset i], [type=button i],
+[type=submit i], [type=color i], [type=search i]), select, button {
+  box-sizing: border-box;
+}
+
+textarea { white-space: pre-wrap; }
+
+input:not([type=file i], [type=range i], [type=checkbox i], [type=radio i]) {
+  align-content: unsafe center;
+}
+
+button,
+::file-selector-button,
+input:is([type=color i], [type=reset i], [type=button i], [type=submit i]) {
+  align-content: center;
+}
+</code></pre>
+
+  <p>In <span>quirks mode</span>, the following rules are also <span>expected</span> to apply:</p>
+
+  <pre><code class="css">@namespace "http://www.w3.org/1999/xhtml";
+
+input:not([type=image i]), textarea { box-sizing: border-box; }</code></pre>
+
+  <p>Each kind of form control is also described in the <a href="#widgets">Widgets</a> section,
+  which describes the look and feel of the control.</p>
+
+  <p>For <code>input</code> elements where the <code data-x="attr-input-type">type</code> attribute
+  is not in the <span data-x="attr-input-type-hidden">Hidden</span> state or the <span
+  data-x="attr-input-type-image">Image Button</span> state, and that are <span>being
+  rendered</span>, are <span>expected</span> to act as follows:</p>
+
+  <ul>
+   <li><p>The <span>inner display type</span> is always 'flow-root'.</p></li>
+  </ul>
+
+

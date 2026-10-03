@@ -1,0 +1,12 @@
+WHATWG HTML — section dependencies/picture-in-picture-api — Picture-in-Picture API
+
+   <dt>Picture-in-Picture API</dt>
+
+   <dd>
+    <p>The following terms are defined in <cite>Picture-in-Picture API</cite>: <ref>PICTUREINPICTURE</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://w3c.github.io/picture-in-picture/#pictureinpicturewindow"><code>PictureInPictureWindow</code></dfn></li>
+    </ul>
+   </dd>
+

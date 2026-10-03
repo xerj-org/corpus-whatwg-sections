@@ -1,0 +1,20 @@
+WHATWG HTML — section dependencies/xmlhttprequest — XMLHttpRequest
+
+   <dt>XMLHttpRequest</dt>
+
+   <dd>
+    <p>The following features and terms are defined in <cite>XMLHttpRequest</cite>:
+    <ref>XHR</ref></p>
+
+    <ul class="brief">
+     <li>The <dfn data-x-href="https://xhr.spec.whatwg.org/#xmlhttprequest"><code>XMLHttpRequest</code></dfn> interface, and its
+             <dfn data-x="dom-XMLHttpRequest-responseXML" data-x-href="https://xhr.spec.whatwg.org/#dom-xmlhttprequest-responsexml"><code>responseXML</code></dfn> attribute</li>
+     <li>The <dfn data-x-href="https://xhr.spec.whatwg.org/#interface-progressevent"><code>ProgressEvent</code></dfn> interface, and its
+             <dfn data-x="dom-ProgressEvent-lengthComputable" data-x-href="https://xhr.spec.whatwg.org/#dom-progressevent-lengthcomputable"><code>lengthComputable</code></dfn>,
+             <dfn data-x="dom-ProgressEvent-loaded" data-x-href="https://xhr.spec.whatwg.org/#dom-progressevent-loaded"><code>loaded</code></dfn>, and
+             <dfn data-x="dom-ProgressEvent-total" data-x-href="https://xhr.spec.whatwg.org/#dom-progressevent-total"><code>total</code></dfn> attributes</li>
+     <li>The <dfn data-x-href="https://xhr.spec.whatwg.org/#formdata"><code>FormData</code></dfn> interface, and its associated
+             <dfn data-x="FormData entry list" data-x-href="https://xhr.spec.whatwg.org/#concept-formdata-entry-list">entry list</dfn></li>
+    </ul>
+   </dd>
+

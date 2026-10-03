@@ -1,0 +1,32 @@
+WHATWG HTML — section inert-subtrees — Inert subtrees
+
+  <h3>Inert subtrees</h3>
+
+  <p class="note">See also <code data-x="attr-inert">inert</code> for an explanation of the
+  attribute of the same name.</p>
+
+  <p>A node (in particular elements and text nodes) can be <dfn>inert</dfn>. When a node is
+  <span>inert</span>:</p>
+
+  <ul>
+   <li><p>Hit-testing must act as if the <span>'pointer-events'</span> CSS property were set to
+   'none'.</p></li>
+
+   <li><p>Text selection functionality must act as if the <span>'user-select'</span> CSS property
+   were set to 'none'.</p></li>
+
+   <li><p>If it is <span>editable</span>, the node behaves as if it were non-editable.</p></li>
+
+   <li><p>The user agent should ignore the node for the purposes of <span>find-in-page</span>.</p></li>
+  </ul>
+
+  <p class="note">Inert nodes generally cannot be focused, and user agents do not expose the inert
+  nodes to accessibility APIs or assistive technologies. Inert nodes that are <span
+  data-x="concept-command">commands</span> will become inoperable to users, in the manner described
+  above.</p>
+
+  <p>User agents may allow the user to override the restrictions on <span>find-in-page</span> and
+  text selection, however.</p>
+
+  <p>By default, a node is not <span>inert</span>.</p>
+

@@ -1,0 +1,23 @@
+WHATWG HTML — section writing-mode — Writing mode
+
+  <h4>Writing mode</h4>
+
+  <p>Several widgets have their rendering controlled by the <span>'writing-mode'</span> CSS
+  property. For the purposes of those widgets, we have the following definitions.</p>
+
+  <div algorithm>
+  <p>A <dfn>horizontal writing mode</dfn> is when resolving the <span>'writing-mode'</span>
+  property of the control results in a computed value of 'horizontal-tb'.</p>
+  </div>
+
+  <div algorithm>
+  <p>A <dfn>vertical writing mode</dfn> is when resolving the <span>'writing-mode'</span> property
+  of the control results in a computed value of either 'vertical-rl', 'vertical-lr', 'sideways-rl'
+  or 'sideways-lr'.</p>
+  </div>
+
+  </div>
+
+
+  <div w-nodev>
+

@@ -1,0 +1,332 @@
+WHATWG HTML — section cross-origin-objects — Security infrastructure for <code>Window</code>, <code>WindowProxy</code>, and <code>Location</code> objects
+
+  <h4 id="cross-origin-objects">Security infrastructure for <code>Window</code>,
+  <code>WindowProxy</code>, and <code>Location</code> objects</h4>
+
+  <p>Although typically objects cannot be accessed across <span data-x="origin">origins</span>, the
+  web platform would not be true to itself if it did not have some legacy exceptions to that rule
+  that the web depends upon.</p>
+
+  <p>This section uses the terminology and typographic conventions from the JavaScript
+  specification. <ref>JAVASCRIPT</ref></p>
+
+
+  <h5>Integration with IDL</h5>
+
+  <div algorithm>
+  <p>When <span>perform a security check</span> is invoked, with a <var>platformObject</var>,
+  <var>identifier</var>, and <var>type</var>, run these steps:</p>
+
+  <ol>
+   <li><p>If <var>platformObject</var> is not a <code>Window</code> or <code>Location</code> object,
+   then return.</p></li>
+
+   <li>
+    <p>For each <var>e</var> of <span>CrossOriginProperties</span>(<var>platformObject</var>):</p>
+
+    <ol>
+     <li>
+      <p>If <span>SameValue</span>(<var>e</var>.[[Property]], <var>identifier</var>) is true:</p>
+
+      <ol>
+       <li><p>If <var>type</var> is "<code data-x="">method</code>" and <var>e</var> has neither
+       [[NeedsGetter]] nor [[NeedsSetter]], then return.</p></li>
+
+       <li><p>Otherwise, if <var>type</var> is "<code data-x="">getter</code>" and
+       <var>e</var>.[[NeedsGetter]] is true, then return.</p></li>
+
+       <li><p>Otherwise, if <var>type</var> is "<code data-x="">setter</code>" and
+       <var>e</var>.[[NeedsSetter]] is true, then return.</p></li>
+      </ol>
+     </li>
+    </ol>
+   </li>
+
+   <li><p>If <span>IsPlatformObjectSameOrigin</span>(<var>platformObject</var>) is false, then
+   throw a <span>"<code>SecurityError</code>"</span> <code>DOMException</code>.</p></li>
+  </ol>
+  </div>
+
+
+  <h5>Shared internal slot: [[CrossOriginPropertyDescriptorMap]]</h5>
+
+  <p><code>Window</code> and <code>Location</code> objects both have a
+  <dfn>[[CrossOriginPropertyDescriptorMap]]</dfn> internal slot, whose value is initially an empty
+  map.</p>
+
+  <div algorithm>
+  <p>The <span>[[CrossOriginPropertyDescriptorMap]]</span> internal slot contains a map
+  with entries whose keys are (<var>currentGlobal</var>, <var>objectGlobal</var>,
+  <var>propertyKey</var>)-tuples and values are property descriptors, as a memoization of what is
+  visible to scripts when <var>currentGlobal</var> inspects a <code>Window</code> or
+  <code>Location</code> object from <var>objectGlobal</var>. It is filled lazily by
+  <span>CrossOriginGetOwnPropertyHelper</span>, which consults it on future lookups.</p>
+  </div>
+
+  <p>User agents should allow a value held in the map to be garbage collected along with its
+  corresponding key when nothing holds a reference to any part of the value. That is, as long as
+  garbage collection is not observable.</p>
+
+  <p class="example">For example, with <code data-x="">const href =
+  Object.getOwnPropertyDescriptor(crossOriginLocation, "href").set</code> the value and its
+  corresponding key in the map cannot be garbage collected as that would be observable.</p>
+
+  <p>User agents may have an optimization whereby they remove key-value pairs from the map when
+  <code data-x="dom-document-domain">document.domain</code> is set. This is not observable as <code
+  data-x="dom-document-domain">document.domain</code> cannot revisit an earlier value.</p>
+
+  <p class="example">For example, setting <code data-x="dom-document-domain">document.domain</code>
+  to "<code data-x="">example.com</code>" on www.example.com means user agents can remove all
+  key-value pairs from the map where part of the key is www.example.com, as that can never be part
+  of the <span>origin</span> again and therefore the corresponding value could never be retrieved
+  from the map.</p>
+
+
+  <h5>Shared abstract operations</h5>
+
+  <div algorithm>
+  <h6><dfn>CrossOriginProperties</dfn> ( <var>O</var> )</h6>
+
+  <ol>
+   <li><p><span>Assert</span>: <var>O</var> is a <code>Location</code> or <code>Window</code>
+   object.</p></li>
+
+   <li><p>If <var>O</var> is a <code>Location</code> object, then return «
+   { [[Property]]: "<code data-x="">href</code>", [[NeedsGetter]]: false, [[NeedsSetter]]: true },
+   { [[Property]]: "<code data-x="">replace</code>" } ».</p></li>
+
+   <li><p>Return «
+   { [[Property]]: "<code data-x="">window</code>", [[NeedsGetter]]: true, [[NeedsSetter]]: false },
+   { [[Property]]: "<code data-x="">self</code>", [[NeedsGetter]]: true, [[NeedsSetter]]: false },
+   { [[Property]]: "<code data-x="">location</code>", [[NeedsGetter]]: true, [[NeedsSetter]]: true },
+   { [[Property]]: "<code data-x="">close</code>" },
+   { [[Property]]: "<code data-x="">closed</code>", [[NeedsGetter]]: true, [[NeedsSetter]]: false },
+   { [[Property]]: "<code data-x="">focus</code>" },
+   { [[Property]]: "<code data-x="">blur</code>" },
+   { [[Property]]: "<code data-x="">frames</code>", [[NeedsGetter]]: true, [[NeedsSetter]]: false },
+   { [[Property]]: "<code data-x="">length</code>", [[NeedsGetter]]: true, [[NeedsSetter]]: false },
+   { [[Property]]: "<code data-x="">top</code>", [[NeedsGetter]]: true, [[NeedsSetter]]: false },
+   { [[Property]]: "<code data-x="">opener</code>", [[NeedsGetter]]: true, [[NeedsSetter]]: false },
+   { [[Property]]: "<code data-x="">parent</code>", [[NeedsGetter]]: true, [[NeedsSetter]]: false },
+   { [[Property]]: "<code data-x="">postMessage</code>" } ».</p></li>
+  </ol>
+  </div>
+
+  <p class="note">This abstract operation does not return a <span>Completion Record</span>.</p>
+
+  <p class="note">Indexed properties do not need to be safelisted in this algorithm, as they are
+  handled directly by the <code>WindowProxy</code> object.</p>
+
+  <div algorithm>
+  <p>A JavaScript property name <var>P</var> is a <dfn>cross-origin accessible window property
+  name</dfn> if it is "<code data-x="">window</code>", "<code data-x="">self</code>", "<code
+  data-x="">location</code>", "<code data-x="">close</code>", "<code data-x="">closed</code>",
+  "<code data-x="">focus</code>", "<code data-x="">blur</code>", "<code data-x="">frames</code>",
+  "<code data-x="">length</code>", "<code data-x="">top</code>", "<code data-x="">opener</code>",
+  "<code data-x="">parent</code>", "<code data-x="">postMessage</code>", or an <span>array index
+  property name</span>.</p>
+  </div>
+
+  <div algorithm>
+  <h6><dfn>CrossOriginPropertyFallback</dfn> ( <var>P</var> )</h6>
+
+  <ol>
+   <li><p>If <var>P</var> is "<code data-x="">then</code>", <span>%Symbol.toStringTag%</span>,
+   <span>%Symbol.hasInstance%</span>, or <span>%Symbol.isConcatSpreadable%</span>, then return
+   <span>PropertyDescriptor</span> {
+   [[Value]]: undefined,
+   [[Writable]]: false,
+   [[Enumerable]]: false,
+   [[Configurable]]: true }.</p></li>
+
+   <li><p>Throw a <span>"<code>SecurityError</code>"</span> <code>DOMException</code>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <h6><dfn>IsPlatformObjectSameOrigin</dfn> ( <var>O</var> )</h6>
+
+  <ol>
+   <li><p>Return true if the <span>current settings object</span>'s <span
+   data-x="concept-settings-object-origin">origin</span> is <span>same origin-domain</span> with
+   <var>O</var>'s <span>relevant settings object</span>'s <span
+   data-x="concept-settings-object-origin">origin</span>, and false otherwise.</p></li>
+  </ol>
+  </div>
+
+  <p class="note">This abstract operation does not return a <span>Completion Record</span>.</p>
+
+  <p class="note">Here the <span>current settings object</span> roughly corresponds to the "caller",
+  because this check occurs before the <span data-x="JavaScript execution context">execution
+  context</span> for the getter/setter/method in question makes its way onto the <span>JavaScript
+  execution context stack</span>. For example, in the code <code data-x="">w.document</code>, this
+  step is invoked before the <code data-x="dom-document">document</code> getter is reached as part
+  of the <a href="#windowproxy-get">[[Get]]</a> algorithm for the <code>WindowProxy</code>
+  <var ignore>w</var>.</p>
+
+  <div algorithm>
+  <h6><dfn>CrossOriginGetOwnPropertyHelper</dfn> ( <var>O</var>, <var>P</var> )</h6>
+
+  <p class="note">If this abstract operation returns undefined and there is no custom behavior, the
+  caller needs to throw a <span>"<code>SecurityError</code>"</span> <code>DOMException</code>. In
+  practice this is handled by the caller calling <span>CrossOriginPropertyFallback</span>.</p>
+
+  <ol>
+   <li><p>Let <var>crossOriginKey</var> be a tuple consisting of the <span>current settings
+   object</span>, <var>O</var>'s <span>relevant settings object</span>, and <var>P</var>.</p></li>
+
+   <li>
+    <p>For each <var>e</var> of <span>CrossOriginProperties</span>(<var>O</var>):</p>
+
+    <ol>
+     <li>
+      <p>If <span>SameValue</span>(<var>e</var>.[[Property]], <var>P</var>) is true:</p>
+
+      <ol>
+       <li><p>If the value of the <span>[[CrossOriginPropertyDescriptorMap]]</span> internal slot of
+       <var>O</var> contains an entry whose key is <var>crossOriginKey</var>, then return that
+       entry's value.</p></li>
+
+       <li><p>Let <var>originalDesc</var> be <span>OrdinaryGetOwnProperty</span>(<var>O</var>,
+       <var>P</var>).</p></li>
+
+       <li><p>Let <var>crossOriginDesc</var> be undefined.</p></li>
+
+       <li>
+        <p>If <var>e</var>.[[NeedsGetter]] and <var>e</var>.[[NeedsSetter]] are absent:</p>
+
+        <ol>
+         <li><p>Let <var>value</var> be <var>originalDesc</var>.[[Value]].</p></li>
+
+         <li><p>If <span>IsCallable</span>(<var>value</var>) is true, then set <var>value</var> to
+         an anonymous built-in function, created in the <span>current realm</span>, that performs
+         the same steps as the IDL operation <var>P</var> on object <var>O</var>.</p></li>
+
+         <li><p>Set <var>crossOriginDesc</var> to <span>PropertyDescriptor</span> {
+         [[Value]]: <var>value</var>,
+         [[Enumerable]]: false,
+         [[Writable]]: false,
+         [[Configurable]]: true }.</p></li>
+        </ol>
+       </li>
+
+       <li>
+        <p>Otherwise:</p>
+
+        <ol>
+         <li><p>Let <var>crossOriginGetter</var> be undefined.</p></li>
+
+         <li><p>If <var>e</var>.[[NeedsGetter]] is true, then set <var>crossOriginGetter</var> to an
+         anonymous built-in function, created in the <span>current realm</span>, that performs the
+         same steps as the getter of the IDL attribute <var>P</var> on object
+         <var>O</var>.</p></li>
+
+         <li><p>Let <var>crossOriginSetter</var> be undefined.</p></li>
+
+         <li><p>If <var>e</var>.[[NeedsSetter]] is true, then set <var>crossOriginSetter</var> to an
+         anonymous built-in function, created in the <span>current realm</span>, that performs the
+         same steps as the setter of the IDL attribute <var>P</var> on object
+         <var>O</var>.</p></li>
+
+         <li><p>Set <var>crossOriginDesc</var> to <span>PropertyDescriptor</span> {
+         [[Getter]]: <var>crossOriginGetter</var>,
+         [[Setter]]: <var>crossOriginSetter</var>,
+         [[Enumerable]]: false,
+         [[Configurable]]: true }.</p></li>
+        </ol>
+       </li>
+
+       <li><p>Create an entry in the value of the <span>[[CrossOriginPropertyDescriptorMap]]</span>
+       internal slot of <var>O</var> with key <var>crossOriginKey</var> and value
+       <var>crossOriginDesc</var>.</p></li>
+
+       <li><p>Return <var>crossOriginDesc</var>.</p></li>
+      </ol>
+     </li>
+    </ol>
+   </li>
+
+   <li><p>Return undefined.</p></li>
+  </ol>
+  </div>
+
+  <p class="note">This abstract operation does not return a <span>Completion Record</span>.</p>
+
+  <p class="note">The reason that the property descriptors produced here are configurable is to
+  preserve the <span>invariants of the essential internal methods</span> required by the JavaScript
+  specification. In particular, since the value of the property can change as a consequence of
+  navigation, it is required that the property be configurable. (However, see <a
+  href="https://github.com/tc39/ecma262/issues/672">tc39/ecma262 issue #672</a> and references to it
+  elsewhere in this specification for cases where we are not able to preserve these invariants, for
+  compatibility with existing web content.) <ref>JAVASCRIPT</ref></p>
+
+  <p class="note">The reason the property descriptors are non-enumerable, despite this mismatching
+  the same-origin behavior, is for compatibility with existing web content. See <a
+  href="https://github.com/whatwg/html/issues/3183">issue #3183</a> for details.</p>
+
+  <div algorithm>
+  <h6><dfn>CrossOriginGet</dfn> ( <var>O</var>, <var>P</var>, <var>Receiver</var> )</h6>
+
+  <ol>
+   <li><p>Let <var>desc</var> be ? <var>O</var>.[[GetOwnProperty]](<var>P</var>).</p></li>
+
+   <li><p><span>Assert</span>: <var>desc</var> is not undefined.</p></li>
+
+   <li><p>If <span>IsDataDescriptor</span>(<var>desc</var>) is true, then return
+   <var>desc</var>.[[Value]].</p></li>
+
+   <li><p><span>Assert</span>: <span>IsAccessorDescriptor</span>(<var>desc</var>) is true.</p></li>
+
+   <li><p>Let <var>getter</var> be <var>desc</var>.[[Getter]].</p></li>
+
+   <li><p>If <var>getter</var> is undefined, then throw a <span>"<code>SecurityError</code>"</span>
+   <code>DOMException</code>.</p></li>
+
+   <li><p>Return ? <span>Call</span>(<var>getter</var>, <var>Receiver</var>).</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <h6><dfn>CrossOriginSet</dfn> ( <var>O</var>, <var>P</var>, <var>V</var>,
+  <var>Receiver</var> )</h6>
+
+  <ol>
+   <li><p>Let <var>desc</var> be ? <var>O</var>.[[GetOwnProperty]](<var>P</var>).</p></li>
+
+   <li><p><span>Assert</span>: <var>desc</var> is not undefined.</p></li>
+
+   <li>
+    <p>If <var>desc</var>.[[Setter]] is present and its value is not undefined:
+
+    <ol>
+     <li><p>Perform ? <span>Call</span>(<var>desc</var>.[[Setter]], <var>Receiver</var>,
+     « <var>V</var> »).</p></li>
+
+     <li><p>Return true.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Throw a <span>"<code>SecurityError</code>"</span> <code>DOMException</code>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <h6><dfn>CrossOriginOwnPropertyKeys</dfn> ( <var>O</var> )</h6>
+
+  <ol>
+   <li><p>Let <var>keys</var> be a new empty <span data-x="js-List">List</span>.</p></li>
+
+   <li><p>For each <var>e</var> of <span>CrossOriginProperties</span>(<var>O</var>), <span
+   data-x="list append">append</span> <var>e</var>.[[Property]] to <var>keys</var>.</p></li>
+
+   <li><p>Return the concatenation of <var>keys</var> and « "<code data-x="">then</code>",
+   <span>%Symbol.toStringTag%</span>, <span>%Symbol.hasInstance%</span>, <span>%Symbol.isConcatSpreadable%</span>
+   ».</p></li>
+  </ol>
+  </div>
+
+  <p class="note">This abstract operation does not return a <span>Completion Record</span>.</p>
+
+  </div>
+
+

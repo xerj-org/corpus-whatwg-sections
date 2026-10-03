@@ -1,0 +1,29 @@
+WHATWG HTML — section the-input-element-as-a-range-control — The <code>input</code> element as a range control
+
+  <h4>The <code>input</code> element as a range control</h4>
+
+  <div algorithm>
+  <p>An <code>input</code> element whose <code data-x="attr-input-type">type</code> attribute is in
+  the <span data-x="attr-input-type-range">Range</span> state is a <span>non-devolvable
+  widget</span>. Its <span>native appearance</span> is <span>expected</span> to render as an
+  <span>'inline-block'</span> box depicting a slider control.</p>
+  </div>
+
+  <p>When this control has a <span>horizontal writing mode</span>, the control is
+  <span>expected</span> to be a horizontal slider. Its lowest value is on the right if the
+  <span>'direction'</span> property has a <span>computed value</span> of 'rtl', and on the left
+  otherwise. When this control has a <span>vertical writing mode</span>, it is
+  <span>expected</span> to be a vertical slider. Its lowest value is on the bottom if the
+  <span>'direction'</span> property has a <span>computed value</span> of 'rtl', and on the top
+  otherwise.</p>
+
+  <p>Predefined suggested values (provided by the <code data-x="attr-input-list">list</code>
+  attribute) are <span>expected</span> to be shown as tick marks on the slider, which the slider
+  can snap to.</p>
+
+  <p class="XXX">Need to detail the <span>primitive appearance</span>.</p>
+  </div>
+
+
+  <div w-nodev>
+

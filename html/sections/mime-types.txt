@@ -1,0 +1,104 @@
+WHATWG HTML — section mime-types — MIME types
+
+  <h3 class="no-num">MIME types</h3>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>The following MIME types are mentioned in this specification:</p>
+
+  <dl>
+   <dt><dfn><code>application/atom+xml</code></dfn></dt>
+   <dd>Atom <ref>ATOM</ref></dd>
+
+   <dt><dfn><code>application/json</code></dfn></dt>
+   <dd>JSON <ref>JSON</ref></dd>
+
+   <dt><dfn data-x-href="https://www.rfc-editor.org/rfc/rfc2046#section-4.5.1"><code>application/octet-stream</code></dfn></dt>
+   <dd>Generic binary data <ref>RFC2046</ref></dd>
+
+   <dt><code>application/microdata+json</code></dt>
+   <dd>Microdata as JSON
+
+   <dt><dfn><code>application/rss+xml</code></dfn></dt>
+   <dd>RSS <!--<ref>RSS</ref>-->
+
+   <dt><dfn><code>application/wasm</code></dfn></dt>
+   <dd>WebAssembly <ref>WASM</ref></dd>
+
+   <dt><code>application/x-www-form-urlencoded</code></dt>
+   <dd>Form submission</dd>
+
+   <dt><code>application/xhtml+xml</code></dt>
+   <dd>HTML</dd>
+
+   <dt><dfn><code>application/xml</code></dfn></dt>
+   <dd>XML <ref>XML</ref> <ref>RFC7303</ref></dd>
+
+   <dt><dfn><code>image/gif</code></dfn></dt>
+   <dd>GIF images <ref>GIF</ref></dd>
+
+   <dt><dfn><code>image/jpeg</code></dfn></dt>
+   <dd>JPEG images <ref>JPEG</ref></dd>
+
+   <dt><dfn><code>image/png</code></dfn></dt>
+   <dd>PNG images <ref>PNG</ref></dd>
+
+   <dt><dfn><code>image/svg+xml</code></dfn></dt>
+   <dd>SVG images <ref>SVG</ref></dd>
+
+   <dt><dfn><code>multipart/form-data</code></dfn></dt>
+   <dd>Form submission <ref>RFC7578</ref></dd>
+
+   <dt><dfn><code>multipart/mixed</code></dfn></dt>
+   <dd>Generic mixed content <ref>RFC2046</ref></dd>
+
+   <dt><code>multipart/x-mixed-replace</code></dt>
+   <dd>Streaming server push</dd>
+
+   <dt><dfn><code>text/css</code></dfn></dt>
+   <dd>CSS <ref>CSS</ref></dd>
+
+   <dt><code>text/event-stream</code></dt>
+   <dd>Server-sent event streams</dd>
+
+   <dt><dfn><code>text/javascript</code></dfn></dt>
+   <dd>JavaScript <ref>JAVASCRIPT</ref> <ref>RFC9239</ref>
+
+   <!--
+   <dt><dfn><code>text/javascript;e4x=1</code></dfn></dt>
+   <dd>E4X <ref>E4X</ref>
+   -->
+
+   <dt><dfn><code>text/json</code></dfn></dt>
+   <dd>JSON (legacy type)</dd>
+
+   <dt><dfn data-x-href="https://www.rfc-editor.org/rfc/rfc2046#section-4.1.3"><code>text/plain</code></dfn></dt>
+   <dd>Generic plain text <ref>RFC2046</ref> <ref>RFC3676</ref></dd>
+
+   <dt><code>text/html</code></dt>
+   <dd>HTML</dd>
+
+   <dt><code>text/ping</code></dt>
+   <dd>Hyperlink auditing</dd>
+
+   <dt><dfn><code>text/uri-list</code></dfn></dt>
+   <dd>List of URLs <ref>RFC2483</ref>
+
+   <dt><dfn><code>text/vcard</code></dfn></dt>
+   <dd>vCard <ref>RFC6350</ref>
+
+   <dt><dfn><code>text/vtt</code></dfn></dt>
+   <dd>WebVTT <ref>WEBVTT</ref></dd>
+
+   <dt><dfn><code>text/xml</code></dfn></dt>
+   <dd>XML <ref>XML</ref> <ref>RFC7303</ref></dd>
+
+   <dt><dfn data-x-href="https://www.rfc-editor.org/rfc/rfc4337#section-3"><code>video/mp4</code></dfn></dt>
+   <dd>MPEG-4 video <ref>RFC4337</ref></dd>
+
+   <dt><dfn><code>video/mpeg</code></dfn></dt>
+   <dd>MPEG video <ref>RFC2046</ref></dd>
+  </dl>
+
+
+

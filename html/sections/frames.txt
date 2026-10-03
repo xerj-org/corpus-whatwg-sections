@@ -1,0 +1,126 @@
+WHATWG HTML — section frames — Frames
+
+  <h4>Frames</h4>
+
+  <p>The <dfn element><code>frameset</code></dfn> element acts as <span>the body element</span> in
+  documents that use frames.</p>
+
+  <p>The <code>frameset</code> element must implement the <code>HTMLFrameSetElement</code>
+  interface.</p>
+
+  <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>HTMLFrameSetElement</dfn> : <span>HTMLElement</span> {
+  [<span>HTMLConstructor</span>] constructor();
+
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute DOMString <dfn attribute for="HTMLFrameSetElement" data-x="dom-frameset-cols">cols</dfn>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute DOMString <dfn attribute for="HTMLFrameSetElement" data-x="dom-frameset-rows">rows</dfn>;
+};
+<span>HTMLFrameSetElement</span> includes <span>WindowEventHandlers</span>;</code></pre>
+
+  <p>The <code>frameset</code> element exposes as <span>event handler content attributes</span> a
+  number of the <span>event handlers</span> of the <code>Window</code> object. It also mirrors their
+  <span>event handler IDL attributes</span>.</p>
+
+  <p>The <span>event handlers</span> of the <code>Window</code> object named by the
+  <span><code>Window</code>-reflecting body element event handler set</span>, exposed on the
+  <code>frameset</code> element, replace the generic <span>event handlers</span> with the same names
+  normally supported by <span>HTML elements</span>.</p>
+
+  <hr>
+
+  <p>The <dfn element><code>frame</code></dfn> element has a <span>content navigable</span> similar
+  to the <code>iframe</code> element, but rendered within a <code>frameset</code> element.</p>
+
+  <!-- START of section that's very similar to <iframe> -->
+
+  <div algorithm>
+  <p>The <code>frame</code> <span>HTML element post-connection steps</span>, given
+  <var>insertedNode</var>, are:</p>
+
+  <ol>
+   <li><p>If <var>insertedNode</var>'s <span>node document</span>'s <span
+   data-x="concept-document-bc">browsing context</span> is null, then return.</p></li>
+
+   <li><p><span>Create a new child navigable</span> for <var>insertedNode</var>.</p></li>
+
+   <li><p><span>Process the <code>frame</code> attributes</span> for <var>insertedNode</var>, with
+   <i data-x="process-frame-initial-insertion">initialInsertion</i> set to true.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <code>frame</code> <span>HTML element removing steps</span>, given <var>removedNode</var>,
+  are to <span>destroy a child navigable</span> given <var>removedNode</var>.</p>
+  </div>
+
+  <p>Whenever a <code>frame</code> element with a non-null <span>content navigable</span> has its
+  <code undefined data-x="attr-frame-src">src</code> attribute set, changed, or removed, the user
+  agent must <span>process the <code>frame</code> attributes</span>.</p> <!-- It doesn't happen
+  when the base URL is changed, though. -->
+
+  <div algorithm>
+  <p>To <dfn>process the <code>frame</code> attributes</dfn> for an element <var>element</var>, with
+  an optional boolean <dfn
+  data-x="process-frame-initial-insertion"><var>initialInsertion</var></dfn> (default false):</p>
+
+  <ol>
+   <li><p>Let <var>url</var> be the result of running the <span>shared attribute processing steps
+   for <code>iframe</code> and <code>frame</code> elements</span> given <var>element</var> and
+   <var>initialInsertion</var>.</p></li>
+
+   <li><p>If <var>url</var> is null, then return.</p></li>
+
+   <li>
+    <p>If <var>url</var> <span>matches <code>about:blank</code></span> and
+    <var>initialInsertion</var> is true:</p>
+
+    <ol>
+     <li><p><span data-x="concept-event-fire">Fire an event</span> named <code
+     data-x="event-load">load</code> at <var>element</var>.</p></li>
+
+     <li><p>Return.</p></li>
+    </ol>
+   </li>
+
+   <li><p><span>Navigate an <code>iframe</code> or <code>frame</code></span> given
+   <var>element</var>, <var>url</var>, the empty string, null, and
+   <var>initialInsertion</var>.</p></li>
+  </ol>
+  </div>
+
+  <p>The <code>frame</code> element <span>potentially delays the load event</span>.</p>
+
+  <!-- END of section that's very similar to <iframe> -->
+
+  <p>The <code>frame</code> element must implement the <code>HTMLFrameElement</code> interface.</p>
+
+  <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>HTMLFrameElement</dfn> : <span>HTMLElement</span> {
+  [<span>HTMLConstructor</span>] constructor();
+
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute DOMString <dfn attribute for="HTMLFrameElement" data-x="dom-frame-name">name</dfn>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute DOMString <dfn attribute for="HTMLFrameElement" data-x="dom-frame-scrolling">scrolling</dfn>;
+  [<span>CEReactions</span>, <span data-x="xattr-ReflectURL">ReflectURL</span>] attribute USVString <dfn attribute for="HTMLFrameElement" data-x="dom-frame-src">src</dfn>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute DOMString <dfn attribute for="HTMLFrameElement" data-x="dom-frame-frameBorder">frameBorder</dfn>;
+  [<span>CEReactions</span>, <span data-x="xattr-ReflectURL">ReflectURL</span>] attribute USVString <dfn attribute for="HTMLFrameElement" data-x="dom-frame-longDesc">longDesc</dfn>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute boolean <dfn attribute for="HTMLFrameElement" data-x="dom-frame-noResize">noResize</dfn>;
+  readonly attribute <span>Document</span>? <span data-x="dom-frame-contentDocument">contentDocument</span>;
+  readonly attribute <span>WindowProxy</span>? <span data-x="dom-frame-contentWindow">contentWindow</span>;
+
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute [<span>LegacyNullToEmptyString</span>] DOMString <dfn attribute for="HTMLFrameElement" data-x="dom-frame-marginHeight">marginHeight</dfn>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute [<span>LegacyNullToEmptyString</span>] DOMString <dfn attribute for="HTMLFrameElement" data-x="dom-frame-marginWidth">marginWidth</dfn>;
+};</code></pre>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLFrameElement"><code
+  data-x="dom-frame-contentDocument">contentDocument</code></dfn> getter steps are to return
+  <span>this</span>'s <span>content document</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLFrameElement"><code
+  data-x="dom-frame-contentWindow">contentWindow</code></dfn> getter steps are to return
+  <span>this</span>'s <span>content window</span>.</p>
+  </div>
+
+

@@ -1,0 +1,26 @@
+WHATWG URL — section url-rendering-simplification — Simplify non-human-readable or irrelevant components
+
+<h4 id=url-rendering-simplification>Simplify non-human-readable or irrelevant components</h4>
+
+<p>Remove components that can provide opportunities for spoofing or distract from security-relevant
+information:
+
+<ul>
+ <li><p>Browsers may render only a URL's <a for=url>host</a> in places where it is important for end
+ users to distinguish between the host and other parts of the URL such as the <a for=url>path</a>.
+ Browsers may consider simplifying the host further to draw attention to its
+ <a for=host>registrable domain</a>. For example, browsers may omit a leading <code>www</code> or
+ <code>m</code> <a for=/>domain label</a> to simplify the host, or display its registrable domain
+ only to remove spoofing opportunities posted by subdomains (e.g.,
+ <code>https://examplecorp.attacker.com/</code>).
+
+ <li><p>Browsers should not render a <a for=/>URL</a>'s <a for=url>username</a> and <a
+ for=url>password</a>, as they can be mistaken for a <a for=/>URL</a>'s <a for=url>host</a> (e.g.,
+ <code>https://examplecorp.com@attacker.example/</code>).
+
+ <li><p>Browsers may render a URL without its <a for=url>scheme</a> if the display surface only ever
+ permits a single scheme (such as a browser feature that omits <code>https://</code> because it is
+ only enabled for secure origins). Otherwise, the scheme may be replaced or supplemented with a
+ human-readable string (e.g., "Not secure"), a security indicator icon, or both.
+</ul>
+

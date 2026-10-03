@@ -1,0 +1,87 @@
+WHATWG HTML — section performing-structured-clones-from-other-specifications — Performing serialization and transferring from other specifications
+
+  <h4 id="performing-structured-clones-from-other-specifications">Performing serialization and
+  transferring from other specifications</h4>
+
+  <p>Other specifications may use the abstract operations defined here. The following provides
+  some guidance on when each abstract operation is typically useful, with examples.</p>
+
+  <dl>
+   <dt><span>StructuredSerializeWithTransfer</span></dt>
+   <dt><span>StructuredDeserializeWithTransfer</span></dt>
+   <dd>
+    <p>Cloning a value to another <span>realm</span>, with a transfer list, but where the target
+    realm is not known ahead of time. In this case the serialization step can be performed
+    immediately, with the deserialization step delayed until the target realm becomes known.</p>
+
+    <p class="example"><code data-x="dom-MessagePort-postMessage">messagePort.postMessage()</code>
+    uses this pair of abstract operations, as the destination realm is not known until the
+    <code>MessagePort</code> <span>has been shipped</span>.</p>
+   </dd>
+
+   <dt><span>StructuredSerialize</span></dt>
+   <dt><span>StructuredSerializeForStorage</span></dt>
+   <dt><span>StructuredDeserialize</span></dt>
+   <dd>
+    <p>Creating a <span>realm</span>-independent snapshot of a given value which can be saved for an
+    indefinite amount of time, and then reified back into a JavaScript value later, possibly
+    multiple times.</p>
+
+    <p><span>StructuredSerializeForStorage</span> can be used for situations where the serialization
+    is anticipated to be stored in a persistent manner, instead of passed between realms. It throws
+    when attempting to serialize <code>SharedArrayBuffer</code> objects, since storing shared memory
+    does not make sense. Similarly, it can throw or possibly have different behavior when given a
+    <span>platform object</span> with custom <span>serialization steps</span> when the
+    <var ignore>forStorage</var> argument is true.</p>
+
+    <p class="example"><code data-x="dom-history-pushState">history.pushState()</code> and <code
+    data-x="dom-history-replaceState">history.replaceState()</code> use
+    <span>StructuredSerializeForStorage</span> on author-supplied state objects, storing them as
+    <span>serialized state</span> in the appropriate <span>session history entry</span>. Then,
+    <span>StructuredDeserialize</span> is used so that the <code
+    data-x="dom-history-state">history.state</code> property can return a clone of the
+    originally-supplied state object.</p>
+
+    <p class="example"><code
+    data-x="dom-BroadcastChannel-postMessage">broadcastChannel.postMessage()</code> uses
+    <span>StructuredSerialize</span> on its input, then uses <span>StructuredDeserialize</span>
+    multiple times on the result to produce a fresh clone for each destination being broadcast
+    to. Note that transferring does not make sense in multi-destination situations.</p>
+
+    <p class="example">Any API for persisting JavaScript values to the filesystem would also use
+    <span>StructuredSerializeForStorage</span> on its input and <span>StructuredDeserialize</span>
+    on its output.</p>
+   </dd>
+  </dl>
+
+  <p>In general, call sites may pass in Web IDL values instead of JavaScript values; this is to be
+  understood to perform an implicit <span data-x="concept-idl-convert">conversion</span> to the
+  JavaScript value before invoking these algorithms.</p>
+
+  <hr>
+
+  <p>Call sites that are not invoked as a result of author code synchronously calling into a user
+  agent method must take care to properly <span>prepare to run script</span> and <span>prepare to
+  run a callback</span> before invoking <span>StructuredSerialize</span>,
+  <span>StructuredSerializeForStorage</span>, or <span>StructuredSerializeWithTransfer</span>
+  abstract operations, if they are being performed on arbitrary objects. This is necessary because
+  the serialization process can invoke author-defined accessors as part of its final
+  deep-serialization steps, and these accessors could call into operations that rely on the <span
+  data-x="concept-entry-everything">entry</span> and <span
+  data-x="concept-incumbent-everything">incumbent</span> concepts being properly set up.</p>
+
+  <p class="example"><code data-x="dom-window-postMessage">window.postMessage()</code> performs
+  <span>StructuredSerializeWithTransfer</span> on its arguments, but is careful to do so
+  immediately, inside the synchronous portion of its algorithm. Thus it is able to use the
+  algorithms without needing to <span>prepare to run script</span> and <span>prepare to run a
+  callback</span>.</p>
+
+  <p class="example">In contrast, a hypothetical API that used <span>StructuredSerialize</span> to
+  serialize some author-supplied object periodically, directly from a <span
+  data-x="concept-task">task</span> on the <span>event loop</span>, would need to ensure it performs
+  the appropriate preparations beforehand. As of this time, we know of no such APIs on the platform;
+  usually it is simpler to perform the serialization ahead of time, as a synchronous consequence of
+  author code.</p>
+
+  </div>
+

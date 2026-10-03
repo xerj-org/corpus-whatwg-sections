@@ -1,0 +1,44 @@
+WHATWG HTML — section user-activation-user-agent-automation — User agent automation
+
+  <h4 id="user-activation-user-agent-automation">User agent automation</h4>
+
+  <p>For the purposes of user-agent automation and application testing, this specification defines
+  the following <span>extension command</span> for the <cite>Web Driver</cite> specification. It is
+  optional for a user agent to support the following <span>extension command</span>.
+  <ref>WEBDRIVER</ref></p>
+
+  <table class="data">
+   <thead>
+    <tr>
+     <th>HTTP Method</th>
+     <th>URI Template</th>
+    </tr>
+   </thead>
+   <tbody>
+    <tr>
+     <td>`<code data-x="">POST</code>`</td>
+     <td><code data-x="">/session/{<var ignore>session id</var>}/window/consume-user-activation</code></td>
+    </tr>
+   </tbody>
+  </table>
+
+  <div algorithm>
+  <p>The <span>remote end steps</span> are:</p>
+
+  <ol>
+   <li><p>Let <var>window</var> be the <span data-x="webdriver-current-browsing-context">current
+   browsing context</span>'s <span>active window</span>.</p></li>
+
+   <li><p>Let <var>consume</var> be true if <var>window</var> has <span>transient activation</span>;
+   otherwise false.</p></li>
+
+   <li><p>If <var>consume</var> is true, then <span>consume user activation</span> of
+   <var>window</var>.</p></li>
+
+   <li><p>Return <span data-x="success-value">success</span> with data <var>consume</var>.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+

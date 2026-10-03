@@ -1,0 +1,16 @@
+WHATWG HTML — section dependencies/webgl — WebGL
+
+   <dt>WebGL</dt>
+
+   <dd>
+    <p>The following interfaces are defined in the WebGL specifications: <ref>WEBGL</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://www.khronos.org/registry/webgl/specs/latest/1.0/#WebGLRenderingContext"><code>WebGLRenderingContext</code></dfn> interface</li>
+     <li><dfn data-x-href="https://www.khronos.org/registry/webgl/specs/latest/2.0/#WebGL2RenderingContext"><code>WebGL2RenderingContext</code></dfn> interface</li>
+     <li><dfn data-x-href="https://www.khronos.org/registry/webgl/specs/latest/1.0/#WebGLContextAttributes"><code>WebGLContextAttributes</code></dfn> dictionary</li>
+    </ul>
+   </dd>
+
+
+

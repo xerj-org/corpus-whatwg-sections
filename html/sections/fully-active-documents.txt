@@ -1,0 +1,74 @@
+WHATWG HTML — section fully-active-documents — Fully active documents
+
+  <h4>Fully active documents</h4>
+
+  <div algorithm>
+  <p>A <code>Document</code> <var>d</var> is said to be <dfn export for="Document">fully
+  active</dfn> when <var>d</var> is the <span data-x="nav-document">active document</span> of a
+  <span>navigable</span> <var>navigable</var>, and either <var>navigable</var> is a <span>top-level
+  traversable</span> or <var>navigable</var>'s <span data-x="nav-container-document">container
+  document</span> is <span>fully active</span>.</p>
+  </div>
+
+  <p>Because they are associated with an element, <span data-x="child navigable">child
+  navigables</span> are always tied to a specific <code>Document</code>, their <span
+  data-x="nav-container-document">container document</span>, in their <span
+  data-x="nav-parent">parent navigable</span>. User agents must not allow the user to interact with
+  <span data-x="child navigable">child navigables</span> whose <span
+  data-x="nav-container-document">container documents</span> are not themselves <span>fully
+  active</span>.</p>
+
+  <div class="example">
+   <p>The following example illustrates how a <code>Document</code> can be the <span
+   data-x="nav-document">active document</span> of its <span>node navigable</span>, while not being
+   <span>fully active</span>. Here <code data-x="">a.html</code> is loaded into a browser window,
+   <code data-x="">b-1.html</code> starts out loaded into an <code>iframe</code> as shown, and
+   <code data-x="">b-2.html</code> and <code data-x="">c.html</code> are omitted (they can simply
+   be an empty document).</p>
+
+   <pre><code data-x="" class="html">&lt;!-- a.html -->
+&lt;!DOCTYPE html>
+&lt;html lang="en">
+&lt;title>Navigable A&lt;/title>
+
+&lt;iframe src="b-1.html">&lt;/iframe>
+&lt;button onclick="frames[0].location.href = 'b-2.html'">Click me&lt;/button>
+
+&lt;!-- b-1.html -->
+&lt;!DOCTYPE html>
+&lt;html lang="en">
+&lt;title>Navigable B&lt;/title>
+
+&lt;iframe src="c.html">&lt;/iframe></code></pre>
+
+   <p>At this point, the documents given by <code data-x="">a.html</code>, <code
+   data-x="">b-1.html</code>, and <code data-x="">c.html</code> are all the <span
+   data-x="nav-document">active documents</span> of their respective <span data-x="node
+   navigable">node navigables</span>. They are also all <span>fully active</span>.</p>
+
+   <p>After clicking on the <code>button</code>, and thus loading a new <code>Document</code> from
+   <code data-x="">b-2.html</code> into navigable B, we have the following results:</p>
+
+   <ul>
+    <li><p>The <code data-x="">a.html</code> <code>Document</code> remains both the <span
+    data-x="nav-document">active document</span> of navigable A, and <span>fully
+    active</span>.</p></li>
+
+    <li><p>The <code data-x="">b-1.html</code> <code>Document</code> is now <em>not</em> the <span
+    data-x="nav-document">active document</span> of navigable B. As such it is also not <span>fully
+    active</span>.</p></li>
+
+    <li><p>The new <code data-x="">b-2.html</code> <code>Document</code> is now the <span
+    data-x="nav-document">active document</span> of navigable B, and is also <span>fully
+    active</span>.</p></li>
+
+    <li><p>The <code data-x="">c.html</code> <code>Document</code> is still the <span
+    data-x="nav-document">active document</span> of navigable C. However, since C's <span
+    data-x="nav-container-document">container document</span> is the <code
+    data-x="">b-1.html</code> <code>Document</code>, which is itself not <span>fully active</span>,
+    this means the <code data-x="">c.html</code> <code>Document</code> is now not <span>fully
+    active</span>.</p></li>
+   </ul>
+  </div>
+
+

@@ -1,0 +1,901 @@
+WHATWG HTML — section the-img-element — The <dfn element><code>img</code></dfn> element
+
+  <h4>The <dfn element><code>img</code></dfn> element</h4>
+
+  <dl class="element">
+   <dt><span data-x="concept-element-categories">Categories</span>:</dt>
+   <dd><span>Flow content</span>.</dd>
+   <dd><span>Phrasing content</span>.</dd>
+   <dd><span>Embedded content</span>.</dd>
+   <dd><span>Form-associated element</span>.</dd>
+   <dd>If the element has a <code data-x="attr-hyperlink-usemap">usemap</code> or <code data-x="attr-img-controls">controls</code> attribute: <span>Interactive content</span>.</dd>
+   <dd><span>Palpable content</span>.</dd>
+   <dt><span data-x="concept-element-contexts">Contexts in which this element can be used</span>:</dt>
+   <dd>Where <span>embedded content</span> is expected.</dd>
+   <dd>As a child of a <code>picture</code> element, after all <code>source</code> elements.</dd>
+   <dt><span data-x="concept-element-content-model">Content model</span>:</dt>
+   <dd><span data-x="concept-content-nothing">Nothing</span>.</dd>
+   <dt><span data-x="concept-element-attributes">Content attributes</span>:</dt>
+   <dd><span>Global attributes</span></dd>
+   <dd><code data-x="attr-img-alt">alt</code></dd>
+   <dd><code data-x="attr-img-src">src</code></dd>
+   <dd><code data-x="attr-img-srcset">srcset</code></dd>
+   <dd><code data-x="attr-img-sizes">sizes</code></dd>
+   <dd><code data-x="attr-img-crossorigin">crossorigin</code></dd>
+   <dd><code data-x="attr-hyperlink-usemap">usemap</code></dd>
+   <dd><code data-x="attr-img-ismap">ismap</code></dd>
+   <dd><code data-x="attr-img-controls">controls</code></dd>
+   <dd><code data-x="attr-dim-width">width</code></dd>
+   <dd><code data-x="attr-dim-height">height</code></dd>
+   <dd><code data-x="attr-img-referrerpolicy">referrerpolicy</code></dd>
+   <dd><code data-x="attr-img-decoding">decoding</code></dd>
+   <dd><code data-x="attr-img-loading">loading</code></dd>
+   <dd><code data-x="attr-img-fetchpriority">fetchpriority</code></dd>
+   <dt><span
+   data-x="concept-element-accessibility-considerations">Accessibility considerations</span>:</dt>
+   <dd>If the element has a non-empty <code data-x="attr-img-alt">alt</code> attribute: <a
+   href="https://w3c.github.io/html-aria/#el-img">for authors</a>; <a
+   href="https://w3c.github.io/html-aam/#el-img">for implementers</a>.</dd>
+   <dd>Otherwise: <a
+   href="https://w3c.github.io/html-aria/#el-img-empty-alt">for authors</a>; <a
+   href="https://w3c.github.io/html-aam/#el-img-empty-alt">for implementers</a>.</dd>
+   <dt><span data-x="concept-element-sanitization">Sanitization</span>:</dt>
+   <dd><span data-x="sanitizer-uncategorized">Uncategorized</span>.</dd>
+   <dt><span data-x="concept-element-dom">DOM interface</span>:</dt>
+   <dd w-nodev>
+    <pre><code class="idl">[Exposed=Window,
+ <span>LegacyFactoryFunction</span>=<span data-x="dom-image">Image</span>(optional unsigned long width, optional unsigned long height)]
+interface <dfn interface>HTMLImageElement</dfn> : <span>HTMLElement</span> {
+  [<span>HTMLConstructor</span>] constructor();
+
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute DOMString <dfn attribute for="HTMLImageElement" data-x="dom-img-alt">alt</dfn>;
+  [<span>CEReactions</span>, <span data-x="xattr-ReflectURL">ReflectURL</span>] attribute USVString <dfn attribute for="HTMLImageElement" data-x="dom-img-src">src</dfn>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute USVString <dfn attribute for="HTMLImageElement" data-x="dom-img-srcset">srcset</dfn>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute DOMString <dfn attribute for="HTMLImageElement" data-x="dom-img-sizes">sizes</dfn>;
+  [<span>CEReactions</span>] attribute DOMString? <span data-x="dom-img-crossOrigin">crossOrigin</span>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute DOMString <dfn attribute for="HTMLImageElement" data-x="dom-img-useMap">useMap</dfn>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute boolean <dfn attribute for="HTMLImageElement" data-x="dom-img-isMap">isMap</dfn>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute boolean <dfn attribute for="HTMLImageElement" data-x="dom-img-controls">controls</dfn>;
+  [<span>CEReactions</span>, <span data-x="xattr-ReflectSetter">ReflectSetter</span>] attribute unsigned long <span data-x="dom-img-width">width</span>;
+  [<span>CEReactions</span>, <span data-x="xattr-ReflectSetter">ReflectSetter</span>] attribute unsigned long <span data-x="dom-img-height">height</span>;
+  readonly attribute unsigned long <span data-x="dom-img-naturalWidth">naturalWidth</span>;
+  readonly attribute unsigned long <span data-x="dom-img-naturalHeight">naturalHeight</span>;
+  readonly attribute boolean <span data-x="dom-img-complete">complete</span>;
+  readonly attribute USVString <span data-x="dom-img-currentSrc">currentSrc</span>;
+  [<span>CEReactions</span>] attribute DOMString <span data-x="dom-img-referrerPolicy">referrerPolicy</span>;
+  [<span>CEReactions</span>] attribute DOMString <span data-x="dom-img-decoding">decoding</span>;
+  [<span>CEReactions</span>] attribute DOMString <span data-x="dom-img-loading">loading</span>;
+  [<span>CEReactions</span>] attribute DOMString <span data-x="dom-img-fetchPriority">fetchPriority</span>;
+
+  <span data-x="idl-Promise">Promise</span>&lt;undefined&gt; <span data-x="dom-img-decode">decode</span>();
+
+  // <a href="#HTMLImageElement-partial">also has obsolete members</a>
+};</code></pre>
+   </dd>
+   <dd w-dev>Uses <code>HTMLImageElement</code>.</dd>
+  </dl>
+
+  <p>An <code>img</code> element represents an image.</p>
+
+  <p>An <code>img</code> element has a <dfn data-x="concept-img-dimension-attribute-source">dimension
+  attribute source</dfn>, initially set to the element itself.</p>
+
+  <!-- v2 ideas for <img>:
+
+     * Maps sites would like to know which images are already cached, so that they can use images
+       that are vaguely suitable while they wait for the most appropriate image to download.
+
+       Almost like lowsrc="", except that many images might be appropriate.
+
+       Slight hitch: their images are at a different origin, and we don't want to allow arbitrary
+       cross-origin inspection (privacy leak risk). So it will require them to do CORS opt-in.
+
+     * See note at rel=noreferrer.
+
+  -->
+
+  <p>The image given by the <dfn element-attr for="img" data-x="attr-img-src"><code>src</code></dfn>
+  and <dfn data-x="attr-img-srcset" element-attr for="img"><code>srcset</code></dfn> attributes, and
+  any previous sibling <code>source</code> elements' <code data-x="attr-source-srcset">srcset</code>
+  attributes if the parent is a <code>picture</code> element, is the embedded content; the value of
+  the <dfn element-attr for="img" data-x="attr-img-alt"><code>alt</code></dfn> attribute provides
+  equivalent content for those who cannot process images or who have image loading disabled (i.e.,
+  it is the <code>img</code> element's <span>fallback content</span>).</p>
+
+  <p>The requirements on the <code data-x="attr-img-alt">alt</code> attribute's value are described
+  <a href="#alt">in a separate section</a>.</p>
+
+  <p>At least one of the <code data-x="attr-img-src">src</code> and <code
+  data-x="attr-img-srcset">srcset</code> attributes must be present.</p>
+
+  <p>If the <code data-x="attr-img-src">src</code> attribute is present, it must contain a
+  <span>valid non-empty URL potentially surrounded by spaces</span> referencing a non-interactive,
+  optionally animated, image resource that is neither paged nor scripted.</p>
+
+  <p class="note">The requirements above imply that images can be static bitmaps (e.g. PNGs, GIFs,
+  JPEGs), single-page vector documents (single-page PDFs, XML files with an SVG document element),
+  animated bitmaps (APNGs, animated GIFs), animated vector graphics (XML files with an SVG
+  <span>document element</span> that use declarative SMIL animation), and so forth. However, these
+  definitions preclude SVG files with script, multipage PDF files, interactive MNG files, HTML
+  documents, plain text documents, and the like. <ref>PNG</ref> <ref>GIF</ref> <ref>JPEG</ref>
+  <ref>PDF</ref> <ref>XML</ref> <ref>APNG</ref> <ref>SVG</ref> <ref>MNG</ref></p>
+
+  <p>The <code data-x="attr-img-srcset">srcset</code> attribute is a <span>srcset
+  attribute</span>.</p>
+
+  <p>The <code data-x="attr-img-srcset">srcset</code> attribute and the <code
+  data-x="attr-img-src">src</code> attribute (if <span data-x="width descriptor">width
+  descriptors</span> are not used) contribute the <span data-x="image source">image sources</span>
+  to the <span>source set</span> (if no <code>source</code> element was selected).</p>
+
+  <p>If the <code data-x="attr-img-srcset">srcset</code> attribute is present and has any <span
+  data-x="image candidate string">image candidate strings</span> using a <span>width
+  descriptor</span>, the <code data-x="attr-img-sizes">sizes</code> attribute must also be present.
+  If the <code data-x="attr-img-srcset">srcset</code> attribute is <em>not</em> specified, and the
+  <code data-x="attr-img-loading">loading</code> attribute is in the <span
+  data-x="attr-loading-lazy-state">Lazy</span> state, the <code
+  data-x="attr-img-sizes">sizes</code> attribute may be specified with the value "<code
+  data-x="">auto</code>" (<span>ASCII case-insensitive</span>). The <dfn element-attr for="img"
+  data-x="attr-img-sizes"><code>sizes</code></dfn> attribute is a <span>sizes attribute</span>,
+  which contributes the <span>source size</span> to the <span>source set</span> (if no
+  <code>source</code> element was selected).</p>
+
+  <div algorithm>
+  <p>An <code>img</code> element <dfn>allows auto-sizes</dfn> if:</p>
+
+  <ul>
+   <li>its <code data-x="attr-img-loading">loading</code> attribute is in the <span
+  data-x="attr-loading-lazy-state">Lazy</span> state, and</li>
+
+   <li>its <code data-x="attr-img-sizes">sizes</code> attribute's value is "<code
+   data-x="">auto</code>" (<span>ASCII case-insensitive</span>), or starts with "<code
+   data-x="">auto,</code>" (<span>ASCII case-insensitive</span>).</li>
+  </ul>
+  </div>
+
+  <p>The <dfn element-attr for="img" data-x="attr-img-crossorigin"><code>crossorigin</code></dfn>
+  attribute is a <span>CORS settings attribute</span>. Its purpose is to allow images from
+  third-party sites that allow cross-origin access to be used with <code>canvas</code>.</p>
+
+  <p>The <dfn element-attr for="img"
+  data-x="attr-img-referrerpolicy"><code>referrerpolicy</code></dfn> attribute is a <span>referrer
+  policy attribute</span>. Its purpose is to set the <span>referrer policy</span> used when <span
+  data-x="concept-fetch">fetching</span> the image. <ref>REFERRERPOLICY</ref></p>
+
+  <p>The <dfn element-attr for="img" data-x="attr-img-decoding"><code>decoding</code></dfn>
+  attribute indicates the preferred method to <span data-x="img-decoding-process">decode</span> this
+  image. The attribute, if present, must be an <span>image decoding hint</span>. This attribute's <i
+  data-x="missing value default">missing value default</i> and <i data-x="invalid value
+  default">invalid value default</i> are both the <span
+  data-x="attr-img-decoding-auto-state">Auto</span> state.</p>
+
+  <p>The <dfn element-attr for="img"
+  data-x="attr-img-fetchpriority"><code>fetchpriority</code></dfn> attribute is a <span>fetch
+  priority attribute</span>. Its purpose is to set the <span
+  data-x="concept-request-priority">priority</span> used when <span
+  data-x="concept-fetch">fetching</span> the image.</p>
+
+  <p>The <dfn element-attr for="img" data-x="attr-img-loading"><code>loading</code></dfn> attribute is a <span>lazy
+  loading attribute</span>. Its purpose is to indicate the policy for loading images that are
+  outside the viewport.</p>
+
+  <div algorithm>
+  <p>When the <code data-x="attr-img-loading">loading</code> attribute's state is changed to the
+  <span data-x="attr-loading-eager-state">Eager</span> state, the user agent must run these
+  steps:</p>
+
+  <ol>
+   <li><p>Let <var>resumptionSteps</var> be the <code>img</code> element's <span>lazy load
+   resumption steps</span>.</p></li>
+
+   <li><p>If <var>resumptionSteps</var> is null, then return.</p></li>
+
+   <li><p>Set the <code>img</code>'s <span>lazy load resumption steps</span> to null.</p></li>
+
+   <li><p>Invoke <var>resumptionSteps</var>.</p></li>
+  </ol>
+  </div>
+
+  <div class="example">
+<pre><code class="html">&lt;img src="1.jpeg" alt="1">
+&lt;img src="2.jpeg" loading=eager alt="2">
+&lt;img src="3.jpeg" loading=lazy alt="3">
+&lt;div id=very-large>&lt;/div> &lt;!-- Everything after this div is below the viewport -->
+&lt;img src="4.jpeg" alt="4">
+&lt;img src="5.jpeg" loading=lazy alt="5"></code></pre>
+
+   <p>In the example above, the images load as follows:</p>
+
+   <dl class="switch">
+    <dt><code data-x="">1.jpeg</code>, <code data-x="">2.jpeg</code>,
+    <code data-x="">4.jpeg</code></dt>
+    <dd><p>The images load eagerly and delay the window's load event.</p></dd>
+
+    <dt><code data-x="">3.jpeg</code></dt>
+    <dd><p>The image loads when layout is known, due to being in the viewport, however it does not
+    delay the window's load event.</p></dd>
+
+    <dt><code data-x="">5.jpeg</code></dt>
+    <dd><p>The image loads only once scrolled into the viewport, and does not delay the window's
+    load event.</p></dd>
+   </dl>
+
+   <p class="note">Developers are encouraged to specify a preferred aspect ratio via <code
+   data-x="attr-dim-width">width</code> and <code data-x="attr-dim-height">height</code> attributes
+   on lazy loaded images, even if CSS sets the image's width and height properties, to prevent the
+   page layout from shifting around after the image loads.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <code>img</code> <span>HTML element insertion steps</span>, given <var>insertedNode</var>,
+  are:</p>
+
+  <ol>
+   <li><p>If <var>insertedNode</var>'s parent is a <code>picture</code> element, then, count this as
+   a <span data-x="relevant mutations">relevant mutation</span> for
+   <var>insertedNode</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <code>img</code> <span>HTML element moving steps</span>, given <var>movedNode</var>,
+  <var>isSubtreeRoot</var>, and <var>oldAncestor</var> are:</p>
+
+  <ol>
+   <li><p>If <var>isSubtreeRoot</var> is true and <var>oldAncestor</var> is a <code>picture</code>
+   element, then count this as a <span data-x="relevant mutations">relevant mutation</span> for
+   <var>movedNode</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <code>img</code> <span>HTML element removing steps</span>, given <var>removedNode</var>,
+  <var>isSubtreeRoot</var>, and <var>oldAncestor</var> are:</p>
+
+  <ol>
+   <li><p>If <var>isSubtreeRoot</var> is true and <var>oldAncestor</var> is a <code>picture</code>
+   element, then count this as a <span data-x="relevant mutations">relevant mutation</span> for
+   <var>removedNode</var>.</p></li>
+
+   <li><p>Set <var>removedNode</var>'s <span>last auto-sizes width</span> to null.</p></li>
+  </ol>
+  </div>
+
+  <hr>
+
+  <p>The <code>img</code> element must not be used as a layout tool. In particular, <code>img</code>
+  elements should not be used to display transparent images, as such images rarely convey meaning and
+  rarely add anything useful to the document.</p>
+
+  <div w-nodev>
+
+  <hr>
+
+  <div algorithm>
+  <p>What an <code>img</code> element represents depends on the <code
+  data-x="attr-img-src">src</code> attribute and the <code data-x="attr-img-alt">alt</code>
+  attribute.</p>
+
+  <dl class="switch">
+
+   <dt>If the <code data-x="attr-img-src">src</code> attribute is set and the <code
+   data-x="attr-img-alt">alt</code> attribute is set to the empty string</dt>
+
+   <dd>
+    <p>The image is either decorative or supplemental to the rest of the content, redundant with
+    some other information in the document.</p>
+
+    <p>If the image is <span data-x="img-available">available</span> and the user agent is configured
+    to display that image, then the element <span>represents</span> the element's image data.</p>
+
+    <p>Otherwise, the element <span>represents</span> nothing, and may be omitted completely from
+    the rendering. User agents may provide the user with a notification that an image is present but
+    has been omitted from the rendering.</p>
+   </dd>
+
+   <dt>If the <code data-x="attr-img-src">src</code> attribute is set and the <code
+   data-x="attr-img-alt">alt</code> attribute is set to a value that isn't empty</dt>
+
+   <dd>
+    <p>The image is a key part of the content; the <code data-x="attr-img-alt">alt</code> attribute
+    gives a textual equivalent or replacement for the image.</p>
+
+    <p>If the image is <span data-x="img-available">available</span> and the user agent is configured
+    to display that image, then the element <span>represents</span> the element's image data.</p>
+
+    <p>Otherwise, the element <span>represents</span> the text given by the <code
+    data-x="attr-img-alt">alt</code> attribute. User agents may provide the user with a notification
+    that an image is present but has been omitted from the rendering.</p>
+   </dd>
+
+   <dt>If the <code data-x="attr-img-src">src</code> attribute is set and the <code
+   data-x="attr-img-alt">alt</code> attribute is not</dt>
+
+   <dd>
+    <p>The image might be a key part of the content, and there is no textual equivalent of the image
+    available.</p>
+
+    <p class="note">In a conforming document, the absence of the <code
+    data-x="attr-img-alt">alt</code> attribute indicates that the image is a key part of the content
+    but that a textual replacement for the image was not available when the image was generated.</p>
+
+    <p>If the image is <span data-x="img-available">available</span> and the user agent is configured
+    to display that image, then the element <span>represents</span> the element's image data.</p>
+
+    <p>If the image has a <code data-x="attr-img-src">src</code> attribute whose value is
+    the empty string, then the element <span>represents</span> nothing.</p>
+
+    <p>Otherwise, the user agent should display some sort of indicator that there is an image that
+    is not being rendered, and may, if requested by the user, or if so configured, or when required
+    to provide contextual information in response to navigation, provide caption information for the
+    image, derived as follows:</p>
+
+    <ol>
+     <!-- when editing this list, search for the two other occurrences of 'critical-no-alt' -->
+
+     <!-- NOTE: the order of these steps is important; it's intended to make the innermost caption
+     override the outer ones -->
+
+     <li><p>If the image has a <code data-x="attr-title">title</code> attribute whose value is not
+     the empty string, then return the value of that attribute.</p></li>
+
+     <li><p>If the image is a descendant of a <code>figure</code> element that has a child
+     <code>figcaption</code> element, and, ignoring the <code>figcaption</code> element and its
+     descendants, the <code>figure</code> element has no <span>flow content</span> descendants other
+     than <span>inter-element whitespace</span> and the <code>img</code> element, then return the
+     contents of the first such <code>figcaption</code> element.</p></li>
+
+     <li><p>Return nothing. (There is no caption information.)</p></li>
+    </ol>
+   </dd>
+
+   <dt>If the <code data-x="attr-img-src">src</code> attribute is not set and either the <code
+   data-x="attr-img-alt">alt</code> attribute is set to the empty string or the <code
+   data-x="attr-img-alt">alt</code> attribute is not set at all</dt>
+
+   <dd>
+    <p>The element <span>represents</span> nothing.</p>
+   </dd>
+
+   <dt>Otherwise</dt>
+
+   <dd>
+    <p>The element <span>represents</span> the text given by the <code
+    data-x="attr-img-alt">alt</code> attribute.</p>
+   </dd>
+  </dl>
+  </div>
+
+  <p>The <code data-x="attr-img-alt">alt</code> attribute does not represent advisory information.
+  User agents must not present the contents of the <code data-x="attr-img-alt">alt</code> attribute
+  in the same way as content of the <code data-x="attr-title">title</code> attribute.</p>
+
+  <p>User agents may always provide the user with the option to display any image, or to prevent any
+  image from being displayed. User agents may also apply heuristics to help the user make use of the
+  image when the user is unable to see it, e.g. due to a visual disability or because they are using
+  a text terminal with no graphics capabilities. Such heuristics could include, for instance,
+  optical character recognition (OCR) of text found within the image.</p>
+
+  <p class="warning">While user agents are encouraged to repair cases of missing <code
+  data-x="attr-img-alt">alt</code> attributes, authors must not rely on such behavior. <a
+  href="#alt">Requirements for providing text to act as an alternative for images</a> are described
+  in detail below.</p>
+
+  <p>The <em>contents</em> of <code>img</code> elements, if any, are ignored for the purposes of
+  rendering.</p>
+
+  </div>
+
+  <hr>
+
+  <p>The <code data-x="attr-hyperlink-usemap">usemap</code> attribute,
+  if present, can indicate that the image has an associated
+  <span>image map</span>.</p>
+
+  <p>The <dfn element-attr for="img" data-x="attr-img-ismap"><code>ismap</code></dfn> attribute,
+  when used on an element that is a descendant of an <code>a</code> element with an <code
+  data-x="attr-hyperlink-href">href</code> attribute, indicates by its presence that the element
+  provides access to a server-side image map. This affects how events are handled on the
+  corresponding <code>a</code> element.</p>
+
+  <p>The <code data-x="attr-img-ismap">ismap</code> attribute is a
+  <span>boolean attribute</span>. The attribute must not be specified
+  on an element that does not have an ancestor <code>a</code> element
+  with an <code data-x="attr-hyperlink-href">href</code> attribute.</p>
+
+  <p class="note">The <code data-x="attr-hyperlink-usemap">usemap</code> and <code
+  data-x="attr-img-ismap">ismap</code> attributes can result in confusing behavior when used
+  together with <code>source</code> elements with the <code data-x="attr-source-media">media</code>
+  attribute specified in a <code>picture</code> element.</p>
+
+  <p>The <dfn element-attr for="img"><code data-x="attr-img-controls">controls</code></dfn>
+  attribute is a <span>boolean attribute</span>. If present, it indicates that the user agent may
+  expose a user interface to the user. The attribute must not be specified on an element that does
+  not have an <code data-x="attr-img-alt">alt</code> attribute, or whose <code
+  data-x="attr-img-alt">alt</code> attribute's value is the empty string.</p>
+
+  <div w-nodev>
+
+  <p>If the <code data-x="attr-img-controls">controls</code> attribute is present, the user agent
+  may expose controls over the image (e.g., a control for fullscreen viewing). The specific
+  controls provided are <span>implementation-defined</span>, and can be platform-specific or based
+  on the user's preferences.</p>
+
+  <p>If the user agent exposes a user interface by displaying controls over the <code>img</code>
+  element, then the user agent should suppress any user interaction events while the user agent is
+  interacting with this interface.</p>
+
+  <p class="XXX"><a href="https://github.com/whatwg/html/issues/12318">Issue #12318</a> tracks
+  the interaction between image controls and animated images. User agents should not expose
+  animation controls for images before that issue is resolved.</p>
+
+  </div>
+
+  <hr>
+
+  <p>The <code>img</code> element supports <span>dimension
+  attributes</span>.</p>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLImageElement"
+  data-x="dom-img-crossOrigin"><code>crossOrigin</code></dfn> IDL attribute must
+  <span>reflect</span> the <code data-x="attr-img-crossorigin">crossorigin</code> content attribute,
+  <span>limited to only known values</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLImageElement"><code
+  data-x="dom-img-referrerPolicy">referrerPolicy</code></dfn> IDL attribute must
+  <span>reflect</span> the <code data-x="attr-img-referrerpolicy">referrerpolicy</code> content
+  attribute, <span>limited to only known values</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLImageElement"><code data-x="dom-img-decoding">decoding</code></dfn>
+  IDL attribute must <span>reflect</span> the <code data-x="attr-img-decoding">decoding</code>
+  content attribute, <span>limited to only known values</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLImageElement"><code data-x="dom-img-loading">loading</code></dfn>
+  IDL attribute must <span>reflect</span> the <code data-x="attr-img-loading">loading</code> content
+  attribute, <span>limited to only known values</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLImageElement"><code
+  data-x="dom-img-fetchPriority">fetchPriority</code></dfn> IDL attribute
+  must <span>reflect</span> the <code data-x="attr-img-fetchpriority">fetchpriority</code> content
+  attribute, <span>limited to only known values</span>.</p>
+  </div>
+
+  </div>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>image</var>.<span subdfn data-x="dom-img-width">width</span> [ = <var>value</var> ]</code></dt>
+   <dt><code data-x=""><var>image</var>.<span subdfn data-x="dom-img-height">height</span> [ = <var>value</var> ]</code></dt>
+
+   <dd>
+    <p>These attributes return the rendered dimensions of the image. When the image is not being
+    rendered, they return the <code data-x="attr-dim-width">width</code> and <code
+    data-x="attr-dim-height">height</code> content attributes' values, defaulting to <code
+    data-x="dom-img-naturalWidth">naturalWidth</code> and <code
+    data-x="dom-img-naturalHeight">naturalHeight</code>.</p>
+
+    <p>They can be set, to change the corresponding content attributes.</p>
+   </dd>
+
+   <dt><code data-x=""><var>image</var>.<span subdfn data-x="dom-img-naturalWidth">naturalWidth</span></code></dt>
+   <dt><code data-x=""><var>image</var>.<span subdfn data-x="dom-img-naturalHeight">naturalHeight</span></code></dt>
+
+   <dd>
+    <p>These attributes return the <span>density-corrected natural width and height</span> of the
+    image, or 0 if the image is not <i data-x="img-available">available</i>.</p>
+   </dd>
+
+   <dt><code data-x=""><var>image</var>.<span subdfn data-x="dom-img-complete">complete</span></code></dt>
+
+   <dd>
+    <p>Returns true if the image has been completely downloaded or if no image is specified;
+    otherwise, returns false.</p>
+   </dd>
+
+   <dt><code data-x=""><var>image</var>.<span subdfn data-x="dom-img-currentSrc">currentSrc</span></code></dt>
+
+   <dd><p>Returns the image's <span>absolute URL</span>.</p></dd>
+
+   <dt><code data-x=""><var>image</var>.<span subdfn data-x="dom-img-decode">decode</span>()</code></dt>
+
+   <dd>
+    <p>This method causes the user agent to <span data-x="img-decoding-process">decode</span> the
+    image <span>in parallel</span>, returning a promise that fulfills when decoding is complete.</p>
+
+    <p>The promise will be rejected with an <span>"<code>EncodingError</code>"</span>
+    <code>DOMException</code> if the image cannot be decoded.</p>
+   </dd>
+
+   <dt><code data-x=""><var>image</var> = new <span subdfn data-x="dom-image">Image</span>([ <var>width</var> [, <var>height</var> ] ])</code></dt>
+
+   <dd>
+    <p>Returns a new <code>img</code> element, with the <code data-x="attr-dim-width">width</code>
+    and <code data-x="attr-dim-height">height</code> attributes set to the values passed in the
+    relevant arguments, if applicable.</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>To determine the <dfn data-x="img-dimensions">dimensions</dfn> of an <code>img</code> element
+  <var>image</var>:</p>
+
+  <ol>
+   <li><p>Let <var>naturalDimensions</var> be null.</p></li>
+
+   <li><p>If <var>image</var> is <i data-x="img-available">available</i>, then set
+   <var>naturalDimensions</var> to <var>image</var>'s <span>density-corrected natural width and
+   height</span>.</p></li>
+
+   <li><p>Return the result of <span data-x="determine-dimensions">determining the
+   dimensions</span> of <var>image</var> given <var>naturalDimensions</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLImageElement" data-x="dom-img-width"><code>width</code></dfn>
+  getter steps are to return the width of <span>this</span>'s <span
+  data-x="img-dimensions">dimensions</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLImageElement" data-x="dom-img-height"><code>height</code></dfn>
+  getter steps are to return the height of <span>this</span>'s <span
+  data-x="img-dimensions">dimensions</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLImageElement"
+  data-x="dom-img-naturalWidth"><code>naturalWidth</code></dfn> and <dfn attribute
+  for="HTMLImageElement" data-x="dom-img-naturalHeight"><code>naturalHeight</code></dfn> getter
+  steps are:</p>
+
+  <ol>
+   <li><p>If the image is not <i data-x="img-available">available</i>, then return 0.</p></li>
+
+   <li><p>Return the respective component of the image's <span>density-corrected natural width and
+   height</span>, in <span data-x="'px'">CSS pixels</span>. <ref>CSS</ref></p></li>
+  </ol>
+  </div>
+
+  <p class="note">Since the <span>density-corrected natural width and height</span> of an image
+  take into account any orientation specified in its metadata, <code
+  data-x="dom-img-naturalWidth">naturalWidth</code> and <code
+  data-x="dom-img-naturalHeight">naturalHeight</code> reflect the dimensions after applying any
+  rotation needed to correctly orient the image, regardless of the value of the
+  <span>'image-orientation'</span> property.</p>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLImageElement"
+  data-x="dom-img-complete"><code>complete</code></dfn> getter steps are:</p>
+
+  <ol>
+   <li>
+    <p>If any of the following are true:</p>
+
+    <ul>
+     <!--TODO: check picture parent-->
+
+     <li><p>both the <code data-x="attr-img-src">src</code> attribute and the <code
+     data-x="attr-img-srcset">srcset</code> attribute are omitted;</p></li>
+
+     <li><p>the <code data-x="attr-img-srcset">srcset</code> attribute is omitted and the <code
+     data-x="attr-img-src">src</code> attribute's value is the empty string;</p></li>
+     <!-- we only have this hack for src="", not srcset=""; present but empty or bogus srcset=""
+     still means complete=false if it's not in the img-error state -->
+
+     <li><p>the <code>img</code> element's <span>current request</span>'s <span
+     data-x="img-req-state">state</span> is <span data-x="img-all">completely available</span> and
+     its <span>pending request</span> is null; or</p></li>
+
+     <li><p>the <code>img</code> element's <span>current request</span>'s <span
+     data-x="img-req-state">state</span> is <span data-x="img-error">broken</span> and its
+     <span>pending request</span> is null,</p></li>
+    </ul>
+
+    <p>then return true.</p>
+   </li>
+
+   <li><p>Return false.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLImageElement"
+  data-x="dom-img-currentSrc"><code>currentSrc</code></dfn> IDL attribute must return the
+  <code>img</code> element's <span>current request</span>'s <span data-x="img-req-url">current
+  URL</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="HTMLImageElement" data-x="dom-img-decode"><code>decode()</code></dfn>
+  method, when invoked, must perform the following steps:</p>
+
+  <ol>
+   <li><p>Let <var>promise</var> be a new promise.</p></li>
+
+   <li>
+    <p><span>Queue a microtask</span> to perform the following steps:</p>
+
+    <div class="note">
+     <p>This is done because <span data-x="update the image data">updating the image data</span>
+     takes place in a microtask as well. Thus, to make code such as</p>
+
+     <pre><code class="js">img.src = "stars.jpg";
+img.decode();</code></pre>
+
+     <p>properly decode <code data-x="">stars.jpg</code>, we need to delay any processing by one
+     microtask.</p>
+    </div>
+
+    <ol>
+     <li><p>Let <var>global</var> be <span>this</span>'s <span>relevant global
+     object</span>.</p></li>
+
+     <li>
+      <p>If any of the following are true:</p>
+
+      <ul>
+       <li><p><span>this</span>'s <span>node document</span> is not <span>fully active</span>;
+       or</p></li>
+
+       <li><p><span>this</span>'s <span>current request</span>'s <span
+       data-x="img-req-state">state</span> is <span data-x="img-error">broken</span>,</p></li>
+      </ul>
+
+      <p>then reject <var>promise</var> with an <span>"<code>EncodingError</code>"</span>
+      <code>DOMException</code>.</p>
+     </li>
+
+     <li>
+      <p>Otherwise, <span>in parallel</span>, wait for one of the following cases to occur, and
+      perform the corresponding actions:</p>
+
+      <dl class="switch">
+       <dt>This <code>img</code> element's <span>node document</span> stops being <span>fully
+       active</span></dt>
+       <dt>This <code>img</code> element's <span>current request</span> changes or is mutated</dt>
+       <dt>This <code>img</code> element's <span>current request</span>'s <span
+       data-x="img-req-state">state</span> becomes <span data-x="img-error">broken</span></dt>
+       <dd><p><span>Queue a global task</span> on the <span>DOM manipulation task source</span> with
+       <var>global</var> to reject <var>promise</var> with an
+       <span>"<code>EncodingError</code>"</span> <code>DOMException</code>.</p></dd>
+
+       <dt>This <code>img</code> element's <span>current request</span>'s <span
+       data-x="img-req-state">state</span> becomes <span data-x="img-all">completely
+       available</span></dt>
+       <dd>
+        <p><span data-x="img-decoding-process">Decode</span> the image.</p>
+
+        <p>If decoding does not need to be performed for this image (for example because it is a
+        vector graphic) or the decoding process completes successfully, then <span>queue a global
+        task</span> on the <span>DOM manipulation task source</span> with <var>global</var> to
+        resolve <var>promise</var> with undefined.</p>
+
+        <p>If decoding fails (for example due to invalid image data), then <span>queue a global
+        task</span> on the <span>DOM manipulation task source</span> with <var>global</var> to
+        reject <var>promise</var> with an <span>"<code>EncodingError</code>"</span>
+        <code>DOMException</code>.</p>
+
+        <p>User agents should ensure that the decoded media data stays readily available until at
+        least the end of the next successful <span>update the rendering</span> step in the
+        <span>event loop</span>. This is an important part of the API contract, and should not be
+        broken if at all possible. (Typically, this would only be violated in low-memory situations
+        that require evicting decoded image data, or when the image is too large to keep in decoded
+        form for this period of time.)</p>
+       </dd>
+      </dl>
+
+      <p class="note">Animated images will become <span data-x="img-all">completely available</span>
+      only after all their frames are loaded. Thus, even though an implementation could decode the
+      first frame before that point, the above steps will not do so, instead waiting until all
+      frames are available.</p>
+     </li>
+    </ol>
+   </li>
+
+   <li><p>Return <var>promise</var>.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+  <div class="example">
+   <p>Without the <code data-x="dom-img-decode">decode()</code> method, the process of loading an
+   <code>img</code> element and then displaying it might look like the following:</p>
+
+   <pre><code class="js">const img = new Image();
+img.src = "nebula.jpg";
+img.onload = () => {
+    document.body.appendChild(img);
+};
+img.onerror = () => {
+    document.body.appendChild(new Text("Could not load the nebula :("));
+};</code></pre>
+
+   <p>However, this can cause notable dropped frames, as the paint that occurs after inserting the
+   image into the DOM causes a synchronous decode on the main thread.</p>
+
+   <p>This can instead be rewritten using the <code data-x="dom-img-decode">decode()</code>
+   method:</p>
+
+   <pre><code class="js">const img = new Image();
+img.src = "nebula.jpg";
+img.decode().then(() => {
+    document.body.appendChild(img);
+}).catch(() => {
+    document.body.appendChild(new Text("Could not load the nebula :("));
+});</code></pre>
+
+   <p>This latter form avoids the dropped frames of the original, by allowing the user agent to
+   decode the image <span>in parallel</span>, and only inserting it into the DOM (and thus causing
+   it to be painted) once the decoding process is complete.</p>
+  </div>
+
+  <div class="example">
+   <p>Because the <code data-x="dom-img-decode">decode()</code> method attempts to ensure that the
+   decoded image data is available for at least one frame, it can be combined with the <code
+   data-x="dom-AnimationFrameProvider-requestAnimationFrame">requestAnimationFrame()</code> API.
+   This means it can be used with coding styles or frameworks that ensure that all DOM modifications
+   are batched together as <span data-x="map of animation frame callbacks">animation frame
+   callbacks</span>:</p>
+
+   <pre><code class="js">const container = document.querySelector("#container");
+
+const { containerWidth, containerHeight } = computeDesiredSize();
+requestAnimationFrame(() => {
+ container.style.width = containerWidth;
+ container.style.height = containerHeight;
+});
+
+// ...
+
+const img = new Image();
+img.src = "supernova.jpg";
+img.decode().then(() => {
+    requestAnimationFrame(() => container.appendChild(img));
+});</code></pre>
+  </div>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>A legacy factory function is provided for creating <code>HTMLImageElement</code> objects (in
+  addition to the factory methods from DOM such as <code
+  data-x="dom-Document-createElement">createElement()</code>): <dfn
+  data-x="dom-image"><code>Image(<var>width</var>, <var>height</var>)</code></dfn>. When invoked,
+  the legacy factory function must perform the following steps:</p>
+
+  <ol>
+   <li><p>Let <var>document</var> be the <span>current global object</span>'s <span
+   data-x="concept-document-window">associated <code>Document</code></span>.</p></li>
+
+   <li><p>Let <var>img</var> be the result of <span data-x="create an element">creating an
+   element</span> given <var>document</var>, "<code data-x="">img</code>", and the <span>HTML
+   namespace</span>.</p></li>
+
+   <li><p>If <var>width</var> is given, then <span data-x="concept-element-attributes-set-value">set
+   an attribute value</span> for <var>img</var> using "<code data-x="attr-dim-width">width</code>"
+   and <var>width</var>.</p></li>
+
+   <li><p>If <var>height</var> is given, then <span
+   data-x="concept-element-attributes-set-value">set an attribute value</span> for <var>img</var>
+   using "<code data-x="attr-dim-height">height</code>" and <var>height</var>.</p></li>
+
+   <li><p>Return <var>img</var>.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+  <div class="example">
+
+   <p>A single image can have different appropriate alternative text depending on the context.</p>
+
+   <p>In each of the following cases, the same image is used, yet the <code
+   data-x="attr-img-alt">alt</code> text is different each time. The image is the coat of arms of the
+   Carouge municipality in the canton Geneva in Switzerland.</p>
+
+   <p>Here it is used as a supplementary icon:</p>
+   <pre><code class="html">&lt;p>I lived in &lt;img src="carouge.svg" alt=""> Carouge.&lt;/p></code></pre>
+
+   <p>Here it is used as an icon representing the town:</p>
+   <pre><code class="html">&lt;p>Home town: &lt;img src="carouge.svg" alt="Carouge">&lt;/p></code></pre>
+
+   <p>Here it is used as part of a text on the town:</p>
+
+   <pre><code class="html">&lt;p>Carouge has a coat of arms.&lt;/p>
+&lt;p>&lt;img src="carouge.svg" alt="The coat of arms depicts a lion, sitting in front of a tree.">&lt;/p>
+&lt;p>It is used as decoration all over the town.&lt;/p></code></pre>
+
+   <p>Here it is used as a way to support a similar text where the description is given as well as,
+   instead of as an alternative to, the image:</p>
+
+   <pre><code class="html">&lt;p>Carouge has a coat of arms.&lt;/p>
+&lt;p>&lt;img src="carouge.svg" alt="">&lt;/p>
+&lt;p>The coat of arms depicts a lion, sitting in front of a tree.
+It is used as decoration all over the town.&lt;/p></code></pre>
+
+   <p>Here it is used as part of a story:</p>
+
+   <pre><code class="html">&lt;p>She picked up the folder and a piece of paper fell out.&lt;/p>
+&lt;p>&lt;img src="carouge.svg" alt="Shaped like a shield, the paper had a
+red background, a green tree, and a yellow lion with its tongue
+hanging out and whose tail was shaped like an S.">&lt;/p>
+&lt;p>She stared at the folder. S! The answer she had been looking for all
+this time was simply the letter S! How had she not seen that before? It all
+came together now. The phone call where Hector had referred to a lion's tail,
+the time Maria had stuck her tongue out...&lt;/p></code></pre>
+
+   <p>Here it is not known at the time of publication what the image will be, only that it will be a
+   coat of arms of some kind, and thus no replacement text can be provided, and instead only a brief
+   caption for the image is provided, in the <code data-x="attr-title">title</code> attribute:</p>
+
+   <pre><code class="html">&lt;p>The last user to have uploaded a coat of arms uploaded this one:&lt;/p>
+&lt;p>&lt;img src="last-uploaded-coat-of-arms.cgi" title="User-uploaded coat of arms.">&lt;/p></code></pre>
+
+   <p>Ideally, the author would find a way to provide real replacement text even in this case, e.g.
+   by asking the previous user. Not providing replacement text makes the document more difficult to
+   use for people who are unable to view images, e.g. blind users, or users or very low-bandwidth
+   connections or who pay by the byte, or users who are forced to use a text-only web browser.</p>
+
+  </div>
+
+  <div class="example">
+
+   <p>Here are some more examples showing the same picture used in different contexts, with
+   different appropriate alternate texts each time.</p>
+
+   <pre><code class="html">&lt;article>
+ &lt;h1>My cats&lt;/h1>
+ &lt;h2>Fluffy&lt;/h2>
+ &lt;p>Fluffy is my favorite.&lt;/p>
+ &lt;img src="fluffy.jpg" alt="She likes playing with a ball of yarn.">
+ &lt;p>She's just too cute.&lt;/p>
+ &lt;h2>Miles&lt;/h2>
+ &lt;p>My other cat, Miles just eats and sleeps.&lt;/p>
+&lt;/article></code></pre>
+
+   <pre><code class="html">&lt;article>
+ &lt;h1>Photography&lt;/h1>
+ &lt;h2>Shooting moving targets indoors&lt;/h2>
+ &lt;p>The trick here is to know how to anticipate; to know at what speed and
+ what distance the subject will pass by.&lt;/p>
+ &lt;img src="fluffy.jpg" alt="A cat flying by, chasing a ball of yarn, can be
+ photographed quite nicely using this technique.">
+ &lt;h2>Nature by night&lt;/h2>
+ &lt;p>To achieve this, you'll need either an extremely sensitive film, or
+ immense flash lights.&lt;/p>
+&lt;/article></code></pre>
+
+   <pre><code class="html">&lt;article>
+ &lt;h1>About me&lt;/h1>
+ &lt;h2>My pets&lt;/h2>
+ &lt;p>I've got a cat named Fluffy and a dog named Miles.&lt;/p>
+ &lt;img src="fluffy.jpg" alt="Fluffy, my cat, tends to keep itself busy.">
+ &lt;p>My dog Miles and I like go on long walks together.&lt;/p>
+ &lt;h2>music&lt;/h2>
+ &lt;p>After our walks, having emptied my mind, I like listening to Bach.&lt;/p>
+&lt;/article></code></pre>
+
+   <pre><code class="html">&lt;article>
+ &lt;h1>Fluffy and the Yarn&lt;/h1>
+ &lt;p>Fluffy was a cat who liked to play with yarn. She also liked to jump.&lt;/p>
+ &lt;aside>&lt;img src="fluffy.jpg" alt="" title="Fluffy">&lt;/aside>
+ &lt;p>She would play in the morning, she would play in the evening.&lt;/p>
+&lt;/article></code></pre>
+
+  </div>
+
+

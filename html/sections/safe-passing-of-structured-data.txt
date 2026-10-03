@@ -1,0 +1,20 @@
+WHATWG HTML — section safe-passing-of-structured-data — Safe passing of structured data
+
+  <h3 split-filename="structured-data">Safe passing of structured data</h3>
+
+  <p id="structuredclone"><span id="structured-clone"></span>To support passing JavaScript objects,
+  including <span data-x="platform object">platform objects</span>, across <span>realm</span>
+  boundaries, this specification defines <span w-nodev>the following </span>infrastructure for
+  serializing and deserializing objects, including in some cases transferring the underlying data
+  instead of copying it. Collectively this serialization/deserialization process is known as
+  "structured cloning", although most APIs perform separate serialization and deserialization steps.
+  (With the notable exception being the <code data-x="dom-structuredClone">structuredClone()</code>
+  method.)</p>
+
+  <div w-nodev>
+
+  <p>This section uses the terminology and typographic conventions from the JavaScript
+  specification. <ref>JAVASCRIPT</ref></p>
+
+  </div>
+

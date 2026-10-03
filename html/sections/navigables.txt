@@ -1,0 +1,1260 @@
+WHATWG HTML — section navigables — Navigables
+
+  <h4>Navigables</h4>
+
+  <p>A <dfn export>navigable</dfn> presents a <code>Document</code> to the user via its <span
+  data-x="nav-active-history-entry">active session history entry</span>. Each navigable has:</p>
+
+  <ul>
+   <li><p>An <dfn data-x="nav-id">id</dfn>, a <span>new unique internal value</span>.</p></li>
+
+   <li><p id="parent-browsing-context">A <dfn data-x="nav-parent" export for=navigable>parent</dfn>,
+   a <span>navigable</span> or null.</p></li>
+
+   <li>
+    <p id="current-entry">A <dfn data-x="nav-current-history-entry">current session history
+    entry</dfn>, a <span>session history entry</span>.</p>
+
+    <p>This can only be modified within the <span
+    data-x="tn-session-history-traversal-queue">session history traversal queue</span> of the
+    parent <span>traversable navigable</span>.</p>
+   </li>
+
+   <li>
+    <p>An <dfn data-x="nav-active-history-entry">active session history entry</dfn>, a
+    <span>session history entry</span>.</p>
+
+    <p>This can only be modified from the event loop of the <span
+    data-x="nav-active-history-entry">active session history entry</span>'s <span
+    data-x="she-document">document</span>.</p>
+   </li>
+
+   <li>
+    <p>An <dfn>is closing</dfn> boolean, initially false.</p>
+
+    <p class="note">This is only ever set to true for <span data-x="top-level
+    traversable">top-level traversable navigables</span>.</p>
+   </li>
+
+   <li>
+    <p>An <dfn id="delaying-load-events-mode">is delaying <code data-x="event-load">load</code>
+    events</dfn> boolean, initially false.</p>
+
+    <p class="note">This is only ever set to true in cases where the navigable's <span
+    data-x="nav-parent">parent</span> is non-null.</p>
+   </li>
+
+   <li>
+    <p>An <dfn>allowed to perform a navigation or history update</dfn> algorithm, which is
+    <span>implementation-defined</span> and returns either <span>allowed</span> or
+    <span>blocked</span>.</p>
+
+    <p class="note">For example, this can return <span>blocked</span> if invoked too many times
+    times within a certain timespan.</p>
+   </li>
+  </ul>
+
+  <p>The <span data-x="nav-current-history-entry">current session history entry</span> and the
+  <span data-x="nav-active-history-entry">active session history entry</span> are usually the same,
+  but they get out of sync when:</p>
+
+  <ul>
+   <li><p>Synchronous navigations are performed. This causes the <span
+   data-x="nav-active-history-entry">active session history entry</span> to temporarily step ahead
+   of the <span data-x="nav-current-history-entry">current session history entry</span>.</p></li>
+
+   <li><p>A non-displayable, non-error response is received when <span data-x="apply the history
+   step">applying the history step</span>. This updates the <span
+   data-x="nav-current-history-entry">current session history entry</span> but leaves the <span
+   data-x="nav-active-history-entry">active session history entry</span> as-is.</p></li>
+  </ul>
+
+  <hr>
+
+  <div algorithm>
+  <p>A <span>navigable</span>'s <dfn export for="navigable" data-x="nav-document">active
+  document</dfn> is its <span data-x="nav-active-history-entry">active session history
+  entry</span>'s <span data-x="she-document">document</span>.</p>
+  </div>
+
+  <p class="note">This can be safely read from within the <span
+  data-x="tn-session-history-traversal-queue">session history traversal queue</span> of the
+  navigable's <span data-x="nav-top">top-level traversable</span>. Although a
+  <span>navigable</span>'s <span data-x="nav-active-history-entry">active history entry</span> can
+  change synchronously, the new entry will always have the same <code>Document</code>.</p>
+
+  <div algorithm>
+  <p>A <span>navigable</span>'s <dfn export for="navigable" data-x="nav-bc">active browsing
+  context</dfn> is its <span data-x="nav-document">active document</span>'s <span
+  data-x="concept-document-bc">browsing context</span>. If this <span>navigable</span> is a
+  <span>traversable navigable</span>, then its <span data-x="nav-bc">active browsing context</span>
+  will be a <span>top-level browsing context</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>A <span>navigable</span>'s <dfn data-x="nav-wp">active <code>WindowProxy</code></dfn> is its
+  <span data-x="nav-bc">active browsing context</span>'s associated <code>WindowProxy</code>.</p>
+  </div>
+
+  <div algorithm>
+  <p>A <span>navigable</span>'s <dfn export for="navigable" data-x="nav-window">active window</dfn>
+  is its <span data-x="nav-wp">active <code>WindowProxy</code></span>'s <span
+  data-x="concept-windowproxy-window">[[Window]]</span>.</p>
+  </div>
+
+  <p class="note">This will always equal the navigable's <span data-x="nav-document">active
+  document</span>'s <span>relevant global object</span>; this is kept in sync by the <span>make
+  active</span> algorithm.</p>
+
+  <div algorithm>
+  <p id="browsing-context-name">A <span>navigable</span>'s <dfn data-x="nav-target">target
+  name</dfn> is its <span data-x="nav-active-history-entry">active session history entry</span>'s
+  <span data-x="she-document-state">document state</span>'s <span
+  data-x="document-state-nav-target-name">navigable target name</span>.</p>
+  </div>
+
+  <hr>
+
+  <div algorithm>
+  <p>To get the <dfn export>node navigable</dfn> of a <span>node</span> <var>node</var>, return the
+  <span>navigable</span> whose <span data-x="nav-document">active document</span> is
+  <var>node</var>'s <span>node document</span>, or null if there is no such
+  <span>navigable</span>.</p>
+  </div>
+
+  <hr>
+
+  <div algorithm>
+  <p>To <dfn>initialize the navigable</dfn> <span>navigable</span> <var>navigable</var>, given a
+  <span>document state</span> <var>documentState</var> and an optional
+  <span>navigable</span>-or-null <var>parent</var> (default null):</p>
+
+  <ol>
+   <li><p><span>Assert</span>: <var>documentState</var>'s <span
+   data-x="document-state-document">document</span> is non-null.</p></li>
+
+   <li>
+    <p>Let <var>entry</var> be a new <span>session history entry</span>, with</p>
+
+    <dl class="props">
+     <dt><span data-x="she-url">URL</span></dt>
+     <dd><var>documentState</var>'s <span data-x="document-state-document">document</span>'s <span
+     data-x="concept-document-url">URL</span></dd>
+
+     <dt><span data-x="she-document-state">document state</span></dt>
+     <dd><var>documentState</var></dd>
+    </dl>
+
+    <p class="note">The caller of this algorithm is responsible for initializing <var>entry</var>'s
+    <span data-x="she-step">step</span>; it will be left as "<code data-x="">pending</code>" until
+    that is complete.</p>
+   </li>
+
+   <li><p>Set <var>navigable</var>'s <span data-x="nav-current-history-entry">current session
+   history entry</span> to <var>entry</var>.</p></li>
+
+   <li><p>Set <var>navigable</var>'s <span data-x="nav-active-history-entry">active session history
+   entry</span> to <var>entry</var>.</p></li>
+
+   <li><p>Set <var>navigable</var>'s <span data-x="nav-parent">parent</span> to
+   <var>parent</var>.</p></li>
+
+   <li><p><span>Set the initial visibility state</span> of <var>documentState</var>'s <span data-x="document-state-document">document</span> to
+   <var>navigable</var>'s <span data-x="nav-traversable">traversable navigable</span>'s <span>system visibility state</span>.</p></li>
+  </ol>
+  </div>
+
+
+  <h5>Traversable navigables</h5>
+
+  <p>A <dfn export>traversable navigable</dfn> is a <span>navigable</span> that also controls which
+  <span>session history entry</span> should be the <span data-x="nav-current-history-entry">current
+  session history entry</span> and <span data-x="nav-active-history-entry">active session history
+  entry</span> for itself and its descendant <span data-x="navigable">navigables</span>.</p>
+
+  <p>In addition to the properties of a <span>navigable</span>, a <span>traversable
+  navigable</span> has:</p>
+
+  <ul>
+   <li><p>A <dfn export data-x="tn-current-session-history-step">current session history
+   step</dfn>, a number, initially 0.</p></li>
+
+   <li><p id="session-history"><dfn data-x="tn-session-history-entries">Session history
+   entries</dfn>, a <span>list</span> of <span data-x="session history entry">session history
+   entries</span>, initially a new <span>list</span>.</p></li>
+
+   <li><p>A <dfn data-x="tn-session-history-traversal-queue">session history traversal queue</dfn>,
+   a <span>session history traversal parallel queue</span>, the result of <span>starting a new
+   session history traversal parallel queue</span>.</p></li>
+
+   <li><p>A <dfn data-x="tn-running-nested-apply-history-step">running nested apply history
+   step</dfn> boolean, initially false.</p></li>
+
+   <li>
+    <p>A <dfn>system visibility state</dfn>, which is either "<code data-x="">hidden</code>" or
+    "<code data-x="">visible</code>".</p>
+
+    <p>See the <a href="#page-visibility">page visibility</a> section for the requirements on this
+    item.</p>
+   </li>
+
+   <li><p>An <dfn>is created by web content</dfn> boolean, initially false.</p></li>
+  </ul>
+
+  <div algorithm>
+  <p>To get the <dfn data-x="nav-traversable" export for="navigable">traversable navigable</dfn> of
+  a <span>navigable</span> <var>inputNavigable</var>:</p>
+
+  <ol>
+   <li><p>Let <var>navigable</var> be <var>inputNavigable</var>.</p></li>
+
+   <li><p>While <var>navigable</var> is not a <span>traversable navigable</span>, set
+   <var>navigable</var> to <var>navigable</var>'s <span data-x="nav-parent">parent</span>.</p></li>
+
+   <li><p>Return <var>navigable</var>.</p></li>
+  </ol>
+  </div>
+
+  <h5>Top-level traversables</h5>
+
+  <div algorithm>
+  <p>A <dfn export>top-level traversable</dfn> is a <span>traversable navigable</span> with a null
+  <span data-x="nav-parent">parent</span>.</p>
+  </div>
+
+  <p class="note">Currently, all <span data-x="traversable navigable">traversable navigables</span>
+  are <span data-x="top-level traversable">top-level traversables</span>. Future proposals envision
+  introducing non-top-level traversables.</p>
+
+  <p>A user agent holds a <dfn export for="user agent">top-level traversable set</dfn> (a
+  <span>set</span> of <span data-x="top-level traversable">top-level traversables</span>). These are
+  typically presented to the user in the form of browser windows or browser tabs.</p>
+
+  <div algorithm>
+  <p>To get the <dfn export for="navigable" data-x="nav-top">top-level traversable</dfn> of a
+  <span>navigable</span> <var>inputNavigable</var>:</p>
+
+  <ol>
+   <li><p>Let <var>navigable</var> be <var>inputNavigable</var>.</p></li>
+
+   <li><p>While <var>navigable</var>'s <span data-x="nav-parent">parent</span> is not null, set
+   <var>navigable</var> to <var>navigable</var>'s <span data-x="nav-parent">parent</span>.</p></li>
+
+   <li><p>Return <var>navigable</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="creating a new top-level traversable">create a new top-level traversable</dfn>
+  given a <span>browsing context</span>-or-null <var>opener</var>, a string
+  <var>targetName</var>, and an optional <span>navigable</span>
+  <var>openerNavigableForWebDriver</var>:</p>
+
+  <ol>
+   <li><p>Let <var>document</var> be null.</p></li>
+
+   <li><p>If <var>opener</var> is null, then set <var>document</var> to the second return value of
+   <span>creating a new top-level browsing context and document</span>.</p></li>
+
+   <li><p>Otherwise, set <var>document</var> to the second return value of <span>creating a new
+   auxiliary browsing context and document</span> given <var>opener</var>.</p></li>
+
+   <li>
+    <p>Let <var>documentState</var> be a new <span>document state</span>, with</p>
+
+    <dl class="props">
+     <dt><span data-x="document-state-document">document</span></dt>
+     <dd><var>document</var></dd>
+
+     <dt><span data-x="document-state-initiator-origin">initiator origin</span></dt>
+     <dd>null if <var>opener</var> is null; otherwise, <var>document</var>'s <span
+     data-x="concept-document-origin">origin</span></dd>
+
+     <dt><span data-x="document-state-origin">origin</span></dt>
+     <dd><var>document</var>'s <span data-x="concept-document-origin">origin</span></dd>
+
+     <dt><span data-x="document-state-nav-target-name">navigable target name</span></dt>
+     <dd><var>targetName</var></dd>
+
+     <dt><span data-x="document-state-about-base-url">about base URL</span></dt>
+     <dd><var>document</var>'s <span data-x="concept-document-about-base-url">about base
+     URL</span></dd>
+    </dl>
+   </li>
+
+   <li><p>Let <var>traversable</var> be a new <span>traversable navigable</span>.</p></li>
+
+   <li><p><span>Initialize the navigable</span> <var>traversable</var> given
+   <var>documentState</var>.</p></li>
+
+   <li><p>Let <var>initialHistoryEntry</var> be <var>traversable</var>'s <span
+   data-x="nav-active-history-entry">active session history entry</span>.</p></li>
+
+   <li><p>Set <var>initialHistoryEntry</var>'s <span data-x="she-step">step</span> to 0.</p></li>
+
+   <li><p><span data-x="list append">Append</span> <var>initialHistoryEntry</var> to
+   <var>traversable</var>'s <span data-x="tn-session-history-entries">session history
+   entries</span>.</p></li>
+
+   <li id="copy-session-storage"><p>If <var>opener</var> is non-null, then <span>legacy-clone a
+   traversable storage shed</span> given <var>opener</var>'s <span data-x="bc-traversable">top-level
+   traversable</span> and <var>traversable</var>. <ref>STORAGE</ref></p></li>
+
+   <li><p><span data-x="list append">Append</span> <var>traversable</var> to the user agent's
+   <span>top-level traversable set</span>.</p></li>
+
+   <li><p>Invoke <span>WebDriver BiDi navigable created</span> with <var>traversable</var>
+   and <var>openerNavigableForWebDriver</var>.</p></li>
+
+   <li><p>Return <var>traversable</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn export>create a fresh top-level traversable</dfn> given a <span>URL</span>
+  <var>initialNavigationURL</var> and an optional <span>POST resource</span>-or-null
+  <var>initialNavigationPostResource</var> (default null):</p>
+
+  <ol>
+   <li><p>Let <var>traversable</var> be the result of <span>creating a new top-level
+   traversable</span> given null and the empty string.</p></li>
+
+   <li>
+    <p><span>Navigate</span> <var>traversable</var> to <var>initialNavigationURL</var> using
+    <var>traversable</var>'s <span data-x="nav-document">active document</span>, with <i
+    data-x="navigation-resource">documentResource</i> set to
+    <var>initialNavigationPostResource</var>.</p>
+
+    <p class="note">We treat these initial navigations as <var>traversable</var> navigating itself,
+    which will ensure all relevant security checks pass.</p>
+   </li>
+
+   <li><p>Return <var>traversable</var>.</p></li>
+  </ol>
+  </div>
+
+
+  <h5>Child navigables</h5>
+
+  <p id="browsing-context-container">Certain elements (for example, <code>iframe</code> elements)
+  can present a <span>navigable</span> to the user. These elements are called <dfn export
+  data-lt="navigable container" data-x="navigable container">navigable containers</dfn>.</p>
+
+  <p id="nested-browsing-context">Each <span>navigable container</span> has a <dfn export
+  for="navigable container">content navigable</dfn>, which is either a <span>navigable</span> or
+  null. It is initially null.</p>
+
+  <div algorithm>
+  <p id="bc-container">The <dfn export for="navigable" data-x="nav-container">container</dfn> of a
+  <span>navigable</span> <var>navigable</var> is the <span>navigable container</span> whose
+  <span>content navigable</span> is <var>navigable</var>, or null if there is no such element.</p>
+  </div>
+
+  <div algorithm>
+  <p id="bc-container-document">The <dfn export for="navigable"
+  data-x="nav-container-document">container document</dfn> of a <span>navigable</span>
+  <var>navigable</var> is the result of running these steps:</p>
+
+  <ol>
+   <li><p>If <var>navigable</var>'s <span data-x="nav-container">container</span> is null, then
+   return null.</p></li>
+
+   <li>
+    <p>Return <var>navigable</var>'s <span data-x="nav-container">container</span>'s <span>node
+    document</span>.</p>
+
+    <p class="note">This is equal to <var>navigable</var>'s <span
+    data-x="nav-container">container</span>'s <span>shadow-including root</span> as
+    <var>navigable</var>'s <span data-x="nav-container">container</span> has to be
+    <span>connected</span>.</p>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn data-x="doc-container-document">container document</dfn> of a <code>Document</code>
+  <var>document</var> is the result of running these steps:</p>
+
+  <ol>
+   <li><p>If <var>document</var>'s <span>node navigable</span> is null, then return null.</p></li>
+
+   <li><p>Return <var>document</var>'s <span>node navigable</span>'s <span
+   data-x="nav-container-document">container document</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p id="child-browsing-context">A <span>navigable</span> <var>navigable</var> is a <dfn
+  export>child navigable</dfn> of another navigable <var>potentialParent</var> when
+  <var>navigable</var>'s <span data-x="nav-parent">parent</span> is <var>potentialParent</var>. We
+  can also just say that a <span>navigable</span> "is a <span>child navigable</span>", which means
+  that its <span data-x="nav-parent">parent</span> is non-null.</p>
+  </div>
+
+  <p class="note">All <span data-x="child navigable">child navigables</span> are the <span>content
+  navigable</span> of their <span data-x="nav-container">container</span>.</p>
+
+  <div algorithm>
+  <p>The <dfn id="concept-bcc-content-document">content document</dfn> of a <span>navigable
+  container</span> <var>container</var> is the result of running these steps:</p>
+
+  <ol>
+   <li><p>If <var>container</var>'s <span>content navigable</span> is null, then return
+   null.</p></li>
+
+   <li><p>Let <var>document</var> be <var>container</var>'s <span>content navigable</span>'s <span
+   data-x="nav-document">active document</span>.</p></li>
+
+   <li><p>If <var>document</var>'s <span data-x="concept-document-origin">origin</span> and
+   <var>container</var>'s <span>node document</span>'s <span
+   data-x="concept-document-origin">origin</span> are not <span>same origin-domain</span>, then
+   return null.</p></li>
+
+   <li><p>Return <var>document</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn>content window</dfn> of a <span>navigable container</span> <var>container</var> is the
+  result of running these steps:</p>
+
+  <ol>
+   <li><p>If <var>container</var>'s <span>content navigable</span> is null, then return
+   null.</p></li>
+
+   <li><p>Return <var>container</var>'s <span>content navigable</span>'s <span
+   data-x="nav-wp">active <code>WindowProxy</code></span>'s object.</p></li>
+  </ol>
+  </div>
+
+  <hr>
+
+  <div algorithm>
+  <p id="creating-a-new-nested-browsing-context">To <dfn>create a new child navigable</dfn>, given
+  an element <var>element</var>:</p>
+
+  <ol>
+   <li><p>Let <var>parentNavigable</var> be <var>element</var>'s <span>node
+   navigable</span>.</p></li>
+
+   <li><p>Let <var>group</var> be <var>element</var>'s <span>node document</span>'s <span
+   data-x="concept-document-bc">browsing context</span>'s <span data-x="bc-tlbc">top-level browsing
+   context</span>'s <span data-x="tlbc group">group</span>.</p></li>
+
+   <li><p>Let <var>browsingContext</var> and <var>document</var> be the result of <span>creating a
+   new browsing context and document</span> given <var>element</var>'s <span>node document</span>,
+   <var>element</var>, and <var>group</var>.</p></li>
+
+   <li><p>Let <var>targetName</var> be null.</p></li>
+
+   <li><p>If <var>element</var> has a <code data-x="">name</code> content attribute, then set
+   <var>targetName</var> to the value of that attribute.</p></li>
+
+   <li>
+    <p>Let <var>documentState</var> be a new <span>document state</span>, with</p>
+
+    <dl class="props">
+     <dt><span data-x="document-state-document">document</span></dt>
+     <dd><var>document</var></dd>
+
+     <dt><span data-x="document-state-initiator-origin">initiator origin</span></dt>
+     <dd><var>document</var>'s <span data-x="concept-document-origin">origin</span></dd>
+
+     <dt><span data-x="document-state-origin">origin</span></dt>
+     <dd><var>document</var>'s <span data-x="concept-document-origin">origin</span></dd>
+
+     <dt><span data-x="document-state-nav-target-name">navigable target name</span></dt>
+     <dd><var>targetName</var></dd>
+
+     <dt><span data-x="document-state-about-base-url">about base URL</span></dt>
+     <dd><var>document</var>'s <span data-x="concept-document-about-base-url">about base
+     URL</span></dd>
+    </dl>
+   </li>
+
+   <li><p>Let <var>navigable</var> be a new <span>navigable</span>.</p></li>
+
+   <li><p><span>Initialize the navigable</span> <var>navigable</var> given <var>documentState</var>
+   and <var>parentNavigable</var>.</p></li>
+
+   <li><p>Set <var>element</var>'s <span>content navigable</span> to <var>navigable</var>.</p></li>
+
+   <li><p>Let <var>historyEntry</var> be <var>navigable</var>'s <span
+   data-x="nav-active-history-entry">active session history entry</span>.</p></li>
+
+   <li><p>Let <var>traversable</var> be <var>parentNavigable</var>'s <span
+   data-x="nav-traversable">traversable navigable</span>.</p></li>
+
+   <li>
+    <p><span data-x="tn-append-session-history-traversal-steps">Append the following session
+    history traversal steps</span> to <var>traversable</var>:</p>
+
+    <ol>
+     <li><p>Let <var>parentDocState</var> be <var>parentNavigable</var>'s <span
+     data-x="nav-active-history-entry">active session history entry</span>'s <span
+     data-x="she-document-state">document state</span>.</p></li>
+
+     <li><p>Let <var>parentNavigableEntries</var> be the result of <span>getting session history
+     entries</span> for <var>parentNavigable</var>.</p></li>
+
+     <li><p>Let <var>targetStepSHE</var> be the first <span>session history entry</span> in
+     <var>parentNavigableEntries</var> whose <span data-x="she-document-state">document
+     state</span> equals <var>parentDocState</var>.</p></li>
+
+     <li><p>Set <var>historyEntry</var>'s <span data-x="she-step">step</span> to
+     <var>targetStepSHE</var>'s <span data-x="she-step">step</span>.</p></li>
+
+     <li><p>Let <var>nestedHistory</var> be a new <span>nested history</span> whose <span
+     data-x="nested-history-id">id</span> is <var>navigable</var>'s <span data-x="nav-id">id</span>
+     and <span data-x="nested-history-entries">entries list</span> is « <var>historyEntry</var>
+     ».</p></li>
+
+     <li><p><span data-x="list append">Append</span> <var>nestedHistory</var> to
+     <var>parentDocState</var>'s <span data-x="document-state-nested-histories">nested
+     histories</span>.</p></li>
+
+     <li><p><span>Update for navigable creation/destruction</span> given
+     <var>traversable</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Invoke <span>WebDriver BiDi navigable created</span> with <var>traversable</var>.</p></li>
+  </ol>
+  </div>
+
+
+  <h5>Jake diagrams</h5>
+
+  <p>A useful method for visualizing sequences of documents, and in particular <span
+  data-x="navigable">navigables</span> and their <span data-x="session history entry">session
+  history entries</span>, is the <dfn>Jake diagram</dfn>. A typical Jake diagram is the
+  following:</p>
+
+  <!--https://domenic.github.io/jake-diagram-generator/#IWN1cnJlbnQgPSAxCnRvcAogIDAtMjogL3QtYSB8IGRvYzEKICAzOiAvdC1hI2ZvbyB8IGRvYzEKICA0OiAvdC1iCmZyYW1lc1swXQogIDA6IC9pLTAtYQogIDEtMzogL2ktMC1iCmZyYW1lc1sxXQogIDAtMTogL2ktMS1hCiAgMi0zOiAvaS0xLWIK -->
+  <table class="jake-diagram"><thead><tr><td></td><th class="step">0</th><th class="step current">1</th><th class="step">2</th><th class="step">3</th><th class="step">4</th></tr></thead><tbody><tr><th><code data-x="">top</code></th><td colspan="3" class="doc-0 current next-is-same-doc">/t-a</td><td colspan="1" class="doc-0 prev-is-same-doc">/t-a#foo</td><td colspan="1" class="doc-1">/t-b</td></tr><tr><th><code data-x="">frames[0]</code></th><td colspan="1" class="doc-2">/i-0-a</td><td colspan="3" class="doc-3 current">/i-0-b</td></tr><tr><th><code data-x="">frames[1]</code></th><td colspan="2" class="doc-4 current">/i-1-a</td><td colspan="2" class="doc-5">/i-1-b</td></tr></tbody></table>
+
+  <p>Here, each numbered column denotes a possible value for the traversable's <span
+  data-x="tn-current-session-history-step">session history step</span>. Each labeled row depicts a
+  <span>navigable</span>, as it transitions between different URLs and documents. The first,
+  labeled <code data-x="">top</code>, being the <span>top-level traversable</span>, and the others
+  being <span data-x="child navigable">child navigables</span>. The documents are given by the
+  background color of each cell, with a new background color indicating a new document in that
+  <span>navigable</span>. The URLs are given by the text content of the cells; usually they are
+  given as <span data-x="relative URL">relative URLs</span> for brevity, unless a cross-origin case
+  is specifically under investigation. A given navigable might not exist at a given step, in which
+  case the corresponding cells are empty. The bold-italic step number depicts the <span
+  data-x="tn-current-session-history-step">current session history step</span> of the traversable,
+  and all cells with bold-italic URLs represent the <span
+  data-x="nav-current-history-entry">current session history entry</span> for that row's
+  navigable.</p>
+
+  <p>Thus, the above Jake diagram depicts the following sequence of events:</p>
+
+  <ol start="0">
+   <li><p>A <span>top-level traversable</span> is created, starting at the URL <code
+   data-x="">/t-a</code>, with two <span data-x="child navigable">child navigables</span>
+   starting at <code data-x="">/i-0-a</code> and <code data-x="">/i-1-a</code>
+   respectively.</p></li>
+
+   <li><p>The first child navigable is <span data-x="navigate">navigated</span> to another
+   document, with URL <code data-x="">/i-0-b</code>.</p></li>
+
+   <li><p>The second child navigable is <span data-x="navigate">navigated</span> to another
+   document, with URL <code data-x="">/i-1-b</code>.</p></li>
+
+   <li><p>The top-level traversable is <span data-x="navigate">navigated</span> to the
+   <em>same</em> document, updating its URL to <code data-x="">/t-a#foo</code>.</p></li>
+
+   <li><p>The top-level traversable is <span data-x="navigate">navigated</span> to another
+   document, with URL <code data-x="">/t-b</code>. (Notice how this document, of course, does not
+   carry over the old document's child navigables.)</p></li>
+
+   <li><p>The traversable was <span data-x="traverse the history by a delta">traversed by a
+   delta</span> of &minus;3, back to step 1.</p></li>
+  </ol>
+
+  <p><span data-x="Jake diagram">Jake diagrams</span> are a powerful tool for visualizing the
+  interactions of multiple navigables, navigations, and traversals. They cannot capture every
+  possible interaction &mdash; for example, they only work with a single level of nesting &mdash;
+  but we will have ocassion to use them to illustrate several complex situations throughout this
+  standard.</p>
+
+  <p class="note"><span data-x="Jake diagram">Jake diagrams</span> are named after their creator,
+  the inimitable Jake Archibald.</p>
+
+
+  <h5>Related navigable collections</h5>
+
+  <p>It is often helpful in this standard's algorithms to look at collections of <span
+  data-x="navigable">navigables</span> starting at a given <code>Document</code>. This section
+  contains a curated set of algorithms for collecting those navigables.</p>
+
+  <p class="note">The return values of these algorithms are ordered so that parents appears before
+  their children. Callers rely on this ordering.</p>
+
+  <p class="note">Starting with a <code>Document</code>, rather than a <span>navigable</span>, is
+  generally better because it makes the caller cognizant of whether they are starting with a
+  <span>fully active</span> <code>Document</code> or not. Although non-<span>fully active</span>
+  <code>Document</code>s do have ancestor and descendant navigables, they often behave as if they
+  don't (e.g., in the <code data-x="dom-parent">window.parent</code> getter).</p>
+
+  <div algorithm>
+  <p>The <dfn export for="Document">ancestor navigables</dfn> of a <code>Document</code>
+  <var>document</var> are given by these steps:</p>
+
+  <ol>
+   <li><p>Let <var>navigable</var> be <var>document</var>'s <span>node navigable</span>'s <span
+   data-x="nav-parent">parent</span>.</p></li>
+
+   <li><p>Let <var>ancestors</var> be an empty list.</p>
+
+   <li>
+    <p>While <var>navigable</var> is not null:</p>
+
+    <ol>
+     <li><p><span data-x="list prepend">Prepend</span> <var>navigable</var> to
+     <var>ancestors</var>.</p></li>
+
+     <li><p>Set <var>navigable</var> to <var>navigable</var>'s <span
+     data-x="nav-parent">parent</span>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Return <var>ancestors</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn export for="Document">inclusive ancestor navigables</dfn> of a <code>Document</code>
+  <var>document</var> are given by these steps:</p>
+
+  <ol>
+   <li><p>Let <var>navigables</var> be <var>document</var>'s <span>ancestor
+   navigables</span>.</p></li>
+
+   <li><p><span data-x="list append">Append</span> <var>document</var>'s <span>node
+   navigable</span> to <var>navigables</var>.</p></li>
+
+   <li><p>Return <var>navigables</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p id="list-of-the-descendant-browsing-contexts">The <dfn export for="Document">descendant
+  navigables</dfn> of a <code>Document</code> <var>document</var> are given by these steps:</p>
+
+  <ol>
+   <li><p>Let <var>navigables</var> be new <span>list</span>.</p></li>
+
+   <li><p>Let <var>navigableContainers</var> be a <span>list</span> of all <span
+   data-x="shadow-including descendant">shadow-including descendants</span> of <var>document</var>
+   that are <span data-x="navigable container">navigable containers</span>, in
+   <span>shadow-including tree order</span>.</p></li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>navigableContainer</var> of
+    <var>navigableContainers</var>:</p>
+
+    <ol>
+     <li><p>If <var>navigableContainer</var>'s <span>content navigable</span> is null, then
+     continue.</p></li>
+
+     <li><p><span data-x="list extend">Extend</span> <var>navigables</var> with
+     <var>navigableContainer</var>'s <span>content navigable</span>'s <span
+     data-x="nav-document">active document</span>'s <span>inclusive descendant
+     navigables</span>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Return <var>navigables</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn export for="Document">inclusive descendant navigables</dfn> of a
+  <code>Document</code> <var>document</var> are given by these steps:</p>
+
+  <ol>
+   <li><p>Let <var>navigables</var> be « <var>document</var>'s <span>node navigable</span>
+   ».</p></li>
+
+   <li><p><span data-x="list extend">Extend</span> <var>navigables</var> with <var>document</var>'s
+   <span>descendant navigables</span>.</p></li>
+
+   <li><p>Return <var>navigables</var>.</p></li>
+  </ol>
+  </div>
+
+  <p class="note">These descendant-collecting algorithms are described as looking at the DOM tree
+  of descendant <code>Document</code> objects. In reality, this is often not feasible since the DOM
+  tree can be in another process from the caller of the algorithm. Instead, implementations
+  generally replicate the appropriate trees across processes.</p>
+
+  <div algorithm>
+  <p id="document-tree-child-browsing-context">The <dfn>document-tree child navigables</dfn> of a
+  <code>Document</code> <var>document</var> are given by these steps:</p>
+
+  <ol>
+   <li><p>If <var>document</var>'s <span>node navigable</span> is null, then return the empty
+   list.</p></li>
+
+   <li><p>Let <var>navigables</var> be new <span>list</span>.</p></li>
+
+   <li><p>Let <var>navigableContainers</var> be a <span>list</span> of all <span
+   data-x="descendant">descendants</span> of <var>document</var> that are <span data-x="navigable
+   container">navigable containers</span>, in <span>tree order</span>.</p></li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>navigableContainer</var> of
+    <var>navigableContainers</var>:</p>
+
+    <ol>
+     <li><p>If <var>navigableContainer</var>'s <span>content navigable</span> is null, then
+     <span>continue</span>.</p></li>
+
+     <li><p><span data-x="list append">Append</span> <var>navigableContainer</var>'s <span>content
+     navigable</span> to <var>navigables</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Return <var>navigables</var>.</p></li>
+  </ol>
+  </div>
+
+
+  <h5 id="garbage-collection-and-browsing-contexts">Navigable destruction</h5>
+
+  <div algorithm>
+  <p>To <dfn>destroy a child navigable</dfn> given a <span>navigable container</span>
+  <var>container</var>:</p>
+
+  <ol>
+   <li><p>Let <var>navigable</var> be <var>container</var>'s <span>content
+   navigable</span>.</p></li>
+
+   <li><p>If <var>navigable</var> is null, then return.</p></li>
+
+   <li><p>Set <var>container</var>'s <span>content navigable</span> to null.</p></li>
+
+   <li><p><span>Inform the navigation API about child navigable destruction</span> given
+   <var>navigable</var>.</p></li>
+
+   <li><p><span>Destroy a document and its descendants</span> given <var>navigable</var>'s <span
+   data-x="nav-document">active document</span>.</p></li>
+
+   <li><p>Let <var>parentDocState</var> be <var>container</var>'s <span>node navigable</span>'s
+   <span data-x="nav-active-history-entry">active session history entry</span>'s <span
+   data-x="she-document-state">document state</span>.</p></li>
+
+   <li><p><span data-x="list remove">Remove</span> the <span>nested history</span> from
+   <var>parentDocState</var>'s <span data-x="document-state-nested-histories">nested
+   histories</span> whose <span data-x="nested-history-id">id</span> equals
+   <var>navigable</var>'s <span data-x="nav-id">id</span>.</p></li>
+
+   <li><p>Let <var>traversable</var> be <var>container</var>'s <span>node navigable</span>'s <span
+   data-x="nav-traversable">traversable navigable</span>.</p></li>
+
+   <li>
+    <p><span data-x="tn-append-session-history-traversal-steps">Append the following session
+    history traversal steps</span> to <var>traversable</var>:</p>
+
+    <ol>
+     <li><p><span>Update for navigable creation/destruction</span> given
+     <var>traversable</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Invoke <span>WebDriver BiDi navigable destroyed</span> with <var>navigable</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="destroy a top-level traversable">destroy</dfn> a <span>top-level
+  traversable</span> <var>traversable</var>:</p>
+
+  <ol>
+   <li><p>Let <var>browsingContext</var> be <var>traversable</var>'s <span
+   data-x="nav-bc">active browsing context</span>.</p></li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>historyEntry</var> in
+    <var>traversable</var>'s <span data-x="tn-session-history-entries">session history
+    entries</span> <span class="XXX" data-x="">in what order?</span>:</p>
+
+    <ol>
+     <li><p>Let <var>document</var> be <var>historyEntry</var>'s <span
+     data-x="she-document">document</span>.</p></li>
+
+     <li><p>If <var>document</var> is not null, then <span>destroy a document and its
+     descendants</span> given <var>document</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p><span data-x="bcg remove">Remove</span> <var>browsingContext</var>.</p></li>
+
+   <li><p>Remove <var>traversable</var> from the user interface (e.g., close or hide its tab in
+   a tabbed browser).</p></li>
+
+   <li><p><span data-x="list remove">Remove</span> <var>traversable</var> from the user agent's
+   <span>top-level traversable set</span>.</p></li>
+
+   <li><p>Invoke <span>WebDriver BiDi navigable destroyed</span> with <var>traversable</var>.</p></li>
+  </ol>
+  </div>
+
+  <p>User agents may <span>destroy a top-level traversable</span> at any time (typically, <a
+  href="#nav-traversal-ui">in response to user requests</a>).</p>
+
+  <div algorithm>
+  <p id="closing-browsing-contexts"><span id="close-a-browsing-context"></span>To <dfn export
+  id="close-a-top-level-traversable" for="top-level traversable" data-x="close a top-level
+  traversable">close</dfn> a <span>top-level traversable</span> <var>traversable</var>:</p>
+
+  <ol>
+   <li><p>If <var>traversable</var>'s <span>is closing</span> is true, then return.</p></li>
+
+   <li><p><span data-x="definitely close a top-level traversable">Definitely close</span>
+   <var>traversable</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="definitely close a top-level traversable">definitely close</dfn> a
+  <span>top-level traversable</span> <var>traversable</var>:</p>
+
+  <ol>
+   <li><p>Let <var>toUnload</var> be <var>traversable</var>'s <span data-x="nav-document">active
+   document</span>'s <span>inclusive descendant navigables</span>.</p></li>
+
+   <li><p>If the result of <span>checking if unloading is canceled</span> for <var>toUnload</var> is
+   not "<code data-x="">continue</code>", then return.</p></li>
+
+   <li>
+    <p><span data-x="tn-append-session-history-traversal-steps">Append the following session history
+    traversal steps</span> to <var>traversable</var>:</p>
+
+    <ol>
+     <li><p>Let <var>afterAllUnloads</var> be an algorithm step which <span data-x="destroy a
+     top-level traversable">destroys</span> <var>traversable</var>.</p></li>
+
+     <li><p><span>Unload a document and its descendants</span> given <var>traversable</var>'s <span
+     data-x="nav-document">active document</span>, null, and <var>afterAllUnloads</var>.</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <p class="note">The <span data-x="close a top-level traversable">close</span> vs. <span
+  data-x="definitely close a top-level traversable">definitely close</span> separation allows other
+  specifications to call <span data-x="close a top-level traversable">close</span> and have it be a
+  no-op if the top-level traversable is already closing due to JavaScript code calling <code
+  data-x="dom-window-close">window.close()</code>.</p>
+
+
+  <h5><span id="browsing-context-names"></span>Navigable target names</h5>
+
+  <p><span data-x="navigable">Navigables</span> can be given <span data-x="nav-target">target
+  names</span>, which are strings allowing certain APIs (such as <code
+  data-x="dom-open">window.open()</code> or the <code>a</code> element's <code
+  data-x="attr-hyperlink-target">target</code> attribute) to target <span
+  data-x="navigate">navigations</span> at that navigable.</p>
+
+  <div algorithm>
+  <p id="valid-browsing-context-name">A <dfn>valid navigable target name</dfn> is any string with at
+  least one character that does not contain both an <span>ASCII tab or newline</span> and a U+003C
+  (&lt;), and it does not start with a U+005F (_). (Names starting with a U+005F (_) are reserved
+  for special keywords.)</p>
+  </div>
+
+  <div algorithm>
+  <p id="valid-browsing-context-name-or-keyword">A <dfn>valid navigable target name or
+  keyword</dfn> is any string that is either a <span>valid navigable target name</span> or that is
+  an <span>ASCII case-insensitive</span> match for one of: <code data-x="">_blank</code>, <code
+  data-x="">_self</code>, <code data-x="">_parent</code>, or <code data-x="">_top</code>.</p>
+  </div>
+
+  <p>These values have different meanings based on whether the page is sandboxed or not, as
+  summarized in the following (non-normative) table. In this table, "current" means the
+  <span>navigable</span> that the link or script is in, "parent" means the <span
+  data-x="nav-parent">parent</span> of the <span>navigable</span> that the link or script is in,
+  "top" means the <span data-x="nav-top">top-level traversable</span> of the <span>navigable</span>
+  that the link or script is in, "new" means a new <span>traversable navigable</span> with a null
+  <span data-x="nav-parent">parent</span> (which may use an <span>auxiliary browsing
+  context</span>, subject to various user preferences and user agent policies), "none" means that
+  nothing will happen, and "maybe new" means the same as "new" if the "<code
+  data-x="attr-iframe-sandbox-allow-popups">allow-popups</code>" keyword is also specified on the
+  <code data-x="attr-iframe-sandbox">sandbox</code> attribute (or if the user overrode the
+  sandboxing), and the same as "none" otherwise.</p>
+
+  <table>
+   <thead>
+    <tr>
+     <th rowspan=2>Keyword
+     <th rowspan=2>Ordinary effect
+     <th colspan=2>Effect in an <code>iframe</code> with...
+    <tr>           <!-- nothing -->
+     <th><code data-x="">sandbox=""</code>
+     <th><code data-x="">sandbox="allow-top-navigation"</code>
+
+   <tbody>
+    <tr>
+     <td>none specified, for links and form submissions <!-- same as empty string -->
+     <td>current
+     <td>current
+     <td>current
+
+    <tr>
+     <td>empty string
+     <td>current
+     <td>current
+     <td>current
+
+    <tr>
+     <td><code data-x="">_blank</code>
+     <td>new
+     <td>maybe new
+     <td>maybe new
+
+    <tr>
+     <td><code data-x="">_self</code>
+     <td>current
+     <td>current
+     <td>current
+
+    <tr>
+     <td><code data-x="">_parent</code> if there isn't a parent
+     <td>current
+     <td>current
+     <td>current
+
+    <tr>
+     <td><code data-x="">_parent</code> if parent is also top
+     <td>parent/top
+     <td>none
+     <td>parent/top
+
+    <tr>
+     <td><code data-x="">_parent</code> if there is one and it's not top
+     <td>parent
+     <td>none
+     <td>none
+
+    <tr>
+     <td><code data-x="">_top</code> if top is current
+     <td>current
+     <td>current
+     <td>current
+
+    <tr>
+     <td><code data-x="">_top</code> if top is not current
+     <td>top
+     <td>none
+     <td>top
+
+    <tr>
+     <td>name that doesn't exist
+     <td>new
+     <td>maybe new
+     <td>maybe new
+
+    <tr>
+     <td>name that exists and is a descendant
+     <td>specified descendant
+     <td>specified descendant
+     <td>specified descendant
+
+    <tr>
+     <td>name that exists and is current
+     <td>current
+     <td>current
+     <td>current
+
+    <tr>
+     <td>name that exists and is an ancestor that is top
+     <td>specified ancestor
+     <td>none
+     <td>specified ancestor/top
+
+    <tr>
+     <td>name that exists and is an ancestor that is not top
+     <td>specified ancestor
+     <td>none
+     <td>none
+
+    <tr>
+     <td>other name that exists with common top
+     <td>specified
+     <td>none
+     <td>none
+
+    <tr>
+     <td>name that exists with different top, if <span data-x="familiar with">familiar</span> and <span>one permitted sandboxed navigator</span>
+     <td>specified
+     <td>specified
+     <td>specified
+
+    <tr>
+     <td>name that exists with different top, if <span data-x="familiar with">familiar</span> but not <span>one permitted sandboxed navigator</span>
+     <td>specified
+     <td>none
+     <td>none
+
+    <tr>
+     <td>name that exists with different top, not <span data-x="familiar with">familiar</span>
+     <td>new
+     <td>maybe new
+     <td>maybe new
+
+  </table>
+
+  <p class="tablenote"><small>Most of the restrictions on sandboxed browsing contexts are applied by
+  other algorithms, e.g. the <span data-x="navigate">navigation</span> algorithm, not <span>the
+  rules for choosing a navigable</span> given below.</small></p>
+
+  <hr>
+
+  <div algorithm>
+  <p>To <dfn>find a navigable by target name</dfn> given a string <var>name</var> and a
+  <span>navigable</span> <var>currentNavigable</var>:</p>
+
+  <ol>
+   <li><p>Let <var>currentDocument</var> be <var>currentNavigable</var>'s <span
+   data-x="nav-document">active document</span>.</p></li>
+
+   <li><p>Let <var>sourceSnapshotParams</var> be the result of <span>snapshotting source snapshot
+   params</span> given <var>currentDocument</var>.</p></li>
+
+   <li>
+    <p>Let <var>subtreesToSearch</var> be an <span>implementation-defined</span> choice of one of
+    the following:</p>
+
+    <ul>
+     <li><p>« <var>currentNavigable</var>'s <span data-x="nav-traversable">traversable
+     navigable</span>, <var>currentNavigable</var> »</p></li>
+
+     <li><p>the <span>inclusive ancestor navigables</span> of <var>currentDocument</var></p></li>
+    </ul>
+
+    <p class="XXX"><a href="https://github.com/whatwg/html/issues/10848">Issue #10848</a> tracks
+    settling on one of these two possibilities, to achieve interoperability.</p>
+   </li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>subtreeToSearch</var> of
+    <var>subtreesToSearch</var>, in reverse order:</p>
+
+    <ol>
+     <li><p>Let <var>documentToSearch</var> be <var>subtreeToSearch</var>'s <span
+     data-x="nav-document">active document</span>.</p></li>
+
+     <li>
+      <p><span data-x="list iterate">For each</span> <var>navigable</var> of the <span>inclusive
+      descendant navigables</span> of <var>documentToSearch</var>:</p>
+
+      <ol>
+       <li>
+        <p>If <var>currentNavigable</var> is not <span>allowed by sandboxing to navigate</span>
+        <var>navigable</var> given <var>sourceSnapshotParams</var>, then optionally
+        <span>continue</span>.</p>
+
+        <p class="XXX"><a href="https://github.com/whatwg/html/issues/10849">Issue #10849</a> tracks
+        making this check required, to achieve interoperability.</p>
+       </li>
+
+       <li><p>If <var>navigable</var>'s <span data-x="nav-target">target name</span> is
+       <var>name</var>, then return <var>navigable</var>.</p></li>
+      </ol>
+     </li>
+    </ol>
+   </li>
+
+   <li><p>Let <var>currentTopLevelBrowsingContext</var> be <var>currentNavigable</var>'s <span
+   data-x="nav-bc">active browsing context</span>'s <span data-x="bc-tlbc">top-level browsing
+   context</span>.</p></li>
+
+   <li><p>Let <var>group</var> be <var>currentTopLevelBrowsingContext</var>'s <span data-x="tlbc
+   group">group</span>.</p></li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>topLevelBrowsingContext</var> of
+    <var>group</var>'s <span>browsing context set</span>, in an <span>implementation-defined</span>
+    order (the user agent should pick a consistent ordering, such as the most recently opened, most
+    recently focused, or more closely related):</p>
+
+    <p class="XXX"><a href="https://github.com/whatwg/html/issues/10850">Issue #10850</a> tracks
+    picking a specific ordering, to achieve interoperability.</p>
+
+    <ol>
+     <li><p>If <var>currentTopLevelBrowsingContext</var> is <var>topLevelBrowsingContext</var>, then
+     <span>continue</span>.</p></li>
+
+     <li><p>Let <var>documentToSearch</var> be <var>topLevelBrowsingContext</var>'s <span>active
+     document</span>.</p></li>
+
+     <li>
+      <p><span data-x="list iterate">For each</span> <var>navigable</var> of the <span>inclusive
+      descendant navigables</span> of <var>documentToSearch</var>:</p>
+
+      <ol>
+       <li><p>If <var>currentNavigable</var>'s <span data-x="nav-bc">active browsing context</span>
+       is not <span>familiar with</span> <var>navigable</var>'s <span data-x="nav-bc">active
+       browsing context</span>, then <span>continue</span>.</p></li>
+
+       <li>
+        <p>If <var>currentNavigable</var> is not <span>allowed by sandboxing to navigate</span>
+        <var>navigable</var> given <var>sourceSnapshotParams</var>, then optionally
+        <span>continue</span>.</p>
+
+
+        <p class="XXX"><a href="https://github.com/whatwg/html/issues/10849">Issue #10849</a> tracks
+        making this check required, to achieve interoperability.</p>
+       </li>
+
+       <li><p>If <var>navigable</var>'s <span data-x="nav-target">target name</span> is
+       <var>name</var>, then return <var>navigable</var>.</p></li>
+      </ol>
+     </li>
+    </ol>
+   </li>
+
+   <li><p>Return null.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p id="the-rules-for-choosing-a-browsing-context-given-a-browsing-context-name"><dfn>The rules
+  for choosing a navigable</dfn>, given a string <var>name</var>, a <span>navigable</span>
+  <var>currentNavigable</var>, and a boolean <var>noopener</var> are as follows:</p>
+
+  <ol>
+   <li><p>Let <var>chosen</var> be null.</p></li>
+
+   <li><p>Let <var>windowType</var> be "<code data-x="">existing or none</code>".</p></li>
+
+   <li><p>Let <var>sandboxingFlagSet</var> be <var>currentNavigable</var>'s <span
+   data-x="nav-document">active document</span>'s <span>active sandboxing flag set</span>.</p></li>
+
+   <li><p>If <var>name</var> is the empty string or an <span>ASCII case-insensitive</span> match
+   for "<code data-x="">_self</code>", then set <var>chosen</var> to
+   <var>currentNavigable</var>.</p></li>
+
+   <li><p>Otherwise, if <var>name</var> is an <span>ASCII case-insensitive</span> match for "<code
+   data-x="">_parent</code>", set <var>chosen</var> to <var>currentNavigable</var>'s <span
+   data-x="nav-parent">parent</span>, if any, and <var>currentNavigable</var> otherwise.</p></li>
+
+   <li><p>Otherwise, if <var>name</var> is an <span>ASCII case-insensitive</span> match for "<code
+   data-x="">_top</code>", set <var>chosen</var> to <var>currentNavigable</var>'s <span
+   data-x="nav-traversable">traversable navigable</span>.</p></li>
+
+   <li><p>Otherwise, if <var>name</var> is not an <span>ASCII case-insensitive</span> match for
+   "<code data-x="">_blank</code>", then set <var>chosen</var> to the result of <span
+   data-x="find a navigable by target name">finding a navigable by target name</span> given
+   <var>name</var> and <var>currentNavigable</var>.</p></li>
+
+   <li>
+    <p>If <var>chosen</var> is null, then a new <span>top-level traversable</span> is being
+    requested, and what happens depends on the user agent's configuration and abilities &mdash; it
+    is determined by the rules given for the first applicable option from the following list:</p>
+
+    <dl class="switch">
+     <dt id="popup-blocker">If <var>currentNavigable</var>'s <span data-x="nav-window">active
+     window</span> does not have <span>transient activation</span> and the user agent has been
+     configured to not show popups (i.e., the user agent has a "popup blocker" enabled)</dt>
+
+     <dd><p>The user agent may inform the user that a popup has been blocked.</p></dd>
+
+     <dt id="sandboxWindowOpen">If <var>sandboxingFlagSet</var> has the <span>sandboxed auxiliary
+     navigation browsing context flag</span> set</dt>
+
+     <dd><p>The user agent may report to a developer console that a popup has been blocked.</p></dd>
+
+     <dt>If the user agent has been configured such that in this instance it will create a new <span>top-level traversable</span></dt>
+
+     <dd>
+      <ol>
+       <li><p><span>Consume user activation</span> of <var>currentNavigable</var>'s <span
+       data-x="nav-window">active window</span>.</p></li>
+
+       <li><p>Set <var>windowType</var> to "<code data-x="">new and unrestricted</code>".</p></li>
+
+       <li><p>Let <var>currentDocument</var> be <var>currentNavigable</var>'s <span
+       data-x="nav-document">active document</span>.</p></li>
+
+       <li>
+        <p>If <var>currentDocument</var>'s <span data-x="concept-document-coop">opener
+        policy</span>'s <span data-x="coop-struct-value">value</span> is "<code
+        data-x="coop-same-origin">same-origin</code>" or "<code
+        data-x="coop-same-origin-plus-coep">same-origin-plus-COEP</code>", and
+        <var>currentDocument</var>'s <span data-x="concept-document-origin">origin</span> is not
+        <span>same origin</span> with <var>currentDocument</var>'s <span>relevant settings
+        object</span>'s <span>top-level origin</span>:</p>
+
+        <ol>
+         <li><p>Set <var>noopener</var> to true.</p></li>
+
+         <li><p>Set <var>name</var> to "<code data-x="">_blank</code>".</p></li>
+
+         <li><p>Set <var>windowType</var> to "<code data-x="">new with no opener</code>".</p>
+        </ol>
+
+        <p class="note">In the presence of an <span>opener policy</span>, nested documents that are
+        cross-origin with their top-level browsing context's active document always set
+        <var>noopener</var> to true.</p>
+       </li>
+
+       <li><p>Let <var>targetName</var> be the empty string.</p></li>
+
+       <li><p>If <var>name</var> is not an <span>ASCII case-insensitive</span> match for "<code
+       data-x="">_blank</code>", then set <var>targetName</var> to <var>name</var>.</p></li>
+
+       <li id="noopener"><p>If <var>noopener</var> is true, then set <var>chosen</var> to the
+       result of <span>creating a new top-level traversable</span> given null,
+       <var>targetName</var>, and <var>currentNavigable</var>.</p></li>
+
+       <li>
+        <p>Otherwise:</p>
+
+        <ol>
+         <li><p>Set <var>chosen</var> to the result of <span>creating a new top-level
+         traversable</span> given <var>currentNavigable</var>'s <span data-x="nav-bc">active
+         browsing context</span>, <var>targetName</var>, and <var>currentNavigable</var>.</p></li>
+
+         <li><p>If <var>sandboxingFlagSet</var>'s <span>sandboxed navigation browsing context
+         flag</span> is set, then set <var>chosen</var>'s <span data-x="nav-bc">active browsing
+         context</span>'s <span>one permitted sandboxed navigator</span> to
+         <var>currentNavigable</var>'s <span data-x="nav-bc">active browsing
+         context</span>.</p></li>
+        </ol>
+       </li>
+
+       <li><p>If <var>sandboxingFlagSet</var>'s <span>sandbox propagates to auxiliary browsing
+       contexts flag</span> is set, then all the flags that are set in <var>sandboxingFlagSet</var>
+       must be set in <var>chosen</var>'s <span data-x="nav-bc">active browsing context</span>'s
+       <span>popup sandboxing flag set</span>.</p></li>
+
+       <li><p>Set <var>chosen</var>'s <span>is created by web content</span> to true.</p></li>
+      </ol>
+
+      <p class="note">If the newly created <span>navigable</span> <var>chosen</var> is immediately
+      <span data-x="navigate">navigated</span>, then the navigation will be done as a "<code
+      data-x="NavigationHistoryBehavior-replace">replace</code>" navigation.</p>
+     </dd>
+
+     <dt>If the user agent has been configured such that in this instance it will choose <var>currentNavigable</var></dt>
+
+     <dd><p>Set <var>chosen</var> to <var>currentNavigable</var>.</p></dd>
+
+     <dt>If the user agent has been configured such that in this instance it will not find a navigable</dt>
+
+     <dd><p>Do nothing.</p></dd>
+    </dl>
+
+    <p class="note">User agents are encouraged to provide a way for users to configure the user
+    agent to always choose <var>currentNavigable</var>.</p>
+   </li>
+
+   <li><p>Return <var>chosen</var> and <var>windowType</var>.</p></li>
+  </ol>
+  </div>
+
+

@@ -1,0 +1,24 @@
+WHATWG HTML — section worklets-speculative — Speculative evaluation
+
+  <h4 id="worklets-speculative">Speculative evaluation</h4>
+
+  <p>Some specifications which use worklets can invoke methods on a web-developer-provided class
+  based on the state of the user agent. To increase concurrency between threads, a user agent may
+  invoke a method speculatively, based on potential future states.</p>
+
+  <p>In these specifications, user agents might invoke such methods at any time, and with any
+  arguments, not just ones corresponding to the current state of the user agent. The results of such
+  speculative evaluations are not displayed immediately, but can be cached for use if the user agent
+  state matches the speculated state. This can increase the concurrency between the user agent and
+  worklet threads.</p>
+
+  <p>As a result of this, to prevent interoperability risks between user agents, authors who
+  register classes on such <code>WorkletGlobalScope</code>s should make their code stateless. That
+  is, the only effect of invoking a method should be its result, and not any side effects such as
+  updating mutable state.</p>
+
+  <p>The same techniques which encourage <a href="#worklets-idempotent">code idempotence</a> also
+  encourage authors to write stateless code.</p>
+
+  <div class="non-normative">
+

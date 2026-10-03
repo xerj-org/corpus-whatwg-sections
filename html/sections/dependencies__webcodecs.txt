@@ -1,0 +1,14 @@
+WHATWG HTML — section dependencies/webcodecs — WebCodecs
+
+   <dt>WebCodecs</dt>
+
+   <dd>
+    <p>The following features are defined in <cite>WebCodecs</cite>: <ref>WEBCODECS</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://w3c.github.io/webcodecs/#videoframe-interface"><code>VideoFrame</code></dfn> interface.</li>
+     <li><dfn data-x-href="https://w3c.github.io/webcodecs/#dom-videoframe-display-width-slot">[[display width]]</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/webcodecs/#dom-videoframe-display-height-slot">[[display height]]</dfn></li>
+    </ul>
+   </dd>
+

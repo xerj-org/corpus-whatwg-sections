@@ -1,0 +1,430 @@
+WHATWG HTML — section shared-document-creation-infrastructure — Shared document creation infrastructure
+
+  <h4>Shared document creation infrastructure</h4>
+
+  <div algorithm>
+  <p>When loading a document using one of the below algorithms, we use the
+  following steps to <!--en-GB--><dfn id="initialise-the-document-object"
+  data-x="create-the-document-object">create and initialize a <code>Document</code> object</dfn>,
+  given a <span data-x="concept-document-type">type</span> <var>type</var>, <span
+  data-x="concept-document-content-type">content type</span> <var>contentType</var>, and
+  <span>navigation params</span> <var>navigationParams</var>:</p>
+
+  <p class="note"><code>Document</code> objects are also created when <span>creating a new browsing
+  context and document</span>; such <span data-x="is initial about:blank">initial
+  <code>about:blank</code></span> <code>Document</code> are never created by this algorithm. Also,
+  <span data-x="concept-document-bc">browsing context</span>-less <code>Document</code> objects can
+  be created via various APIs, such as <code
+  data-x="dom-DOMImplementation-createHTMLDocument">document.implementation.createHTMLDocument()</code>.</p>
+
+  <ol>
+   <li>
+    <p>Let <var>browsingContext</var> be the result of <span
+    data-x="obtain-browsing-context-navigation">obtaining a browsing context to use for a
+    navigation response</span> given <var>navigationParams</var>.</p>
+
+    <p class="note">This can result in a <a
+    href="#browsing-context-group-switches-due-to-cross-origin-opener-policy">browsing context
+    group switch</a>, in which case <var>browsingContext</var> will be a <span data-x="creating a
+    new browsing context and document">newly-created</span> <span>browsing context</span> instead
+    of being <var>navigationParams</var>'s <span
+    data-x="navigation-params-navigable">navigable</span>'s <span data-x="nav-bc">active browsing
+    context</span>. In such a case, the created <code>Window</code>, <code>Document</code>, and
+    <span>agent</span> will not end up being used; because the created <code>Document</code>'s
+    <span data-x="concept-document-origin">origin</span> is <span
+    data-x="concept-origin-opaque">opaque</span>, we will end up creating a new <span>agent</span>
+    and <code>Window</code> <a href="#create-new-agent-and-window">later in this algorithm</a> to
+    go along with the new <code>Document</code>.</p>
+   </li>
+
+   <li>
+    <p>Let <var>permissionsPolicy</var> be the result of <span>creating a permissions policy from a
+    response</span> given <var>navigationParams</var>'s <span
+    data-x="navigation-params-navigable">navigable</span>'s <span
+    data-x="nav-container">container</span>, <var>navigationParams</var>'s <span
+    data-x="navigation-params-origin">origin</span>, and <var>navigationParams</var>'s <span
+    data-x="navigation-params-response">response</span>. <ref>PERMISSIONSPOLICY</ref></p>
+
+    <div class="note">
+     <p>The <span>creating a permissions policy from a response</span> algorithm makes use of the
+     passed <span>origin</span>. If <code data-x="dom-document-domain">document.domain</code> has
+     been used for <var>navigationParams</var>'s <span
+     data-x="navigation-params-navigable">navigable</span>'s <span
+     data-x="nav-container-document">container document</span>, then its <span
+     data-x="concept-document-origin">origin</span> cannot be <span>same origin-domain</span> with
+     the passed origin, because these steps run before the <var>document</var> is created, so it
+     cannot itself yet have used <code data-x="dom-document-domain">document.domain</code>. Note
+     that this means that Permissions Policy checks are less permissive compared to doing a
+     <span>same origin</span> check instead.</p>
+
+     <p>See below for some examples of this in action.</p>
+    </div>
+   </li>
+
+   <li><p>Let <var>creationURL</var> be <var>navigationParams</var>'s <span
+   data-x="navigation-params-response">response</span>'s <span
+   data-x="concept-response-url">URL</span>.</p></li>
+
+   <li><p>If <var>navigationParams</var>'s <span data-x="navigation-params-request">request</span>
+   is non-null, then set <var>creationURL</var> to <var>navigationParams</var>'s <span
+   data-x="navigation-params-request">request</span>'s <span
+   data-x="concept-request-current-url">current URL</span>.</p></li>
+
+   <li><p>Let <var>window</var> be null.</p></li>
+
+   <li>
+    <p>If <var>browsingContext</var>'s <span>active document</span>'s <span>is initial
+    <code>about:blank</code></span> is true, and <var>browsingContext</var>'s <span>active
+    document</span>'s <span data-x="concept-document-origin">origin</span> is <span>same
+    origin-domain</span> with <var>navigationParams</var>'s <span
+    data-x="navigation-params-origin">origin</span>, then set <var>window</var> to
+    <var>browsingContext</var>'s <span>active window</span>.</p>
+
+    <p class="note">This means that both the <span data-x="is initial about:blank">initial
+    <code>about:blank</code></span> <code>Document</code>, and the new <code>Document</code> that
+    is about to be created, will share the same <code>Window</code> object.</p>
+   </li>
+
+   <li id="create-new-agent-and-window">
+    <p>Otherwise:</p>
+
+    <ol>
+     <li><p>Let <var>oacHeader</var> be the result of <span>getting a structured field value</span>
+     given `<code>Origin-Agent-Cluster</code>` and "<code data-x="">item</code>" from
+     <var>navigationParams</var>'s <span data-x="navigation-params-response">response</span>'s
+     <span data-x="concept-response-header-list">header list</span>.</p></li>
+
+     <li><p>Let <var>requestsOAC</var> be true if <var>oacHeader</var> is not
+     null and <var>oacHeader</var>[0] is the <span
+     data-x="http-structured-header-boolean">boolean</span> true; otherwise false.</p></li>
+
+     <li><p>If <var>navigationParams</var>'s <span
+     data-x="navigation-params-reserved-environment">reserved environment</span> is a
+     <span>non-secure context</span>, then set <var>requestsOAC</var> to false.</p></li>
+
+     <li><p>Let <var>agent</var> be the result of <span
+     data-x="obtain-similar-origin-window-agent">obtaining a similar-origin window agent</span>
+     given <var>navigationParams</var>'s <span data-x="navigation-params-origin">origin</span>,
+     <var>browsingContext</var>'s <span data-x="tlbc group">group</span>, and
+     <var>requestsOAC</var>.</p></li>
+
+     <li>
+      <p>Let <var>realmExecutionContext</var> be the result of <span>creating a new realm</span>
+      given <var>agent</var> and the following customizations:</p>
+
+      <ul>
+       <li><p>For the global object, create a new <code>Window</code> object.</p></li>
+
+       <li><p>For the global <b>this</b> binding, use <var>browsingContext</var>'s
+       <code>WindowProxy</code> object.</p></li>
+      </ul>
+     </li>
+
+     <li><p>Set <var>window</var> to the <span data-x="concept-realm-global">global
+     object</span> of <var>realmExecutionContext</var>'s Realm component.</p></li>
+
+     <li><p>Let <var>topLevelCreationURL</var> be <var>creationURL</var>.</p></li>
+
+     <li><p>Let <var>topLevelOrigin</var> be <var>navigationParams</var>'s <span
+     data-x="navigation-params-origin">origin</span>.</p></li>
+
+     <li>
+      <p>If <var>navigable</var>'s <span data-x="nav-container">container</span> is not null:</p>
+
+      <ol>
+       <li><p>Let <var>parentEnvironment</var> be <var>navigable</var>'s <span
+       data-x="nav-container">container</span>'s <span>relevant settings object</span>.</p></li>
+
+       <li><p>Set <var>topLevelCreationURL</var> to <var>parentEnvironment</var>'s <span>top-level
+       creation URL</span>.</p></li>
+
+       <li><p>Set <var>topLevelOrigin</var> to <var>parentEnvironment</var>'s <span>top-level
+       origin</span>.</p></li>
+      </ol>
+     </li>
+
+     <li><p><span>Set up a window environment settings object</span> with <var>creationURL</var>,
+     <var>realmExecutionContext</var>, <var>navigationParams</var>'s <span
+     data-x="navigation-params-reserved-environment">reserved environment</span>,
+     <var>topLevelCreationURL</var>, and <var>topLevelOrigin</var>.</p></li>
+    </ol>
+
+    <p class="note">This is the usual case, where the new <code>Document</code> we're about to
+    create gets a new <code>Window</code> to go along with it.</p>
+   </li>
+
+   <li><p>Let <var>loadTimingInfo</var> be a new <span>document load timing info</span> with its
+   <span>navigation start time</span> set to <var>navigationParams</var>'s <span
+   data-x="navigation-params-response">response</span>'s <span
+   data-x="concept-response-timing-info">timing info</span>'s <span
+   data-x="fetch-timing-info-start-time">start time</span>.</p></li>
+
+   <li>
+    <p>Let <var>document</var> be a new <code>Document</code>, with</p>
+
+    <dl class="props">
+     <dt><span data-x="concept-document-type">type</span></dt>
+     <dd><var>type</var></dd>
+
+     <dt><span data-x="concept-document-content-type">content type</span></dt>
+     <dd><var>contentType</var></dd>
+
+     <dt><span data-x="concept-document-origin">origin</span></dt>
+     <dd><var>navigationParams</var>'s <span data-x="navigation-params-origin">origin</span></dd>
+
+     <dt><span data-x="concept-document-bc">browsing context</span></dt>
+     <dd><var>browsingContext</var>
+
+     <dt><span data-x="concept-document-policy-container">policy container</span></dt>
+     <dd><var>navigationParams</var>'s <span data-x="navigation-params-policy-container">policy
+     container</span></dd>
+
+     <dt><span data-x="concept-document-permissions-policy">permissions policy</span></dt>
+     <dd><var>permissionsPolicy</var></dd>
+
+     <dt><span>active sandboxing flag set</span></dt>
+     <dd><var>navigationParams</var>'s <span data-x="navigation-params-sandboxing">final sandboxing
+     flag set</span></dd>
+
+     <dt><span data-x="concept-document-coop">opener policy</span></dt>
+     <dd><var>navigationParams</var>'s <span data-x="navigation-params-coop">cross-origin opener
+     policy</span></dd>
+
+     <dt><span>load timing info</span></dt>
+     <dd><var>loadTimingInfo</var></dd>
+
+     <dt><span>was created via cross-origin redirects</span></dt>
+     <dd>true if <var>navigationParams</var>'s <span
+     data-x="navigation-params-response">response</span>'s <span
+     data-x="concept-response-redirect-taint">redirect taint</span> is not "<code
+     data-x="">same-origin</code>"; otherwise false</dd>
+
+     <dt><span data-x="concept-document-navigation-id">during-loading navigation ID for WebDriver BiDi</span></dt>
+     <dd><var>navigationParams</var>'s <span data-x="navigation-params-id">id</span></dd>
+
+     <dt><span data-x="concept-document-url">URL</span></dt>
+     <dd><var>creationURL</var></dd>
+
+     <dt><span>current document readiness</span></dt>
+     <dd>"<code data-x="">loading</code>"</dd>
+
+     <dt><span data-x="concept-document-about-base-url">about base URL</span></dt>
+     <dd><var>navigationParams</var>'s <span data-x="navigation-params-about-base-URL">about base URL</span></dd>
+
+     <dt><span data-x="concept-document-allow-declarative-shadow-roots">allow declarative shadow
+     roots</span></dt>
+     <dd>true</dd>
+
+     <dt><span data-x="document-custom-element-registry">custom element registry</span></dt>
+     <dd>a new <code>CustomElementRegistry</code> object</dd>
+    </dl>
+   </li>
+
+   <li><p>Set <var>window</var>'s <span data-x="concept-document-window">associated
+   <code>Document</code></span> to <var>document</var>.</p></li>
+
+   <li><p>Set <var>document</var>'s <span
+   data-x="concept-document-internal-ancestor-origin-objects-list">internal ancestor origin objects
+   list</span> to the result of running the <span>internal ancestor origin objects list creation
+   steps</span> given <var>document</var> and <var>navigationParams</var>'s <span
+   data-x="navigation-params-iframe-referrer-policy"><code>iframe</code> element referrer
+   policy</span>.</p></li>
+
+   <li><p>Set <var>document</var>'s <span data-x="concept-document-ancestor-origins-list">ancestor
+   origins list</span> to the result of running the <span>ancestor origins list creation
+   steps</span> given <var>document</var>.</p></li>
+
+   <li><p><span>Run CSP initialization for a <code data-x="">Document</code></span> given
+   <var>document</var>. <ref>CSP</ref></p>
+
+   <li>
+    <p>If <var>navigationParams</var>'s <span data-x="navigation-params-request">request</span> is
+    non-null:</p>
+
+    <ol>
+     <li><p>Set <var>document</var>'s <span data-x="the document's referrer">referrer</span> to the
+     empty string.</p></li>
+
+     <li><p>Let <var>referrer</var> be <var>navigationParams</var>'s <span
+     data-x="navigation-params-request">request</span>'s <span
+     data-x="concept-request-referrer">referrer</span>.</p></li>
+
+     <li>
+      <p>If <var>referrer</var> is a <span>URL record</span>, then set <var>document</var>'s <span
+      data-x="the document's referrer">referrer</span> to the <span
+      data-x="concept-url-serializer">serialization</span> of <var>referrer</var>.</p>
+
+      <p class="note">Per <cite>Fetch</cite>, <var>referrer</var> will be either a <span>URL
+      record</span> or "<code data-x="">no-referrer</code>" at this point.</p>
+     </li>
+    </ol>
+   </li>
+
+   <li>
+    <p>If <var>navigationParams</var>'s <span data-x="navigation-params-fetch-controller">fetch
+    controller</span> is not null:</p>
+
+    <ol>
+     <li><p>Let <var>fullTimingInfo</var> be the result of <span data-x="extract full timing
+     info">extracting the full timing info</span> from <var>navigationParams</var>'s <span
+     data-x="navigation-params-fetch-controller">fetch controller</span>.</p></li>
+
+     <li><p>Let <var>redirectCount</var> be 0.</p></li>
+
+     <li>
+      <p>If <var>navigationParams</var>'s <span
+      data-x="navigation-params-response">response</span>'s <span
+      data-x="concept-response-redirect-taint">redirect taint</span> is "<code
+      data-x="">same-origin</code>", or all of the following are true:</p>
+
+      <ul>
+       <li><p><var>navigationParams</var>'s <span
+       data-x="navigation-params-request">request</span>'s <span
+       data-x="concept-request-client">client</span> is null, or <var>navigationParams</var>'s
+       <span data-x="navigation-params-request">request</span>'s <span
+       data-x="concept-request-referrer">referrer</span> is not "<code
+       data-x="">no-referrer</code>", and</p></li>
+
+       <li><p><span data-x="navigation TAO check">navigation TAO check</span> given
+       <var>navigationParams</var>'s <span data-x="navigation-params-response">response</span>
+       and <var>navigationParams</var>'s <span data-x="navigation-params-origin">origin</span>
+       returns <span>success</span>,</p></li>
+      </ul>
+
+      <p>then set <var>redirectCount</var> to <var>navigationParams</var>'s <span
+      data-x="navigation-params-request">request</span>'s <span
+      data-x="concept-request-redirect-count">redirect count</span>.</p>
+     </li>
+
+     <li><p><span>Create the navigation timing entry</span> for <var>document</var>, given
+     <var>fullTimingInfo</var>, <var>redirectCount</var>, <var>navigationTimingType</var>,
+     <var>navigationParams</var>'s <span data-x="navigation-params-response">response</span>'s
+     <span data-x="concept-response-service-worker-timing-info">service worker timing info</span>,
+     and <var>navigationParams</var>'s <span data-x="navigation-params-response">response</span>'s
+     <span data-x="concept-response-body-info">body info</span>.</p></li>
+    </ol>
+   </li>
+
+   <li><p><span>Create the navigation timing entry</span> for <var>document</var>, with
+   <var>navigationParams</var>'s <span data-x="navigation-params-response">response</span>'s <span
+   data-x="concept-response-timing-info">timing info</span>, <var>redirectCount</var>,
+   <var>navigationParams</var>'s <span data-x="navigation-params-nav-timing-type">navigation timing
+   type</span>, and <var>navigationParams</var>'s <span
+   data-x="navigation-params-response">response</span>'s <span
+   data-x="concept-response-service-worker-timing-info">service worker timing info</span>.</p></li>
+
+   <li>
+    <p>If <var>navigationParams</var>'s <span data-x="navigation-params-response">response</span>
+    has a `<code>Refresh</code>` header:</p>
+
+    <ol>
+     <li><p>Let <var>value</var> be the <span data-x="isomorphic decode">isomorphic decoding</span>
+     of the value of the header.</p></li>
+
+     <li><p>Run the <span>shared declarative refresh steps</span> with <var>document</var> and
+     <var>value</var>.</p></li>
+    </ol>
+
+    <p class="XXX">We do not currently have a spec for how to handle multiple `<code>Refresh</code>`
+    headers. This is tracked as <a
+    href="https://github.com/whatwg/html/issues/2900">issue #2900</a>.</p>
+   </li>
+
+   <li><p>If <var>navigationParams</var>'s <span
+   data-x="navigation-params-commit-early-hints">commit early hints</span> is not null, then call
+   <var>navigationParams</var>'s <span data-x="navigation-params-commit-early-hints">commit early
+   hints</span> with <var>document</var>.</p></li>
+
+   <li><p><span>Process link headers</span> given <var>document</var>,
+   <var>navigationParams</var>'s <span data-x="navigation-params-response">response</span>, and
+   "<code data-x="">pre-media</code>".</p></li>
+
+   <li>
+    <p>If <var>navigationParams</var>'s <span data-x="navigation-params-navigable">navigable</span>
+    is a <span>top-level traversable</span>, then <span>process the `<code>Speculation-Rules</code>`
+    header</span> given <var>document</var> and <var>navigationParams</var>'s <span
+    data-x="navigation-params-response">response</span>.</p>
+
+    <p class="note">This is conditional because <a
+    href="#step-consider-speculative-loads-top-level-only">speculative loads are only considered for
+    top-level traversables</a>, so it would be wasteful to fetch these rules otherwise.</p>
+   </li>
+
+   <li><p><span>Potentially free deferred fetch quota</span> for <var>document</var>.</p></li>
+
+   <li><p>Return <var>document</var>.</p></li>
+  </ol>
+  </div>
+
+  <div class="example">
+   <p>In this example, the child document is not allowed to use <code>PaymentRequest</code>,
+   despite being <span>same origin-domain</span> at the time the child document tries to use
+   it. At the time the child document is initialized, only the parent document has set <code
+   data-x="dom-document-domain">document.domain</code>, and the child document has not.</p>
+
+   <pre><code class="html">&lt;!-- https://foo.example.com/a.html -->
+&lt;!doctype html>
+&lt;script>
+document.domain = 'example.com';
+&lt;/script>
+&lt;iframe src=b.html>&lt;/iframe></code></pre>
+
+  <pre><code class="html">&lt;!-- https://bar.example.com/b.html -->
+&lt;!doctype html>
+&lt;script>
+document.domain = 'example.com'; // This happens after the document is initialized
+new PaymentRequest(&hellip;); // Not allowed to use
+&lt;/script></code></pre>
+  </div>
+
+  <div class="example">
+   <p>In this example, the child document <em>is</em> allowed to use
+   <code>PaymentRequest</code>, despite not being <span>same origin-domain</span> at the time
+   the child document tries to use it. At the time the child document is initialized, none of
+   the documents have set <code data-x="dom-document-domain">document.domain</code> yet so
+   <span>same origin-domain</span> falls back to a normal <span>same origin</span> check.</p>
+
+   <pre><code class="html">&lt;!-- https://example.com/a.html -->
+&lt;!doctype html>
+&lt;iframe src=b.html>&lt;/iframe>
+&lt;!-- The child document is now initialized, before the script below is run. -->
+&lt;script>
+document.domain = 'example.com';
+&lt;/script></code></pre>
+
+   <pre><code class="html">&lt;!-- https://example.com/b.html -->
+&lt;!doctype html>
+&lt;script>
+new PaymentRequest(&hellip;); // Allowed to use
+&lt;/script></code></pre>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>populate with <code>html</code>/<code>head</code>/<code>body</code></dfn> given a
+  <code>Document</code> <var>document</var>:</p>
+
+  <ol>
+   <li><p>Let <var>html</var> be the result of <span data-x="create an element">creating an
+   element</span> given <var>document</var>, "<code data-x="">html</code>", and the <span>HTML
+   namespace</span>.</p></li>
+
+   <li><p>Let <var>head</var> be the result of <span data-x="create an element">creating an
+   element</span> given <var>document</var>, "<code data-x="">head</code>", and the <span>HTML
+   namespace</span>.</p></li>
+
+   <li><p>Let <var>body</var> be the result of <span data-x="create an element">creating an
+   element</span> given <var>document</var>, "<code data-x="">body</code>", and the <span>HTML
+   namespace</span>.</p></li>
+
+   <li><p><span data-x="concept-node-append">Append</span> <var>html</var> to
+   <var>document</var>.</p></li>
+
+   <li><p><span data-x="concept-node-append">Append</span> <var>head</var> to
+   <var>html</var>.</p></li>
+
+   <li><p><span data-x="concept-node-append">Append</span> <var>body</var> to
+   <var>html</var>.</p></li>
+  </ol>
+  </div>
+
+

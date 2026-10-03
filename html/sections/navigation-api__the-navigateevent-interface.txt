@@ -1,0 +1,417 @@
+WHATWG HTML — section navigation-api/the-navigateevent-interface — The <code>NavigateEvent</code> interface
+
+  <h6>The <code>NavigateEvent</code> interface</h6>
+
+  <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>NavigateEvent</dfn> : <span>Event</span> {
+  constructor(DOMString type, <span>NavigateEventInit</span> eventInitDict);
+
+  readonly attribute <span>NavigationType</span> <span data-x="dom-NavigateEvent-navigationType">navigationType</span>;
+  readonly attribute <span>NavigationDestination</span> <span data-x="dom-NavigateEvent-destination">destination</span>;
+  readonly attribute boolean <span data-x="dom-NavigateEvent-canIntercept">canIntercept</span>;
+  readonly attribute boolean <span data-x="dom-NavigateEvent-userInitiated">userInitiated</span>;
+  readonly attribute boolean <span data-x="dom-NavigateEvent-hashChange">hashChange</span>;
+  readonly attribute <span>AbortSignal</span> <span data-x="dom-NavigateEvent-signal">signal</span>;
+  readonly attribute <code>FormData</code>? <span data-x="dom-NavigateEvent-formData">formData</span>;
+  readonly attribute DOMString? <span data-x="dom-NavigateEvent-downloadRequest">downloadRequest</span>;
+  readonly attribute any <span data-x="dom-NavigateEvent-info">info</span>;
+  readonly attribute boolean <span data-x="dom-NavigateEvent-hasUAVisualTransition">hasUAVisualTransition</span>;
+  readonly attribute Element? <span data-x="dom-NavigateEvent-sourceElement">sourceElement</span>;
+
+  undefined <span data-x="dom-NavigateEvent-intercept">intercept</span>(optional <span>NavigationInterceptOptions</span> options = {});
+  undefined <span data-x="dom-NavigateEvent-scroll">scroll</span>();
+};
+
+dictionary <dfn dictionary>NavigateEventInit</dfn> : <span>EventInit</span> {
+  <span>NavigationType</span> <dfn dict-member for="NavigateEventInit" data-x="dom-NavigateEventInit-navigationType">navigationType</dfn> = "<span data-x="dom-NavigationType-push">push</span>";
+  required <span>NavigationDestination</span> <dfn dict-member for="NavigateEventInit" data-x="dom-NavigateEventInit-destination">destination</dfn>;
+  boolean <dfn dict-member for="NavigateEventInit" data-x="dom-NavigateEventInit-canIntercept">canIntercept</dfn> = false;
+  boolean <dfn dict-member for="NavigateEventInit" data-x="dom-NavigateEventInit-userInitiated">userInitiated</dfn> = false;
+  boolean <dfn dict-member for="NavigateEventInit" data-x="dom-NavigateEventInit-hashChange">hashChange</dfn> = false;
+  required <span>AbortSignal</span> <dfn dict-member for="NavigateEventInit" data-x="dom-NavigateEventInit-signal">signal</dfn>;
+  <span>FormData</span>? <dfn dict-member for="NavigateEventInit" data-x="dom-NavigateEventInit-formData">formData</dfn> = null;
+  DOMString? <dfn dict-member for="NavigateEventInit" data-x="dom-NavigateEventInit-downloadRequest">downloadRequest</dfn> = null;
+  any <dfn dict-member for="NavigateEventInit" data-x="dom-NavigateEventInit-info">info</dfn>;
+  boolean <dfn dict-member for="NavigateEventInit" data-x="dom-NavigateEventInit-hasUAVisualTransition">hasUAVisualTransition</dfn> = false;
+  Element? <dfn dict-member for="NavigateEventInit" data-x="dom-NavigateEventInit-sourceElement">sourceElement</dfn> = null;
+};
+
+dictionary <dfn dictionary>NavigationInterceptOptions</dfn> {
+  <span>NavigationPrecommitHandler</span> <dfn dict-member for="NavigationInterceptOptions" data-x="dom-NavigationInterceptOptions-precommitHandler">precommitHandler</dfn>;
+  <span>NavigationInterceptHandler</span> <dfn dict-member for="NavigationInterceptOptions" data-x="dom-NavigationInterceptOptions-handler">handler</dfn>;
+  <span>NavigationFocusReset</span> <dfn dict-member for="NavigationInterceptOptions" data-x="dom-NavigationInterceptOptions-focusReset">focusReset</dfn>;
+  <span>NavigationScrollBehavior</span> <dfn dict-member for="NavigationInterceptOptions" data-x="dom-NavigationInterceptOptions-scroll">scroll</dfn>;
+};
+
+enum <dfn enum>NavigationFocusReset</dfn> {
+  "<dfn enum-value for="NavigationFocusReset" data-x="dom-NavigationFocusReset-after-transition">after-transition</dfn>",
+  "<dfn enum-value for="NavigationFocusReset" data-x="dom-NavigationFocusReset-manual">manual</dfn>"
+};
+
+enum <dfn enum>NavigationScrollBehavior</dfn> {
+  "<dfn enum-value for="NavigationScrollBehavior" data-x="dom-NavigationScrollBehavior-after-transition">after-transition</dfn>",
+  "<dfn enum-value for="NavigationScrollBehavior" data-x="dom-NavigationScrollBehavior-manual">manual</dfn>"
+};
+
+callback <dfn callback>NavigationInterceptHandler</dfn> = <span data-x="idl-Promise">Promise</span>&lt;undefined> ();</code></pre>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>event</var>.<span subdfn data-x="dom-NavigateEvent-navigationType">navigationType</span></code></dt>
+   <dd><p>One of "<code data-x="dom-NavigationType-push">push</code>", "<code
+   data-x="dom-NavigationType-replace">replace</code>", "<code
+   data-x="dom-NavigationType-reload">reload</code>", or "<code
+   data-x="dom-NavigationType-traverse">traverse</code>", indicating what type of navigation this
+   is.</p></dd>
+
+   <dt><code data-x=""><var>event</var>.<span subdfn data-x="dom-NavigateEvent-destination">destination</span></code></dt>
+   <dd><p>A <code>NavigationDestination</code> representing the destination of the
+   navigation.</p></dd>
+
+   <dt><code data-x=""><var>event</var>.<span subdfn data-x="dom-NavigateEvent-canIntercept">canIntercept</span></code></dt>
+   <dd>
+    <p>True if <code data-x="dom-NavigateEvent-intercept">intercept()</code> can be called to
+    intercept this navigation and convert it into a same-document navigation, replacing its usual
+    behavior; false otherwise.</p>
+
+    <p>Generally speaking, this will be true whenever the current <code>Document</code> <span>can
+    have its URL rewritten</span> to the destination URL, except for in the case of cross-document
+    "<code data-x="dom-NavigationType-traverse">traverse</code>" navigations, where it will always
+    be false.</p>
+   </dd>
+
+   <dt><code data-x=""><var>event</var>.<span subdfn data-x="dom-NavigateEvent-userInitiated">userInitiated</span></code></dt>
+   <dd><p>True if this navigation was due to a user clicking on an <code>a</code> element,
+   submitting a <code>form</code> element, or using the <a href="#nav-traversal-ui">browser UI</a>
+   to navigate; false otherwise.</p></dd>
+
+   <dt><code data-x=""><var>event</var>.<span subdfn data-x="dom-NavigateEvent-hashChange">hashChange</span></code></dt>
+   <dd><p>True for a <span data-x="navigate-fragid">fragment navigation</span>; false
+   otherwise.</p></dd>
+
+   <dt><code data-x=""><var>event</var>.<span subdfn data-x="dom-NavigateEvent-signal">signal</span></code></dt>
+   <dd>
+    <p>An <code>AbortSignal</code> which will become aborted if the navigation gets canceled, e.g.,
+    by the user pressing their browser's "Stop" button, or by another navigation interrupting this
+    one.</p>
+
+    <p>The expected pattern is for developers to pass this along to any async operations, such as
+    <code>fetch()</code>, which they perform as part of handling this navigation.</p>
+   </dd>
+
+   <dt><code data-x=""><var>event</var>.<span subdfn data-x="dom-NavigateEvent-formData">formData</span></code></dt>
+   <dd>
+    <p>The <code>FormData</code> representing the submitted form entries for this navigation, if
+    this navigation is a "<code data-x="dom-NavigationType-push">push</code>" or "<code
+    data-x="dom-NavigationType-replace">replace</code>" navigation representing a POST <span
+    data-x="concept-form-submit">form submission</span>; null otherwise.</p>
+
+    <p>(Notably, this will be null even for "<code data-x="dom-NavigationType-reload">reload</code>"
+    or "<code data-x="dom-NavigationType-traverse">traverse</code>" navigations that are revisiting
+    a <span>session history entry</span> that was originally created from a form submission.)</p>
+   </dd>
+
+   <dt><code data-x=""><var>event</var>.<span subdfn data-x="dom-NavigateEvent-downloadRequest">downloadRequest</span></code></dt>
+   <dd>
+    <p>Represents whether or not this navigation was requested to be a download, by using an
+    <code>a</code> or <code>area</code> element's <code
+    data-x="attr-hyperlink-download">download</code> attribute:</p>
+
+    <ul>
+     <li><p>If a download was not requested, then this property is null.</p></li>
+
+     <li><p>If a download was requested, returns the filename that was supplied as the <code
+     data-x="attr-hyperlink-download">download</code> attribute's value. (This could be the empty
+     string.)</p></li>
+    </ul>
+
+    <p>Note that a download being requested does not always mean that a download will happen: for
+    example, a download might be blocked by browser security policies, or end up being treated as a
+    "<code data-x="NavigationHistoryBehavior-push">push</code>" navigation for <a
+    href="https://github.com/whatwg/html/issues/7718" class="XXX">unspecified reasons</a>.</p>
+
+    <p>Similarly, a navigation might end up being a download even if it was not requested to be one,
+    due to the destination server responding with a `<code
+    data-x="http-content-disposition">Content-Disposition: attachment</code>` header.</p>
+
+    <p>Finally, note that the <code data-x="event-navigate">navigate</code> event will not fire at
+    all for downloads initiated using browser UI affordances, e.g., those created by right-clicking
+    and choosing to save the target of a link.</p>
+   </dd>
+
+   <dt><code data-x=""><var>event</var>.<span subdfn data-x="dom-NavigateEvent-info">info</span></code></dt>
+   <dd><p>An arbitrary JavaScript value passed via one of the <a
+   href="#navigation-api-initiating-navigations">navigation API methods</a> which initiated this
+   navigation, or undefined if the navigation was initiated by the user or by a different
+   API.</p></dd>
+
+   <dt><code data-x=""><var>event</var>.<span subdfn data-x="dom-NavigateEvent-hasUAVisualTransition">hasUAVisualTransition</span></code></dt>
+   <dd><p>Returns true if the user agent performed a visual transition for this navigation before
+   dispatching this event. If true, the best user experience will be given if the author
+   synchronously updates the DOM to the post-navigation state.</p></dd>
+
+   <dt><code data-x=""><var>event</var>.<span subdfn data-x="dom-NavigateEvent-sourceElement">sourceElement</span></code></dt>
+   <dd><p>Returns the <code>Element</code> responsible for this navigation. This can be an
+   <code>a</code>or <code>area</code> element, a <span
+   data-x="concept-submit-button">submit button</span>, or a submitted <code>form</code>
+   element.</p></dd>
+
+   <dt><code data-x=""><var>event</var>.<span subdfn data-x="dom-NavigateEvent-intercept">intercept</span>({ <span subdfn data-x="dom-NavigationInterceptOptions-precommitHandler">precommitHandler</span>, <span subdfn data-x="dom-NavigationInterceptOptions-handler">handler</span>, <span subdfn data-x="dom-NavigationInterceptOptions-focusReset">focusReset</span>, <span subdfn data-x="dom-NavigationInterceptOptions-scroll">scroll</span> })</code></dt>
+   <dd>
+    <p>Intercepts this navigation, preventing its normal handling and instead converting it into a
+    same-document navigation of the same type to the destination URL.</p>
+
+    <p>The <code data-x="dom-NavigationInterceptOptions-precommitHandler">precommitHandler</code>
+    option can be a function that accepts a <code>NavigationPrecommitController</code> and returns a
+    promise. The precommit handler function will run after the <code
+    data-x="event-navigate">navigate</code> event has finished firing, but before the <code
+    data-x="dom-Navigation-currentEntry">navigation.currentEntry</code> property has been updated.
+    Returning a rejected promise will abort the navigation and its effect, such as updating the URL
+    and session history. After all the precommit handlers are fulfilled, the navigation can proceed
+    to commit and call the rest of the handlers. The <code
+    data-x="dom-NavigationInterceptOptions-precommitHandler">precommitHandler</code> option can only
+    be passed when the event is <code data-x="dom-Event-cancelable">cancelable</code>: trying to
+    pass a <code data-x="dom-NavigationInterceptOptions-precommitHandler">precommitHandler</code> to
+    a non-cancelable <code>NavigateEvent</code> will throw a
+    <span>"<code>SecurityError</code>"</span> <code>DOMException</code>.</p>
+
+    <p>The <code data-x="dom-NavigationInterceptOptions-handler">handler</code> option can be a
+    function that returns a promise. The handler function will run after the <code
+    data-x="event-navigate">navigate</code> event has finished firing and the <code
+    data-x="dom-Navigation-currentEntry">navigation.currentEntry</code> property has been updated.
+    This returned promise is used to signal the duration, and success or failure, of the navigation.
+    After it settles, the browser signals to the user (e.g., via a loading spinner UI, or assistive
+    technology) that the navigation is finished. Additionally, it fires <code
+    data-x="event-navigatesuccess">navigatesuccess</code> or <code
+    data-x="event-navigateerror">navigateerror</code> events as appropriate, which other parts of
+    the web application can respond to.</p>
+
+    <p>By default, using this method will cause focus to reset when any handlers' returned promises
+    settle. Focus will be reset to the first element with the <code
+    data-x="attr-fe-autofocus">autofocus</code> attribute set, or <span>the body element</span> if
+    the attribute isn't present. The <code
+    data-x="dom-NavigationInterceptOptions-focusReset">focusReset</code> option can be set to "<code
+    data-x="dom-NavigationFocusReset-manual">manual</code>" to avoid this behavior.</p>
+
+    <p>By default, using this method will delay the browser's scroll restoration logic for "<code
+    data-x="dom-NavigationType-traverse">traverse</code>" or "<code
+    data-x="dom-NavigationType-reload">reload</code>" navigations, or its
+    scroll-reset/scroll-to-a-fragment logic for "<code data-x="dom-NavigationType-push">push</code>"
+    or "<code data-x="dom-NavigationType-replace">replace</code>" navigations, until any handlers'
+    returned promises settle. The <code data-x="dom-NavigationInterceptOptions-scroll">scroll</code>
+    option can be set to "<code data-x="dom-NavigationScrollBehavior-manual">manual</code>" to turn
+    off any browser-driven scroll behavior entirely for this navigation, or <code
+    data-x="dom-NavigateEvent-scroll">scroll()</code> can be called before the promise settles to
+    trigger this behavior early.</p>
+
+    <p>This method will throw a <span>"<code>SecurityError</code>"</span> <code>DOMException</code>
+    if <code data-x="dom-NavigateEvent-canIntercept">canIntercept</code> is false, or if <code
+    data-x="dom-Event-isTrusted">isTrusted</code> is false. It will throw an
+    <span>"<code>InvalidStateError</code>"</span> <code>DOMException</code> if not called
+    synchronously, during event dispatch.</p>
+   </dd>
+
+   <dt><code data-x=""><var>event</var>.<span subdfn data-x="dom-NavigateEvent-scroll">scroll</span>()</code></dt>
+   <dd>
+    <p>For "<code data-x="dom-NavigationType-traverse">traverse</code>" or "<code
+    data-x="dom-NavigationType-reload">reload</code>" navigations, restores the scroll position
+    using the browser's usual scroll restoration logic.</p>
+
+    <p>For "<code data-x="dom-NavigationType-push">push</code>" or "<code
+    data-x="dom-NavigationType-replace">replace</code>" navigations, either resets the scroll
+    position to the top of the document or scrolls to the <span
+    data-x="concept-url-fragment">fragment</span> specified by <code
+    data-x="dom-NavigationDestination-url">destination.url</code> if there is one.</p>
+
+    <p>If called more than once, or called after automatic post-transition scroll processing has
+    happened due to the <code data-x="dom-NavigationInterceptOptions-scroll">scroll</code> option
+    being left as "<code
+    data-x="dom-NavigationScrollBehavior-after-transition">after-transition</code>", or called
+    before the navigation has committed, this method will throw an
+    <span>"<code>InvalidStateError</code>"</span> <code>DOMException</code>.</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <p>Each <code>NavigateEvent</code> has an <dfn
+  data-x="concept-NavigateEvent-interception-state">interception state</dfn>, which is either "<code
+  data-x="">none</code>", "<code data-x="">intercepted</code>", "<code data-x="">committed</code>",
+  "<code data-x="">scrolled</code>", or "<code data-x="">finished</code>", initially "<code
+  data-x="">none</code>".</p>
+
+  <p>Each <code>NavigateEvent</code> has a <dfn
+  data-x="concept-NavigateEvent-navigation-precommit-handler-list">navigation precommit handler
+  list</dfn>, a <span>list</span> of <code>NavigationPrecommitHandler</code> callbacks, initially
+  empty.</p>
+
+  <p>Each <code>NavigateEvent</code> has a <dfn
+  data-x="concept-NavigateEvent-navigation-handler-list">navigation handler list</dfn>, a
+  <span>list</span> of <code>NavigationInterceptHandler</code> callbacks, initially empty.</p>
+
+  <p>Each <code>NavigateEvent</code> has a <dfn data-x="concept-NavigateEvent-focusReset">focus
+  reset behavior</dfn>, a <code>NavigationFocusReset</code>-or-null, initially null.</p>
+
+  <p>Each <code>NavigateEvent</code> has a <dfn data-x="concept-NavigateEvent-scroll">scroll
+  behavior</dfn>, a <code>NavigationScrollBehavior</code>-or-null, initially null.</p>
+
+  <p>Each <code>NavigateEvent</code> has an <dfn
+  data-x="concept-NavigateEvent-abort-controller">abort controller</dfn>, an
+  <code>AbortController</code>-or-null, initially null.</p>
+
+  <p>Each <code>NavigateEvent</code> has a <dfn
+  data-x="concept-NavigateEvent-classic-history-API-state">classic history API state</dfn>, a
+  <span>serialized state</span> or null. It is only used in some cases where the event's <code
+  data-x="dom-NavigateEvent-navigationType">navigationType</code> is "<code
+  data-x="dom-NavigationType-push">push</code>" or "<code
+  data-x="dom-NavigationType-replace">replace</code>", and is set appropriately when the event is
+  <span data-x="concept-event-fire">fired</span>.</p>
+
+  <div algorithm>
+  <p>The <dfn attribute for="NavigateEvent"><code
+  data-x="dom-NavigateEvent-navigationType">navigationType</code></dfn>, <dfn attribute
+  for="NavigateEvent"><code data-x="dom-NavigateEvent-destination">destination</code></dfn>, <dfn
+  attribute for="NavigateEvent"><code
+  data-x="dom-NavigateEvent-canIntercept">canIntercept</code></dfn>, <dfn attribute
+  for="NavigateEvent"><code data-x="dom-NavigateEvent-userInitiated">userInitiated</code></dfn>,
+  <dfn attribute for="NavigateEvent"><code
+  data-x="dom-NavigateEvent-hashChange">hashChange</code></dfn>, <dfn attribute
+  for="NavigateEvent"><code data-x="dom-NavigateEvent-signal">signal</code></dfn>, <dfn attribute
+  for="NavigateEvent"><code data-x="dom-NavigateEvent-formData">formData</code></dfn>, <dfn
+  attribute for="NavigateEvent"><code
+  data-x="dom-NavigateEvent-downloadRequest">downloadRequest</code></dfn>, <dfn attribute
+  for="NavigateEvent"><code data-x="dom-NavigateEvent-info">info</code></dfn>, <dfn attribute
+  for="NavigateEvent"><code
+  data-x="dom-NavigateEvent-hasUAVisualTransition">hasUAVisualTransition</code></dfn>, and
+  <dfn attribute for="NavigateEvent"><code
+  data-x="dom-NavigateEvent-sourceElement">sourceElement</code></dfn> attributes
+  must return the values they are initialized to.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="NavigateEvent"><code
+  data-x="dom-NavigateEvent-intercept">intercept(<var>options</var>)</code></dfn> method steps
+  are:</p>
+
+  <ol>
+   <li><p><span data-x="NavigateEvent-perform-shared-checks">Perform shared checks</span> given
+   <span>this</span>.</p></li>
+
+   <li><p>If <span>this</span>'s <code data-x="dom-NavigateEvent-canIntercept">canIntercept</code>
+   attribute was initialized to false, then throw a <span>"<code>SecurityError</code>"</span>
+   <code>DOMException</code>.</p></li>
+
+   <li><p>If <span>this</span>'s <span>dispatch flag</span> is unset, then throw an
+   <span>"<code>InvalidStateError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li>
+    <p>If <var>options</var>["<code
+    data-x="dom-NavigationInterceptOptions-precommitHandler">precommitHandler</code>"] <span
+    data-x="map exists">exists</span>:</p>
+
+    <ol>
+     <li><p> If <span>this</span>'s <code data-x="dom-Event-cancelable">cancelable</code> attribute
+     is initialized to false, then throw an <span>"<code>InvalidStateError</code>"</span>
+     <code>DOMException</code>.</p></li>
+
+     <li><p><span data-x="list append">Append</span> <var>options</var>["<code
+     data-x="dom-NavigationInterceptOptions-precommitHandler">precommitHandler</code>"] to
+     <span>this</span>'s <span
+     data-x="concept-NavigateEvent-navigation-precommit-handler-list">navigation precommit handler
+     list</span>.</p></li>
+    </ol>
+   </li>
+
+   <li><p><span>Assert</span>: <span>this</span>'s <span
+   data-x="concept-NavigateEvent-interception-state">interception state</span> is either "<code
+   data-x="">none</code>" or "<code data-x="">intercepted</code>".</p></li>
+
+   <li><p>Set <span>this</span>'s <span
+   data-x="concept-NavigateEvent-interception-state">interception state</span> to "<code
+   data-x="">intercepted</code>".</p></li>
+
+   <li><p>If <var>options</var>["<code
+   data-x="dom-NavigationInterceptOptions-handler">handler</code>"] <span data-x="map
+   exists">exists</span>, then <span data-x="list append">append</span> it to <span>this</span>'s
+   <span data-x="concept-NavigateEvent-navigation-handler-list">navigation handler
+   list</span>.</p></li>
+
+   <li>
+    <p>If <var>options</var>["<code
+    data-x="dom-NavigationInterceptOptions-focusReset">focusReset</code>"] <span data-x="map
+    exists">exists</span>:</p>
+
+    <ol>
+     <li><p>If <span>this</span>'s <span data-x="concept-NavigateEvent-focusReset">focus reset
+     behavior</span> is not null, and it is not equal to <var>options</var>["<code
+     data-x="dom-NavigationInterceptOptions-focusReset">focusReset</code>"], then the user agent may
+     <span>report a warning to the console</span> indicating that the <code
+     data-x="dom-NavigationInterceptOptions-focusReset">focusReset</code> option for a previous call
+     to <code data-x="dom-NavigateEvent-intercept">intercept()</code> was overridden by this new
+     value, and the previous value will be ignored.</p></li>
+
+     <li><p>Set <span>this</span>'s <span data-x="concept-NavigateEvent-focusReset">focus reset
+     behavior</span> to <var>options</var>["<code
+     data-x="dom-NavigationInterceptOptions-focusReset">focusReset</code>"].</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p>If <var>options</var>["<code data-x="dom-NavigationInterceptOptions-scroll">scroll</code>"]
+    <span data-x="map exists">exists</span>:</p>
+
+    <ol>
+     <li><p>If <span>this</span>'s <span data-x="concept-NavigateEvent-scroll">scroll
+     behavior</span> is not null, and it is not equal to <var>options</var>["<code
+     data-x="dom-NavigationInterceptOptions-scroll">scroll</code>"], then the user agent may
+     <span>report a warning to the console</span> indicating that the <code
+     data-x="dom-NavigationInterceptOptions-scroll">scroll</code> option for a previous call to
+     <code data-x="dom-NavigateEvent-intercept">intercept()</code> was overridden by this new value,
+     and the previous value will be ignored.</p></li>
+
+     <li><p>Set <span>this</span>'s <span data-x="concept-NavigateEvent-scroll">scroll
+     behavior</span> to <var>options</var>["<code
+     data-x="dom-NavigationInterceptOptions-scroll">scroll</code>"].</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="NavigateEvent"><code
+  data-x="dom-NavigateEvent-scroll">scroll()</code></dfn> method steps are:</p>
+
+  <ol>
+   <li><p><span data-x="NavigateEvent-perform-shared-checks">Perform shared checks</span> given
+   <span>this</span>.</p></li>
+
+   <li><p>If <span>this</span>'s <span
+   data-x="concept-NavigateEvent-interception-state">interception state</span> is not "<code
+   data-x="">committed</code>", then throw an <span>"<code>InvalidStateError</code>"</span>
+   <code>DOMException</code>.</p></li>
+
+   <li><p><span>Process scroll behavior</span> given <span>this</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="NavigateEvent-perform-shared-checks">perform shared checks</dfn> for a
+  <code>NavigateEvent</code> <var>event</var>:</p>
+
+  <ol>
+   <li><p>If <var>event</var>'s <span>relevant global object</span>'s <span
+   data-x="concept-document-window">associated <code>Document</code></span> is not <span>fully
+   active</span>, then throw an <span>"<code>InvalidStateError</code>"</span>
+   <code>DOMException</code>.</p></li>
+
+   <li><p>If <var>event</var>'s <code data-x="dom-Event-isTrusted">isTrusted</code> attribute was
+   initialized to false, then throw a <span>"<code>SecurityError</code>"</span>
+   <code>DOMException</code>.</p></li>
+
+   <li><p>If <var>event</var>'s <span>canceled flag</span> is set, then throw an
+   <span>"<code>InvalidStateError</code>"</span> <code>DOMException</code>.</p></li>
+  </ol>
+  </div>
+
+
+  </div>
+

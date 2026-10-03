@@ -1,0 +1,60 @@
+WHATWG HTML — section the-localstorage-attribute — The <code data-x="dom-localStorage">localStorage</code> getter
+
+  <h4 id="the-localstorage-attribute">The <code data-x="dom-localStorage">localStorage</code> getter</h4>
+
+  <pre><code class="idl">interface mixin <dfn interface>WindowLocalStorage</dfn> {
+  readonly attribute <span>Storage</span> <span data-x="dom-localStorage">localStorage</span>;
+};
+<span>Window</span> includes <span>WindowLocalStorage</span>;</code></pre>
+
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>window</var>.<span subdfn data-x="dom-localStorage">localStorage</span></code></dt>
+   <dd>
+    <p>Returns the <code>Storage</code> object associated with <var>window</var>'s origin's local
+    storage area.</p>
+
+    <p>Throws a <span>"<code>SecurityError</code>"</span> <code>DOMException</code> if the
+    <code>Document</code>'s <span data-x="concept-document-origin">origin</span> is an <span
+    data-x="concept-origin-opaque">opaque origin</span> or if the request violates a policy decision
+    (e.g., if the user agent is configured to not allow the page to persist data).</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <p>A <code>Document</code> object has an associated <dfn>local storage holder</dfn>, which is null
+  or a <code>Storage</code> object. It is initially null.</p>
+
+  <div algorithm>
+  <p>
+  <!--INSERT TRACKING-->
+  The <dfn attribute for="WindowLocalStorage"><code
+  data-x="dom-localStorage">localStorage</code></dfn> getter steps are:</p>
+
+  <ol>
+   <li><p>If <span>this</span>'s <span data-x="concept-document-window">associated
+   <code>Document</code></span>'s <span>local storage holder</span> is non-null, then return
+   <span>this</span>'s <span data-x="concept-document-window">associated
+   <code>Document</code></span>'s <span>local storage holder</span>.</p></li>
+
+   <li><p>Let <var>map</var> be the result of running <span>obtain a local storage bottle map</span>
+   with <span>this</span>'s <span>relevant settings object</span> and "<code
+   data-x="">localStorage</code>".</p></li>
+
+   <li><p>If <var>map</var> is failure, then throw a <span>"<code>SecurityError</code>"</span>
+   <code>DOMException</code>.</p></li>
+
+   <li><p>Let <var>storage</var> be a new <code>Storage</code> object whose <span
+   data-x="concept-Storage-map">map</span> is <var>map</var>.
+
+   <li><p>Set <span>this</span>'s <span data-x="concept-document-window">associated
+   <code>Document</code></span>'s <span>local storage holder</span> to <var>storage</var>.</p></li>
+
+   <li><p>Return <var>storage</var>.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+

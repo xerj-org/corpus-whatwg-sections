@@ -1,0 +1,12 @@
+WHATWG HTML — section dependencies/webotp-api — WebOTP API
+
+   <dt>WebOTP API</dt>
+
+   <dd>
+    <p>The following terms are defined in <cite>WebOTP API</cite>:</p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://wicg.github.io/web-otp/#otpcredential"><code>OTPCredential</code></dfn></li>
+    </ul>
+   </dd>
+

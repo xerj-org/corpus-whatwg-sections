@@ -1,0 +1,12 @@
+WHATWG HTML — section dependencies/paint-timing — Paint Timing
+
+   <dt>Paint Timing</dt>
+
+   <dd>
+    <p>The following terms are defined in <cite>Paint Timing</cite>: <ref>PAINTTIMING</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://w3c.github.io/paint-timing/#mark-paint-timing">mark paint timing</dfn></li>
+    </ul>
+   </dd>
+

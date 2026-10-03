@@ -1,0 +1,14 @@
+WHATWG HTML — section dependencies/accessible-name-and-description-computation — Accessible Name and Description Computation
+
+   <dt>Accessible Name and Description Computation</dt>
+
+   <dd>
+    <p>The following term is defined in <cite>Accessible Name and Description
+    Computation</cite>: <ref>ACCNAME</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://w3c.github.io/accname/#dfn-accessible-name" data-x="concept-accessible-name">accessible name</dfn></li>
+    </ul>
+   </dd>
+
+

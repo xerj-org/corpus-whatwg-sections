@@ -1,0 +1,47 @@
+WHATWG HTML — section the-hgroup-element — The <dfn element><code>hgroup</code></dfn> element
+
+  <h4>The <dfn element><code>hgroup</code></dfn> element</h4>
+
+  <dl class="element">
+   <dt><span data-x="concept-element-categories">Categories</span>:</dt>
+   <dd><span>Flow content</span>.</dd>
+   <dd><span>Heading content</span>.</dd>
+   <dd><span>Palpable content</span>.</dd>
+   <dt><span data-x="concept-element-contexts">Contexts in which this element can be used</span>:</dt>
+   <dd>Where <span>heading content</span> is expected.</dd>
+   <dt><span data-x="concept-element-content-model">Content model</span>:</dt>
+   <dd>Zero or more <code>p</code> elements, followed by one <code>h1</code>, <code>h2</code>,
+   <code>h3</code>, <code>h4</code>, <code>h5</code>, or <code>h6</code> element, followed by zero
+   or more <code>p</code> elements, optionally intermixed with <span>script-supporting
+   elements</span>.</dd>
+   <dt><span data-x="concept-element-attributes">Content attributes</span>:</dt>
+   <dd><span>Global attributes</span></dd>
+   <dt><span
+   data-x="concept-element-accessibility-considerations">Accessibility considerations</span>:</dt>
+   <dd><a href="https://w3c.github.io/html-aria/#el-hgroup">For authors</a>.</dd>
+   <dd><a href="https://w3c.github.io/html-aam/#el-hgroup">For implementers</a>.</dd>
+   <dt><span data-x="concept-element-sanitization">Sanitization</span>:</dt>
+   <dd><span data-x="sanitizer-category-default">Default</span>.</dd>
+   <dt><span data-x="concept-element-dom">DOM interface</span>:</dt>
+   <dd>Uses <code>HTMLElement</code>.</dd>
+  </dl>
+
+  <p>The <code>hgroup</code> element <span>represents</span> a heading and related content. The
+  element may be used to group an <code>h1</code>&ndash;<code>h6</code> element with one or more
+  <code>p</code> elements containing content representing a subheading, alternative title, or
+  tagline.</p>
+
+  <div class="example">
+   <p>Here are some examples of valid headings contained within an <code>hgroup</code> element.</p>
+
+    <pre><code class="html">&lt;hgroup&gt;
+ &lt;h1&gt;The reality dysfunction&lt;/h1&gt;
+ &lt;p&gt;Space is not the only void&lt;/p&gt;
+&lt;/hgroup&gt;</code></pre>
+
+    <pre><code class="html">&lt;hgroup&gt;
+ &lt;h1&gt;Dr. Strangelove&lt;/h1&gt;
+ &lt;p&gt;Or: How I Learned to Stop Worrying and Love the Bomb&lt;/p&gt;
+&lt;/hgroup&gt;</code></pre>
+  </div>
+

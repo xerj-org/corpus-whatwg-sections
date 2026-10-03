@@ -1,0 +1,97 @@
+WHATWG HTML — section user-activation-data-model — Data model
+
+  <h4 id="user-activation-data-model">Data model</h4>
+
+  <div var-scope>
+  <p>For the purpose of tracking user activation, each <code>Window</code> <var>W</var> has two
+  relevant values:</p>
+
+  <ul>
+   <li><p>A <dfn>last activation timestamp</dfn>, which is either a
+   <code>DOMHighResTimeStamp</code>, positive infinity (indicating that <var>W</var> has never been
+   activated), or negative infinity (indicating that the activation has been <span data-x="consume
+   user activation">consumed</span>). Initially positive infinity.</p></li>
+
+   <li><p>A <dfn>last history-action activation timestamp</dfn>, which is either a
+   <code>DOMHighResTimeStamp</code> or positive infinity, initially positive infinity.</p></li>
+  </ul>
+  </div>
+
+  <p>A user agent also defines a <dfn>transient activation duration</dfn>, which is a constant
+  number indicating how long a user activation is available for certain <a
+  href="#user-activation-gated-apis">user activation-gated APIs</a> (e.g., for opening popups).</p>
+
+  <p class="note">The <span>transient activation duration</span> is expected be at most a few
+  seconds, so that the user can possibly perceive the link between an interaction with the page and
+  the page calling the activation-gated API.</p>
+
+  <div var-scope>
+  <p>We then have the following boolean user activation states for <var>W</var>:</p>
+
+  <dl>
+   <dt><dfn export>Sticky activation</dfn></dt>
+   <dd>
+    <div algorithm>
+    <p>When the <span>current high resolution time</span> given <var>W</var> is greater than or
+    equal to the <span>last activation timestamp</span> in <var>W</var>, <var>W</var> is said to
+    have <span>sticky activation</span>.</p>
+    </div>
+
+    <p>This is <var>W</var>'s historical activation state, indicating whether the user has ever
+    interacted in <var>W</var>. It starts false, then changes to true (and never changes back to
+    false) when <var>W</var> gets the very first <span>activation notification</span>.</p>
+   </dd>
+
+   <dt><dfn export>Transient activation</dfn></dt>
+   <dd>
+    <div algorithm>
+    <p>When the <span>current high resolution time</span> given <var>W</var> is greater than or
+    equal to the <span>last activation timestamp</span> in <var>W</var>, and less than the
+    <span>last activation timestamp</span> in <var>W</var> plus the <span>transient activation
+    duration</span>, then <var>W</var> is said to have <span>transient activation</span>.</p>
+    </div>
+
+    <p>This is <var>W</var>'s current activation state, indicating whether the user has interacted
+    in <var>W</var> recently. This starts with a false value, and remains true for a limited time
+    after every <span>activation notification</span> <var>W</var> gets.</p>
+
+    <div algorithm>
+    <p>The <span>transient activation</span> state is considered <dfn
+    data-x="activation-expiry">expired</dfn> if it becomes false because the <span>transient
+    activation duration</span> time has elapsed since the last user activation. Note that it can
+    become false even before the expiry time through an <span data-x="consume user
+    activation">activation consumption</span>.</p>
+    </div>
+   </dd>
+
+   <dt><dfn>History-action activation</dfn></dt>
+   <dd>
+    <div algorithm>
+    <p>When the <span>last history-action activation timestamp</span> of <var>W</var> is not equal
+    to the <span>last activation timestamp</span> of <var>W</var>, then <var>W</var> is said to have
+    <span>history-action activation</span>.</p>
+    </div>
+
+    <p>This is a special variant of user activation, used to allow access to certain session history
+    APIs which, if used too frequently, would make it harder for the user to traverse back using <a
+    href="#nav-traversal-ui">browser UI</a>. It starts with a false value, and becomes true whenever
+    the user interacts with <var>W</var>, but is reset to false through <span data-x="consume
+    history-action user activation">history-action activation consumption</span>. This ensures such
+    APIs cannot be used multiple times in a row without an intervening user activation. But unlike
+    <span>transient activation</span>, there is no time limit within which such APIs must be
+    used.</p>
+   </dd>
+  </dl>
+  </div>
+
+  <p class="note">The <span>last activation timestamp</span> and <span>last history-action
+  activation timestamp</span> are retained even after the <code>Document</code> changes its
+  <span>fully active</span> status (e.g., after navigating away from a <code>Document</code>, or
+  navigating to a cached <code>Document</code>). This means <span>sticky activation</span> state
+  spans multiple navigations as long as the same <code>Document</code> gets reused. For the
+  transient activation state, the original <span data-x="activation-expiry">expiry</span> time
+  remains unchanged (i.e., the state still expires within the <span>transient activation
+  duration</span> limit from the original <span>activation triggering input event</span>). It is
+  important to consider this when deciding whether to base certain things off <span>sticky
+  activation</span> or <span>transient activation</span>.</p>
+

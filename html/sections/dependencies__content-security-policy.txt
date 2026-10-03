@@ -1,0 +1,33 @@
+WHATWG HTML — section dependencies/content-security-policy — Content Security Policy
+
+   <dt>Content Security Policy</dt>
+
+   <dd>
+    <p>The following terms are defined in <cite>Content Security Policy</cite>: <ref>CSP</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://w3c.github.io/webappsec-csp/#content-security-policy-object">Content Security Policy</dfn></li>
+     <li><dfn data-x="csp-disposition" data-x-href="https://w3c.github.io/webappsec-csp/#policy-disposition">disposition</dfn></li>
+     <li><dfn data-x="csp-directive-set" data-x-href="https://w3c.github.io/webappsec-csp/#policy-directive-set">directive set</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/webappsec-csp/#directives">Content Security Policy directive</dfn></li>
+     <li><dfn data-x="concept-csp-list" data-x-href="https://w3c.github.io/webappsec-csp/#csp-list">CSP list</dfn></li>
+     <li>The <dfn data-x-href="https://w3c.github.io/webappsec-csp/#grammardef-serialized-policy">Content Security Policy syntax</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/webappsec-csp/#enforced">enforce the policy</dfn></li>
+     <li>The <dfn data-x-href="https://w3c.github.io/webappsec-csp/#parse-serialized-policy">parse a serialized Content Security Policy</dfn> algorithm</li>
+     <li>The <dfn data-x-href="https://w3c.github.io/webappsec-csp/#run-document-csp-initialization">Run CSP initialization for a Document</dfn> algorithm</li>
+     <li>The <dfn data-x-href="https://w3c.github.io/webappsec-csp/#run-global-object-csp-initialization">Run CSP initialization for a global object</dfn> algorithm</li>
+     <li>The <dfn data-x-href="https://w3c.github.io/webappsec-csp/#should-block-inline">Should element's inline behavior be blocked by Content Security Policy?</dfn> algorithm</li>
+     <li>The <dfn data-x-href="https://w3c.github.io/webappsec-csp/#should-block-navigation-request">Should navigation request of type be blocked by Content Security Policy?</dfn> algorithm</li>
+     <li>The <dfn data-x-href="https://w3c.github.io/webappsec-csp/#should-block-navigation-response">Should navigation response to navigation request of type in target be blocked by Content Security Policy?</dfn> algorithm</li>
+     <li>The <dfn data-x-href="https://w3c.github.io/webappsec-csp/#report-uri"><code data-x="">report-uri</code> directive</dfn></li>
+     <li>The <dfn data-x="csp-EnsureCSPDoesNotBlockStringCompilation" data-x-href="https://w3c.github.io/webappsec-csp/#can-compile-strings">EnsureCSPDoesNotBlockStringCompilation</dfn> abstract operation</li>
+     <li>The <dfn data-x-href="https://w3c.github.io/webappsec-csp/#allow-base-for-document">Is base allowed for Document?</dfn> algorithm</li>
+     <li>The <dfn data-x-href="https://w3c.github.io/webappsec-csp/#frame-ancestors"><code data-x="">frame-ancestors</code> directive</dfn></li>
+     <li>The <dfn data-x-href="https://w3c.github.io/webappsec-csp/#sandbox"><code data-x="">sandbox</code> directive</dfn></li>
+     <li>The <dfn data-x-href="https://w3c.github.io/webappsec-csp/#contains-a-header-delivered-content-security-policy">contains a header-delivered Content Security Policy</dfn> property.</li>
+     <li>The <dfn data-x="parse-response-csp" data-x-href="https://w3c.github.io/webappsec-csp/#parse-response-csp">Parse a response's Content Security Policies</dfn> algorithm.</li>
+     <li><dfn data-x-href="https://w3c.github.io/webappsec-csp/#securitypolicyviolationevent"><code>SecurityPolicyViolationEvent</code></dfn> interface</li>
+     <li>The <dfn data-x="event-securitypolicyviolation" data-x-href="https://w3c.github.io/webappsec-csp/#eventdef-globaleventhandlers-securitypolicyviolation"><code>securitypolicyviolation</code></dfn> event</li>
+    </ul>
+   </dd>
+

@@ -1,0 +1,207 @@
+WHATWG HTML — section the-audio-element — The <dfn element id="audio"><code>audio</code></dfn> element
+
+  <h4 id="the-audio-element">The <dfn element id="audio"><code>audio</code></dfn> element</h4>
+
+  <dl class="element">
+   <dt><span data-x="concept-element-categories">Categories</span>:</dt>
+   <dd><span>Flow content</span>.</dd>
+   <dd><span>Phrasing content</span>.</dd>
+   <dd><span>Embedded content</span>.</dd>
+   <dd>If the element has a <code data-x="attr-media-controls">controls</code> attribute: <span>Interactive content</span>.</dd>
+   <dd>If the element has a <code data-x="attr-media-controls">controls</code> attribute: <span>Palpable content</span>.</dd>
+   <dt><span data-x="concept-element-contexts">Contexts in which this element can be used</span>:</dt>
+   <dd>Where <span>embedded content</span> is expected.</dd>
+   <dt><span data-x="concept-element-content-model">Content model</span>:</dt>
+   <dd>If the element has a <code data-x="attr-media-src">src</code> attribute:
+zero or more <code>track</code> elements, then
+<span>transparent</span>, but with no <span>media element</span> descendants.</dd>
+   <dd>If the element does not have a <code data-x="attr-media-src">src</code> attribute: zero or more <code>source</code> elements, then
+ zero or more <code>track</code> elements, then
+ <span>transparent</span>, but with no <span>media element</span> descendants.</dd>
+   <dt><span data-x="concept-element-attributes">Content attributes</span>:</dt>
+   <dd><span>Global attributes</span></dd>
+   <dd><code data-x="attr-media-src">src</code></dd>
+   <dd><code data-x="attr-media-crossorigin">crossorigin</code></dd>
+   <dd><code data-x="attr-media-preload">preload</code></dd>
+   <dd><code data-x="attr-media-autoplay">autoplay</code></dd>
+   <dd><code data-x="attr-media-loop">loop</code></dd>
+   <dd><code data-x="attr-media-muted">muted</code></dd>
+   <dd><code data-x="attr-media-controls">controls</code></dd>
+   <dd><code data-x="attr-media-loading">loading</code></dd>
+   <dt><span
+   data-x="concept-element-accessibility-considerations">Accessibility considerations</span>:</dt>
+   <dd><a href="https://w3c.github.io/html-aria/#el-audio">For authors</a>.</dd>
+   <dd><a href="https://w3c.github.io/html-aam/#el-audio">For implementers</a>.</dd>
+   <dt><span data-x="concept-element-sanitization">Sanitization</span>:</dt>
+   <dd><span data-x="sanitizer-uncategorized">Uncategorized</span>.</dd>
+   <dt><span data-x="concept-element-dom">DOM interface</span>:</dt>
+   <dd w-nodev>
+    <pre><code class="idl">[Exposed=Window,
+ <span>LegacyFactoryFunction</span>=<span data-x="dom-Audio">Audio</span>(optional DOMString src)]
+interface <dfn interface>HTMLAudioElement</dfn> : <span>HTMLMediaElement</span> {
+  [<span>HTMLConstructor</span>] constructor();
+};</code></pre>
+   </dd>
+   <dd w-dev>Uses <code>HTMLAudioElement</code>.</dd>
+  </dl>
+
+  <p>An <code>audio</code> element <span>represents</span> a sound or audio stream.</p>
+
+  <!-- v2 (actually v3) suggestions:
+    * Audio synthesis. Use cases from Charles Pritchard:
+      > Use a sound of varying pitch to hint to a user the location of their
+      > mouse (is it hovering over a button, is it x/y pixels away from the edge
+      > of the screen, how close is it to the center).
+      >
+      > Alter the pitch of a sound to make a very cheap midi instrument.
+      >
+      > Pre-mix a few generated sounds, because the client processor is slow.
+      >
+      > Alter the pitch of an actual audio recording, and pre-mix it, to give
+      > different sounding voices to pre-recorded readings of a single text. As
+      > has been tried for "male" "female" sound fonts.
+      >
+      > Support very simple audio codecs, and programmable synthesizers.
+  -->
+
+  <p>Content may be provided inside the <code>audio</code> element<span w-nodev>. User agents
+  should not show this content to the user</span>; it is intended for older web browsers which do
+  not support <code>audio</code>, so that text can be shown to the users of these older browsers
+  informing them of how to access the audio contents.</p>
+
+  <p class="note">In particular, this content is not intended to address accessibility concerns. To
+  make audio content accessible to the deaf or to those with other physical or cognitive
+  disabilities, a variety of features are available. If captions or a sign language video are
+  available, the <code>video</code> element can be used instead of the <code>audio</code> element to
+  play the audio, allowing users to enable the visual alternatives. Chapter titles can be provided
+  to aid navigation, using the <code>track</code> element and a <span>WebVTT file</span>. And,
+  naturally, transcripts or other textual alternatives can be provided by simply linking to them in
+  the prose near the <code>audio</code> element. <ref>WEBVTT</ref></p>
+
+  <p>The <code>audio</code> element is a <span>media element</span> whose <span>media data</span> is
+  ostensibly audio data.</p>
+
+  <p>The <code>audio</code> element has an internal <span>shadow tree</span>
+  with no <code>slot</code> elements.</p>
+
+  <p>The <code data-x="attr-media-src">src</code>, <code data-x="attr-media-crossorigin">crossorigin</code>,
+  <code data-x="attr-media-preload">preload</code>, <code data-x="attr-media-autoplay">autoplay</code>,
+  <code data-x="attr-media-loop">loop</code>, <code data-x="attr-media-muted">muted</code>, <code
+  data-x="attr-media-controls">controls</code>, and <code data-x="attr-media-loading">loading</code> attributes are <span data-x="media element
+  attributes">the attributes common to all media elements</span>.</p>
+
+  <p class="note"><code>audio</code> elements without a <code data-x="attr-media-controls">controls</code> attribute will not be displayed by the user agent, preventing them from lazy loading.</p>
+
+  <div class="example">
+    <pre><code class="html">&lt;audio src="1.mp3" type="audio/mpeg" controls&gt;
+&lt;audio src="2.mp3" type="audio/mpeg" controls loading="eager"&gt;
+&lt;audio src="3.mp3" type="audio/mpeg" controls loading="lazy"&gt;
+&lt;audio src="4.mp3" type="audio/mpeg" controls loading="lazy" autoplay&gt;
+&lt;div id="very-large"&gt;&lt;/div&gt; &lt;!-- Everything after this div is below the viewport --&gt;
+&lt;audio src="5.mp3" type="audio/mpeg" controls&gt;
+&lt;audio src="6.mp3" type="audio/mpeg" controls loading="lazy"&gt;
+&lt;audio src="7.mp3" type="audio/mpeg" controls autoplay loading="lazy"&gt;
+&lt;audio src="8.mp3" type="audio/mpeg" controls preload="metadata" loading="lazy"&gt;</code></pre>
+
+       <p>In the example above, the audio files load as follows:</p>
+
+       <dl class="switch">
+        <dt><code data-x="">1.mp3</code>, <code data-x="">2.mp3</code>, <code data-x="">5.mp3</code></dt>
+        <dd><p>The audio file loads eagerly and delays the window's load event.</p></dd>
+
+        <dt><code data-x="">3.mp3</code></dt>
+        <dd><p>The audio loads when layout is known, due to being in the viewport, however it does
+        not delay the window's load event.</p></dd>
+
+        <dt><code data-x="">4.mp3</code></dt>
+        <dd><p>The audio loads and autoplay playback begins when layout is known, due to being in
+        the viewport, however it does not delay the window's load event.</p></dd>
+
+        <dt><code data-x="">6.mp3</code></dt>
+        <dd><p>The audio loads only once scrolled into the viewport, and does not delay the window's
+        load event.</p></dd>
+
+        <dt><code data-x="">7.mp3</code></dt>
+        <dd><p>The audio loads and autoplay playback begins only once scrolled into the viewport,
+        and does not delay the window's load event.</p></dd>
+
+        <dt><code data-x="">8.mp3</code></dt>
+        <dd><p>The audio's metadata loads only once scrolled into the viewport, and does not delay
+        the window's load event.</p></dd>
+       </dl>
+      </div>
+
+
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>audio</var> = new <span subdfn data-x="dom-Audio">Audio</span>([ <var>url</var> ])</code></dt>
+
+   <dd>
+    <p>Returns a new <code>audio</code> element, with the <code data-x="attr-media-src">src</code>
+    attribute set to the value passed in the argument, if applicable.</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>A legacy factory function is provided for creating <code>HTMLAudioElement</code> objects (in
+  addition to the factory methods from DOM such as <code
+  data-x="dom-Document-createElement">createElement()</code>): <dfn><code
+  data-x="dom-Audio">Audio(<var>src</var>)</code></dfn>. When invoked, the legacy factory function
+  must perform the following steps:</p>
+
+  <ol>
+   <li><p>Let <var>document</var> be the <span>current global object</span>'s <span
+   data-x="concept-document-window">associated <code>Document</code></span>.</p></li>
+
+   <li><p>Let <var>audio</var> be the result of <span data-x="create an element">creating an
+   element</span> given <var>document</var>, "<code data-x="">audio</code>", and the <span>HTML
+   namespace</span>.</p></li>
+
+   <li><p><span data-x="concept-element-attributes-set-value">Set an attribute value</span> for
+   <var>audio</var> using "<code data-x="attr-media-preload">preload</code>" and "<code
+   data-x="attr-media-preload-auto">auto</code>".</p></li>
+
+   <li><p>If <var>src</var> is given, then <span data-x="concept-element-attributes-set-value">set
+   an attribute value</span> for <var>audio</var> using "<code data-x="attr-media-src">src</code>"
+   and <var>src</var>. (This will <a href="#concept-media-load-algorithm-at-creation">cause the user
+   agent to invoke</a> the object's <span data-x="concept-media-load-algorithm">resource selection
+   algorithm</span> before returning.)</p></li>
+
+   <li><p>Return <var>audio</var>.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+
+
+  <!--CODECS
+
+  <div w-nodev>
+
+  <h5>Audio codecs for <code>audio</code> elements</h5>
+
+  <p>User agents may support any audio codecs and container formats.</p>
+
+  <p>User agents must support the WAVE container format with audio encoded using the 16 bit PCM (LE)
+  codec, at sampling frequencies of 11.025kHz, 22.050kHz, and 44.100kHz, and for both mono and
+  stereo. <a href="#- -refsWAVE">[WAVE]</a></p>
+
+  <!- -
+   <dt id="- -refsWAVE">WAVE</dt>
+   <dd>https://en.wikipedia.org/wiki/WAV? </dd>
+  - ->
+
+  <!- - similar note in video codecs section - ->
+  <p class="note">Implementations are free to implement support for audio codecs either natively, or
+  using platform-specific APIs: this specification does not specify how codecs are
+  to be implemented.</p>
+
+  </div>
+
+  (when replacing this text, also fix "- -" nested comments)-->
+
+
+

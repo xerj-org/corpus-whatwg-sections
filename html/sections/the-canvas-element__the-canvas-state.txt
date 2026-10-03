@@ -1,0 +1,112 @@
+WHATWG HTML — section the-canvas-element/the-canvas-state — The canvas state
+
+  <h6>The canvas state</h6>
+
+  <p>Objects that implement the <code>CanvasState</code> interface maintain a stack of drawing
+  states. <dfn data-x="drawing state">Drawing states</dfn> consist of:</p>
+
+  <ul>
+   <li><p>The current <span data-x="dom-context-2d-transformation">transformation
+   matrix</span>.</p></li>
+
+   <li><p>The current <span>clipping region</span>.</p></li>
+
+   <li><p>The current <span data-x="concept-CanvasTextDrawingStyles-letter-spacing">letter
+   spacing</span>, <span data-x="concept-CanvasTextDrawingStyles-word-spacing">word spacing</span>,
+   <span data-x="concept-CanvasFillStrokeStyles-fill-style">fill style</span>, <span
+   data-x="concept-CanvasFillStrokeStyles-stroke-style">stroke style</span>, <span
+   data-x="concept-canvas-current-filter">filter</span>, <span
+   data-x="concept-canvas-global-alpha">global alpha</span>, <span data-x="current compositing and
+   blending operator">compositing and blending operator</span>, and <span
+   data-x="concept-CanvasShadowStyles-shadow-color">shadow color</span>.</p></li>
+
+   <li><p>The current values of the following attributes: <code
+   data-x="dom-context-2d-lineWidth">lineWidth</code>, <code
+   data-x="dom-context-2d-lineCap">lineCap</code>, <code
+   data-x="dom-context-2d-lineJoin">lineJoin</code>, <code
+   data-x="dom-context-2d-miterLimit">miterLimit</code>, <code
+   data-x="dom-context-2d-lineDashOffset">lineDashOffset</code>, <code
+   data-x="dom-context-2d-shadowOffsetX">shadowOffsetX</code>, <code
+   data-x="dom-context-2d-shadowOffsetY">shadowOffsetY</code>, <code
+   data-x="dom-context-2d-shadowBlur">shadowBlur</code>, <code
+   data-x="dom-context-2d-lang">lang</code>, <code
+   data-x="dom-context-2d-font">font</code>, <code
+   data-x="dom-context-2d-textAlign">textAlign</code>, <code
+   data-x="dom-context-2d-textBaseline">textBaseline</code>, <code
+   data-x="dom-context-2d-direction">direction</code>, <code
+   data-x="dom-context-2d-fontKerning">fontKerning</code>, <code
+   data-x="dom-context-2d-fontStretch">fontStretch</code>, <code
+   data-x="dom-context-2d-fontVariantCaps">fontVariantCaps</code>, <code
+   data-x="dom-context-2d-textRendering">textRendering</code>, <code
+   data-x="dom-context-2d-imageSmoothingEnabled">imageSmoothingEnabled</code>, <code
+   data-x="dom-context-2d-imageSmoothingQuality">imageSmoothingQuality</code>.</p></li>
+
+   <li><p>The current <span>dash list</span>.</p></li>
+  </ul>
+
+  <p class="note">The rendering context's bitmaps are not part of the drawing state, as they
+  depend on whether and how the rendering context is bound to a <code>canvas</code> element.</p>
+
+  <p>Objects that implement the <code>CanvasState</code> mixin have a <dfn
+  data-x="concept-canvas-context-lost">context lost</dfn> boolean, that is initialized to false
+  when the object is created. The <span data-x="concept-canvas-context-lost">context lost</span>
+  value is updated in the <span>context lost steps</span>.</p>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>context</var>.<span subdfn data-x="dom-context-2d-save">save</span>()</code></dt>
+   <dd><p>Pushes the current state onto the stack.</p></dd>
+
+   <dt><code data-x=""><var>context</var>.<span subdfn data-x="dom-context-2d-restore">restore</span>()</code></dt>
+   <dd><p>Pops the top state on the stack, restoring the context to that state.</p></dd>
+
+   <dt><code data-x=""><var>context</var>.<span subdfn data-x="dom-context-2d-reset">reset</span>()</code></dt>
+   <dd><p>Resets the rendering context, which includes the backing buffer, the drawing state stack,
+   path, and styles.</p></dd>
+
+   <dt><code data-x=""><var>context</var>.<span subdfn data-x="dom-context-2d-isContextLost">isContextLost</span>()</code></dt>
+   <dd><p>Returns true if the rendering context was lost. Context loss can occur due to driver
+   crashes, running out of memory, etc. In these cases, the canvas loses its backing storage and
+   takes steps to <span>reset the rendering context to its default state</span>.</p></dd>
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn method for="CanvasState"><code data-x="dom-context-2d-save">save()</code></dfn> method
+  steps are to push a copy of the current drawing state onto the drawing state stack.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="CanvasState"><code data-x="dom-context-2d-restore">restore()</code></dfn>
+  method steps are to pop the top entry in the drawing state stack, and reset the drawing state it
+  describes. If there is no saved state, then the method must do nothing.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="CanvasState"><code data-x="dom-context-2d-reset">reset()</code></dfn>
+  method steps are to <span>reset the rendering context to its default state</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>reset the rendering context to its default state</dfn>:</p>
+
+  <ol>
+   <li><p>Clear canvas's bitmap to <span>transparent black</span>.</p></li>
+
+   <li><p>Empty the list of subpaths in the context's <span>current default path</span>.</p></li>
+
+   <li><p>Clear the context's drawing state stack.</p></li>
+
+   <li><p>Reset everything that <span>drawing state</span> consists of to their initial
+   values.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="CanvasState"><code
+  data-x="dom-context-2d-isContextLost">isContextLost()</code></dfn> method steps are to return
+  <span>this</span>'s <span data-x="concept-canvas-context-lost">context lost</span>.</p>
+  </div>
+
+  </div>
+

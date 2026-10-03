@@ -1,0 +1,1211 @@
+WHATWG HTML — section the-link-element — The <dfn element><code>link</code></dfn> element
+
+  <h4>The <dfn element><code>link</code></dfn> element</h4>
+
+  <dl class="element">
+   <dt><span data-x="concept-element-categories">Categories</span>:</dt>
+   <dd><span>Metadata content</span>.</dd>
+   <dd>If the element is <span>allowed in the body</span>: <span>flow content</span>.</dd>
+   <dd>If the element is <span>allowed in the body</span>: <span>phrasing content</span>.</dd>
+   <dt><span data-x="concept-element-contexts">Contexts in which this element can be used</span>:</dt>
+   <dd>Where <span>metadata content</span> is expected.</dd>
+   <dd>In a <code>noscript</code> element that is a child of a <code>head</code> element.</dd>
+   <dd>If the element is <span>allowed in the body</span>: where <span>phrasing content</span> is expected.</dd>
+   <dt><span data-x="concept-element-content-model">Content model</span>:</dt>
+   <dd><span data-x="concept-content-nothing">Nothing</span>.</dd>
+   <dt><span data-x="concept-element-attributes">Content attributes</span>:</dt>
+   <dd><span>Global attributes</span></dd>
+   <dd><code data-x="attr-link-href">href</code></dd>
+   <dd><code data-x="attr-link-crossorigin">crossorigin</code></dd>
+   <dd><code data-x="attr-link-rel">rel</code></dd>
+   <dd><code data-x="attr-link-media">media</code></dd>
+   <dd><code data-x="attr-link-integrity">integrity</code></dd>
+   <dd><code data-x="attr-link-hreflang">hreflang</code></dd>
+   <dd><code data-x="attr-link-type">type</code></dd>
+   <dd><code data-x="attr-link-referrerpolicy">referrerpolicy</code></dd>
+   <dd><code data-x="attr-link-sizes">sizes</code></dd>
+   <dd><code data-x="attr-link-imagesrcset">imagesrcset</code></dd>
+   <dd><code data-x="attr-link-imagesizes">imagesizes</code></dd>
+   <dd><code data-x="attr-link-as">as</code></dd>
+   <dd><code data-x="attr-link-blocking">blocking</code></dd>
+   <dd><code data-x="attr-link-color">color</code></dd>
+   <dd><code data-x="attr-link-disabled">disabled</code></dd>
+   <dd><code data-x="attr-link-fetchpriority">fetchpriority</code></dd>
+   <dd>Also, the <code data-x="attr-link-title">title</code> attribute <span data-x="attr-link-title">has special semantics</span> on this element.</dd>
+   <dt><span
+   data-x="concept-element-accessibility-considerations">Accessibility considerations</span>:</dt>
+   <dd><a href="https://w3c.github.io/html-aria/#el-link">For authors</a>.</dd>
+   <dd><a href="https://w3c.github.io/html-aam/#el-link">For implementers</a>.</dd>
+   <dt><span data-x="concept-element-sanitization">Sanitization</span>:</dt>
+   <dd><span data-x="sanitizer-uncategorized">Uncategorized</span>.</dd>
+   <dt><span data-x="concept-element-dom">DOM interface</span>:</dt>
+   <dd w-nodev>
+    <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>HTMLLinkElement</dfn> : <span>HTMLElement</span> {
+  [<span>HTMLConstructor</span>] constructor();
+
+  [<span>CEReactions</span>, <span data-x="xattr-ReflectURL">ReflectURL</span>] attribute USVString <dfn attribute for="HTMLLinkElement" data-x="dom-link-href">href</dfn>;
+  [<span>CEReactions</span>] attribute DOMString? <span data-x="dom-link-crossOrigin">crossOrigin</span>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute DOMString <dfn attribute for="HTMLLinkElement" data-x="dom-link-rel">rel</dfn>;
+  [<span>CEReactions</span>] attribute DOMString <span data-x="dom-link-as">as</span>;
+  [SameObject, PutForwards=<span data-x="dom-DOMTokenList-value">value</span>, <span data-x="xattr-Reflect">Reflect</span>="<span data-x="attr-link-rel">rel</span>"] readonly attribute <span>DOMTokenList</span> <dfn attribute for="HTMLLinkElement" data-x="dom-link-relList">relList</dfn>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute DOMString <dfn attribute for="HTMLLinkElement" data-x="dom-link-media">media</dfn>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute DOMString <dfn attribute for="HTMLLinkElement" data-x="dom-link-integrity">integrity</dfn>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute DOMString <dfn attribute for="HTMLLinkElement" data-x="dom-link-hreflang">hreflang</dfn>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute DOMString <dfn attribute for="HTMLLinkElement" data-x="dom-link-type">type</dfn>;
+  [SameObject, PutForwards=<span data-x="dom-DOMTokenList-value">value</span>, <span data-x="xattr-Reflect">Reflect</span>] readonly attribute <span>DOMTokenList</span> <dfn attribute for="HTMLLinkElement" data-x="dom-link-sizes">sizes</dfn>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute USVString <dfn attribute for="HTMLLinkElement" data-x="dom-link-imageSrcset">imageSrcset</dfn>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute DOMString <dfn attribute for="HTMLLinkElement" data-x="dom-link-imageSizes">imageSizes</dfn>;
+  [<span>CEReactions</span>] attribute DOMString <span data-x="dom-link-referrerPolicy">referrerPolicy</span>;
+  [SameObject, PutForwards=<span data-x="dom-DOMTokenList-value">value</span>, <span data-x="xattr-Reflect">Reflect</span>] readonly attribute <span>DOMTokenList</span> <dfn attribute for="HTMLLinkElement" data-x="dom-link-blocking">blocking</dfn>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute boolean <dfn attribute for="HTMLLinkElement" data-x="dom-link-disabled">disabled</dfn>;
+  [<span>CEReactions</span>] attribute DOMString <span data-x="dom-link-fetchPriority">fetchPriority</span>;
+
+  // <a href="#HTMLLinkElement-partial">also has obsolete members</a>
+};
+<span>HTMLLinkElement</span> includes <span>LinkStyle</span>;</code></pre>
+   </dd>
+   <dd w-dev>Uses <code>HTMLLinkElement</code>.</dd>
+  </dl>
+
+  <p>The <code>link</code> element allows authors to link their document to other resources.</p>
+
+  <p>The address of the link(s) is given by the <dfn element-attr for="link"><code
+  data-x="attr-link-href">href</code></dfn> attribute. If the <code
+  data-x="attr-link-href">href</code> attribute is present, then its value must be a <span>valid
+  non-empty URL potentially surrounded by spaces</span>. One or both of the <code
+  data-x="attr-link-href">href</code> or <code data-x="attr-link-imagesrcset">imagesrcset</code>
+  attributes must be present.</p>
+
+  <p w-nodev>If both the <code data-x="attr-link-href">href</code> and <code
+  data-x="attr-link-imagesrcset">imagesrcset</code> attributes are absent, then the element does not
+  define a link.</p>
+
+  <p>The types of link indicated (the relationships) are given by the value of the <dfn element-attr
+  for="link"><code data-x="attr-link-rel">rel</code></dfn> attribute, which, if present, must have a
+  value that is a <span>unordered set of unique space-separated tokens</span>. The <a
+  href="#linkTypes">allowed keywords and their meanings</a> are defined in a later section. <span
+  w-nodev>If the <code data-x="attr-link-rel">rel</code> attribute is absent, has no keywords, or if
+  none of the keywords used are allowed according to the definitions in this specification, then the
+  element does not create any links.</span></p>
+
+  <div w-nodev>
+
+  <p><code data-x="attr-link-rel">rel</code>'s
+  <span data-x="concept-supported-tokens">supported tokens</span> are the keywords defined in
+  <a href="#linkTypes">HTML link types</a> which are allowed on <code>link</code> elements, impact
+  the processing model, and are supported by the user agent. The possible <span
+  data-x="concept-supported-tokens">supported tokens</span> are
+  <code data-x="rel-alternate">alternate</code>,
+  <code data-x="rel-dns-prefetch">dns-prefetch</code>,
+  <code data-x="rel-expect">expect</code>,
+  <code data-x="rel-icon">icon</code>,
+  <code data-x="rel-manifest">manifest</code>,
+  <code data-x="rel-modulepreload">modulepreload</code>,
+  <code data-x="rel-next">next</code>,
+  <code data-x="rel-pingback">pingback</code>,
+  <code data-x="rel-preconnect">preconnect</code>,
+  <code data-x="rel-prefetch">prefetch</code>,
+  <code data-x="rel-preload">preload</code>,
+  <code data-x="rel-search">search</code>, and
+  <code data-x="rel-stylesheet">stylesheet</code>.
+  <code data-x="attr-link-rel">rel</code>'s <span data-x="concept-supported-tokens">supported
+  tokens</span> must only include the tokens from this list that the user agent implements the
+  processing model for.</p>
+
+  <p class="note">Theoretically a user agent could support the processing model for the <code
+  data-x="rel-canonical">canonical</code> keyword — if it were a search engine that executed
+  JavaScript. But in practice that's quite unlikely. So in most cases, <code
+  data-x="rel-canonical">canonical</code> ought not be included in <code
+  data-x="attr-link-rel">rel</code>'s <span data-x="concept-supported-tokens">supported
+  tokens</span>.</p>
+
+  </div>
+
+  <p>A <code>link</code> element must have either a <code data-x="attr-link-rel">rel</code>
+  attribute or an <code data-x="attr-itemprop">itemprop</code> attribute, but not both.</p>
+
+  <div algorithm>
+  <p>If a <code>link</code> element has an <code data-x="attr-itemprop">itemprop</code> attribute,
+  or has a <code data-x="attr-link-rel">rel</code> attribute that contains only keywords that are
+  <span>body-ok</span>, then the element is said to be <dfn>allowed in the body</dfn>. This means
+  that the element can be used where <span>phrasing content</span> is expected.</p>
+  </div>
+
+  <p class="note">If the <code data-x="attr-link-rel">rel</code> attribute is used, the element can
+  only sometimes be used in the <code>body</code> of the page. When used with the <code
+  data-x="attr-itemprop">itemprop</code> attribute, the element can be used both in the
+  <code>head</code> element and in the <code>body</code> of the page, subject to the constraints of
+  the microdata model.</p>
+
+  <hr>
+
+  <p>Two categories of links can be created using the <code>link</code> element: <span
+  data-x="external resource link">links to external resources</span> and <span
+  data-x="hyperlink">hyperlinks</span>. The <a href="#linkTypes">link types section</a> defines
+  whether a particular link type is an external resource or a hyperlink. One <code>link</code>
+  element can create multiple links (of which some might be <span data-x="external resource
+  link">external resource links</span> and some might be <span
+  data-x="hyperlink">hyperlinks</span>); exactly which and how many links are created depends on the
+  keywords given in the <code data-x="attr-link-rel">rel</code> attribute. User agents must process
+  the links on a per-link basis, not a per-element basis.</p>
+
+  <p class="note">Each link created for a <code>link</code> element is handled separately. For
+  instance, if there are two <code>link</code> elements with <code data-x="">rel="stylesheet"</code>,
+  they each count as a separate external resource, and each is affected by its own attributes
+  independently. Similarly, if a single <code>link</code> element has a <code
+  data-x="attr-link-rel">rel</code> attribute with the value <code data-x="">next stylesheet</code>,
+  it creates both a <span>hyperlink</span> (for the <code data-x="rel-next">next</code> keyword) and
+  an <span>external resource link</span> (for the <code data-x="rel-stylesheet">stylesheet</code>
+  keyword), and they are affected by other attributes (such as <code
+  data-x="attr-link-media">media</code> or <code data-x="attr-link-title">title</code>)
+  differently.</p>
+
+  <div class="example">
+   <p>For example, the following <code>link</code> element creates two <span
+   data-x="hyperlink">hyperlinks</span> (to the same page):</p>
+
+   <pre><code class="html">&lt;link rel="author license" href="/about"></code></pre>
+
+   <p>The two links created by this element are one whose semantic is that the target page has
+   information about the current page's author, and one whose semantic is that the target page has
+   information regarding the license under which the current page is provided.</p>
+  </div>
+
+  <p><span data-x="hyperlink">Hyperlinks</span> created with the <code>link</code> element and its
+  <code data-x="attr-link-rel">rel</code> attribute apply to the whole document. This contrasts with
+  the <code data-x="attr-hyperlink-rel">rel</code> attribute of <code>a</code> and <code>area</code>
+  elements, which indicates the type of a link whose context is given by the link's location within
+  the document.</p>
+
+  <p>Unlike those created by <code>a</code> and <code>area</code> elements, <span
+  data-x="hyperlink">hyperlinks</span> created by <code>link</code> elements are not displayed as
+  part of the document by default, in user agents that <a href="#renderingUA">support the suggested
+  default rendering</a>. And even if they are force-displayed using CSS, they have no
+  <span>activation behavior</span>. Instead, they primarily provide semantic information which might
+  be used by the page or by other software that consumes the page's contents. Additionally, the user
+  agent can <a
+  href="#providing-users-with-a-means-to-follow-hyperlinks-created-using-the-link-element">provide
+  its own UI for following such hyperlinks</a>.</p>
+
+  <p>The exact behavior for <span data-x="external resource link">links to external resources</span>
+  depends on the exact relationship, as defined for the relevant <a href="#linkTypes">link
+  type</a>.</p>
+
+  <hr>
+
+  <p>The <dfn element-attr for="link"><code data-x="attr-link-crossorigin">crossorigin</code></dfn>
+  attribute is a <span>CORS settings attribute</span>. It is intended for use with <span
+  data-x="external resource link">external resource links</span>.</p>
+
+  <p>The <dfn element-attr for="link"><code data-x="attr-link-media">media</code></dfn> attribute
+  says which media the resource applies to. The value must be a <span>valid media query
+  list</span>.</p>
+
+  <p>The <dfn for="link" element-attr><code data-x="attr-link-integrity">integrity</code></dfn>
+  attribute represents the <span data-x="concept-request-integrity-metadata">integrity
+  metadata</span> for requests which this element is responsible for. The value is text. The
+  attribute must only be specified on <code>link</code> elements that have a <code
+  data-x="attr-link-rel">rel</code> attribute that contains the <code
+  data-x="rel-stylesheet">stylesheet</code>, <code data-x="rel-preload">preload</code>, or <code
+  data-x="rel-modulepreload">modulepreload</code> keyword. <ref>SRI</ref></p>
+
+  <p>The <dfn element-attr for="link"><code data-x="attr-link-hreflang">hreflang</code></dfn>
+  attribute on the <code>link</code> element has the same semantics as the <span
+  data-x="attr-hyperlink-hreflang"><code>hreflang</code> attribute on the <code>a</code>
+  element</span>.</p>
+
+  <p>The <dfn element-attr for="link"><code data-x="attr-link-type">type</code></dfn> attribute
+  gives the <span>MIME type</span> of the linked resource. It is purely advisory. The value must be
+  a <span>valid MIME type string</span>.</p>
+
+  <p>For <span data-x="external resource link">external resource links</span>, the <code
+  data-x="attr-link-type">type</code> attribute is used as a hint to user agents so that they can
+  avoid fetching resources they do not support.</p>
+
+  <p>The <dfn element-attr for="link"><code
+  data-x="attr-link-referrerpolicy">referrerpolicy</code></dfn> attribute is a <span>referrer policy
+  attribute</span>. It is intended for use with <span data-x="external resource link">external
+  resource links</span>, where it helps set the <span>referrer policy</span> used when <span
+  data-x="fetch and process the linked resource">fetching and processing the linked resource</span>.
+  <ref>REFERRERPOLICY</ref></p>
+
+  <p>The <dfn element-attr for="link"><code data-x="attr-link-title">title</code></dfn> attribute
+  gives the title of the link. With one exception, it is purely advisory. The value is text. The
+  exception is for style sheet links that are <span>in a document tree</span>, for which the <code
+  data-x="attr-link-title">title</code> attribute defines <span data-x="CSS style sheet set">CSS
+  style sheet sets</span>.</p>
+
+  <p class="note">The <code data-x="attr-link-title">title</code> attribute on <code>link</code>
+  elements differs from the global <code data-x="attr-title">title</code> attribute of most other
+  elements in that a link without a title does not inherit the title of the parent element: it
+  merely has no title.</p>
+
+  <hr>
+
+  <p>The <dfn element-attr for="link"><code data-x="attr-link-imagesrcset">imagesrcset</code></dfn>
+  attribute may be present, and is a <span>srcset attribute</span>.</p>
+
+  <p>The <code data-x="attr-link-imagesrcset">imagesrcset</code> and <code
+  data-x="attr-link-href">href</code> attributes (if <span data-x="width descriptor">width
+  descriptors</span> are not used) together contribute the <span data-x="image source">image
+  sources</span> to the <span>source set</span>.</p>
+
+  <p>If the <code data-x="attr-link-imagesrcset">imagesrcset</code> attribute is present and has any
+  <span data-x="image candidate string">image candidate strings</span> using a <span>width
+  descriptor</span>, the <dfn element-attr for="link"><code
+  data-x="attr-link-imagesizes">imagesizes</code></dfn> attribute must also be present, and is a
+  <span>sizes attribute</span>. The <code data-x="attr-link-imagesizes">imagesizes</code> attribute
+  contributes the <span>source size</span> to the <span>source set</span>.</p>
+
+  <p>The <code data-x="attr-link-imagesrcset">imagesrcset</code> and <code
+  data-x="attr-link-imagesizes">imagesizes</code> attributes must only be specified on
+  <code>link</code> elements that have both a <code data-x="attr-link-rel">rel</code> attribute that
+  specifies the <code data-x="rel-preload">preload</code> keyword, as well as an <code
+  data-x="attr-link-as">as</code> attribute in the "<code data-x="">image</code>" state.</p>
+
+  <div class="example">
+   <p>These attributes allow preloading the appropriate resource that is later used by an
+   <code>img</code> element that has the corresponding values for its <code
+   data-x="attr-img-srcset">srcset</code> and <code data-x="attr-img-sizes">sizes</code>
+   attributes:</p>
+
+   <pre><code class="html">&lt;link rel="preload" as="image"
+      imagesrcset="wolf_400px.jpg 400w, wolf_800px.jpg 800w, wolf_1600px.jpg 1600w"
+      imagesizes="50vw">
+
+&lt;!-- ... later, or perhaps inserted dynamically ... -->
+&lt;img src="wolf.jpg" alt="A rad wolf"
+     srcset="wolf_400px.jpg 400w, wolf_800px.jpg 800w, wolf_1600px.jpg 1600w"
+     sizes="50vw"></code></pre>
+
+     <p>Note how we omit the <code data-x="attr-link-href">href</code> attribute, as it would only
+     be relevant for browsers that do not support <code
+     data-x="attr-link-imagesrcset">imagesrcset</code>, and in those cases it would likely cause the
+     incorrect image to be preloaded.</p>
+  </div>
+
+  <div class="example">
+   <p>The <code data-x="attr-link-imagesrcset">imagesrcset</code> attribute can be combined with the
+   <code data-x="attr-link-media">media</code> attribute to preload the appropriate resource
+   selected from a <code>picture</code> element's sources, for <span>art direction</span>:</p>
+
+   <pre><code class="html">&lt;link rel="preload" as="image"
+      imagesrcset="dog-cropped-1x.jpg, dog-cropped-2x.jpg 2x"
+      media="(max-width: 800px)">
+&lt;link rel="preload" as="image"
+      imagesrcset="dog-wide-1x.jpg, dog-wide-2x.jpg 2x"
+      media="(min-width: 801px)">
+
+&lt;!-- ... later, or perhaps inserted dynamically ... -->
+&lt;picture>
+  &lt;source srcset="dog-cropped-1x.jpg, dog-cropped-2x.jpg 2x"
+          media="(max-width: 800px)">
+  &lt;img src="dog-wide-1x.jpg" srcset="dog-wide-2x.jpg 2x"
+       alt="An awesome dog">
+&lt;/picture></code></pre>
+  </div>
+
+  <hr>
+
+  <p>The <dfn element-attr for="link"><code data-x="attr-link-sizes">sizes</code></dfn> attribute
+  gives the sizes of icons for visual media. Its value, if present, is merely advisory.<span
+  w-nodev> User agents may use the value to decide which icon(s) to use if multiple icons are
+  available.</span> If specified, the attribute must have a value that is an <span>unordered set of
+  unique space-separated tokens</span> which are <span>ASCII case-insensitive</span>. Each value
+  must be either an <span>ASCII case-insensitive</span> match for the string "<code
+  data-x="attr-link-sizes-any">any</code>", or a value that consists of two <span data-x="valid
+  non-negative integer">valid non-negative integers</span> that do not have a leading U+0030 DIGIT
+  ZERO (0) character and that are separated by a single U+0078 LATIN SMALL LETTER X or U+0058 LATIN
+  CAPITAL LETTER X character. The attribute must only be specified on <code>link</code> elements
+  that have a <code data-x="attr-link-rel">rel</code> attribute that specifies the <code
+  data-x="rel-icon">icon</code> keyword or the <code data-x="">apple-touch-icon</code> keyword.</p>
+
+  <p class="note">The <code data-x="">apple-touch-icon</code> keyword is a registered <span
+  data-x="concept-rel-extensions">extension to the predefined set of link types</span>, but user
+  agents are not required to support it in any way.</p>
+
+  <hr>
+
+  <p>The <dfn element-attr for="link"><code data-x="attr-link-as">as</code></dfn> attribute
+  specifies either a <span>preload destination</span> or a <span>module preload destination</span>
+  for a preload request for the resource given by the <code data-x="attr-link-href">href</code>
+  attribute. It is an <span>enumerated attribute</span>. Each of the union of <span
+  data-x="preload destination">preload destinations</span> and <span
+  data-x="module preload destination">module preload destinations</span> is a keyword for this
+  attribute, mapping to a state of the same name. The attribute must be specified on
+  <code>link</code> elements that have a <code data-x="attr-link-rel">rel</code> attribute that
+  contains the <code data-x="rel-preload">preload</code> keyword; in such cases it must have a
+  value which is a <span>preload destination</span>. It may be specified on <code>link</code>
+  elements that have a <code data-x="attr-link-rel">rel</code> attribute that contains the
+  <code data-x="rel-modulepreload">modulepreload</code> keyword; in such cases it must have a value
+  which is a <span>module preload destination</span>. For other <code>link</code> elements, it must
+  not be specified.</p>
+
+  <p w-nodev>The processing model for how the <code data-x="attr-link-as">as</code> attribute is
+  used is given in an individual link type's <span>fetch and process the linked resource</span>
+  algorithm.</p>
+
+  <p class="note">The attribute does not have a <i data-x="missing value default">missing value
+  default</i> or <i data-x="invalid value default">invalid value default</i>, meaning that invalid
+  or missing values for the attribute map to no state. This is accounted for in the processing
+  model. For <code data-x="rel-preload">preload</code> links, both conditions are an error; for
+  <code data-x="rel-modulepreload">modulepreload</code> links, a missing value will be treated as
+  "<code data-x="">script</code>".</p>
+
+  <hr>
+
+  <p>The <dfn element-attr for="link"><code data-x="attr-link-blocking">blocking</code></dfn>
+  attribute is a <span>blocking attribute</span>. It is used by link types <code
+  data-x="rel-stylesheet">stylesheet</code> and <code
+  data-x="rel-expect">expect</code>, and it must only be specified on link elements
+  that have a <code data-x="attr-link-rel">rel</code> attribute containing those keywords.</p>
+
+  <hr>
+
+  <p>The <dfn element-attr for="link"><code data-x="attr-link-color">color</code></dfn> attribute is
+  used with the <code data-x="">mask-icon</code> link type. The attribute must only be specified on
+  <code>link</code> elements that have a <code data-x="attr-link-rel">rel</code> attribute that
+  contains the <code data-x="">mask-icon</code> keyword. The value must be a string that matches the
+  CSS <span>&lt;color></span> production, defining a suggested color that user agents can use to
+  customize the display of the icon that the user sees when they pin your site.</p>
+
+  <p class="note">This specification does not have any user agent requirements for the <code
+  data-x="attr-link-color">color</code> attribute.</p>
+
+  <p class="note">The <code data-x="">mask-icon</code> keyword is a registered <span
+  data-x="concept-rel-extensions">extension to the predefined set of link types</span>, but user
+  agents are not required to support it in any way.</p>
+
+  <hr>
+
+  <p><code>link</code> elements have an associated <dfn>explicitly enabled</dfn> boolean. It is
+  initially false.
+
+  <p>The <dfn element-attr for="link"><code data-x="attr-link-disabled">disabled</code></dfn>
+  attribute is a <span>boolean attribute</span> that is used with the <code
+  data-x="rel-stylesheet">stylesheet</code> link type.  The attribute must only be specified on
+  <code>link</code> elements that have a <code data-x="attr-link-rel">rel</code> attribute that
+  contains the <code data-x="rel-stylesheet">stylesheet</code> keyword.</p>
+
+  <div algorithm>
+  <p>Whenever the <code data-x="attr-link-disabled">disabled</code> attribute is removed, set the
+  <code>link</code> element's <span>explicitly enabled</span> attribute to true.</p>
+  </div>
+
+  <div class="example">
+   <p>Removing the <code data-x="attr-link-disabled">disabled</code> attribute dynamically, e.g.,
+   using <code data-x="">document.querySelector("link").removeAttribute("disabled")</code>, will
+   fetch and apply the style sheet:</p>
+
+   <pre><code class="html">&lt;link disabled rel="alternate stylesheet" href="css/pooh"></code></pre>
+  </div>
+
+  <p>The <dfn element-attr for="link"
+  data-x="attr-link-fetchpriority"><code>fetchpriority</code></dfn> attribute is a <span>fetch
+  priority attribute</span> that is intended for use with <span
+  data-x="external resource link">external resource links</span>, where it is used to set the <span
+  data-x="concept-request-priority">priority</span> used when <span
+  data-x="fetch and process the linked resource">fetching and processing the linked
+  resource</span>.</p>
+
+  <div w-nodev>
+  <hr>
+
+  <p class="note">There is no reflecting IDL attribute for the <code
+  data-x="attr-link-color">color</code> attribute, but this might be added later.</p>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLLinkElement"><code data-x="dom-link-as">as</code></dfn> IDL
+  attribute must <span>reflect</span> the <code data-x="attr-link-as">as</code> content attribute,
+  <span>limited to only known values</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLLinkElement"><code
+  data-x="dom-link-crossOrigin">crossOrigin</code></dfn> IDL attribute must <span>reflect</span> the
+  <code data-x="attr-link-crossorigin">crossorigin</code> content attribute, <span>limited to only
+  known values</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLLinkElement"><code
+  data-x="dom-link-referrerPolicy">referrerPolicy</code></dfn> IDL attribute must
+  <span>reflect</span> the <code data-x="attr-link-referrerpolicy">referrerpolicy</code> content
+  attribute, <span>limited to only known values</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLLinkElement"><code
+  data-x="dom-link-fetchPriority">fetchPriority</code></dfn> IDL attribute must
+  <span>reflect</span> the <code data-x="attr-link-fetchpriority">fetchpriority</code> content
+  attribute, <span>limited to only known values</span>.</p>
+  </div>
+
+  <p class="note">The <code data-x="dom-link-rellist">relList</code> attribute can be used for
+  feature detection, by calling its <code data-x="dom-DOMTokenList-supports">supports()</code>
+  method to check which <a href="#linkTypes">types of links</a> are supported.</p>
+
+  <h5>Processing the <code data-x="attr-link-media">media</code> attribute</h5>
+
+  <p>If the link is a <span>hyperlink</span> then the <code data-x="attr-link-media">media</code>
+  attribute is purely advisory, and describes for which media the document in question was
+  designed.</p>
+
+  <p>However, if the link is an <span>external resource link</span>, then the <code
+  data-x="attr-link-media">media</code> attribute is prescriptive. The user agent must apply the
+  external resource when the <code data-x="attr-link-media">media</code> attribute's value
+  <span>matches the environment</span> and the other relevant conditions apply, and must not apply
+  it otherwise.</p><!-- note similar text in <style> element section -->
+
+  <p id="default-media">The default, if the <code data-x="attr-link-media">media</code> attribute is
+  omitted, is "<code data-x="">all</code>", meaning that by default links apply to all media.</p>
+
+  <p class="note">The external resource might have further restrictions defined within that limit
+  its applicability. For example, a CSS style sheet might have some <code data-x="">@media</code>
+  blocks. This specification does not override such further restrictions or requirements.</p><!--
+  note similar text in <style> element section -->
+
+  <h5>Processing the <code data-x="attr-link-type">type</code> attribute</h5>
+
+  <p>If the <code data-x="attr-link-type">type</code> attribute is present, then the user agent must
+  assume that the resource is of the given type (even if that is not a <span>valid MIME type
+  string</span>, e.g. the empty string). If the attribute is omitted, but the <span>external
+  resource link</span> type has a default type defined, then the user agent must assume that the
+  resource is of that type. If the UA does not support the given <span>MIME type</span> for the
+  given link relationship, then the UA should not <span>fetch and process the linked
+  resource</span>; if the UA does support the given <span>MIME type</span> for the given link
+  relationship, then the UA should <span>fetch and process the linked resource</span> at the
+  appropriate time as specified for the <span>external resource link</span>'s particular type.
+  If the attribute is omitted, and the <span>external resource link</span> type does not have a
+  default type defined, but the user agent would <span>fetch and process the linked resource</span>
+  if the type was known and supported, then the user agent should <span>fetch and process the linked
+  resource</span> under the assumption that it will be supported.</p>
+
+  <p>User agents must not consider the <code data-x="attr-link-type">type</code> attribute
+  authoritative &mdash; upon fetching the resource, user agents must not use the <code
+  data-x="attr-link-type">type</code> attribute to determine its actual type. Only the actual type
+  (as defined in the next paragraph) is used to determine whether to <em>apply</em> the resource,
+  not the aforementioned assumed type.</p>
+
+  <p id="concept-link-type-sniffing">If the <span>external resource link</span> type defines rules
+  for processing the resource's <span data-x="Content-Type">Content-Type metadata</span>, then those
+  rules apply.  Otherwise, if the resource is expected to be an image, user agents may apply the
+  <span data-x="Content-Type sniffing: image">image sniffing rules</span>, with the <var ignore>official
+  type</var> being the type determined from the resource's <span data-x="Content-Type">Content-Type
+  metadata</span>, and use the resulting <span data-x="Content-Type sniffing">computed type of the
+  resource</span> as if it was the actual type.  Otherwise, if neither of these conditions apply or
+  if the user agent opts not to apply the image sniffing rules, then the user agent must use the
+  resource's <span data-x="Content-Type">Content-Type metadata</span> to determine the type of the
+  resource. If there is no type metadata, but the <span>external resource link</span> type has a
+  default type defined, then the user agent must assume that the resource is of that type.</p>
+
+  <p class="note">The <code data-x="rel-stylesheet">stylesheet</code> link type defines rules for
+  processing the resource's <span data-x="Content-Type">Content-Type metadata</span>.</p>
+
+  <p>Once the user agent has established the type of the resource, the user agent must apply the
+  resource if it is of a supported type and the other relevant conditions apply, and must ignore the
+  resource otherwise.</p>
+
+  <div class="example">
+
+   <p>If a document contains style sheet links labeled as follows:</p>
+
+   <pre><code class="html">&lt;link rel="stylesheet" href="A" type="text/plain"&gt;
+&lt;link rel="stylesheet" href="B" type="text/css"&gt;
+&lt;link rel="stylesheet" href="C"&gt;</code></pre>
+
+   <p>...then a compliant UA that supported only CSS style sheets would fetch the B and C files, and
+   skip the A file (since <code>text/plain</code> is not the <span>MIME type</span> for CSS style
+   sheets).</p>
+
+   <p>For files B and C, it would then check the actual types returned by the server. For those that
+   are sent as <code>text/css</code>, it would apply the styles, but for those labeled as
+   <code>text/plain</code>, or any other type, it would not.</p>
+
+   <p>If one of the two files was returned without a <span>Content-Type</span> metadata, or with a
+   syntactically incorrect type like <code data-x="">Content-Type:&nbsp;"null"</code>, then the
+   default type for <code data-x="rel-stylesheet">stylesheet</code> links would kick in. Since that
+   default type is <code>text/css</code>, the style sheet <em>would</em> nonetheless be applied.</p>
+
+  </div>
+
+  <h5><span id="obtaining-a-resource-from-a-link-element"></span>Fetching and processing a resource
+  from a <code>link</code> element</h5>
+
+  <div var-scope><!-- algo-declaration -->
+  <p id="concept-link-obtain">All <span data-x="external resource link">external resource
+  links</span> have a <dfn>fetch and process the linked resource</dfn> algorithm, which takes a
+  <code>link</code> element <var>el</var>. They also have <dfn>linked resource fetch setup
+  steps</dfn> which take a <code>link</code> element <var>el</var> and <span
+  data-x="concept-request">request</span> <var>request</var>. Individual link types may provide
+  their own <span>fetch and process the linked resource</span> algorithm, but unless explicitly
+  stated, they use the <span>default fetch and process the linked resource</span> algorithm.
+  Similarly, individual link types may provide their own <span>linked resource fetch setup
+  steps</span>, but unless explicitly stated, these steps just return true.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn>default fetch and process the linked resource</dfn>, given a <code>link</code> element
+  <var>el</var>, is as follows:</p>
+
+  <ol>
+   <li><p>Let <var>options</var> be the result of <span data-x="create link options from
+   element">creating link options</span> from <var>el</var>.</p></li>
+
+   <li><p>Let <var>request</var> be the result of <span data-x="create a link request">creating a
+   link request</span> given <var>options</var>.</p></li>
+
+   <li><p>If <var>request</var> is null, then return.</p></li>
+
+   <li><p>Run the <span>linked resource fetch setup steps</span>, given <var>el</var> and
+   <var>request</var>. If the result is false, then return.</p></li>
+
+   <li><p>Set <var>request</var>'s <span data-x="concept-request-initiator-type">initiator
+   type</span> to "<code data-x="">css</code>" if <var>el</var>'s <code
+   data-x="attr-link-rel">rel</code> attribute contains the keyword <code
+   data-x="rel-stylesheet">stylesheet</code>; "<code data-x="">link</code>" otherwise.</p></li>
+
+   <li>
+    <p><!--FETCH--><span data-x="concept-fetch">Fetch</span> <var>request</var> with <i
+    data-x="processResponseConsumeBody">processResponseConsumeBody</i> set to the following steps
+    given <span data-x="concept-response">response</span> <var>response</var> and null, failure, or
+    a <span>byte sequence</span> <var>bodyBytes</var>:</p>
+
+    <ol>
+     <li><p>Let <var>success</var> be true.</p></li>
+
+     <li>
+      <p>If any of the following are true:</p>
+
+      <ul>
+       <li><p><var>bodyBytes</var> is null or failure; or</p></li>
+
+       <li><p><var>response</var>'s <span data-x="concept-response-status">status</span> is not an
+       <span>ok status</span>,</p></li>
+      </ul>
+
+      <p>then set <var>success</var> to false.</p>
+
+      <p class="note">Note that content-specific errors, e.g., CSS parse errors or PNG decoding
+      errors, do not affect <var>success</var>.</p>
+     </li>
+
+     <li>
+      <p>Otherwise, wait for the <span data-x="external resource link">link
+      resource</span>'s <span>critical subresources</span> to finish loading.</p>
+
+      <p class="XXX">The specification that defines a link type's <span>critical subresources</span>
+      (e.g., CSS) is expected to describe how these subresources are fetched and processed. However,
+      since this is not currently explicit, this specification describes waiting for a <span
+      data-x="external resource link">link resource</span>'s <span>critical subresources</span> to
+      be fetched and processed, with the expectation that this will be done correctly.</p>
+     </li>
+
+     <li><p><span>Process the linked resource</span> given <var>el</var>, <var>success</var>,
+     <var>response</var>, and <var>bodyBytes</var>.</li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>create a link request</dfn> given a <span>link processing options</span>
+  <var>options</var>:</p>
+
+  <ol>
+   <li><p><span>Assert</span>: <var>options</var>'s <span data-x="link options href">href</span> is
+   not the empty string.</p></li>
+
+   <li>
+    <p>Let <var>url</var> be the result of <span>encoding-parsing a URL</span> given
+    <var>options</var>'s <span data-x="link options href">href</span>, relative to
+    <var>options</var>'s <span data-x="link options base url">base URL</span>.</p>
+
+    <p class="XXX">Passing the base URL instead of a document or environment is tracked by <a
+    href="https://github.com/whatwg/html/issues/9715">issue #9715</a>.</p>
+   </li>
+
+   <li><p>If <var>url</var> is failure, then return null.</p></li>
+
+   <li><p>Let <var>request</var> be the result of <span data-x="create a potential-CORS
+   request">creating a potential-CORS request</span> given <var>url</var>, <var>options</var>'s
+   <span data-x="link options destination">destination</span>, and <var>options</var>'s <span
+   data-x="link options crossorigin">crossorigin</span>.</p></li>
+
+   <li><p>Set <var>request</var>'s <span data-x="concept-request-policy-container">policy
+   container</span> to <var>options</var>'s <span data-x="link options policy container">policy
+   container</span>.</p></li>
+
+   <li><p>Set <var>request</var>'s <span data-x="concept-request-integrity-metadata">integrity
+   metadata</span> to <var>options</var>'s <span data-x="link options
+   integrity">integrity</span>.</p></li>
+
+   <li><p>Set <var>request</var>'s <span data-x="concept-request-nonce-metadata">cryptographic
+   nonce metadata</span> to <var>options</var>'s <span data-x="link options nonce">cryptographic
+   nonce metadata</span>.</p></li>
+
+   <li><p>Set <var>request</var>'s <span data-x="concept-request-referrer-policy">referrer
+   policy</span> to <var>options</var>'s <span data-x="link options referrer policy">referrer
+   policy</span>.</p></li>
+
+   <li><p>Set <var>request</var>'s <span data-x="concept-request-client">client</span> to
+   <var>options</var>'s <span data-x="link options environment">environment</span>.</p></li>
+
+   <li><p>Set <var>request</var>'s <span data-x="concept-request-priority">priority</span> to
+   <var>options</var>'s <span data-x="link options fetch priority">fetch priority</span>.</p></li>
+
+   <li><p>Return <var>request</var>.</p></li>
+  </ol>
+  </div>
+
+  <p>User agents may opt to only try to <span data-x="fetch and process the linked resource">fetch
+  and process</span> such resources when they are needed, instead of pro-actively fetching all the
+  <span data-x="external resource link">external resources</span> that are not applied.</p>
+
+  <!-- the next few paragraphs are similar to text in the <style> element section -->
+  <!-- TODO: integrate this better with Fetch's process response definition -->
+  <div var-scope><!-- algo-declaration -->
+  <p>Similar to the <span>fetch and process the linked resource</span> algorithm, all <span
+  data-x="external resource link">external resource links</span> have a <dfn>process the linked
+  resource</dfn> algorithm which takes a <code>link</code> element <var>el</var>, boolean
+  <var>success</var>, a <span data-x="concept-response">response</span> <var>response</var>, and a
+  <span>byte sequence</span> <var>bodyBytes</var>. Individual link types may provide their own
+  <span>process the linked resource</span> algorithm, but unless explicitly stated, that algorithm
+  does nothing.</p>
+  </div>
+
+  <p>Unless otherwise specified for a given <code data-x="attr-link-rel">rel</code> keyword, the
+  element must <span>delay the load event</span> of the element's <span>node document</span> until
+  all the attempts to <span>fetch and process the linked resource</span> and its <span>critical
+  subresources</span> are complete. (Resources that the user agent has not yet attempted to fetch
+  and process, e.g., because it is waiting for the resource to be needed, do not <span>delay the
+  load event</span>.)</p>
+
+  <h5>Processing `<code data-x="http-link">Link</code>` headers</h5>
+
+  <p>All link types that can be <span data-x="external resource link">external resource
+  links</span> define a <dfn>process a link header</dfn> algorithm, which takes a <span>link
+  processing options</span>. This algorithm defines whether and how they react to appearing in an
+  HTTP `<code data-x="http-link">Link</code>` response header.</p>
+
+  <p class="note">For most link types, this algorithm does nothing. The <a
+  href="#table-link-relations">summary table</a> is a good reference to quickly know whether a link
+  type has defined <span>process a link header</span> steps.</p>
+
+  <p>A <dfn>link processing options</dfn> is a <span>struct</span>. It has the following
+  <span data-x="struct item">items</span>:</p>
+
+  <dl>
+   <dt><dfn data-x="link options href" for="link processing options">href</dfn> (default the empty
+   string)</dt>
+   <dt><dfn data-x="link options initiator" for="link processing options">initiator</dfn> (default
+   "<code data-x="">link</code>")</dt>
+   <dt><dfn data-x="link options integrity" for="link processing options">integrity</dfn> (default
+   the empty string)</dt>
+   <dt><dfn data-x="link options type" for="link processing options">type</dfn> (default the empty
+   string)</dt>
+   <dt><dfn data-x="link options nonce" for="link processing options">cryptographic nonce
+   metadata</dfn> (default the empty string)</dt>
+   <dd>A string</dd>
+
+   <dt><dfn data-x="link options destination" for="link processing options">destination</dfn>
+   (default the empty string)</dt>
+   <dd>A <span>destination type</span>.</dd>
+
+   <dt><dfn data-x="link options crossorigin" for="link processing options">crossorigin</dfn>
+   (default <span data-x="attr-crossorigin-none">No CORS</span>)</dt>
+   <dd>A <span>CORS settings attribute</span> state</dd>
+
+   <dt><dfn data-x="link options referrer policy" for="link processing options">referrer
+   policy</dfn> (default the empty string)</dt>
+   <dd>A <span>referrer policy</span></dd>
+
+   <dt><dfn data-x="link options source set" for="link processing options">source set</dfn> (default
+   null)</dt>
+   <dd>Null or a  <span>source set</span></dd>
+
+   <dt><dfn data-x="link options base URL" for="link processing options">base URL</dfn></dt>
+   <dd>A <span>URL</span></dd>
+
+   <dt><dfn data-x="link options origin" for="link processing options">origin</dfn></dt>
+   <dd>An <span>origin</span></dd>
+
+   <dt><dfn data-x="link options environment" for="link processing options">environment</dfn></dt>
+   <dd>An <span>environment</span></dd>
+
+   <dt><dfn data-x="link options policy container" for="link processing options">policy
+   container</dfn></dt>
+   <dd>A <span>policy container</span></dd>
+
+   <dt><dfn data-x="link options document" for="link processing options">document</dfn> (default
+   null)</dt>
+   <dd>Null or a <code>Document</code></dd>
+
+   <dt><dfn data-x="link options on document ready" for="link processing options">on document
+   ready</dfn> (default null)</dt>
+   <dd>Null or an algorithm accepting a <code>Document</code></dd>
+
+   <dt><dfn data-x="link options fetch priority" for="link processing options">fetch priority</dfn>
+   (default <code data-x="attr-fetchpriority-auto-state">Auto</code>)</dt>
+   <dd>A <span>fetch priority attribute</span> state</dd>
+  </dl>
+
+  <p class="note">A <span>link processing options</span> has a <span
+  data-x="link options base URL">base URL</span> and an <span data-x="link options href">href</span>
+  rather than a parsed URL because the URL could be a result of the options's <span
+  data-x="link options source set">source set</span>.</p>
+
+  <div algorithm>
+  <p>To <dfn>create link options from element</dfn> given a <code>link</code> element
+  <var>el</var>:</p>
+
+  <ol>
+   <li><p>Let <var>document</var> be <var>el</var>'s <span>node document</span>.</p></li>
+
+   <li>
+    <p>Let <var>options</var> be a new <span>link processing options</span> with</p>
+
+    <dl class="props">
+     <dt><span data-x="link options crossorigin">crossorigin</span></dt>
+     <dd>the state of <var>el</var>'s <code data-x="attr-link-crossorigin">crossorigin</code>
+     content attribute</dd>
+
+     <dt><span data-x="link options referrer policy">referrer policy</span></dt>
+     <dd>the state of <var>el</var>'s <code data-x="attr-link-referrerpolicy">referrerpolicy</code>
+     content attribute</dd>
+
+     <dt><span data-x="link options source set">source set</span></dt>
+     <dd><var>el</var>'s <span>source set</span></dd>
+
+     <dt><span data-x="link options base URL">base URL</span></dt>
+     <dd><var>document</var>'s <span>document base URL</span></dd>
+
+     <dt><span data-x="link options origin">origin</span></dt>
+     <dd><var>document</var>'s <span data-x="concept-document-origin">origin</span></dd>
+
+     <dt><span data-x="link options environment">environment</span></dt>
+     <dd><var>document</var>'s <span>relevant settings object</span></dd>
+
+     <dt><span data-x="link options policy container">policy container</span></dt>
+     <dd><var>document</var>'s <span
+     data-x="concept-document-policy-container">policy container</span></dd>
+
+     <dt><span data-x="link options document">document</span></dt>
+     <dd><var>document</var></dd>
+
+     <dt><span data-x="link options nonce">cryptographic nonce metadata</span></dt>
+     <dd>the current value of <var>el</var>'s <span>[[CryptographicNonce]]</span> internal slot</dd>
+
+     <dt><span data-x="link options fetch priority">fetch priority</span></dt>
+     <dd>the state of <var>el</var>'s <code data-x="attr-link-fetchpriority">fetchpriority</code>
+     content attribute</dd>
+    </dl>
+   </li>
+
+   <li><p>If <var>el</var> has an <code data-x="attr-link-href">href</code> attribute, then set
+   <var>options</var>'s <span data-x="link options href">href</span> to the value of
+   <var>el</var>'s <code data-x="attr-link-href">href</code> attribute.</p></li>
+
+   <li><p>If <var>el</var> has an <code data-x="attr-link-integrity">integrity</code> attribute,
+   then set <var>options</var>'s <span data-x="link options integrity">integrity</span> to the
+   value of <var>el</var>'s <code data-x="attr-link-integrity">integrity</code> content
+   attribute.</p></li>
+
+   <li><p>If <var>el</var> has a <code data-x="attr-link-type">type</code> attribute, then set
+   <var>options</var>'s <span data-x="link options type">type</span> to the value of
+   <var>el</var>'s <code data-x="attr-link-type">type</code> attribute.</p></li>
+
+   <li>
+    <p><span>Assert</span>: <var>options</var>'s <span data-x="link options href">href</span> is not
+    the empty string, or <var>options</var>'s <span data-x="link options source set">source
+    set</span> is not null.</p>
+
+    <p>A <code>link</code> element with neither an <code data-x="attr-link-href">href</code> or an
+    <code data-x="attr-link-imagesrcset">imagesrcset</code> does not represent a link.</p>
+   </li>
+
+   <li><p>Return <var>options</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>extract links from headers</dfn> given a <span data-x="concept-header-list">header
+  list</span> <var>headers</var>:</p>
+
+  <ol>
+   <li><p>Let <var>links</var> be a new <span>list</span>.</p></li>
+
+   <li><p>Let <var>rawLinkHeaders</var> be the result of <span
+   data-x="concept-header-list-get-decode-split">getting, decoding, and splitting</span>
+   `<code>Link</code>` from <var>headers</var>.</p></li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>linkHeader</var> of
+    <var>rawLinkHeaders</var>:</p>
+
+    <ol>
+     <li><p>Let <var>linkObject</var> be the result of <span data-x="parsing a link field
+     value">parsing</span> <var>linkHeader</var>. <ref>WEBLINK</ref></p></li>
+
+     <li><p>If <var>linkObject</var>["<code data-x="">target_uri</code>"] does not
+     <span data-x="map exists">exist</span>, then <span>continue</span>.</p></li>
+
+     <li><p><span data-x="list append">Append</span> <var>linkObject</var> to
+     <var>links</var>.</p></li>
+    </ol>
+   </li>
+   <li><p>Return <var>links</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>process link headers</dfn> given a <code>Document</code> <var>doc</var>,
+  a <span data-x="concept-response">response</span> <var>response</var>, and a
+  "<code data-x="">pre-media</code>" or "<code data-x="">media</code>" <var>phase</var>:</p>
+
+  <ol>
+   <li><p>Let <var>links</var> be the result of <span data-x="extract links from
+   headers">extracting links</span> from <var>response</var>'s <span
+   data-x="concept-response-header-list">header list</span>.</p></li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>linkObject</var> in <var>links</var>:</p>
+
+    <ol>
+     <li><p>Let <var>rel</var> be <var>linkObject</var>["<code
+     data-x="">relation_type</code>"].</p></li>
+
+     <li><p>Let <var>attribs</var> be <var>linkObject</var>["<code
+     data-x="">target_attributes</code>"].</p></li>
+
+     <li><p>Let <var>expectedPhase</var> be "<code data-x="">media</code>" if either "<code
+     data-x="attr-img-srcset">srcset</code>", "<code
+     data-x="attr-link-imagesrcset">imagesrcset</code>", or "<code
+     data-x="attr-link-media">media</code>" <span data-x="map exists">exist</span> in
+     <var>attribs</var>; otherwise "<code data-x="">pre-media</code>".</p></li>
+
+     <li><p>If <var>expectedPhase</var> is not <var>phase</var>, then
+     <span>continue</span>.</p></li>
+
+     <li><p>If <var>attribs</var>["<code data-x="attr-link-media">media</code>"] <span data-x="map
+     exists">exists</span> and <var>attribs</var>["<code data-x="attr-link-media">media</code>"]
+     does not <span data-x="matches the environment">match the environment</span>, then
+     <span>continue</span>.</p></li>
+
+     <li>
+      <p>Let <var>options</var> be a new <span>link processing options</span> with</p>
+
+      <dl class="props">
+       <dt><span data-x="link options href">href</span></dt>
+       <dd><var>linkObject</var>["<code data-x="">target_uri</code>"]</dd>
+
+       <dt><span data-x="link options base URL">base URL</span></dt>
+       <dd><var>doc</var>'s <span>document base URL</span></dd>
+
+       <dt><span data-x="link options origin">origin</span></dt>
+       <dd><var>doc</var>'s <span data-x="concept-document-origin">origin</span></dd>
+
+       <dt><span data-x="link options environment">environment</span></dt>
+       <dd><var>doc</var>'s <span>relevant settings object</span></dd>
+
+       <dt><span data-x="link options policy container">policy container</span></dt>
+       <dd><var>doc</var>'s <span data-x="concept-document-policy-container">policy
+       container</span></dd>
+
+       <dt><span data-x="link options document">document</span></dt>
+       <dd><var>doc</var></dd>
+      </dl>
+     </li>
+
+     <li><p><span>Apply link options from parsed header attributes</span> to <var>options</var>
+     given <var>attribs</var> and <var>rel</var>. If that returned false, then return.</p></li>
+
+     <li><p>If <var>attribs</var>["<code data-x="attr-link-imagesrcset">imagesrcset</code>"] <span
+     data-x="map exists">exists</span> and <var>attribs</var>["<code
+     data-x="attr-link-imagesizes">imagesizes</code>"] <span data-x="map exists">exists</span>,
+     then set <var>options</var>'s <span data-x="link options source set">source set</span> to the
+     result of <span data-x="create a source set">creating a source set</span> given
+     <var>linkObject</var>["<code data-x="">target_uri</code>"], <var>attribs</var>["<code
+     data-x="attr-link-imagesrcset">imagesrcset</code>"], <var>attribs</var>["<code
+     data-x="attr-link-imagesizes">imagesizes</code>"], and null.</p></li>
+
+     <li><p>Run the <span>process a link header</span> steps for <var>rel</var> given
+     <var>options</var>.</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>apply link options from parsed header attributes</dfn> to a <span>link processing
+  options</span> <var>options</var> given <var>attribs</var> and a string <var>rel</var>:</p>
+
+  <ol>
+   <li>
+    <p>If <var>rel</var> is "<code data-x="rel-preload">preload</code>":</p>
+
+    <ol>
+     <li><p>If <var>attribs</var>["<code data-x="attr-link-as">as</code>"] does not <span
+     data-x="map exists">exist</span>, then return false.</p></li>
+
+     <li><p>Let <var>destination</var> be the result of <span data-x="translate a preload
+     destination">translating</span> <var>attribs</var>["<code
+     data-x="attr-link-as">as</code>"].</p></li>
+
+     <li><p>If <var>destination</var> is null, then return false.</p></li>
+
+     <li><p>Set <var>options</var>'s <span data-x="link options destination">destination</span> to
+     <var>destination</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>If <var>attribs</var>["<code data-x="attr-link-crossorigin">crossorigin</code>"] <span
+   data-x="map exists">exists</span> and is an <span>ASCII case-insensitive</span> match for one of
+   the <span>CORS settings attribute</span> <span data-x="enumerated attribute">keywords</span>,
+   then set <var>options</var>'s <span data-x="link options crossorigin">crossorigin</span> to the
+   <span>CORS settings attribute</span> state corresponding to that keyword.</p></li>
+
+   <li><p>If <var>attribs</var>["<code data-x="attr-link-integrity">integrity</code>"] <span
+   data-x="map exists">exists</span>, then set <var>options</var>'s <span data-x="link options
+   integrity">integrity</span> to <var>attribs</var>["<code
+   data-x="attr-link-integrity">integrity</code>"].</p></li>
+
+   <li><p>If <var>attribs</var>["<code data-x="attr-link-referrerpolicy">referrerpolicy</code>"]
+   <span data-x="map exists">exists</span> and is an <span>ASCII case-insensitive</span> match for
+   some <span>referrer policy</span>, then set <var>options</var>'s <span data-x="link options
+   referrer policy">referrer policy</span> to that <span>referrer policy</span>.</p></li>
+
+   <li><p>If <var>attribs</var>["<code data-x="attr-nonce">nonce</code>"]
+   <span data-x="map exists">exists</span>, then set <var>options</var>'s <span data-x="link
+   options nonce">nonce</span> to <var>attribs</var>["<code
+   data-x="attr-nonce">nonce</code>"].</p></li>
+
+   <li><p>If <var>attribs</var>["<code data-x="attr-link-type">type</code>"] <span data-x="map
+   exists">exists</span>, then set <var>options</var>'s <span data-x="link options
+   type">type</span> to <var>attribs</var>["<code data-x="attr-link-type">type</code>"].</p></li>
+
+   <li><p>If <var>attribs</var>["<code data-x="attr-link-fetchpriority">fetchpriority</code>"]
+   <span data-x="map exists">exists</span> and is an <span>ASCII case-insensitive</span> match for
+   a <span>fetch priority attribute</span> keyword, then set <var>options</var>'s <span
+   data-x="link options fetch priority">fetch priority</span> to that <span>fetch priority
+   attribute</span> keyword.</p></li>
+
+   <li><p>Return true.</p></li>
+  </ol>
+  </div>
+
+
+
+  <h5>Early hints</h5>
+
+  <p><dfn>Early hints</dfn> allow user-agents to perform some operations, such as to speculatively
+  load resources that are likely to be used by the document, before the navigation request is fully
+  handled by the server and a response code is served. Servers can indicate early hints by serving a
+  <span data-x="concept-response">response</span> with a 103 status code before serving the final
+  <span data-x="concept-response">response</span>.<ref>RFC8297</ref></p>
+
+  <p class="note">For compatibility reasons <a
+  href="https://httpwg.org/specs/rfc8297.html#security-considerations">early hints are typically
+  delivered over HTTP/2 or above</a>, but for readability we use HTTP/1.1-style notation below.</p>
+
+  <div class="example">
+   <p>For example, given the following sequence of responses:</p>
+   <pre>103 Early Hint
+Link: &lt;/image.png&gt;; <span data-x="attr-link-rel">rel</span>=<span
+data-x="rel-preload">preload</span>; <span data-x="attr-link-as">as</span>=image</pre>
+
+   <pre>200 OK
+Content-Type: text/html
+
+&lt;!DOCTYPE html&gt;
+...
+&lt;img src="/image.png"&gt;</pre>
+
+   <p>the image will start loading before the HTML content arrives.</p>
+  </div>
+
+  <p class="note">Only the first early hint response served during the navigation is handled, and it
+  is discarded if it is succeeded by a cross-origin redirect.</p>
+
+  <p>In addition to the `<code data-x="http-link">Link</code>` headers, it is possible that the 103
+  response contains a <span>Content Security Policy</span> header, which is enforced when processing
+  the early hint.</p>
+
+  <div class="example">
+   <p>For example, given the following sequence of responses:</p>
+   <pre>103 Early Hint
+Content-Security-Policy: style-src: self;
+Link: &lt;/style.css&gt;; <span data-x="attr-link-rel">rel</span>=<span
+data-x="rel-preload">preload</span>; <span data-x="attr-link-as">as</span>=style</pre>
+
+   <pre>103 Early Hint
+Link: &lt;/image.png&gt;; <span data-x="attr-link-rel">rel</span>=<span
+data-x="rel-preload">preload</span>; <span data-x="attr-link-as">as</span>=image</pre>
+
+   <pre>302 Redirect
+Location: /alternate.html</pre>
+
+   <pre>200 OK
+Content-Security-Policy: style-src: none;
+Link: &lt;/font.ttf&gt;; <span data-x="attr-link-rel">rel</span>=<span
+data-x="rel-preload">preload</span>; <span data-x="attr-link-as">as</span>=font</pre>
+
+   <p>The font and style would be loaded, and the image will be discarded, as only the first early
+   hint response in the final redirect chain is respected. The late <span>Content Security
+   Policy</span> header comes after the request to fetch the style has already been performed, but
+   the style will not be accessible to the document.</p>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>process early hint headers</dfn> given a <span
+  data-x="concept-response">response</span> <var>response</var> and an <span>environment</span>
+  <var>reservedEnvironment</var>:</p>
+
+  <p class="note">Early-hint `<code data-x="http-link">Link</code>` headers are always processed
+  before `<code data-x="http-link">Link</code>` headers from the final <span
+  data-x="concept-response">response</span>, followed by <code>link</code> elements. This is
+  equivalent to prepending the contents of the early and final `<code
+  data-x="http-link">Link</code>` headers to the <code>Document</code>'s <code>head</code> element,
+  in respective order.</p>
+
+  <ol>
+   <li>
+    <p>Let <var>earlyPolicyContainer</var> be the result of <span>creating a policy container from
+    a fetch response</span> given <var>response</var> and <var>reservedEnvironment</var>.</p>
+
+    <p class="note">This allows the early hint <span data-x="concept-response">response</span> to
+    include a <span>Content Security Policy</span> which would be <span data-x="enforce the
+    policy">enforced</span> when fetching the early hint <span
+    data-x="concept-request">request</span>.</p>
+   </li>
+
+   <li><p>Let <var>links</var> be the result of <span data-x="extract links from
+   headers">extracting links</span> from <var>response</var>'s <span
+   data-x="concept-response-header-list">header list</span>.</p></li>
+
+   <li><p>Let <var>earlyHints</var> be an empty <span>list</span>.</p></li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>linkObject</var> in <var>links</var>:</p>
+
+    <p class="note">The moment we receive the early hint link header, we begin <span
+    data-x="concept-fetch">fetching</span> <var>earlyRequest</var>. If it comes back before the
+    <code>Document</code> is created, we set <var>earlyResponse</var> to the <span
+    data-x="concept-response">response</span> of that <span data-x="concept-fetch">fetch</span> and
+    once the <code>Document</code> is created we commit it (by making it available in the <span>map
+    of preloaded resources</span> as if it was a <code>link</code> element). If the
+    <code>Document</code> is created first, the <span data-x="concept-response">response</span> is
+    committed as soon as it becomes available.</p>
+
+    <ol>
+     <li><p>Let <var>rel</var> be <var>linkObject</var>["<code
+     data-x="">relation_type</code>"].</p></li>
+
+     <li>
+      <p>Let <var>options</var> be a new <span>link processing options</span> with</p>
+
+      <dl class="props">
+       <dt><span data-x="link options href">href</span></dt>
+       <dd><var>linkObject</var>["<code data-x="">target_uri</code>"]</dd>
+
+       <dt><span data-x="link options initiator">initiator</span></dt>
+       <dd>"<code data-x="">early-hint</code>"</dd>
+
+       <dt><span data-x="link options base URL">base URL</span></dt>
+       <dd><var>response</var>'s <span data-x="concept-response-url">URL</span></dd>
+
+       <dt><span data-x="link options origin">origin</span></dt>
+       <dd><var>response</var>'s <span data-x="concept-response-url">URL</span>'s <span
+       data-x="concept-url-origin">origin</span></dd>
+
+       <dt><span data-x="link options environment">environment</span></dt>
+       <dd><var>reservedEnvironment</var></dd>
+
+       <dt><span data-x="link options policy container">policy container</span></dt>
+       <dd><var>earlyPolicyContainer</var></dd>
+      </dl>
+     </li>
+
+     <li>
+      <p>Let <var>attribs</var> be <var>linkObject</var>["<code
+      data-x="">target_attributes</code>"].</p>
+
+      <p class="note">Only the <code data-x="attr-link-as">as</code>, <code
+      data-x="attr-link-crossorigin">crossorigin</code>, <code
+      data-x="attr-link-integrity">integrity</code>, and <code data-x="attr-link-type">type</code>
+      attributes are handled as part of early hint processing. The other ones, in particular <code
+      data-x="attr-link-blocking">blocking</code>, <code
+      data-x="attr-link-imagesrcset">imagesrcset</code>, <code
+      data-x="attr-link-imagesizes">imagesizes</code>, and <code
+      data-x="attr-link-media">media</code> are only applicable once a <code>Document</code> is
+      created.</p>
+     </li>
+
+     <li><p><span>Apply link options from parsed header attributes</span> to <var>options</var>
+     given <var>attribs</var> and <var>rel</var>. If that returned false, then return.</p></li>
+
+     <li><p>Run the <span>process a link header</span> steps for <var>rel</var> given
+     <var>options</var>.</p></li>
+
+     <li><p><span data-x="list append">Append</span> <var>options</var> to
+     <var>earlyHints</var>.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p>Return the following substeps given <code>Document</code> <var>doc</var>: <span
+    data-x="list iterate">for each</span> <var>options</var> in <var>earlyHints</var>:</p>
+
+    <ol>
+     <li><p>If <var>options</var>'s <span
+     data-x="link options on document ready">on document ready</span> is null, then set
+     <var>options</var>'s <span data-x="link options document">document</span> to
+     <var>doc</var>.</p></li>
+
+     <li><p>Otherwise, call <var>options</var>'s <span
+     data-x="link options on document ready">on document ready</span> with <var>doc</var>.</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  </div>
+
+  <h5>Providing users with a means to follow hyperlinks created using the <code>link</code>
+  element</h5>
+
+  <p id="linkui">Interactive user agents may provide users with a means to <span data-x="following
+  hyperlinks">follow the hyperlinks</span> created using the <code>link</code> element, somewhere
+  within their user interface. Such invocations of the <span data-x="following hyperlinks">follow
+  the hyperlink</span> algorithm must set the <i
+  data-x="following-userInvolvement">userInvolvement</i> argument to "<code
+  data-x="uni-browser-ui">browser UI</code>". The exact interface is not defined by this
+  specification, but it could include the following information (obtained from the element's
+  attributes, again as defined below), in some form or another (possibly simplified), for each
+  <span>hyperlink</span> created with each <code>link</code> element in the document:</p>
+
+  <ul> <!-- the order here is the order that makes most sense for a UI -->
+
+   <li>The relationship between this document and the resource (given by the <code
+   data-x="attr-link-rel">rel</code> attribute)</li>
+
+   <li>The title of the resource (given by the <code data-x="attr-link-title">title</code>
+   attribute).</li>
+
+   <li>The address of the resource (given by the <code data-x="attr-link-href">href</code>
+   attribute).</li>
+
+   <li>The language of the resource (given by the <code data-x="attr-link-hreflang">hreflang</code>
+   attribute).</li>
+
+   <li>The optimum media for the resource (given by the <code data-x="attr-link-media">media</code>
+   attribute).</li>
+  </ul>
+
+  <p>User agents could also include other information, such as the type of the resource (as given by
+  the <code data-x="attr-link-type">type</code> attribute).</p>
+
+
+
+

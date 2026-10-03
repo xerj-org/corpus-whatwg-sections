@@ -1,0 +1,81 @@
+WHATWG HTML — section speculative-loading-security — Security considerations
+
+  <h4 id="speculative-loading-security">Security considerations</h4>
+
+
+  <h5 id="speculative-loading-cross-site-requests">Cross-site requests</h5>
+
+  <p>Speculative loads can be initiated by web pages to cross-site destinations. However, because
+  such cross-site speculative loads are always done without <span>credentials</span>, as explained
+  <a href="#speculative-loading-state-partitioning">below</a>, ambient authority is limited to
+  requests that are already possible via other mechanisms on the platform.</p>
+
+  <p>The `<code>Speculation-Rules</code>` header can also be used to issue requests, for JSON
+  documents whose body will be <span data-x="parse a speculation rule set string">parsed as a
+  speculation rule set string</span>. However, they use the "<code data-x="">same-origin</code>"
+  <span data-x="concept-request-credentials-mode">credentials mode</span>, the "<code
+  data-x="">cors</code>" <span data-x="concept-request-mode">mode</span>, and responses which do not
+  use the <code>application/speculationrules+json</code> <span>MIME type essence</span> are ignored,
+  so they are not useful in mounting attacks.</p>
+
+
+  <h5 id="speculative-loading-injected-content">Injected content</h5>
+
+  <p>Because links in a document can be selected for speculative loading via <span data-x="document
+  rule predicate">document rule predicates</span>, developers need to be cautious if such links
+  might contain user-generated markup. For example, if the <code
+  data-x="attr-hyperlink-href">href</code> of a link can be entered by one user and displayed to all
+  other users, a malicious user might choose a value like "<code data-x="">/logout</code>", causing
+  other users' browsers to automatically log out of the site when that link is speculatively loaded.
+  Using a <span>document rule selector predicate</span> to exclude such potentially-dangerous links,
+  or using a <span>document rule URL pattern predicate</span> to allowlist known-safe links, are
+  useful techniques in this regard.</p>
+
+  <p>As with all uses of the <code>script</code> element, developers need to be cautious about
+  inserting user-provided content into <code data-x="">&lt;script type=speculationrules></code>'s
+  <span>child text content</span>. In particular, the insertion of an unescaped closing <code
+  data-x="">&lt;/script></code> tag could be used to break out of the <code>script</code> element
+  context and inject attacker-controlled markup.</p>
+
+  <p>The <code data-x="">&lt;script type=speculationrules></code> feature causes activity in
+  response to content found in the document, so it is worth considering the options open to an
+  attacker able to inject unescaped HTML. Such an attacker is already able to inject JavaScript or
+  <code>iframe</code> elements. Speculative loads are generally less dangerous than arbitrary script
+  execution. However, the use of <span data-x="document rule predicate">document rule
+  predicates</span> could be used to speculatively load links in the document, and the existence of
+  those loads could provide a vector for exfiltrating information about those links.
+  Defense-in-depth against this possibility is provided by Content Security Policy. In particular,
+  the <code data-x="">script-src</code> directive can be used to restrict the parsing of speculation
+  rules <code>script</code> elements, and the <code data-x="">default-src</code> directive applies
+  to navigational prefetch requests arising from such speculation rules. Additional defense is
+  provided by the requirement that speculative loads are only performed to <span data-x="Is url
+  potentially trustworthy?">potentially-trustworthy URLs</span>, so an on-path attacker would only
+  have access to metadata and traffic analysis, and could not see the URLs directly.
+  <ref>CSP</ref></p>
+
+  <p>It's generally not expected that user-generated content will be added as arbitrary response
+  headers: server operators are already going to encounter significant trouble if this is possible.
+  It is therefore unlikely that the `<code>Speculation-Rules</code>` header meaningfully expands the
+  XSS attack surface. For this reason, Content Security Policy does not apply to the loading of rule
+  sets via that header.</p>
+
+
+  <h5 id="speculative-loading-ip-anonymization">IP anonymization</h5>
+
+  <p>This standard allows developers to request that navigational prefetches are performed using IP
+  anonymization technology provided by the user agent. The details of this anonymization are not
+  specified, but some general security principles apply.</p>
+
+  <p>To the extent IP anonymization is implemented using a proxy service, it is advisable to
+  minimize the information available to the service operator and other entities on the network path.
+  This likely involves, at a minimum, the use of TLS for the connection.</p>
+
+  <p>Site operators need to be aware that, similar to virtual private network (VPN) technology, the
+  client IP address seen by the HTTP server might not exactly correspond to the user's actual
+  network provider or location, and a traffic for multiple distinct subscribers could originate from
+  a single client IP address. This can affect site operators' security and abuse prevention
+  measures. IP anonymization measures might make an effort to use an egress IP address which has a
+  similar geolocation or is located in the same jurisdiction as the user, but any such behavior is
+  particular to the user agent and not guaranteed.</p>
+
+

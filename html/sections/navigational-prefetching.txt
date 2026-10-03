@@ -1,0 +1,45 @@
+WHATWG HTML — section navigational-prefetching — Navigational prefetching
+
+  <h4>Navigational prefetching</h4>
+
+  <p>For now, the navigational prefetching process is defined in the <cite>Prefetch</cite>
+  specification. Moving it into this standard is tracked in <a
+  href="https://github.com/whatwg/html/issues/11123">issue #11123</a>. <ref>PREFETCH</ref></p>
+
+  <p>This standard refers to the following concepts defined there:</p>
+
+  <ul class="brief">
+   <li><dfn
+   data-x-href="https://wicg.github.io/nav-speculation/prefetch.html#prefetch-record">prefetch
+   record</dfn>, and its items <dfn data-x="prefetch-record-source"
+   data-x-href="https://wicg.github.io/nav-speculation/prefetch.html#prefetch-record-source">source</dfn>,
+   <dfn data-x="prefetch-record-url"
+   data-x-href="https://wicg.github.io/nav-speculation/prefetch.html#prefetch-record-url">URL</dfn>,
+   <dfn data-x="prefetch-record-nvs-hint"
+   data-x-href="https://wicg.github.io/nav-speculation/prefetch.html#prefetch-record-no-vary-search-hint">No-Vary-Search
+   hint</dfn>, <dfn data-x="prefetch-record-referrer-policy"
+   data-x-href="https://wicg.github.io/nav-speculation/prefetch.html#prefetch-record-referrer-policy">referrer
+   policy</dfn>, <dfn data-x="prefetch-record-anonymization-policy"
+   data-x-href="https://wicg.github.io/nav-speculation/prefetch.html#prefetch-record-anonymization-policy">anonymization
+   policy</dfn>, <dfn data-x="prefetch-record-tags"
+   data-x-href="https://wicg.github.io/nav-speculation/prefetch.html#prefetch-record-tags">tags</dfn>,
+   and <dfn data-x="prefetch-record-state"
+   data-x-href="https://wicg.github.io/nav-speculation/prefetch.html#prefetch-record-state">state</dfn></li>
+
+   <li><dfn data-x="prefetch-record-cancel-and-discard"
+   data-x-href="https://wicg.github.io/nav-speculation/prefetch.html#prefetch-record-cancel-and-discard">cancel
+   and discard</dfn></li>
+
+   <li><dfn
+   data-x-href="https://wicg.github.io/nav-speculation/prefetch.html#prefetch-record-still-being-speculated">still
+   being speculated</dfn></li>
+
+   <li><dfn data-x="document-prefetch-records"
+   data-x-href="https://wicg.github.io/nav-speculation/prefetch.html#document-prefetch-records">prefetch
+   records</dfn></li>
+
+   <li><dfn
+   data-x-href="https://wicg.github.io/nav-speculation/prefetch.html#start-a-referrer-initiated-navigational-prefetch">start
+   a referrer-initiated navigational prefetch</dfn></li>
+  </ul>
+

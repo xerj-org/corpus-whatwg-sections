@@ -1,0 +1,27 @@
+WHATWG HTML — section introduction — Introduction
+
+  <h4>Introduction</h4>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>Web applications often need to process untrusted HTML strings, such as when rendering
+  user-generated content or using client-side templates. Safely inserting these strings into the DOM
+  requires careful sanitization to prevent DOM-based cross-site scripting (XSS) attacks.</p>
+
+  <p>HTML sanitization provides a native mechanism for safely parsing and sanitizing HTML strings.
+  By using the user agent's own HTML parser, they ensure the sanitized output accurately reflects
+  how the browser will render the content, preventing script execution and mitigating advanced
+  attacks such as <a
+  href="https://github.com/google/security-research-pocs/tree/master/script-gadgets">script
+  gadgets</a>.</p>
+
+  <p>These APIs offer functionality to parse a string containing HTML into a DOM tree, and to filter
+  the resulting tree according to a user-supplied configuration. The methods come in two main
+  flavors: "safe" and "unsafe".</p>
+
+  <h5>Safe and unsafe</h5>
+
+  <p>The "safe" methods will not generate any markup that executes script. That is, they are
+  intended to be safe from XSS. The "unsafe" methods will parse and filter based on the provided
+  configuration, but do not have the same safety guarantees by default.</p>
+

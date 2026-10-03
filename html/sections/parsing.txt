@@ -1,0 +1,43 @@
+WHATWG HTML — section parsing — Parsing HTML documents
+
+  <h3 split-filename="parsing" id="parsing">Parsing HTML documents</h3>
+
+  <p><i>This section only applies to user agents, data mining tools, and conformance
+  checkers.</i></p>
+
+  <p class="note">The rules for parsing XML documents into DOM trees are covered by the next
+  section, entitled "<span>The XML syntax</span>".</p>
+
+  <p>User agents must use the parsing rules described in this section to generate the DOM trees from
+  <code>text/html</code> resources. Together, these rules define what is referred to as the
+  <dfn export>HTML parser</dfn>.</p>
+
+  <div class="note">
+   <p>While the HTML syntax described in this specification bears a close resemblance to SGML and
+   XML, it is a separate language with its own parsing rules.</p>
+
+   <p>Some earlier versions of HTML (in particular from HTML2 to HTML4) were based on SGML and used
+   SGML parsing rules. However, few (if any) web browsers ever implemented true SGML parsing for
+   HTML documents; the only user agents to strictly handle HTML as an SGML application have
+   historically been validators. The resulting confusion &mdash; with validators claiming documents
+   to have one representation while widely deployed web browsers interoperably implemented a
+   different representation &mdash; has wasted decades of productivity. This version of HTML thus
+   returns to a non-SGML basis.</p>
+  </div>
+
+  <p>For the purposes of conformance checkers, if a resource is determined to be in <span>the HTML
+  syntax</span>, then it is an <span data-x="HTML documents">HTML document</span>.</p>
+
+  <p class="note">As stated <span data-x="HTML elements">in the terminology section</span>,
+  references to <span data-x="element type">element types</span> that do not explicitly specify a
+  namespace always refer to elements in the <span>HTML namespace</span>. For example, if the spec
+  talks about "a <code>menu</code> element", then that is an element with the local name "<code
+  data-x="">menu</code>", the namespace "<code data-x="">http://www.w3.org/1999/xhtml</code>", and
+  the interface <code>HTMLMenuElement</code>. Where possible, references to such elements are
+  hyperlinked to their definition.</p>
+
+  </div>
+
+
+  <div w-nodev>
+

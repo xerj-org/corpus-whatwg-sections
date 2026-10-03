@@ -1,0 +1,18 @@
+WHATWG HTML — section dependencies/dependencies — Dependencies
+
+  <h4>Dependencies</h4>
+
+  <!--
+    data-noexport="" is used here to avoid the definition scraper (Shepherd) from picking up any of the terms found
+    within this section. This is *not* used in accordance to the Bikeshed data model, which requires data-noexport=""
+    to exist only on <dfn> or <hN> elements. (That is why we use data-noexport="" instead of noexport=""; Wattsi will
+    only translate noexport="" according to the Bikeshed data model.)
+
+    We may be able to remove this once all definitions are sufficiently marked up and Shepherd stops trying to infer
+    definitions by scraping HTML.
+  -->
+  <div data-noexport="">
+
+  <p>This specification relies on several other underlying specifications.</p>
+
+  <dl>

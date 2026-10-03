@@ -1,0 +1,290 @@
+WHATWG HTML — section the-global-scope — The global scope
+
+  <h4>The global scope</h4>
+
+  <p>The global scope is the "inside" of a worker.</p>
+
+  <h5>The <code subdfn>WorkerGlobalScope</code> common interface</h5>
+
+  <pre><code class="idl">[Exposed=Worker]
+interface <dfn interface>WorkerGlobalScope</dfn> : <span>EventTarget</span> {
+  readonly attribute <span>WorkerGlobalScope</span> <span data-x="dom-WorkerGlobalScope-self">self</span>;
+  readonly attribute <span>WorkerLocation</span> <span data-x="dom-WorkerGlobalScope-location">location</span>;
+  readonly attribute <span>WorkerNavigator</span> <span data-x="dom-worker-navigator">navigator</span>;
+  undefined <span data-x="dom-WorkerGlobalScope-importScripts">importScripts</span>((<code data-x="tt-trustedscripturl">TrustedScriptURL</code> or USVString)... urls);
+
+  attribute <span>OnErrorEventHandler</span> <span data-x="handler-WorkerGlobalScope-onerror">onerror</span>;
+  attribute <span>EventHandler</span> <span data-x="handler-WorkerGlobalScope-onlanguagechange">onlanguagechange</span>;
+  attribute <span>EventHandler</span> <span data-x="handler-WorkerGlobalScope-onoffline">onoffline</span>;
+  attribute <span>EventHandler</span> <span data-x="handler-WorkerGlobalScope-ononline">ononline</span>;
+  attribute <span>EventHandler</span> <span data-x="handler-WorkerGlobalScope-onrejectionhandled">onrejectionhandled</span>;
+  attribute <span>EventHandler</span> <span data-x="handler-WorkerGlobalScope-onunhandledrejection">onunhandledrejection</span>;
+};</code></pre>
+
+  <p><code>WorkerGlobalScope</code> serves as the base class for specific types of worker global
+  scope objects, including <code>DedicatedWorkerGlobalScope</code>,
+  <code>SharedWorkerGlobalScope</code>, and <code>ServiceWorkerGlobalScope</code>.</p>
+
+  <div w-nodev>
+
+  <p id="the-worker's-documents">A <code>WorkerGlobalScope</code> object has an associated <dfn
+  id="concept-WorkerGlobalScope-owner-set" export for="WorkerGlobalScope">owner set</dfn> (a
+  <span>set</span> of <code>Document</code> and <code>WorkerGlobalScope</code> objects). It is
+  initially empty and populated when the worker is created or obtained.</p>
+
+  <p class="note">It is a <span>set</span>, instead of a single owner, to accommodate
+  <code>SharedWorkerGlobalScope</code> objects.</p>
+
+  <p>A <code>WorkerGlobalScope</code> object has an associated <dfn export for="WorkerGlobalScope"
+  data-x="concept-WorkerGlobalScope-type">type</dfn> ("<code data-x="">classic</code>" or "<code
+  data-x="">module</code>"). It is set during creation.</p>
+
+  <p>A <code>WorkerGlobalScope</code> object has an associated <dfn export for="WorkerGlobalScope"
+  data-x="concept-WorkerGlobalScope-url">url</dfn> (null or a <span>URL</span>). It is initially
+  null.</p>
+
+  <p>A <code>WorkerGlobalScope</code> object has an associated <dfn export for="WorkerGlobalScope"
+  data-x="concept-WorkerGlobalScope-name">name</dfn> (a string). It is set during creation.</p>
+
+  <p class="note">The <span data-x="concept-WorkerGlobalScope-name">name</span> can have different
+  semantics for each subclass of <code>WorkerGlobalScope</code>. For
+  <code>DedicatedWorkerGlobalScope</code> instances, it is simply a developer-supplied name, useful
+  mostly for debugging purposes. For <code>SharedWorkerGlobalScope</code> instances, it allows
+  obtaining a reference to a common shared worker via the <code
+  data-x="dom-SharedWorker">SharedWorker()</code> constructor. For
+  <code>ServiceWorkerGlobalScope</code> objects, it doesn't make sense (and as such isn't exposed
+  through the JavaScript API at all).</p>
+
+  <p>A <code>WorkerGlobalScope</code> object has an associated <dfn export for="WorkerGlobalScope"
+  data-x="concept-WorkerGlobalScope-policy-container">policy container</dfn> (a <span>policy
+  container</span>). It is initially a new <span>policy container</span>.</p>
+
+  <p>A <code>WorkerGlobalScope</code> object has an associated <dfn export for="WorkerGlobalScope"
+  data-x="concept-WorkerGlobalScope-embedder-policy">embedder policy</dfn> (an <span>embedder
+  policy</span>).</p>
+
+  <p>A <code>WorkerGlobalScope</code> object has an associated <dfn export for="WorkerGlobalScope"
+  data-x="concept-WorkerGlobalScope-module-map">module map</dfn>.  It is a <span>module map</span>,
+  initially empty.</p>
+
+  <p>A <code>WorkerGlobalScope</code> object has an associated <dfn export for="WorkerGlobalScope"
+  data-x="concept-WorkerGlobalScope-cross-origin-isolated-capability">cross-origin isolated
+  capability</dfn> boolean. It is initially false.</p>
+
+  </div>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>workerGlobal</var>.<span subdfn data-x="dom-WorkerGlobalScope-self">self</span></code></dt>
+   <dd>Returns <var>workerGlobal</var>.</dd>
+
+   <dt><code data-x=""><var>workerGlobal</var>.<span subdfn data-x="dom-WorkerGlobalScope-location">location</span></code></dt>
+   <dd>Returns <var>workerGlobal</var>'s <code>WorkerLocation</code> object.</dd>
+
+   <dt><code data-x=""><var>workerGlobal</var>.<span subdfn data-x="dom-worker-navigator">navigator</span></code></dt>
+   <dd>Returns <var>workerGlobal</var>'s <code>WorkerNavigator</code> object.</dd>
+
+   <dt><code data-x=""><var>workerGlobal</var>.<span subdfn data-x="dom-WorkerGlobalScope-importScripts">importScripts</span>(...<var>urls</var>)</code></dt>
+   <dd>Fetches each <span>URL</span> in <var>urls</var>, executes them one-by-one in the order they
+   are passed, and then returns (or throws if something went amiss).</dd>
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn attribute for="WorkerGlobalScope"><code
+  data-x="dom-WorkerGlobalScope-self">self</code></dfn> attribute must return the
+  <code>WorkerGlobalScope</code> object itself.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="WorkerGlobalScope"><code
+  data-x="dom-WorkerGlobalScope-location">location</code></dfn> attribute must return the
+  <code>WorkerLocation</code> object whose associated <span
+  data-x="concept-WorkerLocation-WorkerGlobalScope"><code>WorkerGlobalScope</code> object</span> is
+  the <code>WorkerGlobalScope</code> object.</p>
+  </div>
+
+  <p class="note">While the <code>WorkerLocation</code> object is created after the
+  <code>WorkerGlobalScope</code> object, this is not problematic as it cannot be observed from
+  script.</p>
+
+  <hr>
+
+  </div>
+
+  <p>The following are the <span>event handlers</span> (and their corresponding <span data-x="event
+  handler event type">event handler event types</span>) <span w-nodev>that must be</span> supported,
+  as <span>event handler IDL attributes</span>, by objects implementing the
+  <code>WorkerGlobalScope</code> interface:</p>
+
+  <table>
+   <thead>
+    <tr><th><span data-x="event handlers">Event handler</span> <th><span>Event handler event type</span>
+   <tbody>
+    <tr><td><dfn attribute for="WorkerGlobalScope"><code data-x="handler-WorkerGlobalScope-onerror">onerror</code></dfn> <td> <code data-x="event-error">error</code>
+    <tr><td><dfn attribute for="WorkerGlobalScope"><code data-x="handler-WorkerGlobalScope-onlanguagechange">onlanguagechange</code></dfn> <td> <code data-x="event-languagechange">languagechange</code> <!-- new -->
+    <tr><td><dfn attribute for="WorkerGlobalScope"><code data-x="handler-WorkerGlobalScope-onoffline">onoffline</code></dfn> <td> <code data-x="event-offline">offline</code> <!-- new -->
+    <tr><td><dfn attribute for="WorkerGlobalScope"><code data-x="handler-WorkerGlobalScope-ononline">ononline</code></dfn> <td> <code data-x="event-online">online</code> <!-- new -->
+    <tr><td><dfn attribute for="WorkerGlobalScope"><code data-x="handler-WorkerGlobalScope-onrejectionhandled">onrejectionhandled</code></dfn> <td> <code data-x="event-rejectionhandled">rejectionhandled</code>
+    <tr><td><dfn attribute for="WorkerGlobalScope"><code data-x="handler-WorkerGlobalScope-onunhandledrejection">onunhandledrejection</code></dfn> <td> <code data-x="event-unhandledrejection">unhandledrejection</code>
+  </table>
+
+
+  <h5>Dedicated workers and the <code subdfn>DedicatedWorkerGlobalScope</code> interface</h5>
+
+  <pre><code class="idl">[Global=(Worker,DedicatedWorker),Exposed=DedicatedWorker]
+interface <dfn interface>DedicatedWorkerGlobalScope</dfn> : <span>WorkerGlobalScope</span> {
+  [Replaceable] readonly attribute DOMString <span data-x="dom-DedicatedWorkerGlobalScope-name">name</span>;
+
+  undefined <span data-x="dom-DedicatedWorkerGlobalScope-postMessage">postMessage</span>(any message, sequence&lt;<span data-x="idl-object">object</span>&gt; transfer);
+  undefined <span data-x="dom-DedicatedWorkerGlobalScope-postMessage-options">postMessage</span>(any message, optional <span>StructuredSerializeOptions</span> options = {});
+
+  undefined <span data-x="dom-DedicatedWorkerGlobalScope-close">close</span>();
+};
+
+<span>DedicatedWorkerGlobalScope</span> includes <span>MessageEventTarget</span>;</code></pre>
+
+  <p><code>DedicatedWorkerGlobalScope</code> objects have an associated <dfn>inside port</dfn> (a
+  <code>MessagePort</code>). This port is part of a channel that is set up when the worker is
+  created, but it is not exposed.<span w-nodev> This object must never be garbage collected before
+  the <code>DedicatedWorkerGlobalScope</code> object.</span></p>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>dedicatedWorkerGlobal</var>.<span subdfn data-x="dom-DedicatedWorkerGlobalScope-name">name</span></code></dt>
+   <dd><p>Returns <var>dedicatedWorkerGlobal</var>'s <span
+   data-x="concept-WorkerGlobalScope-name">name</span>, i.e. the value given to the
+   <code>Worker</code> constructor. Primarily useful for debugging.</p></dd>
+
+   <dt><code data-x=""><var>dedicatedWorkerGlobal</var>.<span subdfn data-x="dom-DedicatedWorkerGlobalScope-postMessage">postMessage</span>(<var>message</var> [, <var>transfer</var> ])</code></dt>
+   <dt><code data-x=""><var>dedicatedWorkerGlobal</var>.<span subdfn data-x="dom-DedicatedWorkerGlobalScope-postMessage-options">postMessage</span>(<var>message</var> [, { <span data-x="dom-StructuredSerializeOptions-transfer">transfer</span> } ])</code></dt>
+   <dd><p>Clones <var>message</var> and transmits it to the <code>Worker</code> object associated
+   with <var>dedicatedWorkerGlobal</var>. <var>transfer</var> can be passed as a list of objects
+   that are to be transferred rather than cloned.</p></dd>
+
+   <dt><code data-x=""><var>dedicatedWorkerGlobal</var>.<span subdfn data-x="dom-DedicatedWorkerGlobalScope-close">close</span>()</code></dt>
+   <dd><p>Aborts <var>dedicatedWorkerGlobal</var>.</p></dd>
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn attribute for="DedicatedWorkerGlobalScope"><code
+  data-x="dom-DedicatedWorkerGlobalScope-name">name</code></dfn> getter steps are to return
+  <span>this</span>'s <span data-x="concept-WorkerGlobalScope-name">name</span>. Its value
+  represents the name given to the worker using the <code>Worker</code> constructor, used primarily
+  for debugging purposes.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="DedicatedWorkerGlobalScope"><code
+  data-x="dom-DedicatedWorkerGlobalScope-postMessage">postMessage(<var>message</var>,
+  <var>transfer</var>)</code></dfn> and <dfn method for="DedicatedWorkerGlobalScope"><code
+  data-x="dom-DedicatedWorkerGlobalScope-postMessage-options">postMessage(<var>message</var>,
+  <var>options</var>)</code></dfn> methods on <code>DedicatedWorkerGlobalScope</code> objects act as
+  if, when invoked, it immediately invoked the respective <code
+  data-x="dom-MessagePort-postMessage">postMessage(<var>message</var>, <var>transfer</var>)</code>
+  and <code data-x="dom-MessagePort-postMessage-options">postMessage(<var>message</var>,
+  <var>options</var>)</code> on the port, with the same arguments, and returned the same return
+  value.</p>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn export>close a worker</dfn>, given a <var>workerGlobal</var>, run these steps:</p>
+
+  <ol>
+   <li><p>Discard any <span data-x="concept-task">tasks</span> that have been added to
+   <var>workerGlobal</var>'s <span>relevant agent</span>'s <span
+   data-x="concept-agent-event-loop">event loop</span>'s <span data-x="task queue">task
+   queues</span>.</p>
+
+   <li><p>Set <var>workerGlobal</var>'s <span data-x="dom-WorkerGlobalScope-closing">closing</span>
+   flag to true. (This prevents any further tasks from being queued.)</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="DedicatedWorkerGlobalScope"><code
+  data-x="dom-DedicatedWorkerGlobalScope-close">close()</code></dfn> method steps are to
+  <span>close a worker</span> given <span>this</span>.</p>
+  </div>
+
+  <hr>
+
+  </div>
+
+  <h5>Shared workers and the <code subdfn>SharedWorkerGlobalScope</code> interface</h5>
+
+  <pre><code class="idl">[Global=(Worker,SharedWorker),Exposed=SharedWorker]
+interface <dfn interface>SharedWorkerGlobalScope</dfn> : <span>WorkerGlobalScope</span> {
+  [Replaceable] readonly attribute DOMString <span data-x="dom-SharedWorkerGlobalScope-name">name</span>;
+
+  undefined <span data-x="dom-SharedWorkerGlobalScope-close">close</span>();
+
+  attribute <span>EventHandler</span> <span data-x="handler-SharedWorkerGlobalScope-onconnect">onconnect</span>;
+};</code></pre>
+
+  <div w-nodev>
+
+  <p id="concept-sharedworkerglobalscope-constructor-origin">A <code>SharedWorkerGlobalScope</code>
+  object has associated <dfn
+  data-x="concept-SharedWorkerGlobalScope-constructor-storage-key">constructor storage key</dfn> (a
+  <span>storage key</span>), <dfn
+  data-x="concept-SharedWorkerGlobalScope-constructor-url">constructor URL</dfn> (a <span>URL
+  record</span>), and <dfn data-x="concept-SharedWorkerGlobalScope-credentials">credentials</dfn> (a
+  <span data-x="concept-request-credentials-mode">credentials mode</span>), and <dfn
+  data-x="concept-SharedWorkerGlobalScope-extended-lifetime">extended lifetime</dfn> (a boolean).
+  They are initialized when the <code>SharedWorkerGlobalScope</code> object is created, in the
+  <span>run a worker</span> algorithm.</p>
+
+  </div>
+
+  <p>Shared workers receive message ports through <code
+  data-x="event-WorkerGlobalScope-connect">connect</code> events on their <code>SharedWorkerGlobalScope</code> object for each
+  connection.</p>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>sharedWorkerGlobal</var>.<span subdfn data-x="dom-SharedWorkerGlobalScope-name">name</span></code></dt>
+   <dd><p>Returns <var>sharedWorkerGlobal</var>'s <span
+   data-x="concept-WorkerGlobalScope-name">name</span>, i.e. the value given to the
+   <code>SharedWorker</code> constructor. Multiple <code>SharedWorker</code> objects can correspond
+   to the same shared worker (and <code>SharedWorkerGlobalScope</code>), by reusing the same
+   name.</p></dd>
+
+   <dt><code data-x=""><var>sharedWorkerGlobal</var>.<span subdfn data-x="dom-SharedWorkerGlobalScope-close">close</span>()</code></dt>
+   <dd><p>Aborts <var>sharedWorkerGlobal</var>.</p></dd>
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn attribute for="SharedWorkerGlobalScope"><code
+  data-x="dom-SharedWorkerGlobalScope-name">name</code></dfn> getter steps are to return
+  <span>this</span>'s <span data-x="concept-WorkerGlobalScope-name">name</span>. Its value
+  represents the name that can be used to obtain a reference to the worker using the
+  <code>SharedWorker</code> constructor.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="SharedWorkerGlobalScope"><code
+  data-x="dom-SharedWorkerGlobalScope-close">close()</code></dfn> method steps are to <span>close a
+  worker</span> given <span>this</span>.</p>
+  </div>
+
+  <hr>
+
+  </div>
+
+  <p>The following are the <span>event handlers</span> (and their corresponding <span data-x="event
+  handler event type">event handler event types</span>) <span w-nodev>that must be</span> supported,
+  as <span>event handler IDL attributes</span>, by objects implementing the
+  <code>SharedWorkerGlobalScope</code> interface:</p>
+
+  <table>
+   <thead>
+    <tr><th><span data-x="event handlers">Event handler</span> <th><span>Event handler event type</span>
+   <tbody>
+    <tr><td><dfn attribute for="SharedWorkerGlobalScope"><code data-x="handler-SharedWorkerGlobalScope-onconnect">onconnect</code></dfn> <td> <code data-x="event-WorkerGlobalScope-connect">connect</code>
+  </table>
+
+
+

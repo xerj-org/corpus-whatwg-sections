@@ -1,0 +1,156 @@
+WHATWG HTML — section the-canvas-element/shadows — <dfn>Shadows</dfn>
+
+  <h6><dfn>Shadows</dfn></h6>
+
+  <p>All drawing operations on an object which implements the <code>CanvasShadowStyles</code>
+  interface are affected by the four global shadow attributes.</p>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>context</var>.<span subdfn data-x="dom-context-2d-shadowColor">shadowColor</span> [ = <var>value</var> ]</code></dt>
+
+   <dd>
+    <p>Returns the current shadow color.</p>
+
+    <p>Can be set, to change the shadow color. Values that cannot be parsed as CSS colors are
+    ignored.</p>
+   </dd>
+
+   <dt><code data-x=""><var>context</var>.<span subdfn data-x="dom-context-2d-shadowOffsetX">shadowOffsetX</span> [ = <var>value</var> ]</code></dt>
+   <dt><code data-x=""><var>context</var>.<span subdfn data-x="dom-context-2d-shadowOffsetY">shadowOffsetY</span> [ = <var>value</var> ]</code></dt>
+
+   <dd>
+    <p>Returns the current shadow offset.</p>
+
+    <p>Can be set, to change the shadow offset. Values that are not finite numbers are ignored.</p>
+   </dd>
+
+   <dt><code data-x=""><var>context</var>.<span subdfn data-x="dom-context-2d-shadowBlur">shadowBlur</span> [ = <var>value</var> ]</code></dt>
+
+   <dd>
+    <p>Returns the current level of blur applied to shadows.</p>
+
+    <p>Can be set, to change the blur level. Values that are not finite numbers greater than or
+    equal to zero are ignored.</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <p>Objects which implement the <code>CanvasShadowStyles</code> interface have an associated <dfn
+  data-x="concept-CanvasShadowStyles-shadow-color">shadow color</dfn>, which is a CSS color.
+  Initially, it must be <span>transparent black</span>.</p>
+
+  <div algorithm>
+  <p>The <dfn attribute for="CanvasShadowStyles"><code
+  data-x="dom-context-2d-shadowColor">shadowColor</code></dfn> getter steps are to return the <span
+  data-x="serialize a CSS &lt;color> value">serialization</span> of <span>this</span>'s <span
+  data-x="concept-CanvasShadowStyles-shadow-color">shadow color</span> with <span
+  data-x="HTML-compatible serialization is requested">HTML-compatible serialization
+  requested</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <code data-x="dom-context-2d-shadowColor">shadowColor</code> setter steps are:</p>
+
+  <ol>
+   <li><p>Let <var>context</var> be <span>this</span>'s <code
+   data-x="dom-context-2d-canvas">canvas</code> attribute's value, if that is an element; otherwise
+   null.</p></li>
+
+   <li><p>Let <var>parsedValue</var> be the result of <span data-x="parse a CSS &lt;color>
+   value">parsing</span> the given value with <var>context</var> if non-null.</p></li>
+
+   <li><p>If <var>parsedValue</var> is failure, then return.</p></li>
+
+   <li><p>Set <span>this</span>'s <span data-x="concept-CanvasShadowStyles-shadow-color">shadow
+   color</span> to <var>parsedValue</var>.</p></li>
+  </ol>
+  </div>
+
+  <p>The <dfn attribute for="CanvasShadowStyles"><code
+  data-x="dom-context-2d-shadowOffsetX">shadowOffsetX</code></dfn> and <dfn attribute
+  for="CanvasShadowStyles"><code data-x="dom-context-2d-shadowOffsetY">shadowOffsetY</code></dfn>
+  attributes specify the distance that the shadow will be offset in the positive horizontal and
+  positive vertical distance respectively. Their values are in coordinate space units. They are not
+  affected by the current transformation matrix.</p>
+
+  <p>When the context is created, the shadow offset attributes must initially have the value
+  0.</p>
+
+  <div algorithm>
+  <p>On getting, they must return their current value. On setting, the attribute being set must be
+  set to the new value, except if the value is infinite or NaN, in which case the new value must be
+  ignored.</p>
+  </div>
+
+  <p>The <dfn attribute for="CanvasShadowStyles"><code
+  data-x="dom-context-2d-shadowBlur">shadowBlur</code></dfn> attribute specifies the level of the
+  blurring effect. (The units do not map to coordinate space units, and are not affected by the
+  current transformation matrix.)</p>
+
+  <p>When the context is created, the <code data-x="dom-context-2d-shadowBlur">shadowBlur</code>
+  attribute must initially have the value 0.</p>
+
+  <div algorithm>
+  <p>On getting, the attribute must return its current value. On setting, the attribute must be set
+  to the new value, except if the value is negative, infinite or NaN, in which case the new value
+  must be ignored.</p>
+  </div>
+
+  <div algorithm>
+  <p><dfn data-x="when shadows are drawn">Shadows are only drawn if</dfn> the opacity component of
+  the alpha component of the <span data-x="concept-CanvasShadowStyles-shadow-color">shadow
+  color</span> is nonzero and either the <code data-x="dom-context-2d-shadowBlur">shadowBlur</code>
+  is nonzero, or the <code data-x="dom-context-2d-shadowOffsetX">shadowOffsetX</code> is nonzero, or
+  the <code data-x="dom-context-2d-shadowOffsetY">shadowOffsetY</code> is nonzero.</p>
+  </div>
+
+  <div algorithm>
+  <p><span>When shadows are drawn</span>, they must be rendered as follows:</p>
+
+  <ol>
+   <li><p>Let <var>A</var> be an infinite <span>transparent black</span> bitmap on which the source
+   image for which a shadow is being created has been rendered.</p></li>
+
+   <li><p>Let <var>B</var> be an infinite <span>transparent black</span> bitmap, with a coordinate
+   space and an origin identical to <var>A</var>.</p></li>
+
+   <li><p>Copy the alpha component of <var>A</var> to <var>B</var>, offset by <code
+   data-x="dom-context-2d-shadowOffsetX">shadowOffsetX</code> in the positive <var>x</var>
+   direction, and <code data-x="dom-context-2d-shadowOffsetY">shadowOffsetY</code> in the positive
+   <var>y</var> direction.</p></li>
+
+   <li>
+    <p>If <code data-x="dom-context-2d-shadowBlur">shadowBlur</code> is greater than 0:</p>
+
+    <ol>
+     <li><p>Let <var>&sigma;</var> be half the value of <code
+     data-x="dom-context-2d-shadowBlur">shadowBlur</code>.</p></li>
+
+     <li><p>Perform a 2D Gaussian Blur on <var>B</var>, using <var>&sigma;</var>
+     as the standard deviation.</p> <!-- wish i could find a reference for this --> </li>
+    </ol>
+
+    <p>User agents may limit values of <var>&sigma;</var> to an implementation-specific
+    maximum value to avoid exceeding hardware limitations during the Gaussian blur operation.</p>
+   </li>
+
+   <li><p>Set the red, green, and blue components of every pixel in <var>B</var> to the
+   red, green, and blue components (respectively) of the <span
+   data-x="concept-CanvasShadowStyles-shadow-color">shadow color</span>.</p></li>
+
+   <li><p>Multiply the alpha component of every pixel in <var>B</var> by the alpha
+   component of the <span data-x="concept-CanvasShadowStyles-shadow-color">shadow
+   color</span>.</p></li>
+
+   <li><p>The shadow is in the bitmap <var>B</var>, and is rendered as part of the
+   <span>drawing model</span> described below.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+  <p>If the <span>current compositing and blending operator</span> is "<code
+  data-x="gcop-copy">copy</code>", then shadows effectively won't render (since the shape will
+  overwrite the shadow).</p>
+

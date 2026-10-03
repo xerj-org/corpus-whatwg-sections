@@ -1,0 +1,19 @@
+WHATWG URL — section url-rendering-elision — Elision
+
+<h4 id=url-rendering-elision>Elision</h4>
+
+<p>In a space-constrained display, URLs should be elided carefully to avoid misleading the user when
+making a security decision:
+
+<ul>
+ <li><p>Browsers should ensure that at least the <a for=host>registrable domain</a> can be shown
+ when the URL is rendered (to avoid showing, e.g., <code>...examplecorp.com</code> when loading
+ <code>https://not-really-examplecorp.com/</code>).
+
+ <li><p>When the full <a for=url>host</a> cannot be rendered, browsers should elide
+ <a for=/>domain labels</a> starting from the lowest-level domain label. For example,
+ <code>examplecorp.com.evil.com</code> should be elided as <code>...com.evil.com</code>, not
+ <code>examplecorp.com...</code>. (Note that bidirectional text means that the lowest-level domain
+ label may not appear on the left.)
+</ul>
+

@@ -1,0 +1,87 @@
+WHATWG HTML — section the-css-user-agent-style-sheet-and-presentational-hints — The CSS user agent style sheet and presentational hints (+non-replaced-elements)
+
+  <h3>The CSS user agent style sheet and presentational hints</h3>
+
+  <p>The CSS rules given in these subsections are, except where otherwise specified,
+  <span>expected</span> to be used as part of the user-agent level style sheet defaults for all
+  documents that contain <span>HTML elements</span>.</p>
+
+  <p>Some rules are intended for the author-level zero-specificity presentational hints part of the
+  CSS cascade; these are explicitly called out as <dfn data-lt="presentational hint"
+  export>presentational hints</dfn>.</p>
+
+  <hr>
+
+  <div algorithm>
+  <p>When the text below says that an attribute <var>attribute</var> on an element
+  <var>element</var> <dfn>maps to the pixel length property</dfn> (or properties)
+  <var>properties</var>, it means that if <var>element</var> has an attribute <var>attribute</var>
+  set, and parsing that attribute's value using the <span>rules for parsing non-negative
+  integers</span> doesn't generate an error, then the user agent is <span>expected</span> to use
+  the parsed value as a pixel length for a <span data-x="presentational hints">presentational
+  hint</span> for <var>properties</var>.</p>
+  </div>
+
+  <div algorithm>
+  <p>When the text below says that an attribute <var>attribute</var> on an element
+  <var>element</var> <dfn>maps to the dimension property</dfn> (or properties)
+  <var>properties</var>, it means that if <var>element</var> has an attribute <var>attribute</var>
+  set, and parsing that attribute's value using the <span>rules for parsing dimension values</span>
+  doesn't generate an error, then the user agent is <span>expected</span> to use the parsed
+  dimension as the value for a <span data-x="presentational hints">presentational hint</span> for
+  <var>properties</var>, with the value given as a pixel length if the dimension was a length, and
+  with the value given as a percentage if the dimension was a percentage.</p>
+  </div>
+
+  <div algorithm>
+  <p>When the text below says that an attribute <var>attribute</var> on an element
+  <var>element</var> <dfn>maps to the dimension property (ignoring zero)</dfn> (or properties)
+  <var>properties</var>, it means that if <var>element</var> has an attribute <var>attribute</var>
+  set, and parsing that attribute's value using the <span>rules for parsing nonzero dimension
+  values</span> doesn't generate an error, then the user agent is <span>expected</span> to use the
+  parsed dimension as the value for a <span data-x="presentational hints">presentational
+  hint</span> for <var>properties</var>, with the value given as a pixel length if the dimension
+  was a length, and with the value given as a percentage if the dimension was a percentage.</p>
+  </div>
+
+  <div algorithm>
+  <p>When the text below says that a pair of attributes <var>w</var> and <var>h</var> on an
+  element <var>element</var> <dfn>map to the aspect-ratio property</dfn>, it means that if
+  <var>element</var> has both attributes <var>w</var> and <var>h</var>, and parsing those
+  attributes' values using the <span>rules for parsing non-negative integers</span> doesn't
+  generate an error for either, then the user agent is <span>expected</span> to use the parsed
+  integers as a <span data-x="presentational hints">presentational hint</span> for the
+  <span>'aspect-ratio'</span> property of the form <code data-x="">auto <var>w</var> /
+  <var>h</var></code>.</p>
+  </div>
+
+  <div algorithm>
+  <p>When the text below says that a pair of attributes <var>w</var> and <var>h</var> on an
+  element <var>element</var> <dfn>map to the aspect-ratio property (using dimension rules)</dfn>, it
+  means that if <var>element</var> has both attributes <var>w</var> and <var>h</var>, and parsing
+  those attributes' values using the <span>rules for parsing dimension values</span> doesn't
+  generate an error or return a percentage for either, then the user agent is <span>expected</span>
+  to use the parsed dimensions as a <span data-x="presentational hints">presentational hint</span>
+  for the <span>'aspect-ratio'</span> property of the form <code data-x="">auto <var>w</var> /
+  <var>h</var></code>.</p>
+  </div>
+
+  <div algorithm>
+  <p>When a user agent is to <dfn>align descendants</dfn> of a node, the user agent is
+  <span>expected</span> to align only those descendants that have both their
+  <span>'margin-inline-start'</span> and <span>'margin-inline-end'</span> properties computing to a
+  value other than 'auto', that are over-constrained and that have one of those two margins with a
+  <span>used value</span> forced to a greater value, and that do not themselves have an applicable
+  <code data-x="">align</code> attribute. When multiple elements are to <span data-x="align
+  descendants">align</span> a particular descendant, the most deeply nested such element is
+  <span>expected</span> to override the others. Aligned elements are <span>expected</span> to be
+  aligned by having the <span data-x="used value">used values</span> of their margins on the
+  <span>line-left</span> and <span>line-right</span> sides be set accordingly.
+  <ref>CSSLOGICAL</ref> <ref>CSSWM</ref></p>
+  </div>
+
+
+
+  <h3>Non-replaced elements</h3>
+
+

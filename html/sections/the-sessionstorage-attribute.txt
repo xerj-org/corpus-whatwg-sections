@@ -1,0 +1,63 @@
+WHATWG HTML — section the-sessionstorage-attribute — The <code data-x="dom-sessionStorage">sessionStorage</code> getter
+
+  <h4 id="the-sessionstorage-attribute">The <code data-x="dom-sessionStorage">sessionStorage</code> getter</h4>
+
+  <pre><code class="idl">interface mixin <dfn interface>WindowSessionStorage</dfn> {
+  readonly attribute <span>Storage</span> <span data-x="dom-sessionStorage">sessionStorage</span>;
+};
+<span>Window</span> includes <span>WindowSessionStorage</span>;</code></pre>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>window</var>.<span subdfn data-x="dom-sessionStorage">sessionStorage</span></code></dt>
+   <dd>
+    <p>Returns the <code>Storage</code> object associated with that <var>window</var>'s origin's
+    session storage area.</p>
+
+    <p>Throws a <span>"<code>SecurityError</code>"</span> <code>DOMException</code> if the
+    <code>Document</code>'s <span data-x="concept-document-origin">origin</span> is an <span
+    data-x="concept-origin-opaque">opaque origin</span> or if the request violates a policy decision
+    (e.g., if the user agent is configured to not allow the page to persist data).</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <p>A <code>Document</code> object has an associated <dfn>session storage holder</dfn>, which is
+  null or a <code>Storage</code> object. It is initially null.</p>
+
+  <div algorithm>
+  <p>
+  <!--INSERT TRACKING-->
+  The <dfn attribute for="WindowSessionStorage"><code
+  data-x="dom-sessionStorage">sessionStorage</code></dfn> getter steps are:</p>
+
+  <ol>
+   <li><p>If <span>this</span>'s <span data-x="concept-document-window">associated
+   <code>Document</code></span>'s <span>session storage holder</span> is non-null, then return
+   <span>this</span>'s <span data-x="concept-document-window">associated
+   <code>Document</code></span>'s <span>session storage holder</span>.</p></li>
+
+   <li><p>Let <var>map</var> be the result of running <span>obtain a session storage bottle
+   map</span> with <span>this</span>'s <span>relevant settings object</span> and "<code
+   data-x="">sessionStorage</code>".</p></li>
+
+   <li><p>If <var>map</var> is failure, then throw a <span>"<code>SecurityError</code>"</span>
+   <code>DOMException</code>.</p></li>
+
+   <li><p>Let <var>storage</var> be a new <code>Storage</code> object whose <span
+   data-x="concept-Storage-map">map</span> is <var>map</var>.
+
+   <li><p>Set <span>this</span>'s <span data-x="concept-document-window">associated
+   <code>Document</code></span>'s <span>session storage holder</span> to
+   <var>storage</var>.</p></li>
+
+   <li><p>Return <var>storage</var>.</p></li>
+  </ol>
+  </div>
+
+  <p class="note">After <span>creating a new auxiliary browsing context and document</span>, the
+  session storage <a href="#copy-session-storage">is copied</a> over.</p>
+
+  </div>
+
+

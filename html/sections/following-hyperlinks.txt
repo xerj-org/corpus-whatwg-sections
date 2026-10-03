@@ -1,0 +1,131 @@
+WHATWG HTML — section following-hyperlinks — Following hyperlinks
+
+  <h4>Following hyperlinks</h4>
+
+  <div algorithm>
+  <p>An element <var>element</var> <dfn>cannot navigate</dfn> if any of the following are true:</p>
+
+  <ul>
+   <li><p><var>element</var>'s <span>node document</span> is not <span>fully active</span>;
+   or</p></li>
+
+   <li><p><var>element</var> is not an <code>a</code> element and is not
+   <span>connected</span>.</p></li>
+  </ul>
+  </div>
+
+  <p class="note">This is also used by <span data-x="concept-form-submit">form submission</span> for
+  the <code>form</code> element. The exception for <code>a</code> elements is for compatibility with
+  web content.</p>
+
+  <div algorithm>
+  <p>To <dfn>get an element's noopener</dfn>, given an <code>a</code>, <code>area</code>, or
+  <code>form</code> element <var>element</var>, a <span>URL record</span> <var>url</var>, and a
+  string <var>target</var>, perform the following steps. They return a boolean.</p>
+
+  <ol>
+   <li><p>If <var>element</var>'s <a href="#linkTypes">link types</a> include the <code
+   data-x="rel-noopener">noopener</code> or <code data-x="rel-noreferrer">noreferrer</code>
+   keyword, then return true.</li>
+
+   <li id="opener-processing-model"><p>If <var>element</var>'s <a href="#linkTypes">link types</a>
+   do not include the <code data-x="rel-opener">opener</code> keyword and <var>target</var> is an
+   <span>ASCII case-insensitive</span> match for "<code data-x="">_blank</code>", then return
+   true.</p></li>
+
+   <li>
+    <p>If <var>url</var>'s <span data-x="concept-url-blob-entry">blob URL entry</span> is not
+    null:</p>
+
+    <ol>
+     <li><p>Let <var>blobOrigin</var> be <var>url</var>'s <span
+     data-x="concept-url-blob-entry">blob URL entry</span>'s <span
+     data-x="blob-url-entry-environment">environment</span>'s <span
+     data-x="concept-settings-object-origin">origin</span>.</p></li>
+
+     <li><p>Let <var>topLevelOrigin</var> be <var>element</var>'s <span>relevant settings
+     object</span>'s <span>top-level origin</span>.</p></li>
+
+     <li><p>If <var>blobOrigin</var> is not <span>same site</span> with <var>topLevelOrigin</var>,
+     then return true.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Return false.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="following hyperlinks">follow the hyperlink</dfn> created by an element
+  <var>subject</var>, given an optional <dfn
+  data-x="following-hyperlinkSuffix"><var>hyperlinkSuffix</var></dfn> (default null) and an
+  optional <dfn data-x="following-userInvolvement"><var>userInvolvement</var></dfn> (default "<code
+  data-x="uni-none">none</code>"):</p>
+
+  <ol>
+   <li><p>If <var>subject</var> <span>cannot navigate</span>, then return.</p></li>
+
+   <li><p>Let <var>targetAttributeValue</var> be the empty string.</p></li>
+
+   <li><p>If <var>subject</var> is an <code>a</code> or <code>area</code> element, then set
+   <var>targetAttributeValue</var> to the result of <span data-x="get an element's target">getting
+   an element's target</span> given <var>subject</var>.</p></li>
+
+   <li><p>Let <var>urlRecord</var> be the result of <span>encoding-parsing a URL</span> given
+   <var>subject</var>'s <code data-x="attr-hyperlink-href">href</code> attribute value, relative to
+   <var>subject</var>'s <span>node document</span>.</p></li>
+
+   <li><p>If <var>urlRecord</var> is failure, then return.</p></li>
+
+   <li><p>Let <var>noopener</var> be the result of <span data-x="get an element's noopener">getting
+   an element's noopener</span> with <var>subject</var>, <var>urlRecord</var>, and
+   <var>targetAttributeValue</var>.</p></li>
+
+   <li><p>Let <var>targetNavigable</var> be the first return value of applying <span>the rules for
+   choosing a navigable</span> given <var>targetAttributeValue</var>, <var>subject</var>'s
+   <span>node navigable</span>, and <var>noopener</var>.</p></li>
+
+   <li><p>If <var>targetNavigable</var> is null, then return.</p></li>
+
+   <li><p>Let <var>urlString</var> be the result of applying the <span
+   data-x="concept-url-serializer">URL serializer</span> to <var>urlRecord</var>.</p></li>
+
+   <li><p>If <var>hyperlinkSuffix</var> is non-null, then append it to
+   <var>urlString</var>.</p></li>
+
+   <li>
+    <p><span>Navigate</span><!--DONAV hyperlink--> <var>targetNavigable</var> to
+    <var>urlString</var> using <var>subject</var>'s <span>node document</span>, with <i
+    data-x="navigation-referrer-policy">referrerPolicy</i> set to <var>subject</var>'s
+    <span>hyperlink referrer policy</span>, <i
+    data-x="navigation-user-involvement">userInvolvement</i> set to <var>userInvolvement</var>, and
+    <i data-x="navigation-source-element">sourceElement</i> set to <var>subject</var>.</p>
+
+    <p class="note">Unlike many other types of navigations, following hyperlinks does not have
+    special "<code data-x="NavigationHistoryBehavior-replace">replace</code>" behavior for when
+    documents are not <span>completely loaded</span>. This is true for both user-initiated instances
+    of following hyperlinks, as well as script-triggered ones via, e.g., <code
+    data-x="">aElement.click()</code>.</p>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn>hyperlink referrer policy</dfn> for an element <var>subject</var> is the value
+  returned by the following steps:</p>
+
+  <ol>
+   <li id="noreferrer-a-area-processing-model"><p>If <var>subject</var>'s <a href="#linkTypes">link
+   types</a> includes the <code data-x="rel-noreferrer">noreferrer</code> keyword, then return
+   "<code data-x="">no-referrer</code>".</p></li>
+
+   <li><p>Return the current state of <var>subject</var>'s <code
+   data-x="attr-hyperlink-referrerpolicy">referrerpolicy</code> content attribute.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+
+<!--DOWNLOAD-->
+

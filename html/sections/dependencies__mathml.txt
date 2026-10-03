@@ -1,0 +1,70 @@
+WHATWG HTML — section dependencies/mathml — MathML
+
+   <dt>MathML</dt>
+
+   <dd>
+    <p>While support for MathML as a whole is not required by this specification (though it is
+    encouraged, at least for web browsers), certain features depend upon small parts of MathML being
+    implemented. <ref>MATHML</ref></p>
+
+    <p>The following features are defined in <cite>Mathematical Markup Language</cite>
+    (<cite>MathML</cite>):</p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#dfn-a">MathML <code>a</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#dfn-annotation-xml">MathML <code>annotation-xml</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#the-top-level-math-element">MathML <code>math</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#error-message-merror">MathML <code>merror</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#dfn-mfrac">MathML <code>mfrac</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#the-mi-element">MathML <code>mi</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#dfn-mmultiscripts">MathML <code>mmultiscripts</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#number-mn">MathML <code>mn</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#operator-fence-separator-or-accent-mo">MathML <code>mo</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#dfn-mover">MathML <code>mover</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#dfn-mpadded">MathML <code>mpadded</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#dfn-mphantom">MathML <code>mphantom</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#dfn-mprescripts">MathML <code>mprescripts</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#dfn-mroot">MathML <code>mroot</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#dfn-mrow">MathML <code>mrow</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#string-literal-ms">MathML <code>ms</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#dfn-mspace">MathML <code>mspace</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#dfn-msqrt">MathML <code>msqrt</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#dfn-mstyle">MathML <code>mstyle</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#dfn-msub">MathML <code>msub</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#dfn-msubsup">MathML <code>msubsup</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#dfn-msup">MathML <code>msup</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#dfn-mtable">MathML <code>mtable</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#dfn-mtd">MathML <code>mtd</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#text-mtext">MathML <code>mtext</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#dfn-mtr">MathML <code>mtr</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#dfn-munder">MathML <code>munder</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#dfn-munderover">MathML <code>munderover</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#dfn-semantics">MathML <code>semantics</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#dfn-accent">MathML <code>accent</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#dfn-accentunder">MathML <code>accentunder</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#dfn-columnspan">MathML <code>columnspan</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#dfn-depth">MathML <code>depth</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#dfn-fence">MathML <code>fence</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#dfn-form">MathML <code>form</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#dfn-height">MathML <code>height</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#dfn-largeop">MathML <code>largeop</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#dfn-lspace">MathML <code>lspace</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#dfn-maxsize">MathML <code>maxsize</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#dfn-minsize">MathML <code>minsize</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#dfn-movablelimits">MathML <code>movablelimits</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#dfn-rowspan">MathML <code>rowspan</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#dfn-rspace">MathML <code>rspace</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#dfn-separator">MathML <code>separator</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#dfn-stretchy">MathML <code>stretchy</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#dfn-symmetric">MathML <code>symmetric</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#dfn-voffset">MathML <code>voffset</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#dfn-width">MathML <code>width</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#dfn-displaystyle">MathML <code>displaystyle</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#dfn-mathbackground">MathML <code>mathbackground</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#dfn-mathcolor">MathML <code>mathcolor</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#dfn-mathsize">MathML <code>mathsize</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/mathml-core/#dfn-scriptlevel">MathML <code>scriptlevel</code></dfn> attribute</li>
+    </ul>
+   </dd>
+
+

@@ -1,0 +1,210 @@
+WHATWG HTML — section the-base-element — The <dfn element><code>base</code></dfn> element
+
+  <h4>The <dfn element><code>base</code></dfn> element</h4>
+
+  <dl class="element">
+   <dt><span data-x="concept-element-categories">Categories</span>:</dt>
+   <dd><span>Metadata content</span>.</dd>
+   <dt><span data-x="concept-element-contexts">Contexts in which this element can be used</span>:</dt>
+   <dd>In a <code>head</code> element containing no other <code>base</code> elements.</dd>
+   <dt><span data-x="concept-element-content-model">Content model</span>:</dt>
+   <dd><span data-x="concept-content-nothing">Nothing</span>.</dd>
+   <dt><span data-x="concept-element-attributes">Content attributes</span>:</dt>
+   <dd><span>Global attributes</span></dd>
+   <dd><code data-x="attr-base-href">href</code></dd>
+   <dd><code data-x="attr-base-target">target</code></dd>
+   <dt><span
+   data-x="concept-element-accessibility-considerations">Accessibility considerations</span>:</dt>
+   <dd><a href="https://w3c.github.io/html-aria/#el-base">For authors</a>.</dd>
+   <dd><a href="https://w3c.github.io/html-aam/#el-base">For implementers</a>.</dd>
+   <dt><span data-x="concept-element-sanitization">Sanitization</span>:</dt>
+   <dd><span data-x="sanitizer-category-unsafe">Unsafe</span>.</dd>
+   <dt><span data-x="concept-element-dom">DOM interface</span>:</dt>
+   <dd w-nodev>
+    <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>HTMLBaseElement</dfn> : <span>HTMLElement</span> {
+  [<span>HTMLConstructor</span>] constructor();
+
+  [<span>CEReactions</span>, <span data-x="xattr-ReflectSetter">ReflectSetter</span>] attribute USVString <span data-x="dom-base-href">href</span>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute DOMString <dfn attribute for="HTMLBaseElement" data-x="dom-base-target">target</dfn>;
+};</code></pre>
+   </dd>
+   <dd w-dev>Uses <code>HTMLBaseElement</code>.</dd>
+  </dl>
+
+  <p>The <code>base</code> element allows authors to specify the <span>document base URL</span> for
+  the purposes of parsing <span data-x="URL">URLs</span>, and the name of the default
+  <span>navigable</span> for the purposes of <span>following hyperlinks</span>. The element does not
+  <span data-x="represents">represent</span> any content beyond this information.</p>
+
+  <p>There must be no more than one <code>base</code> element per document.</p>
+
+  <p>A <code>base</code> element must have either an <code data-x="attr-base-href">href</code>
+  attribute, a <code data-x="attr-base-target">target</code> attribute, or both.</p>
+
+  <p>The <dfn element-attr for="base"><code data-x="attr-base-href">href</code></dfn> content
+  attribute, if specified, must contain a <span>valid URL potentially surrounded by
+  spaces</span>.</p>
+
+  <p>A <code>base</code> element, if it has an <code data-x="attr-base-href">href</code> attribute,
+  must come before any other elements in the tree that have attributes defined as taking <span
+  data-x="URL">URLs</span>.</p>
+
+  <div w-nodev>
+
+  <p class="note">If there are multiple <code>base</code> elements with <code
+  data-x="attr-base-href">href</code> attributes, all but the first are ignored.</p>
+
+  </div>
+
+  <p>The <dfn element-attr for="base"><code data-x="attr-base-target">target</code></dfn> attribute,
+  if specified, must contain a <span>valid navigable target name or keyword</span>, which specifies
+  which <span>navigable</span> is to be used as the default when <span
+  data-x="hyperlink">hyperlinks</span> and <span data-x="form">forms</span> in the
+  <code>Document</code> cause <span data-x="navigate">navigation</span>.</p>
+
+  <p>A <code>base</code> element, if it has a <code data-x="attr-base-target">target</code>
+  attribute, must come before any elements in the tree that represent <span
+  data-x="hyperlink">hyperlinks</span>.</p>
+
+  <div w-nodev>
+
+  <p class="note">If there are multiple <code>base</code> elements with <code
+  data-x="attr-base-target">target</code> attributes, all but the first are ignored.</p>
+
+  <div algorithm>
+  <p>To <dfn>get an element's target</dfn>, given an <code>a</code>, <code>area</code>, or
+  <code>form</code> element <var>element</var>, and an optional string-or-null <var>target</var>
+  (default null), run these steps:
+
+  <ol>
+   <li>
+    <p>If <var>target</var> is null:</p>
+
+    <ol>
+     <li><p>If <var>element</var> has a <code data-x="">target</code> attribute, then set
+     <var>target</var> to that attribute's value.</p></li>
+
+     <li><p>Otherwise, if <var>element</var>'s <span>node document</span> contains a
+     <code>base</code> element with a <code data-x="attr-base-target">target</code> attribute, set
+     <var>target</var> to the value of the <code data-x="attr-base-target">target</code> attribute
+     of the first such <code>base</code> element.</p></li>
+    </ol>
+   </li>
+
+   <li><p>If <var>target</var> is not null, and contains an <span>ASCII tab or newline</span> and a
+   U+003C (&lt;), then set <var>target</var> to "<code data-x="">_blank</code>".</p></li>
+
+   <li><p>Return <var>target</var>.</p></li>
+  </ol>
+  </div>
+
+  <hr>
+
+  <p>A <code>base</code> element that is the first <code>base</code> element with an <code
+  data-x="attr-base-href">href</code> content attribute <span>in a document tree</span> has a
+  <dfn>frozen base URL</dfn>. The <span>frozen base URL</span> must be <span>immediately</span>
+  <span data-x="set the frozen base URL">set</span> for an element whenever any of the following
+  situations occur:</p>
+
+  <ul>
+   <li><p>The <code>base</code> element becomes the first <code>base</code> element in <span>tree
+   order</span> with an <code data-x="attr-base-href">href</code> content attribute in its
+   <code>Document</code>.</p></li>
+
+   <li><p>The <code>base</code> element is the first <code>base</code> element in <span>tree
+   order</span> with an <code data-x="attr-base-href">href</code> content attribute in its
+   <code>Document</code>, and its <code data-x="attr-base-href">href</code> content attribute is
+   changed.</p></li>
+  </ul>
+
+  <div algorithm>
+  <p>To <dfn export>set the frozen base URL</dfn> for an element <var>element</var>:</p>
+
+  <ol>
+   <li><p>Let <var>document</var> be <var>element</var>'s <span>node document</span>.
+
+   <li><p>Let <var>urlRecord</var> be the result of <span data-x="URL parser">parsing</span> the
+   value of <var>element</var>'s <code data-x="attr-base-href">href</code> content attribute with
+   <var>document</var>'s <span>fallback base URL</span>, and <var>document</var>'s <span
+   data-x="document's character encoding">character encoding</span>. (Thus, the <code>base</code>
+   element isn't affected by itself.)</p></li>
+   <!-- This uses the URL parser rather than encoding-parse a URL since otherwise we'd have to
+        unnecessarily complicate the latter for two callsites. -->
+
+   <li>
+    <p>If any of the following are true:</p>
+
+    <ul>
+     <li><p><var>urlRecord</var> is failure;</p></li>
+
+     <li><p><var>urlRecord</var>'s <span data-x="concept-url-scheme">scheme</span> is "<code
+     data-x="">data</code>" or "<code data-x="">javascript</code>"; or</p></li>
+
+     <li><p>running <span>Is base allowed for Document?</span> on <var>urlRecord</var> and
+     <var>document</var> returns "<code data-x="">Blocked</code>",</p></li>
+    </ul>
+
+    <p>then set <var>element</var>'s <span>frozen base URL</span> to <var>document</var>'s
+    <span>fallback base URL</span> and return.</p>
+   </li>
+
+   <li><p>Set <var>element</var>'s <span>frozen base URL</span> to <var>urlRecord</var>.</p></li>
+
+   <li><p><span>Respond to base URL changes</span> given <var>document</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLBaseElement"><code data-x="dom-base-href">href</code></dfn> IDL
+  attribute, on getting, must return the result of running the following algorithm:
+  <!-- https://software.hixie.ch/utilities/js/live-dom-viewer/?saved=1715
+       https://github.com/whatwg/html/issues/1060#issuecomment-211221664 -->
+
+  <ol>
+   <li><p>Let <var>document</var> be <var>element</var>'s <span>node document</span>.
+
+   <li><p>Let <var>url</var> be the value of the <code data-x="attr-base-href">href</code>
+   attribute of this element, if it has one, and the empty string otherwise.</p></li>
+
+   <li><p>Let <var>urlRecord</var> be the result of <span data-x="URL parser">parsing</span>
+   <var>url</var> with <var>document</var>'s <span>fallback base URL</span>, and
+   <var>document</var>'s <span data-x="document's character encoding">character encoding</span>.
+   (Thus, the <code>base</code> element isn't affected by other <code>base</code> elements or
+   itself.)</p></li>
+   <!-- This uses the URL parser rather than encoding-parse a URL since otherwise we'd have to
+        unnecessarily complicate the latter for two callsites. -->
+
+   <li><p>If <var>urlRecord</var> is failure, return <var>url</var>.</p></li>
+
+   <li><p>Return the <span data-x="concept-url-serializer">serialization</span> of
+   <var>urlRecord</var>.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+  <div class="example">
+
+   <p>In this example, a <code>base</code> element is used to set the <span>document base
+   URL</span>:</p>
+
+   <pre><code class="html">&lt;!DOCTYPE html>
+&lt;html lang="en">
+    &lt;head>
+        &lt;title>This is an example for the &amp;lt;base&amp;gt; element&lt;/title>
+        &lt;base href="https://www.example.com/news/index.html">
+    &lt;/head>
+    &lt;body>
+        &lt;p>Visit the &lt;a href="archives.html">archives&lt;/a>.&lt;/p>
+    &lt;/body>
+&lt;/html></code></pre>
+
+   <p>The link in the above example would be a link to "<code
+   data-x="">https://www.example.com/news/archives.html</code>".</p>
+
+  </div>
+
+
+
+

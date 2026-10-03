@@ -1,0 +1,365 @@
+WHATWG HTML — section message-ports — Message ports
+
+  <h4>Message ports</h4>
+
+  <p>Each channel has two message ports. Data sent through one port is received by the other port,
+  and vice versa.</p>
+
+  <pre><code class="idl">[Exposed=(Window,Worker,AudioWorklet), <span>Transferable</span>]
+interface <dfn interface>MessagePort</dfn> : <span>EventTarget</span> {
+  undefined <span data-x="dom-MessagePort-postMessage">postMessage</span>(any message, sequence&lt;<span data-x="idl-object">object</span>&gt; transfer);
+  undefined <span data-x="dom-MessagePort-postMessage-options">postMessage</span>(any message, optional <span>StructuredSerializeOptions</span> options = {});
+  undefined <span data-x="dom-MessagePort-start">start</span>();
+  undefined <span data-x="dom-MessagePort-close">close</span>();
+
+  // event handlers
+  attribute <span>EventHandler</span> <span data-x="handler-MessagePort-onclose">onclose</span>;
+};
+
+<span>MessagePort</span> includes <span>MessageEventTarget</span>;
+
+dictionary <dfn dictionary>StructuredSerializeOptions</dfn> {
+  sequence&lt;<span data-x="idl-object">object</span>&gt; <dfn dict-member for="StructuredSerializeOptions" data-x="dom-StructuredSerializeOptions-transfer">transfer</dfn> = [];
+};</code></pre>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>port</var>.<span subdfn data-x="dom-MessagePort-postMessage">postMessage</span>(<var>message</var> [, <var>transfer</var>])</code></dt>
+   <dt><code data-x=""><var>port</var>.<span subdfn data-x="dom-MessagePort-postMessage-options">postMessage</span>(<var>message</var> [, { <span data-x="">transfer</span> }])</code></dt>
+   <dd>
+    <p>Posts a message through the channel. Objects listed in <var>transfer</var> are transferred,
+    not just cloned, meaning that they are no longer usable on the sending side.</p>
+
+    <p>Throws a <span>"<code>DataCloneError</code>"</span> <code>DOMException</code> if
+    <var>transfer</var> contains duplicate objects or <var>port</var>, or if <var>message</var>
+    could not be cloned.</p>
+   </dd>
+
+   <dt><code data-x=""><var>port</var>.<span subdfn data-x="dom-MessagePort-start">start</span>()</code></dt>
+   <dd><p>Begins dispatching messages received on the port.</p></dd>
+
+   <dt><code data-x=""><var>port</var>.<span subdfn data-x="dom-MessagePort-close">close</span>()</code></dt>
+   <dd><p>Disconnects the port, so that it is no longer active.</p></dd>
+  </dl>
+
+  <div w-nodev>
+
+  <p>Each <code>MessagePort</code> object has a <dfn>message event target</dfn> (a
+  <code>MessageEventTarget</code>), to which the <code data-x="event-message">message</code> and <code
+  data-x="event-messageerror">messageerror</code> events are dispatched. Unless otherwise
+  specified, it defaults to the <code>MessagePort</code> object itself.</p>
+
+  <p>Each <code>MessagePort</code> object can be entangled with another (a symmetric relationship).
+  Each <code>MessagePort</code> object also has a <span>task source</span> called the <dfn>port
+  message queue</dfn>, initially empty. A <span>port message queue</span> can be enabled or
+  disabled, and is initially disabled. Once enabled, a port can never be disabled again (though
+  messages in the queue can get moved to another queue or removed altogether, which has much the
+  same effect). A <code>MessagePort</code> also has a <dfn>has been shipped</dfn> flag, which must
+  initially be false.</p>
+
+  <div algorithm>
+  <p>When a port's <span>port message queue</span> is enabled, the <span>event loop</span> must use
+  it as one of its <span data-x="task source">task sources</span>. When a port's <span>relevant
+  global object</span> is a <code>Window</code>, all <span data-x="concept-task">tasks</span> <span
+  data-x="queue a task">queued</span> on its <span>port message queue</span> must be associated with
+  the port's <span>relevant global object</span>'s <span data-x="concept-document-window">associated
+  <code>Document</code></span>.</p>
+  </div>
+
+  <p class="note">If the document is <span>fully active</span>, but the event listeners were all
+  created in the context of documents that are <em>not</em> <span>fully active</span>, then the
+  messages will not be received unless and until the documents become <span>fully active</span>
+  again.</p>
+
+  <div algorithm>
+  <p>Each <span>event loop</span> has a <span>task source</span> called the <dfn>unshipped port
+  message queue</dfn>. This is a virtual <span>task source</span>: it must act as if it contained
+  the <span data-x="concept-task">tasks</span> of each <span>port message queue</span> of each
+  <code>MessagePort</code> whose <span>has been shipped</span> flag is false, whose <span>port
+  message queue</span> is enabled, and whose <span>relevant agent</span>'s <span
+  data-x="concept-agent-event-loop">event loop</span> is that <span>event loop</span>, in the order
+  in which they were added to their respective <span>task source</span>. When a <span
+  data-x="concept-task">task</span> would be removed from the <span>unshipped port message
+  queue</span>, it must instead be removed from its <span>port message queue</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>When a <code>MessagePort</code>'s <span>has been shipped</span> flag is false, its <span>port
+  message queue</span> must be ignored for the purposes of the <span>event loop</span>. (The
+  <span>unshipped port message queue</span> is used instead.)</p>
+  </div>
+
+  <p class="note">The <span>has been shipped</span> flag is set to true when a port, its twin, or
+  the object it was cloned from, is or has been transferred. When a <code>MessagePort</code>'s
+  <span>has been shipped</span> flag is true, its <span>port message queue</span> acts as a
+  first-class <span>task source</span>, unaffected to any <span>unshipped port message
+  queue</span>.</p>
+
+  <div algorithm>
+  <p>When the user agent is to <dfn>entangle</dfn> two <code>MessagePort</code> objects, it must run
+  the following steps:</p>
+
+  <ol>
+   <li>
+    <p>If one of the ports is already entangled, then disentangle it and the port that it was
+    entangled with.</p>
+
+    <p class="note">If those two previously entangled ports were the two ports of a
+    <code>MessageChannel</code> object, then that <code>MessageChannel</code> object no longer
+    represents an actual channel: the two ports in that object are no longer entangled.</p>
+   </li>
+
+   <li>
+    <p>Associate the two ports to be entangled, so that they form the two parts of a new channel.
+    (There is no <code>MessageChannel</code> object that represents this channel.)</p>
+
+    <p>Two ports <var>A</var> and <var>B</var> that have gone through this step
+    are now said to be entangled; one is entangled to the other, and vice versa.</p>
+
+    <p class="note">While this specification describes this process as instantaneous,
+    implementations are more likely to implement it via message passing. As with all algorithms, the
+    key is "merely" that the end result be indistinguishable, in a black-box sense, from the
+    specification.</p>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn>disentangle</dfn> steps, given a <code>MessagePort</code> <var>initiatorPort</var>
+  which initiates disentangling, are as follows:</p>
+
+  <ol>
+   <li><p>Let <var>otherPort</var> be the <code>MessagePort</code> which <var>initiatorPort</var>
+   was entangled with.</p></li>
+
+   <li><p><span>Assert</span>: <var>otherPort</var> exists.</p></li>
+
+   <li><p>Disentangle <var>initiatorPort</var> and <var>otherPort</var>, so that they are no longer
+   entangled or associated with each other.</p></li>
+
+   <li><p><span data-x="concept-event-fire">Fire an event</span> named <code
+   data-x="event-close">close</code> at <var>otherPort</var>.</p></li>
+  </ol>
+
+  <div class="note">
+   <p>The <code data-x="event-close">close</code> event will be fired even if the port is not
+   explicitly closed. The cases where this event is dispatched are:</p>
+
+   <ul>
+    <li>the <code data-x="dom-MessagePort-close">close()</code> method was called;</li>
+
+    <li>the <code>Document</code> was <span data-x="destroy a document">destroyed</span>; or</li>
+
+    <li>the <code>MessagePort</code> was <a href="#ports-and-garbage-collection">garbage
+    collected</a>.</li>
+   </ul>
+
+   <p>We only dispatch the event on <var>otherPort</var> because <var>initiatorPort</var> explicitly
+   triggered the close, its <code>Document</code> no longer exists, or it was already garbage
+   collected, as described above.</p>
+  </div>
+  </div>
+
+  <hr>
+
+  <div algorithm>
+  <p id="transferMessagePort"><code>MessagePort</code> objects are <span>transferable
+  objects</span>. Their <span>transfer steps</span>, given <var>value</var> and
+  <var>dataHolder</var>, are:</p>
+
+  <ol>
+   <li><p>Set <var>value</var>'s <span>has been shipped</span> flag to true.</p></li>
+
+   <li><p>Set <var>dataHolder</var>.[[PortMessageQueue]] to <var>value</var>'s <span>port message
+   queue</span>.</p></li>
+
+   <li>
+    <p>If <var>value</var> is entangled with another port <var>remotePort</var>:</p>
+
+    <ol>
+     <li><p>Set <var>remotePort</var>'s <span>has been shipped</span> flag to true.</p></li>
+
+     <li><p>Set <var>dataHolder</var>.[[RemotePort]] to <var>remotePort</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Otherwise, set <var>dataHolder</var>.[[RemotePort]] to null.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>Their <span>transfer-receiving steps</span>, given <var>dataHolder</var> and <var>value</var>,
+  are:</p>
+
+  <ol>
+   <li><p>Set <var>value</var>'s <span>has been shipped</span> flag to true.</p></li>
+
+   <li><p>Move all the <span data-x="concept-task">tasks</span> that are to fire <code
+   data-x="event-message">message</code> events in <var>dataHolder</var>.[[PortMessageQueue]] to the
+   <span>port message queue</span> of <var>value</var>, if any, leaving <var>value</var>'s
+   <span>port message queue</span> in its initial disabled state, and, if <var>value</var>'s
+   <span>relevant global object</span> is a <code>Window</code>, associating the moved <span
+   data-x="concept-task">tasks</span> with <var>value</var>'s <span>relevant global object</span>'s
+   <span data-x="concept-document-window">associated <code>Document</code></span>.</p></li>
+
+   <li><p>If <var>dataHolder</var>.[[RemotePort]] is not null, then <span>entangle</span>
+   <var>dataHolder</var>.[[RemotePort]] and <var>value</var>. (This will disentangle
+   <var>dataHolder</var>.[[RemotePort]] from the original port that was transferred.)</p></li>
+  </ol>
+  </div>
+
+  <hr>
+
+  <div algorithm>
+  <p>The <dfn>message port post message steps</dfn>, given <var>sourcePort</var>,
+  <var>targetPort</var>, <var>message</var>, and <var>options</var> are as follows:</p>
+
+  <ol> <!-- a lot of this is similar or identical to the window post message steps -->
+   <li><p>Let <var>transfer</var> be <var>options</var>["<code
+   data-x="dom-StructuredSerializeOptions-transfer">transfer</code>"].</p></li>
+
+   <li><p>If <var>transfer</var> <span data-x="list contains">contains</span>
+   <var>sourcePort</var>, then throw a <span>"<code>DataCloneError</code>"</span>
+   <code>DOMException</code>.</p></li>
+
+   <li><p>Let <var>doomed</var> be false.</p></li>
+
+   <li><p>If <var>targetPort</var> is not null and <var>transfer</var> <span data-x="list
+   contains">contains</span> <var>targetPort</var>, then set <var>doomed</var> to true and
+   optionally report to a developer console that the target port was posted to itself, causing the
+   communication channel to be lost.</p></li>
+
+   <li><p>Let <var>serializeWithTransferResult</var> be
+   <span>StructuredSerializeWithTransfer</span>(<var>message</var>, <var>transfer</var>). Rethrow
+   any exceptions.</p></li>
+
+   <li><p>If <var>targetPort</var> is null, or if <var>doomed</var> is true, then return.</p></li>
+   <!-- we don't throw an exception if there is no target port because this can happen at a moment's
+   notice. we don't return false because if the port is _about_ to be closed, the message might not
+   be listened for anyway. we don't do this before the steps above because otherwise you can tell
+   the difference (in whether the ports have become useless, or in when the structured clone
+   algorithm runs scripts). We don't throw an exception for 'doomed' being true, because this can't
+   necessarily be detected right now every time -->
+
+   <li>
+    <p>Add a <span data-x="concept-task">task</span> that runs the following steps to the <span>port
+    message queue</span> of <var>targetPort</var>:</p>
+
+    <ol>
+     <li>
+      <p>Let <var>finalTargetPort</var> be the <code>MessagePort</code> in whose <span>port message
+      queue</span> the task now finds itself.</p>
+
+      <p class="note">This can be different from <var>targetPort</var>, if <var>targetPort</var>
+      itself was transferred and thus all its tasks moved along with it.</p>
+     </li>
+
+     <li><p>Let <var>messageEventTarget</var> be <var>finalTargetPort</var>'s <span>message event
+     target</span>.</p></li>
+
+     <li><p>Let <var>targetRealm</var> be <var>finalTargetPort</var>'s <span
+     data-x="concept-relevant-realm">relevant realm</span>.</p></li>
+
+     <li>
+      <p>Let <var>deserializeRecord</var> be
+      <span>StructuredDeserializeWithTransfer</span>(<var>serializeWithTransferResult</var>,
+      <var>targetRealm</var>).</p>
+
+      <p>If this throws an exception, catch it, <span data-x="concept-event-fire">fire an
+      event</span> named <code data-x="event-messageerror">messageerror</code> at
+      <var>messageEventTarget</var>, using <code>MessageEvent</code>, and then return.
+     </li>
+
+     <li><p>Let <var>messageClone</var> be <var>deserializeRecord</var>.[[Deserialized]].</p></li>
+
+     <li><p>Let <var>newPorts</var> be a new <span>frozen array</span> consisting of all
+     <code>MessagePort</code> objects in <var>deserializeRecord</var>.[[TransferredValues]], if any,
+     maintaining their relative order.</p></li>
+
+     <li><p><span data-x="concept-event-fire">Fire an event</span> named <code
+     data-x="event-message">message</code> at <var>messageEventTarget</var>, using
+     <code>MessageEvent</code>, with the <code data-x="dom-MessageEvent-data">data</code> attribute
+     initialized to <var>messageClone</var> and the <code
+     data-x="dom-MessageEvent-ports">ports</code> attribute initialized to
+     <var>newPorts</var>.</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="MessagePort"><code
+  data-x="dom-MessagePort-postMessage-options">postMessage(<var>message</var>,
+  <var>options</var>)</code></dfn> method steps are:</p>
+
+  <ol>
+   <li><p>Let <var>targetPort</var> be the port with which <span>this</span> is entangled, if any;
+   otherwise let it be null.</p></li>
+
+   <li><p>Run the <span>message port post message steps</span> providing <span>this</span>,
+   <var>targetPort</var>, <var>message</var> and <var>options</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="MessagePort"><code
+  data-x="dom-MessagePort-postMessage">postMessage(<var>message</var>,
+  <var>transfer</var>)</code></dfn> method steps are:</p>
+
+  <ol>
+   <li><p>Let <var>targetPort</var> be the port with which <span>this</span> is entangled, if any;
+   otherwise let it be null.</p></li>
+
+   <li><p>Let <var>options</var> be «[ "<code
+   data-x="dom-StructuredSerializeOptions-transfer">transfer</code>" → <var>transfer</var>
+   ]».</p></li>
+
+   <li><p>Run the <span>message port post message steps</span> providing <span>this</span>,
+   <var>targetPort</var>, <var>message</var> and <var>options</var>.</p></li>
+  </ol>
+  </div>
+
+  <hr>
+
+  <div algorithm>
+  <p>The <dfn method for="MessagePort"><code data-x="dom-MessagePort-start">start()</code></dfn>
+  method steps are to enable <span>this</span>'s <span>port message queue</span>, if it is not
+  already enabled.</p>
+  </div>
+
+  <hr>
+
+  <div algorithm>
+  <p>The <dfn method for="MessagePort"><code data-x="dom-MessagePort-close">close()</code></dfn>
+  method steps are:</p>
+
+  <ol>
+   <li><p>Set <span>this</span>'s <span>[[Detached]]</span> internal slot value to true.</p></li>
+
+   <li><p>If <span>this</span> is entangled, <span>disentangle</span> it.</p></li>
+  </ol>
+  </div>
+
+  <hr>
+
+  <p>The following are the <span>event handlers</span> (and their corresponding <span data-x="event
+  handler event type">event handler event types</span>) that must be supported,
+  as <span>event handler IDL attributes</span>, by all objects implementing the
+  <code>MessagePort</code> interface:</p>
+
+  <table>
+   <thead>
+    <tr><th><span data-x="event handlers">Event handler</span> <th><span>Event handler event type</span>
+   <tbody>
+    <tr><td><dfn attribute for="MessagePort"><code data-x="handler-MessagePort-onclose">onclose</code></dfn> <td> <code data-x="event-close">close</code>
+  </table>
+
+  <div algorithm>
+  <p>The first time a <code>MessagePort</code> object's <code
+  data-x="handler-MessageEventTarget-onmessage">onmessage</code> IDL attribute is set, the port's
+  <span>port message queue</span> must be enabled, as if the <code
+  data-x="dom-MessagePort-start">start()</code> method had been called.</p>
+  </div>
+
+  </div>
+
+

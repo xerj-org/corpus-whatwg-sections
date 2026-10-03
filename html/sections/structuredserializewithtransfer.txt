@@ -1,0 +1,138 @@
+WHATWG HTML — section structuredserializewithtransfer — <dfn>StructuredSerializeWithTransfer</dfn> ( <var>value</var>, <var>transferList</var> )
+
+  <h4 id="structuredserializewithtransfer" data-lt="StructuredSerializeWithTransfer"
+  abstract-op><dfn>StructuredSerializeWithTransfer</dfn> ( <var>value</var>, <var>transferList</var>
+  )</h4>
+
+  <ol>
+   <li>
+    <p>Let <var>memory</var> be an empty <span data-x="ordered map">map</span>.</p>
+
+    <p class="note">In addition to how it is used normally by
+    <span>StructuredSerializeInternal</span>, in this algorithm <var>memory</var> is also used to
+    ensure that <span>StructuredSerializeInternal</span> ignores items in <var>transferList</var>,
+    and let us do our own handling instead.</p>
+   </li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>transferable</var> of
+    <var>transferList</var>:</p>
+
+    <ol>
+     <li><p>If <var>transferable</var> has neither an [[ArrayBufferData]] internal slot nor a
+     <span>[[Detached]]</span> internal slot, then throw a
+     <span>"<code>DataCloneError</code>"</span> <code>DOMException</code>.</p></li>
+
+     <li><p>If <var>transferable</var> has an [[ArrayBufferData]] internal slot and
+     <span>IsSharedArrayBuffer</span>(<var>transferable</var>) is true, then throw a
+     <span>"<code>DataCloneError</code>"</span> <code>DOMException</code>.</p></li>
+
+     <li><p>If <var>memory</var>[<var>transferable</var>] <span data-x="map exists">exists</span>,
+     then throw a <span>"<code>DataCloneError</code>"</span> <code>DOMException</code>.</p></li>
+
+     <li>
+      <p><span data-x="map set">Set</span> <var>memory</var>[<var>transferable</var>] to {
+      [[Type]]: an uninitialized value }.</p>
+
+      <p class="note"><var>transferable</var> is not transferred yet as transferring has side
+      effects and <span>StructuredSerializeInternal</span> needs to be able to throw first.</p>
+     </li>
+    </ol>
+   </li>
+
+   <li><p>Let <var>serialized</var> be ? <span>StructuredSerializeInternal</span>(<var>value</var>,
+   false, <var>memory</var>).</p></li>
+
+   <li><p>Let <var>transferDataHolders</var> be a new empty <span
+   data-x="js-List">List</span>.</p></li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>transferable</var> of
+    <var>transferList</var>:</p>
+
+    <ol>
+     <li><p>If <var>transferable</var> has an [[ArrayBufferData]] internal slot and
+     <span>IsDetachedBuffer</span>(<var>transferable</var>) is true, then throw a
+     <span>"<code>DataCloneError</code>"</span> <code>DOMException</code>.</p></li>
+
+     <li><p>If <var>transferable</var> has a <span>[[Detached]]</span> internal slot and
+     <var>transferable</var>.<span>[[Detached]]</span> is true, then throw a
+     <span>"<code>DataCloneError</code>"</span> <code>DOMException</code>.</p></li>
+
+     <li><p>Let <var>dataHolder</var> be <var>memory</var>[<var>transferable</var>].</p></li>
+
+     <li>
+      <p>If <var>transferable</var> has an [[ArrayBufferData]] internal slot:</p>
+
+      <ol>
+       <li>
+        <p>If <var>transferable</var> has an [[ArrayBufferMaxByteLength]] internal slot:</p>
+
+        <ol>
+         <li><p>Set <var>dataHolder</var>.[[Type]] to "ResizableArrayBuffer".</p></li>
+
+         <li><p>Set <var>dataHolder</var>.[[ArrayBufferData]] to
+         <var>transferable</var>.[[ArrayBufferData]].</p></li>
+
+         <li><p>Set <var>dataHolder</var>.[[ArrayBufferByteLength]] to
+         <var>transferable</var>.[[ArrayBufferByteLength]].</p></li>
+
+         <li><p>Set <var>dataHolder</var>.[[ArrayBufferMaxByteLength]] to
+         <var>transferable</var>.[[ArrayBufferMaxByteLength]].</p></li>
+        </ol>
+       </li>
+
+       <li>
+        <p>Otherwise:</p>
+
+        <ol>
+         <li><p>Set <var>dataHolder</var>.[[Type]] to "ArrayBuffer".</p></li>
+
+         <li><p>Set <var>dataHolder</var>.[[ArrayBufferData]] to
+         <var>transferable</var>.[[ArrayBufferData]].</p></li>
+
+         <li><p>Set <var>dataHolder</var>.[[ArrayBufferByteLength]] to
+         <var>transferable</var>.[[ArrayBufferByteLength]].</p></li>
+        </ol>
+       </li>
+
+       <li>
+        <p>Perform ? <span>DetachArrayBuffer</span>(<var>transferable</var>).</p>
+
+        <p class="note">Specifications can use the [[ArrayBufferDetachKey]] internal slot to prevent
+        <code data-x="idl-ArrayBuffer">ArrayBuffer</code>s from being detached. This is used in
+        <cite>WebAssembly JavaScript Interface</cite>, for example. <ref>WASMJS</ref></p>
+       </li>
+      </ol>
+     </li>
+
+     <li>
+      <p>Otherwise:</p>
+
+      <ol>
+       <li><p><span>Assert</span>: <var>transferable</var> is a <span>platform object</span> that is
+       a <span data-x="transferable objects">transferable object</span>.</p></li>
+
+       <li><p>Let <var>interfaceName</var> be the identifier of the <span>primary interface</span>
+       of <var>transferable</var>.</p></li>
+
+       <li><p>Set <var>dataHolder</var>.[[Type]] to <var>interfaceName</var>.</p></li>
+
+       <li><p>Perform the appropriate <span>transfer steps</span> for the interface identified by
+       <var>interfaceName</var>, given <var>transferable</var> and <var>dataHolder</var>.</p></li>
+
+       <li><p>Set <var>transferable</var>.<span>[[Detached]]</span> to true.</p></li>
+      </ol>
+     </li>
+
+     <li><p><span data-x="list append">Append</span> <var>dataHolder</var> to
+     <var>transferDataHolders</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Return { [[Serialized]]: <var>serialized</var>, [[TransferDataHolders]]:
+   <var>transferDataHolders</var> }.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>

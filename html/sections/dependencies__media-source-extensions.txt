@@ -1,0 +1,14 @@
+WHATWG HTML — section dependencies/media-source-extensions — Media Source Extensions
+
+   <dt>Media Source Extensions</dt>
+
+   <dd>
+    <p>The following terms are defined in <cite>Media Source Extensions</cite>:
+    <ref>MEDIASOURCE</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://w3c.github.io/media-source/#idl-def-mediasource"><code>MediaSource</code></dfn> interface</li>
+     <li><dfn data-x-href="https://w3c.github.io/media-source/#mediasource-detach">detaching from a media element</dfn></li>
+    </ul>
+   </dd>
+

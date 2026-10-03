@@ -1,0 +1,14 @@
+WHATWG HTML — section dependencies/cooperative-scheduling-of-background-tasks — Cooperative Scheduling of Background Tasks
+
+   <dt>Cooperative Scheduling of Background Tasks</dt>
+
+   <dd>
+    <p>The following features are defined in <cite>Cooperative Scheduling of Background
+    Tasks</cite>: <ref>REQUESTIDLECALLBACK</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://w3c.github.io/requestidlecallback/#the-requestidlecallback-method"><code>requestIdleCallback()</code></dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/requestidlecallback/#start-an-idle-period-algorithm">start an idle period algorithm</dfn></li>
+    </ul>
+   </dd>
+

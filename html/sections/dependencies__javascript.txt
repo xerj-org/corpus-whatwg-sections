@@ -1,0 +1,198 @@
+WHATWG HTML — section dependencies/javascript — JavaScript
+
+   <dt>JavaScript</dt>
+
+   <dd>
+    <p>Some parts of the language described by this specification only support JavaScript as the
+    underlying scripting language. <ref>JAVASCRIPT</ref></p>
+
+    <p class="note">The term "JavaScript" is used to refer to ECMA-262, rather than the official
+    term ECMAScript, since the term JavaScript is more widely known.</p>
+
+    <p>The following terms are defined in the JavaScript specification and used in this
+    specification:</p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://tc39.es/ecma262/#active-function-object">active function object</dfn></li>
+     <li><dfn data-x-href="https://tc39.es/ecma262/#sec-agents">agent</dfn> and
+         <dfn data-x-href="https://tc39.es/ecma262/#sec-agent-clusters">agent cluster</dfn></li>
+     <li><dfn data-x-href="https://tc39.es/ecma262/#sec-automatic-semicolon-insertion">automatic semicolon insertion</dfn></li>
+     <li><dfn data-x-href="https://tc39.es/ecma262/#sec-candidate-executions">candidate execution</dfn></li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#current-realm">current realm</dfn></li>
+     <li><dfn data-x-href="https://tc39.es/ecma262/#clamping">clamping</dfn> a mathematical value</li>
+     <li><dfn data-x-href="https://tc39.es/ecma262/#early-error-rule">early error</dfn></li>
+     <li><dfn data-x-href="https://tc39.es/ecma262/#sec-forward-progress">forward progress</dfn></li>
+     <li><dfn data-x-href="https://tc39.es/ecma262/#sec-invariants-of-the-essential-internal-methods">invariants of the essential internal methods</dfn></li>
+     <li><dfn data-x-href="https://tc39.es/ecma262/#sec-execution-contexts">JavaScript execution context</dfn></li>
+     <li><dfn data-x-href="https://tc39.es/ecma262/#execution-context-stack">JavaScript execution context stack</dfn></li>
+     <li><dfn data-x-href="https://tc39.es/ecma262/#sec-code-realms">realm</dfn></li>
+     <li><dfn data-x-href="https://tc39.es/ecma262/#sec-jobcallback-records">JobCallback Record</dfn></li>
+     <li><dfn data-x-href="https://tc39.es/ecma262/#sec-built-in-function-objects">NewTarget</dfn></li>
+     <li><dfn data-x-href="https://tc39.es/ecma262/#running-execution-context">running JavaScript execution context</dfn></li>
+     <li><dfn data-x-href="https://tc39.es/ecma262/#surrounding-agent">surrounding agent</dfn></li>
+     <li><dfn data-x-href="https://tc39.es/ecma262/#sec-abstract-closure">abstract closure</dfn></li>
+     <li><dfn data-x-href="https://tc39.es/ecma262/#immutable-prototype-exotic-object">immutable prototype exotic object</dfn></li>
+     <li><dfn data-x-href="https://tc39.es/ecma262/#sec-well-known-symbols">Well-Known Symbols</dfn>, including
+         <dfn>%Symbol.hasInstance%</dfn>,
+         <dfn>%Symbol.isConcatSpreadable%</dfn>,
+         <dfn>%Symbol.toPrimitive%</dfn>, and
+         <dfn>%Symbol.toStringTag%</dfn></li>
+     <li><dfn data-x-href="https://tc39.es/ecma262/#sec-well-known-intrinsic-objects">Well-Known Intrinsic Objects</dfn>, including
+         <dfn data-x-href="https://tc39.es/ecma262/#sec-properties-of-the-array-prototype-object">%Array.prototype%</dfn>,
+         <dfn data-x-href="https://tc39.es/ecma262/#sec-properties-of-the-error-prototype-object">%Error.prototype%</dfn>,
+         <dfn>%EvalError.prototype%</dfn>,
+         <dfn data-x-href="https://tc39.es/ecma262/#sec-properties-of-the-function-prototype-object">%Function.prototype%</dfn>,
+         <dfn data-x-href="https://tc39.es/ecma262/#sec-properties-of-the-object-prototype-object">%Object.prototype%</dfn>,
+         <dfn data-x-href="https://tc39.es/ecma262/#sec-object.prototype.valueof">%Object.prototype.valueOf%</dfn>,
+         <dfn>%RangeError.prototype%</dfn>,
+         <dfn>%ReferenceError.prototype%</dfn>,
+         <dfn>%SyntaxError.prototype%</dfn>,
+         <dfn>%TypeError.prototype%</dfn>, and
+         <dfn>%URIError.prototype%</dfn></li>
+
+     <li>The <dfn data-x="js-prod-FunctionBody" data-x-href="https://tc39.es/ecma262/#prod-FunctionBody"><i>FunctionBody</i></dfn> production</li>
+     <li>The <dfn data-x="js-prod-Module" data-x-href="https://tc39.es/ecma262/#prod-Module"><i>Module</i></dfn> production</li>
+     <li>The <dfn data-x="js-prod-Pattern" data-x-href="https://tc39.es/ecma262/#prod-Pattern"><i>Pattern</i></dfn> production</li>
+     <li>The <dfn data-x="js-prod-Script" data-x-href="https://tc39.es/ecma262/#prod-Script"><i>Script</i></dfn> production</li>
+
+     <li>The
+     <dfn data-x="js-BigInt" data-x-href="https://tc39.es/ecma262/#sec-ecmascript-language-types-bigint-type">BigInt</dfn>,
+     <dfn data-x="js-Boolean" data-x-href="https://tc39.es/ecma262/#sec-ecmascript-language-types-boolean-type">Boolean</dfn>,
+     <dfn data-x="js-Number" data-x-href="https://tc39.es/ecma262/#sec-ecmascript-language-types-number-type">Number</dfn>,
+     <dfn data-x="js-String" data-x-href="https://tc39.es/ecma262/#sec-ecmascript-language-types-string-type">String</dfn>,
+     <dfn data-x="js-Symbol" data-x-href="https://tc39.es/ecma262/#sec-ecmascript-language-types-symbol-type">Symbol</dfn>,
+     and <dfn data-x="js-Object" data-x-href="https://tc39.es/ecma262/#sec-object-type">Object</dfn> ECMAScript language types</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-completion-record-specification-type">Completion Record</dfn> specification type</li>
+     <li>The <dfn data-x="js-List" data-x-href="https://tc39.es/ecma262/#sec-list-and-record-specification-type">List</dfn> and
+             <dfn data-x-href="https://tc39.es/ecma262/#sec-list-and-record-specification-type">Record</dfn> specification types</li>
+     <li>The <dfn data-x="PropertyDescriptor" data-x-href="https://tc39.es/ecma262/#sec-property-descriptor-specification-type">Property Descriptor</dfn> specification type</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#modulerequest-record">ModuleRequest Record</dfn> specification type</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-script-records">Script Record</dfn> specification type</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-synthetic-module-records">Synthetic Module Record</dfn> specification type</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-cyclic-module-records">Cyclic Module Record</dfn> specification type</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-source-text-module-records">Source Text Module Record</dfn> specification type and its
+             <dfn data-x="js-Evaluate" data-x-href="https://tc39.es/ecma262/#sec-moduleevaluation">Evaluate</dfn>,
+             <dfn data-x="js-Link" data-x-href="https://tc39.es/ecma262/#sec-moduledeclarationlinking">Link</dfn> and
+             <dfn data-x="js-LoadRequestedModules" data-x-href="https://tc39.es/ecma262/#sec-LoadRequestedModules">LoadRequestedModules</dfn> methods</li>
+
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-arraycreate">ArrayCreate</dfn> abstract operation</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-call">Call</dfn> abstract operation</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-clear-kept-objects">ClearKeptObjects</dfn> abstract operation</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-cleanup-finalization-registry">CleanupFinalizationRegistry</dfn> abstract operation</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-construct">Construct</dfn> abstract operation</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-copydatablockbytes">CopyDataBlockBytes</dfn> abstract operation</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-createbuiltinfunction">CreateBuiltinFunction</dfn> abstract operation</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-createbytedatablock">CreateByteDataBlock</dfn> abstract operation</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-createdataproperty">CreateDataProperty</dfn> abstract operation</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-create-default-export-synthetic-module">CreateDefaultExportSyntheticModule</dfn> abstract operation</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-definepropertyorthrow">DefinePropertyOrThrow</dfn> abstract operation</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-detacharraybuffer">DetachArrayBuffer</dfn> abstract operation</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-enumerableownproperties">EnumerableOwnProperties</dfn> abstract operation</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-FinishLoadingImportedModule">FinishLoadingImportedModule</dfn> abstract operation</li>
+     <li>The <dfn data-x="js-OrdinaryFunctionCreate" data-x-href="https://tc39.es/ecma262/#sec-ordinaryfunctioncreate">OrdinaryFunctionCreate</dfn> abstract operation</li>
+     <li>The <dfn data-x="js-Get" data-x-href="https://tc39.es/ecma262/#sec-get-o-p">Get</dfn> abstract operation</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-getactivescriptormodule">GetActiveScriptOrModule</dfn> abstract operation</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-getfunctionrealm">GetFunctionRealm</dfn> abstract operation</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-hasownproperty">HasOwnProperty</dfn> abstract operation</li>
+     <li>The <dfn data-x="js-HostCallJobCallback" data-x-href="https://tc39.es/ecma262/#sec-hostcalljobcallback">HostCallJobCallback</dfn> abstract operation</li>
+     <li>The <dfn data-x="js-HostEnqueueFinalizationRegistryCleanupJob" data-x-href="https://tc39.es/ecma262/#sec-host-cleanup-finalization-registry">HostEnqueueFinalizationRegistryCleanupJob</dfn> abstract operation</li>
+     <li>The <dfn data-x="js-HostEnqueueGenericJob" data-x-href="https://tc39.es/ecma262/#sec-hostenqueuegenericjob">HostEnqueueGenericJob</dfn> abstract operation</li>
+     <li>The <dfn data-x="js-HostEnqueuePromiseJob" data-x-href="https://tc39.es/ecma262/#sec-hostenqueuepromisejob">HostEnqueuePromiseJob</dfn> abstract operation</li>
+     <li>The <dfn data-x="js-HostEnqueueTimeoutJob" data-x-href="https://tc39.es/ecma262/#sec-hostenqueuetimeoutjob">HostEnqueueTimeoutJob</dfn> abstract operation</li>
+     <li>The <dfn data-x="js-HostEnsureCanAddPrivateElement" data-x-href="https://tc39.es/ecma262/#sec-hostensurecanaddprivateelement">HostEnsureCanAddPrivateElement</dfn> abstract operation</li>
+     <li>The <dfn data-x="js-HostGetSupportedImportAttributes" data-x-href="https://tc39.es/ecma262/#sec-hostgetsupportedimportattributes">HostGetSupportedImportAttributes</dfn> abstract operation</li>
+     <li>The <dfn data-x="js-HostLoadImportedModule" data-x-href="https://tc39.es/ecma262/#sec-HostLoadImportedModule">HostLoadImportedModule</dfn> abstract operation</li>
+     <li>The <dfn data-x="js-HostMakeJobCallback" data-x-href="https://tc39.es/ecma262/#sec-hostmakejobcallback">HostMakeJobCallback</dfn> abstract operation</li>
+     <li>The <dfn data-x="js-HostPromiseRejectionTracker" data-x-href="https://tc39.es/ecma262/#sec-host-promise-rejection-tracker">HostPromiseRejectionTracker</dfn> abstract operation</li>
+     <li>The <dfn data-x="js-InitializeHostDefinedRealm" data-x-href="https://tc39.es/ecma262/#sec-initializehostdefinedrealm">InitializeHostDefinedRealm</dfn> abstract operation</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-isarraybufferviewoutofbounds">IsArrayBufferViewOutOfBounds</dfn> abstract operation</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-isaccessordescriptor">IsAccessorDescriptor</dfn> abstract operation</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-iscallable">IsCallable</dfn> abstract operation</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-isconstructor">IsConstructor</dfn> abstract operation</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-isdatadescriptor">IsDataDescriptor</dfn> abstract operation</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-isdetachedbuffer">IsDetachedBuffer</dfn> abstract operation</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-issharedarraybuffer">IsSharedArrayBuffer</dfn> abstract operation</li>
+     <li>The <dfn data-x="js-NewObjectEnvironment" data-x-href="https://tc39.es/ecma262/#sec-newobjectenvironment">NewObjectEnvironment</dfn> abstract operation</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-normalcompletion">NormalCompletion</dfn> abstract operation</li>
+     <!-- the next set of Ordinary* abstract operations are in order of appearance -->
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-ordinarygetprototypeof">OrdinaryGetPrototypeOf</dfn> abstract operation</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-ordinarysetprototypeof">OrdinarySetPrototypeOf</dfn> abstract operation</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-ordinaryisextensible">OrdinaryIsExtensible</dfn> abstract operation</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-ordinarypreventextensions">OrdinaryPreventExtensions</dfn> abstract operation</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-ordinarygetownproperty">OrdinaryGetOwnProperty</dfn> abstract operation</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-ordinarydefineownproperty">OrdinaryDefineOwnProperty</dfn> abstract operation</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-ordinaryget">OrdinaryGet</dfn> abstract operation</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-ordinaryset">OrdinarySet</dfn> abstract operation</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-ordinarydelete">OrdinaryDelete</dfn> abstract operation</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-ordinaryownpropertykeys">OrdinaryOwnPropertyKeys</dfn> abstract operation</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-objectcreate">OrdinaryObjectCreate</dfn> abstract operation</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-parse-json-module">ParseJSONModule</dfn> abstract operation</li>
+     <li>The <dfn data-x="js-ParseModule" data-x-href="https://tc39.es/ecma262/#sec-parsemodule">ParseModule</dfn> abstract operation</li>
+     <li>The <dfn data-x="js-ParseScript" data-x-href="https://tc39.es/ecma262/#sec-parse-script">ParseScript</dfn> abstract operation</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-newpromisereactionjob">NewPromiseReactionJob</dfn> abstract operation</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-newpromiseresolvethenablejob">NewPromiseResolveThenableJob</dfn> abstract operation</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-regexpbuiltinexec">RegExpBuiltinExec</dfn> abstract operation</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-regexpcreate">RegExpCreate</dfn> abstract operation</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-runjobs">RunJobs</dfn> abstract operation</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-samevalue">SameValue</dfn> abstract operation</li>
+     <li>The <dfn data-x="js-ScriptEvaluation" data-x-href="https://tc39.es/ecma262/#sec-runtime-semantics-scriptevaluation">ScriptEvaluation</dfn> abstract operation</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-setsyntheticmoduleexport">SetSyntheticModuleExport</dfn> abstract operation</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-set-immutable-prototype">SetImmutablePrototype</dfn> abstract operation</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-throwcompletion">ThrowCompletion</dfn> abstract operation</li>
+     <li>The <dfn data-x="js-ToBoolean" data-x-href="https://tc39.es/ecma262/#sec-toboolean">ToBoolean</dfn> abstract operation</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-tostring">ToString</dfn> abstract operation</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-touint32">ToUint32</dfn> abstract operation</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#typedarray-create">TypedArrayCreate</dfn> abstract operation</li>
+
+     <li>The <dfn data-x="js-abstract-equality" data-x-href="https://tc39.es/ecma262/#sec-islooselyequal">IsLooselyEqual</dfn> abstract operation</li>
+     <li>The <dfn data-x="js-strict-equality" data-x-href="https://tc39.es/ecma262/#sec-isstrictlyequal">IsStrictlyEqual</dfn> abstract operation</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-atomics-object"><code>Atomics</code></dfn> object</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-atomics.waitasync"><code>Atomics.waitAsync</code></dfn> object</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-date-objects"><code>Date</code></dfn> class</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-finalization-registry-objects"><code>FinalizationRegistry</code></dfn> class</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-regexp-regular-expression-objects"><code>RegExp</code></dfn> class</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-sharedarraybuffer-objects"><code>SharedArrayBuffer</code></dfn> class</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-native-error-types-used-in-this-standard-syntaxerror"><code>SyntaxError</code></dfn> class</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-native-error-types-used-in-this-standard-typeerror"><code>TypeError</code></dfn> class</li>
+     <li>The <dfn data-x="js-RangeError" data-x-href="https://tc39.es/ecma262/#sec-native-error-types-used-in-this-standard-rangeerror"><code>RangeError</code></dfn> class</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-weak-ref-objects"><code>WeakRef</code></dfn> class</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-eval-x"><code>eval()</code></dfn> function</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-weak-ref.prototype.deref"><code>WeakRef.prototype.deref()</code></dfn> function</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-IsHTMLDDA-internal-slot">[[IsHTMLDDA]]</dfn> internal slot</li>
+     <li><dfn data-x-href="https://tc39.es/ecma262/#sec-import-calls"><code>import()</code></dfn></li>
+     <li><dfn data-x-href="https://tc39.es/ecma262/#sec-meta-properties"><code>import.meta</code></dfn></li>
+     <li>The <dfn data-x="js-HostGetImportMetaProperties" data-x-href="https://tc39.es/ecma262/#sec-hostgetimportmetaproperties">HostGetImportMetaProperties</dfn> abstract operation</li>
+     <li>The <dfn data-x="js-typeof" data-x-href="https://tc39.es/ecma262/#sec-typeof-operator"><code>typeof</code></dfn> operator</li>
+     <li>The <dfn data-x-href="https://tc39.es/ecma262/#sec-delete-operator"><code>delete</code></dfn> operator</li>
+     <li><dfn data-x-href="https://tc39.es/ecma262/#table-49">The <var ignore>TypedArray</var> Constructors</dfn> table</li>
+    </ul>
+
+    <p>User agents that support JavaScript must also implement the <cite>Dynamic Code Brand
+    Checks</cite> proposal. The following terms are defined there, and used in this specification:
+    <ref>JSDYNAMICCODEBRANDCHECKS</ref></p>
+
+    <ul class="brief">
+     <li>The <dfn data-x="js-HostEnsureCanCompileStrings" data-x-href="https://tc39.es/proposal-dynamic-code-brand-checks/#sec-hostensurecancompilestrings">HostEnsureCanCompileStrings</dfn> abstract operation</li>
+     <li>The <dfn data-x="js-HostGetCodeForEval" data-x-href="https://tc39.es/proposal-dynamic-code-brand-checks/#sec-hostgetcodeforeval">HostGetCodeForEval</dfn> abstract operation</li>
+    </ul>
+
+    <p>User agents that support JavaScript must also implement the <cite>Import Text</cite> proposal.
+    The following term is defined there, and used in this specification: <ref>JSIMPORTTEXT</ref></p>
+
+    <ul class="brief">
+     <li>The <dfn data-x-href="https://tc39.es/proposal-import-text/#sec-create-text-module">CreateTextModule</dfn> abstract operation</li>
+    </ul>
+
+    <p>User agents that support JavaScript must also implement <cite>ECMAScript
+    Internationalization API</cite>. <ref>JSINTL</ref></p>
+
+    <p>User agents that support JavaScript must also implement the <cite>Temporal</cite> proposal.
+    The following terms are defined there, and used in this specification: <ref>JSTEMPORAL</ref></p>
+
+    <ul class="brief">
+     <li>The <dfn data-x="js-HostSystemUTCEpochNanoseconds" data-x-href="https://tc39.es/proposal-temporal/#sec-hostsystemutcepochnanoseconds">HostSystemUTCEpochNanoseconds</dfn> abstract operation</li>
+     <li>The <dfn data-x-href="https://tc39.es/proposal-temporal/#eqn-nsMaxInstant">nsMaxInstant</dfn> and
+         <dfn data-x-href="https://tc39.es/proposal-temporal/#eqn-nsMinInstant">nsMinInstant</dfn> values</li>
+    </ul>
+   </dd>
+

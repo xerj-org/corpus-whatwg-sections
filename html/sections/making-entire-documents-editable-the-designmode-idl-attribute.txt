@@ -1,0 +1,58 @@
+WHATWG HTML — section making-entire-documents-editable:-the-designmode-idl-attribute — Making entire documents editable: the <code data-x="dom-document-designMode">designMode</code> getter and setter
+
+  <h4 id="making-entire-documents-editable:-the-designmode-idl-attribute">Making entire documents
+  editable: the <code data-x="dom-document-designMode">designMode</code> getter and setter</h4>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>document</var>.<span subdfn data-x="dom-document-designMode">designMode</span> [ = <var>value</var> ]</code></dt>
+   <dd>
+    <p>Returns "<code data-x="">on</code>" if the document is editable, and "<code
+    data-x="">off</code>" if it isn't.</p>
+
+    <p>Can be set, to change the document's current state. This focuses the document and resets the
+    selection in that document.</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <p><code>Document</code> objects have an associated <dfn>design mode enabled</dfn>, which is a
+  boolean. It is initially false.</p>
+
+  <div algorithm>
+  <p>The <dfn attribute for="Document" id="designMode"><code
+  data-x="dom-document-designMode">designMode</code></dfn> getter steps are to return "<code
+  data-x="">on</code>" if <span>this</span>'s <span>design mode enabled</span> is true; otherwise
+  "<code data-x="">off</code>".</p>
+  </div>
+
+  <div algorithm>
+  <p>The <code data-x="dom-document-designMode">designMode</code> setter steps are:</p>
+
+  <ol>
+   <li><p>Let <var>value</var> be the given value, <span>converted to ASCII
+   lowercase</span>.</p></li>
+
+   <li>
+    <p>If <var>value</var> is "<code data-x="">on</code>" and <span>this</span>'s <span>design mode
+    enabled</span> is false:</p>
+
+    <ol>
+     <li><p>Set <span>this</span>'s <span>design mode enabled</span> to true.</p></li>
+
+     <li><p>Reset <span>this</span>'s <span>active range</span>'s start and end boundary points to
+     be at the start of <span>this</span>.</p></li>
+
+     <li><p>Run the <span>focusing steps</span> for <span>this</span>'s <span>document
+     element</span>, if non-null.</p></li>
+    </ol>
+   </li>
+
+   <li><p>If <var>value</var> is "<code data-x="">off</code>", then set <span>this</span>'s
+   <span>design mode enabled</span> to false.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+

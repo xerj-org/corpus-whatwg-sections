@@ -1,0 +1,553 @@
+WHATWG HTML — section media-elements/found-a-media-resource-specific-timed-track — If the <span>media resource</span> is found to declare a <span>media-resource-specific text track</span> that the user agent supports
+
+     <dt id="found-a-media-resource-specific-timed-track">If the <span>media resource</span> is
+     found to declare a <span>media-resource-specific text track</span> that the user agent
+     supports</dt>
+
+     <dd>
+      <p>If the <span>media data</span> is <span>CORS-same-origin</span>, run the <span>steps to
+      expose a media-resource-specific text track</span> with the relevant data.</p>
+
+      <p class="note">Cross-origin videos do not expose their subtitles, since that would allow
+      attacks such as hostile sites reading subtitles from confidential videos on a user's
+      intranet.</p>
+     </dd>
+    </dl>
+   </li>
+
+   <!-- this step is mentioned above, search for "final step" -->
+   <li><p><i>Final step</i>: If the user agent ever reaches this step (which can only happen if the entire resource
+   gets loaded and kept available): abort the overall <span
+   data-x="concept-media-load-algorithm">resource selection algorithm</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>When a <span>media element</span> is to <dfn>forget the media element's media-resource-specific
+  tracks</dfn>, the user agent must remove from the <span>media element</span>'s <span>list of text
+  tracks</span> all the <span data-x="media-resource-specific text track">media-resource-specific
+  text tracks</span>, then empty the <span>media element</span>'s <code
+  data-x="dom-media-audioTracks">audioTracks</code> attribute's <code>AudioTrackList</code> object,
+  then empty the <span>media element</span>'s <code data-x="dom-media-videoTracks">videoTracks</code>
+  attribute's <code>VideoTrackList</code> object. No events (in particular, no <code
+  data-x="event-media-removetrack">removetrack</code> events) are fired as part of this; the <code
+  data-x="event-media-error">error</code> and <code data-x="event-media-emptied">emptied</code>
+  events, fired by the algorithms that invoke this one, can be used instead.</p>
+  </div>
+
+  </div>
+
+  <hr>
+
+  <p>The <dfn element-attr for="audio,video"><code data-x="attr-media-preload">preload</code></dfn>
+  attribute is an <span>enumerated attribute</span> with the following keywords and
+  states:</p>
+
+  <table>
+   <thead>
+    <tr>
+     <th>Keyword
+     <th>State
+     <th>Brief description
+   <tbody>
+    <tr>
+     <td><dfn attr-value for="audio/preload,video/preload"><code
+     data-x="attr-media-preload-auto">auto</code></dfn>
+     <td><dfn data-x="attr-media-preload-auto-state">Automatic</dfn>
+     <td>Hints to the user agent that the user agent can put the user's needs first without risk to the server, up to and including optimistically downloading the entire resource.
+    <tr>
+     <td><dfn attr-value for="audio/preload,video/preload"><code
+     data-x="attr-media-preload-none">none</code></dfn>
+     <td><dfn data-x="attr-media-preload-none-state">None</dfn>
+     <td>Hints to the user agent that either the author does not expect the user to need the media resource, or that the server wants to minimize unnecessary traffic.
+         This state does not provide a hint regarding how aggressively to actually download the media resource if buffering starts anyway (e.g. once the user hits "play").
+    <tr>
+     <td><dfn attr-value for="audio/preload,video/preload"><code
+     data-x="attr-media-preload-metadata">metadata</code></dfn>
+     <td><dfn data-x="attr-media-preload-metadata-state">Metadata</dfn>
+     <td>Hints to the user agent that the author does not expect the user to need the media resource, but that fetching the resource metadata (dimensions, track list, duration, etc.), and maybe even the first few frames, is reasonable. If the user agent precisely fetches no more than the metadata, then the <span>media element</span> will end up with its <code data-x="dom-media-readyState">readyState</code> attribute set to <code data-x="dom-media-HAVE_METADATA">HAVE_METADATA</code>; typically though, some frames will be obtained as well and it will probably be <code data-x="dom-media-HAVE_CURRENT_DATA">HAVE_CURRENT_DATA</code> or <code data-x="dom-media-HAVE_FUTURE_DATA">HAVE_FUTURE_DATA</code>.
+         When the media resource is playing, hints to the user agent that bandwidth is to be considered scarce, e.g. suggesting throttling the download so that the media data is obtained at the slowest possible rate that still maintains consistent playback.
+  </table>
+
+  <p>The attribute's <i data-x="empty value default">empty value default</i> is the <span
+  data-x="attr-media-preload-auto-state">Automatic</span> state.</p>
+
+  <div algorithm>
+  <p>The attribute's <i data-x="missing value default">missing value default</i> and <i
+  data-x="invalid value default">invalid value default</i> are both
+  <span>implementation-defined</span>, though the <span
+  data-x="attr-media-preload-metadata-state">Metadata</span> state is suggested as a compromise
+  between reducing server load and providing an optimal user experience.</p>
+  </div>
+
+  <p>The attribute can be changed even once the <span>media resource</span> is being buffered or
+  played; the descriptions in the table above are to be interpreted with that in mind.</p>
+
+  <p class="note">Authors might switch the attribute from "<code
+  data-x="attr-media-preload-none">none</code>" or "<code
+  data-x="attr-media-preload-metadata">metadata</code>" to "<code
+  data-x="attr-media-preload-auto">auto</code>" dynamically once the user begins playback. For
+  example, on a page with many videos this might be used to indicate that the many videos are not to
+  be downloaded unless requested, but that once one <em>is</em> requested it is to be downloaded
+  aggressively.</p>
+
+  <div w-nodev>
+
+  <p>The <code data-x="attr-media-preload">preload</code> attribute is intended to provide a hint to
+  the user agent about what the author thinks will lead to the best user experience. The attribute
+  may be ignored altogether, for example based on explicit user preferences or based on the
+  available connectivity.</p>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLMediaElement"><code data-x="dom-media-preload">preload</code></dfn>
+  IDL attribute must <span>reflect</span> the content attribute of the same name, <span>limited to
+  only known values</span>.</p>
+  </div>
+
+  </div>
+
+  <p class="note">The <code data-x="attr-media-autoplay">autoplay</code> attribute can override the
+  <code data-x="attr-media-preload">preload</code> attribute (since if the media plays, it naturally
+  has to buffer first, regardless of the hint given by the <code
+  data-x="attr-media-preload">preload</code> attribute). Including both is not an error, however.</p>
+
+  <p class="note">In <code>audio</code> and <code>video</code> elements, if <span data-x="concept-n-script">scripting is
+  enabled</span>, the <code data-x="attr-media-loading">loading</code> attribute can defer the <code
+  data-x="attr-media-preload">preload</code> attribute's hinted behavior until the element's
+  <span>lazy load resumption steps</span> are run.</p>
+
+  <hr>
+
+<!--v3BUF (when readding this, also add a domintro block)
+  <p>The <dfn><code data-x="dom-media-bufferingRate">bufferingRate</code></dfn> attribute must return
+  the average number of bits received per second for the current download over the past few seconds.
+  If there is no download in progress, the attribute must return 0.</p>
+
+  <p>The <dfn><code data-x="dom-media-bufferingThrottled">bufferingThrottled</code></dfn> attribute
+  must return true if the user agent is intentionally throttling the bandwidth used by the download
+  (including when throttling to zero to pause the download altogether), and false otherwise.</p>
+
+  <hr>
+-->
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>media</var>.<span subdfn data-x="dom-media-buffered">buffered</span></code></dt>
+
+   <dd>
+    <p>Returns a <code>TimeRanges</code> object that represents the ranges of the <span>media
+    resource</span> that the user agent has buffered.</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLMediaElement"><code
+  data-x="dom-media-buffered">buffered</code></dfn> getter steps are to return a new
+  <span>normalized <code>TimeRanges</code> object</span> that represents the ranges of
+  <span>this</span>'s <span>media resource</span>, if any, that the user agent has buffered. User
+  agents must accurately determine the ranges available, even for media streams where this can
+  only be determined by tedious inspection.</p>
+  </div>
+
+  <p class="note">Typically this will be a single range anchored at the zero point, but if, e.g. the
+  user agent uses HTTP range requests in response to seeking, then there could be multiple
+  ranges.</p>
+
+  <p>User agents may discard previously buffered data.</p>
+
+  <p class="note">Thus, a time position included within a range of the objects return by the <code
+  data-x="dom-media-buffered">buffered</code> attribute at one time can end up being not included in
+  the range(s) of objects returned by the same attribute at later times.</p>
+
+  <p class="warning">Returning a new object each time is a bad pattern for attribute getters and is
+  only enshrined here as it would be costly to change it. It is not to be copied to new APIs.</p>
+
+  </div>
+
+
+
+  <h5>Offsets into the media resource</h5>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>media</var>.<span subdfn data-x="dom-media-duration">duration</span></code></dt>
+
+   <dd>
+    <p>Returns the length of the <span>media resource</span>, in seconds, assuming that the start of
+    the <span>media resource</span> is at time zero.</p>
+
+    <p>Returns NaN if the duration isn't available.</p>
+
+    <p>Returns Infinity for unbounded streams.</p>
+   </dd>
+
+   <dt><code data-x=""><var>media</var>.<span subdfn data-x="dom-media-currentTime">currentTime</span> [ = <var>value</var> ]</code></dt>
+
+   <dd>
+    <p>Returns the <span>official playback position</span>, in seconds.</p>
+
+    <p>Can be set, to seek to the given time.</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <p>A <span>media resource</span> has a <dfn>media timeline</dfn> that maps times (in seconds) to
+  positions in the <span>media resource</span>. The origin of a timeline is its earliest defined
+  position. The duration of a timeline is its last defined position.</p>
+
+  <p><dfn id="defineTimeline" data-x="establish the media timeline">Establishing the media
+  timeline</dfn>: if the <span>media resource</span> somehow specifies an explicit timeline whose
+  origin is not negative (i.e. gives each frame a specific time offset and gives the first frame a
+  zero or positive offset), then the <span>media timeline</span> should be that timeline. (Whether
+  the <span>media resource</span> can specify a timeline or not depends on the <span data-x="media
+  resource">media resource</span>'s format.) If the <span>media resource</span> specifies an
+  explicit start time <em>and date</em>, then that time and date should be considered the zero point
+  in the <span>media timeline</span>; the <span>timeline offset</span> will be the time and date,
+  exposed using the <code data-x="dom-media-getStartDate">getStartDate()</code> method.</p>
+
+  <p>If the <span>media resource</span> has a discontinuous timeline, the user agent must extend the
+  timeline used at the start of the resource across the entire resource, so that the <span>media
+  timeline</span> of the <span>media resource</span> increases linearly starting from the
+  <span>earliest possible position</span> (as defined below), even if the underlying <span>media
+  data</span> has out-of-order or even overlapping time codes.</p>
+
+  <p class="example">For example, if two clips have been concatenated into one video file, but the
+  video format exposes the original times for the two clips, the video data might expose a timeline
+  that goes, say, 00:15..00:29 and then 00:05..00:38. However, the user agent would not expose those
+  times; it would instead expose the times as 00:15..00:29 and 00:29..01:02, as a single video.</p>
+
+  <p>
+  <!--INSERT TRACKING-->
+  In the rare case of a <span>media resource</span> that does not have an explicit timeline, the
+  zero time on the <span>media timeline</span> should correspond to the first frame of the
+  <span>media resource</span>. In the even rarer case of a <span>media resource</span> with no
+  explicit timings of any kind, not even frame durations, the user agent must itself determine the
+  time for each frame in an <span>implementation-defined</span> manner.</p>
+
+  <p class="note">An example of a file format with no explicit timeline but with explicit frame
+  durations is the Animated GIF format. An example of a file format with no explicit timings at all
+  is the JPEG-push format (<code>multipart/x-mixed-replace</code> with JPEG frames, often
+  used as the format for MJPEG streams).</p>
+
+  <p>If, in the case of a resource with no timing information, the user agent will nonetheless be
+  able to seek to an earlier point than the first frame originally provided by the server, then the
+  zero time should correspond to the earliest seekable time of the <span>media resource</span>;
+  otherwise, it should correspond to the first frame received from the server (the point in the
+  <span>media resource</span> at which the user agent began receiving the stream).</p>
+
+  <p class="note">At the time of writing, there is no known format that lacks explicit frame time
+  offsets yet still supports seeking to a frame before the first frame sent by the server.</p>
+
+  <div class="example">
+
+   <p>Consider a stream from a TV broadcaster, which begins streaming on a sunny Friday afternoon in
+   October, and always sends connecting user agents the media data on the same media timeline, with
+   its zero time set to the start of this stream. Months later, user agents connecting to this
+   stream will find that the first frame they receive has a time with millions of seconds. The <code
+   data-x="dom-media-getStartDate">getStartDate()</code> method would always return the date that the
+   broadcast started; this would allow controllers to display real times in their scrubber (e.g.
+   "2:30pm") rather than a time relative to when the broadcast began ("8 months, 4 hours, 12
+   minutes, and 23 seconds").</p>
+
+   <p>Consider a stream that carries a video with several concatenated fragments, broadcast by a
+   server that does not allow user agents to request specific times but instead just streams the
+   video data in a predetermined order, with the first frame delivered always being identified as
+   the frame with time zero. If a user agent connects to this stream and receives fragments defined
+   as covering timestamps 2010-03-20 23:15:00 UTC to 2010-03-21 00:05:00 UTC and 2010-02-12 14:25:00
+   UTC to 2010-02-12 14:35:00 UTC, it would expose this with a <span>media timeline</span> starting
+   at 0s and extending to 3,600s (one hour). Assuming the streaming server disconnected at the end
+   of the second clip, the <code data-x="dom-media-duration">duration</code> attribute would then
+   return 3,600. The <code data-x="dom-media-getStartDate">getStartDate()</code> method would return a
+   <code>Date</code> object with a time corresponding to 2010-03-20 23:15:00 UTC. However, if a
+   different user agent connected five minutes later, <em>it</em> would (presumably) receive
+   fragments covering timestamps 2010-03-20 23:20:00 UTC to 2010-03-21 00:05:00 UTC and 2010-02-12
+   14:25:00 UTC to 2010-02-12 14:35:00 UTC, and would expose this with a <span>media timeline</span>
+   starting at 0s and extending to 3,300s (fifty five minutes). In this case, the <code
+   data-x="dom-media-getStartDate">getStartDate()</code> method would return a <code>Date</code> object
+   with a time corresponding to 2010-03-20 23:20:00 UTC.</p>
+
+   <p>In both of these examples, the <code data-x="dom-media-seekable">seekable</code> attribute
+   would give the ranges that the controller would want to actually display in its UI; typically, if
+   the servers don't support seeking to arbitrary times, this would be the range of time from the
+   moment the user agent connected to the stream up to the latest frame that the user agent has
+   obtained; however, if the user agent starts discarding earlier information, the actual range
+   might be shorter.</p>
+
+  </div>
+
+  <p>In any case, the user agent must ensure that the <span>earliest possible position</span> (as
+  defined below) using the established <span>media timeline</span>, is greater than or equal to
+  zero.</p>
+
+  <p>The <span>media timeline</span> also has an associated clock. Which clock is used is user-agent
+  defined, and may be <span>media resource</span>-dependent, but it should approximate the user's
+  wall clock.</p>
+
+  <p><span data-x="media element">Media elements</span> have a <dfn>current playback position</dfn>,
+  which must initially (i.e. in the absence of <span>media data</span>) be zero seconds. The
+  <span>current playback position</span> is a time on the <span>media timeline</span>.</p>
+
+  <p><span data-x="media element">Media elements</span> also have an <dfn>official playback
+  position</dfn>, which must initially be set to zero seconds. The <span>official playback
+  position</span> is an approximation of the <span>current playback position</span> that is kept
+  stable while scripts are running.</p>
+
+  <p><span data-x="media element">Media elements</span> also have a <dfn>default playback start
+  position</dfn>, which must initially be set to zero seconds. This time is used to allow the
+  element to be seeked even before the media is loaded.</p>
+
+  <p>Each <span>media element</span> has a <dfn>show poster flag</dfn>. When a <span>media
+  element</span> is created, this flag must be set to true. This flag is used to control when the
+  user agent is to show a poster frame for a <code>video</code> element instead of showing the video
+  contents.</p>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLMediaElement"><code
+  data-x="dom-media-currentTime">currentTime</code></dfn> attribute must, on getting, return the
+  <span>media element</span>'s <span>default playback start position</span>, unless that is zero, in
+  which case it must return the element's <span>official playback position</span>. The returned
+  value must be expressed in seconds. On setting, if the <span>media element</span>'s <code
+  data-x="dom-media-readyState">readyState</code> is <code
+  data-x="dom-media-HAVE_NOTHING">HAVE_NOTHING</code>, then it must set the <span>media
+  element</span>'s <span>default playback start position</span> to the new value; otherwise, it must
+  set the <span>official playback position</span> to the new value and then <span
+  data-x="dom-media-seek">seek</span> to the new value. The new value must be interpreted as being
+  in seconds.</p>
+  </div>
+
+  <p>If the <span>media resource</span> is a streaming resource, then the user agent might be unable
+  to obtain certain parts of the resource after it has expired from its buffer. Similarly, some
+  <span data-x="media resource">media resources</span> might have a <span>media timeline</span> that
+  doesn't start at zero. The <dfn>earliest possible position</dfn> is the earliest position in the
+  stream or resource that the user agent can ever obtain again. It is also a time on the <span>media
+  timeline</span>.</p>
+
+  <p class="note">The <span>earliest possible position</span> is not explicitly exposed in the API;
+  it corresponds to the start time of the first range in the <code
+  data-x="dom-media-seekable">seekable</code> attribute's <code>TimeRanges</code> object, if any, or
+  the <span>current playback position</span> otherwise.</p>
+
+  <div algorithm>
+  <p>When the <span>earliest possible position</span> changes: if the <span>current playback
+  position</span> is before the <span>earliest possible position</span>, the user agent must <span
+  data-x="dom-media-seek">seek</span> to the <span>earliest possible position</span>; otherwise, if
+  the user agent has not fired a <code data-x="event-media-timeupdate">timeupdate</code> event at
+  the element in the past 15 to 250ms and is not still running event handlers for such an event,
+  then the user agent must <span>queue a media element task</span> given the <span>media
+  element</span> to <span data-x="concept-event-fire">fire an event</span> named <code
+  data-x="event-media-timeupdate">timeupdate</code> at the element.</p>
+  </div>
+
+  <p class="note">Because of the above requirement and the requirement in the <span
+  data-x="concept-media-load-resource">resource fetch algorithm</span> that kicks in <a
+  href="#getting-media-metadata">when the metadata of the clip becomes known</a>, the <span>current
+  playback position</span> can never be less than the <span>earliest possible position</span>.</p>
+
+  <!-- see https://www.w3.org/Bugs/Public/show_bug.cgi?id=14492 -->
+  <!-- basically this is to handle very-long-running streams that use different video and audio
+       tracks per TV show -->
+
+  <div algorithm>
+  <p>If at any time the user agent learns that an audio or video track has ended and all <span>media
+  data</span> relating to that track corresponds to parts of the <span>media timeline</span> that
+  are <em>before</em> the <span>earliest possible position</span>, the user agent may <span>queue a
+  media element task</span> given the <span>media element</span> to run these steps:</p>
+
+  <ol>
+   <li><p>Remove the track from the <code data-x="dom-media-audioTracks">audioTracks</code>
+   attribute's <code>AudioTrackList</code> object or the <code
+   data-x="dom-media-videoTracks">videoTracks</code> attribute's <code>VideoTrackList</code> object
+   as appropriate.</p></li>
+
+   <li><p><span data-x="concept-event-fire">Fire an event</span> named <code
+   data-x="event-media-removetrack">removetrack</code> at the <span>media element</span>'s
+   aforementioned <code>AudioTrackList</code> or <code>VideoTrackList</code> object, using
+   <code>TrackEvent</code>, with the <code data-x="dom-TrackEvent-track">track</code> attribute
+   initialized to the <code>AudioTrack</code> or <code>VideoTrack</code> object representing the
+   track.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLMediaElement"><code
+  data-x="dom-media-duration">duration</code></dfn> attribute must return the time of the end of the
+  <span>media resource</span>, in seconds, on the <span>media timeline</span>. If no <span>media
+  data</span> is available, then the attributes must return the Not-a-Number (NaN) value. If the
+  <span>media resource</span> is not known to be bounded (e.g. streaming radio, or a live event with
+  no announced end time), then the attribute must return the positive Infinity value.</p>
+  </div>
+
+  <p>The user agent must determine the duration of the <span>media resource</span> before playing
+  any part of the <span>media data</span> and before setting <code
+  data-x="dom-media-readyState">readyState</code> to a value greater than or equal to <code
+  data-x="dom-media-HAVE_METADATA">HAVE_METADATA</code>, even if doing so requires fetching multiple
+  parts of the resource.</p>
+
+  <div algorithm>
+  <p id="durationChange">When the length of the <span>media resource</span> changes to a known value
+  (e.g. from being unknown to known, or from a previously established length to a new length), the
+  user agent must <span>queue a media element task</span> given the <span>media element</span> to
+  <span data-x="concept-event-fire">fire an event</span> named <code
+  data-x="event-media-durationchange">durationchange</code> at the <span>media element</span>. (The
+  event is not fired when the duration is reset as part of loading a new media resource.) If the
+  duration is changed such that the <span>current playback position</span> ends up being greater
+  than the time of the end of the <span>media resource</span>, then the user agent must also <span
+  data-x="dom-media-seek">seek</span> to the time of the end of the <span>media resource</span>.</p>
+  </div>
+
+  <p class="example">If an "infinite" stream ends for some reason, then the duration would change
+  from positive Infinity to the time of the last frame or sample in the stream, and the <code
+  data-x="event-media-durationchange">durationchange</code> event would be fired. Similarly, if the
+  user agent initially estimated the <span>media resource</span>'s duration instead of determining
+  it precisely, and later revises the estimate based on new information, then the duration would
+  change and the <code data-x="event-media-durationchange">durationchange</code> event would be
+  fired.</p>
+
+  <p>Some video files also have an explicit date and time corresponding to the zero time in the
+  <span>media timeline</span>, known as the <dfn>timeline offset</dfn>. Initially, the
+  <span>timeline offset</span> must be set to Not-a-Number (NaN).</p>
+
+  <div algorithm>
+  <p>The <dfn method for="HTMLMediaElement"><code
+  data-x="dom-media-getStartDate">getStartDate()</code></dfn> method must return <span
+  data-x="create a Date object">a new <code>Date</code> object</span> representing the current
+  <span>timeline offset</span>.</p>
+  </div>
+
+  </div>
+
+  <hr>
+
+  <p>The <dfn element-attr for="audio,video"><code data-x="attr-media-loop">loop</code></dfn>
+  attribute is a <span>boolean attribute</span> that, if specified, indicates that the <span>media
+  element</span> is to seek back to the start of the <span>media resource</span> upon reaching the
+  end.</p>
+
+
+
+  <h5>Ready states</h5>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>media</var>.<span subdfn data-x="dom-media-readyState">readyState</span></code></dt>
+
+   <dd>
+    <p>Returns a value that expresses the current state of the element with respect to rendering the
+    <span>current playback position</span>, from the codes in the list below.</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <p><span data-x="media element">Media elements</span> have a <i>ready state</i>, which describes to
+  what degree they are ready to be rendered at the <span>current playback position</span>. The
+  possible values are as follows; the ready state of a media element at any particular time is the
+  greatest value describing the state of the element:</p>
+
+  </div>
+
+  <dl>
+   <dt><dfn const for="HTMLMediaElement"><code data-x="dom-media-HAVE_NOTHING">HAVE_NOTHING</code></dfn> (numeric value 0)</dt>
+
+   <dd><p>No information regarding the <span>media resource</span> is available. No data for the
+   <span>current playback position</span> is available. <span data-x="media element">Media
+   elements</span> whose <code data-x="dom-media-networkState">networkState</code> attribute are set
+   to <code data-x="dom-media-NETWORK_EMPTY">NETWORK_EMPTY</code> are always in the <code
+   data-x="dom-media-HAVE_NOTHING">HAVE_NOTHING</code> state.</p></dd>
+
+   <dt><dfn const for="HTMLMediaElement"><code data-x="dom-media-HAVE_METADATA">HAVE_METADATA</code></dfn> (numeric value 1)</dt>
+
+   <dd><p>Enough of the resource has been obtained that the duration of the resource is available.
+   In the case of a <code>video</code> element, the dimensions of the video are also available. No
+   <span>media data</span> is available for the immediate <span>current playback
+   position</span>.</p></dd>
+
+   <dt><dfn const for="HTMLMediaElement"><code data-x="dom-media-HAVE_CURRENT_DATA">HAVE_CURRENT_DATA</code></dfn> (numeric value 2)</dt>
+
+   <dd><p>Data for the immediate <span>current playback position</span> is available, but either not
+   enough data is available that the user agent could successfully advance the <span>current
+   playback position</span> in the <span>direction of playback</span> at all without immediately
+   reverting to the <code data-x="dom-media-HAVE_METADATA">HAVE_METADATA</code> state, or there is no
+   more data to obtain in the <span>direction of playback</span>. For example, in video this
+   corresponds to the user agent having data from the current frame, but not the next frame, when
+   the <span>current playback position</span> is at the end of the current frame; and to when <span
+   data-x="ended playback">playback has ended</span>.</p></dd>
+
+   <dt><dfn const for="HTMLMediaElement"><code data-x="dom-media-HAVE_FUTURE_DATA">HAVE_FUTURE_DATA</code></dfn> (numeric value 3)</dt>
+
+   <dd><p>Data for the immediate <span>current playback position</span> is available, as well as
+   enough data for the user agent to advance the <span>current playback position</span> in the
+   <span>direction of playback</span> at least a little without immediately reverting to the <code
+   data-x="dom-media-HAVE_METADATA">HAVE_METADATA</code> state, and <span>the text tracks are
+   ready</span>. For example, in video this corresponds to the user agent having data for at least
+   the current frame and the next frame when the <span>current playback position</span> is at the
+   instant in time between the two frames, or to the user agent having the video data for the
+   current frame and audio data to keep playing at least a little when the <span>current playback
+   position</span> is in the middle of a frame. The user agent cannot be in this state if <span
+   data-x="ended playback">playback has ended</span>, as the <span>current playback position</span>
+   can never advance in this case.</p></dd>
+
+   <dt><dfn const for="HTMLMediaElement"><code data-x="dom-media-HAVE_ENOUGH_DATA">HAVE_ENOUGH_DATA</code></dfn> (numeric value 4)</dt>
+
+   <dd>
+   <p>All the conditions described for the <code
+    data-x="dom-media-HAVE_FUTURE_DATA">HAVE_FUTURE_DATA</code> state are met, and, in addition,
+    either of the following conditions is also true:</p>
+
+    <ul>
+     <li>The user agent estimates that data is being fetched at a rate where the <span>current
+     playback position</span>, if it were to advance at the element's <code
+     data-x="dom-media-playbackRate">playbackRate</code>, would not overtake the available data
+     before playback reaches the end of the <span>media resource</span>.</li>
+
+     <li>The user agent has entered a state where waiting longer will not result in further data
+     being obtained, and therefore nothing would be gained by delaying playback any further. (For
+     example, the buffer might be full.)</li>
+    </ul>
+   </dd>
+  </dl>
+
+  <p class="note">In practice, the difference between <code
+  data-x="dom-media-HAVE_METADATA">HAVE_METADATA</code> and <code
+  data-x="dom-media-HAVE_CURRENT_DATA">HAVE_CURRENT_DATA</code> is negligible. Really the only time
+  the difference is relevant is when painting a <code>video</code> element onto a
+  <code>canvas</code>, where it distinguishes the case where something will be drawn (<code
+  data-x="dom-media-HAVE_CURRENT_DATA">HAVE_CURRENT_DATA</code> or greater) from the case where
+  nothing is drawn (<code data-x="dom-media-HAVE_METADATA">HAVE_METADATA</code> or less). Similarly,
+  the difference between <code data-x="dom-media-HAVE_CURRENT_DATA">HAVE_CURRENT_DATA</code> (only
+  the current frame) and <code data-x="dom-media-HAVE_FUTURE_DATA">HAVE_FUTURE_DATA</code> (at least
+  this frame and the next) can be negligible (in the extreme, only one frame). The only time that
+  distinction really matters is when a page provides an interface for "frame-by-frame"
+  navigation.</p>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>When the ready state of a <span>media element</span> whose <code
+  data-x="dom-media-networkState">networkState</code> is not <code
+  data-x="dom-media-NETWORK_EMPTY">NETWORK_EMPTY</code> changes, the user agent must follow the steps
+  given below:</p>
+
+  <ol>
+   <li>
+    <p>Apply the first applicable set of substeps from the following list:</p>
+
+
+    <dl class="switch">
+
+     <!-- going up to metadata -->
+     <dt>If the previous ready state was <code data-x="dom-media-HAVE_NOTHING">HAVE_NOTHING</code>,
+     and the new ready state is <code data-x="dom-media-HAVE_METADATA">HAVE_METADATA</code></dt>
+
+     <dd id="fire-loadedmetadata">
+
+      <p><span>Queue a media element task</span> given the <span>media element</span> to <span
+      data-x="concept-event-fire">fire an event</span> named <code
+      data-x="event-media-loadedmetadata">loadedmetadata</code> at the element.</p>
+
+      <p class="note">Before this task is run, as part of the <span>event loop</span> mechanism, the
+      rendering will have been updated to resize the <code>video</code> element if appropriate.</p>
+     </dd>
+
+     <!-- going up to current for the first time -->
+

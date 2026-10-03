@@ -1,0 +1,101 @@
+WHATWG HTML — section the-map-element — The <dfn element><code>map</code></dfn> element
+
+  <h4 split-filename="image-maps">The <dfn element><code>map</code></dfn> element</h4>
+
+  <dl class="element">
+   <dt><span data-x="concept-element-categories">Categories</span>:</dt>
+   <dd><span>Flow content</span>.</dd>
+   <dd><span>Phrasing content</span>.</dd>
+   <dd><span>Palpable content</span>.</dd>
+   <dt><span data-x="concept-element-contexts">Contexts in which this element can be used</span>:</dt>
+   <dd>Where <span>phrasing content</span> is expected.</dd>
+   <dt><span data-x="concept-element-content-model">Content model</span>:</dt>
+   <dd><span>Transparent</span>.</dd>
+   <dt><span data-x="concept-element-attributes">Content attributes</span>:</dt>
+   <dd><span>Global attributes</span></dd>
+   <dd><code data-x="attr-map-name">name</code></dd>
+   <dt><span
+   data-x="concept-element-accessibility-considerations">Accessibility considerations</span>:</dt>
+   <dd><a href="https://w3c.github.io/html-aria/#el-map">For authors</a>.</dd>
+   <dd><a href="https://w3c.github.io/html-aam/#el-map">For implementers</a>.</dd>
+   <dt><span data-x="concept-element-sanitization">Sanitization</span>:</dt>
+   <dd><span data-x="sanitizer-uncategorized">Uncategorized</span>.</dd>
+   <dt><span data-x="concept-element-dom">DOM interface</span>:</dt>
+   <dd w-nodev>
+    <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>HTMLMapElement</dfn> : <span>HTMLElement</span> {
+  [<span>HTMLConstructor</span>] constructor();
+
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute DOMString <dfn attribute for="HTMLMapElement" data-x="dom-map-name">name</dfn>;
+  [SameObject] readonly attribute <span>HTMLCollection</span> <span data-x="dom-map-areas">areas</span>;
+};</code></pre>
+   </dd>
+   <dd w-dev>Uses <code>HTMLMapElement</code>.</dd>
+  </dl>
+
+  <p>The <code>map</code> element, in conjunction with an <code>img</code> element and any
+  <code>area</code> element descendants, defines an <span>image map</span>. The element
+  <span>represents</span> its children.</p>
+
+  <p>The <dfn element-attr for="map"><code data-x="attr-map-name">name</code></dfn> attribute gives
+  the map a name so that it can be <span>referenced</span>. The attribute must be present and must
+  have a non-empty value with no <span>ASCII whitespace</span>. The value of the <code
+  data-x="attr-map-name">name</code> attribute must not be equal to the value of the <code
+  data-x="attr-map-name">name</code> attribute of another <code>map</code> element in the same
+  <span>tree</span>. If the <code data-x="attr-id">id</code> attribute is also specified, both
+  attributes must have the same value.</p>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>map</var>.<span subdfn data-x="dom-map-areas">areas</span></code></dt>
+
+   <dd>
+    <p>Returns an <code>HTMLCollection</code> of the <code>area</code> elements in the
+    <code>map</code>.</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLMapElement"><code data-x="dom-map-areas">areas</code></dfn>
+  attribute must return an <code>HTMLCollection</code> rooted at the <code>map</code> element, whose
+  filter matches only <code>area</code> elements.</p>
+  </div>
+
+  </div>
+
+  <div class="example">
+
+   <p>Image maps can be defined in conjunction with other content on the page, to ease maintenance.
+   This example is of a page with an image map at the top of the page and a corresponding set of
+   text links at the bottom.</p>
+
+   <pre><code class="html">&lt;!DOCTYPE HTML>
+&lt;HTML LANG="EN">
+&lt;TITLE>Babies&trade;: Toys&lt;/TITLE>
+&lt;HEADER>
+ &lt;H1>Toys&lt;/H1>
+ &lt;IMG SRC="/images/menu.gif"
+      ALT="Babies&trade; navigation menu. Select a department to go to its page."
+      USEMAP="#NAV">
+&lt;/HEADER>
+ ...
+&lt;FOOTER>
+ &lt;MAP NAME="NAV">
+  &lt;P>
+   &lt;A HREF="/clothes/">Clothes&lt;/A>
+   &lt;AREA ALT="Clothes" COORDS="0,0,100,50" HREF="/clothes/"> |
+   &lt;A HREF="/toys/">Toys&lt;/A>
+   &lt;AREA ALT="Toys" COORDS="100,0,200,50" HREF="/toys/"> |
+   &lt;A HREF="/food/">Food&lt;/A>
+   &lt;AREA ALT="Food" COORDS="200,0,300,50" HREF="/food/"> |
+   &lt;A HREF="/books/">Books&lt;/A>
+   &lt;AREA ALT="Books" COORDS="300,0,400,50" HREF="/books/">
+  &lt;/P>
+ &lt;/MAP>
+&lt;/FOOTER></code></pre>
+
+  </div>
+
+
+

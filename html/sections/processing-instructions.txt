@@ -1,0 +1,68 @@
+WHATWG HTML — section processing-instructions — Processing instructions
+
+  <h4>Processing instructions</h4>
+
+  <p>A processing instruction marks a location in a document for further processing.</p>
+
+  <div algorithm>
+  <p><dfn data-x="syntax-processing-instruction">Processing instructions</dfn> must have the
+  following format:</p>
+
+  <ol>
+   <li>"<code data-x="">&lt;?</code>".</li>
+
+   <li>A <span data-x="syntax-pi-target">target</span>.</li>
+
+   <li>
+    <p>Either of the following two options:</p>
+    <ul>
+     <li>Zero or more <span>ASCII whitespace</span>.</li>
+     <li>One or more <span>ASCII whitespace</span>, followed by <span
+     data-x="syntax-pi-data">data</span>.</li>
+    </ul>
+   </li>
+
+   <li>Optionally, a U+003F (?).</li>
+
+   <li>A U+003E (>).</li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn data-x="syntax-pi-target">target</dfn> consists of <span>ASCII alphanumeric</span>,
+  U+002D (-), and U+005F (_) code points. It must start with an <span>ASCII alpha</span> or U+005F
+  (_) and must not be an <span>ASCII case-insensitive</span> match for "<code data-x="">xml</code>"
+  or "<code data-x="">xml-stylesheet</code>".</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn data-x="syntax-pi-data">data</dfn> is <span data-x="syntax-text">text</span>, with the
+  additional restriction that the text must not contain U+003E (>), nor end with U+003F (?).</p>
+  </div>
+
+  <div class="note">
+  <p>Processing instructions in the HTML syntax have some notable differences to <a
+  href="https://www.w3.org/TR/xml/#sec-pi">processing instructions in XML</a>: <ref>XML</ref></p>
+
+  <ul>
+   <li><p>In HTML, a processing instruction can end with "<code data-x="">&gt;</code>" or "<code
+   data-x="">?&gt;</code>", while in XML it can only end with "<code
+   data-x="">?&gt;</code>".</p></li>
+
+   <li><p>In HTML, "<code data-x="">&lt;?xml ...?&gt;</code>" and "<code
+   data-x="">&lt;?xml-stylesheet ...?&gt;</code>" specifically are not parsed as processing
+   instructions but instead treated as <span data-x="bogus comment state">bogus comments</span>.
+   This is for compatibility with existing HTML content, where such syntax is relatively
+   common.</p></li>
+
+   <li><p>HTML does not support the full <a href="https://www.w3.org/TR/xml/#NT-Name">Name</a>
+   production for <span data-x="syntax-pi-target">processing instruction targets</span>. A much more
+   limited subset is allowed, as noted above. <ref>XML</ref></p></li>
+  </ul>
+  </div>
+
+
+<!--HTMLPARSER-->
+
+  <div w-nodev>
+

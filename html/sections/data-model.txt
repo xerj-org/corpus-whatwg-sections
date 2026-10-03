@@ -1,0 +1,431 @@
+WHATWG HTML — section data-model — Data model
+
+  <h4>Data model</h4>
+
+  <div algorithm>
+  <p id="tlbc-system-focus">A <span>top-level traversable</span> has <dfn export for="top-level
+  traversable">system focus</dfn> when it can receive keyboard input channeled from the operating
+  system, possibly targeted at one of its <span data-x="nav-document">active document</span>'s
+  <span>descendant navigables</span>.</p>
+  </div>
+
+  <p>A <span>top-level traversable</span> has <dfn for="top-level traversable">user attention</dfn>
+  when its <span>system visibility state</span> is "<code data-x="">visible</code>", and it either
+  has <span>system focus</span> or user agent widgets directly related to it can receive keyboard
+  input channeled from the operating system.</p>
+  <!-- This language is borrowed from system focus -->
+
+  <p class="note">User attention is lost when a browser window loses focus, whereas system focus
+  might also be lost to other system widgets in the browser window such as a location bar.</p>
+
+  <div algorithm>
+  <p>A <code>Document</code> <var>d</var> is a <dfn export for="Document">fully active descendant of
+  a top-level traversable with user attention</dfn> when <var>d</var> is <span>fully active</span>
+  and <var>d</var>'s <span>node navigable</span>'s <span data-x="nav-top">top-level
+  traversable</span> has <span>user attention</span>.</p>
+  </div>
+
+  <p>The term <dfn>focusable area</dfn> is used to refer to regions of the interface that can further become
+  the target of such keyboard input. Focusable areas can be elements, parts of elements, or other regions
+  managed by the user agent.</p>
+
+  <p>Each <span>focusable area</span> has a <dfn>DOM anchor</dfn>, which is a <code>Node</code> object
+  that represents the position of the <span>focusable area</span> in the DOM. (When the <span>focusable
+  area</span> is itself a <code>Node</code>, it is its own <span>DOM anchor</span>.) The <span>DOM anchor</span> is
+  used in some APIs as a substitute for the <span>focusable area</span> when there is no other DOM object
+  to represent the <span>focusable area</span>.</p>
+
+  <p>The following table describes what objects can be <span data-x="focusable area">focusable
+  areas</span>. The cells in the left column describe objects that can be <span data-x="focusable
+  area">focusable areas</span>; the cells in the right column describe the <span data-x="DOM anchor">DOM
+  anchors</span> for those elements. (The cells that span both columns are non-normative examples.)</p>
+
+  <table id="table-fa">
+   <thead>
+    <tr>
+     <th id="th-fa-area"><span>Focusable area</span>
+     <th id="th-fa-dom-rep"><span>DOM anchor</span>
+    <tr>
+     <th id="th-fa-examples" colspan=2>Examples
+
+   <tbody>
+    <tr>
+     <th class="data-header" headers="th-fa-area" id="td-fa-1">
+     Elements that meet all the following criteria:
+
+     <ul class="brief">
+      <li>the element's <span>tabindex value</span> is non-null, or the element is determined by the
+      user agent to be focusable;</li>
+
+      <li>the element is either not a <span>shadow host</span>, or has a <span
+      data-x="concept-element-shadow-root">shadow root</span> whose <span>delegates focus</span> is
+      false;</li>
+
+      <li>the element is not <span data-x="concept-element-disabled">actually disabled</span>;</li>
+
+      <li>the element is not <span>inert</span>;</li>
+
+      <li>the element is either <span>being rendered</span>, <span>delegating its rendering to its
+      children</span>, or <span>being used as relevant canvas fallback content</span>.</li>
+     </ul>
+     <td headers="td-fa-1 th-fa-dom-rep">
+     The element itself.
+    <tr>
+     <td headers="td-fa-1 th-fa-examples" colspan=2>
+     <p class="example"><code>iframe</code>, <code>dialog</code>, <code
+     data-x="attr-input-type-text">&lt;input type=text></code>, sometimes <code data-x="a">&lt;a
+     href=""></code> (depending on platform conventions).
+
+   <tbody>
+    <tr>
+     <th class="data-header" headers="th-fa-area" id="td-fa-2">
+     The shapes of <code>area</code> elements in an <span>image map</span> associated with an
+     <code>img</code> element that is <span>being rendered</span> and is not <span>inert</span>.
+     <td headers="td-fa-2 th-fa-dom-rep">
+     The <code>img</code> element.
+    <tr>
+     <td headers="td-fa-2 th-fa-examples" colspan=2>
+     <div class="example">
+      <p>In the following example, the <code>area</code> element creates two shapes, one on each
+      image. The <span>DOM anchor</span> of the first shape is the first <code>img</code> element, and the
+      <span>DOM anchor</span> of the second shape is the second <code>img</code> element.</p>
+      <pre><code class="html">&lt;map id=wallmap>&lt;area alt="Enter Door" coords="10,10,100,200" href="door.html">&lt;/map>
+...
+&lt;img src="images/innerwall.jpeg" alt="There is a white wall here, with a door." usemap="#wallmap">
+...
+&lt;img src="images/outerwall.jpeg" alt="There is a red wall here, with a door." usemap="#wallmap"></code></pre>
+     </div>
+
+   <tbody>
+    <tr>
+     <th class="data-header" headers="th-fa-area" id="td-fa-3">
+     The user-agent provided subwidgets of elements that are <span>being rendered</span> and are not
+     <span data-x="concept-element-disabled">actually disabled</span> or <span>inert</span>.
+     <td headers="td-fa-3 th-fa-dom-rep">
+     The element for which the <span>focusable area</span> is a subwidget.
+    <tr>
+     <td headers="td-fa-3 th-fa-examples" colspan=2>
+     <p class="example">The <span data-x="expose a user interface to the user">controls in the user
+     interface</span> for a <code>video</code> element, the up and down buttons in a spin-control
+     version of <code data-x="attr-input-type-number">&lt;input type=number></code>, the part of a
+     <code>details</code> element's rendering that enables the element to be opened or closed using
+     keyboard input.</p>
+
+   <tbody>
+    <tr>
+     <th class="data-header" headers="th-fa-area" id="td-fa-4">
+     The scrollable regions of elements that are <span>being rendered</span> and are not
+     <span>inert</span>. <!-- the being rendered part is kinda redundant, a scrollable region is a
+     box generated for the element so by definition if the element has a scrollable region it is
+     being rendered -->
+     <td headers="td-fa-4 th-fa-dom-rep">
+     The element for which the box that the scrollable region scrolls was created.
+    <tr>
+     <td headers="td-fa-4 th-fa-examples" colspan=2>
+     <p class="example">The CSS <span>'overflow'</span> property's 'scroll' value typically creates
+     a scrollable region.</p>
+
+   <tbody>
+    <tr>
+     <th class="data-header" headers="th-fa-area" id="td-fa-5">
+     The <span>viewport</span> of a <code>Document</code> that has a non-null <span
+     data-x="concept-document-bc">browsing context</span> and is not <span>inert</span>.
+     <td headers="td-fa-5 th-fa-dom-rep">
+     The <code>Document</code> for which the <span>viewport</span> was created.
+    <tr>
+     <td headers="td-fa-5 th-fa-examples" colspan=2>
+     <p class="example">The contents of an <code>iframe</code>.</p>
+
+   <tbody>
+    <tr>
+     <th class="data-header" headers="th-fa-area" id="td-fa-6">
+     Any other element or part of an element determined by the user agent to be a focusable area,
+     especially to aid with accessibility or to better match platform conventions.
+     <td headers="td-fa-6 th-fa-dom-rep">
+     The element.
+    <tr>
+     <td headers="td-fa-6 th-fa-examples" colspan=2>
+     <p class="example">A user agent could make all list item bullets <span>sequentially
+     focusable</span>, so that a user can more easily navigate lists.</p>
+     <p class="example">Similarly, a user agent could make all elements with <code
+     data-x="attr-title">title</code> attributes <span>sequentially focusable</span>, so that their
+     advisory information can be accessed.</p>
+
+  </table>
+
+  <p id="bc-focus-ergo-bcc-focus" class="note">A <span>navigable container</span> (e.g. an
+  <code>iframe</code>) is a <span>focusable area</span>, but key events routed to a <span>navigable
+  container</span> get immediately routed to its <span>content navigable</span>'s <span
+  data-x="nav-document">active document</span>. Similarly, in sequential focus navigation a
+  <span>navigable container</span> essentially acts merely as a placeholder for its <span>content
+  navigable</span>'s <span data-x="nav-document">active document</span>.</p>
+
+  <hr>
+
+  <p>One <span>focusable area</span> in each <code>Document</code> is designated the <dfn>focused
+  area of the document</dfn>. Which control is so designated changes over time, based on algorithms
+  in this specification.</p>
+
+  <p class="note">Even if a document is not <span>fully active</span> and not shown to the user, it
+  can still have a <span>focused area of the document</span>. If a document's <span>fully
+  active</span> state changes, its <span>focused area of the document</span> will stay the same.</p>
+
+  <div algorithm>
+  <p id="currently-focused-area-of-a-top-level-browsing-context">The <dfn>currently focused area of
+  a top-level traversable</dfn> <var>traversable</var> is the <span>focusable area</span>-or-null
+  returned by this algorithm:</p>
+
+  <ol>
+   <li><p>If <var>traversable</var> does not have <span>system focus</span>, then return
+   null.</p></li>
+
+   <li><p>Let <var>candidate</var> be <var>traversable</var>'s <span data-x="nav-document">active
+   document</span>.</p></li>
+
+   <li><p>While <var>candidate</var>'s <span data-x="focused area of the document">focused
+   area</span> is a <span>navigable container</span> with a non-null <span>content
+   navigable</span>: set <var>candidate</var> to the <span data-x="nav-document">active
+   document</span> of that <span>navigable container</span>'s <span>content
+   navigable</span>.</p></li>
+
+   <li><p>If <var>candidate</var>'s <span data-x="focused area of the document">focused area</span>
+   is non-null, set <var>candidate</var> to <var>candidate</var>'s <span data-x="focused area of
+   the document">focused area</span>.</p></li>
+   <!-- Can it be null though? See https://github.com/whatwg/html/issues/5835. -->
+
+   <li><p>Return <var>candidate</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p id="current-focus-chain-of-a-top-level-browsing-context">The <dfn>current focus chain of a
+  top-level traversable</dfn> <var>traversable</var> is the <span>focus chain</span> of the <span
+  data-x="currently focused area of a top-level traversable">currently focused area</span> of
+  <var>traversable</var>, if <var>traversable</var> is non-null, or an empty list otherwise.</p>
+  </div>
+
+  <div algorithm>
+  <p>An element that is the <span>DOM anchor</span> of a <span>focusable area</span> is said to
+  <dfn data-x="gains focus">gain focus</dfn> when that <span>focusable area</span> becomes the
+  <span>currently focused area of a top-level traversable</span>. When an element is the <span>DOM
+  anchor</span> of a <span>focusable area</span> of the <span>currently focused area of a top-level
+  traversable</span>, it is <dfn>focused</dfn>.</p>
+  </div>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn>focus chain</dfn> of a <span>focusable area</span> <var>subject</var> is the ordered
+  list constructed as follows:</p>
+
+  <ol>
+   <li><p>Let <var>output</var> be an empty <span>list</span>.</p></li>
+
+   <li><p>Let <var>currentObject</var> be <var>subject</var>.</p></li>
+
+   <li>
+    <p>While true:</p>
+
+    <ol>
+     <li><p><span data-x="list append">Append</span> <var>currentObject</var> to
+     <var>output</var>.</p></li>
+
+     <li>
+      <p>If <var>currentObject</var> is an <code>area</code> element's shape, then <span
+      data-x="list append">append</span> that <code>area</code> element to <var>output</var>.</p>
+
+      <p>Otherwise, if <var>currentObject</var>'s <span>DOM anchor</span> is an element that is not
+      <var>currentObject</var> itself, then <span data-x="list append">append</span>
+      <var>currentObject</var>'s <span>DOM anchor</span> to <var>output</var>.</p>
+     </li>
+
+     <li>
+      <p>If <var>currentObject</var> is a <span>focusable area</span>, then set
+      <var>currentObject</var> to <var>currentObject</var>'s <span>DOM anchor</span>'s <span>node
+      document</span>.</p>
+
+      <p>Otherwise, if <var>currentObject</var> is a <code>Document</code> whose <span>node
+      navigable</span>'s <span data-x="nav-parent">parent</span> is non-null, then set
+      <var>currentObject</var> to <var>currentObject</var>'s <span>node navigable</span>'s <span
+      data-x="nav-parent">parent</span>.</p>
+
+      <p>Otherwise, <span>break</span>.</p>
+     </li>
+    </ol>
+   </li>
+
+   <li>
+    <p>Return <var>output</var>.</p>
+
+    <p class="note">The chain starts with <var>subject</var> and (if <var>subject</var> is or can be
+    the <span>currently focused area of a top-level traversable</span>) continues up the focus
+    hierarchy up to the <code>Document</code> of the <span>top-level traversable</span>.</p>
+   </li>
+  </ol>
+  </div>
+
+  <p>All elements that are <span data-x="focusable area">focusable areas</span> are said to be
+  <dfn>focusable</dfn>.</p>
+
+  <p>There are two special types of focusability for <span data-x="focusable area">focusable
+  areas</span>:</p>
+  <ul>
+   <li>
+    <div algorithm>
+    <p>A <span>focusable area</span> is said to be <dfn>sequentially focusable</dfn> if it is
+    included in its <code>Document</code>'s <span>sequential focus navigation order</span> and
+    the user agent determines that it is sequentially focusable.</p>
+    </div>
+   </li>
+   <li>
+    <div algorithm>
+    <p>A <span>focusable area</span> is said to be <dfn>click focusable</dfn> if the user agent
+    determines that it is click focusable. User agents should consider focusable areas with non-null
+    <span data-x="tabindex value">tabindex values</span> to be click focusable.</p>
+    </div>
+   </li>
+  </ul>
+
+  <p class="note">Elements which are not <span>focusable</span> are not <span data-x="focusable
+  area">focusable areas</span>, and thus not <span>sequentially focusable</span> and not <span>click
+  focusable</span>.</p>
+
+  <div class="note">
+   <p>Being <span>focusable</span> is a statement about whether an element can be focused
+   programmatically, e.g. via the <code data-x="dom-focus">focus()</code> method or <code
+   data-x="attr-fe-autofocus">autofocus</code> attribute. In contrast, <span>sequentially
+   focusable</span> and <span>click focusable</span> govern how the user agent responds to user
+   interaction: respectively, to <span>sequential focus navigation</span> and as
+   <span>activation behavior</span>.</p>
+
+   <p>The user agent might determine that an element is not <span>sequentially focusable</span> even
+   if it is <span>focusable</span> and is included in its <code>Document</code>'s <span>sequential
+   focus navigation order</span>, according to user preferences. For example, macOS users can set
+   the user agent to skip non-form control elements, or can skip links when doing <span>sequential
+   focus navigation</span> with just the <kbd>Tab</kbd> key (as opposed to using both the
+   <kbd>Option</kbd> and <kbd>Tab</kbd> keys).</p>
+
+   <p>Similarly, the user agent might determine that an element is not <span>click focusable</span>
+   even if it is <span>focusable</span>. For example, in some user agents, clicking on a
+   non-editable form control does not focus it, i.e. the user agent has determined that such
+   controls are not click focusable.</p>
+
+   <p>Thus, an element can be <span>focusable</span>, but neither <span>sequentially
+   focusable</span> nor <span>click focusable</span>. For example, in some user agents, a
+   non-editable form-control with a negative-integer <span>tabindex value</span> would not be
+   focusable via user interaction, only via programmatic APIs.</p>
+  </div>
+
+  <div algorithm>
+  <p>When a user <a href="#activation">activates</a> a <span>click focusable</span> <span>focusable
+  area</span>, the user agent must run the <span>focusing steps</span> on the <span>focusable
+  area</span> with <i>focus trigger</i> set to "<code data-x="">click</code>".</p>
+  </div>
+
+  <p class="note">Note that focusing is not an <span>activation behavior</span>, i.e. calling the
+  <code data-x="dom-click">click()</code> method on an element or dispatching a synthetic <code
+  data-x="event-click">click</code> event on it won't cause the element to get focused.</p>
+
+  <hr>
+
+  <div algorithm>
+  <p>A node is a <dfn>focus navigation scope owner</dfn> if it is a <code>Document</code>, a
+  <span>shadow host</span>, a <span>slot</span>, or an element which is the <span>popover
+  trigger</span> of an element in the <span data-x="popover-showing-state">popover showing
+  state</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>Each <span>focus navigation scope owner</span> has a <dfn>focus navigation scope</dfn>, which
+  is a list of elements. Its contents are determined as follows:</p>
+
+  <p>Every element <var>element</var> has an <dfn>associated focus navigation owner</dfn>, which is
+  either null or a <span>focus navigation scope owner</span>. It is determined by the following
+  algorithm:</p>
+
+  <ol>
+   <li><p>If <var>element</var>'s parent is null, then return null.</p></li>
+
+   <li><p>If <var>element</var>'s parent is a <span>shadow host</span>, then return
+   <var>element</var>'s <span>assigned slot</span>.</p></li>
+
+   <li><p>If <var>element</var>'s parent is a <span>shadow root</span>, then return the parent's
+   <span data-x="concept-DocumentFragment-host">host</span>.</p></li>
+
+   <li><p>If <var>element</var>'s parent is the <span>document element</span>, then return the
+   parent's <span>node document</span>.</p></li>
+
+   <li><p>If <var>element</var> is in the <span data-x="popover-showing-state">popover showing
+   state</span> and has a <span>popover trigger</span> set, then return <var>element</var>'s
+   <span>popover trigger</span>.</p></li>
+
+   <li><p>Return <var>element</var>'s parent's <span>associated focus navigation owner</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>Then, the contents of a given <span>focus navigation scope owner</span> <var>owner</var>'s
+  <span>focus navigation scope</span> are all elements whose <span>associated focus navigation
+  owner</span> is <var>owner</var>.</p>
+  </div>
+
+  <p class="note">The order of elements within a <span>focus navigation scope</span> does not impact
+  any of the algorithms in this specification. Ordering only becomes important for the
+  <span>tabindex-ordered focus navigation scope</span> and <span>flattened tabindex-ordered focus
+  navigation scope</span> concepts defined below.</p>
+
+  <div algorithm>
+  <p>A <dfn>tabindex-ordered focus navigation scope</dfn> is a list of <span data-x="focusable
+  area">focusable areas</span> and <span data-x="focus navigation scope owner">focus navigation
+  scope owners</span>. Every <span>focus navigation scope owner</span> <var>owner</var> has
+  <span>tabindex-ordered focus navigation scope</span>, whose contents are determined as
+  follows:</p>
+
+  <ul>
+   <li><p>It contains all elements in <var>owner</var>'s <span>focus navigation scope</span> that
+   are themselves <span data-x="focus navigation scope owner">focus navigation scope owners</span>,
+   except the elements whose <span>tabindex value</span> is a negative integer.</p></li>
+
+   <li><p>It contains all of the <span data-x="focusable area">focusable areas</span> whose
+   <span>DOM anchor</span> is an element in <var>owner</var>'s <span>focus navigation scope</span>,
+   except the <span data-x="focusable area">focusable areas</span> whose <span>tabindex value</span>
+   is a negative integer.</p></li>
+  </ul>
+  </div>
+
+  <p>The order within a <span>tabindex-ordered focus navigation scope</span> is determined by each
+  element's <span>tabindex value</span>, as described in the section below.</p>
+
+  <p class="note">The rules there do not give a precise ordering, as they are composed mostly of
+  "<!--non-normative-->should" statements and relative orderings.</p>
+
+  <div algorithm>
+  <p>A <dfn>flattened tabindex-ordered focus navigation scope</dfn> is a list of <span
+  data-x="focusable area">focusable areas</span>. Every <span>focus navigation scope owner</span>
+  <var>owner</var> owns a distinct <span>flattened tabindex-ordered focus navigation scope</span>,
+  whose contents are determined by the following algorithm:</p>
+
+  <ol>
+   <li><p>Let <var>result</var> be a <span data-x="list clone">clone</span> of <var>owner</var>'s
+   <span>tabindex-ordered focus navigation scope</span>.</p></li>
+
+   <li>
+    <p>For each <var>item</var> of <var>result</var>:</p>
+
+    <ol>
+     <li><p>If <var>item</var> is not a <span>focus navigation scope owner</span>, then
+     <span>continue</span>.</p></li>
+
+     <li><p>If <var>item</var> is not a <span>focusable area</span>, then replace <var>item</var>
+     with all of the items in <var>item</var>'s <span>flattened tabindex-ordered focus navigation
+     scope</span>.</p></li>
+
+     <li><p>Otherwise, insert the contents of <var>item</var>'s <span>flattened tabindex-ordered
+     focus navigation scope</span> after <var>item</var>.</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  </div>
+

@@ -1,0 +1,27 @@
+WHATWG HTML — section http-headers — HTTP headers
+
+  <h3 class="no-num">HTTP headers</h3>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>The following HTTP request headers are defined by this specification:</p>
+
+  <ul>
+   <li>`<code>Last-Event-ID</code>`</li>
+   <li>`<code>Ping-From</code>`</li>
+   <li>`<code>Ping-To</code>`</li>
+  </ul>
+
+  <p>The following HTTP response headers are defined by this specification:</p>
+
+  <ul>
+   <li>`<code>Cross-Origin-Embedder-Policy</code>`</li>
+   <li>`<code>Cross-Origin-Embedder-Policy-Report-Only</code>`</li>
+   <li>`<code>Cross-Origin-Opener-Policy</code>`</li>
+   <li>`<code>Cross-Origin-Opener-Policy-Report-Only</code>`</li>
+   <li>`<code>Origin-Agent-Cluster</code>`</li>
+   <li>`<code>Refresh</code>`</li>
+   <li>`<code>X-Frame-Options</code>`</li>
+  </ul>
+
+

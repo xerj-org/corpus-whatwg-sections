@@ -1,0 +1,50 @@
+WHATWG HTML — section worklets-motivations — Motivations
+
+  <h4 id="worklets-motivations">Motivations</h4>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>Allowing extension points to rendering, or other sensitive parts of the implementation pipeline
+  such as audio output, is difficult. If extension points were done with full access to the APIs
+  available on <code>Window</code>, engines would need to abandon previously-held assumptions for
+  what could happen in the middle of those phases. For example, during the layout phase, rendering
+  engines assume that no DOM will be modified.</p>
+
+  <p>Additionally, defining extension points in the <code>Window</code> environment would restrict
+  user agents to performing work in the same thread as the <code>Window</code> object. (Unless
+  implementations added complex, high-overhead infrastructure to allow thread-safe APIs, as well
+  as thread-joining guarantees.)</p>
+
+  <p>Worklets are designed to allow extension points, while keeping guarantees that user agents
+  currently rely on. This is done through new global environments, based on subclasses of
+  <code>WorkletGlobalScope</code>.</p>
+
+  <p>Worklets are similar to web workers. However, they:</p>
+
+  <ul>
+   <li><p>Are thread-agnostic. That is, they are not designed to run on a dedicated separate thread,
+   like each worker is. Implementations can run worklets wherever they choose (including on the main
+   thread).</p></li>
+
+   <li><p>Are able to have multiple duplicate instances of the global scope created, for the purpose
+   of parallelism.</p></li>
+
+   <li><p>Do not use an event-based API. Instead, classes are registered on the global scope, whose
+   methods are invoked by the user agent.</p></li>
+
+   <li><p>Have a reduced API surface on the global scope.</p></li>
+
+   <li><p>Have a lifetime for their <span>global object</span> which is defined by other
+   specifications, often in an <span>implementation-defined</span> manner.</p></li>
+  </ul>
+
+  <p>As worklets have relatively high overhead, they are best used sparingly. Due to this, a given
+  <code>WorkletGlobalScope</code> is expected to be shared between multiple separate scripts. (This
+  is similar to how a single <code>Window</code> is shared between multiple separate scripts.)</p>
+
+  <p>Worklets are a general technology that serve different use cases. Some worklets, such as those
+  defined in <cite>CSS Painting API</cite>, provide extension points intended for stateless,
+  idempotent, and short-running computations, which have special considerations as described in the
+  next couple of sections. Others, such as those defined in <cite>Web Audio API</cite>, are used for
+  stateful, long-running operations. <ref>CSSPAINT</ref> <ref>WEBAUDIO</ref></p>
+

@@ -1,0 +1,206 @@
+WHATWG HTML — section the-selectedcontent-element — The <dfn element><code>selectedcontent</code></dfn> element
+
+  <h4>The <dfn element><code>selectedcontent</code></dfn> element</h4>
+
+  <dl class="element">
+   <dt><span data-x="concept-element-categories">Categories</span>:</dt>
+   <dd><span>Phrasing content</span>.</dd>
+   <dt><span data-x="concept-element-contexts">Contexts in which this element can be used</span>:</dt>
+   <dd>As a descendant of a <code>button</code> element which is a child of a <code>select</code>
+   element.</dd>
+   <dt><span data-x="concept-element-content-model">Content model</span>:</dt>
+   <dd><span data-x="concept-content-nothing">Nothing</span>.</dd>
+   <dt><span data-x="concept-element-attributes">Content attributes</span>:</dt>
+   <dd><span>Global attributes</span></dd>
+   <dt><span data-x="concept-element-accessibility-considerations">Accessibility considerations</span>:</dt>
+   <dd><a href="https://w3c.github.io/html-aria/#el-selectedcontent">For authors</a>.</dd>
+   <dd><a href="https://w3c.github.io/html-aam/#el-selectedcontent">For implementers</a>.</dd>
+   <dt><span data-x="concept-element-sanitization">Sanitization</span>:</dt>
+   <dd><span data-x="sanitizer-uncategorized">Uncategorized</span>.</dd>
+   <dt><span data-x="concept-element-dom">DOM interface</span>:</dt>
+   <dd w-nodev>
+    <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>HTMLSelectedContentElement</dfn> : <span>HTMLElement</span> {
+  [<span>HTMLConstructor</span>] constructor();
+};</code></pre>
+   </dd>
+   <dd w-dev>Uses <code>HTMLSelectedContentElement</code>.</dd>
+  </dl>
+
+  <p>The <code>selectedcontent</code> element reflects the contents of a <code>select</code>
+  element's currently selected <code>option</code> element. <code>selectedcontent</code> elements
+  can be used to declaratively show the selected <code>option</code> element's contents within the
+  <code>select</code> element's first child <code>button</code> element.</p>
+
+  <p class="note">The <code>option</code> element's <code data-x="attr-option-label">label</code>
+  attribute can be used to render a visible label for the option, but the
+  <code>selectedcontent</code> element will not reflect the content of the <code
+  data-x="attr-option-label">label</code> attribute.</p>
+
+  <p w-dev>Every time the selected <code>option</code> of a <code>select</code> switches from one
+  option to another, the <code>selectedcontent</code> element removes all of its children and
+  replaces them with a new copy of the DOM structure of the <code>select</code>'s selected
+  <code>option</code> element.</p>
+
+  <p>Every <code>selectedcontent</code> element has a boolean <dfn
+  data-x="selectedcontent-disabled">disabled</dfn>, which is initially false.</p>
+
+  <div algorithm>
+  <p>To <dfn>update a <code>select</code>'s descendant <code>selectedcontent</code> elements</dfn>
+  given a <code>select</code> element <var>select</var>:</p>
+
+  <ol>
+   <li><p>If <var>select</var> has the <code data-x="attr-select-multiple">multiple</code>
+   attribute, then return.</p></li>
+
+   <li><p>Let <var>descendantSelectedcontents</var> be a <span>list</span> of <var>select</var>'s
+   <span data-x="descendant">descendants</span>, in <span>tree order</span>, that are
+   <code>selectedcontent</code> elements whose <span
+   data-x="selectedcontent-disabled">disabled</span> is false.</p></li>
+
+   <li><p>For each <var>selectedcontent</var> of <var>descendantSelectedcontents</var>:
+   <span>update a <code>selectedcontent</code></span> given <var>select</var> and
+   <var>selectedcontent</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>update a <code>selectedcontent</code></dfn> given a <code>select</code> element
+  <var>select</var> and a <code>selectedcontent</code> element <var>selectedcontent</var>:</p>
+
+  <ol>
+   <li><p>If <var>selectedcontent</var>'s <span data-x="selectedcontent-disabled">disabled</span> is
+   true, then return.</p></li>
+
+   <li><p>Let <var>option</var> be the first <code>option</code> in <var>select</var>'s <span
+   data-x="concept-select-option-list">list of options</span> whose <span
+   data-x="concept-option-selectedness">selectedness</span> is true, if any such <code>option</code>
+   exists; otherwise null.</p></li>
+
+   <li><p>If <var>option</var> is null, then <span>clear a <code>selectedcontent</code></span>
+   given <var>selectedcontent</var>.</p></li>
+
+   <li><p>Otherwise, <span>clone an option into a <code>selectedcontent</code></span> given
+   <var>option</var> and <var>selectedcontent</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>clone an <code>option</code> into a <code>selectedcontent</code></dfn>, given an
+  <code>option</code> element <var>option</var> and a <code>selectedcontent</code> element
+  <var>selectedcontent</var>:</p>
+
+  <ol>
+   <li><p>Let <var>documentFragment</var> be the result of <span data-x="create a document
+   fragment">creating a document fragment</span> given <var>option</var>'s <span>node
+   document</span>.</p></li>
+
+   <li>
+    <p>For each <var>child</var> of <var>option</var>'s <span
+    data-x="concept-tree-child">children</span>:</p>
+
+    <ol>
+     <li><p>Let <var>childClone</var> be the result of running <span
+     data-x="concept-node-clone">clone</span> given <var>child</var> with <span
+     data-x="concept-node-clone-subtree">subtree</span> set to true.</p></li>
+
+     <li><p><span data-x="concept-node-append">Append</span> <var>childClone</var> to
+     <var>documentFragment</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p><span data-x="concept-node-replace-all">Replace all</span> with
+   <var>documentFragment</var> within <var>selectedcontent</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>clear a <code>selectedcontent</code></dfn> given a <code>selectedcontent</code> element
+  <var>selectedcontent</var>:</p>
+
+  <ol>
+   <li><p><span data-x="concept-node-replace-all">Replace all</span> with null within
+   <var>selectedcontent</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <code>selectedcontent</code> <span>HTML element insertion steps</span>, given
+  <var>selectedcontent</var>, are to <span>recalculate a <code>selectedcontent</code> element's
+  disabledness</span> given <var>selectedcontent</var>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <code>selectedcontent</code> <span>HTML element post-connection steps</span>, given
+  <var>selectedcontent</var>, are:</p>
+
+  <ol>
+   <li><p>Let <var>select</var> be the result of <span>recalculate a <code>selectedcontent</code>
+   element's disabledness</span> given <var>selectedcontent</var>.</p></li>
+
+   <li><p>If <var>selectedcontent</var>'s <span data-x="selectedcontent-disabled">disabled</span> is
+   true, <var>select</var> is null, or <var>select</var> has the <code
+   data-x="attr-select-multiple">multiple</code> attribute, then return.</p></li>
+
+   <li><p><span>Update a <code>selectedcontent</code></span> given <var>select</var> and
+   <var>selectedcontent</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <code>selectedcontent</code> <span>HTML element moving steps</span>, given
+  <var>movedNode</var>, <var>isSubtreeRoot</var>, and <var>oldAncestor</var>, are:</p>
+
+  <ol>
+   <li><p>Let <var>select</var> be the result of <span>recalculate a <code>selectedcontent</code>
+   element's disabledness</span> given <var>movedNode</var>.</p></li>
+
+   <li><p>If <var>movedNode</var>'s <span data-x="selectedcontent-disabled">disabled</span> is
+   true, <var>select</var> is null, or <var>select</var> has the <code
+   data-x="attr-select-multiple">multiple</code> attribute, then return.</p></li>
+
+   <li><p><span>Queue a microtask</span> to <span>update a <code>selectedcontent</code></span> given
+   <var>select</var> and <var>movedNode</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>recalculate a <code>selectedcontent</code> element's disabledness</dfn>, given a
+  <code>selectedcontent</code> element <var>selectedcontent</var>, run these steps. They return a
+  <code>select</code> element or null.</p>
+
+  <ol>
+   <li><p>Let <var>nearestSelectAncestor</var> be null.</p></li>
+
+   <li><p>Set <var>selectedcontent</var>'s <span data-x="selectedcontent-disabled">disabled</span>
+   to false.</p></li>
+
+   <li>
+    <p>For each <var>ancestor</var> of <var>selectedcontent</var>'s <span
+    data-x="ancestor">ancestors</span>, in reverse <span>tree order</span>:</p>
+
+    <ol>
+     <li>
+      <p>If <var>ancestor</var> is a <code>select</code> element:</p>
+
+      <ol>
+       <li><p>If <var>nearestSelectAncestor</var> is null, then set <var>nearestSelectAncestor</var>
+       to <var>ancestor</var> and <span>continue</span>.</p></li>
+
+       <li><p>Set <var>selectedcontent</var>'s <span
+       data-x="selectedcontent-disabled">disabled</span> to true and <span>break</span>.</p></li>
+      </ol>
+     </li>
+
+     <li><p>If <var>ancestor</var> is an <code>option</code> element or a
+     <code>selectedcontent</code> element, then set <var>selectedcontent</var>'s <span
+     data-x="selectedcontent-disabled">disabled</span> to true and <span>break</span>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Return <var>nearestSelectAncestor</var>.</p></li>
+  </ol>
+  </div>
+
+
+

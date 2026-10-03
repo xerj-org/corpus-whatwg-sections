@@ -1,0 +1,153 @@
+WHATWG HTML — section the-p-element — The <dfn element><code>p</code></dfn> element
+
+  <h4>The <dfn element><code>p</code></dfn> element</h4>
+
+  <dl class="element">
+   <dt><span data-x="concept-element-categories">Categories</span>:</dt>
+   <dd><span>Flow content</span>.</dd>
+   <dd><span>Palpable content</span>.</dd>
+   <dt><span data-x="concept-element-contexts">Contexts in which this element can be used</span>:</dt>
+   <dd>Where <span>flow content</span> is expected.</dd>
+   <dd>As a child of an <code>hgroup</code> element.</dd>
+   <dt><span data-x="concept-element-content-model">Content model</span>:</dt>
+   <dd><span>Phrasing content</span>.</dd>
+   <dt><span data-x="concept-element-attributes">Content attributes</span>:</dt>
+   <dd><span>Global attributes</span></dd>
+   <dt><span
+   data-x="concept-element-accessibility-considerations">Accessibility considerations</span>:</dt>
+   <dd><a href="https://w3c.github.io/html-aria/#el-p">For authors</a>.</dd>
+   <dd><a href="https://w3c.github.io/html-aam/#el-p">For implementers</a>.</dd>
+   <dt><span data-x="concept-element-sanitization">Sanitization</span>:</dt>
+   <dd><span data-x="sanitizer-category-default">Default</span>.</dd>
+   <dt><span data-x="concept-element-dom">DOM interface</span>:</dt>
+   <dd w-nodev>
+    <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>HTMLParagraphElement</dfn> : <span>HTMLElement</span> {
+  [<span>HTMLConstructor</span>] constructor();
+
+  // <a href="#HTMLParagraphElement-partial">also has obsolete members</a>
+};</code></pre>
+   </dd>
+   <dd w-dev>Uses <code>HTMLParagraphElement</code>.</dd>
+  </dl>
+
+  <p>The <code>p</code> element <span>represents</span> a <span>paragraph</span>.</p>
+
+  <p class="note">While paragraphs are usually represented in visual media by blocks of text that
+  are physically separated from adjacent blocks through blank lines, a style sheet or user agent
+  would be equally justified in presenting paragraph breaks in a different manner, for instance
+  using inline pilcrows (&#x00B6;).</p>
+
+  <div class="example">
+   <p>The following examples are conforming HTML fragments:</p>
+   <pre><code class="html">&lt;p&gt;The little kitten gently seated herself on a piece of
+carpet. Later in her life, this would be referred to as the time the
+cat sat on the mat.&lt;/p&gt;</code></pre>
+   <pre><code class="html">&lt;fieldset&gt;
+ &lt;legend&gt;Personal information&lt;/legend&gt;
+ &lt;p&gt;
+   &lt;label&gt;Name: &lt;input name="n"&gt;&lt;/label&gt;
+   &lt;label&gt;&lt;input name="anon" type="checkbox"&gt; Hide from other users&lt;/label&gt;
+ &lt;/p&gt;
+ &lt;p&gt;&lt;label&gt;Address: &lt;textarea name="a"&gt;&lt;/textarea&gt;&lt;/label&gt;&lt;/p&gt;
+&lt;/fieldset&gt;</code></pre>
+   <pre><code class="html">&lt;p&gt;There was once an example from Femley,&lt;br&gt;
+Whose markup was of dubious quality.&lt;br&gt;
+The validator complained,&lt;br&gt;
+So the author was pained,&lt;br&gt;
+To move the error from the markup to the rhyming.&lt;/p&gt;</code></pre>
+  </div>
+
+  <p>The <code>p</code> element should not be used when a more specific element is more
+  appropriate.</p>
+
+  <div class="example">
+
+   <p>The following example is technically correct:</p>
+
+<pre><code class="html">&lt;section&gt;
+ &lt;!-- ... --&gt;
+ &lt;p&gt;Last modified: 2001-04-23&lt;/p&gt;
+ &lt;p&gt;Author: fred@example.com&lt;/p&gt;
+&lt;/section&gt;</code></pre>
+
+   <p>However, it would be better marked-up as:</p>
+
+<pre><code class="html">&lt;section&gt;
+ &lt;!-- ... --&gt;
+ &lt;footer&gt;Last modified: 2001-04-23&lt;/footer&gt;
+ &lt;address&gt;Author: fred@example.com&lt;/address&gt;
+&lt;/section&gt;</code></pre>
+
+   <p>Or:</p>
+
+<pre><code class="html">&lt;section&gt;
+ &lt;!-- ... --&gt;
+ &lt;footer&gt;
+  &lt;p&gt;Last modified: 2001-04-23&lt;/p&gt;
+  &lt;address&gt;Author: fred@example.com&lt;/address&gt;
+ &lt;/footer&gt;
+&lt;/section&gt;</code></pre>
+
+  </div>
+
+  <div class="note">
+
+   <p>List elements (in particular, <code>ol</code> and <code>ul</code> elements) cannot be children
+   of <code>p</code> elements. When a sentence contains a bulleted list, therefore, one might wonder
+   how it should be marked up.</p>
+
+   <div class="example">
+    <p>For instance, this fantastic sentence has bullets relating to</p>
+    <ul>
+     <li>wizards,
+     <li>faster-than-light travel, and
+     <li>telepathy,
+    </ul>
+    <p>and is further discussed below.</p>
+   </div>
+
+   <p>The solution is to realize that a <i data-x="paragraph">paragraph</i>, in HTML terms, is not a
+   logical concept, but a structural one. In the fantastic example above, there are actually
+   <em>five</em> <span data-x="paragraph">paragraphs</span> as defined by this specification: one
+   before the list, one for each bullet, and one after the list.</p>
+
+   <div class="example">
+
+    <p>The markup for the above example could therefore be:</p>
+
+    <pre><code class="html">&lt;p>For instance, this fantastic sentence has bullets relating to&lt;/p>
+&lt;ul>
+ &lt;li>wizards,
+ &lt;li>faster-than-light travel, and
+ &lt;li>telepathy,
+&lt;/ul>
+&lt;p>and is further discussed below.&lt;/p></code></pre>
+
+   </div>
+
+   <p>Authors wishing to conveniently style such "logical" paragraphs consisting of multiple
+   "structural" paragraphs can use the <code>div</code> element instead of the <code>p</code>
+   element.</p>
+
+   <div class="example">
+
+    <p>Thus for instance the above example could become the following:</p>
+
+    <pre><code class="html">&lt;div>For instance, this fantastic sentence has bullets relating to
+&lt;ul>
+ &lt;li>wizards,
+ &lt;li>faster-than-light travel, and
+ &lt;li>telepathy,
+&lt;/ul>
+and is further discussed below.&lt;/div></code></pre>
+
+    <p>This example still has five structural paragraphs, but now the author can style just the
+    <code>div</code> instead of having to consider each part of the example separately.</p>
+
+   </div>
+
+  </div>
+
+
+

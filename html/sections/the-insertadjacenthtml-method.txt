@@ -1,0 +1,143 @@
+WHATWG HTML — section the-insertadjacenthtml-method — The <code data-x="dom-Element-insertAdjacentHTML">insertAdjacentHTML()</code> method
+
+  <h4>The <code data-x="dom-Element-insertAdjacentHTML">insertAdjacentHTML()</code> method</h4>
+
+  <p class="XXX">The <code data-x="dom-Element-insertAdjacentHTML">insertAdjacentHTML()</code>
+  method has a number of outstanding issues in the <cite>DOM Parsing and Serialization</cite> <a
+  href="https://github.com/w3c/DOM-Parsing/issues">issue tracker</a>, documenting various problems
+  with its specification.</p>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>element</var>.<span subdfn data-x="dom-Element-insertAdjacentHTML">insertAdjacentHTML</span>(<var>position</var>, <var>string</var>)</code></dt>
+   <dd>
+    <p>Parses <var>string</var> as HTML or XML and inserts the resulting nodes into the tree in
+    the position given by the <var>position</var> argument, as follows:</p>
+
+    <dl>
+     <dt>"<code data-x="">beforebegin</code>"</dt>
+     <dd>Before the element itself (i.e., after <var>element</var>'s previous sibling)</dd>
+
+     <dt>"<code data-x="">afterbegin</code>"</dt>
+     <dd>Just inside the element, before its first child.</dd>
+
+     <dt>"<code data-x="">beforeend</code>"</dt>
+     <dd>Just inside the element, after its last child.</dd>
+
+     <dt>"<code data-x="">afterend</code>"</dt>
+     <dd>After the element itself (i.e., before <var>element</var>'s next sibling)</dd>
+    </dl>
+
+    <p>Throws a <span>"<code>SyntaxError</code>"</span> <code>DOMException</code> if the arguments
+    have invalid values (e.g., in the case of an <span data-x="XML documents">XML document</span>,
+    if the given string is not well-formed).</p>
+
+    <p>Throws a <span>"<code>NoModificationAllowedError</code>"</span> <code>DOMException</code>
+    if the given position isn't possible (e.g. inserting elements after the root element of a
+    <code>Document</code>).</p>
+   </dd>
+  </dl>
+
+  <p class="warning">This method performs no sanitization to remove potentially-dangerous elements
+  and attributes like <code>script</code> or <span>event handler content attributes</span>.</p>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p><code>Element</code>'s <dfn method for="Element"><code
+  data-x="dom-Element-insertAdjacentHTML">insertAdjacentHTML(<var>position</var>,
+  <var>string</var>)</code></dfn> method steps are:</p>
+
+  <ol>
+   <li><p>Let <var>compliantString</var> be the result of invoking the <span
+   data-x="tt-getcompliantstring">get trusted type compliant string</span> algorithm with <code
+   data-x="tt-trustedhtml">TrustedHTML</code>, <span>this</span>'s <span>relevant global
+   object</span>, <var>string</var>, "<code data-x="">Element insertAdjacentHTML</code>", and "<code
+   data-x="">script</code>".</p></li>
+
+   <li><p>Let <var>context</var> be null.</p></li>
+
+   <li><p>Use the first matching item from this list:</p>
+    <dl class=switch>
+     <dt>If <var>position</var> is an <span>ASCII case-insensitive</span> match for the string "<code data-x="">beforebegin</code>"</dt>
+     <dt>If <var>position</var> is an <span>ASCII case-insensitive</span> match for the string "<code data-x="">afterend</code>"</dt>
+     <dd>
+      <ol>
+       <li><p>Set <var>context</var> to <span>this</span>'s <span
+       data-x="dom-parent">parent</span>.</p></li>
+
+       <li><p>If <var>context</var> is null or a <code>Document</code>, throw a
+       <span>"<code>NoModificationAllowedError</code>"</span> <code>DOMException</code>.</p></li>
+      </ol>
+     </dd>
+
+     <dt>If <var>position</var> is an <span>ASCII case-insensitive</span> match for the string "<code data-x="">afterbegin</code>"</dt>
+     <dt>If <var>position</var> is an <span>ASCII case-insensitive</span> match for the string "<code data-x="">beforeend</code>"</dt>
+     <dd>Set <var>context</var> to <span>this</span>.</dd>
+
+     <dt>Otherwise</dt>
+     <dd><p>Throw a <span>"<code>SyntaxError</code>"</span> <code>DOMException</code>.</p></dd>
+    </dl>
+   </li>
+
+   <li>
+    <p>If <var>context</var> is not an <code>Element</code> or all of the following are true:</p>
+
+    <ul>
+     <li><p><var>context</var>'s <span>node document</span> is an HTML document;</p></li>
+     <li><p><var>context</var>'s <span data-x="concept-element-local-name">local name</span> is
+     "<code>html</code>"; and</p></li>
+     <li><p><var>context</var>'s <span data-x="concept-element-namespace">namespace</span> is the
+     <span>HTML namespace</span>,</p></li>
+    </ul>
+
+    <p>then set <var>context</var> to the result of <span data-x="create an element">creating an
+    element</span> given <span>this</span>'s <span>node document</span>, "<code
+    data-x="">body</code>", and the <span>HTML namespace</span>.</p>
+   </li>
+
+   <li>
+    <p>Let <var>fragment</var> be the result of invoking the <span>fragment parsing algorithm
+    steps</span> with <var>context</var> and <var>compliantString</var>.</p>
+   </li>
+
+   <li>Use the first matching item from this list:
+    <dl class=switch>
+     <dt>If <var>position</var> is an <span>ASCII case-insensitive</span> match for the string "<code data-x="">beforebegin</code>"</dt>
+     <dd>
+      <p><span data-x="concept-node-insert">Insert</span> <var>fragment</var> into
+      <span>this</span>'s <span data-x="dom-parent">parent</span> before <span>this</span>.</p>
+     </dd>
+
+     <dt>If <var>position</var> is an <span>ASCII case-insensitive</span> match for the string "<code data-x="">afterbegin</code>"</dt>
+     <dd>
+      <p><span data-x="concept-node-insert">Insert</span> <var>fragment</var> into
+      <span>this</span> before its <span>first child</span>.</p>
+     </dd>
+
+     <dt>If <var>position</var> is an <span>ASCII case-insensitive</span> match for the string "<code data-x="">beforeend</code>"</dt>
+     <dd>
+      <p><span data-x="concept-node-append">Append</span> <var>fragment</var> to
+      <span>this</span>.</p>
+     </dd>
+
+     <dt>If <var>position</var> is an <span>ASCII case-insensitive</span> match for the string "<code data-x="">afterend</code>"</dt>
+     <dd>
+      <p><span data-x="concept-node-insert">Insert</span> <var>fragment</var> into
+      <span>this</span>'s <span data-x="dom-parent">parent</span> before <span>this</span>'s
+      <span>next sibling</span>.</p>
+     </dd>
+    </dl>
+   </li>
+  </ol>
+  </div>
+
+  <p class=note>As with other direct <code>Node</code>-manipulation APIs (and unlike <code
+  data-x="dom-Element-innerHTML">innerHTML</code>), <code
+  data-x="dom-Element-insertAdjacentHTML">insertAdjacentHTML()</code> does not include any special
+  handling for <code>template</code> elements. In most cases you will want to use <code
+  data-x="">templateEl.<span data-x="dom-template-content">content</span>.<span
+  data-x="dom-Element-insertAdjacentHTML">insertAdjacentHTML()</span></code> instead of directly
+  manipulating the child nodes of a <code>template</code> element.</p>
+
+  </div>
+

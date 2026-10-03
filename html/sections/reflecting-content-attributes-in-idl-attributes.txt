@@ -1,0 +1,859 @@
+WHATWG HTML — section reflecting-content-attributes-in-idl-attributes — Reflecting content attributes in IDL attributes
+
+  <h4>Reflecting content attributes in IDL attributes</h4>
+
+  <p>The building blocks for reflecting are as follows:</p>
+
+  <ul>
+   <li><p>A <dfn>reflected target</dfn> is an element or <code>ElementInternals</code>
+   object. It is typically clear from context and typically identical to the interface of the
+   <span>reflected IDL attribute</span>. It is always identical to that interface when it is an
+   <code>ElementInternals</code> object.</p></li>
+
+   <li><p>A <dfn>reflected IDL attribute</dfn> is an attribute interface member.</p></li>
+
+   <li><p>A <dfn>reflected content attribute name</dfn> is a string. When the <span>reflected
+   target</span> is an element, it represents the local name of a content attribute whose namespace
+   is null. When the <span>reflected target</span> is an <code>ElementInternals</code> object, it
+   represents a key of the <span>reflected target</span>'s <span data-x="internals-target">target
+   element</span>'s <span>internal content attribute map</span>.</p></li>
+  </ul>
+
+  <p>A <span>reflected IDL attribute</span> can be defined to <dfn export>reflect</dfn> a
+  <span>reflected content attribute name</span> of a <span>reflected target</span>. In general this
+  means that the IDL attribute getter returns the current value of the content attribute, and the
+  setter changes the value of the content attribute to the given value.</p>
+
+  <div w-nodev>
+
+  <p><span data-x="reflected target">Reflected targets</span> have these associated algorithms:
+
+  <ul class="brief">
+   <li><dfn>get the element</dfn>: takes no arguments; returns an element.</li>
+   <li><dfn>get the content attribute</dfn>: takes no arguments; returns null or a string.</li>
+   <li><dfn>set the content attribute</dfn>: takes a string <var ignore>value</var>; returns nothing.</li>
+   <li><dfn>delete the content attribute</dfn>: takes no arguments; returns nothing.</li>
+  </ul>
+
+  <div var-scope>
+  <p>For a <span>reflected target</span> that is an element <var>element</var>, these are defined as
+  follows:</p>
+
+  <dl>
+   <div algorithm>
+   <dt><span>get the element</span></dt>
+   <dd><ol><li><p>Return <var>element</var>.</p></li></ol></dd>
+   </div>
+
+   <div algorithm>
+   <dt><span>get the content attribute</span></dt>
+   <dd>
+    <ol>
+     <li><p>Let <var>attribute</var> be the result of <span
+     data-x="concept-element-attributes-get-by-namespace">getting an attribute by namespace and
+     local name</span> given null, the <span>reflected content attribute name</span>, and
+     <var>element</var>.</p></li>
+
+     <li><p>If <var>attribute</var> is null, then return null.</p></li>
+
+     <li><p>Return <var>attribute</var>'s <span
+     data-x="concept-attribute-value">value</span>.</p></li>
+    </ol>
+   </dd>
+   </div>
+
+   <div algorithm>
+   <dt><span>set the content attribute</span> with a string <var>value</var></dt>
+   <dd><ol><li><p><span data-x="concept-element-attributes-set-value">Set an attribute value</span>
+   given <var>element</var>, the <span>reflected content attribute name</span>, and
+   <var>value</var>.</p></li></ol></dd>
+   </div>
+
+   <div algorithm>
+   <dt><span>delete the content attribute</span></dt>
+   <dd><ol><li><p><span data-x="concept-element-attributes-remove-by-namespace">Remove an attribute
+   by namespace and local name</span> given null, the <span>reflected content attribute name</span>,
+   and <var>element</var>.</p></li></ol></dd>
+   </div>
+  </dl>
+  </div>
+
+  <div var-scope>
+  <p>For a <span>reflected target</span> that is an <code>ElementInternals</code> object
+  <var>elementInternals</var>, they are defined as follows:</p>
+
+  <dl>
+   <div algorithm>
+   <dt><span>get the element</span></dt>
+   <dd><ol><li><p>Return <var>elementInternals</var>'s <span data-x="internals-target">target
+   element</span>.</p></li></ol></dd>
+   </div>
+
+   <div algorithm>
+   <dt><span>get the content attribute</span></dt>
+   <dd>
+    <ol>
+     <li><p>If <var>elementInternals</var>'s <span data-x="internals-target">target element</span>'s
+     <span>internal content attribute map</span>[the <span>reflected content attribute name</span>]
+     <span data-x="map exists">does not exist</span>, then return null.
+
+     <li><p>Return <var>elementInternals</var>'s <span data-x="internals-target">target
+     element</span>'s <span>internal content attribute map</span>[the <span>reflected content
+     attribute name</span>].</p></li>
+    </ol>
+   </dd>
+   </div>
+
+   <div algorithm>
+   <dt><span>set the content attribute</span> with a string <var>value</var></dt>
+   <dd><ol><li><p><span data-x="map set">Set</span> <var>elementInternals</var>'s <span
+   data-x="internals-target">target element</span>'s <span>internal content attribute map</span>[the
+   <span>reflected content attribute name</span>] to <var>value</var>.</p></li></ol></dd>
+   </div>
+
+   <div algorithm>
+   <dt><span>delete the content attribute</span></dt>
+   <dd><ol><li><p><span data-x="map remove">Remove</span> <var>elementInternals</var>'s <span
+   data-x="internals-target">target element</span>'s <span>internal content attribute map</span>[the
+   <span>reflected content attribute name</span>].</p></li></ol></dd>
+   </div>
+  </dl>
+  </div>
+
+  <p class="note">This results in somewhat redundant data structures for
+  <code>ElementInternals</code> objects as their <span data-x="internals-target">target
+  element</span>'s <span>internal content attribute map</span> cannot be directly manipulated and as
+  such reflection is only happening in a single direction. This approach was nevertheless chosen to
+  make it less error-prone to define IDL attributes that are shared between <span data-x="reflected
+  target">reflected targets</span> and benefit from common API semantics.</p>
+
+  <hr>
+
+  <p>IDL attributes of type <code data-x="idl-DOMString">DOMString</code> or <code data-x=""><span
+  data-x="idl-DOMString">DOMString</span>?</code> that <span>reflect</span> <span data-x="enumerated
+  attribute">enumerated</span> content attributes can be <dfn>limited to only known values</dfn>.
+  Per the processing models below, those will cause the getters for such IDL attributes to only
+  return keywords for those enumerated attributes, or the empty string or null.</p>
+
+  <p>If a <span>reflected IDL attribute</span> has the type <code
+  data-x="idl-DOMString">DOMString</code>:</p>
+
+  <ul>
+   <li>
+    <div algorithm>
+    <p>The getter steps are:</p>
+
+    <ol>
+     <li><p>Let <var>element</var> be the result of running <span>this</span>'s <span>get the
+     element</span>.</p></li>
+
+     <li><p>Let <var>contentAttributeValue</var> be the result of running <span>this</span>'s
+     <span>get the content attribute</span>.</p></li>
+
+     <li><p>Let <var>attributeDefinition</var> be the attribute definition of <var>element</var>'s
+     content attribute whose namespace is null and local name is the <span>reflected content
+     attribute name</span>.
+
+     <li>
+      <p>If <var>attributeDefinition</var> indicates it is an <span>enumerated attribute</span> and
+      the <span>reflected IDL attribute</span> is defined to be <span>limited to only known
+      values</span>:</p>
+
+      <ol>
+       <li><p>If <var>contentAttributeValue</var> does not correspond to any state of
+       <var>attributeDefinition</var> (e.g., it is null and there is no <i data-x="missing value
+       default">missing value default</i>), or if it is in a state of
+       <var>attributeDefinition</var> with no associated keyword value, then return the empty
+       string.</p></li>
+
+       <li><p>Return the <span>canonical keyword</span> for the state of
+       <var>attributeDefinition</var> that <var>contentAttributeValue</var> corresponds to.</p></li>
+      </ol>
+     </li>
+
+     <li><p>If <var>contentAttributeValue</var> is null, then return the empty string.</p></li>
+
+     <li><p>Return <var>contentAttributeValue</var>.</p></li>
+    </ol>
+    </div>
+   </li>
+
+   <li>
+    <div algorithm>
+    <p>The setter steps are to run <span>this</span>'s <span>set the content attribute</span>
+    with the given value.</p>
+    </div>
+   </li>
+  </ul>
+
+  <p>If a <span>reflected IDL attribute</span> has the type <code data-x=""><span
+  data-x="idl-DOMString">DOMString</span>?</code>:</p>
+
+  <ul>
+   <li>
+    <div algorithm>
+    <p>The getter steps are:</p>
+
+    <ol>
+     <li><p>Let <var>element</var> be the result of running <span>this</span>'s <span>get the
+     element</span>.</p></li>
+
+     <li><p>Let <var>contentAttributeValue</var> be the result of running <span>this</span>'s
+     <span>get the content attribute</span>.</p></li>
+
+     <li><p>Let <var>attributeDefinition</var> be the attribute definition of <var>element</var>'s
+     content attribute whose namespace is null and local name is the <span>reflected content
+     attribute name</span>.
+
+     <li>
+      <p>If <var>attributeDefinition</var> indicates it is an <span>enumerated attribute</span>:</p>
+
+      <ol>
+       <li><p><span>Assert</span>: the <span>reflected IDL attribute</span> is <span>limited to only
+       known values</span>.</p></li>
+
+       <li><p><span>Assert</span>: <var>contentAttributeValue</var> corresponds to a state of
+       <var>attributeDefinition</var>.</p></li>
+
+       <li><p>If <var>contentAttributeValue</var> corresponds to a state of
+       <var>attributeDefinition</var> with no associated keyword value, then return null.</p></li>
+
+       <li><p>Return the <span>canonical keyword</span> for the state of
+       <var>attributeDefinition</var> that <var>contentAttributeValue</var> corresponds to.</p></li>
+      </ol>
+     </li>
+
+     <li><p>Return <var>contentAttributeValue</var>.</p></li>
+    </ol>
+    </div>
+   </li>
+
+   <li>
+    <div algorithm>
+    <p>The setter steps are:</p>
+
+    <ol>
+     <li><p>If the given value is null, then run <span>this</span>'s <span>delete the content
+     attribute</span>.</p></li>
+
+     <li><p>Otherwise, run <span>this</span>'s <span>set the content attribute</span> with the given
+     value.</p></li>
+    </ol>
+    </div>
+   </li>
+  </ul>
+
+  <p>If a <span>reflected IDL attribute</span> has the type <code
+  data-x="idl-USVString">USVString</code>, optionally <dfn>treated as a URL</dfn>:</p>
+
+  <ul>
+   <li>
+    <div algorithm>
+    <p>The getter steps are:</p>
+
+    <ol>
+     <li><p>Let <var>element</var> be the result of running <span>this</span>'s <span>get the
+     element</span>.</p></li>
+
+     <li><p>Let <var>contentAttributeValue</var> be the result of running <span>this</span>'s
+     <span>get the content attribute</span>.</p></li>
+
+     <li>
+      <p>If the <span>reflected IDL attribute</span> is <span>treated as a URL</span>:</p>
+
+      <ol>
+       <li><p>If <var>contentAttributeValue</var> is null, then return the empty string.</p></li>
+
+       <li><p>Let <var>urlString</var> be the result of <span>encoding-parsing-and-serializing a
+       URL</span> given <var>contentAttributeValue</var>, relative to <var>element</var>'s
+       <span>node document</span>.</p></li>
+
+       <li><p>If <var>urlString</var> is not failure, then return <var>urlString</var>.</p></li>
+      </ol>
+     </li>
+
+     <li><p>Return <var>contentAttributeValue</var>, <span
+     data-x="convert">converted to a scalar value string</span>.</p></li>
+    </ol>
+    </div>
+   </li>
+
+   <li>
+    <div algorithm>
+    <p>The setter steps are to run <span>this</span>'s <span>set the content attribute</span>
+    with the given value.</p>
+    </div>
+   </li>
+  </ul>
+
+  <p>If a <span>reflected IDL attribute</span> has the type <code
+  data-x="idl-boolean">boolean</code>:</p>
+
+  <ul>
+   <li>
+    <div algorithm>
+    <p>The getter steps are:</p>
+
+    <ol>
+     <li><p>Let <var>contentAttributeValue</var> be the result of running <span>this</span>'s
+     <span>get the content attribute</span>.</p></li>
+
+     <li><p>If <var>contentAttributeValue</var> is null, then return false.</p></li>
+
+     <li><p>Return true.</p></li>
+    </ol>
+    </div>
+   </li>
+
+   <li>
+    <div algorithm>
+    <p>The setter steps are:</p>
+
+    <ol>
+     <li><p>If the given value is false, then run <span>this</span>'s <span>delete the content
+     attribute</span>.</p></li>
+
+     <li><p>If the given value is true, then run <span>this</span>'s <span>set the content
+     attribute</span> with the empty string.
+    </ol>
+    </div>
+   </li>
+  </ul>
+
+  <p class="note">This corresponds to the rules for <span data-x="boolean attribute">boolean content
+  attributes</span>.
+
+  <div var-scope>
+  <p>If a <span>reflected IDL attribute</span> has the type <code data-x="idl-long">long</code>,
+  optionally <dfn>limited to only non-negative numbers</dfn> and optionally with a <dfn>default
+  value</dfn> <var>defaultValue</var>:
+
+  <ul>
+   <li>
+    <div algorithm>
+    <p>The getter steps are:</p>
+
+    <ol>
+     <li><p>Let <var>contentAttributeValue</var> be the result of running <span>this</span>'s
+     <span>get the content attribute</span>.</p></li>
+
+     <li>
+      <p>If <var>contentAttributeValue</var> is not null:
+
+      <ol>
+       <li><p>Let <var>parsedValue</var> be the result of <span data-x="rules for parsing
+       integers">integer parsing</span> <var>contentAttributeValue</var> if the <span>reflected IDL
+       attribute</span> is not <span>limited to only non-negative numbers</span>; otherwise the
+       result of <span data-x="rules for parsing non-negative integers">non-negative integer
+       parsing</span> <var>contentAttributeValue</var>.</p></li>
+
+       <li><p>If <var>parsedValue</var> is not an error and is within the <code
+       data-x="idl-long">long</code> range, then return <var>parsedValue</var>.</p></li>
+      </ol>
+     </li>
+
+     <li><p>If the <span>reflected IDL attribute</span> has a <span>default value</span>, then
+     return <var>defaultValue</var>.</p></li>
+
+     <li><p>If the <span>reflected IDL attribute</span> is <span>limited to only non-negative
+     numbers</span>, then return &#x2212;1.</p></li>
+
+     <li><p>Return 0.</p></li>
+    </ol>
+    </div>
+   </li>
+
+   <li>
+    <div algorithm>
+    <p>The setter steps are:</p>
+
+    <ol>
+     <li><p>If the <span>reflected IDL attribute</span> is <span>limited to only non-negative
+     numbers</span> and the given value is negative, then throw an
+     <span>"<code>IndexSizeError</code>"</span> <code>DOMException</code>.</p></li>
+
+     <li><p>Run <span>this</span>'s <span>set the content attribute</span> with the given value
+     converted to the shortest possible string representing the number as a <span>valid
+     integer</span>.</p></li>
+    </ol>
+    </div>
+   </li>
+  </ul>
+  </div>
+
+  <div var-scope>
+  <p>If a <span>reflected IDL attribute</span> has the type <code
+  data-x="idl-unsigned-long">unsigned long</code>, optionally <dfn
+  id="limited-to-only-non-negative-numbers-greater-than-zero">limited to only positive
+  numbers</dfn>, <dfn
+  id="limited-to-only-non-negative-numbers-greater-than-zero-with-fallback">limited to only positive
+  numbers with fallback</dfn>, or <dfn>clamped to the range</dfn> [<var>clampedMin</var>,
+  <var>clampedMax</var>], and optionally with a <span>default value</span> <var>defaultValue</var>:
+
+  <ul>
+   <li>
+    <div algorithm>
+    <p>The getter steps are:</p>
+
+    <ol>
+     <li><p>Let <var>contentAttributeValue</var> be the result of running <span>this</span>'s
+     <span>get the content attribute</span>.</p></li>
+
+     <li><p>Let <var>minimum</var> be 0.</p></li>
+
+     <li><p>If the <span>reflected IDL attribute</span> is <span>limited to only positive
+     numbers</span> or <span>limited to only positive numbers with fallback</span>, then set
+     <var>minimum</var> to 1.</p></li>
+
+     <li><p>If the <span>reflected IDL attribute</span> is <span>clamped to the range</span>, then
+     set <var>minimum</var> to <var>clampedMin</var>.</p></li>
+
+     <li><p>Let <var>maximum</var> be 2147483647 if the <span>reflected IDL attribute</span> is not
+     <span>clamped to the range</span>; otherwise <var>clampedMax</var>.</p></li>
+
+     <li>
+      <p>If <var>contentAttributeValue</var> is not null:
+
+      <ol>
+       <li><p>Let <var>parsedValue</var> be the result of <span data-x="rules for parsing
+       non-negative integers">non-negative integer parsing</span>
+       <var>contentAttributeValue</var>.</p></li>
+
+       <li><p>If <var>parsedValue</var> is not an error and is in the range <var>minimum</var> to
+       <var>maximum</var>, inclusive, then return <var>parsedValue</var>.</p></li>
+
+       <li>
+        <p>If <var>parsedValue</var> is not an error and the <span>reflected IDL attribute</span> is
+        <span>clamped to the range</span>:
+
+        <ol>
+         <li><p>If <var>parsedValue</var> is less than <var>minimum</var>, then return
+         <var>minimum</var>.</p></li>
+
+         <li><p>Return <var>maximum</var>.</p></li>
+        </ol>
+       </li>
+      </ol>
+     </li>
+
+     <li><p>If the <span>reflected IDL attribute</span> has a <span>default value</span>, then
+     return <var>defaultValue</var>.</p></li>
+
+     <li><p>Return <var>minimum</var>.</p></li>
+    </ol>
+    </div>
+   </li>
+
+   <li>
+    <div algorithm>
+    <p>The setter steps are:</p>
+
+    <ol>
+     <li><p>If the <span>reflected IDL attribute</span> is <span>limited to only positive
+     numbers</span> and the given value is 0, then throw an
+     <span>"<code>IndexSizeError</code>"</span> <code>DOMException</code>.</p></li>
+
+     <li><p>Let <var>minimum</var> be 0.</p></li>
+
+     <li><p>If the <span>reflected IDL attribute</span> is <span>limited to only positive
+     numbers</span> or <span>limited to only positive numbers with fallback</span>, then set
+     <var>minimum</var> to 1.</p></li>
+
+     <li><p>Let <var>newValue</var> be <var>minimum</var>.</p></li>
+
+     <li><p>If the <span>reflected IDL attribute</span> has a <span>default value</span>, then set
+     <var>newValue</var> to <var>defaultValue</var>.</p></li>
+
+     <li><p>If the given value is in the range <var>minimum</var> to 2147483647, inclusive,
+     then set <var>newValue</var> to it.</p></li>
+
+     <li><p>Run <span>this</span>'s <span>set the content attribute</span> with <var>newValue</var>
+     converted to the shortest possible string representing the number as a <span>valid non-negative
+     integer</span>.</p></li>
+    </ol>
+    </div>
+
+    <p class="note"><span>Clamped to the range</span> has no effect on the setter steps.</p>
+   </li>
+  </ul>
+  </div>
+  <!-- see https://www.w3.org/Bugs/Public/show_bug.cgi?id=10352
+           https://bugzilla.mozilla.org/show_bug.cgi?id=586118
+           https://www.w3.org/Bugs/Public/show_bug.cgi?id=17705
+       ...for why the range is clamped to 2147483647 rather the normal unsigned long maximum value
+       of 4294967295 -->
+
+  <div var-scope>
+  <p>If a <span>reflected IDL attribute</span> has the type <code data-x="idl-double">double</code>,
+  optionally <span id="limited-to-numbers-greater-than-zero">limited to only positive numbers</span>
+  and optionally with a <span>default value</span> <var>defaultValue</var>:
+
+  <ul>
+   <li>
+    <div algorithm>
+    <p>The getter steps are:</p>
+
+    <ol>
+     <li><p>Let <var>contentAttributeValue</var> be the result of running <span>this</span>'s
+     <span>get the content attribute</span>.</p></li>
+
+     <li>
+      <p>If <var>contentAttributeValue</var> is not null:
+
+      <ol>
+       <li><p>Let <var>parsedValue</var> be the result of <span data-x="rules for parsing
+       floating-point number values">floating-point number parsing</span>
+       <var>contentAttributeValue</var>.</p></li>
+
+       <li><p>If <var>parsedValue</var> is not an error and is greater than 0, then return
+       <var>parsedValue</var>.</p></li>
+
+       <li><p>If <var>parsedValue</var> is not an error and the <span>reflected IDL attribute</span>
+       is not <span>limited to only positive numbers</span>, then return
+       <var>parsedValue</var>.</p></li>
+      </ol>
+     </li>
+
+     <li><p>If the <span>reflected IDL attribute</span> has a <span>default value</span>, then
+     return <var>defaultValue</var>.</p></li>
+
+     <li><p>Return 0.</p></li>
+    </ol>
+    </div>
+   </li>
+
+
+   <li>
+    <div algorithm>
+    <p>The setter steps are:</p>
+
+    <ol>
+     <li><p>If the <span>reflected IDL attribute</span> is <span>limited to only positive
+     numbers</span> and the given value is not greater than 0, then return.</p></li>
+
+     <li><p>Run <span>this</span>'s <span>set the content attribute</span> with the given value,
+     converted to the <span>best representation of the number as a floating-point
+     number</span>.</p></li>
+    </ol>
+    </div>
+   </li>
+  </ul>
+  </div>
+
+  <p class="note">The values Infinity and Not-a-Number (NaN) values throw an exception on setting,
+  as defined in <cite>Web IDL</cite>. <ref>WEBIDL</ref></p>
+
+  <div algorithm>
+  <p>If a <span>reflected IDL attribute</span> has the type <code>DOMTokenList</code>, then its
+  getter steps are to return a <code>DOMTokenList</code> object whose associated element is
+  <span>this</span> and associated attribute's local name is the <span>reflected content
+  attribute name</span>. Specification authors cannot reflect IDL attributes of this type on
+  <code>ElementInternals</code>.</p>
+  </div>
+  <!-- Supporting ElementInternals is doable in theory, but would require corresponding changes to
+       DOMTokenList. -->
+
+  <div var-scope>
+  <p>If a <span>reflected IDL attribute</span> has the type <code data-x=""><var>T</var>?</code>,
+  where <var>T</var> is either <code>Element</code> or an interface that inherits from
+  <code>Element</code>, then with <var>attr</var> being the <span>reflected content attribute
+  name</span>:</p>
+
+  <ul>
+   <li><p>Its <span>reflected target</span> has an <dfn>explicitly set
+   <var>attr</var>-element</dfn>, which is a weak reference to an element or null. It is initially
+   null.</p></li>
+
+   <li>
+    <div algorithm>
+    <p>Its <span>reflected target</span> <var>reflectedTarget</var> has a <dfn
+    for="Element,ElementInternals" export id="attr-associated-element">get the
+    <var>attr</var>-associated element</dfn> algorithm, that runs these steps:</p>
+
+    <ol>
+     <li><p>Let <var>element</var> be the result of running <var>reflectedTarget</var>'s <span>get
+     the element</span>.</p></li>
+
+     <li><p>Let <var>contentAttributeValue</var> be the result of running
+     <var>reflectedTarget</var>'s <span>get the content attribute</span>.</p></li>
+
+     <li>
+      <p>If <var>reflectedTarget</var>'s <span>explicitly set <var>attr</var>-element</span> is not
+      null:</p>
+
+      <ol>
+       <li><p>If <var>reflectedTarget</var>'s <span>explicitly set <var>attr</var>-element</span> is
+       a <span>descendant</span> of any of <var>element</var>'s <span
+       data-x="concept-shadow-including-ancestor">shadow-including ancestors</span>, then return
+       <var>reflectedTarget</var>'s <span>explicitly set <var>attr</var>-element</span>.</p></li>
+
+       <li><p>Return null.</p></li>
+      </ol>
+     </li>
+
+     <li>
+      <p>Otherwise, if <var>contentAttributeValue</var> is not null, return the first element
+      <var>candidate</var>, in <span>tree order</span>, that meets the following criteria:</p>
+
+      <ul>
+       <li><p><var>candidate</var>'s <span>root</span> is the same as <var>element</var>'s
+       <span>root</span>;</p></li>
+
+       <li><p><var>candidate</var>'s <span data-x="concept-ID">ID</span> is
+       <var>contentAttributeValue</var>; and</p></li>
+
+       <li><p><var>candidate</var> <span>implements</span> <var>T</var>.</p></li>
+      </ul>
+
+      <p>If no such element exists, then return null.</p>
+     </li>
+
+     <li><p>Return null.</p></li>
+    </ol>
+    </div>
+   </li>
+
+   <li>
+    <div algorithm>
+    <p>The getter steps are to return the result of running <span>this</span>'s <span>get the
+    <var>attr</var>-associated element</span>.</p>
+    </div>
+   </li>
+
+   <li>
+    <div algorithm>
+    <p>The setter steps are:</p>
+    <ol>
+     <li>
+      <p>If the given value is null:</p>
+
+      <ol>
+       <li><p>Set <span>this</span>'s <span>explicitly set <var>attr</var>-element</span> to
+       null.</p></li>
+
+       <li><p>Run <span>this</span>'s <span>delete the content attribute</span>.</p></li>
+
+       <li><p>Return.</p></li>
+      </ol>
+     </li>
+
+     <li><p>Run <span>this</span>'s <span>set the content attribute</span> with the empty
+     string.</p></li>
+
+     <li><p>Set <span>this</span>'s <span>explicitly set <var>attr</var>-element</span> to a weak
+     reference to the given value.</p></li>
+    </ol>
+    </div>
+   </li>
+
+   <li>
+    <div algorithm>
+    <p>For element <span data-x="reflected target">reflected targets</span> only: the following
+    <span data-x="concept-element-attributes-change-ext">attribute change steps</span>, given
+    <var>element</var>, <var>localName</var>, <var>oldValue</var>, <var>value</var>, and
+    <var>namespace</var>, are used to synchronize between the content attribute and the IDL
+    attribute:</p>
+
+    <ol>
+     <li><p>If <var>localName</var> is not <var>attr</var> or <var>namespace</var> is not null, then
+     return.</p></li>
+
+     <li><p>Set <var>element</var>'s <span>explicitly set <var>attr</var>-element</span> to
+     null.</p></li>
+    </ol>
+    </div>
+   </li>
+  </ul>
+  </div>
+
+  <p class="note"><span data-x="reflected IDL attribute">Reflected IDL attributes</span> of this
+  type are strongly encouraged to have their identifier end in "<code data-x="">Element</code>" for
+  consistency.</p>
+
+  <div var-scope>
+  <p>If a <span>reflected IDL attribute</span> has the type <code
+  data-x="">FrozenArray&lt;<var>T</var>&gt;?</code>, where <var>T</var> is either
+  <code>Element</code> or an interface that inherits from <code>Element</code>, then with
+  <var>attr</var> being the <span>reflected content attribute name</span>:</p>
+
+  <ul>
+   <li><p>Its <span>reflected target</span> has an <dfn>explicitly set
+   <var>attr</var>-elements</dfn>, which is either a <span>list</span> of weak references to
+   elements or null. It is initially null.</p></li>
+
+   <li><p>Its <span>reflected target</span> has a <dfn>cached <var>attr</var>-associated
+   elements</dfn>, which is a <span>list</span> of elements. It is initially « ».</p></li>
+
+   <li><p>Its <span>reflected target</span> has a <dfn>cached <var>attr</var>-associated
+   elements object</dfn>, which is a <code data-x="">FrozenArray&lt;<var>T</var>&gt;?</code>. It is
+   initially null.</p></li>
+
+   <li>
+    <div algorithm>
+    <p>Its <span>reflected target</span> <var>reflectedTarget</var> has a <dfn
+    for="Element,ElementInternals" export id="attr-associated-elements">get the
+    <var>attr</var>-associated elements</dfn> algorithm, which runs these steps:</p>
+
+    <ol>
+     <li><p>Let <var>elements</var> be an empty <span>list</span>.</p></li>
+
+     <li><p>Let <var>element</var> be the result of running <var>reflectedTarget</var>'s <span>get
+     the element</span>.</p></li>
+
+     <li>
+      <p>If <var>reflectedTarget</var>'s <span>explicitly set <var>attr</var>-elements</span> is not
+      null:</p>
+
+      <ol>
+       <li>
+        <p><span data-x="list iterate">For each</span> <var>attrElement</var> in
+        <var>reflectedTarget</var>'s <span>explicitly set <var>attr</var>-elements</span>:</p>
+
+        <ol>
+         <li><p>If <var>attrElement</var> is not a <span>descendant</span> of any of
+         <var>element</var>'s <span data-x="concept-shadow-including-ancestor">shadow-including
+         ancestors</span>, then <span>continue</span>.</p></li>
+
+         <li><p><span data-x="list append">Append</span> <var>attrElement</var> to
+         <var>elements</var>.</p></li>
+        </ol>
+       </li>
+      </ol>
+     </li>
+
+     <li>
+      <p>Otherwise:</p>
+
+      <ol>
+       <li><p>Let <var>contentAttributeValue</var> be the result of running
+       <var>reflectedTarget</var>'s <span>get the content attribute</span>.
+
+       <li><p>If <var>contentAttributeValue</var> is null, then return null.</p></li>
+
+       <li><p>Let <var>tokens</var> be <var>contentAttributeValue</var>, <span data-x="split a
+       string on ASCII whitespace">split on ASCII whitespace</span>.
+
+       <li>
+        <p><span data-x="list iterate">For each</span> <var>id</var> of <var>tokens</var>:</p>
+
+        <ol>
+         <li>
+          <p>Let <var>candidate</var> be the first element, in <span>tree order</span>, that meets
+          the following criteria:</p>
+
+          <ul>
+           <li><p><var>candidate</var>'s <span>root</span> is the same as <var>element</var>'s
+           <span>root</span>;</p></li>
+
+           <li><p><var>candidate</var>'s <span data-x="concept-ID">ID</span> is <var>id</var>;
+           and</p></li>
+
+           <li><p><var>candidate</var> <span>implements</span> <var>T</var>.</p></li>
+          </ul>
+
+          <p>If no such element exists, then <span>continue</span>.</p>
+         </li>
+
+         <li><p><span data-x="list append">Append</span> <var>candidate</var> to
+         <var>elements</var>.</p></li>
+        </ol>
+       </li>
+      </ol>
+     </li>
+
+     <li><p>Return <var>elements</var>.</p></li>
+    </ol>
+    </div>
+   </li>
+
+   <li>
+    <div algorithm>
+    <p>The getter steps are:</p>
+
+    <ol>
+     <li><p>Let <var>elements</var> be the result of running <span>this</span>'s <span>get the
+     <var>attr</var>-associated elements</span>.</p></li>
+
+     <li><p>If the contents of <var>elements</var> is equal to the contents of <span>this</span>'s
+     <span>cached <var>attr</var>-associated elements</span>, then return <span>this</span>'s
+     <span>cached <var>attr</var>-associated elements object</span>.</p></li>
+
+     <li><p>Let <var>elementsAsFrozenArray</var> be <var>elements</var>, <span
+     data-x="concept-idl-convert">converted</span> to a <code
+     data-x="">FrozenArray&lt;<var>T</var>&gt;?</code>.</p></li>
+
+     <li><p>Set <span>this</span>'s <span>cached <var>attr</var>-associated elements</span> to
+     <var>elements</var>.</p></li>
+
+     <li><p>Set <span>this</span>'s <span>cached <var>attr</var>-associated elements object</span>
+     to <var>elementsAsFrozenArray</var>.</p></li>
+
+     <li><p>Return <var>elementsAsFrozenArray</var>.</p></li>
+    </ol>
+    </div>
+
+    <p class="note">This extra caching layer is necessary to preserve the invariant that <code
+    data-x="">element.reflectedElements === element.reflectedElements</code>.</p>
+   </li>
+
+   <li>
+    <div algorithm>
+    <p>The setter steps are:</p>
+    <ol>
+     <li>
+      <p>If the given value is null:</p>
+
+      <ol>
+       <li><p>Set <span>this</span>'s <span>explicitly set <var>attr</var>-elements</span> to
+       null.</p></li>
+
+       <li><p>Run <span>this</span>'s <span>delete the content attribute</span>.</p></li>
+
+       <li><p>Return.</p></li>
+      </ol>
+     </li>
+
+     <li><p>Run <span>this</span>'s <span>set the content attribute</span> with the empty
+     string.</p></li>
+
+     <li><p>Let <var>elements</var> be an empty <span>list</span>.</p></li>
+
+     <li>
+      <p><span data-x="list iterate">For each</span> <var>element</var> in the given value:</p>
+
+      <ol>
+       <li><p><span data-x="list append">Append</span> a weak reference to <var>element</var> to
+       <var>elements</var>.</p></li>
+      </ol>
+     </li>
+
+     <li><p>Set <span>this</span>'s <span>explicitly set <var>attr</var>-elements</span> to
+     <var>elements</var>.</p></li>
+    </ol>
+    </div>
+   </li>
+
+   <li>
+    <div algorithm>
+    <p>For element <span data-x="reflected target">reflected targets</span> only: the following
+    <span data-x="concept-element-attributes-change-ext">attribute change steps</span>, given
+    <var>element</var>, <var>localName</var>, <var>oldValue</var>, <var>value</var>, and
+    <var>namespace</var>, are used to synchronize between the content attribute and the IDL
+    attribute:</p>
+
+    <ol>
+     <li><p>If <var>localName</var> is not <var>attr</var> or <var>namespace</var> is not null, then
+     return.</p></li>
+
+     <li><p>Set <var>element</var>'s <span>explicitly set <var>attr</var>-elements</span> to
+     null.</p></li>
+    </ol>
+    </div>
+   </li>
+  </ul>
+  </div>
+
+  <p class="note"><span data-x="reflected IDL attribute">Reflected IDL attributes</span> of this
+  type are strongly encouraged to have their identifier end in "<code data-x="">Elements</code>" for
+  consistency.</p>
+

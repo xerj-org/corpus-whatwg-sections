@@ -1,0 +1,161 @@
+WHATWG HTML — section media-elements/getting-media-metadata — Once enough of the <span>media data</span> has been fetched to determine the duration of the <span>media resource</span>, its dimensions, and other metadata
+
+     <dt id="getting-media-metadata">Once enough of the <span>media data</span> has been fetched to
+     determine the duration of the <span>media resource</span>, its dimensions, and other
+     metadata</dt>
+
+     <dd>
+      <p>This indicates that the resource is usable. The user agent must follow these substeps:</p>
+
+      <ol>
+       <li>
+        <p><span>Establish the media timeline</span> for the purposes of the <span>current playback
+        position</span> and the <span>earliest possible position</span>, based on the <span>media data</span>.</p>
+       </li>
+
+       <li>
+        <p>Update the <span>timeline offset</span> to the date and time that corresponds to the zero
+        time in the <span>media timeline</span> established in the previous step, if any. If no
+        explicit time and date is given by the <span>media resource</span>, the <span>timeline
+        offset</span> must be set to Not-a-Number (NaN).</p>
+       </li>
+
+       <li><p>Set the <span>current playback position</span> and the <span>official playback
+       position</span> to the <span>earliest possible position</span>.</p></li>
+
+       <li>
+        <p>Update the <code data-x="dom-media-duration">duration</code> attribute with the time of
+        the last frame of the resource, if known, on the <span>media timeline</span> established
+        above. If it is not known (e.g. a stream that is in principle infinite), update the <code
+        data-x="dom-media-duration">duration</code> attribute to the value positive Infinity.</p>
+
+        <p class="note">The user agent <a href="#durationChange">will</a> <span>queue a media
+        element task</span> given the <span>media element</span> to <span
+        data-x="concept-event-fire">fire an event</span> named <code
+        data-x="event-media-durationchange">durationchange</code> at the element at this point.</p>
+       </li>
+
+       <li>
+        <p>For <code>video</code> elements, set the <code
+        data-x="dom-video-videoWidth">videoWidth</code> and <code
+        data-x="dom-video-videoHeight">videoHeight</code> attributes, and <span>queue a media
+        element task</span> given the <span>media element</span> to <span
+        data-x="concept-event-fire">fire an event</span> named <code
+        data-x="event-media-resize">resize</code> at the <span>media element</span>.</p>
+
+        <p class="note">Further <code data-x="event-media-resize">resize</code> events will be fired
+        if the dimensions subsequently change.</p>
+       </li>
+
+       <li>
+        <p>Set the <code data-x="dom-media-readyState">readyState</code> attribute to <code
+        data-x="dom-media-HAVE_METADATA">HAVE_METADATA</code>.</p>
+
+        <p class="note">A <code data-x="event-media-loadedmetadata">loadedmetadata</code> DOM event
+        <a href="#fire-loadedmetadata">will be fired</a> as part of setting the <code
+        data-x="dom-media-readyState">readyState</code> attribute to a new value.</p>
+       </li>
+
+       <li><p>Let <var>jumped</var> be false.</p></li>
+
+       <li><p>If the <span>media element</span>'s <span>default playback start position</span> is
+       greater than zero, then <span data-x="dom-media-seek">seek</span> to that time, and let <var>jumped</var> be true.</p></li>
+
+       <li><p>Set the <span>media element</span>'s <span>default playback
+       start position</span> to zero.</p></li>
+
+       <li><p>Let the <var>initial playback position</var> be 0.</p></li>
+
+       <li>
+        <p>If either the <span>media resource</span> or the <span>URL</span> of the <var>current
+        media resource</var> indicate a particular start time, then set the <var>initial playback
+        position</var> to that time and, if <var>jumped</var> is still false, <span
+        data-x="dom-media-seek">seek</span> to that time.</p>
+
+        <p class="example">For example, with media formats that support <span>media fragment
+        syntax</span>, the <span data-x="concept-url-fragment">fragment</span> can be used to
+        indicate a start position.</p>
+       </li>
+
+       <li><p>If there is no <span data-x="dom-AudioTrack-enabled">enabled</span> audio track, then
+       enable an audio track. This <a href="#toggle-audio-track">will cause a <code
+       data-x="event-media-change">change</code> event to be fired</a>.</p></li>
+
+       <li><p>If there is no <span data-x="dom-VideoTrack-selected">selected</span> video track,
+       then select a video track. This <a href="#toggle-video-track">will cause a <code
+       data-x="event-media-change">change</code> event to be fired</a>.</p></li>
+      </ol>
+
+      <p>Once the <code data-x="dom-media-readyState">readyState</code> attribute reaches <code
+      data-x="dom-media-HAVE_CURRENT_DATA">HAVE_CURRENT_DATA</code>, <a href="#fire-loadeddata">after
+      the <code data-x="event-media-loadeddata">loadeddata</code> event has been fired</a>, set the
+      element's <span>delaying-the-load-event flag</span> to false. This stops <span data-x="delay
+      the load event">delaying the load event</span>.</p>
+
+      <p class="note">A user agent that is attempting to reduce network usage while still fetching
+      the metadata for each <span>media resource</span> would also stop buffering at this point,
+      following <a href="#resourceSuspend">the rules described previously</a>, which involve the
+      <code data-x="dom-media-networkState">networkState</code> attribute switching to the <code
+      data-x="dom-media-NETWORK_IDLE">NETWORK_IDLE</code> value and a <code
+      data-x="event-media-suspend">suspend</code> event firing.</p>
+
+      <p class="note">The user agent is <em>required</em> to determine the duration of the
+      <span>media resource</span> and go through this step before playing.</p> <!-- actually defined
+      in the 'duration' section -->
+     </dd>
+
+
+     <dt>Once the entire <span>media resource</span> has been fetched (but potentially before any of
+     it has been decoded)</dt>
+
+     <dd>
+      <p><span data-x="concept-event-fire">Fire an event</span> named <code
+      data-x="event-media-progress">progress</code> at the <span>media element</span>.</p>
+
+      <p>Set the <code data-x="dom-media-networkState">networkState</code> to <code
+      data-x="dom-media-NETWORK_IDLE">NETWORK_IDLE</code> and <span
+      data-x="concept-event-fire">fire an event</span> named
+      <code data-x="event-media-suspend">suspend</code> at the <span>media element</span>.</p>
+
+      <p>If the user agent ever discards any <span>media data</span> and then needs to resume the
+      network activity to obtain it again, then it must <span>queue a media element task</span>
+      given the <span>media element</span> to set the <code
+      data-x="dom-media-networkState">networkState</code> to <code
+      data-x="dom-media-NETWORK_LOADING">NETWORK_LOADING</code>.</p>
+
+      <p class="note">If the user agent can keep the <span>media resource</span> loaded, then the
+      algorithm will continue to its <i>final step</i> below, which aborts the algorithm.</p>
+     </dd>
+
+
+     <dt>If the connection is interrupted after some <span>media data</span> has been received,
+     causing the user agent to give up trying to fetch the resource</dt>
+
+     <dd>
+      <p>Fatal network errors that occur after the user agent has established whether the <var>current media resource</var> is usable (i.e. once the <span>media element</span>'s
+      <code data-x="dom-media-readyState">readyState</code> attribute is no longer <code
+      data-x="dom-media-HAVE_NOTHING">HAVE_NOTHING</code>) must cause the user agent to execute the
+      following steps:</p>
+
+      <ol>
+       <li><p>The user agent should cancel the fetching process.</p></li>
+
+       <li><p>Set the <code data-x="dom-media-error">error</code> attribute to the result of
+       <span>creating a <code>MediaError</code></span> with <code
+       data-x="dom-MediaError-MEDIA_ERR_NETWORK">MEDIA_ERR_NETWORK</code>.</p></li>
+
+       <li><p>Set the element's <code data-x="dom-media-networkState">networkState</code> attribute
+       to the <code data-x="dom-media-NETWORK_IDLE">NETWORK_IDLE</code> value.</p></li>
+
+       <li><p>Set the element's <span>delaying-the-load-event flag</span> to false. This stops <span
+       data-x="delay the load event">delaying the load event</span>.</p></li>
+
+       <li><p><span data-x="concept-event-fire">Fire an event</span> named <code
+       data-x="event-media-error">error</code> at the <span>media element</span>.</p></li>
+
+       <li><p>Abort the overall <span data-x="concept-media-load-algorithm">resource selection
+       algorithm</span>.</p></li>
+      </ol>
+     </dd>
+
+

@@ -1,0 +1,12 @@
+WHATWG HTML — section structuredserializeforstorage — <dfn>StructuredSerializeForStorage</dfn> ( <var>value</var> )
+
+  <h4 id="structuredserializeforstorage" data-lt="StructuredSerializeForStorage"
+  abstract-op><dfn>StructuredSerializeForStorage</dfn> ( <var>value</var> )</h4>
+
+  <ol>
+   <li><p>Return ? <span>StructuredSerializeInternal</span>(<var>value</var>, true).</p></li>
+  </ol>
+  </div>
+
+
+  <div algorithm>

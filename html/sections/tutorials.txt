@@ -1,0 +1,113 @@
+WHATWG HTML — section tutorials — Tutorials
+
+  <h4>Tutorials</h4>
+
+  <h5>Creating a dedicated worker</h5>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>Creating a worker requires a URL to a JavaScript file. The <code
+  data-x="dom-Worker">Worker()</code> constructor is invoked with the URL to that file as its only
+  argument; a worker is then created and returned:</p>
+
+  <pre><code class="js">var worker = new Worker('helper.js');</code></pre>
+
+  <p>If you want your worker script to be interpreted as a <span>module script</span> instead of
+  the default <span>classic script</span>, you need to use a slightly different signature:</p>
+
+  <pre><code class="js">var worker = new Worker('helper.mjs', { type: "module" });</code></pre>
+
+
+  <h5>Communicating with a dedicated worker</h5>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>Dedicated workers use <code>MessagePort</code> objects behind the scenes, and thus support all
+  the same features, such as sending structured data, transferring binary data, and transferring
+  other ports.</p>
+
+  <p>To receive messages from a dedicated worker, use the <code
+  data-x="handler-MessageEventTarget-onmessage">onmessage</code> <span data-x="event handler IDL
+  attributes">event handler IDL attribute</span> on the <code>Worker</code> object:</p>
+
+  <pre><code class="js">worker.onmessage = function (event) { ... };</code></pre>
+
+  <p>You can also use the <code data-x="dom-EventTarget-addEventListener">addEventListener()</code>
+  method.</p>
+
+  <p class="note">The implicit <code>MessagePort</code> used by dedicated workers has its <span>port
+  message queue</span> implicitly enabled when it is created, so there is no equivalent to the
+  <code>MessagePort</code> interface's <code data-x="dom-MessagePort-start">start()</code> method on
+  the <code>Worker</code> interface.</p>
+
+  <p>To <em>send</em> data to a worker, use the <code
+  data-x="dom-Worker-postMessage">postMessage()</code> method. Structured data can be sent over this
+  communication channel. To send <code data-x="idl-ArrayBuffer">ArrayBuffer</code> objects
+  efficiently (by transferring them rather than cloning them), list them in an array in the second
+  argument.</p>
+
+  <pre><code class="js">worker.postMessage({
+  operation: 'find-edges',
+  input: buffer, // an ArrayBuffer object
+  threshold: 0.6,
+}, [buffer]);</code></pre>
+
+  <p>To receive a message inside the worker, the <code
+  data-x="handler-MessageEventTarget-onmessage">onmessage</code> <span data-x="event handler
+  IDL attributes">event handler IDL attribute</span> is used.</p>
+
+  <pre><code class="js">onmessage = function (event) { ... };</code></pre>
+
+  <p>You can again also use the <code
+  data-x="dom-EventTarget-addEventListener">addEventListener()</code> method.</p>
+
+  <p>In either case, the data is provided in the event object's <code
+  data-x="dom-MessageEvent-data">data</code> attribute.</p>
+
+  <p>To send messages back, you again use <code
+  data-x="dom-DedicatedWorkerGlobalScope-postMessage">postMessage()</code>. It supports the
+  structured data in the same manner.</p>
+
+  <pre><code class="js">postMessage(event.data.input, [event.data.input]); // transfer the buffer back</code></pre>
+
+
+  <h5 dfn data-lt="shared worker">Shared workers</h5>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>Shared workers are identified by the URL of the script used to create it, optionally with an
+  explicit name. The name allows multiple instances of a particular shared worker to be started.</p>
+
+  <p>Shared workers are scoped by <span>origin</span>. Two different sites using the same names will
+  not collide. However, if a page tries to use the same shared worker name as another page on the
+  same site, but with a different script URL, it will fail.</p>
+
+  <p>Creating shared workers is done using the <code data-x="dom-SharedWorker">SharedWorker()</code>
+  constructor. This constructor takes the URL to the script to use for its first argument, and the
+  name of the worker, if any, as the second argument.</p>
+
+  <pre><code class="js">var worker = new SharedWorker('service.js');</code></pre>
+
+  <p>Communicating with shared workers is done with explicit <code>MessagePort</code> objects. The
+  object returned by the <code data-x="dom-SharedWorker">SharedWorker()</code> constructor holds a
+  reference to the port on its <code data-x="dom-SharedWorker-port">port</code> attribute.</p>
+
+  <pre><code class="js">worker.port.onmessage = function (event) { ... };
+worker.port.postMessage('some message');
+worker.port.postMessage({ foo: 'structured', bar: ['data', 'also', 'possible']});</code></pre>
+
+  <p>Inside the shared worker, new clients of the worker are announced using the <code
+  data-x="event-WorkerGlobalScope-connect">connect</code> event. The port for the new client is
+  given by the event object's <code data-x="dom-messageevent-source">source</code> attribute.</p>
+
+  <pre><code class="js">onconnect = function (event) {
+  var newPort = event.source;
+  // set up a listener
+  newPort.onmessage = function (event) { ... };
+  // send a message back to the port
+  newPort.postMessage('ready!'); // can also send structured data, of course
+};</code></pre>
+
+
+
+

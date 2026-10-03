@@ -1,0 +1,12 @@
+WHATWG HTML — section dependencies/webhid-api — WebHID API
+
+  <dt>WebHID API</dt>
+
+  <dd>
+   <p>The following terms are defined in <cite>WebHID API</cite>:</p>
+
+   <ul class="brief">
+    <li><dfn data-x="request-device" data-x-href="https://wicg.github.io/webhid/#requestdevice-method"><code>requestDevice</code></dfn></li>
+   </ul>
+  </dd>
+

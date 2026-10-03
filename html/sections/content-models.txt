@@ -1,0 +1,798 @@
+WHATWG HTML — section content-models — <dfn>Content models</dfn>
+
+  <h4><dfn>Content models</dfn></h4>
+
+  <p>Each element defined in this specification has a content model: a description of the element's
+  expected <span data-x="concept-html-contents">contents</span>. An <span data-x="HTML elements">HTML
+  element</span> must have contents that match the requirements described in the element's content
+  model. The <dfn data-x="concept-html-contents">contents</dfn> of an element are its children in the
+  DOM.</p>
+
+  <p><span>ASCII whitespace</span> is always allowed between elements. User agents represent these
+  characters between elements in the source markup as <code>Text</code> nodes in the DOM.<!-- not a
+  conf criteria since the parser now requires this --> Empty <code>Text</code> nodes and
+  <code>Text</code> nodes consisting of just sequences of those characters are considered
+  <dfn>inter-element whitespace</dfn>.</p>
+
+  <p><span>Inter-element whitespace</span>, comment nodes, and processing instruction nodes must be
+  ignored when establishing whether an element's contents match the element's content model or not,
+  and must be ignored when following algorithms that define document and element semantics.</p>
+
+  <p class="note" var-scope>Thus, an element <var>A</var> is said to be <i>preceded or followed</i>
+  by a second element <var>B</var> if <var>A</var> and <var>B</var> have
+  the same parent node and there are no other element nodes or <code>Text</code> nodes (other than
+  <span>inter-element whitespace</span>) between them. Similarly, a node is the <i>only child</i> of
+  an element if that element contains no other nodes other than <span>inter-element
+  whitespace</span>, comment nodes, and processing instruction nodes.</p>
+
+  <p>Authors must not use <span>HTML elements</span> anywhere except where they are explicitly
+  allowed, as defined for each element, or as explicitly required by other specifications. For XML
+  compound documents, these contexts could be inside elements from other namespaces, if those
+  elements are defined as providing the relevant contexts.</p>
+
+  <p class="example"><cite>The Atom Syndication Format</cite> defines a <code
+  data-x="">content</code> element. When its <code data-x="">type</code> attribute has the value
+  <code data-x="">xhtml</code>, <cite>The Atom Syndication Format</cite> requires that it contain a
+  single HTML <code>div</code> element. Thus, a <code>div</code> element is allowed in that context,
+  even though this is not explicitly normatively stated by this specification. <ref>ATOM</ref></p>
+
+  <p>In addition, <span>HTML elements</span> may be orphan nodes (i.e. without a parent node).</p>
+
+  <div class="example">
+
+   <p>For example, creating a <code>td</code> element and storing it in a global variable in a
+   script is conforming, even though <code>td</code> elements are otherwise only supposed to be used
+   inside <code>tr</code> elements.</p>
+
+   <pre><code class="js">var data = {
+  name: "Banana",
+  cell: document.createElement('td'),
+};</code></pre>
+
+  </div>
+
+
+  <h5>The "nothing" content model</h5>
+
+  <p>When an element's content model is <dfn data-x="concept-content-nothing">nothing</dfn>, the
+  element must contain no <code>Text</code> nodes (other than <span>inter-element whitespace</span>)
+  and no element nodes.</p>
+
+  <p class="note">Most HTML elements whose content model is "nothing" are also, for convenience,
+  <span>void elements</span> (elements that have no <span data-x="syntax-end-tag">end tag</span> in
+  the <a href="#syntax">HTML syntax</a>). However, these are entirely separate concepts.</p>
+
+
+  <h5>Kinds of content</h5>
+
+  <p>Each element in HTML falls into zero or more <dfn data-x="content categories">categories</dfn>
+  that group elements with similar characteristics together. The following broad categories are used
+  in this specification:</p>
+
+  <ul class="brief">
+   <li><span>Metadata content</span></li>
+   <li><span>Flow content</span></li>
+   <li><span>Sectioning content</span></li>
+   <li><span>Heading content</span></li>
+   <li><span>Phrasing content</span></li>
+   <li><span>Embedded content</span></li>
+   <li><span>Interactive content</span></li>
+  </ul>
+
+  <p class="note">Some elements also fall into other categories, which are defined in other parts of
+  this specification.</p>
+
+  <p>These categories are related as follows:</p>
+
+  <p><iframe loading="lazy" width="1000" height="288" src="/images/content-venn.svg"></iframe></p>
+
+  <p>Sectioning content, heading content, phrasing content, embedded content, and interactive
+  content are all types of flow content. Metadata is sometimes flow content. Metadata and
+  interactive content are sometimes phrasing content. Embedded content is also a type of phrasing
+  content, and sometimes is interactive content.</p>
+
+  <p>Other categories are also used for specific purposes, e.g. form controls are specified using a
+  number of categories to define common requirements. Some elements have unique requirements and do
+  not fit into any particular category.</p>
+
+
+  <h6>Metadata content</h6>
+
+  <p><dfn export>Metadata content</dfn> is content that sets up the presentation or behavior of the
+  rest of the content, or that sets up the relationship of the document with other documents, or
+  that conveys other "out of band" information.</p>
+
+  <!-- when updating this also update the category index -->
+  <ul class="brief category-list">
+   <li><code>base</code></li>
+   <li><code>link</code></li>
+   <li><code>meta</code></li>
+   <li><code>noscript</code></li>
+   <li><code>script</code></li>
+   <li><code>style</code></li>
+   <li><code>template</code></li>
+   <li><code>title</code></li>
+  </ul>
+
+  <p>Elements from other namespaces whose semantics are primarily metadata-related (e.g. RDF) are
+  also <span>metadata content</span>.</p>
+
+  <div class="example">
+
+   <p>Thus, in the XML serialization, one can use RDF, like this:</p>
+
+   <pre><code class="html">&lt;html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:r="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xml:lang="en">
+ &lt;head>
+  &lt;title>Hedral's Home Page&lt;/title>
+  &lt;r:RDF>
+   &lt;Person xmlns="http://www.w3.org/2000/10/swap/pim/contact#"
+           r:about="https://hedral.example.com/#">
+    &lt;fullName>Cat Hedral&lt;/fullName>
+    &lt;mailbox r:resource="mailto:hedral@damowmow.com"/>
+    &lt;personalTitle>Sir&lt;/personalTitle>
+   &lt;/Person>
+  &lt;/r:RDF>
+ &lt;/head>
+ &lt;body>
+  &lt;h1>My home page&lt;/h1>
+  &lt;p>I like playing with string, I guess. Sister says squirrels are fun
+  too so sometimes I follow her to play with them.&lt;/p>
+ &lt;/body>
+&lt;/html></code></pre>
+
+   <p>This isn't possible in the HTML serialization, however.</p>
+
+  </div>
+
+
+  <h6>Flow content</h6>
+
+  <p>Most elements that are used in the body of documents and applications are categorized as
+  <dfn export>flow content</dfn>.</p>
+
+  <!-- when updating this also update the category index -->
+  <ul class="brief category-list">
+   <li><code>a</code></li>
+   <li><code>abbr</code></li>
+   <li><code>address</code></li>
+   <li><code>area</code> (if it is a descendant of a <code>map</code> element)</li>
+   <li><code>article</code></li>
+   <li><code>aside</code></li>
+   <li><code>audio</code></li>
+   <li><code>b</code></li>
+   <li><code>bdi</code></li>
+   <li><code>bdo</code></li>
+   <li><code>blockquote</code></li>
+   <li><code>br</code></li>
+   <li><code>button</code></li>
+   <li><code>canvas</code></li>
+   <li><code>cite</code></li>
+   <li><code>code</code></li>
+   <li><code>data</code></li>
+   <li><code>datalist</code></li>
+   <li><code>del</code></li>
+   <li><code>details</code></li>
+   <li><code>dfn</code></li>
+   <li><code>dialog</code></li>
+   <li><code>div</code></li>
+   <li><code>dl</code></li>
+   <li><code>em</code></li>
+   <li><code>embed</code></li>
+   <li><code>fieldset</code></li>
+   <li><code>figure</code></li>
+   <li><code>footer</code></li>
+   <li><code>form</code></li>
+   <li><code>h1</code></li>
+   <li><code>h2</code></li>
+   <li><code>h3</code></li>
+   <li><code>h4</code></li>
+   <li><code>h5</code></li>
+   <li><code>h6</code></li>
+   <li><code>header</code></li>
+   <li><code>hgroup</code></li>
+   <li><code>hr</code></li>
+   <li><code>i</code></li>
+   <li><code>iframe</code></li>
+   <li><code>img</code></li>
+   <li><code>input</code></li>
+   <li><code>ins</code></li>
+   <li><code>kbd</code></li>
+   <li><code>label</code></li>
+   <li><code>link</code> (if it is <span>allowed in the body</span>)</li>
+   <li><code>main</code> (if it is a <span>hierarchically correct <code>main</code> element</span>)</li>
+   <li><code>map</code></li>
+   <li><code>mark</code></li>
+   <li><span>MathML <code>math</code></span></li>
+   <li><code>menu</code></li>
+   <li><code>meta</code> (if the <code data-x="attr-itemprop">itemprop</code> attribute is present)</li>
+   <li><code>meter</code></li>
+   <li><code>nav</code></li>
+   <li><code>noscript</code></li>
+   <li><code>object</code></li>
+   <li><code>ol</code></li>
+   <li><code>output</code></li>
+   <li><code>p</code></li>
+   <li><code>picture</code></li>
+   <li><code>pre</code></li>
+   <li><code>progress</code></li>
+   <li><code>q</code></li>
+   <li><code>ruby</code></li>
+   <li><code>s</code></li>
+   <li><code>samp</code></li>
+   <li><code>script</code></li>
+   <li><code>search</code></li>
+   <li><code>section</code></li>
+   <li><code>select</code></li>
+   <li><code>slot</code></li>
+   <li><code>small</code></li>
+   <li><code>span</code></li>
+   <li><code>strong</code></li>
+   <li><code>sub</code></li>
+   <li><code>sup</code></li>
+   <li><span>SVG <code>svg</code></span></li>
+   <li><code>table</code></li>
+   <li><code>template</code></li>
+   <li><code>textarea</code></li>
+   <li><code>time</code></li>
+   <li><code>u</code></li>
+   <li><code>ul</code></li>
+   <li><code>var</code></li>
+   <li><code>video</code></li>
+   <li><code>wbr</code></li>
+   <li><span data-x="autonomous custom element">autonomous custom elements</span></li>
+   <li><span data-x="text content">text</span></li>
+  </ul>
+
+
+  <h6>Sectioning content</h6>
+
+  <p><dfn export>Sectioning content</dfn> is content that defines the scope of <code>header</code>
+  and <code>footer</code> elements.</p>
+
+  <!-- when updating this also update the category index -->
+  <ul class="brief category-list">
+   <li><code>article</code></li>
+   <li><code>aside</code></li>
+   <li><code>nav</code></li>
+   <li><code>section</code></li>
+  </ul>
+
+
+  <h6>Heading content</h6>
+
+  <p><dfn export>Heading content</dfn> defines the heading of a section (whether explicitly marked
+  up using <span>sectioning content</span> elements, or implied by the heading content itself).</p>
+
+  <!-- when updating this also update the category index -->
+  <ul class="brief category-list">
+   <li><code>h1</code></li>
+   <li><code>h2</code></li>
+   <li><code>h3</code></li>
+   <li><code>h4</code></li>
+   <li><code>h5</code></li>
+   <li><code>h6</code></li>
+   <li><code>hgroup</code> (if it has a descendant <code>h1</code> to <code>h6</code> element)</li>
+  </ul>
+
+
+  <h6>Phrasing content</h6>
+
+  <p><dfn export>Phrasing content</dfn> is the text of the document, as well as elements that mark
+  up that text at the intra-paragraph level. Runs of <span>phrasing content</span> form <span
+  data-x="paragraph">paragraphs</span>.</p>
+
+  <!-- when updating this also update the category index -->
+  <ul class="brief category-list">
+   <li><code>a</code></li>
+   <li><code>abbr</code></li>
+   <li><code>area</code> (if it is a descendant of a <code>map</code> element)</li>
+   <li><code>audio</code></li>
+   <li><code>b</code></li>
+   <li><code>bdi</code></li>
+   <li><code>bdo</code></li>
+   <li><code>br</code></li>
+   <li><code>button</code></li>
+   <li><code>canvas</code></li>
+   <li><code>cite</code></li>
+   <li><code>code</code></li>
+   <li><code>data</code></li>
+   <li><code>datalist</code></li>
+   <li><code>del</code></li>
+   <li><code>dfn</code></li>
+   <li><code>em</code></li>
+   <li><code>embed</code></li>
+   <li><code>i</code></li>
+   <li><code>iframe</code></li>
+   <li><code>img</code></li>
+   <li><code>input</code></li>
+   <li><code>ins</code></li>
+   <li><code>kbd</code></li>
+   <li><code>label</code></li>
+   <li><code>link</code> (if it is <span>allowed in the body</span>)</li>
+   <li><code>map</code></li>
+   <li><code>mark</code></li>
+   <li><span>MathML <code>math</code></span></li>
+   <li><code>meta</code> (if the <code data-x="attr-itemprop">itemprop</code> attribute is present)</li>
+   <li><code>meter</code></li>
+   <li><code>noscript</code></li>
+   <li><code>object</code></li>
+   <li><code>output</code></li>
+   <li><code>picture</code></li>
+   <li><code>progress</code></li>
+   <li><code>q</code></li>
+   <li><code>ruby</code></li>
+   <li><code>s</code></li>
+   <li><code>samp</code></li>
+   <li><code>script</code></li>
+   <li><code>select</code></li>
+   <li><code>selectedcontent</code> (if it is a descendant of a <code>button</code> in a
+   <code>select</code>)</li>
+   <li><code>slot</code></li>
+   <li><code>small</code></li>
+   <li><code>span</code></li>
+   <li><code>strong</code></li>
+   <li><code>sub</code></li>
+   <li><code>sup</code></li>
+   <li><span>SVG <code>svg</code></span></li>
+   <li><code>template</code></li>
+   <li><code>textarea</code></li>
+   <li><code>time</code></li>
+   <li><code>u</code></li>
+   <li><code>var</code></li>
+   <li><code>video</code></li>
+   <li><code>wbr</code></li>
+   <li><span data-x="autonomous custom element">autonomous custom elements</span></li>
+   <li><span data-x="text content">text</span></li>
+  </ul>
+
+  <p class="note">Most elements that are categorized as phrasing content can only contain elements
+  that are themselves categorized as phrasing content, not any flow content.</p>
+
+  <p><dfn data-x="text content">Text</dfn>, in the context of content models, means either nothing,
+  or <code>Text</code> nodes. <span data-x="text content">Text</span> is sometimes used as a content
+  model on its own, but is also <span>phrasing content</span>, and can be <span>inter-element
+  whitespace</span> (if the <code>Text</code> nodes are empty or contain just <span>ASCII
+  whitespace</span>).</p>
+
+  <p><code>Text</code> nodes and attribute values must consist of <span data-x="scalar value">scalar
+  values</span>, excluding <span data-x="noncharacter">noncharacters</span>, and <span
+  data-x="control">controls</span> other than <span>ASCII whitespace</span>.
+
+  <!--<code>Text</code> nodes and attribute values may begin with an <i>isolated combining
+  character</i>.--> <!-- commented out since nothing disallows it currently, so it's implicit;
+  however, if we ever make charmod a normative reference, this will be needed to override it -->
+  <!-- see also https://www.w3.org/Bugs/Public/show_bug.cgi?id=13502#c22 -->
+
+  This specification includes extra constraints on the exact value of <code>Text</code> nodes and
+  attribute values depending on their precise context.
+
+  <!-- <ref>UNICODE</ref>-->
+
+  </p>
+
+
+
+  <h6>Embedded content</h6>
+
+  <p><dfn id="embedded-content-category" export>Embedded content</dfn> is content that imports
+  another resource into the document, or content from another vocabulary that
+  is inserted into the document.</p>
+
+  <!-- when updating this also update the category index -->
+  <ul class="brief category-list">
+   <li><code>audio</code></li>
+   <li><code>canvas</code></li>
+   <li><code>embed</code></li>
+   <li><code>iframe</code></li>
+   <li><code>img</code></li>
+   <li><span>MathML <code>math</code></span></li>
+   <li><code>object</code></li>
+   <li><code>picture</code></li>
+   <li><span>SVG <code>svg</code></span></li>
+   <li><code>video</code></li>
+  </ul>
+
+  <p>Elements that are from namespaces other than the <span>HTML namespace</span> and that convey
+  content but not metadata, are <span>embedded content</span> for the purposes of the content models
+  defined in this specification. (For example, MathML or SVG.)</p>
+
+  <p>Some embedded content elements can have <dfn>fallback content</dfn>: content that is to be used
+  when the external resource cannot be used (e.g. because it is of an unsupported format). The
+  element definitions state what the fallback is, if any.</p>
+  <!-- we might not need to define fallback content at all. consider removing it if we don't end up
+  using it anywhere (e.g. Selection) -->
+
+
+  <h6>Interactive content</h6>
+
+<!--
+TESTS:
+https://software.hixie.ch/utilities/js/live-dom-viewer/?%3C%21DOCTYPE%20html%3E%0A%3Cp%20tabindex%3D1%3Etest%20%3Ca%20href%3D%22%22%3E%20%3Cem%3Etest%3C/em%3E%20%3C/a%3E%0A%3Cscript%3E%0A%20function%20test%20%28e%29%20%7B%20w%28e.type%20+%20%27%20on%20%27%20+%20e.target.tagName%20+%20%27%20through%20%27%20+%20e.currentTarget.tagName%29%3B%20%7D%0A%20document.getElementsByTagName%28%27a%27%29%5B0%5D.addEventListener%28%27click%27%2C%20test%2C%20false%29%3B%0A%20document.getElementsByTagName%28%27a%27%29%5B0%5D.addEventListener%28%27DOMActivate%27%2C%20test%2C%20false%29%3B%0A%20document.getElementsByTagName%28%27p%27%29%5B0%5D.addEventListener%28%27click%27%2C%20test%2C%20false%29%3B%0A%20document.getElementsByTagName%28%27p%27%29%5B0%5D.addEventListener%28%27DOMActivate%27%2C%20test%2C%20false%29%3B%0A%3C/script%3E%0A
+https://software.hixie.ch/utilities/js/live-dom-viewer/?%3C%21DOCTYPE%20HTML%3E%0A%3Ca%20href%3Dhttp%3A//google.com/%20target%3Da%3EA%3C/a%3E%3Ca%20href%3Dhttp%3A//yahoo.com/%20target%3Db%3EB%3C/a%3E%3Cbr%3E%0A%3Ciframe%20name%3Da%3E%3C/iframe%3E%3Ciframe%20name%3Db%3E%3C/iframe%3E%0A%3Cscript%3E%0A%20var%20a%20%3D%20document.getElementsByTagName%28%27a%27%29%5B0%5D%3B%0A%20var%20b%20%3D%20document.getElementsByTagName%28%27a%27%29%5B1%5D%3B%0A%20a.appendChild%28b%29%3B%0A%3C/script%3E
+https://software.hixie.ch/utilities/js/live-dom-viewer/?%3C%21DOCTYPE%20HTML%3E%0A%3Cform%20action%3D%22http%3A//google.com/%22%20onsubmit%3D%22w%28%27onsubmit%27%29%22%3E%3Cem%3EA%3C/em%3E%3C/form%3E%0A%3Cscript%3E%0Adocument.getElementsByTagName%28%27form%27%29%5B0%5D.attachEvent%28%27onsubmit%27%2C%20function%20%28%29%20%7B%20w%28%27submit%20fired%27%29%20%7D%29%3B%0Adocument.getElementsByTagName%28%27form%27%29%5B0%5D.fireEvent%28%27onsubmit%27%29%3B%0A%3C/script%3E
+https://software.hixie.ch/utilities/js/live-dom-viewer/?%3C%21DOCTYPE%20HTML%3E%0A%3Cform%20action%3D%22http%3A//google.com/%22%3EX%3C/form%3E%0A%3Cscript%3E%0Avar%20evt%20%3D%20document.createEvent%28%22Events%22%29%3B%0Aevt.initEvent%28%22submit%22%2C%20true%2C%20true%29%3B%0Adocument.getElementsByTagName%28%27form%27%29%5B0%5D.dispatchEvent%28evt%29%3B%0A%3C/script%3E
+-->
+
+  <p><dfn export>Interactive content</dfn> is content that is specifically intended for user
+  interaction.</p>
+
+  <!-- when updating this also update the category index -->
+  <ul class="brief category-list">
+   <li><code>a</code> (if the <code data-x="attr-hyperlink-href">href</code> attribute is present)</li>
+   <li><code>audio</code> (if the <code data-x="attr-media-controls">controls</code> attribute is present)</li>
+   <li><code>button</code></li>
+   <li><code>details</code></li>
+   <li><code>embed</code></li>
+   <li><code>iframe</code></li>
+   <li><code>img</code> (if the <code data-x="attr-hyperlink-usemap">usemap</code> or <code data-x="attr-img-controls">controls</code> attribute is present)</li>
+   <li><code>input</code> (if the <code data-x="attr-input-type">type</code> attribute is <em>not</em> in the <span data-x="attr-input-type-hidden">Hidden</span> state)</li>
+   <li><code>label</code></li>
+   <li><code>select</code></li>
+   <li><code>textarea</code></li>
+   <li><code>video</code> (if the <code data-x="attr-media-controls">controls</code> attribute is present)</li>
+  </ul>
+
+
+
+  <h6 id="palpable-content">Palpable content</h6>
+
+  <p>As a general rule, elements whose content model allows any <span>flow content</span> or
+  <span>phrasing content</span> should have at least one node in its <span
+  data-x="concept-html-contents">contents</span> that is <dfn export>palpable content</dfn> and
+  that does not have the <code data-x="attr-hidden">hidden</code> attribute specified.</p>
+
+  <p class="note"><span>Palpable content</span> makes an element non-empty by providing either
+  some descendant non-empty <span data-x="text content">text</span>, or else something users can
+  hear (<code>audio</code> elements) or view (<code>video</code>, <code>img</code>, or
+  <code>canvas</code> elements) or otherwise interact with (for example, interactive form
+  controls).</p>
+
+  <p>This requirement is not a hard requirement, however, as there are many cases where an element
+  can be empty legitimately, for example when it is used as a placeholder which will later be filled
+  in by a script, or when the element is part of a template and would on most pages be filled in but
+  on some pages is not relevant.</p>
+
+  <p>Conformance checkers are encouraged to provide a mechanism for authors to find elements that
+  fail to fulfill this requirement, as an authoring aid.</p>
+
+  <p>The following elements are palpable content:</p>
+
+  <!-- when updating this also update the category index -->
+  <ul class="brief category-list">
+   <li><code>a</code></li>
+   <li><code>abbr</code></li>
+   <li><code>address</code></li>
+   <li><code>article</code></li>
+   <li><code>aside</code></li>
+   <li><code>audio</code> (if the <code data-x="attr-media-controls">controls</code> attribute is present)</li>
+   <li><code>b</code></li>
+   <li><code>bdi</code></li>
+   <li><code>bdo</code></li>
+   <li><code>blockquote</code></li>
+   <li><code>button</code></li>
+   <li><code>canvas</code></li>
+   <li><code>cite</code></li>
+   <li><code>code</code></li>
+   <li><code>data</code></li>
+   <li><code>del</code></li>
+   <li><code>details</code></li>
+   <li><code>dfn</code></li>
+   <li><code>div</code></li>
+   <li><code>dl</code> (if the element's children include at least one name-value group)</li>
+   <li><code>em</code></li>
+   <li><code>embed</code></li>
+   <li><code>fieldset</code></li>
+   <li><code>figure</code></li>
+   <li><code>footer</code></li>
+   <li><code>form</code></li>
+   <li><code>h1</code></li>
+   <li><code>h2</code></li>
+   <li><code>h3</code></li>
+   <li><code>h4</code></li>
+   <li><code>h5</code></li>
+   <li><code>h6</code></li>
+   <li><code>header</code></li>
+   <li><code>hgroup</code></li>
+   <li><code>i</code></li>
+   <li><code>iframe</code></li>
+   <li><code>img</code></li>
+   <li><code>input</code> (if the <code data-x="attr-input-type">type</code> attribute is <em>not</em> in the <span data-x="attr-input-type-hidden">Hidden</span> state)</li>
+   <li><code>ins</code></li>
+   <li><code>kbd</code></li>
+   <li><code>label</code></li>
+   <li><code>main</code></li>
+   <li><code>map</code></li>
+   <li><code>mark</code></li>
+   <li><span>MathML <code>math</code></span></li>
+   <li><code>menu</code> (if the element's children include at least one <code>li</code> element)</li>
+   <li><code>meter</code></li>
+   <li><code>nav</code></li>
+   <li><code>object</code></li>
+   <li><code>ol</code> (if the element's children include at least one <code>li</code> element)</li>
+   <li><code>output</code></li>
+   <li><code>p</code></li>
+   <li><code>picture</code></li>
+   <li><code>pre</code></li>
+   <li><code>progress</code></li>
+   <li><code>q</code></li>
+   <li><code>ruby</code></li>
+   <li><code>s</code></li>
+   <li><code>samp</code></li>
+   <li><code>search</code></li>
+   <li><code>section</code></li>
+   <li><code>select</code></li>
+   <li><code>small</code></li>
+   <li><code>span</code></li>
+   <li><code>strong</code></li>
+   <li><code>sub</code></li>
+   <li><code>sup</code></li>
+   <li><span>SVG <code>svg</code></span></li>
+   <li><code>table</code></li>
+   <li><code>textarea</code></li>
+   <li><code>time</code></li>
+   <li><code>u</code></li>
+   <li><code>ul</code> (if the element's children include at least one <code>li</code> element)</li>
+   <li><code>var</code></li>
+   <li><code>video</code></li>
+   <li><span data-x="autonomous custom element">autonomous custom elements</span></li>
+   <li><span data-x="text content">text</span> that is not <span>inter-element whitespace</span></li>
+  </ul>
+
+
+  <h6>Script-supporting elements</h6>
+
+  <p><dfn>Script-supporting elements</dfn> are those that do not <span
+  data-x="represents">represent</span> anything themselves (i.e. they are not rendered), but are
+  used to support scripts, e.g. to provide functionality for the user.</p>
+
+  <p>The following elements are script-supporting elements:</p>
+
+  <!-- when updating this also update the category index -->
+  <ul class="brief category-list">
+   <li><code>script</code></li>
+   <li><code>template</code></li>
+  </ul>
+
+
+  <h5>Transparent content models</h5>
+
+  <p>Some elements are described as <dfn>transparent</dfn>; they have "transparent" in the
+  description of their content model. The content model of a <span>transparent</span> element is
+  derived from the content model of its parent element: the elements required in the part of the
+  content model that is "transparent" are the same elements as required in the part of the content
+  model of the parent of the transparent element in which the transparent element finds itself.</p>
+
+  <div class="example">
+
+   <p>For instance, an <code>ins</code> element inside a <code>ruby</code> element cannot contain an
+   <code>rt</code> element, because the part of the <code>ruby</code> element's content model that
+   allows <code>ins</code> elements is the part that allows <span>phrasing content</span>, and the
+   <code>rt</code> element is not <span>phrasing content</span>.</p>
+
+  </div>
+
+<!--(as far as I can tell, there's no way to violate this requirement
+     without first violating the earlier requirement)
+  <p>Furthermore, when a content model includes a part that is "transparent", those parts must not
+  contain content that would not be conformant if all transparent elements in the tree were
+  replaced, in their parent element, by the <span data-x="concept-html-contents">contents</span> in
+  the "transparent" part of their content model, retaining order.</p>
+
+  <div class="example">
+
+   <p>Consider the following markup fragment:</p>
+
+   <pre><code class="html">&lt;p>Hello &lt;a href="world.html">&lt;em>wonderful&lt;/em> world&lt;/a>!&lt;/p></code></pre>
+
+   <p>Its DOM looks like the following:</p>
+
+   <ul class="domTree"><li class="t1"><code>p</code><ul><li class="t3"><code>#text</code>: <span data-x="">Hello </span></li><li class="t1"><code>a</code> <span class="t2" data-x=""><code class="attribute name" data-x="attr-hyperlink-href">href</code>="<code class="attribute value" data-x="">world.html</code>"</span><ul><li class="t1"><code>em</code><ul><li class="t3"><code>#text</code>: <span data-x="">wonderful</span></li></ul></li><li class="t3"><code>#text</code>: <span data-x=""> world</span></li></ul></li><li class="t3"><code>#text</code>: <span data-x="">!</span></li></ul></li></ul>
+
+   <p>The content model of the <code>a</code> element is <span>transparent</span>. To see if its
+   contents are conforming, therefore, the element is replaced by its contents:</p>
+
+   <ul class="domTree"><li class="t1"><code>p</code><ul><li class="t3"><code>#text</code>: <span data-x="">Hello </span></li><li class="t1"><code>em</code><ul><li class="t3"><code>#text</code>: <span data-x="">wonderful</span></li></ul></li><li class="t3"><code>#text</code>: <span data-x=""> world</span></li><li class="t3"><code>#text</code>: <span data-x="">!</span></li></ul></li></ul>
+
+   <p>Since that is conforming, the contents of the <code>a</code> are conforming in the original
+   fragment (there is no complication regarding the various parts of the <code>p</code> element's
+   content model, since that element's content model has only one part).</p>
+
+  </div>
+-->
+
+  <p class="note">In some cases, where transparent elements are nested in each other, the process
+  has to be applied iteratively.</p>
+
+  <div class="example">
+   <p>Consider the following markup fragment:</p>
+
+   <pre><code class="html">&lt;p>&lt;object>&lt;ins>&lt;map>&lt;a href="/">Apples&lt;/a>&lt;/map>&lt;/ins>&lt;/object>&lt;/p></code></pre>
+
+   <p>To check whether "Apples" is allowed inside the <code>a</code> element, the content models are
+   examined. The <code>a</code> element's content model is transparent, as is the <code>map</code>
+   element's, as is the <code>ins</code> element's, as is the <code>object</code> element's. The
+   <code>object</code> element is found in the <code>p</code> element, whose content model is
+   <span>phrasing content</span>. Thus, "Apples" is allowed, as text is phrasing content.</p>
+  </div>
+
+  <p>When a transparent element has no parent, then the part of its content model that is
+  "transparent" must instead be treated as accepting any <span>flow content</span>.</p>
+
+
+  <h5>Paragraphs</h5>
+
+  <p class="note">The term <span>paragraph</span> as defined in this section is used for more than
+  just the definition of the <code>p</code> element. The <span>paragraph</span> concept defined here
+  is used to describe how to interpret documents. The <code>p</code> element is merely one of
+  several ways of marking up a <span>paragraph</span>.</p>
+
+  <!-- note: the actual definition is below -->
+  <p>A <dfn>paragraph</dfn> is typically a run of <span>phrasing content</span> that forms a block
+  of text with one or more sentences that discuss a particular topic, as in typography, but can also
+  be used for more general thematic grouping. For instance, an address is also a paragraph, as is a
+  part of a form, a byline, or a stanza in a poem.</p>
+
+  <div class="example">
+
+   <p>In the following example, there are two paragraphs in a section. There is also a heading,
+   which contains phrasing content that is not a paragraph. Note how the comments and
+   <span>inter-element whitespace</span> do not form paragraphs.</p>
+
+   <pre><code class="html">&lt;section>
+  &lt;h2>Example of paragraphs&lt;/h2>
+  This is the &lt;em>first&lt;/em> paragraph in this example.
+  &lt;p>This is the second.&lt;/p>
+  &lt;!-- This is not a paragraph. -->
+&lt;/section></code></pre>
+
+  </div>
+
+  <p>Paragraphs in <span>flow content</span> are defined relative to what the document looks like
+  without the <code>a</code>, <code>ins</code>, <code>del</code>, and <code>map</code> elements
+  complicating matters, since those elements, with their hybrid content models, can straddle
+  paragraph boundaries, as shown in the first two examples below.</p>
+
+  <p class="note">Generally, having elements straddle paragraph boundaries is best avoided.
+  Maintaining such markup can be difficult.</p>
+
+  <div class="example">
+
+   <p>The following example takes the markup from the earlier example and puts <code>ins</code> and
+   <code>del</code> elements around some of the markup to show that the text was changed (though in
+   this case, the changes admittedly don't make much sense). Notice how this example has exactly the
+   same paragraphs as the previous one, despite the <code>ins</code> and <code>del</code> elements
+   &mdash; the <code>ins</code> element straddles the heading and the first paragraph, and the
+   <code>del</code> element straddles the boundary between the two paragraphs.</p>
+
+   <pre><code class="html">&lt;section>
+  &lt;ins>&lt;h2>Example of paragraphs&lt;/h2>
+  This is the &lt;em>first&lt;/em> paragraph in&lt;/ins> this example&lt;del>.
+  &lt;p>This is the second.&lt;/p>&lt;/del>
+  &lt;!-- This is not a paragraph. -->
+&lt;/section></code></pre>
+
+  </div>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>Let <var>view</var> be a view of the DOM that replaces all <code>a</code>,
+  <code>ins</code>, <code>del</code>, and <code>map</code> elements in the document with their <span
+  data-x="concept-html-contents">contents</span>. Then, in <var>view</var>, for each run
+  of sibling <span>phrasing content</span> nodes uninterrupted by other types of content, in an
+  element that accepts content other than <span>phrasing content</span> as well as <span>phrasing
+  content</span>, let <var>first</var> be the first node of the run, and let <var>last</var> be the last node of the run. For each such run that consists of at least one
+  node that is neither <span>embedded content</span> nor <span>inter-element whitespace</span>, a
+  paragraph exists in the original DOM from immediately before <var>first</var> to
+  immediately after <var>last</var>. (Paragraphs can thus span across <code>a</code>,
+  <code>ins</code>, <code>del</code>, and <code>map</code> elements.)</p>
+  </div>
+
+  <p>Conformance checkers may warn authors of cases where they have paragraphs that overlap each
+  other (this can happen with <code>object</code>, <code>video</code>, <code>audio</code>, and
+  <code>canvas</code> elements, and indirectly through elements in other namespaces that allow HTML
+  to be further embedded therein, like <span>SVG <code>svg</code></span> or <span>MathML
+  <code>math</code></span>).</p>
+  <!-- example below -->
+
+  </div>
+
+  <p>A <span>paragraph</span> is also formed explicitly by <code>p</code> elements.</p>
+
+  <p class="note">The <code>p</code> element can be used to wrap individual paragraphs when there
+  would otherwise not be any content other than phrasing content to separate the paragraphs from
+  each other.</p>
+
+  <div class="example">
+
+   <p>In the following example, the link spans half of the first paragraph, all of the heading
+   separating the two paragraphs, and half of the second paragraph. It straddles the paragraphs and
+   the heading.</p>
+
+   <pre><code class="html">&lt;header>
+ Welcome!
+ &lt;a href="about.html">
+  This is home of...
+  &lt;h1>The Falcons!&lt;/h1>
+  The Lockheed Martin multirole jet fighter aircraft!
+ &lt;/a>
+ This page discusses the F-16 Fighting Falcon's innermost secrets.
+&lt;/header></code></pre>
+
+   <p>Here is another way of marking this up, this time showing the paragraphs explicitly, and
+   splitting the one link element into three:</p>
+
+   <pre><code class="html">&lt;header>
+ &lt;p>Welcome! &lt;a href="about.html">This is home of...&lt;/a>&lt;/p>
+ &lt;h1>&lt;a href="about.html">The Falcons!&lt;/a>&lt;/h1>
+ &lt;p>&lt;a href="about.html">The Lockheed Martin multirole jet
+ fighter aircraft!&lt;/a> This page discusses the F-16 Fighting
+ Falcon's innermost secrets.&lt;/p>
+&lt;/header></code></pre>
+
+  </div>
+
+  <div class="example">
+
+   <!-- I don't know if there's a better way to deal with this, but if there is, let me know... -->
+
+   <p>It is possible for paragraphs to overlap when using certain elements that define fallback
+   content. For example, in the following section:</p>
+
+   <pre><code class="html">&lt;section>
+ &lt;h2>My Cats&lt;/h2>
+ You can play with my cat simulator.
+ &lt;object data="cats.sim">
+  To see the cat simulator, use one of the following links:
+  &lt;ul>
+   &lt;li>&lt;a href="cats.sim">Download simulator file&lt;/a>
+   &lt;li>&lt;a href="https://sims.example.com/watch?v=LYds5xY4INU">Use online simulator&lt;/a>
+  &lt;/ul>
+  Alternatively, upgrade to the Mellblom Browser.
+ &lt;/object>
+ I'm quite proud of it.
+&lt;/section></code></pre>
+
+   <p>There are five paragraphs:</p>
+
+   <ol class="brief">
+
+    <li>The paragraph that says "You can play with my cat simulator. <i>object</i> I'm
+    quite proud of it.", where <i>object</i> is the <code>object</code> element.</li>
+
+    <li>The paragraph that says "To see the cat simulator, use one of the following links:".</li>
+
+    <li>The paragraph that says "Download simulator file".</li>
+
+    <li>The paragraph that says "Use online simulator".</li>
+
+    <li>The paragraph that says "Alternatively, upgrade to the Mellblom Browser.".</li>
+   </ol>
+
+   <p>The first paragraph is overlapped by the other four. A user agent that supports the "cats.sim"
+   resource will only show the first one, but a user agent that shows the fallback will confusingly
+   show the first sentence of the first paragraph as if it was in the same paragraph as the second
+   one, and will show the last paragraph as if it was at the start of the second sentence of the
+   first paragraph.</p>
+
+   <p>To avoid this confusion, explicit <code>p</code> elements can be used. For example:</p>
+
+   <!-- My Fish -->
+   <pre><code class="html">&lt;section>
+ &lt;h2>My Cats&lt;/h2>
+ &lt;p>You can play with my cat simulator.&lt;/p>
+ &lt;object data="cats.sim">
+  &lt;p>To see the cat simulator, use one of the following links:&lt;/p>
+  &lt;ul>
+   &lt;li>&lt;a href="cats.sim">Download simulator file&lt;/a>
+   &lt;li>&lt;a href="https://sims.example.com/watch?v=LYds5xY4INU">Use online simulator&lt;/a>
+  &lt;/ul>
+  &lt;p>Alternatively, upgrade to the Mellblom Browser.&lt;/p>
+ &lt;/object>
+ &lt;p>I'm quite proud of it.&lt;/p>
+&lt;/section></code></pre>
+
+  </div>
+
+

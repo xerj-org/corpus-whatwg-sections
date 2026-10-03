@@ -1,0 +1,224 @@
+WHATWG HTML — section the-canvas-element/the-imagebitmaprenderingcontext-interface — The <code>ImageBitmapRenderingContext</code> interface
+
+  <h6>The <code>ImageBitmapRenderingContext</code> interface</h6>
+
+  <pre><code class="idl">[Exposed=(Window,Worker)]
+interface <dfn interface>ImageBitmapRenderingContext</dfn> {
+  readonly attribute (<span>HTMLCanvasElement</span> or <span>OffscreenCanvas</span>) <span data-x="dom-ImageBitmapRenderingContext-canvas">canvas</span>;
+  undefined <span data-x="dom-ImageBitmapRenderingContext-transferFromImageBitmap">transferFromImageBitmap</span>(<span>ImageBitmap</span>? bitmap);
+};
+
+dictionary <dfn dictionary>ImageBitmapRenderingContextSettings</dfn> {
+  boolean <span data-x="dom-ImageBitmapRenderingContextSettings-alpha">alpha</span> = true;
+};</code></pre>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>context</var> = <var>canvas</var>.<span data-x="dom-canvas-getContext">getContext</span>('bitmaprenderer' [, { [ <span data-x="dom-ImageBitmapRenderingContextSettings-alpha">alpha</span>: false ] } ])</code></dt>
+
+   <dd>
+    <p>Returns an <code>ImageBitmapRenderingContext</code> object that is permanently bound to a
+    particular <code>canvas</code> element.</p>
+
+    <p>If the <code data-x="dom-ImageBitmapRenderingContextSettings-alpha">alpha</code> setting is
+    provided and set to false, then the canvas is forced to always be opaque.</p>
+   </dd>
+
+   <dt><code data-x=""><var>context</var>.<span subdfn data-x="dom-ImageBitmapRenderingContext-canvas">canvas</span></code></dt>
+
+   <dd><p>Returns the <code>canvas</code> element that the context is bound to.</p></dd>
+
+   <dt><code data-x=""><var>context</var>.<span subdfn data-x="dom-ImageBitmapRenderingContext-transferFromImageBitmap">transferFromImageBitmap</span>(imageBitmap)</code></dt>
+
+   <dd>
+    <p>Transfers the underlying <span data-x="concept-ImageBitmap-bitmap-data">bitmap data</span>
+    from <var>imageBitmap</var> to <var>context</var>, and the bitmap becomes the contents of the
+    <code>canvas</code> element to which <var>context</var> is bound.</p>
+   </dd>
+
+   <dt><code data-x=""><var>context</var>.<span data-x="dom-ImageBitmapRenderingContext-transferFromImageBitmap">transferFromImageBitmap</span>(null)</code></dt>
+
+   <dd>
+    <p>Replaces contents of the <code>canvas</code> element to which <var>context</var> is bound
+    with a <span>transparent black</span> bitmap whose size corresponds to the <code
+    data-x="attr-canvas-width">width</code> and <code data-x="attr-canvas-height">height</code>
+    content attributes of the <code>canvas</code> element.</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn attribute for="ImageBitmapRenderingContext"><code
+  data-x="dom-ImageBitmapRenderingContext-canvas">canvas</code></dfn> attribute must return the
+  value it was initialized to when the object was created.</p>
+  </div>
+
+  <p>An <code>ImageBitmapRenderingContext</code> object has an <dfn
+  data-x="concept-ImageBitmapRenderingContext-output-bitmap">output bitmap</dfn>, which is a
+  reference to <span data-x="concept-ImageBitmap-bitmap-data">bitmap data</span>.</p>
+
+  <p>An <code>ImageBitmapRenderingContext</code> object has a <dfn
+  data-x="concept-ImageBitmapRenderingContext-bitmap-mode">bitmap mode</dfn>, which can be set to
+  <dfn data-x="concept-ImageBitmapRenderingContext-valid">valid</dfn> or <dfn
+  data-x="concept-ImageBitmapRenderingContext-blank">blank</dfn>. A value of <span
+  data-x="concept-ImageBitmapRenderingContext-valid">valid</span> indicates that the context's
+  <span data-x="concept-ImageBitmapRenderingContext-output-bitmap">output bitmap</span> refers to
+  <span data-x="concept-ImageBitmap-bitmap-data">bitmap data</span> that was acquired via <code
+  data-x="dom-ImageBitmapRenderingContext-transferFromImageBitmap">transferFromImageBitmap()</code>.
+  A value <span data-x="concept-ImageBitmapRenderingContext-blank">blank</span> indicates that the
+  context's <span data-x="concept-ImageBitmapRenderingContext-output-bitmap">output
+  bitmap</span> is a default transparent bitmap.</p>
+
+  <div algorithm>
+  <p>An <code>ImageBitmapRenderingContext</code> object also has an <dfn
+  data-x="concept-ImageBitmapRenderingContext-alpha">alpha</dfn> flag, which can be set to true or
+  false. When an <code>ImageBitmapRenderingContext</code> object has its <span
+  data-x="concept-ImageBitmapRenderingContext-alpha">alpha</span> flag set to false, the contents
+  of the <code>canvas</code> element to which the context is bound are obtained by
+  compositing the context's <span
+  data-x="concept-ImageBitmapRenderingContext-output-bitmap">output bitmap</span> onto an
+  <span>opaque black</span> bitmap of the same size using the <span
+  data-x="gcop-source-over">source-over</span> compositing operator. If the <span
+  data-x="concept-ImageBitmapRenderingContext-alpha">alpha</span> flag is set to true, then the
+  <span data-x="concept-ImageBitmapRenderingContext-output-bitmap">output bitmap</span> is used as
+  the contents of the <code>canvas</code> element to which the context is bound.
+  <ref>COMPOSITE</ref></p>
+  </div>
+
+  <p class="note">The step of compositing over an <span>opaque black</span> bitmap ought to be
+  elided whenever equivalent results can be obtained more efficiently by other means.</p>
+
+  <hr>
+
+  <div algorithm>
+  <p>When a user agent is required to <dfn>set an <code>ImageBitmapRenderingContext</code>'s output
+  bitmap</dfn>, with a <var>context</var> argument that is an
+  <code>ImageBitmapRenderingContext</code> object and an optional argument <var>bitmap</var> that
+  refers to <span data-x="concept-imagebitmap-bitmap-data">bitmap data</span>, it must run these
+  steps:</p>
+
+  <ol>
+   <li><p>If a <var>bitmap</var> argument was not provided:</p>
+
+    <ol>
+     <li><p>Set <var>context</var>'s <span
+     data-x="concept-ImageBitmapRenderingContext-bitmap-mode">bitmap mode</span> to <span
+     data-x="concept-ImageBitmapRenderingContext-blank">blank</span>.</p></li>
+
+     <li><p>Let <var>canvas</var> be the <code>canvas</code> element to which <var>context</var>
+     is bound.</p></li>
+
+     <li><p>Set <var>context</var>'s <span
+     data-x="concept-ImageBitmapRenderingContext-output-bitmap">output bitmap</span> to be
+     <span>transparent black</span> with a <span>natural width</span> equal to <span
+     data-x="obtain-numeric-values">the numeric value</span> of <var>canvas</var>'s <code
+     data-x="attr-canvas-width">width</code> attribute and a <span>natural height</span> equal
+     to <span data-x="obtain-numeric-values">the numeric value</span> of <var>canvas</var>'s
+     <code data-x="attr-canvas-height">height</code> attribute, those values being interpreted
+     in <span data-x="'px'">CSS pixels</span>.</p></li>
+
+     <li><p>Set the <span
+     data-x="concept-ImageBitmapRenderingContext-output-bitmap">output bitmap</span>'s <span
+     data-x="concept-canvas-origin-clean">origin-clean</span> flag to true.</p></li>
+    </ol>
+   </li>
+
+   <li><p>If a <var>bitmap</var> argument was provided:</p>
+
+    <ol>
+     <li><p>Set <var>context</var>'s <span
+     data-x="concept-ImageBitmapRenderingContext-bitmap-mode">bitmap mode</span> to <span
+     data-x="concept-ImageBitmapRenderingContext-valid">valid</span>.</p></li>
+
+     <li>
+      <p>Set <var>context</var>'s <span
+      data-x="concept-ImageBitmapRenderingContext-output-bitmap">output bitmap</span> to refer
+      to the same underlying bitmap data as <var>bitmap</var>, without making a copy.</p>
+
+      <p class="note">The <span data-x="concept-canvas-origin-clean">origin-clean</span> flag of
+      <var>bitmap</var> is included in the bitmap data to be referenced by <var>context</var>'s
+      <span data-x="concept-ImageBitmapRenderingContext-output-bitmap">output bitmap</span>.</p>
+     </li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <hr>
+
+  <div algorithm>
+  <p>The <dfn><code>ImageBitmapRenderingContext</code> creation algorithm</dfn>, which is passed a
+  <var>target</var> and <var>options</var>, consists of running these steps:</p>
+
+  <ol>
+   <li><p>Let <var>settings</var> be the result of <span
+   data-x="concept-idl-convert">converting</span> <var>options</var> to the dictionary type
+   <code>ImageBitmapRenderingContextSettings</code>. (This can throw an exception.)</p></li>
+
+   <li><p>Let <var>context</var> be a new <code>ImageBitmapRenderingContext</code> object.</p></li>
+
+   <li><p>Initialize <var>context</var>'s <code data-x="dom-context-2d-canvas">canvas</code>
+   attribute to point to <var>target</var>.</p></li>
+
+   <li><p>Set <var>context</var>'s <span
+   data-x="concept-ImageBitmapRenderingContext-output-bitmap">output bitmap</span> to the same
+   bitmap as <var>target</var>'s bitmap (so that they are shared).</p></li>
+
+   <li><p>Run the steps to <span>set an <code>ImageBitmapRenderingContext</code>'s output
+   bitmap</span> with <var>context</var>.</p></li>
+
+   <li><p>Initialize <var>context</var>'s <span
+   data-x="concept-ImageBitmapRenderingContext-alpha">alpha</span> flag to true.
+
+   <li>
+    <p>Process each of the members of <var>settings</var> as follows:</p>
+
+    <dl>
+     <dt><dfn dict-member for="ImageBitmapRenderingContextSettings"><code data-x="dom-ImageBitmapRenderingContextSettings-alpha">alpha</code></dfn></dt>
+     <dd>If false, then set <var>context</var>'s <span
+     data-x="concept-ImageBitmapRenderingContext-alpha">alpha</span> flag to false.</dd>
+    </dl>
+   </li>
+
+   <li><p>Return <var>context</var>.</p></li>
+  </ol>
+  </div>
+
+  <hr>
+
+  <div algorithm>
+  <p>The <dfn method for="ImageBitmapRenderingContext"><code
+  data-x="dom-ImageBitmapRenderingContext-transferFromImageBitmap">transferFromImageBitmap(<var>bitmap</var>)</code></dfn>
+  method, when invoked, must run these steps:</p>
+
+  <ol>
+   <li><p>Let <var>bitmapContext</var> be the <code>ImageBitmapRenderingContext</code> object on
+   which the <code
+   data-x="dom-ImageBitmapRenderingContext-transferFromImageBitmap">transferFromImageBitmap()</code>
+   method was called.</p></li>
+
+   <li><p>If <var>bitmap</var> is null, then run the steps to <span>set an
+   ImageBitmapRenderingContext's output bitmap</span>, with <var>bitmapContext</var> as the
+   <i>context</i> argument and no <i>bitmap</i> argument, then return.</p></li>
+
+   <li><p>If the value of <var>bitmap</var>'s <span>[[Detached]]</span> internal slot is set to
+   true, then throw an <span>"<code>InvalidStateError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>Run the steps to <span>set an <code>ImageBitmapRenderingContext</code>'s output
+   bitmap</span>, with the <i>context</i> argument equal to <var>bitmapContext</var>, and the
+   <i>bitmap</i> argument referring to <var>bitmap</var>'s underlying <span
+   data-x="concept-ImageBitmap-bitmap-data">bitmap data</span>.
+
+   <li><p>Set the value of <var>bitmap</var>'s <span>[[Detached]]</span> internal slot to
+   true.</p></li>
+
+   <li><p>Unset <var>bitmap</var>'s <span data-x="concept-ImageBitmap-bitmap-data">bitmap
+   data</span>.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+
+
+

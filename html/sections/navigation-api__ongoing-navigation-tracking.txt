@@ -1,0 +1,658 @@
+WHATWG HTML — section navigation-api/ongoing-navigation-tracking — Ongoing navigation tracking
+
+  <h5>Ongoing navigation tracking</h5>
+
+  <div w-nodev>
+
+  <p>During any given navigation (in the <span data-x="NavigationType">broad sense of the
+  word</span>), the <code>Navigation</code> object needs to keep track of the following:</p>
+
+  <table>
+   <caption>For all navigations</caption>
+   <thead>
+    <tr>
+     <th>State
+     <th>Duration
+     <th>Explanation
+   <tbody>
+    <tr>
+     <td>The <code>NavigateEvent</code>
+     <td>For the duration of event firing
+     <td>So that if the navigation is canceled while the event is firing, we can <span data-x="canceled flag">cancel</span> the event
+    <tr>
+     <td>The event's <span data-x="concept-NavigateEvent-abort-controller">abort controller</span>
+     <td>Until all promises returned from handlers passed to <code data-x="dom-NavigateEvent-intercept">intercept()</code> have settled
+     <td>So that if the navigation is canceled, we can <span>signal abort</span>
+    <tr>
+     <td>Whether a new element was <span data-x="focusing steps">focused</span>
+     <td>Until all promises returned from handlers passed to <code data-x="dom-NavigateEvent-intercept">intercept()</code> have settled
+     <td>So that if one was, focus is not <span data-x="potentially reset the focus">reset</span>
+    <tr>
+     <td>The <code>NavigationHistoryEntry</code> being navigated to
+     <td>From when it is determined, until all promises returned from handlers passed to <code data-x="dom-NavigateEvent-intercept">intercept()</code> have settled
+     <td>So that we know what to resolve any <code data-x="dom-NavigationResult-committed">committed</code> and <code data-x="dom-NavigationResult-finished">finished</code> promises with
+    <tr>
+     <td>Any <code data-x="dom-NavigationResult-finished">finished</code> promise that was returned
+     <td>Until all promises returned from handlers passed to <code data-x="dom-NavigateEvent-intercept">intercept()</code> have settled
+     <td>So that we can resolve or reject it appropriately
+  </table>
+
+  <table>
+   <caption>For non-"<code data-x="dom-NavigationType-traverse">traverse</code>" navigations</caption>
+   <thead>
+    <tr>
+     <th>State
+     <th>Duration
+     <th>Explanation
+   <tbody>
+    <tr>
+     <td>Any <code data-x="dom-NavigationNavigateOptions-state">state</code>
+     <td>For the duration of event firing
+     <td>So that we can update the current entry's <span data-x="she-navigation-api-state">navigation API state</span> if the event finishes firing without being <span data-x="canceled flag">canceled</span>
+  </table>
+
+  <table>
+   <caption>For "<code data-x="dom-NavigationType-traverse">traverse</code>" navigations</caption>
+   <thead>
+    <tr>
+     <th>State
+     <th>Duration
+     <th>Explanation
+   <tbody>
+    <tr>
+     <td>Any <code data-x="dom-NavigationOptions-info">info</code>
+     <td>Until the task is queued to fire the <code data-x="event-navigate">navigate</code> event
+     <td>So that we can use it to fire the <code data-x="event-navigate">navigate</code> after the trip through the <span data-x="tn-session-history-traversal-queue">session history traversal queue</span>.
+    <tr>
+     <td>Any <code data-x="dom-NavigationResult-committed">committed</code> promise that was returned
+     <td>Until the session history is updated (inside that same task)
+     <td>So that we can resolve or reject it appropriately
+    <tr>
+     <td>Whether <code data-x="dom-NavigateEvent-intercept">intercept()</code> was called
+     <td>Until the session history is updated (inside that same task)
+     <td>So that we can suppress the normal scroll restoration logic in favor of the behavior given by the <code data-x="dom-NavigationInterceptOptions-scroll">scroll</code> option
+  </table>
+
+  <p>We also cannot assume there is only a single navigation requested at any given time, due to web
+  developer code such as:</p>
+
+  <pre><code class="js">const p1 = navigation.navigate(url1).finished;
+const p2 = navigation.navigate(url2).finished;</code></pre>
+
+  <p>That is, in this scenario, we need to ensure that while navigating to <code
+  data-x="">url2</code>, we still have the promise <code data-x="">p1</code> around so that we can
+  reject it. We can't just get rid of any ongoing navigation promises the moment the second call to
+  <code data-x="dom-Navigation-navigate">navigate()</code> happens.</p>
+
+  <p>We end up accomplishing all this by associating the following with each
+  <code>Navigation</code>:</p>
+
+  <ul>
+   <li><p><dfn>Ongoing <code data-x="event-navigate">navigate</code> event</dfn>, a
+   <code>NavigateEvent</code> or null, initially null.</p></li>
+
+   <li><p><dfn>Focus changed during ongoing navigation</dfn>, a boolean, initially false.</p></li>
+
+   <li><p><dfn>Suppress normal scroll restoration during ongoing navigation</dfn>, a boolean,
+   initially false.</p></li>
+
+   <li><p><dfn>Ongoing API method tracker</dfn>, a <span>navigation API method tracker</span> or
+   null, initially null.</p></li>
+
+   <li><p><dfn>Upcoming traverse API method trackers</dfn>, an <span>ordered map</span> from strings
+   to <span data-x="navigation API method tracker">navigation API method trackers</span>, initially
+   empty.</p></li>
+  </ul>
+
+  <p class="note">The state here that is not stored in <span data-x="navigation API method
+  tracker">navigation API method trackers</span> is state which needs to be tracked even for
+  navigations that are not initiated via navigation API methods.</p>
+
+  <p>A <dfn>navigation API method tracker</dfn> is a <span>struct</span> with the following <span
+  data-x="struct item">items</span>:</p>
+
+  <ul>
+   <li><p>A <dfn data-x="navigation-api-method-tracker-navigation">navigation object</dfn>, a
+   <code>Navigation</code></p></li>
+
+   <li><p>A <dfn data-x="navigation-api-method-tracker-key">key</dfn>, a string or null</p></li>
+
+   <li><p>An <dfn data-x="navigation-api-method-tracker-info">info</dfn>, a JavaScript
+   value</p></li>
+
+   <li><p>A <dfn data-x="navigation-api-method-tracker-state">serialized state</dfn>, a
+   <span>serialized state</span> or null</p></li>
+
+   <li><p>A <dfn data-x="navigation-api-method-tracker-committed-to-entry">committed-to entry</dfn>,
+   a <code>NavigationHistoryEntry</code> or null</p></li>
+
+   <li><p>A <dfn data-x="navigation-api-method-tracker-committed">committed promise</dfn>, a
+   promise</p></li>
+
+   <li><p>A <dfn data-x="navigation-api-method-tracker-finished">finished promise</dfn>, a
+   promise</p></li>
+
+   <li><p>A <dfn data-x="navigation-api-method-tracker-pending">pending</dfn>, a boolean.</p></li>
+  </ul>
+
+  <p>All this state is then managed via the following algorithms.</p>
+
+  <div algorithm>
+  <p>To <dfn>set up a navigate/reload API method tracker</dfn> given a <code>Navigation</code>
+  <var>navigation</var>, a JavaScript value <var>info</var>, and a <span>serialized
+  state</span>-or-null <var>serializedState</var>:</p>
+
+  <ol>
+   <li><p>Let <var>committedPromise</var> and <var>finishedPromise</var> be new promises created in
+   <var>navigation</var>'s <span data-x="concept-relevant-realm">relevant realm</span>.</p></li>
+
+   <li>
+    <p><span>Mark as handled</span> <var>finishedPromise</var>.</p>
+
+    <div class="note" id="note-mark-as-handled-navigation-api-finished">
+     <p>The web developer doesn’t necessarily care about <var>finishedPromise</var> being
+     rejected:</p>
+
+     <ul>
+      <li><p>They might only care about <var>committedPromise</var>.</p></li>
+
+      <li><p>They could be doing multiple synchronous navigations within the same task, in which
+      case all but the last will be aborted (causing their <var>finishedPromise</var> to reject).
+      This could be an application bug, but also could just be an emergent feature of disparate
+      parts of the application overriding each others' actions.</p></li>
+
+      <li><p>They might prefer to listen to other transition-failure signals instead of
+      <var>finishedPromise</var>, e.g., the <code data-x="event-navigateerror">navigateerror</code>
+      event, or the <code
+      data-x="dom-NavigationTransition-finished">navigation.transition.finished</code>
+      promise.</p></li>
+     </ul>
+
+     <p>As such, we mark it as handled to ensure that it never triggers <code
+     data-x="event-unhandledrejection">unhandledrejection</code> events.</p>
+    </div>
+   </li>
+
+   <li>
+    <p>Return a new <span>navigation API method tracker</span> with:</p>
+
+    <dl class="props">
+     <dt><span data-x="navigation-api-method-tracker-navigation">navigation object</span></dt>
+     <dd><var>navigation</var></dd>
+
+     <dt><span data-x="navigation-api-method-tracker-key">key</span></dt>
+     <dd>null</dd>
+
+     <dt><span data-x="navigation-api-method-tracker-info">info</span></dt>
+     <dd><var>info</var></dd>
+
+     <dt><span data-x="navigation-api-method-tracker-state">serialized state</span></dt>
+     <dd><var>serializedState</var></dd>
+
+     <dt><span data-x="navigation-api-method-tracker-committed-to-entry">committed-to entry</span></dt>
+     <dd>null</dd>
+
+     <dt><span data-x="navigation-api-method-tracker-committed">committed promise</span></dt>
+     <dd><var>committedPromise</var></dd>
+
+     <dt><span data-x="navigation-api-method-tracker-finished">finished promise</span></dt>
+     <dd><var>finishedPromise</var></dd>
+
+     <dt><span data-x="navigation-api-method-tracker-pending">pending</span></dt>
+     <dd>false if <var>navigation</var> <span>has entries and events disabled</span>; otherwise
+     true</dd>
+    </dl>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>add an upcoming traverse API method tracker</dfn> given a <code>Navigation</code>
+  <var>navigation</var>, a string <var>destinationKey</var>, and a JavaScript value
+  <var>info</var>:</p>
+
+  <ol>
+   <li><p>Let <var>committedPromise</var> and <var>finishedPromise</var> be new promises created in
+   <var>navigation</var>'s <span data-x="concept-relevant-realm">relevant realm</span>.</p></li>
+
+   <li>
+    <p><span>Mark as handled</span> <var>finishedPromise</var>.</p>
+
+    <p class="note">See the <a href="#note-mark-as-handled-navigation-api-finished">previous
+    discussion</a> about why this is done.</p>
+   </li>
+
+   <li>
+    <p>Let <var>apiMethodTracker</var> be a new <span>navigation API method tracker</span> with:</p>
+
+    <dl class="props">
+     <dt><span data-x="navigation-api-method-tracker-navigation">navigation object</span></dt>
+     <dd><var>navigation</var></dd>
+
+     <dt><span data-x="navigation-api-method-tracker-key">key</span></dt>
+     <dd><var>destinationKey</var></dd>
+
+     <dt><span data-x="navigation-api-method-tracker-info">info</span></dt>
+     <dd><var>info</var></dd>
+
+     <dt><span data-x="navigation-api-method-tracker-state">serialized state</span></dt>
+     <dd>null</dd>
+
+     <dt><span data-x="navigation-api-method-tracker-committed-to-entry">committed-to entry</span></dt>
+     <dd>null</dd>
+
+     <dt><span data-x="navigation-api-method-tracker-committed">committed promise</span></dt>
+     <dd><var>committedPromise</var></dd>
+
+     <dt><span data-x="navigation-api-method-tracker-finished">finished promise</span></dt>
+     <dd><var>finishedPromise</var></dd>
+
+     <dt><span data-x="navigation-api-method-tracker-pending">pending</span></dt>
+     <dd>false</dd>
+    </dl>
+   </li>
+
+   <li><p>Set <var>navigation</var>'s <span>upcoming traverse API method
+   trackers</span>[<var>destinationKey</var>] to <var>apiMethodTracker</var>.</p></li>
+
+   <li><p>Return <var>apiMethodTracker</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="navigation-api-method-tracker-clean-up">clean up</dfn> a <span>navigation API
+  method tracker</span> <var>apiMethodTracker</var>:</p>
+
+  <ol>
+   <li><p>Let <var>navigation</var> be <var>apiMethodTracker</var>'s <span
+   data-x="navigation-api-method-tracker-navigation">navigation object</span>.</p></li>
+
+   <li><p>If <var>navigation</var>'s <span>ongoing API method tracker</span> is
+   <var>apiMethodTracker</var>, then set <var>navigation</var>'s <span>ongoing API method
+   tracker</span> to null.</p></li>
+
+   <li>
+    <p>Otherwise:</p>
+
+    <ol>
+     <li><p>Let <var>key</var> be <var>apiMethodTracker</var>'s <span
+     data-x="navigation-api-method-tracker-key">key</span>.</p></li>
+
+     <li><p><span>Assert</span>: <var>key</var> is not null.</p></li>
+
+     <li><p><span>Assert</span>: <var>navigation</var>'s <span>upcoming traverse API method
+     trackers</span>[<var>key</var>] <span data-x="map exists">exists</span>.</p></li>
+
+     <li><p><span data-x="map remove">Remove</span> <var>navigation</var>'s <span>upcoming traverse
+     API method trackers</span>[<var>key</var>].</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>notify about the committed-to entry</dfn> given a <span>navigation API method
+  tracker</span> <var>apiMethodTracker</var> and a <code>NavigationHistoryEntry</code>
+  <var>nhe</var>:</p>
+
+  <ol>
+   <li><p>Set <var>apiMethodTracker</var>'s <span
+   data-x="navigation-api-method-tracker-committed-to-entry">committed-to entry</span> to
+   <var>nhe</var>.</p></li>
+
+   <li>
+    <p>If <var>apiMethodTracker</var>'s <span
+    data-x="navigation-api-method-tracker-state">serialized state</span> is not null, then set
+    <var>nhe</var>'s <span data-x="nhe-she">session history entry</span>'s <span
+    data-x="she-navigation-api-state">navigation API state</span> to <var>apiMethodTracker</var>'s
+    <span data-x="navigation-api-method-tracker-state">serialized state</span>.</p>
+
+    <p class="note">If it's null, then we're traversing to <var>nhe</var> via <code
+    data-x="dom-Navigation-traverseTo">navigation.traverseTo()</code>, which does not allow changing
+    the state.</p>
+
+    <p class="note">At this point, <var>apiMethodTracker</var>'s <span
+    data-x="navigation-api-method-tracker-state">serialized state</span> is no longer needed.
+    Implementations might want to clear it out to avoid keeping it alive for the lifetime of the
+    <span>navigation API method tracker</span>.</p>
+   </li>
+
+   <li>
+    <p>Resolve <var>apiMethodTracker</var>'s <span
+    data-x="navigation-api-method-tracker-committed">committed promise</span> with
+    <var>nhe</var>.</p>
+
+    <p class="note">At this point, <var>apiMethodTracker</var>'s <span
+    data-x="navigation-api-method-tracker-committed">committed promise</span> is only needed in
+    cases where it has not yet been returned to author code. Implementations might want to clear it
+    out to avoid keeping it alive for the lifetime of the <span>navigation API method
+    tracker</span>.</p>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>resolve the finished promise</dfn> for a <span>navigation API method tracker</span>
+  <var>apiMethodTracker</var>:</p>
+
+  <ol>
+   <li><p><span>Assert</span>: <var>apiMethodTracker</var>'s <span
+   data-x="navigation-api-method-tracker-committed-to-entry">committed-to entry</span> is not
+   null.</p></li>
+
+   <li><p>Resolve <var>apiMethodTracker</var>'s <span
+   data-x="navigation-api-method-tracker-finished">finished promise</span> with its <span
+   data-x="navigation-api-method-tracker-committed-to-entry">committed-to entry</span>.</p></li>
+
+   <li><p><span data-x="navigation-api-method-tracker-clean-up">Clean up</span>
+   <var>apiMethodTracker</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>reject the finished promise</dfn> for a <span>navigation API method tracker</span>
+  <var>apiMethodTracker</var> with a JavaScript value <var>exception</var>:</p>
+
+  <ol>
+   <li>
+    <p>Reject <var>apiMethodTracker</var>'s <span
+    data-x="navigation-api-method-tracker-committed">committed promise</span> with
+    <var>exception</var>.</p>
+
+    <p class="note">This will do nothing if <var>apiMethodTracker</var>'s <span
+    data-x="navigation-api-method-tracker-committed">committed promise</span> was previously
+    resolved via <span>notify about the committed-to entry</span>.</p>
+   </li>
+
+   <li><p>Reject <var>apiMethodTracker</var>'s <span
+   data-x="navigation-api-method-tracker-finished">finished promise</span> with
+   <var>exception</var>.</p></li>
+
+   <li><p><span data-x="navigation-api-method-tracker-clean-up">Clean up</span>
+   <var>apiMethodTracker</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>abort the ongoing navigation</dfn> given a <code>Navigation</code>
+  <var>navigation</var> and an optional <code>DOMException</code> <var>error</var>:</p>
+
+  <ol>
+   <li><p>Let <var>event</var> be <var>navigation</var>'s <span>ongoing <code
+   data-x="event-navigate">navigate</code> event</span>.</p></li>
+
+   <li><p><span>Assert</span>: <var>event</var> is not null.</p></li>
+
+   <li><p>Set <var>navigation</var>'s <span>focus changed during ongoing navigation</span> to
+   false.</p></li>
+
+   <li><p>Set <var>navigation</var>'s <span>suppress normal scroll restoration during ongoing
+   navigation</span> to false.</p></li>
+
+   <li><p>If <var>error</var> was not given, then let <var>error</var> be a new
+   <span>"<code>AbortError</code>"</span> <code>DOMException</code> created in
+   <var>navigation</var>'s <span data-x="concept-relevant-realm">relevant realm</span>.</p></li>
+
+   <li><p>If <var>event</var>'s <span>dispatch flag</span> is set, then set <var>event</var>'s
+   <span>canceled flag</span> to true.</p></li>
+
+   <li><p><span data-x="abort a NavigateEvent">Abort</span> <var>event</var> given
+   <var>error</var>.</p></li>
+  </ol>
+
+  <p>To <dfn>abort a <code>NavigateEvent</code></dfn> <var>event</var> given <var>reason</var>:</p>
+
+  <ol>
+   <li><p>Let <var>navigation</var> be <var>event</var>'s <span>relevant global object</span>'s
+   <span data-x="window-navigation-api">navigation API</span>.</p></li>
+
+   <li><p>Set <var>navigation</var>'s <span>ongoing <code data-x="event-navigate">navigate</code>
+   event</span> to null.</p></li>
+
+   <li><p><span>Signal abort</span> on <var>event</var>'s <span
+   data-x="concept-NavigateEvent-abort-controller">abort controller</span> given
+   <var>reason</var>.</p></li>
+
+   <li>
+    <p>Let <var>errorInfo</var> be the result of <span data-x="extract-error">extracting error
+    information</span> from <var>reason</var>.</p>
+
+    <p class="note">For example, if this algorithm is reached because of a call to <code
+    data-x="dom-window-stop">window.stop()</code>, these properties would probably end up
+    initialized based on the line of script that called <code
+    data-x="dom-window-stop">window.stop()</code>. But if it's because the user clicked the stop
+    button, these properties would probably end up with default values like the empty string or
+    0.</p>
+   </li>
+
+   <li><p>If <var>navigation</var>'s <span>ongoing API method tracker</span> is non-null, then
+   <span>reject the finished promise</span> for <var>apiMethodTracker</var> with
+   <var>reason</var>.</p></li>
+
+   <li><p><span data-x="concept-event-fire">Fire an event</span> named <code
+   data-x="event-navigateerror">navigateerror</code> at <var>navigation</var> using
+   <code>ErrorEvent</code>, with additional attributes initialized according to
+   <var>errorInfo</var>.</p></li>
+
+   <li><p>If <var>navigation</var>'s <span data-x="concept-Navigation-transition">transition</span>
+   is null, then return.</p></li>
+
+   <li><p>Reject <var>navigation</var>'s <span
+   data-x="concept-Navigation-transition">transition</span>'s <span
+   data-x="concept-NavigationTransition-committed">committed promise</span> with
+   <var>reason</var>.</p></li>
+
+   <li><p>Reject <var>navigation</var>'s <span
+   data-x="concept-Navigation-transition">transition</span>'s <span
+   data-x="concept-NavigationTransition-finished">finished promise</span> with
+   <var>reason</var>.</p></li>
+
+   <li><p>Set <var>navigation</var>'s <span data-x="concept-Navigation-transition">transition</span>
+   to null.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>inform the navigation API about aborting navigation</dfn> in a <span>navigable</span>
+  <var>navigable</var>:</p>
+
+  <ol>
+   <li><p>If this algorithm is running on <var>navigable</var>'s <span data-x="nav-window">active
+   window</span>'s <span>relevant agent</span>'s <span data-x="concept-agent-event-loop">event
+   loop</span>, then continue on to the following steps. Otherwise, <span>queue a global task</span>
+   on the <span>navigation and traversal task source</span> given <var>navigable</var>'s <span
+   data-x="nav-window">active window</span> to run the following steps.</p></li>
+
+   <li><p>Let <var>navigation</var> be <var>navigable</var>'s <span data-x="nav-window">active
+   window</span>'s <span data-x="window-navigation-api">navigation API</span>.</p></li>
+
+   <li>
+    <p><span>While</span> <var>navigation</var>'s <span>ongoing <code
+    data-x="event-navigate">navigate</code> event</span> is not null:</p>
+
+    <ol>
+     <li><p><span>Abort the ongoing navigation</span> given <var>navigation</var>.</p></li>
+    </ol>
+
+    <div class="note">
+     <p>If there is an ongoing cross-document navigation, this means it will be signaled to the
+     navigation API as aborted, e.g., by firing <code
+     data-x="event-navigateerror">navigateerror</code> events. This is somewhat accurate, since the
+     next navigation the <code>Document</code> experiences will be this same-document navigation, so
+     a developer which was expecting the next navigation completion to be that of the cross-document
+     navigation gets a useful signal that this did not happen. However, it is also somewhat
+     inaccurate, as the browser will continue to process the ongoing cross-document navigation
+     (applying it after this same-document one synchronously finishes).</p>
+
+     <p>Ultimately, the navigation API gets a bit messy with overlapping cross- and same-document
+     navigations, as the <a href="#ongoing-navigation-tracking">ongoing navigation tracking</a>
+     machinery and APIs are built to expose only a single ongoing navigation. Web developers will be
+     best-served if they do not create such overlapping situations, e.g., by <code
+     data-x="">await</code>ing promises returned from <code
+     data-x="dom-Navigation-navigate">navigation.navigate()</code> before starting new
+     navigations.</p>
+    </div>
+
+    <p class="note">This is a loop, since <span>abort the ongoing navigation</span> can run
+    JavaScript (e.g., via the <code data-x="event-navigateerror">navigateerror</code> event), which
+    might start a new navigation. Since such a newly-started navigation will be superseded by the
+    completion of this navigation, it gets signaled to the navigation API as aborted.</p>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>inform the navigation API about child navigable destruction</dfn> given a
+  <span>navigable</span> <var>navigable</var>:</p>
+
+  <ol>
+   <li><p><span>Inform the navigation API about aborting navigation</span> in
+   <var>navigable</var>.</p></li>
+
+   <li><p>Let <var>navigation</var> be <var>navigable</var>'s <span data-x="nav-window">active
+   window</span>'s <span data-x="window-navigation-api">navigation API</span>.</p></li>
+
+   <li><p>Let <var>traversalAPIMethodTrackers</var> be a <span data-x="list clone">clone</span> of
+   <var>navigation</var>'s <span>upcoming traverse API method trackers</span>.</p></li>
+
+   <li><p><span data-x="list iterate">For each</span> <var>apiMethodTracker</var> of
+   <var>traversalAPIMethodTrackers</var>: <span>reject the finished promise</span> for
+   <var>apiMethodTracker</var> with a new <span>"<code>AbortError</code>"</span>
+   <code>DOMException</code> created in <var>navigation</var>'s <span
+   data-x="concept-relevant-realm">relevant realm</span>.</p></li>
+  </ol>
+  </div>
+
+  <hr>
+
+  <p>The ongoing navigation concept is most-directly exposed to web developers through the <code
+  data-x="dom-Navigation-transition">navigation.transition</code> property, which is an instance of
+  the <code>NavigationTransition</code> interface:</p>
+
+  <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>NavigationTransition</dfn> {
+  readonly attribute <span>NavigationType</span> <span data-x="dom-NavigationTransition-navigationType">navigationType</span>;
+  readonly attribute <span>NavigationHistoryEntry</span> <span data-x="dom-NavigationTransition-from">from</span>;
+  readonly attribute <span>NavigationDestination</span> <span data-x="dom-NavigationTransition-to">to</span>;
+  readonly attribute <span data-x="idl-Promise">Promise</span>&lt;undefined> <span data-x="dom-NavigationTransition-committed">committed</span>;
+  readonly attribute <span data-x="idl-Promise">Promise</span>&lt;undefined> <span data-x="dom-NavigationTransition-finished">finished</span>;
+};</code></pre>
+
+  </div>
+
+  <dl class="domintro">
+   <dt><code data-x=""><span data-x="dom-navigation">navigation</span>.<span subdfn data-x="dom-Navigation-transition">transition</span></code></dt>
+   <dd>
+    <p>A <code>NavigationTransition</code> representing any ongoing navigation that hasn't yet
+    reached the <code data-x="event-navigatesuccess">navigatesuccess</code> or <code
+    data-x="event-navigateerror">navigateerror</code> stage, if one exists; or null, if there is no
+    such transition ongoing.</p>
+
+    <p>Since <code data-x="dom-Navigation-currentEntry">navigation.currentEntry</code> (and other
+    properties like <code data-x="dom-location-href">location.href</code>) are updated immediately
+    upon navigation, this <code data-x="dom-Navigation-transition">navigation.transition</code>
+    property is useful for determining when such navigations are not yet fully settled, according to
+    any handlers passed to <code
+    data-x="dom-NavigateEvent-intercept">navigateEvent.intercept()</code>.</p>
+   </dd>
+
+   <dt><code data-x=""><span data-x="dom-navigation">navigation</span>.<span data-x="dom-Navigation-transition">transition</span>.<span subdfn data-x="dom-NavigationTransition-navigationType">navigationType</span></code></dt>
+   <dd><p>One of "<code data-x="dom-NavigationType-push">push</code>", "<code
+   data-x="dom-NavigationType-replace">replace</code>", "<code
+   data-x="dom-NavigationType-reload">reload</code>", or "<code
+   data-x="dom-NavigationType-traverse">traverse</code>", indicating what type of navigation this
+   transition is for.</p></dd>
+
+   <dt><code data-x=""><span data-x="dom-navigation">navigation</span>.<span data-x="dom-Navigation-transition">transition</span>.<span subdfn data-x="dom-NavigationTransition-from">from</span></code></dt>
+   <dd><p>The <code>NavigationHistoryEntry</code> from which the transition is coming. This can be
+   useful to compare against <code
+   data-x="dom-Navigation-currentEntry">navigation.currentEntry</code>.</p></dd>
+
+   <dt><code data-x=""><span data-x="dom-navigation">navigation</span>.<span data-x="dom-Navigation-transition">transition</span>.<span subdfn data-x="dom-NavigationTransition-to">to</span></code></dt>
+   <dd><p>The <code>NavigationDestination</code> of the transition. This can be useful as a way to
+   reflect a current navigation's destination's <code
+   data-x="dom-NavigationDestination-url">url</code> without having to listen to the <code
+   data-x="event-navigate">navigate</code> event.</p></dd>
+
+   <dt><code data-x=""><span data-x="dom-navigation">navigation</span>.<span data-x="dom-Navigation-transition">transition</span>.<span subdfn data-x="dom-NavigationTransition-committed">committed</span></code></dt>
+   <dd><p>A promise which fulfills once the <code
+   data-x="dom-Navigation-currentEntry">navigation.currentEntry</code> and <span
+   data-x="concept-document-url">URL</span> change. This occurs after all of its <span
+   data-x="dom-NavigationInterceptOptions-precommitHandler">precommit handlers</span> are fulfilled.
+   The promise rejects if one or more of the <span
+   data-x="dom-NavigationInterceptOptions-precommitHandler">precommit handlers</span>
+   rejects.</p></dd>
+
+   <dt><code data-x=""><span data-x="dom-navigation">navigation</span>.<span data-x="dom-Navigation-transition">transition</span>.<span subdfn data-x="dom-NavigationTransition-finished">finished</span></code></dt>
+   <dd><p>A promise which fulfills at the same time as the <code
+   data-x="event-navigatesuccess">navigatesuccess</code> fires, or rejects at the same time the
+   <code data-x="event-navigateerror">navigateerror</code> event fires.</p></dd>
+  </dl>
+
+  <div w-nodev>
+
+  <p>Each <code>Navigation</code> has a <dfn
+  data-x="concept-Navigation-transition">transition</dfn>, which is a
+  <code>NavigationTransition</code> or null, initially null.</p>
+
+  <div algorithm>
+  <p>The <dfn attribute for="Navigation"><code
+  data-x="dom-Navigation-transition">transition</code></dfn> getter steps are to return
+  <span>this</span>'s <span data-x="concept-Navigation-transition">transition</span>.</p>
+  </div>
+
+  <p>Each <code>NavigationTransition</code> has an associated <dfn
+  data-x="concept-NavigationTransition-navigationType">navigation type</dfn>, which is a
+  <code>NavigationType</code>.</p>
+
+  <p>Each <code>NavigationTransition</code> has an associated <dfn
+  data-x="concept-NavigationTransition-from">from entry</dfn>, which is a
+  <code>NavigationHistoryEntry</code>.</p>
+
+  <p>Each <code>NavigationTransition</code> has an associated <dfn
+  data-x="concept-NavigationTransition-destination">destination</dfn>, which is a
+  <code>NavigationDestination</code>.</p>
+
+  <p>Each <code>NavigationTransition</code> has an associated <dfn
+  data-x="concept-NavigationTransition-committed">committed promise</dfn>, which is a promise.</p>
+
+  <p>Each <code>NavigationTransition</code> has an associated <dfn
+  data-x="concept-NavigationTransition-finished">finished promise</dfn>, which is a promise.</p>
+
+  <div algorithm>
+  <p>The <dfn attribute for="NavigationTransition"><code
+  data-x="dom-NavigationTransition-navigationType">navigationType</code></dfn> getter steps are to
+  return <span>this</span>'s <span data-x="concept-NavigationTransition-navigationType">navigation
+  type</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="NavigationTransition"><code
+  data-x="dom-NavigationTransition-from">from</code></dfn> getter steps are to return
+  <span>this</span>'s <span data-x="concept-NavigationTransition-from">from entry</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="NavigationTransition"><code
+  data-x="dom-NavigationTransition-to">to</code></dfn> getter steps are to return
+  <span>this</span>'s <span
+  data-x="concept-NavigationTransition-destination">destination</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="NavigationTransition"><code
+  data-x="dom-NavigationTransition-committed">committed</code></dfn> getter steps are to return
+  <span>this</span>'s <span data-x="concept-NavigationTransition-committed">committed
+  promise</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="NavigationTransition"><code
+  data-x="dom-NavigationTransition-finished">finished</code></dfn> getter steps are to return
+  <span>this</span>'s <span data-x="concept-NavigationTransition-finished">finished
+  promise</span>.</p>
+  </div>
+
+  </div>
+
+

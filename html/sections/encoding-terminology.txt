@@ -1,0 +1,16 @@
+WHATWG HTML — section encoding-terminology — Character encodings
+
+  <h4 id="encoding-terminology">Character encodings</h4>
+
+  <p>A <dfn data-x="encoding" data-x-href="https://encoding.spec.whatwg.org/#encoding">character
+  encoding</dfn>, or just <i>encoding</i> where that is not ambiguous, is a defined way to convert
+  between byte streams and Unicode strings, as defined in <cite>Encoding</cite>. An
+  <span>encoding</span> has an <dfn data-x-href="https://encoding.spec.whatwg.org/#name">encoding
+  name</dfn> and one or more <dfn data-x="encoding label"
+  data-x-href="https://encoding.spec.whatwg.org/#label">encoding labels</dfn>, referred to as the
+  encoding's <i>name</i> and <i>labels</i> in the Encoding standard. <ref>ENCODING</ref></p>
+
+
+
+  <div w-nodev>
+

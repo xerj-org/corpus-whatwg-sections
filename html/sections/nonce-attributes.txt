@@ -1,0 +1,101 @@
+WHATWG HTML — section nonce-attributes — Nonce attributes
+
+  <h4>Nonce attributes</h4>
+
+  <p>A <dfn element-attr for="htmlsvg-global" data-x="attr-nonce"><code>nonce</code></dfn> content
+  attribute represents a cryptographic nonce ("number used once") which can be used by <cite>Content
+  Security Policy</cite> to determine whether or not a given fetch will be allowed to proceed. The
+  value is text. <ref>CSP</ref></p>
+
+  <p>Elements that have a <code data-x="attr-nonce">nonce</code> content attribute ensure that the
+  cryptographic nonce is only exposed to script (and not to side-channels like CSS attribute
+  selectors) by taking the value from the content attribute, moving it into an internal slot named
+  <dfn for="HTMLOrSVGOrMathMLElement" attribute>[[CryptographicNonce]]</dfn>, exposing it to script
+  via the <code>HTMLOrSVGOrMathMLElement</code> interface mixin, and setting the content attribute
+  to the empty string. Unless otherwise specified, the slot's value is the empty string.</p>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>element</var>.<span subdfn data-x="dom-HTMLOrSVGOrMathMLElement-nonce">nonce</span></code></dt>
+   <dd><p>Returns the value set for <var>element</var>'s cryptographic nonce. If the setter was not
+   used, this will be the value originally found in the <code data-x="attr-nonce">nonce</code>
+   content attribute.</p></dd>
+
+   <dt><code data-x=""><var>element</var>.<span data-x="dom-HTMLOrSVGOrMathMLElement-nonce">nonce</span> = <var>value</var></code></dt>
+   <dd><p>Updates <var>element</var>'s cryptographic nonce value.</p></dd>
+  </dl>
+
+  <div algorithm>
+  <p>The <dfn id="dom-noncedelement-nonce" attribute for="HTMLOrSVGOrMathMLElement"><code
+  data-x="dom-HTMLOrSVGOrMathMLElement-nonce">nonce</code></dfn> IDL attribute must, on getting,
+  return the value of this element's <span>[[CryptographicNonce]]</span>; and on setting, set this
+  element's <span>[[CryptographicNonce]]</span> to the given value.</p>
+  </div>
+
+  <p class="note" id="nonce-does-not-update-dom">Note how the setter for the <code
+  data-x="dom-HTMLOrSVGOrMathMLElement-nonce">nonce</code> IDL attribute does not update the
+  corresponding content attribute. This, as well as the below setting of the <code
+  data-x="attr-nonce">nonce</code> content attribute to the empty string when an element
+  <span>becomes browsing-context connected</span>, is meant to prevent exfiltration of the nonce
+  value through mechanisms that can easily read content attributes, such as selectors. Learn more in
+  <a href="https://github.com/whatwg/html/issues/2369">issue #2369</a>, where this behavior was
+  introduced.</p>
+
+  <div algorithm>
+  <p>The following <span data-x="concept-element-attributes-change-ext">attribute change
+  steps</span> are used for the <code data-x="attr-nonce">nonce</code> content attribute:
+
+  <ol>
+   <li><p>If <var>element</var> does not <span>include</span> <code>HTMLOrSVGOrMathMLElement</code>,
+   then return.</p></li>
+
+   <li><p>If <var>localName</var> is not <code data-x="attr-nonce">nonce</code> or
+   <var>namespace</var> is not null, then return.</p></li>
+
+   <li><p>If <var>value</var> is null, then set <var>element</var>'s
+   <span>[[CryptographicNonce]]</span> to the empty string.</p></li>
+
+   <li><p>Otherwise, set <var>element</var>'s <span>[[CryptographicNonce]]</span> to
+   <var>value</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>Whenever an element <span data-x="include">including</span>
+  <code>HTMLOrSVGOrMathMLElement</code> <span>becomes browsing-context connected</span>, the user
+  agent must execute the following steps on the <var>element</var>:</p>
+
+  <ol>
+   <li><p>Let <var>CSP list</var> be <var>element</var>'s <span data-x="shadow-including
+   root">shadow-including root</span>'s <span data-x="concept-document-policy-container">policy
+   container</span>'s <span data-x="policy-container-csp-list">CSP list</span>.</p></li>
+
+   <li>
+    <p>If <var>CSP list</var> <span>contains a header-delivered Content Security Policy</span>, and
+    <var>element</var> has a <code data-x="attr-nonce">nonce</code> content attribute
+    whose value is not the empty string:</p>
+
+    <ol>
+     <li><p>Let <var>nonce</var> be <var>element</var>'s
+     <span>[[CryptographicNonce]]</span>.</p></li>
+
+     <li><p><span data-x="concept-element-attributes-set-value">Set an attribute value</span> for
+     <var>element</var> using "<code data-x="attr-nonce">nonce</code>" and the empty
+     string.</p></li>
+
+     <li><p>Set <var>element</var>'s <span>[[CryptographicNonce]]</span> to
+     <var>nonce</var>.</p></li>
+    </ol>
+
+    <p class="note">If <var>element</var>'s <span>[[CryptographicNonce]]</span> were not restored it
+    would be the empty string at this point.</p>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <span data-x="concept-node-clone-ext">cloning steps</span> for elements that
+  <span>include</span> <code>HTMLOrSVGOrMathMLElement</code> given <var>node</var>, <var>copy</var>,
+  and <var>subtree</var> are to set <var>copy</var>'s <span>[[CryptographicNonce]]</span> to
+  <var>node</var>'s <span>[[CryptographicNonce]]</span>.</p>
+  </div>
+

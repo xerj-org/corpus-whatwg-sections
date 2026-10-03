@@ -1,0 +1,425 @@
+WHATWG HTML — section timers — Timers
+
+  <h3 split-filename="timers-and-user-prompts" id="timers">Timers</h3>
+
+  <p>The <code data-x="dom-setTimeout">setTimeout()</code> and <code
+  data-x="dom-setInterval">setInterval()</code> methods allow authors to schedule timer-based
+  callbacks.</p>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>id</var> = self.<span subdfn data-x="dom-setTimeout">setTimeout</span>(<var>handler</var> [, <var>timeout</var> [, ...<var>arguments</var> ] ])</code></dt>
+
+   <dd>
+    <p>Schedules a timeout to run <var>handler</var> after <var>timeout</var> milliseconds. Any
+    <var>arguments</var> are passed straight through to the <var>handler</var>.</p>
+   </dd>
+
+   <dt><code data-x=""><var>id</var> = self.<span data-x="dom-setTimeout">setTimeout</span>(<var>code</var> [, <var>timeout</var> ])</code></dt>
+
+   <dd>
+    <p>Schedules a timeout to compile and run <var>code</var> after <var>timeout</var>
+    milliseconds.</p>
+   </dd>
+
+   <dt><code data-x="">self.<span subdfn data-x="dom-clearTimeout">clearTimeout</span>(<var>id</var>)</code></dt>
+   <!-- don't mention that the id is optional, since if omitted, the method does nothing -->
+
+   <dd><p>Cancels the timeout set with <code data-x="dom-setTimeout">setTimeout()</code> or <code
+   data-x="dom-setInterval">setInterval()</code> identified by <var>id</var>.</p></dd>
+
+   <dt><code data-x=""><var>id</var> = self.<span subdfn data-x="dom-setInterval">setInterval</span>(<var>handler</var> [, <var>timeout</var> [, ...<var>arguments</var> ] ])</code></dt>
+
+   <dd>
+    <p>Schedules a timeout to run <var>handler</var> every <var>timeout</var> milliseconds. Any
+    <var>arguments</var> are passed straight through to the <var>handler</var>.</p>
+   </dd>
+
+   <dt><code data-x=""><var>id</var> = self.<span data-x="dom-setInterval">setInterval</span>(<var>code</var> [, <var>timeout</var> ])</code></dt>
+
+   <dd>
+    <p>Schedules a timeout to compile and run <var>code</var> every <var>timeout</var>
+    milliseconds.</p>
+   </dd>
+
+   <dt><code data-x="">self.<span subdfn data-x="dom-clearInterval">clearInterval</span>(<var>id</var>)</code></dt>
+   <!-- don't mention that the id is optional, since if omitted, the method does nothing -->
+
+   <dd><p>Cancels the timeout set with <code data-x="dom-setInterval">setInterval()</code> or <code
+   data-x="dom-setTimeout">setTimeout()</code> identified by <var>id</var>.</p></dd>
+  </dl>
+
+  <p class="note">Timers can be nested; after five such nested timers, however, the interval is
+  forced to be at least four milliseconds.</p>
+
+  <p class="note">This API does not guarantee that timers will run exactly on schedule. Delays due
+  to CPU load, other tasks, etc, are to be expected.</p>
+
+  <div w-nodev>
+
+  <p>Objects that implement the <code>WindowOrWorkerGlobalScope</code> mixin have a
+  <dfn export for="WindowOrWorkerGlobalScope">map of setTimeout and setInterval IDs</dfn>, which is
+  an <span>ordered map</span>, initially empty. Each <span data-x="map key">key</span> in this map
+  is a positive integer, corresponding to the return value of a <code data-x="dom-setTimeout"
+  >setTimeout()</code> or <code data-x="dom-setInterval">setInterval()</code> call.
+  Each <span data-x="map value">value</span> is a <span>unique internal value</span>, corresponding
+  to a key in the object's <span>map of active timers</span>.</p>
+
+  <hr>
+
+  <div algorithm>
+  <p>The <dfn method for="WindowOrWorkerGlobalScope" data-x="dom-setTimeout"><code
+  id="dom-windowtimers-setTimeout">setTimeout(<var>handler</var>, <var>timeout</var>,
+  ...<var>arguments</var>)</code></dfn> method steps are to return the result of running the
+  <span>timer initialization steps</span> given <span>this</span>, <var>handler</var>,
+  <var>timeout</var>, <var>arguments</var>, and false.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="WindowOrWorkerGlobalScope" data-x="dom-setInterval"><code
+  id="dom-windowtimers-setInterval">setInterval(<var>handler</var>, <var>timeout</var>,
+  ...<var>arguments</var>)</code></dfn> method steps are to return the result of running the
+  <span>timer initialization steps</span> given <span>this</span>, <var>handler</var>,
+  <var>timeout</var>, <var>arguments</var>, and true.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="WindowOrWorkerGlobalScope" data-x="dom-clearTimeout"><code
+  id="dom-windowtimers-clearTimeout">clearTimeout(<var>id</var>)</code></dfn> and <dfn method
+  for="WindowOrWorkerGlobalScope" data-x="dom-clearInterval"><code
+  id="dom-windowtimers-clearInterval">clearInterval(<var>id</var>)</code></dfn> method steps
+  are to <span data-x="map remove">remove</span> <span>this</span>'s <span>map of setTimeout and
+  setInterval IDs</span>[<var>id</var>].</p>
+  </div>
+
+  <p class="note">Because <code data-x="dom-clearTimeout">clearTimeout()</code> and <code
+  data-x="dom-clearInterval">clearInterval()</code> clear entries from the same map, either method
+  can be used to clear timers created by <code data-x="dom-setTimeout">setTimeout()</code> or <code
+  data-x="dom-setInterval">setInterval()</code>.</p>
+
+  <hr>
+
+  <div algorithm>
+  <p>To perform the <!--en-GB--><dfn id="timer-initialisation-steps">timer initialization
+  steps</dfn>, given a <code>WindowOrWorkerGlobalScope</code> <var>global</var>, a string or <code
+  data-x="idl-Function">Function</code> or <code data-x="tt-trustedscript">TrustedScript</code>
+  <var>handler</var>, a number <var>timeout</var>, a list <var>arguments</var>, a boolean
+  <var>repeat</var>, and optionally (and only if <var>repeat</var> is true) a number
+  <var>previousId</var>, perform the following steps. They return a number.</p>
+
+  <ol>
+   <li>
+    <p>If <var>handler</var> is not a <code data-x="idl-Function">Function</code> and
+    <var>previousId</var> was not given:</p>
+
+    <ol>
+     <li><p>Let <var>globalName</var> be "<code data-x="">Window</code>" if <var>global</var> is a
+     <code>Window</code> object; "<code data-x="">WorkerGlobalScope</code>" otherwise.</p></li>
+
+     <li><p>Let <var>methodName</var> be "<code data-x="">setInterval</code>" if <var>repeat</var>
+     is true; "<code data-x="">setTimeout</code>" otherwise.</p></li>
+
+     <li><p>Let <var>sink</var> be a concatenation of <var>globalName</var>, U+0020 SPACE, and
+     <var>methodName</var>.</p></li>
+
+     <li><p>Set <var>handler</var> to the result of invoking the <span
+     data-x="tt-getcompliantstring">get trusted type compliant string</span> algorithm with <code
+     data-x="tt-trustedscript">TrustedScript</code>, <var>global</var>, <var>handler</var>,
+     <var>sink</var>, and "<code data-x="">script</code>".</p></li>
+    </ol>
+   </li>
+
+   <li><p>Let <var>thisArg</var> be <var>global</var> if that is a <code>WorkerGlobalScope</code>
+   object; otherwise let <var>thisArg</var> be the <code>WindowProxy</code> that corresponds to
+   <var>global</var>.</p></li>
+
+   <li><p>If <var>previousId</var> was given, let <var>id</var> be <var>previousId</var>;
+   otherwise, let <var>id</var> be an <span>implementation-defined</span> integer that is greater
+   than zero and does not already <span data-x="map exists">exist</span> in <var>global</var>'s
+   <span>map of setTimeout and setInterval IDs</span>.</p></li>
+
+   <li>
+    <p>If the <span>surrounding agent</span>'s <span data-x="concept-agent-event-loop">event
+    loop</span>'s <span>currently running task</span> is a task that was created by this algorithm,
+    then let <var>nestingLevel</var> be the <span data-x="concept-task">task</span>'s <span>timer
+    nesting level</span>. Otherwise, let <var>nestingLevel</var> be 0.</p>
+
+    <p class="note">The task's <span>timer nesting level</span> is used both for nested calls to
+    <code data-x="dom-setTimeout">setTimeout()</code>, and for the repeating timers created by
+    <code data-x="dom-setInterval">setInterval()</code>. (Or, indeed, for any combination of the
+    two.) In other words, it represents nested invocations of this algorithm, not of a particular
+    method.</p>
+   </li>
+
+   <li><p>If <var>timeout</var> is less than 0, then set <var>timeout</var> to 0.</p></li>
+
+   <li><p>If <var>nestingLevel</var> is greater than 5, and <var>timeout</var> is less than 4, then
+   set <var>timeout</var> to 4.</p></li>
+
+   <li><p>Let <var>realm</var> be <var>global</var>'s <span data-x="concept-relevant-realm">relevant
+   realm</span>.</p></li>
+
+   <li><p>Let <var>initiating script</var> be the <span>active script</span>.</p></li>
+
+   <li><p>Let <var>uniqueHandle</var> be null.</p></li>
+
+   <li>
+    <p>Let <var>task</var> be a <span data-x="concept-task">task</span> that runs the following
+    substeps:</p>
+
+    <ol>
+     <li><p><span>Assert</span>: <var>uniqueHandle</var> is a <span>unique internal value</span>,
+     not null.</p></li>
+
+     <li><p>If <var>id</var> does not <span data-x="map exists">exist</span> in <var>global</var>'s
+     <span>map of setTimeout and setInterval IDs</span>, then abort these steps.</p></li>
+
+     <li>
+      <p>If <var>global</var>'s <span>map of setTimeout and setInterval IDs</span>[<var>id</var>]
+      does not equal <var>uniqueHandle</var>, then abort these steps.</p>
+
+      <p class="note">This accommodates for the ID having been cleared by a <code
+      data-x="dom-clearTimeout">clearTimeout()</code> or <code
+      data-x="dom-clearInterval">clearInterval()</code> call, and being reused by a subsequent
+      <code data-x="dom-setTimeout">setTimeout()</code> or <code
+      data-x="dom-setInterval">setInterval()</code> call.</p>
+     </li>
+
+     <li><p>Let <var>settings object</var> be <var>global</var>'s <span>relevant settings
+     object</span>.</p></li>
+
+     <li><p>If <span data-x="concept-environment-noscript">scripting is disabled</span> for
+     <var>settings object</var>, then abort these steps.</p></li>
+
+     <li><p><span>Record timing info for timer handler</span> given <var>handler</var>,
+     <var>settings object</var>, and <var>repeat</var>.</p></li>
+
+     <li><p>If <var>handler</var> is a <code data-x="idl-Function">Function</code>, then <span
+     data-x="es-invoking-callback-functions">invoke</span> <var>handler</var> given
+     <var>arguments</var> and "<code data-x="">report</code>", and with <i
+     data-x="dfn-callback-this-value">callback this value</i> set to <var>thisArg</var>.</p></li>
+
+     <li>
+      <p>Otherwise:</p>
+
+      <ol>
+       <li><p><span>Assert</span>: <var>handler</var> is a string.</p></li>
+
+       <li><p>Perform <span
+       data-x="csp-EnsureCSPDoesNotBlockStringCompilation">EnsureCSPDoesNotBlockStringCompilation</span>(<var>realm</var>,
+       « », <var>handler</var>, <var>handler</var>, timer, « », <var>handler</var>). If this throws
+       an exception, catch it, <span data-x="report an exception">report</span> it for
+       <var>global</var>, and abort these steps.</p></li>
+       <!-- timer is an enum value. -->
+
+       <li><p>Let <var>fetch options</var> be the <span>default script fetch
+       options</span>.</p></li>
+
+       <li><p>Let <var>base URL</var> be <var>settings object</var>'s <span>API base
+       URL</span>.</p></li>
+
+       <li>
+        <p>If <var>initiating script</var> is not null:</p>
+
+        <ol>
+         <li><p>Set <var>fetch options</var> to a <span>script fetch options</span> whose <span
+         data-x="concept-script-fetch-options-nonce">cryptographic nonce</span> is <var>initiating
+         script</var>'s <span data-x="concept-script-script-fetch-options">fetch options</span>'s
+         <span data-x="concept-script-fetch-options-nonce">cryptographic nonce</span>, <span
+         data-x="concept-script-fetch-options-integrity">integrity metadata</span> is the empty
+         string, <span data-x="concept-script-fetch-options-parser">parser metadata</span> is
+         "<code data-x="">not-parser-inserted</code>", <span
+         data-x="concept-script-fetch-options-credentials">credentials mode</span> is
+         <var>initiating script</var>'s <span data-x="concept-script-script-fetch-options">fetch
+         options</span>'s <span data-x="concept-script-fetch-options-credentials">credentials
+         mode</span>, <span data-x="concept-script-fetch-options-referrer-policy">referrer
+         policy</span> is <var>initiating script</var>'s <span
+         data-x="concept-script-script-fetch-options">fetch options</span>'s <span
+         data-x="concept-script-fetch-options-referrer-policy">referrer policy</span>, and <span
+         data-x="concept-script-fetch-options-fetch-priority">fetch priority</span> is "<code
+         data-x="">auto</code>".</p></li>
+
+         <li><p>Set <var>base URL</var> to <var>initiating script</var>'s <span
+         data-x="concept-script-base-url">base URL</span>.</p></li>
+        </ol>
+
+        <p class="note">The effect of these steps ensures that the string compilation done by <code
+        data-x="dom-setTimeout">setTimeout()</code> and <code
+        data-x="dom-setInterval">setInterval()</code> behaves equivalently to that done by
+        <code>eval()</code>. That is, <span>module script</span> fetches via <code>import()</code>
+        will behave the same in both contexts.</p>
+       </li>
+
+       <li><p>Let <var>script</var> be the result of <span>creating a classic script</span> given
+       <var>handler</var>, <var>settings object</var>, <var>base URL</var>, and <var>fetch
+       options</var>.</p></li>
+
+       <li><p><span data-x="run a classic script">Run the classic script</span>
+       <var>script</var>.</p></li>
+      </ol>
+     </li>
+
+     <li><p>If <var>id</var> does not <span data-x="map exists">exist</span> in <var>global</var>'s
+     <span>map of setTimeout and setInterval IDs</span>, then abort these steps.</p></li>
+
+     <li>
+      <p>If <var>global</var>'s <span>map of setTimeout and setInterval IDs</span>[<var>id</var>]
+      does not equal <var>uniqueHandle</var>, then abort these steps.</p>
+
+      <p class="note">The ID might have been removed via the author code in <var>handler</var>
+      calling <code data-x="dom-clearTimeout">clearTimeout()</code> or <code
+      data-x="dom-clearInterval">clearInterval()</code>. Checking that uniqueHandle isn't different
+      accounts for the possibility of the ID, after having been cleared, being reused by a
+      subsequent <code data-x="dom-setTimeout">setTimeout()</code> or <code
+      data-x="dom-setInterval">setInterval()</code> call.</p>
+     </li>
+
+     <li><p>If <var>repeat</var> is true, then perform the <span>timer initialization
+     steps</span> again, given <var>global</var>, <var>handler</var>, <var>timeout</var>,
+     <var>arguments</var>, true, and <var>id</var>.</p></li>
+
+     <li><p>Otherwise, <span data-x="map remove">remove</span> <var>global</var>'s <span>map of
+     setTimeout and setInterval IDs</span>[<var>id</var>].</p></li>
+    </ol>
+   </li>
+
+   <li><p>Increment <var>nestingLevel</var> by one.</p></li>
+
+   <li><p>Set <var>task</var>'s <dfn>timer nesting level</dfn> to <var>nestingLevel</var>.</p></li>
+
+   <li><p>Let <var>completionStep</var> be an algorithm step which <span data-x="queue a global
+   task">queues a global task</span> on the <dfn export>timer task source</dfn> given
+   <var>global</var> to run <var>task</var>.</p></li>
+
+   <li><p>Set <var>uniqueHandle</var> to the result of <span data-x="run steps after a
+   timeout">running steps after a timeout</span> given <var>global</var>, "<code
+   data-x="">setTimeout/setInterval</code>", <var>timeout</var>, and
+   <var>completionStep</var>.</p></li>
+
+   <li><p><span data-x="map set">Set</span> <var>global</var>'s <span>map of setTimeout and
+   setInterval IDs</span>[<var>id</var>] to <var>uniqueHandle</var>.</p></li>
+
+   <li><p>Return <var>id</var>.</p></li>
+  </ol>
+  </div>
+
+  <p class="note">Argument conversion as defined by Web IDL (for example, invoking <code
+  data-x="">toString()</code> methods on objects passed as the first argument) happens in the
+  algorithms defined in Web IDL, before this algorithm is invoked.</p>
+
+  <div class="example">
+   <p>So for example, the following rather silly code will result in the log containing "<code
+   data-x="">ONE&nbsp;TWO&nbsp;</code>":</p>
+
+   <pre><code class="js">var log = '';
+function logger(s) { log += s + ' '; }
+
+setTimeout({ toString: function () {
+  setTimeout("logger('ONE')", 100);
+  return "logger('TWO')";
+} }, 100);</code></pre>
+  </div>
+
+  </div>
+
+  <div class="example">
+   <p>To run tasks of several milliseconds back to back without any delay, while still yielding back
+   to the browser to avoid starving the user interface (and to avoid the browser killing the script
+   for hogging the CPU), simply queue the next timer before performing work:</p>
+
+   <pre><code class="js">function doExpensiveWork() {
+  var done = false;
+  // ...
+  // this part of the function takes up to five milliseconds
+  // set done to true if we're done
+  // ...
+  return done;
+}
+
+function rescheduleWork() {
+  var id = setTimeout(rescheduleWork, 0); // preschedule next iteration
+  if (doExpensiveWork())
+    clearTimeout(id); // clear the timeout if we don't need it
+}
+
+function scheduleWork() {
+  setTimeout(rescheduleWork, 0);
+}
+
+scheduleWork(); // queues a task to do lots of work</code></pre>
+  </div>
+
+  <div w-nodev>
+
+  <p>Objects that implement the <code>WindowOrWorkerGlobalScope</code> mixin have a <dfn export
+  for="WindowOrWorkerGlobalScope">map of active timers</dfn>, which is an <span>ordered map</span>,
+  initially empty. Each <span data-x="map key">key</span> in this map is a <span>unique internal
+  value</span> that represents a timer, and each <span data-x="map value">value</span> is a
+  <code>DOMHighResTimeStamp</code>, representing the expiry time for that timer.</p>
+
+  <div algorithm>
+  <p>To <dfn export>run steps after a timeout</dfn>, given a <code>WindowOrWorkerGlobalScope</code>
+  <var>global</var>, a string <var>orderingIdentifier</var>, a number <var>milliseconds</var>, and a
+  set of steps <var>completionSteps</var>, perform the following steps. They return a <span>unique
+  internal value</span>.</p>
+
+  <ol>
+
+   <li><p>Let <var>timerKey</var> be a new <span>unique internal value</span>.</p></li>
+
+   <li><p>Let <var>startTime</var> be the <span>current high resolution time</span> given
+   <var>global</var>.</p></li>
+
+   <li><p><span data-x="map set">Set</span> <var>global</var>'s <span>map of active
+   timers</span>[<var>timerKey</var>] to <var>startTime</var> plus
+   <var>milliseconds</var>.</p></li>
+
+   <li>
+    <p>Run the following steps <span>in parallel</span>:</p>
+
+    <ol>
+     <li>
+      <p>If <var>global</var> is a <code>Window</code> object, wait until <var>global</var>'s <span
+      data-x="concept-document-window">associated <code>Document</code></span> has been <span>fully
+      active</span> for a further <var>milliseconds</var> milliseconds (not necessarily
+      consecutively).</p>
+
+      <p>Otherwise, <var>global</var> is a <code>WorkerGlobalScope</code> object; wait until
+      <var>milliseconds</var> milliseconds have passed with the worker not suspended (not
+      necessarily consecutively).</p>
+     </li>
+
+     <li><p>Wait until any invocations of this algorithm that had the same <var>global</var> and
+     <var>orderingIdentifier</var>, that started before this one, and whose <var>milliseconds</var>
+     is less than or equal to this one's, have completed.</p></li>
+
+     <li>
+      <p>Optionally, wait a further <span>implementation-defined</span> length of time.</p>
+
+      <p class="note">This is intended to allow user agents to pad timeouts as needed to optimize
+      the power usage of the device. For example, some processors have a low-power mode where the
+      granularity of timers is reduced; on such platforms, user agents can slow timers down to fit
+      this schedule instead of requiring the processor to use the more accurate mode with its
+      associated higher power usage.</p>
+     </li>
+
+     <li><p>Perform <var>completionSteps</var>.</p></li>
+
+     <li><p><span data-x="map remove">Remove</span> <var>global</var>'s
+     <span>map of active timers</span>[<var>timerKey</var>].</p></li>
+    </ol>
+   </li>
+
+   <li><p>Return <var>timerKey</var>.</p></li>
+  </ol>
+
+  <p class="note"><span>Run steps after a timeout</span> is meant to be used by other
+  specifications that want to execute developer-supplied code after a developer-supplied timeout,
+  in a similar manner to <code data-x="dom-setTimeout">setTimeout()</code>. (Note, however, it does
+  not have the nesting and clamping behavior of <code data-x="dom-setTimeout">setTimeout()</code>.)
+  Such specifications can choose an <var>orderingIdentifier</var> to ensure ordering within their
+  specification's timeouts, while not constraining ordering with respect to other specification's
+  timeouts.</p>
+  </div>
+
+  </div>
+

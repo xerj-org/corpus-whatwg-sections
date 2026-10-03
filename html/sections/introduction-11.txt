@@ -1,0 +1,66 @@
+WHATWG HTML — section introduction — Introduction
+
+  <h3>Introduction</h3>
+
+  <p>The suggestions in this section are generally expressed in CSS terms. User agents are
+  <span>expected</span> to either support CSS, or translate from the CSS rules given in this
+  section to approximations for other presentation mechanisms.</p>
+
+  <p>In the absence of style-layer rules to the contrary (e.g. author style sheets), user agents are
+  <span>expected</span> to render an element so that it conveys to the user the meaning that the
+  element <span>represents</span>, as described by this specification.</p>
+
+  <p>The suggestions in this section generally assume a visual output medium with a resolution of
+  96dpi or greater, but HTML is intended to apply to multiple media (it is a
+  <i>media-independent</i> language). User agent implementers are encouraged to adapt the
+  suggestions in this section to their target media.</p>
+
+  <hr>
+
+  <div algorithm>
+  <p>An element is <dfn export>being rendered</dfn> if it has any associated CSS layout boxes, SVG
+  layout boxes, or some equivalent in other styling languages.</p>
+  </div>
+
+  <p class="note">Just being off-screen does not mean the element is not <span>being
+  rendered</span>. The presence of the <code data-x="attr-hidden">hidden</code> attribute normally
+  means the element is not <span>being rendered</span>, though this might be overridden by the style
+  sheets.</p>
+
+  <p class="note">The <span>fully active</span> state does not affect whether an element is
+  <span>being rendered</span> or not. Even if a document is not <span>fully active</span> and not
+  shown at all to the user, elements within it can still qualify as "being rendered".</p>
+
+  <div algorithm>
+  <p>An element is said to <dfn>intersect the viewport</dfn> when it is <span>being rendered</span>
+  and its associated CSS layout box intersects the <span>viewport</span>.</p>
+  </div>
+
+  <p class="note">Similar to the <span>being rendered</span> state, elements in non-<span>fully
+  active</span> documents can still <span>intersect the viewport</span>. The <span>viewport</span>
+  is not shared between documents and might not always be shown to the user, so an element in a
+  non-<span>fully active</span> document can still intersect the <span>viewport</span> associated
+  with its document.</p>
+
+  <p class="note">This specification does not define the precise timing for when the intersection is
+  tested, but it is suggested that the timing match that of the Intersection Observer API. <ref>INTERSECTIONOBSERVER</ref></p>
+
+  <div algorithm>
+  <p>An element is <dfn>delegating its rendering to its children</dfn> if it is not <span>being
+  rendered</span> but its children (if any) could <span data-x="being rendered">be rendered</span>,
+  as a result of CSS 'display: contents', or some equivalent in other styling languages.
+  <ref>CSSDISPLAY</ref></p>
+  </div>
+
+  <hr>
+
+  <p>User agents that do not honor author-level CSS style sheets are nonetheless
+  <span>expected</span> to act as if they applied the CSS rules given in these sections in a manner
+  consistent with this specification and the relevant CSS and Unicode specifications.
+  <ref>CSS</ref> <ref>UNICODE</ref> <ref>BIDI</ref></p>
+
+  <p class="note">This is especially important for issues relating to the <span>'display'</span>,
+  <span>'unicode-bidi'</span>, and <span>'direction'</span> properties.</p>
+
+
+

@@ -1,0 +1,170 @@
+WHATWG HTML — section dependencies/fetch — Fetch
+
+   <dt>Fetch</dt>
+
+   <dd>
+    <p>The following terms are defined in <cite>Fetch</cite>: <ref>FETCH</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x="header-abnf" data-x-href="https://fetch.spec.whatwg.org/#abnf">ABNF</dfn></li>
+     <li><dfn><code>about:blank</code></dfn></li>
+     <li>`<dfn data-x-href="https://fetch.spec.whatwg.org/#sec-purpose-header"><code>Sec-Purpose</code></dfn>`</li>
+     <li>An <dfn data-x-href="https://fetch.spec.whatwg.org/#http-scheme">HTTP(S) scheme</dfn></li>
+     <li>A URL which <dfn data-x="is-local" data-x-href="https://fetch.spec.whatwg.org/#is-local">is local</dfn></li>
+     <li>A <dfn data-x-href="https://fetch.spec.whatwg.org/#local-scheme">local scheme</dfn></li>
+     <li>A <dfn data-x-href="https://fetch.spec.whatwg.org/#fetch-scheme">fetch scheme</dfn></li>
+     <li><dfn data-x-href="https://fetch.spec.whatwg.org/#http-cors-protocol">CORS protocol</dfn></li>
+     <li><dfn data-x="environment-default-user-agent-value" data-x-href="https://fetch.spec.whatwg.org/#environment-default-user-agent-value">environment default `<code>User-Agent</code>` value</dfn></li>
+     <li><dfn data-x-href="https://fetch.spec.whatwg.org/#concept-header-extract-mime-type">extract a MIME type</dfn></li>
+     <li><dfn data-x-href="https://fetch.spec.whatwg.org/#legacy-extract-an-encoding">legacy extract an encoding</dfn></li>
+     <li><dfn data-x="concept-fetch" data-x-href="https://fetch.spec.whatwg.org/#concept-fetch">fetch</dfn></li>
+     <li><dfn data-x-href="https://fetch.spec.whatwg.org/#fetch-controller">fetch controller</dfn></li>
+     <li><dfn data-x-href="https://fetch.spec.whatwg.org/#fetch-controller-process-the-next-manual-redirect">process the next manual redirect</dfn></li>
+     <li><dfn data-x-href="https://fetch.spec.whatwg.org/#ok-status">ok status</dfn></li>
+     <li><dfn data-x="navigation-request" data-x-href="https://fetch.spec.whatwg.org/#navigation-request">navigation request</dfn></li>
+     <li><dfn data-x-href="https://fetch.spec.whatwg.org/#concept-network-error">network error</dfn></li>
+     <li><dfn data-x-href="https://fetch.spec.whatwg.org/#concept-aborted-network-error">aborted network error</dfn></li>
+     <li>`<dfn data-x="http-origin" data-x-href="https://fetch.spec.whatwg.org/#http-origin"><code>Origin</code></dfn>` header</li>
+     <li>`<dfn data-x-href="https://fetch.spec.whatwg.org/#http-cross-origin-resource-policy"><code>Cross-Origin-Resource-Policy</code></dfn>` header</li>
+     <li><dfn data-x-href="https://fetch.spec.whatwg.org/#concept-header-list-get-structured-header">getting a structured field value</dfn></li>
+     <li><dfn data-x="concept-header-list" data-x-href="https://fetch.spec.whatwg.org/#concept-header-list">header list</dfn></li>
+     <li><dfn data-x="concept-header-list-set" data-x-href="https://fetch.spec.whatwg.org/#concept-header-list-set">set</dfn></li>
+     <li><dfn data-x="concept-header-list-get-decode-split" data-x-href="https://fetch.spec.whatwg.org/#concept-header-list-get-decode-split">get, decode, and split</dfn></li>
+     <li><dfn data-x="fetch-controller-abort" data-x-href="https://fetch.spec.whatwg.org/#fetch-controller-abort">abort</dfn></li>
+     <li><dfn data-x-href="https://fetch.spec.whatwg.org/#cross-origin-resource-policy-check">cross-origin resource policy check</dfn></li>
+     <li>the <dfn data-x-href="https://fetch.spec.whatwg.org/#requestcredentials"><code>RequestCredentials</code></dfn> enumeration</li>
+     <li>the <dfn data-x-href="https://fetch.spec.whatwg.org/#requestdestination"><code>RequestDestination</code></dfn> enumeration</li>
+     <li>the <dfn data-x-href="https://fetch.spec.whatwg.org/#dom-global-fetch"><code>fetch()</code></dfn> method</li>
+     <li><dfn data-x-href="https://fetch.spec.whatwg.org/#finalize-and-report-timing">report timing</dfn></li>
+     <li><dfn data-x="serialize-a-response-url-for-reporting" data-x-href="https://fetch.spec.whatwg.org/#serialize-a-response-url-for-reporting">serialize a response URL for reporting</dfn></li>
+     <li><dfn data-x="body safely extract" data-x-href="https://fetch.spec.whatwg.org/#bodyinit-safely-extract">safely extracting a body</dfn></li>
+     <li><dfn data-x="body-incrementally-read" data-x-href="https://fetch.spec.whatwg.org/#body-incrementally-read">incrementally reading a body</dfn></li>
+     <li><dfn data-x-href="https://fetch.spec.whatwg.org/#process-response-end-of-body">processResponseConsumeBody</dfn></li>
+     <li><dfn data-x-href="https://fetch.spec.whatwg.org/#fetch-processresponseendofbody">processResponseEndOfBody</dfn></li>
+     <li><dfn data-x-href="https://fetch.spec.whatwg.org/#process-response">processResponse</dfn></li>
+     <li><dfn data-x-href="https://fetch.spec.whatwg.org/#fetch-useparallelqueue">useParallelQueue</dfn></li>
+     <li><dfn data-x-href="https://fetch.spec.whatwg.org/#fetch-processearlyhintsresponse">processEarlyHintsResponse</dfn></li>
+     <li><dfn data-x-href="https://fetch.spec.whatwg.org/#concept-connection-pool">connection pool</dfn></li>
+     <li><dfn data-x-href="https://fetch.spec.whatwg.org/#concept-connection-obtain">obtain a connection</dfn></li>
+     <li><dfn data-x-href="https://fetch.spec.whatwg.org/#determine-the-network-partition-key">determine the network partition key</dfn></li>
+     <li><dfn data-x-href="https://fetch.spec.whatwg.org/#extract-full-timing-info">extract full timing info</dfn></li>
+     <li><dfn data-x-href="https://fetch.spec.whatwg.org/#byte-sequence-as-a-body">as a body</dfn></li>
+     <li><dfn data-x="response-body-info" data-x-href="https://fetch.spec.whatwg.org/#response-body-info">response body info</dfn></li>
+     <li><dfn data-x-href="https://fetch.spec.whatwg.org/#resolve-an-origin">resolve an origin</dfn></li>
+     <li><dfn data-x-href="https://fetch.spec.whatwg.org/#credentials">credentials</dfn></li>
+     <li><dfn data-x-href="https://fetch.spec.whatwg.org/#reserve-deferred-fetch-quota">reserve deferred fetch quota</dfn></li>
+     <li><dfn data-x-href="https://fetch.spec.whatwg.org/#potentially-free-deferred-fetch-quota">potentially free deferred fetch quota</dfn></li>
+     <li><dfn data-x-href="https://fetch.spec.whatwg.org/#is-offline">is offline</dfn></li>
+     <li><dfn data-x-href="https://fetch.spec.whatwg.org/#navigation-tao-check">navigation TAO check</dfn></li>
+     <li>
+      <dfn data-x="concept-response"
+      data-x-href="https://fetch.spec.whatwg.org/#concept-response">response</dfn> and its
+      associated:
+      <ul class="brief">
+       <li><dfn data-x="concept-response-type" data-x-href="https://fetch.spec.whatwg.org/#concept-response-type">type</dfn></li>
+       <li><dfn data-x="concept-response-url" data-x-href="https://fetch.spec.whatwg.org/#concept-response-url">URL</dfn></li>
+       <li><dfn data-x="concept-response-url-list" data-x-href="https://fetch.spec.whatwg.org/#concept-response-url-list">URL list</dfn></li>
+       <li><dfn data-x="concept-response-status" data-x-href="https://fetch.spec.whatwg.org/#concept-response-status">status</dfn></li>
+       <li><dfn data-x="concept-response-header-list" data-x-href="https://fetch.spec.whatwg.org/#concept-response-header-list">header list</dfn></li>
+       <li><dfn data-x="concept-response-body" data-x-href="https://fetch.spec.whatwg.org/#concept-response-body">body</dfn></li>
+       <li><dfn data-x="concept-response-body-info" data-x-href="https://fetch.spec.whatwg.org/#concept-response-body-info">body info</dfn></li>
+       <li><dfn data-x="concept-internal-response" data-x-href="https://fetch.spec.whatwg.org/#concept-internal-response">internal response</dfn></li>
+       <li><dfn data-x="concept-response-location-url" data-x-href="https://fetch.spec.whatwg.org/#concept-response-location-url">location URL</dfn></li>
+       <li><dfn data-x="concept-response-timing-info" data-x-href="https://fetch.spec.whatwg.org/#concept-response-timing-info">timing info</dfn></li>
+       <li><dfn data-x="concept-response-service-worker-timing-info" data-x-href="https://fetch.spec.whatwg.org/#response-service-worker-timing-info">service worker timing info</dfn></li>
+       <li><dfn data-x="concept-response-redirect-taint" data-x-href="https://fetch.spec.whatwg.org/#response-redirect-taint">redirect taint</dfn></li>
+       <li><dfn data-x="concept-response-timing-allow-passed" data-x-href="https://fetch.spec.whatwg.org/#concept-response-timing-allow-passed">timing allow passed</dfn></li>
+       <li>
+        <dfn data-x-href="https://wicg.github.io/background-fetch/#extract-content-range-values">extract content-range values</dfn>
+        <!-- TODO: move this to FETCH -->
+       </li>
+      </ul>
+     </li>
+     <li>
+      <dfn data-x="concept-request"
+      data-x-href="https://fetch.spec.whatwg.org/#concept-request">request</dfn> and its associated:
+      <ul class="brief">
+       <li><dfn data-x="concept-request-url" data-x-href="https://fetch.spec.whatwg.org/#concept-request-url">URL</dfn></li>
+       <li><dfn data-x="concept-request-method" data-x-href="https://fetch.spec.whatwg.org/#concept-request-method">method</dfn></li>
+       <li><dfn data-x="concept-request-header-list" data-x-href="https://fetch.spec.whatwg.org/#concept-request-header-list">header list</dfn></li>
+       <li><dfn data-x="concept-request-body" data-x-href="https://fetch.spec.whatwg.org/#concept-request-body">body</dfn></li>
+       <li><dfn data-x="concept-request-client" data-x-href="https://fetch.spec.whatwg.org/#concept-request-client">client</dfn></li>
+       <li><dfn data-x="concept-request-url-list" data-x-href="https://fetch.spec.whatwg.org/#concept-request-url-list">URL list</dfn></li>
+       <li><dfn data-x="concept-request-current-url" data-x-href="https://fetch.spec.whatwg.org/#concept-request-current-url">current URL</dfn></li>
+       <li><dfn data-x="concept-request-reserved-client" data-x-href="https://fetch.spec.whatwg.org/#concept-request-reserved-client">reserved client</dfn></li>
+       <li><dfn data-x="concept-request-replaces-client-id" data-x-href="https://fetch.spec.whatwg.org/#concept-request-replaces-client-id">replaces client id</dfn></li>
+       <li><dfn data-x="concept-request-initiator" data-x-href="https://fetch.spec.whatwg.org/#concept-request-initiator">initiator</dfn></li>
+       <li><dfn data-x="concept-request-destination" data-x-href="https://fetch.spec.whatwg.org/#concept-request-destination">destination</dfn></li>
+       <li><dfn data-x="concept-potential-destination" data-x-href="https://fetch.spec.whatwg.org/#concept-potential-destination">potential destination</dfn></li>
+       <li><dfn data-x="concept-potential-destination-translate" data-x-href="https://fetch.spec.whatwg.org/#concept-potential-destination-translate">translating</dfn> a <span data-x="concept-potential-destination">potential destination</span></li>
+       <li><dfn data-x="concept-script-like-destination" data-x-href="https://fetch.spec.whatwg.org/#request-destination-script-like">script-like</dfn> <span data-x="concept-request-destination">destinations</span></li>
+       <li><dfn data-x="concept-request-priority" data-x-href="https://fetch.spec.whatwg.org/#request-priority">priority</dfn></li>
+       <li><dfn data-x="concept-request-origin" data-x-href="https://fetch.spec.whatwg.org/#concept-request-origin">origin</dfn></li>
+       <li><dfn data-x="concept-request-referrer" data-x-href="https://fetch.spec.whatwg.org/#concept-request-referrer">referrer</dfn></li>
+       <li><dfn data-x="concept-request-mode" data-x-href="https://fetch.spec.whatwg.org/#concept-request-mode">mode</dfn></li>
+       <li><dfn data-x="concept-request-credentials-mode" data-x-href="https://fetch.spec.whatwg.org/#concept-request-credentials-mode">credentials mode</dfn></li>
+       <li><dfn data-x-href="https://fetch.spec.whatwg.org/#concept-request-use-url-credentials-flag">use-URL-credentials flag</dfn></li>
+       <li><dfn data-x-href="https://fetch.spec.whatwg.org/#unsafe-request-flag">unsafe-request flag</dfn></li>
+       <li><dfn data-x="concept-request-cache-mode" data-x-href="https://fetch.spec.whatwg.org/#concept-request-cache-mode">cache mode</dfn></li>
+       <li><dfn data-x="concept-request-redirect-count" data-x-href="https://fetch.spec.whatwg.org/#concept-request-redirect-count">redirect count</dfn></li>
+       <li><dfn data-x="concept-request-redirect-mode" data-x-href="https://fetch.spec.whatwg.org/#concept-request-redirect-mode">redirect mode</dfn></li>
+       <li><dfn data-x="concept-request-policy-container" data-x-href="https://fetch.spec.whatwg.org/#concept-request-policy-container">policy container</dfn></li>
+       <li><dfn data-x="concept-request-referrer-policy" data-x-href="https://fetch.spec.whatwg.org/#concept-request-referrer-policy">referrer policy</dfn></li>
+       <li><dfn data-x="concept-request-nonce-metadata" data-x-href="https://fetch.spec.whatwg.org/#concept-request-nonce-metadata">cryptographic nonce metadata</dfn></li>
+       <li><dfn data-x="concept-request-integrity-metadata" data-x-href="https://fetch.spec.whatwg.org/#concept-request-integrity-metadata">integrity metadata</dfn></li>
+       <li><dfn data-x="concept-request-parser-metadata" data-x-href="https://fetch.spec.whatwg.org/#concept-request-parser-metadata">parser metadata</dfn></li>
+       <li><dfn data-x="concept-request-reload-navigation-flag" data-x-href="https://fetch.spec.whatwg.org/#concept-request-reload-navigation-flag">reload-navigation flag</dfn></li>
+       <li><dfn data-x="concept-request-history-navigation-flag" data-x-href="https://fetch.spec.whatwg.org/#concept-request-history-navigation-flag">history-navigation flag</dfn></li>
+       <li><dfn data-x="concept-request-user-activation" data-x-href="https://fetch.spec.whatwg.org/#request-user-activation">user-activation</dfn></li>
+       <li><dfn data-x="concept-request-render-blocking" data-x-href="https://fetch.spec.whatwg.org/#request-render-blocking">render-blocking</dfn></li>
+       <li><dfn data-x="concept-request-initiator-type" data-x-href="https://fetch.spec.whatwg.org/#request-initiator-type">initiator type</dfn></li>
+       <li><dfn data-x="concept-request-service-workers-mode" data-x-href="https://fetch.spec.whatwg.org/#request-service-workers-mode">service-workers mode</dfn></li>
+       <li><dfn data-x="concept-request-traversable-for-user-prompts" data-x-href="https://fetch.spec.whatwg.org/#concept-request-window">traversable for user prompts</dfn></li>
+       <li><dfn data-x-href="https://fetch.spec.whatwg.org/#request-top-level-navigation-initiator-origin">top-level navigation initiator origin</dfn></li>
+       <li><dfn data-x-href="https://fetch.spec.whatwg.org/#concept-request-add-range-header">add a range header</dfn></li>
+       <li><dfn data-x-href="https://fetch.spec.whatwg.org/#destination-type">destination type</dfn></li>
+      </ul>
+     </li>
+     <li>
+      <dfn data-x="fetch-timing-info"
+      data-x-href="https://fetch.spec.whatwg.org/#fetch-timing-info">fetch timing info</dfn> and its
+      associated:
+      <ul class="brief">
+       <li><dfn data-x="fetch-timing-info-start-time" data-x-href="https://fetch.spec.whatwg.org/#fetch-timing-info-start-time">start time</dfn></li>
+       <li><dfn data-x="fetch-timing-info-end-time" data-x-href="https://fetch.spec.whatwg.org/#fetch-timing-info-end-time">end time</dfn></li>
+      </ul>
+     </li>
+    </ul>
+
+    <p>The following terms are defined in <cite>Referrer Policy</cite>:
+    <ref>REFERRERPOLICY</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://w3c.github.io/webappsec-referrer-policy/#referrer-policy">referrer policy</dfn></li>
+     <li>The `<dfn data-x="http-referrer-policy" data-x-href="https://w3c.github.io/webappsec-referrer-policy/#referrer-policy-header-dfn"><code>Referrer-Policy</code></dfn>` HTTP header</li>
+     <li>The <dfn data-x="parse-referrer-policy-header" data-x-href="https://w3c.github.io/webappsec-referrer-policy/#parse-referrer-policy-from-header">parse a referrer policy from a `<code>Referrer-Policy</code>` header</dfn> algorithm</li>
+     <li>The "<dfn data-x="referrer-policy-no-referrer" data-x-href="https://w3c.github.io/webappsec-referrer-policy/#referrer-policy-no-referrer"><code>no-referrer</code></dfn>",
+             "<dfn data-x="referrer-policy-no-referrer-when-downgrade" data-x-href="https://w3c.github.io/webappsec-referrer-policy/#referrer-policy-no-referrer-when-downgrade"><code>no-referrer-when-downgrade</code></dfn>",
+             "<dfn data-x="referrer-policy-origin-when-cross-origin" data-x-href="https://w3c.github.io/webappsec-referrer-policy/#referrer-policy-origin-when-cross-origin"><code>origin-when-cross-origin</code></dfn>", and
+             "<dfn data-x="referrer-policy-unsafe-url" data-x-href="https://w3c.github.io/webappsec-referrer-policy/#referrer-policy-unsafe-url"><code>unsafe-url</code></dfn>" referrer policies</li>
+     <li>The <dfn data-x-href="https://w3c.github.io/webappsec-referrer-policy/#default-referrer-policy">default referrer policy</dfn></li>
+    </ul>
+
+    <p>The following terms are defined in <cite>Mixed Content</cite>: <ref>MIX</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://w3c.github.io/webappsec-mixed-content/#a-priori-authenticated-url"><i>a priori</i> authenticated URL</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/webappsec-mixed-content/#mixed-content">mixed content</dfn></li>
+    </ul>
+
+    <p>The following terms are defined in <cite>Subresource Integrity</cite>: <ref>SRI</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://w3c.github.io/webappsec-subresource-integrity/#parse-metadata">parse integrity metadata</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/webappsec-subresource-integrity/#the-integrity-attribute">the requirements of the integrity attribute</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/webappsec-subresource-integrity/#get-the-strongest-metadata">get the strongest metadata from set</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/webappsec-subresource-integrity/#integrity-policy">integrity policy</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/webappsec-subresource-integrity/#parse-integrity-policy-headers">parse Integrity-Policy headers</dfn></li>
+    </ul>
+   </dd>
+

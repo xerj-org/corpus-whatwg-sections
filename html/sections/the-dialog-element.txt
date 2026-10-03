@@ -1,0 +1,919 @@
+WHATWG HTML — section the-dialog-element — The <dfn element><code>dialog</code></dfn> element
+
+  <h4>The <dfn element><code>dialog</code></dfn> element</h4>
+
+  <dl class="element">
+   <dt><span data-x="concept-element-categories">Categories</span>:</dt>
+   <dd><span>Flow content</span>.</dd>
+   <dt><span data-x="concept-element-contexts">Contexts in which this element can be used</span>:</dt>
+   <dd>Where <span>flow content</span> is expected.</dd>
+   <dt><span data-x="concept-element-content-model">Content model</span>:</dt>
+   <dd><span>Flow content</span>.</dd>
+   <dt><span data-x="concept-element-attributes">Content attributes</span>:</dt>
+   <dd><span>Global attributes</span></dd>
+   <dd><code data-x="attr-dialog-closedby">closedby</code></dd>
+   <dd><code data-x="attr-dialog-open">open</code></dd>
+   <dt><span
+   data-x="concept-element-accessibility-considerations">Accessibility considerations</span>:</dt>
+   <dd><a href="https://w3c.github.io/html-aria/#el-dialog">For authors</a>.</dd>
+   <dd><a href="https://w3c.github.io/html-aam/#el-dialog">For implementers</a>.</dd>
+   <dt><span data-x="concept-element-sanitization">Sanitization</span>:</dt>
+   <dd><span data-x="sanitizer-uncategorized">Uncategorized</span>.</dd>
+   <dt><span data-x="concept-element-dom">DOM interface</span>:</dt>
+   <dd w-nodev>
+    <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>HTMLDialogElement</dfn> : <span>HTMLElement</span> {
+  [<span>HTMLConstructor</span>] constructor();
+
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute boolean <dfn attribute for="HTMLDialogElement" data-x="dom-dialog-open">open</dfn>;
+  attribute DOMString <span data-x="dom-dialog-returnValue">returnValue</span>;
+  [<span>CEReactions</span>, <span data-x="xattr-ReflectSetter">ReflectSetter</span>] attribute DOMString <span data-x="dom-dialog-closedBy">closedBy</span>;
+  [<span>CEReactions</span>] undefined <span data-x="dom-dialog-show">show</span>();
+  [<span>CEReactions</span>] undefined <span data-x="dom-dialog-showModal">showModal</span>();
+  [<span>CEReactions</span>] undefined <span data-x="dom-dialog-close">close</span>(optional DOMString returnValue);
+  [<span>CEReactions</span>] undefined <span data-x="dom-dialog-requestClose">requestClose</span>(optional DOMString returnValue);
+};</code></pre>
+   </dd>
+   <dd w-dev>Uses <code>HTMLDialogElement</code>.</dd>
+  </dl>
+
+  <p>The <code>dialog</code> element represents a transitory part of an application, in the form of
+  a small window ("dialog box"), which the user interacts with to perform a task or gather
+  information. Once the user is done, the dialog can be automatically closed by the application, or
+  manually closed by the user.</p>
+
+  <p>Especially for modal dialogs, which are a familiar pattern across all types of applications,
+  authors should work to ensure that dialogs in their web applications behave in a way that is
+  familiar to users of non-web applications.</p>
+
+  <p class="note">As with all HTML elements, it is not conforming to use the <code>dialog</code>
+  element when attempting to represent another type of control. For example, context menus,
+  tooltips, and popup listboxes are not dialog boxes, so abusing the <code>dialog</code> element to
+  implement these patterns is incorrect.</p>
+
+  <p>An important part of user-facing dialog behavior is the placement of initial focus. The
+  <span>dialog focusing steps</span> attempt to pick a good candidate for initial focus when a
+  dialog is shown, but might not be a substitute for authors carefully thinking through the correct
+  choice to match user expectations for a specific dialog. As such, authors should use the <code
+  data-x="attr-fe-autofocus">autofocus</code> attribute on the descendant element of the dialog that
+  the user is expected to immediately interact with after the dialog opens. If there is no such
+  element, then authors should use the <code data-x="attr-fe-autofocus">autofocus</code> attribute
+  on the <code>dialog</code> element itself.</p>
+
+  <div class="example">
+   <p>In the following example, a dialog is used for editing the details of a product in an
+   inventory management web application.</p>
+
+   <pre><code class="html">&lt;dialog>
+  &lt;label>Product Number &lt;input type="text" readonly>&lt;/label>
+  &lt;label>Product Name &lt;input type="text" autofocus>&lt;/label>
+&lt;/dialog></code></pre>
+
+   <p>If the <code data-x="attr-fe-autofocus">autofocus</code> attribute was not present, the
+   Product Number field would have been focused by the dialog focusing steps. Although that is
+   reasonable behavior, the author determined that the more relevant field to focus was the Product
+   Name field, as the Product Number field is readonly and expects no user input. So, the author
+   used autofocus to override the default.</p>
+
+   <p>Even if the author wants to focus the Product Number field by default, they are best off
+   explicitly specifying that by using autofocus on that <code>input</code> element. This makes the
+   intent obvious to future readers of the code, and ensures the code stays robust in the face of
+   future updates. (For example, if another developer added a close button, and positioned it in the
+   node tree before the Product Number field).</p>
+  </div>
+
+  <p>Another important aspect of user behavior is whether dialogs are scrollable or not. In some
+  cases, overflow (and thus scrollability) cannot be avoided, e.g., when it is caused by the user's
+  high text zoom settings. But in general, scrollable dialogs are not expected by users. Adding
+  large text nodes directly to dialog elements is particularly bad as this is likely to cause the
+  dialog element itself to overflow. Authors are best off avoiding them.</p>
+
+  <div class="example">
+   <p>The following terms of service dialog respects the above suggestions.</p>
+
+   <pre><code class="html">&lt;dialog style="height: 80vh;">
+  &lt;div style="overflow: auto; height: 60vh;" autofocus>
+    &lt;p>By placing an order via this Web site on the first day of the fourth month of the year
+    2010 Anno Domini, you agree to grant Us a non-transferable option to claim, for now and for
+    ever more, your immortal soul.&lt;/p>
+    &lt;p>Should We wish to exercise this option, you agree to surrender your immortal soul,
+    and any claim you may have on it, within 5 (five) working days of receiving written
+    notification from  this site or one of its duly authorized minions.&lt;/p>
+    &lt;!-- ... etc., with many more &lt;p> elements ... -->
+  &lt;/div>
+  &lt;form method="dialog">
+    &lt;button type="submit" value="agree">Agree&lt;/button>
+    &lt;button type="submit" value="disagree">Disagree&lt;/button>
+  &lt;/form>
+&lt;/dialog></code></pre>
+
+   <p>Note how the <span>dialog focusing steps</span> would have picked the scrollable
+   <code>div</code> element by default, but similarly to the previous example, we have placed <code
+   data-x="attr-fe-autofocus">autofocus</code> on the <code>div</code> so as to be more explicit and
+   robust against future changes.</p>
+
+   <p>In contrast, if the <code>p</code> elements expressing the terms of service did not have such
+   a wrapper <code>div</code> element, then the <code>dialog</code> itself would become scrollable,
+   violating the above advice. Furthermore, in the absence of any <code
+   data-x="attr-fe-autofocus">autofocus</code> attribute, such a markup pattern would have violated
+   the above advice and tripped up the <span>dialog focusing steps</span>'s default behavior, and
+   caused focus to jump to the Agree <code>button</code>, which is a bad user experience.</p>
+  </div>
+
+  <div class="example">
+   <p>This dialog box has some small print. The <code>strong</code> element is used to draw the
+   user's attention to the more important part.</p>
+
+   <pre><code class="html">&lt;dialog>
+ &lt;h1>Add to Wallet&lt;/h1>
+ &lt;p>&lt;strong>&lt;label for=amt>How many gold coins do you want to add to your wallet?&lt;/label>&lt;/strong>&lt;/p>
+ &lt;p>&lt;input id=amt name=amt type=number min=0 step=0.01 value=100>&lt;/p>
+ &lt;p>&lt;small>You add coins at your own risk.&lt;/small>&lt;/p>
+ &lt;p>&lt;label>&lt;input name=round type=checkbox> Only add perfectly round coins&lt;/label>&lt;/p>
+ &lt;p>&lt;input type=button onclick="submit()" value="Add Coins">&lt;/p>
+&lt;/dialog></code></pre>
+  </div>
+
+  <hr>
+
+  <p>The <dfn element-attr for="dialog"><code data-x="attr-dialog-open">open</code></dfn> attribute
+  is a <span>boolean attribute</span>. When specified, it indicates that the <code>dialog</code>
+  element is active and that the user can interact with it.</p>
+
+  <p>The <dfn element-attr for="dialog"><code data-x="attr-dialog-closedby">closedby</code></dfn>
+  content attribute is an <span>enumerated attribute</span> with the following keywords and
+  states:</p>
+
+  <table>
+   <thead>
+    <tr>
+     <th>Keyword
+     <th>State
+     <th>Brief description
+   <tbody>
+    <tr>
+     <td><dfn attr-value for="dialog/closedby"><code data-x="attr-dialog-closedby-any">any</code></dfn>
+     <td><dfn data-x="attr-dialog-closedby-any-state">Any</dfn>
+     <td><span data-x="close request">Close requests</span> or clicks outside close the dialog.
+    <tr>
+     <td><dfn attr-value for="dialog/closedby"><code data-x="attr-dialog-closedby-closerequest">closerequest</code></dfn>
+     <td><dfn data-x="attr-dialog-closedby-closerequest-state">Close Request</dfn>
+     <td><span data-x="close request">Close requests</span> close the dialog.
+    <tr>
+     <td><dfn attr-value for="dialog/closedby"><code data-x="attr-dialog-closedby-none">none</code></dfn>
+     <td><dfn data-x="attr-dialog-closedby-none-state">None</dfn>
+     <td>No user actions automatically close the dialog.
+  </table>
+
+  <p>The <code data-x="attr-dialog-closedby">closedby</code> attribute's <i data-x="invalid value
+  default">invalid value default</i> and <i data-x="missing value default">missing value
+  default</i> are both the <dfn data-x="attr-dialog-closedby-auto-state">Auto</dfn> state.</p>
+
+  <p class="note">The <span data-x="attr-dialog-closedby-auto-state">Auto</span> state behaves as
+  <span data-x="attr-dialog-closedby-closerequest-state">Close Request</span> state when the
+  <code>dialog</code> was shown using its <code data-x="dom-dialog-showModal">showModal()</code>
+  method; otherwise the <span data-x="attr-dialog-closedby-none-state">None</span> state.</p>
+
+  <div w-nodev>
+
+  <p>A <code>dialog</code> element without an <code data-x="attr-dialog-open">open</code> attribute
+  specified should not be shown to the user. This requirement may be implemented indirectly through
+  the style layer. For example, user agents that <a href="#renderingUA">support the suggested
+  default rendering</a> implement this requirement using the CSS rules described in the <a
+  href="#rendering">Rendering section</a>.</p>
+
+  </div>
+
+  <div class="note" id="note-dialog-remove-open-attribute">
+   <p>Removing the <code data-x="attr-dialog-open">open</code> attribute will usually hide the
+   dialog. However, doing so has a number of strange additional consequences:
+
+   <ul>
+    <li><p>The <code data-x="event-close">close</code> event will not be fired.</p></li>
+
+    <li><p>The <code data-x="dom-dialog-close">close()</code> method, and any <span data-x="close
+    request">close requests</span>, will no longer be able to close the dialog.</p></li>
+
+    <li><p>If the dialog was shown using its <code data-x="dom-dialog-showModal">showModal()</code>
+    method, the <code>Document</code> will still be <span data-x="blocked by a modal
+    dialog">blocked</span>.</p></li>
+   </ul>
+
+   <p>For these reasons, it is generally better to never remove the <code
+   data-x="attr-dialog-open">open</code> attribute manually. Instead, use the <code
+   data-x="dom-dialog-requestclose">requestClose()</code> or <code
+   data-x="dom-dialog-close">close()</code> methods to close the dialog, or the <code
+   data-x="attr-hidden">hidden</code> attribute to hide it.</p>
+  </div>
+
+  <p>The <code data-x="attr-tabindex">tabindex</code> attribute must not be specified on
+  <code>dialog</code> elements.</p>
+
+  <hr>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>dialog</var>.<span subdfn data-x="dom-dialog-show">show</span>()</code></dt>
+   <dd><p>Displays the <code>dialog</code> element.</p></dd>
+
+   <dt><code data-x=""><var>dialog</var>.<span subdfn data-x="dom-dialog-showModal">showModal</span>()</code></dt>
+   <dd>
+    <p>Displays the <code>dialog</code> element and makes it the top-most modal dialog.</p>
+
+    <p>This method honors the <code data-x="attr-fe-autofocus">autofocus</code> attribute.</p>
+   </dd>
+
+   <dt><code data-x=""><var>dialog</var>.<span subdfn data-x="dom-dialog-close">close</span>([ <var>result</var> ])</code></dt>
+   <dd>
+    <p>Closes the <code>dialog</code> element.</p>
+
+    <p>The argument, if provided, provides a return value.</p>
+   </dd>
+
+   <dt><code data-x=""><var>dialog</var>.<span subdfn data-x="dom-dialog-requestClose">requestClose</span>([ <var>result</var> ])</code></dt>
+   <dd>
+    <p>Acts as if a <span data-x="close request">close request</span> was sent targeting
+    <var>dialog</var>, by first firing a <code data-x="event-cancel">cancel</code> event, and if
+    that event is not canceled with <code data-x="dom-Event-preventDefault">preventDefault()</code>,
+    proceeding to close the <var>dialog</var> in the same way as the <code
+    data-x="dom-dialog-close">close()</code> method (including firing a <code
+    data-x="event-close">close</code> event).</p>
+
+    <p>This is a helper utility that can be used to consolidate cancelation and closing logic into
+    the <code data-x="event-cancel">cancel</code> and <code data-x="event-close">close</code> event
+    handlers, by having all non-<span data-x="close request">close request</span> closing
+    affordances call this method.</p>
+
+    <p>Note that this method ignores the <code data-x="attr-dialog-closedby">closedby</code>
+    attribute: that is, even if <code data-x="attr-dialog-closedby">closedby</code> is set to
+    "<code data-x="attr-dialog-closedby-none">none</code>", the same behavior will apply.</p>
+
+    <p>The argument, if provided, provides a return value.</p>
+   </dd>
+
+   <dt><code data-x=""><var>dialog</var>.<span subdfn data-x="dom-dialog-returnValue">returnValue</span> [ = <var>result</var> ]</code></dt>
+   <dd>
+    <p>Returns the <code>dialog</code>'s return value.</p>
+
+    <p>Can be set, to update the return value.</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn method for="HTMLDialogElement"><code data-x="dom-dialog-show">show()</code></dfn>
+  method steps are:</p>
+
+  <ol>
+   <li><p>If <span>this</span> has an <code data-x="attr-dialog-open">open</code> attribute and
+   <span>is modal</span> of <span>this</span> is false, then return.</p></li>
+
+   <li><p>If <span>this</span> has an <code data-x="attr-dialog-open">open</code> attribute, then
+   throw an <span>"<code>InvalidStateError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>If the result of <span data-x="concept-event-fire">firing an event</span> named <code
+   data-x="event-beforetoggle">beforetoggle</code>, using <code>ToggleEvent</code>, with the <code
+   data-x="dom-Event-cancelable">cancelable</code> attribute initialized to true, the <code
+   data-x="dom-ToggleEvent-oldState">oldState</code> attribute initialized to "<code
+   data-x="">closed</code>", and the <code data-x="dom-ToggleEvent-newState">newState</code>
+   attribute initialized to "<code data-x="">open</code>" at <span>this</span> is false, then
+   return.</p></li>
+
+   <li><p>If <span>this</span> has an <code data-x="attr-dialog-open">open</code> attribute, then
+   return.</p></li>
+
+   <li><p><span>Queue a dialog toggle event task</span> given <span>this</span>, "<code
+   data-x="">closed</code>", "<code data-x="">open</code>", and null.</p></li>
+
+   <li><p>Add an <code data-x="attr-dialog-open">open</code> attribute to <span>this</span>, whose
+   value is the empty string.</p></li>
+
+   <li><p>Set <span>this</span>'s <span>previously focused element</span> to the
+   <span>focused</span> element.</p></li>
+
+   <li><p>Let <var>document</var> be <span>this</span>'s <span>node document</span>.</p></li>
+
+   <li><p>Let <var>hideUntil</var> be the result of running <span>topmost popover ancestor</span>
+   given <span>this</span>, null, and false.</p></li>
+
+   <li><p>Run <span>hide popovers until</span> given <var>document</var>, <var>hideUntil</var>,
+   false, and true.</p></li>
+
+   <li><p>Run the <span>dialog focusing steps</span> given <span>this</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="HTMLDialogElement"><code
+  data-x="dom-dialog-showModal">showModal()</code></dfn> method steps are to <span>show a modal
+  dialog</span> given <span>this</span> and null.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="HTMLDialogElement"><code
+  data-x="dom-dialog-close">close(<var>returnValue</var>)</code></dfn> method steps are:
+
+  <ol>
+   <li><p>If <var>returnValue</var> is not given, then set it to null.</p></li>
+
+   <li><p><span>Close the dialog</span> <span>this</span> with <var>returnValue</var> and
+   null.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="HTMLDialogElement"><code
+  data-x="dom-dialog-requestClose">requestClose(<var>returnValue</var>)</code></dfn> method steps
+  are:</p>
+
+  <ol>
+   <li><p>If <var>returnValue</var> is not given, then set it to null.</p></li>
+
+   <li><p><span data-x="dialog-request-close">Request to close the dialog</span> <span>this</span>
+   with <var>returnValue</var> and null.</p></li>
+  </ol>
+  </div>
+
+  <div class="note" id="note-dialog-method-names">
+   <p>We use show/close as the verbs for <code>dialog</code> elements, as opposed to verb pairs that
+   are more commonly thought of as antonyms such as show/hide or open/close, due to the following
+   constraints:</p>
+
+   <ul>
+    <li><p>Hiding a dialog is different from closing one. Closing a dialog gives it a return value,
+    fires an event, unblocks the page for other dialogs, and so on. Whereas hiding a dialog is a
+    purely visual property, and is something you can already do with the <code
+    data-x="attr-hidden">hidden</code> attribute or by removing the <code
+    data-x="attr-dialog-open">open</code> attribute. (See also the <a
+    href="#note-dialog-remove-open-attribute">note above</a> about removing the <code
+    data-x="attr-dialog-open">open</code> attribute, and how hiding the dialog in that way is
+    generally not desired.)</p></li>
+
+    <li><p>Showing a dialog is different from opening one. Opening a dialog consists of creating
+    and showing that dialog (similar to how <code data-x="dom-open">window.open()</code> both
+    creates and shows a new window). Whereas showing the dialog is the process of taking a
+    <code>dialog</code> element that is already in the DOM, and making it interactive and visible
+    to the user.</p></li>
+
+    <li><p>If we were to have a <code data-x="">dialog.open()</code> method despite the above, it
+    would conflict with the <code data-x="dom-dialog-open">dialog.open</code> property.</p></li>
+   </ul>
+
+   <p>Furthermore, a <a
+   href="https://lists.whatwg.org/pipermail/whatwg-whatwg.org/2013-December/041799.html">survey</a>
+   of many other UI frameworks contemporary to the original design of the <code>dialog</code>
+   element made it clear that the show/close verb pair was reasonably common.</p>
+
+   <p>In summary, it turns out that the implications of certain verbs, and how they are used in
+   technology contexts, mean that paired actions such as showing and closing a dialog are not
+   always expressible as antonyms.</p>
+  </div>
+
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLDialogElement"><code
+  data-x="dom-dialog-returnValue">returnValue</code></dfn> IDL attribute, on getting, must return
+  the last value to which it was set. On setting, it must be set to the new value. When the element
+  is created, it must be set to the empty string.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLDialogElement"><code
+  data-x="dom-dialog-closedBy">closedBy</code></dfn> getter steps are to return the keyword
+  corresponding to the <span>computed closed-by state</span> given <span>this</span>.</p>
+  </div>
+
+  <hr>
+
+  <p>Each <code>Document</code> has a <dfn>dialog pointerdown target</dfn>, which is an <span
+  data-x="HTMLDialogElement">HTML dialog element</span> or null, initially null.</p>
+
+  <p>Each <span data-x="html elements">HTML element</span> has a <dfn>previously focused
+  element</dfn> which is null or an element, and it is initially null. When <code
+  data-x="dom-dialog-showModal">showModal()</code> and <code data-x="dom-dialog-show">show()</code>
+  are called, this element is set to the currently <span>focused</span> element before running the
+  <span>dialog focusing steps</span>. Elements with the <code data-x="attr-popover">popover</code>
+  attribute set this element to the currently <span>focused</span> element during the <span
+  data-x="show popover">show popover algorithm</span>.</p>
+
+  <p>Each <code>dialog</code> element has a <dfn>dialog toggle task tracker</dfn>, which is a
+  <span>toggle task tracker</span> or null, initially null.</p>
+
+  <p>Each <code>dialog</code> element has a <dfn data-x="dialog-close-watcher">close watcher</dfn>,
+  which is a <span>close watcher</span> or null, initially null.</p>
+
+  <p>Each <code>dialog</code> element has a <dfn>request close return value</dfn>, which is a
+  string or null, initially null.</p>
+
+  <p>Each <code>dialog</code> element has a <dfn>request close source element</dfn>, which is an
+  <code>Element</code> or null, initially null.</p>
+
+  <p>Each <code>dialog</code> element has an <dfn
+  id="enable-close-watcher-for-requestclose()">enable close watcher for request close</dfn> boolean,
+  initially false.</p>
+
+  <p class="note"><code>dialog</code>'s <span>enable close watcher for request close</span> is used
+  to force enable the dialog's <span data-x="dialog-close-watcher">close watcher</span> while <span
+  data-x="dialog-request-close">requesting to close</span> it. A dialog whose <span>computed
+  closed-by state</span> is the <span data-x="attr-dialog-closedby-none-state">None</span> state
+  would otherwise have a disabled <span data-x="dialog-close-watcher">close watcher</span>.</p>
+
+  <p>Each <code>dialog</code> element has an <dfn>is modal</dfn> boolean, initially false.</p>
+
+  <hr>
+
+  <div algorithm>
+  <p>The <code>dialog</code> <span>HTML element insertion steps</span>, given
+  <var>insertedNode</var>, are:</p>
+
+  <ol>
+   <li><p>If <var>insertedNode</var>'s <span>node document</span> is not <span>fully active</span>,
+   then return.</p></li>
+
+   <li><p>If <var>insertedNode</var> has an <code data-x="attr-dialog-open">open</code> attribute
+   and is <span>connected</span>, then run the <span>dialog setup steps</span> given
+   <var>insertedNode</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <code>dialog</code> <span>HTML element removing steps</span>, given
+  <var>removedNode</var>, <var>isSubtreeRoot</var>, and <var>oldAncestor</var> are:</p>
+
+  <ol>
+   <li><p>If <var>removedNode</var> has an <code data-x="attr-dialog-open">open</code> attribute,
+   then run the <span>dialog cleanup steps</span> given <var>removedNode</var>.</p></li>
+
+   <li><p>If <var>removedNode</var>'s <span>node document</span>'s <span>top layer</span> <span
+   data-x="list contains">contains</span> <var>removedNode</var>, then <span>remove an element from
+   the top layer immediately</span> given <var>removedNode</var>.</p></li>
+
+   <li><p>Set <span>is modal</span> of <var>removedNode</var> to false.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The following <span data-x="concept-element-attributes-change-ext">attribute change
+  steps</span>, given <var>element</var>, <var>localName</var>, <var>oldValue</var>,
+  <var>value</var>, and <var>namespace</var> are used for <code>dialog</code> elements:</p>
+
+  <ol>
+   <li><p>If <var>namespace</var> is not null, then return.</p></li>
+
+   <li><p>If <var>localName</var> is not <code data-x="attr-dialog-open">open</code>, then
+   return.</p></li>
+
+   <li><p>If <var>value</var> is null and <var>oldValue</var> is not null, then run the
+   <span>dialog cleanup steps</span> given <var>element</var>.</p></li>
+
+   <li><p>If <var>element</var>'s <span>node document</span> is not <span>fully active</span>, then
+   return.</p></li>
+
+   <li>
+    <p>If <var>element</var> is not <span>connected</span>, then return.</p>
+
+    <p class=note>This ensures that the dialog setup steps are not run on nodes that are
+    disconnected, which would result in a <span>close watcher</span> being established. The
+    <span>dialog cleanup steps</span> need no such guard.</p>
+   </li>
+
+   <li><p>If <var>value</var> is not null and <var>oldValue</var> is null, then run the
+   <span>dialog setup steps</span> given <var>element</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>show a modal dialog</dfn> given a <code>dialog</code> element <var>subject</var> and an
+  <code>Element</code> or null <var>source</var>:</p>
+
+  <ol>
+   <li><p>If <var>subject</var> has an <code data-x="attr-dialog-open">open</code> attribute and
+   <span>is modal</span> of <var>subject</var> is true, then return.</p></li>
+
+   <li><p>If <var>subject</var> has an <code data-x="attr-dialog-open">open</code> attribute, then
+   throw an <span>"<code>InvalidStateError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>If <var>subject</var>'s <span>node document</span> is not <span>fully active</span>, then
+   throw an <span>"<code>InvalidStateError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>If <var>subject</var> is not <span>connected</span>, then throw an
+   <span>"<code>InvalidStateError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>If <var>subject</var> is in the <span data-x="popover-showing-state">popover showing
+   state</span>, then throw an <span>"<code>InvalidStateError</code>"</span>
+   <code>DOMException</code>.</p></li>
+
+   <li><p>If the result of <span data-x="concept-event-fire">firing an event</span> named <code
+   data-x="event-beforetoggle">beforetoggle</code>, using <code>ToggleEvent</code>, with the <code
+   data-x="dom-Event-cancelable">cancelable</code> attribute initialized to true, the <code
+   data-x="dom-ToggleEvent-oldState">oldState</code> attribute initialized to "<code
+   data-x="">closed</code>", the <code data-x="dom-ToggleEvent-newState">newState</code>
+   attribute initialized to "<code data-x="">open</code>", and the <code
+   data-x="dom-ToggleEvent-source">source</code> attribute initialized to <var>source</var> at
+   <var>subject</var> is false, then return.</p></li>
+
+   <li><p>If <var>subject</var> has an <code data-x="attr-dialog-open">open</code> attribute,
+   then return.</p></li>
+
+   <li><p>If <var>subject</var> is not <span>connected</span>, then return.</p></li>
+
+   <li><p>If <var>subject</var> is in the <span data-x="popover-showing-state">popover showing
+   state</span>, then return.</p></li>
+
+   <li><p><span>Queue a dialog toggle event task</span> given <var>subject</var>, "<code
+   data-x="">closed</code>", "<code data-x="">open</code>", and <var>source</var>.</p></li>
+
+   <li><p>Add an <code data-x="attr-dialog-open">open</code> attribute to <var>subject</var>, whose
+   value is the empty string.</p></li>
+
+   <li><p><span>Assert</span>: <var>subject</var>'s <span data-x="dialog-close-watcher">close
+   watcher</span> is not null.</p></li>
+
+   <li><p>Set <span>is modal</span> of <var>subject</var> to true.</p></li>
+
+   <li>
+    <p>Set <var>subject</var>'s <span>node document</span> to be <span data-x="blocked by a modal
+    dialog">blocked by the modal dialog</span> <var>subject</var>.</p>
+
+    <p class="note" id="note-dialog-plus-focus-fixup">This will cause the <span>focused area of the
+    document</span> to become <span>inert</span> (unless that currently focused area is a
+    <span>shadow-including descendant</span> of <var>subject</var>). In such cases, the
+    <span>focused area of the document</span> will soon be <a href="#focus-fixup-rule">reset</a> to
+    the <span>viewport</span>. In a couple steps we will attempt to find a better candidate to
+    focus.</p>
+   </li>
+
+   <li><p>If <var>subject</var>'s <span>node document</span>'s <span>top layer</span> does not
+   already <span data-x="list contains">contain</span> <var>subject</var>, then <span>add an element
+   to the top layer</span> given <var>subject</var>.</p></li>
+
+   <li><p>Set <var>subject</var>'s <span>previously focused element</span> to the
+   <span>focused</span> element.</p></li>
+
+   <li><p>Let <var>document</var> be <var>subject</var>'s <span>node document</span>.</p></li>
+
+   <li><p>Let <var>hideUntil</var> be the result of running <span>topmost popover ancestor</span>
+   given <var>subject</var>, null, and false.</p></li>
+
+   <li><p>Run <span>hide popovers until</span> given <var>document</var>, <var>hideUntil</var>,
+   false, and true.</p></li>
+
+   <li><p>Run the <span>dialog focusing steps</span> given <var>subject</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p id="canceling-dialogs">To <dfn>set the dialog close watcher</dfn>, given a <code>dialog</code>
+  element <var>dialog</var>:</p>
+
+  <ol>
+   <li><p><span>Assert</span>: <var>dialog</var>'s <span data-x="dialog-close-watcher">close
+   watcher</span> is null.</p></li>
+
+   <li><p><span>Assert</span>: <var>dialog</var> has an <code data-x="attr-dialog-open">open</code>
+   attribute and <var>dialog</var>'s <span>node document</span> is <span>fully active</span>.</p>
+   </li>
+
+   <li>
+    <p>Set <var>dialog</var>'s <span data-x="dialog-close-watcher">close watcher</span> to the
+    result of <span data-x="establish a close watcher">establishing a close watcher</span> given
+    <var>dialog</var>'s <span>relevant global object</span>, with:</p>
+
+    <ul>
+     <li><p><i data-x="create-close-watcher-cancelAction">cancelAction</i> given
+     <var>canPreventClose</var> being to return the result of <span
+     data-x="concept-event-fire">firing an event</span> named <code
+     data-x="event-cancel">cancel</code> at <var>dialog</var>, with the <code
+     data-x="dom-Event-cancelable">cancelable</code> attribute initialized to
+     <var>canPreventClose</var>.</p></li>
+
+     <li><p><i data-x="create-close-watcher-closeAction">closeAction</i> being to <span>close the
+     dialog</span> given <var>dialog</var>, <var>dialog</var>'s <span>request close return
+     value</span>, and <var>dialog</var>'s <span>request close source element</span>.</p></li>
+
+     <li><p><i data-x="create-close-watcher-getEnabledState">getEnabledState</i> being to return
+     true if <var>dialog</var>'s <span>enable close watcher for request close</span> is true or
+     <var>dialog</var>'s <span>computed closed-by state</span> is not <span
+     data-x="attr-dialog-closedby-none-state">None</span>; otherwise false.</p></li>
+    </ul>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <span>is valid command steps</span> for <code>dialog</code> elements, given a <code
+  data-x="attr-button-command">command</code> attribute <var>command</var>, are:</p>
+
+  <ol>
+   <li><p>If <var>command</var> is in the <span
+   data-x="attr-button-command-close-state">Close</span> state, the <span
+   data-x="attr-button-command-request-close-state">Request Close</span> state, or the <span
+   data-x="attr-button-command-show-modal-state">Show Modal</span> state, then return true.</p></li>
+
+   <li><p>Return false.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <span>command steps</span> for <code>dialog</code> elements, given an element
+  <var>element</var>, an element <var>source</var>, and a <code
+  data-x="attr-button-command">command</code> attribute <var>command</var>, are:</p>
+
+  <ol>
+   <li><p>If <var>element</var> is in the <span
+   data-x="popover-showing-state">popover showing</span> state, then return.</p></li>
+
+   <li><p>If <var>command</var> is in the <span
+   data-x="attr-button-command-close-state">Close</span> state and <var>element</var> has an <code
+   data-x="attr-dialog-open">open</code> attribute, then <span>close the dialog</span>
+   <var>element</var> with <var>source</var>'s <span data-x="concept-fe-optional-value">optional
+   value</span> and <var>source</var>.</p></li>
+
+   <li><p>If <var>command</var> is in the <span
+   data-x="attr-button-command-request-close-state">Request Close</span> state and
+   <var>element</var> has an <code data-x="attr-dialog-open">open</code> attribute, then <span
+   data-x="dialog-request-close">request to close the dialog</span> <var>element</var> with
+   <var>source</var>'s <span data-x="concept-fe-optional-value">optional value</span> and
+   <var>source</var>.</p></li>
+
+   <li><p>If <var>command</var> is the <span
+   data-x="attr-button-command-show-modal-state">Show Modal</span> state and <var>element</var> does
+   not have an <code data-x="attr-dialog-open">open</code> attribute, then
+   <span>show a modal dialog</span> given <var>element</var> and <var>source</var>.</p></li>
+  </ol>
+  </div>
+
+  <div class="example">
+   <p>The following buttons use <code data-x="attr-button-commandfor">commandfor</code> to open and
+   close a "confirm" <code>dialog</code> as modal when activated:</p>
+
+   <pre><code class="html">&lt;button type=button
+        commandfor="the-dialog"
+        command="show-modal">
+ Delete
+&lt;/button>
+&lt;dialog id="the-dialog">
+ &lt;form action="/delete" method="POST">
+  &lt;button type="submit">
+   Delete
+  &lt;/button>
+  &lt;button commandfor="the-dialog"
+          command="close">
+   Cancel
+  &lt;/button>
+ &lt;/form>
+&lt;/dialog>
+    </code></pre>
+  </div>
+
+  <div algorithm>
+  <p>When a <code>dialog</code> element <var>subject</var> is to be <dfn data-x="close the
+  dialog">closed</dfn>, with null or a string <var>result</var> and an <code>Element</code> or null
+  <var>source</var>, run these steps:</p>
+
+  <ol>
+   <li><p>If <var>subject</var> does not have an <code data-x="attr-dialog-open">open</code>
+   attribute, then return.</p></li>
+
+   <li><p><span data-x="concept-event-fire">Fire an event</span> named <code
+   data-x="event-beforetoggle">beforetoggle</code>, using <code>ToggleEvent</code>, with the <code
+   data-x="dom-ToggleEvent-oldState">oldState</code> attribute initialized to "<code
+   data-x="">open</code>", the <code data-x="dom-ToggleEvent-newState">newState</code> attribute
+   initialized to "<code data-x="">closed</code>", and the <code
+   data-x="dom-ToggleEvent-source">source</code> attribute initialized to <var>source</var> at
+   <var>subject</var>.</p></li>
+
+   <li><p>If <var>subject</var> does not have an <code data-x="attr-dialog-open">open</code>
+   attribute, then return.</p></li>
+
+   <li><p><span>Queue a dialog toggle event task</span> given <var>subject</var>, "<code
+   data-x="">open</code>", "<code data-x="">closed</code>", and <var>source</var>.</p></li>
+
+   <li><p>Remove <var>subject</var>'s <code data-x="attr-dialog-open">open</code>
+   attribute.</p></li>
+
+   <li><p>If <span>is modal</span> of <var>subject</var> is true, then <span>request an
+   element to be removed from the top layer</span> given <var>subject</var>.</p></li>
+
+   <li><p>Let <var>wasModal</var> be the value of <var>subject</var>'s <span>is
+   modal</span> flag.</p></li>
+
+   <li><p>Set <span>is modal</span> of <var>subject</var> to false.</p></li>
+
+   <li><p>If <var>result</var> is not null, then set <var>subject</var>'s <code
+   data-x="dom-dialog-returnValue">returnValue</code> attribute to <var>result</var>.</p></li>
+
+   <li><p>Set <var>subject</var>'s <span>request close return value</span> to null.</p></li>
+
+   <li><p>Set <var>subject</var>'s <span>request close source element</span> to null.</p></li>
+
+   <li>
+    <p>If <var>subject</var>'s <span>previously focused element</span> is not null:</p>
+
+    <ol>
+     <li><p>Let <var>element</var> be <var>subject</var>'s <span>previously focused
+     element</span>.</p></li>
+
+     <li><p>Set <var>subject</var>'s <span>previously focused element</span> to null.</p></li>
+
+     <li><p>If <var>subject</var>'s <span>node document</span>'s <span>focused area of the
+     document</span>'s <span>DOM anchor</span> is a <span>shadow-including inclusive
+     descendant</span> of <var>subject</var>, or <var>wasModal</var> is true, then run the
+     <span>focusing steps</span> for <var>element</var>; the viewport should not be scrolled by
+     doing this step.</p></li>
+    </ol>
+   </li>
+
+   <li><p><span>Queue an element task</span> on the <span>user interaction task source</span> given the
+   <var>subject</var> element to <span data-x="concept-event-fire">fire an event</span> named
+   <code data-x="event-close">close</code> at <var>subject</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="dialog-request-close">request to close</dfn> <code>dialog</code> element
+  <var>subject</var>, given null or a string <var>returnValue</var> and null or an
+  <code>Element</code> <var>source</var>:</p>
+
+  <ol>
+   <li><p>If <var>subject</var> does not have an <code data-x="attr-dialog-open">open</code>
+   attribute, then return.</p></li>
+
+   <li><p>If <var>subject</var> is not <span>connected</span> or <var>subject</var>'s
+   <span>node document</span> is not <span>fully active</span>, then return.</p></li>
+
+   <li><p><span>Assert</span>: <var>subject</var>'s <span data-x="dialog-close-watcher">close
+   watcher</span> is not null.</p></li>
+
+   <li><p>Set <var>subject</var>'s <span>enable close watcher for request close</span> to
+   true.</p></li>
+
+   <li><p>Set <var>subject</var>'s <span>request close return value</span> to
+   <var>returnValue</var>.</p></li>
+
+   <li><p>Set <var>subject</var>'s <span>request close source element</span> to
+   <var>source</var>.</p></li>
+
+   <li><p><span data-x="close-watcher-request-close">Request to close</span> <var>subject</var>'s
+   <span data-x="dialog-close-watcher">close watcher</span> with false.</p></li>
+
+   <li><p>Set <var>subject</var>'s <span>enable close watcher for request close</span> to
+   false.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>queue a dialog toggle event task</dfn> given a <code>dialog</code> element
+  <var>element</var>, a string <var>oldState</var>, a string <var>newState</var>, and an
+  <code>Element</code> or null <var>source</var>:</p>
+
+  <ol>
+   <li>
+    <p>If <var>element</var>'s <span>dialog toggle task tracker</span> is not null:</p>
+
+    <ol>
+     <li><p>Set <var>oldState</var> to <var>element</var>'s <span>dialog toggle task
+     tracker</span>'s <span data-x="toggle-task-old-state">old state</span>.</p></li>
+
+     <li><p>Remove <var>element</var>'s <span>dialog toggle task tracker</span>'s <span
+     data-x="toggle-task-task">task</span> from its <span>task queue</span>.</p></li>
+
+     <li><p>Set <var>element</var>'s <span>dialog toggle task tracker</span> to null.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p><span>Queue an element task</span> given the <span>DOM manipulation task source</span> and
+    <var>element</var> to run the following steps:</p>
+
+    <ol>
+     <li><p><span data-x="concept-event-fire">Fire an event</span> named <code
+     data-x="event-toggle">toggle</code> at <var>element</var>, using <code>ToggleEvent</code>, with
+     the <code data-x="dom-ToggleEvent-oldState">oldState</code> attribute initialized to
+     <var>oldState</var>, the <code data-x="dom-ToggleEvent-newState">newState</code> attribute
+     initialized to <var>newState</var>, and the <code
+     data-x="dom-ToggleEvent-source">source</code> attribute initialized to
+     <var>source</var>.</p></li>
+
+     <li><p>Set <var>element</var>'s <span>dialog toggle task tracker</span> to null.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Set <var>element</var>'s <span>dialog toggle task tracker</span> to a struct with <span
+   data-x="toggle-task-task">task</span> set to the just-queued <span
+   data-x="concept-task">task</span> and <span data-x="toggle-task-old-state">old state</span> set
+   to <var>oldState</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To retrieve a dialog's <dfn>computed closed-by state</dfn>, given a <code>dialog</code>
+  <var>dialog</var>:
+
+  <ol>
+   <li>
+    <p>If the state of <var>dialog</var>'s <code data-x="attr-dialog-closedby">closedby</code>
+    attribute is <span data-x="attr-dialog-closedby-auto-state">Auto</span>:</p>
+
+    <ol>
+     <li><p>If <var>dialog</var>'s <span>is modal</span> is true, then return <span
+     data-x="attr-dialog-closedby-closerequest-state">Close Request</span>.</p></li>
+
+     <li><p>Return <span data-x="attr-dialog-closedby-none-state">None</span>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Return the state of <var>dialog</var>'s <code
+   data-x="attr-dialog-closedby">closedby</code> attribute.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn>dialog focusing steps</dfn>, given a <code>dialog</code> element <var>subject</var>,
+  are as follows:</p>
+
+  <ol>
+   <li><p>If the <span>allow focus steps</span> given <var>subject</var>'s <span>node
+   document</span> return false, then return.</p></li>
+
+   <li><p>Let <var>control</var> be null.</p></li>
+
+   <li><p>If <var>subject</var> has the <code data-x="attr-fe-autofocus">autofocus</code>
+   attribute, then set <var>control</var> to <var>subject</var>.</p></li>
+
+   <li><p>If <var>control</var> is null, then set <var>control</var> to the <span>focus
+   delegate</span> of <var>subject</var>.</p></li>
+
+   <li><p>If <var>control</var> is null, then set <var>control</var> to <var>subject</var>.</p></li>
+
+   <li>
+    <p>Run the <span>focusing steps</span> for <var>control</var>.</p>
+
+    <p class="note">If <var>control</var> is not <span>focusable</span>, this will do nothing. This
+    would only happen if subject had no focus delegate, and the user agent decided that
+    <code>dialog</code> elements were not generally focusable. In that case, any <a
+    href="#note-dialog-plus-focus-fixup">earlier modifications</a> to the <span>focused area of the
+    document</span> will apply.</p>
+   </li>
+
+   <li><p>Let <var>topDocument</var> be <var>control</var>'s <span>node navigable</span>'s <span
+   data-x="nav-top">top-level traversable</span>'s <span data-x="nav-document">active
+   document</span>.</p></li>
+
+   <li><p>If <var>control</var>'s <span>node document</span>'s <span
+   data-x="concept-document-origin">origin</span> is not the <span data-x="same origin">same</span>
+   as the <span data-x="concept-document-origin">origin</span> of <var>topDocument</var>, then
+   return.</p></li>
+
+   <li><p><span data-x="list empty">Empty</span> <var>topDocument</var>'s
+   <span>autofocus candidates</span>.</p></li>
+
+   <li><p>Set <var>topDocument</var>'s <span>autofocus processed flag</span> to true.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn>dialog setup steps</dfn>, given a <code>dialog</code> element <var>subject</var>, are
+  as follows:</p>
+
+  <ol>
+   <li><p><span>Assert</span>: <var>subject</var> has an <code data-x="attr-dialog-open">open</code>
+   attribute.</p></li>
+
+   <li><p><span>Assert</span>: <var>subject</var> is <span>connected</span>.</p></li>
+
+   <li><p><span>Assert</span>: <var>subject</var>'s <span>node document</span>'s <span>open dialogs
+   list</span> does not <span data-x="list contains">contain</span> <var>subject</var>.</p></li>
+
+   <li><p>Add <var>subject</var> to <var>subject</var>'s <span>node document</span>'s <span>open
+   dialogs list</span>.</p></li>
+
+   <li><p><span>Set the dialog close watcher</span> with <var>subject</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn>dialog cleanup steps</dfn>, given a <code>dialog</code> element <var>subject</var>,
+  are as follows:</p>
+
+  <ol>
+   <li><p><span data-x="list remove">Remove</span> <var>subject</var> from <var>subject</var>'s
+   <span>node document</span>'s <span>open dialogs list</span>.</p></li>
+
+   <li>
+    <p>If <var>subject</var>'s <span data-x="dialog-close-watcher">close watcher</span> is not
+    null:</p>
+
+    <ol>
+     <li><p><span data-x="close-watcher-destroy">Destroy</span> <var>subject</var>'s <span
+     data-x="dialog-close-watcher">close watcher</span>.</p></li>
+
+     <li><p>Set <var>subject</var>'s <span data-x="dialog-close-watcher">close watcher</span> to
+     null.</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+

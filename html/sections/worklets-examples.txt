@@ -1,0 +1,80 @@
+WHATWG HTML — section worklets-examples — Examples
+
+  <h3 id="worklets-examples">Examples</h3>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>For these examples, we'll use a fake worklet. The <code>Window</code> object provides two
+  <code>Worklet</code> instances, which each run code in their own collection of
+  <code>FakeWorkletGlobalScope</code>s:
+
+  <pre class="extract"><code class="idl">partial interface <span>Window</span> {
+  [SameObject, SecureContext] readonly attribute <span>Worklet</span> <span>fakeWorklet1</span>;
+  [SameObject, SecureContext] readonly attribute <span>Worklet</span> <span>fakeWorklet2</span>;
+};</code></pre>
+
+  <dl class="domintro" w-dev>
+   <dt><code data-x="">window.fakeWorklet1</code></dt>
+   <dd>Returns one of the fake worklets.</dd>
+
+   <dt><code data-x="">window.fakeWorklet2</code></dt>
+   <dd>Returns another of the fake worklets.</dd>
+  </dl>
+
+  <p><span w-nodev>Each <code>Window</code> has two <code>Worklet</code> instances, <dfn>fake
+  worklet 1</dfn> and <dfn>fake worklet 2</dfn>. </span>Both of these have their <span>worklet
+  global scope type</span> set to <code>FakeWorkletGlobalScope</code>, and their <span>worklet
+  destination type</span> set to "<code data-x="">fakeworklet</code>". User agents should create at
+  least two <code>FakeWorkletGlobalScope</code> instances per worklet.</p>
+
+  <p class="note">"<code data-x="">fakeworklet</code>" is not actually a valid <span
+  data-x="concept-request-destination">destination</span> per <cite>Fetch</cite>. But this
+  illustrates how real worklets would generally have their own worklet-type-specific destination.
+  <ref>FETCH</ref></p>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn noexport><code>fakeWorklet1</code></dfn> getter steps are to return
+  <span>this</span>'s <span>fake worklet 1</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn noexport><code>fakeWorklet2</code></dfn> getter steps are to return
+  <span>this</span>'s <span>fake worklet 2</span>.</p>
+  </div>
+
+  </div>
+
+  <hr>
+
+  <pre class="extract"><code class="idl">[Global=(Worklet,FakeWorklet),
+ Exposed=FakeWorklet,
+ SecureContext]
+interface <dfn interface noexport>FakeWorkletGlobalScope</dfn> : <span>WorkletGlobalScope</span> {
+  undefined <span data-x="dom-FakeWorkletGlobalScope-registerFake">registerFake</span>(DOMString type, <span data-x="idl-Function">Function</span> classConstructor);
+};</code></pre>
+
+  <p w-dev>Inside a <code subdfn>FakeWorkletGlobalScope</code>, the following global method is
+  available:</p>
+
+  <dl class="domintro" w-dev>
+   <dt><code data-x="">registerFake(<var>type</var>, <var>classConstructor</var>)</code></dt>
+   <dd>Registers the JavaScript class given by <var>classConstructor</var> for use when the user
+   agent later wants to do some operation specified by <var>type</var>.</dd>
+  </dl>
+
+  <div w-nodev>
+
+  <p>Each <code>FakeWorkletGlobalScope</code> has a <dfn>registered class constructors map</dfn>,
+  which is an <span>ordered map</span>, initially empty.</p>
+
+  <div algorithm>
+  <p>The <dfn data-x="dom-FakeWorkletGlobalScope-registerFake"
+  noexport><code>registerFake(<var>type</var>, <var>classConstructor</var>)</code></dfn> method
+  steps are to set <span>this</span>'s <span>registered class constructors
+  map</span>[<var>type</var>] to <var>classConstructor</var>.</p>
+  </div>
+
+  </div>
+

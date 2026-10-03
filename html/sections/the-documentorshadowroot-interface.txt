@@ -1,0 +1,12 @@
+WHATWG HTML — section the-documentorshadowroot-interface — The <code>DocumentOrShadowRoot</code> interface
+
+  <h4>The <code>DocumentOrShadowRoot</code> interface</h4>
+
+  <p><cite>DOM</cite> defines the <code data-x="DOM
+  DocumentOrShadowRoot">DocumentOrShadowRoot</code> mixin, which this specification
+  extends.</p>
+
+  <pre><code class="idl">partial interface mixin <dfn data-lt="">DocumentOrShadowRoot</dfn> {
+  readonly attribute <span>Element</span>? <span data-x="dom-documentorshadowroot-activeElement">activeElement</span>;
+};</code></pre>
+

@@ -1,0 +1,22 @@
+WHATWG HTML — section policy-controlled-features — Policy-controlled features
+
+  <h3 id="policy-controlled-features">Policy-controlled features</h3>
+
+  <p>This document defines the following <span
+  data-x="concept-policy-controlled-feature">policy-controlled features</span>:</p>
+
+  <ul>
+    <li>"<dfn data-x="autoplay-feature"><code data-x="">autoplay</code></dfn>", which has a <span
+    data-x="concept-default-allowlist">default allowlist</span> of <code
+    data-x="">'self'</code>.</li>
+    <li>"<dfn data-x="cross-origin-isolated-feature"><code
+    data-x="">cross-origin-isolated</code></dfn>", which has a <span
+    data-x="concept-default-allowlist">default allowlist</span> of <code
+    data-x="">'self'</code>.</li>
+    <li>"<dfn data-x="focus-without-user-activation-feature"><code
+    data-x="">focus-without-user-activation</code></dfn>", which has a <span
+    data-x="concept-default-allowlist">default allowlist</span> of <code
+    data-x="">'self'</code>.</li>
+  </ul>
+
+

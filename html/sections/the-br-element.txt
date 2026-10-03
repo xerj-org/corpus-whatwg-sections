@@ -1,0 +1,89 @@
+WHATWG HTML — section the-br-element — The <dfn element><code>br</code></dfn> element
+
+  <h4>The <dfn element><code>br</code></dfn> element</h4>
+
+  <dl class="element">
+   <dt><span data-x="concept-element-categories">Categories</span>:</dt>
+   <dd><span>Flow content</span>.</dd>
+   <dd><span>Phrasing content</span>.</dd>
+   <dt><span data-x="concept-element-contexts">Contexts in which this element can be used</span>:</dt>
+   <dd>Where <span>phrasing content</span> is expected.</dd>
+   <dt><span data-x="concept-element-content-model">Content model</span>:</dt>
+   <dd><span data-x="concept-content-nothing">Nothing</span>.</dd>
+   <dt><span data-x="concept-element-attributes">Content attributes</span>:</dt>
+   <dd><span>Global attributes</span></dd>
+   <dt><span
+   data-x="concept-element-accessibility-considerations">Accessibility considerations</span>:</dt>
+   <dd><a href="https://w3c.github.io/html-aria/#el-br">For authors</a>.</dd>
+   <dd><a href="https://w3c.github.io/html-aam/#el-br">For implementers</a>.</dd>
+   <dt><span data-x="concept-element-sanitization">Sanitization</span>:</dt>
+   <dd><span data-x="sanitizer-category-default">Default</span>.</dd>
+   <dt><span data-x="concept-element-dom">DOM interface</span>:</dt>
+   <dd w-nodev>
+    <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>HTMLBRElement</dfn> : <span>HTMLElement</span> {
+  [<span>HTMLConstructor</span>] constructor();
+
+  // <a href="#HTMLBRElement-partial">also has obsolete members</a>
+};</code></pre>
+   </dd>
+   <dd w-dev>Uses <code>HTMLBRElement</code>.</dd>
+  </dl>
+
+  <p>The <code>br</code> element <span>represents</span> a line break.</p>
+
+  <p class="note">While line breaks are usually represented in visual media by physically moving
+  subsequent text to a new line, a style sheet or user agent would be equally justified in causing
+  line breaks to be rendered in a different manner, for instance as green dots, or as extra
+  spacing.</p>
+
+  <p><code>br</code> elements must be used only for line breaks that are actually part of the
+  content, as in poems or addresses.</p>
+
+  <div class="example">
+
+  <p>The following example is correct usage of the <code>br</code> element:</p>
+
+   <pre><code class="html">&lt;p&gt;P. Sherman&lt;br&gt;
+42 Wallaby Way&lt;br&gt;
+Sydney&lt;/p&gt;</code></pre>
+
+  </div>
+
+  <p><code>br</code> elements must not be used for separating thematic groups in a paragraph.</p>
+
+  <div class="example">
+
+   <p>The following examples are non-conforming, as they abuse the <code>br</code> element:</p>
+
+   <pre><code class="html">&lt;p&gt;&lt;a ...&gt;34 comments.&lt;/a&gt;&lt;br&gt;
+&lt;a ...&gt;Add a comment.&lt;/a&gt;&lt;/p&gt;</code></pre>
+
+   <pre><code class="html">&lt;p&gt;&lt;label&gt;Name: &lt;input name="name"&gt;&lt;/label&gt;&lt;br&gt;
+&lt;label&gt;Address: &lt;input name="address"&gt;&lt;/label&gt;&lt;/p&gt;</code></pre>
+
+   <p>Here are alternatives to the above, which are correct:</p>
+
+   <pre><code class="html">&lt;p&gt;&lt;a ...&gt;34 comments.&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a ...&gt;Add a comment.&lt;/a&gt;&lt;/p&gt;</code></pre>
+
+   <pre><code class="html">&lt;p&gt;&lt;label&gt;Name: &lt;input name="name"&gt;&lt;/label&gt;&lt;/p&gt;
+&lt;p&gt;&lt;label&gt;Address: &lt;input name="address"&gt;&lt;/label&gt;&lt;/p&gt;</code></pre>
+
+  </div>
+
+  <p>If a <span>paragraph</span> consists of nothing but a single <code>br</code> element, it
+  represents a placeholder blank line (e.g. as in a template). Such blank lines must not be used for
+  presentation purposes.</p>
+
+  <div w-nodev>
+
+  <p>Any content inside <code>br</code> elements must not be considered part of the surrounding
+  text.</p>
+
+  <p class="note">This element <a href="#bidireq">has rendering requirements involving the
+  bidirectional algorithm</a>.</p>
+
+  </div>
+
+

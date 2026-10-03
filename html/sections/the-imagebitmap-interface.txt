@@ -1,0 +1,622 @@
+WHATWG HTML — section the-imagebitmap-interface — The <code>ImageBitmap</code> interface
+
+  <h4>The <code>ImageBitmap</code> interface</h4>
+
+  <pre><code class="idl">[Exposed=(Window,Worker), <span>Serializable</span>, <span>Transferable</span>]
+interface <dfn interface>ImageBitmap</dfn> {
+  readonly attribute unsigned long <span data-x="dom-ImageBitmap-width">width</span>;
+  readonly attribute unsigned long <span data-x="dom-ImageBitmap-height">height</span>;
+  undefined <span data-x="dom-ImageBitmap-close">close</span>();
+};
+
+typedef (<span>CanvasImageSource</span> or
+         <span>Blob</span> or
+         <span>ImageData</span>) <dfn typedef>ImageBitmapSource</dfn>;
+
+enum <dfn enum>ImageOrientation</dfn> { "<span data-x="dom-ImageOrientation-from-image">from-image</span>", "<span data-x="dom-ImageOrientation-flipY">flipY</span>" };
+enum <dfn enum>PremultiplyAlpha</dfn> { "<span data-x="dom-PremultiplyAlpha-none">none</span>", "<span data-x="dom-PremultiplyAlpha-premultiply">premultiply</span>", "<span data-x="dom-PremultiplyAlpha-default">default</span>" };
+enum <dfn enum>ColorSpaceConversion</dfn> { "<span data-x="dom-ColorSpaceConversion-none">none</span>", "<span data-x="dom-ColorSpaceConversion-default">default</span>" };
+enum <dfn enum>ResizeQuality</dfn> { "<span data-x="dom-ResizeQuality-pixelated">pixelated</span>", "<span data-x="dom-ResizeQuality-low">low</span>", "<span data-x="dom-ResizeQuality-medium">medium</span>", "<span data-x="dom-ResizeQuality-high">high</span>" };
+
+dictionary <dfn dictionary>ImageBitmapOptions</dfn> {
+  <span>ImageOrientation</span> <span data-x="dom-ImageBitmapOptions-imageOrientation">imageOrientation</span> = "<span data-x="dom-ImageOrientation-from-image">from-image</span>";
+  <span>PremultiplyAlpha</span> <span data-x="dom-ImageBitmapOptions-premultiplyAlpha">premultiplyAlpha</span> = "<span data-x="dom-PremultiplyAlpha-default">default</span>";
+  <span>ColorSpaceConversion</span> <span data-x="dom-ImageBitmapOptions-colorSpaceConversion">colorSpaceConversion</span> = "<span data-x="dom-ColorSpaceConversion-default">default</span>";
+  [EnforceRange] unsigned long <span data-x="dom-ImageBitmapOptions-resizeWidth">resizeWidth</span>;
+  [EnforceRange] unsigned long <span data-x="dom-ImageBitmapOptions-resizeHeight">resizeHeight</span>;
+  <span>ResizeQuality</span> <span data-x="dom-ImageBitmapOptions-resizeQuality">resizeQuality</span> = "<span data-x="dom-ResizeQuality-low">low</span>";
+};</code></pre>
+
+  <p>An <code>ImageBitmap</code> object represents a bitmap image that can be painted to a canvas
+  without undue latency.</p>
+
+  <p class="note">The exact judgement of what is undue latency of this is left up to the
+  implementer, but in general if making use of the bitmap requires network I/O, or even local disk
+  I/O, then the latency is probably undue; whereas if it only requires a blocking read from a GPU or
+  system RAM, the latency is probably acceptable.</p>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>promise</var> = self.<span subdfn data-x="dom-createImageBitmap">createImageBitmap</span>(<var>image</var> [, <var>options</var> ])</code></dt>
+   <dt><code data-x=""><var>promise</var> = self.<span data-x="dom-createImageBitmap">createImageBitmap</span>(<var>image</var>, <var>sx</var>, <var>sy</var>, <var>sw</var>, <var>sh</var> [, <var>options</var> ])</code></dt>
+
+   <dd>
+    <p>Takes <var>image</var>, which can be an <code>img</code> element, an <span>SVG
+    <code>image</code></span> element, a <code>video</code> element, a <code>canvas</code> element,
+    a <code>Blob</code> object, an <code>ImageData</code> object, or another
+    <code>ImageBitmap</code> object, and returns a promise that is resolved when a new
+    <code>ImageBitmap</code> is created.</p>
+
+    <p>If no <code>ImageBitmap</code> object can be constructed, for example because the provided
+    <var>image</var> data is not actually an image, then the promise is rejected instead.</p>
+
+    <p>If <var>sx</var>, <var>sy</var>, <var>sw</var>, and <var>sh</var> arguments are provided, the
+    source image is cropped to the given pixels, with any pixels missing in the original replaced by
+    <span>transparent black</span>. These coordinates are in the source image's pixel coordinate
+    space, <em>not</em> in <span data-x="'px'">CSS pixels</span>.</p>
+
+    <p>If <var>options</var> is provided, the <code>ImageBitmap</code> object's bitmap data is
+    modified according to <var>options</var>. For example, if the <code
+    data-x="dom-ImageBitmapOptions-premultiplyAlpha">premultiplyAlpha</code> option is set to "<code
+    data-x="dom-PremultiplyAlpha-premultiply">premultiply</code>", the <span
+    data-x="concept-ImageBitmap-bitmap-data">bitmap data</span>'s non-alpha color components are
+    <span data-x="concept-premultiplied-alpha">premultiplied by the alpha component</span>.</p>
+
+    <p>Rejects the promise with an <span>"<code>InvalidStateError</code>"</span>
+    <code>DOMException</code> if the source image is not in a valid state (e.g., an <code>img</code>
+    element that hasn't loaded successfully, an <code>ImageBitmap</code> object whose
+    <span>[[Detached]]</span> internal slot value is true, an <code>ImageData</code> object whose
+    <code data-x="dom-imagedata-data">data</code> attribute value's [[ViewedArrayBuffer]] internal
+    slot is detached, or a <code>Blob</code> whose data cannot be interpreted as a bitmap
+    image).</p>
+   </dd>
+
+   <dt><code data-x=""><var>imageBitmap</var>.<span subdfn data-x="dom-ImageBitmap-close">close</span>()</code></dt>
+
+   <dd><p>Releases <var>imageBitmap</var>'s underlying <span
+   data-x="concept-ImageBitmap-bitmap-data">bitmap data</span>.</p></dd>
+
+   <dt><code data-x=""><var>imageBitmap</var>.<span subdfn data-x="dom-ImageBitmap-width">width</span></code></dt>
+
+   <dd>
+    <p>Returns the <span>natural width</span> of the image, in <span data-x="'px'">CSS
+    pixels</span>.</p>
+   </dd>
+
+   <dt><code data-x=""><var>imageBitmap</var>.<span subdfn data-x="dom-ImageBitmap-height">height</span></code></dt>
+
+   <dd>
+    <p>Returns the <span>natural height</span> of the image, in <span data-x="'px'">CSS
+    pixels</span>.</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <p>An <code>ImageBitmap</code> object whose <span>[[Detached]]</span> internal slot value
+  is false always has associated <dfn data-x="concept-ImageBitmap-bitmap-data">bitmap data</dfn>,
+  with a width and a height. However, it is possible for this data to be corrupted. If an
+  <code>ImageBitmap</code> object's media data can be decoded without errors, it is said to be <dfn
+  data-x="concept-ImageBitmap-good">fully decodable</dfn>.</p>
+
+  <p>An <code>ImageBitmap</code> object's bitmap has an <span
+  data-x="concept-canvas-origin-clean">origin-clean</span> flag, which indicates whether the
+  bitmap is tainted by content from a different <span>origin</span>. The flag is initially set to
+  true and may be changed to false by the steps of <code
+  data-x="dom-createImageBitmap">createImageBitmap()</code>.</p>
+
+  <hr>
+
+  <p><code>ImageBitmap</code> objects are <span>serializable objects</span> and <span>transferable
+  objects</span>.</p>
+
+  <div algorithm>
+  <p>Their <span>serialization steps</span>, given <var>value</var> and <var>serialized</var>,
+  are:</p>
+
+  <ol>
+   <li><p>If <var>value</var>'s <span data-x="concept-canvas-origin-clean">origin-clean</span>
+   flag is not set, then throw a <span>"<code>DataCloneError</code>"</span>
+   <code>DOMException</code>.
+
+   <li><p>Set <var>serialized</var>.[[BitmapData]] to a copy of <var>value</var>'s <span
+   data-x="concept-ImageBitmap-bitmap-data">bitmap data</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>Their <span>deserialization steps</span>, given <var>serialized</var>, <var>value</var>,
+  and <var>targetRealm</var>, are:</p>
+
+  <ol>
+   <li><p>Set <var>value</var>'s <span data-x="concept-ImageBitmap-bitmap-data">bitmap data</span>
+   to <var>serialized</var>.[[BitmapData]].</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>Their <span>transfer steps</span>, given <var>value</var> and <var>dataHolder</var>, are:</p>
+
+  <ol>
+   <li><p>If <var>value</var>'s <span data-x="concept-canvas-origin-clean">origin-clean</span>
+   flag is not set, then throw a <span>"<code>DataCloneError</code>"</span>
+   <code>DOMException</code>.
+
+   <li><p>Set <var>dataHolder</var>.[[BitmapData]] to <var>value</var>'s <span
+   data-x="concept-ImageBitmap-bitmap-data">bitmap data</span>.</p></li>
+
+   <li><p>Unset <var>value</var>'s <span data-x="concept-ImageBitmap-bitmap-data">bitmap
+   data</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>Their <span>transfer-receiving steps</span>, given <var>dataHolder</var> and <var>value</var>,
+  are:</p>
+
+  <ol>
+   <li><p>Set <var>value</var>'s <span data-x="concept-ImageBitmap-bitmap-data">bitmap data</span>
+   to <var>dataHolder</var>.[[BitmapData]].</p></li>
+  </ol>
+  </div>
+
+  <hr>
+
+  <p>The <span data-x="dom-createImageBitmap">createImageBitmap</span> method uses the <dfn>bitmap
+  task source</dfn> to settle its returned Promise.</p>
+
+  <div var-scope>
+  <div algorithm>
+  <p>The <dfn method for="WindowOrWorkerGlobalScope"><code
+  data-x="dom-createImageBitmap">createImageBitmap(<var>image</var>,
+  <var>options</var>)</code></dfn> and <code data-x="">createImageBitmap(<var>image</var>,
+  <var>sx</var>, <var>sy</var>, <var>sw</var>, <var>sh</var>, <var>options</var>)</code> methods,
+  when invoked, must run these steps:</p>
+
+  <ol>
+   <li><p>If either <var>sw</var> or <var>sh</var> is given and is 0, then return <span>a promise
+   rejected with</span> a <code data-x="js-RangeError">RangeError</code>.</p></li>
+
+   <li><p>If either <var>options</var>'s <dfn dict-member for="ImageBitmapOptions"><code
+   data-x="dom-ImageBitmapOptions-resizeWidth">resizeWidth</code></dfn> or <var>options</var>'s
+   <dfn dict-member for="ImageBitmapOptions"><code
+   data-x="dom-ImageBitmapOptions-resizeHeight">resizeHeight</code></dfn> is present and is 0, then
+   return <span>a promise rejected with</span> an <span>"<code>InvalidStateError</code>"</span>
+   <code>DOMException</code>.</p></li>
+
+   <li><p><span>Check the usability of the <var>image</var> argument</span>. If this throws an
+   exception or returns <i>bad</i>, then return <span>a promise rejected with</span> an
+   <span>"<code>InvalidStateError</code>"</span> <code>DOMException</code>.
+
+   <li><p>Let <var>promise</var> be a new promise.</p></li>
+
+   <li><p>Let <var>imageBitmap</var> be a new <code>ImageBitmap</code> object.</p></li>
+
+   <li>
+    <p>Switch on <var>image</var>:</p>
+
+    <dl class="switch">
+     <dt><code>img</code>
+     <dt><span>SVG <code>image</code></span>
+     <dd>
+      <ol>
+       <li><p>If <var>image</var>'s media data has no <span>natural dimensions</span> (e.g., it's
+       a vector graphic with no specified content size) and either <var>options</var>'s <code
+       data-x="dom-ImageBitmapOptions-resizeWidth">resizeWidth</code> or <var>options</var>'s <code
+       data-x="dom-ImageBitmapOptions-resizeHeight">resizeHeight</code> is not present, then return
+       <span>a promise rejected with</span> an <span>"<code>InvalidStateError</code>"</span>
+       <code>DOMException</code>.</p></li>
+
+       <li><p>If <var>image</var>'s media data has no <span>natural dimensions</span> (e.g., it's
+       a vector graphic with no specified content size), it should be rendered to a bitmap of the
+       size specified by the <code data-x="dom-ImageBitmapOptions-resizeWidth">resizeWidth</code>
+       and the <code data-x="dom-ImageBitmapOptions-resizeHeight">resizeHeight</code>
+       options.</p></li>
+
+       <li><p>Set <var>imageBitmap</var>'s <span data-x="concept-ImageBitmap-bitmap-data">bitmap
+       data</span> to a copy of <var>image</var>'s media data, <span>cropped to the source rectangle
+       with formatting</span>. If this is an animated image, <var>imageBitmap</var>'s <span
+       data-x="concept-ImageBitmap-bitmap-data">bitmap data</span> must only be taken from the
+       default image of the animation (the one that the format defines is to be used when animation
+       is not supported or is disabled), or, if there is no such image, the first frame of the
+       animation.</p></li>
+
+       <li><p>If <var>image</var> <span>is not origin-clean</span>, then set the <span
+       data-x="concept-canvas-origin-clean">origin-clean</span> flag of <var>imageBitmap</var>'s
+       bitmap to false.</p></li>
+
+       <li><p><span>Queue a global task</span>, using the <span>bitmap task source</span>, to
+       resolve <var>promise</var> with <var>imageBitmap</var>.</p></li>
+      </ol>
+     </dd>
+
+     <dt><code>video</code>
+     <dd>
+      <ol>
+       <li><p>If <var>image</var>'s <code data-x="dom-media-networkState">networkState</code>
+       attribute is <code data-x="dom-media-NETWORK_EMPTY">NETWORK_EMPTY</code>, then return
+       <span>a promise rejected with</span> an <span>"<code>InvalidStateError</code>"</span>
+       <code>DOMException</code>.</p></li>
+
+       <li><p>Set <var>imageBitmap</var>'s <span data-x="concept-ImageBitmap-bitmap-data">bitmap
+       data</span> to a copy of the frame at the <span>current playback position</span>, at the
+       <span>media resource</span>'s <span data-x="concept-video-natural-width">natural
+       width</span> and <span data-x="concept-video-natural-height">natural height</span> (i.e.,
+       after any aspect-ratio correction has been applied), <span>cropped to the source rectangle
+       with formatting</span>.</p>
+
+       <li><p>If <var>image</var> <span>is not origin-clean</span>, then set the <span
+       data-x="concept-canvas-origin-clean">origin-clean</span> flag of <var>imageBitmap</var>'s
+       bitmap to false.</p></li>
+
+       <li><p><span>Queue a global task</span>, using the <span>bitmap task source</span>, to
+       resolve <var>promise</var> with <var>imageBitmap</var>.</p></li>
+      </ol>
+     </dd>
+
+     <dt><code>canvas</code>
+     <dd>
+      <ol>
+       <li><p>Set <var>imageBitmap</var>'s <span data-x="concept-ImageBitmap-bitmap-data">bitmap
+       data</span> to a copy of <var>image</var>'s <span
+       data-x="concept-ImageBitmap-bitmap-data">bitmap data</span>, <span>cropped to the source
+       rectangle with formatting</span>.</p></li>
+
+       <li><p>Set the <span data-x="concept-canvas-origin-clean">origin-clean</span> flag of the
+       <var>imageBitmap</var>'s bitmap to the same value as the <span
+       data-x="concept-canvas-origin-clean">origin-clean</span> flag of <var>image</var>'s
+       bitmap.</p></li>
+
+       <li><p><span>Queue a global task</span>, using the <span>bitmap task source</span>, to
+       resolve <var>promise</var> with <var>imageBitmap</var>.</p></li>
+      </ol>
+     </dd>
+
+     <dt><code>Blob</code>
+     <dd>
+      <p>Run these steps <span>in parallel</span>:</p>
+
+      <ol>
+       <li><p>Let <var>imageData</var> be the result of reading <var>image</var>'s data. If an <span
+       data-x="file-error-read">error occurs during reading of the object</span>, then <span>queue a
+       global task</span>, using the <span>bitmap task source</span>, to reject <var>promise</var>
+       with an <span>"<code>InvalidStateError</code>"</span> <code>DOMException</code> and abort
+       these steps.</p></li>
+
+       <li><p>Apply the <span data-x="Content-Type sniffing: image">image sniffing rules</span> to
+       determine the file format of <var>imageData</var>, with MIME type of <var>image</var> (as
+       given by <var>image</var>'s <code data-x="dom-Blob-type">type</code> attribute) giving the
+       official type.</p></li>
+
+       <li><p>If <var>imageData</var> is not in a supported image file format (e.g., it's not an
+       image at all), or if <var>imageData</var> is corrupted in some fatal way such that the image
+       dimensions cannot be obtained (e.g., a vector graphic with no natural size), then <span>queue
+       a global task</span>, using the <span>bitmap task source</span>, to reject <var>promise</var>
+       with an <span>"<code>InvalidStateError</code>"</span> <code>DOMException</code> and abort
+       these steps.</p></li>
+
+       <li><p>Set <var>imageBitmap</var>'s <span data-x="concept-ImageBitmap-bitmap-data">bitmap
+       data</span> to <var>imageData</var>, <span>cropped to the source rectangle with
+       formatting</span>. If this is an animated image, <var>imageBitmap</var>'s <span
+       data-x="concept-ImageBitmap-bitmap-data">bitmap data</span> must only be taken from the
+       default image of the animation (the one that the format defines is to be used when animation
+       is not supported or is disabled), or, if there is no such image, the first frame of the
+       animation.</p></li>
+
+       <li><p><span>Queue a global task</span>, using the <span>bitmap task source</span>, to
+       resolve <var>promise</var> with <var>imageBitmap</var>.</p></li>
+      </ol>
+     </dd>
+
+     <dt><code>ImageData</code>
+     <dd>
+      <ol>
+       <li><p>Let <var>buffer</var> be <var>image</var>'s <code
+       data-x="dom-imagedata-data">data</code> attribute value's [[ViewedArrayBuffer]] internal
+       slot.</p></li>
+
+       <li><p>If <span>IsDetachedBuffer</span>(<var>buffer</var>) is true, then return <span>a
+       promise rejected with</span> an <span>"<code>InvalidStateError</code>"</span>
+       <code>DOMException</code>.</p></li>
+
+       <li><p>Set <var>imageBitmap</var>'s <span data-x="concept-ImageBitmap-bitmap-data">bitmap
+       data</span> to <var>image</var>'s image data, <span>cropped to the source rectangle with
+       formatting</span>.</p></li>
+
+       <li><p><span>Queue a global task</span>, using the <span>bitmap task source</span>, to
+       resolve <var>promise</var> with <var>imageBitmap</var>.</p></li>
+      </ol>
+     </dd>
+
+     <dt><code>ImageBitmap</code>
+     <dd>
+      <ol>
+       <li><p>Set <var>imageBitmap</var>'s <span data-x="concept-ImageBitmap-bitmap-data">bitmap
+       data</span> to a copy of <var>image</var>'s <span
+       data-x="concept-ImageBitmap-bitmap-data">bitmap data</span>, <span>cropped to the source
+       rectangle with formatting</span>.</p></li>
+
+       <li><p>Set the <span data-x="concept-canvas-origin-clean">origin-clean</span> flag of
+       <var>imageBitmap</var>'s bitmap to the same value as the <span
+       data-x="concept-canvas-origin-clean">origin-clean</span> flag of <var>image</var>'s
+       bitmap.</p></li>
+
+       <li><p><span>Queue a global task</span>, using the <span>bitmap task source</span>, to
+       resolve <var>promise</var> with <var>imageBitmap</var>.</p></li>
+      </ol>
+     </dd>
+
+     <dt><code>VideoFrame</code>
+     <dd>
+      <ol>
+       <li><p>Set <var>imageBitmap</var>'s <span data-x="concept-ImageBitmap-bitmap-data">bitmap
+       data</span> to a copy of <var>image</var>'s visible pixel data, <span>cropped to the source
+       rectangle with formatting</span>.</p></li>
+
+       <li><p><span>Queue a global task</span>, using the <span>bitmap task source</span>, to
+       resolve <var>promise</var> with <var>imageBitmap</var>.</p></li>
+      </ol>
+     </dd>
+    </dl>
+   </li>
+
+   <li><p>Return <var>promise</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>When the steps above require that the user agent <dfn data-x="cropped to the source
+  rectangle with formatting">crop bitmap data to the source rectangle with formatting</dfn>,
+  the user agent must run the following steps:</p>
+
+  <ol>
+   <li><p>Let <var>input</var> be the <span data-x="concept-ImageBitmap-bitmap-data">bitmap
+   data</span> being transformed.</p></li>
+
+   <li>
+    <p>If <var>sx</var>, <var>sy</var>, <var>sw</var> and <var>sh</var> are specified, let
+    <var>sourceRectangle</var> be a rectangle whose corners are the four points (<var>sx</var>,
+    <var>sy</var>), (<var>sx</var>+<var>sw</var>, <var>sy</var>), (<var>sx</var>+<var>sw</var>,
+    <var>sy</var>+<var>sh</var>), (<var>sx</var>, <var>sy</var>+<var>sh</var>). Otherwise, let
+    <var>sourceRectangle</var> be a rectangle whose corners are the four points (0, 0), (width of
+    <var>input</var>, 0), (width of <var>input</var>, height of <var>input</var>), (0, height of
+    <var>input</var>).</p>
+
+    <p class="note">If either <var>sw</var> or <var>sh</var> are negative, then
+    the top-left corner of this rectangle will be to the left or above the (<var>sx</var>,
+    <var>sy</var>) point.</p>
+   </li>
+
+   <li>
+    <p>Let <var>outputWidth</var> be determined as follows:</p>
+
+    <dl class="switch">
+     <dt>If the <code data-x="dom-ImageBitmapOptions-resizeWidth">resizeWidth</code> member of
+     <var>options</var> is specified</dt>
+     <dd>the value of the <code data-x="dom-ImageBitmapOptions-resizeWidth">resizeWidth</code>
+     member of <var>options</var></dd>
+
+     <dt>If the <code data-x="dom-ImageBitmapOptions-resizeWidth">resizeWidth</code> member of
+     <var>options</var> is not specified, but the <code
+     data-x="dom-ImageBitmapOptions-resizeHeight">resizeHeight</code> member is specified</dt>
+     <dd>the width of <var>sourceRectangle</var>, times the value of the <code
+     data-x="dom-ImageBitmapOptions-resizeHeight">resizeHeight</code> member of <var>options</var>,
+     divided by the height of <var>sourceRectangle</var>, rounded up to the nearest integer</dd>
+
+     <dt>If neither <code data-x="dom-ImageBitmapOptions-resizeWidth">resizeWidth</code> nor <code
+     data-x="dom-ImageBitmapOptions-resizeHeight">resizeHeight</code> are specified</dt>
+     <dd>the width of <var>sourceRectangle</var></dd>
+    </dl>
+   </li>
+
+   <li>
+    <p>Let <var>outputHeight</var> be determined as follows:</p>
+
+    <dl class="switch">
+     <dt>If the <code data-x="dom-ImageBitmapOptions-resizeHeight">resizeHeight</code> member of
+     <var>options</var> is specified</dt>
+     <dd>the value of the <code data-x="dom-ImageBitmapOptions-resizeHeight">resizeHeight</code>
+     member of <var>options</var></dd>
+
+     <dt>If the <code data-x="dom-ImageBitmapOptions-resizeHeight">resizeHeight</code> member of
+     <var>options</var> is not specified, but the <code
+     data-x="dom-ImageBitmapOptions-resizeWidth">resizeWidth</code> member is specified</dt>
+     <dd>the height of <var>sourceRectangle</var>, times the value of the <code
+     data-x="dom-ImageBitmapOptions-resizeWidth">resizeWidth</code> member of <var>options</var>,
+     divided by the width of <var>sourceRectangle</var>, rounded up to the nearest integer</dd>
+
+     <dt>If neither <code data-x="dom-ImageBitmapOptions-resizeWidth">resizeWidth</code> nor <code
+     data-x="dom-ImageBitmapOptions-resizeHeight">resizeHeight</code> are specified</dt>
+     <dd>the height of <var>sourceRectangle</var></dd>
+    </dl>
+   </li>
+
+   <li><p>Place <var>input</var> on an infinite <span>transparent black</span> grid plane,
+   positioned so that its top left corner is at the origin of the plane, with the
+   <var>x</var>-coordinate increasing to the right, and the <var>y</var>-coordinate increasing down,
+   and with each pixel in the <var>input</var> image data occupying a cell on the plane's
+   grid.</p></li>
+
+   <li><p>Let <var>output</var> be the rectangle on the plane denoted by
+   <var>sourceRectangle</var>.</p></li>
+
+   <li><p>Scale <var>output</var> to the size specified by <var>outputWidth</var> and
+   <var>outputHeight</var>. The user agent should use the value of the <dfn dict-member
+   for="ImageBitmapOptions"><code
+   data-x="dom-ImageBitmapOptions-resizeQuality">resizeQuality</code></dfn> option to guide the
+   choice of scaling algorithm.</p></li>
+
+   <li>
+    <p>If the value of the <dfn dict-member for="ImageBitmapOptions"><code
+    data-x="dom-ImageBitmapOptions-imageOrientation">imageOrientation</code></dfn> member of
+    <var>options</var> is "<dfn enum-value for="ImageOrientation"><code
+    data-x="dom-ImageOrientation-flipY">flipY</code></dfn>", <var>output</var> must be flipped
+    vertically, disregarding any image orientation metadata of the source (such as EXIF metadata),
+    if any. <ref>EXIF</ref></p>
+
+    <p class="note">If the value is "<dfn enum-value for="ImageOrientation"><code
+    data-x="dom-ImageOrientation-from-image">from-image</code></dfn>", no extra step is needed.</p>
+
+    <p class="note">There used to be a "<dfn><code
+    data-x="dom-ImageBitmapOptions-imageOrientation-none">none</code></dfn>" enum value. It was
+    renamed to "<code data-x="dom-ImageOrientation-from-image">from-image</code>". In the future,
+    "<code data-x="dom-ImageBitmapOptions-imageOrientation-none">none</code>" will be added back
+    with a different meaning.</p>
+   </li>
+
+   <li>
+    <p>If <var>image</var> is an <code>img</code> element or a <code>Blob</code> object, let
+    <var>val</var> be the value of the <dfn dict-member for="ImageBitmapOptions"><code
+    data-x="dom-ImageBitmapOptions-colorSpaceConversion">colorSpaceConversion</code></dfn> member
+    of <var>options</var>, and then run these substeps:</p>
+
+    <ol>
+     <li><p>If <var>val</var> is "<dfn enum-value for="ColorSpaceConversion"><code
+     data-x="dom-ColorSpaceConversion-default">default</code></dfn>",
+     the color space conversion behavior is implementation-specific, and should be chosen according
+     to the default color space that the implementation uses for drawing images onto the canvas.</p>
+     </li>
+
+     <li><p>If <var>val</var> is "<dfn enum-value for="ColorSpaceConversion"><code
+     data-x="dom-ColorSpaceConversion-none">none</code></dfn>", <var>output</var> must be decoded
+     without performing any color space conversions. This means that the image decoding algorithm
+     must ignore color profile metadata embedded in the source data as well as the display device
+     color profile.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p>Let <var>val</var> be the value of <dfn dict-member for="ImageBitmapOptions"><code
+    data-x="dom-ImageBitmapOptions-premultiplyAlpha">premultiplyAlpha</code></dfn> member of
+    <var>options</var>, and then run these substeps:</p>
+
+    <ol>
+     <li><p>If <var>val</var> is "<dfn enum-value for="PremultiplyAlpha"><code
+     data-x="dom-PremultiplyAlpha-default">default</code></dfn>", the alpha premultiplication
+     behavior is implementation-specific, and should be chosen according to implementation deems
+     optimal for drawing images onto the canvas.</p></li>
+
+     <li><p>If <var>val</var> is "<dfn enum-value for="PremultiplyAlpha"><code
+     data-x="dom-PremultiplyAlpha-premultiply">premultiply</code></dfn>", the <var>output</var> that
+     is not premultiplied by alpha must have its color components <span
+     data-x="convert-to-premultiplied">multiplied by alpha</span> and that is premultiplied by alpha
+     must be left untouched.</p></li>
+
+     <li><p>If <var>val</var> is "<dfn enum-value for="PremultiplyAlpha"><code
+     data-x="dom-PremultiplyAlpha-none">none</code></dfn>", the <var>output</var> that is not
+     premultiplied by alpha must be left untouched and that is premultiplied by alpha must have its
+     color components <span data-x="convert-from-premultiplied">divided by alpha</span>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Return <var>output</var>.</p></li>
+  </ol>
+  </div>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="ImageBitmap"><code data-x="dom-ImageBitmap-close">close()</code></dfn>
+  method steps are:</p>
+
+  <ol>
+   <li><p>Set <span>this</span>'s <span>[[Detached]]</span> internal slot value to true.</p></li>
+
+   <li><p>Unset <span>this</span>'s <span data-x="concept-ImageBitmap-bitmap-data">bitmap
+   data</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="ImageBitmap"><code data-x="dom-ImageBitmap-width">width</code></dfn>
+  getter steps are:</p>
+
+  <ol>
+   <li><p>If <span>this</span>'s <span>[[Detached]]</span> internal slot's value is true, then
+   return 0.</p></li>
+
+   <li><p>Return <span>this</span>'s width, in <span data-x="'px'">CSS pixels</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="ImageBitmap"><code data-x="dom-ImageBitmap-height">height</code></dfn>
+  getter steps are:</p>
+
+  <ol>
+   <li><p>If <span>this</span>'s <span>[[Detached]]</span> internal slot's value is true, then
+   return 0.</p></li>
+
+   <li><p>Return <span>this</span>'s height, in <span data-x="'px'">CSS pixels</span>.</p></li>
+  </ol>
+  </div>
+
+  <p>The <code>ResizeQuality</code> enumeration is used to express a preference for the
+  interpolation quality to use when scaling images.</p>
+
+  <p>The "<dfn enum-value for="ResizeQuality"><code
+  data-x="dom-ResizeQuality-pixelated">pixelated</code></dfn>" value indicates a preference for
+  scaling the image to preserve the pixelation of the original as much as possible, with minor
+  smoothing as necessary to avoid distorting the image when the target size is not a clean multiple
+  of the original.</p>
+
+  <p>To implement "<code data-x="dom-ResizeQuality-pixelated">pixelated</code>", for each axis
+  independently, first determine the integer multiple of its natural size that puts it closest to
+  the target size and is greater than zero. Scale it to this integer-multiple-size using nearest
+  neighbor, then scale it the rest of the way to the target size using bilinear interpolation.</p>
+
+  <p>The "<dfn enum-value for="ResizeQuality"><code data-x="dom-ResizeQuality-low">low</code></dfn>"
+  value indicates a preference for a low level of image interpolation quality. Low-quality image
+  interpolation may be more computationally efficient than higher settings.</p>
+
+  <p>The "<dfn enum-value for="ResizeQuality"><code
+  data-x="dom-ResizeQuality-medium">medium</code></dfn>" value indicates a preference for a medium
+  level of image interpolation quality.</p>
+
+  <p>The "<dfn enum-value for="ResizeQuality"><code
+  data-x="dom-ResizeQuality-high">high</code></dfn>" value indicates a preference for a high level
+  of image interpolation quality. High-quality image interpolation may be more computationally
+  expensive than lower settings.</p>
+
+  <p class="note">Bilinear scaling is an example of a relatively fast, lower-quality image-smoothing
+  algorithm. Bicubic or Lanczos scaling are examples of image-scaling algorithms that produce
+  higher-quality output. This specification does not mandate that specific interpolation algorithms
+  be used, except for "<code data-x="dom-ResizeQuality-pixelated">pixelated</code>" as described
+  above.</p>
+
+  </div>
+
+  <div class="example">
+
+   <p>Using this API, a sprite sheet can be precut and prepared:</p>
+
+   <pre><code class="js">var sprites = {};
+function loadMySprites() {
+  var image = new Image();
+  image.src = 'mysprites.png';
+  var resolver;
+  var promise = new Promise(function (arg) { resolver = arg });
+  image.onload = function () {
+    resolver(Promise.all([
+      createImageBitmap(image,  0,  0, 40, 40).then(function (image) { sprites.person = image }),
+      createImageBitmap(image, 40,  0, 40, 40).then(function (image) { sprites.grass  = image }),
+      createImageBitmap(image, 80,  0, 40, 40).then(function (image) { sprites.tree   = image }),
+      createImageBitmap(image,  0, 40, 40, 40).then(function (image) { sprites.hut    = image }),
+      createImageBitmap(image, 40, 40, 40, 40).then(function (image) { sprites.apple  = image }),
+      createImageBitmap(image, 80, 40, 40, 40).then(function (image) { sprites.snake  = image })
+    ]));
+  };
+  return promise;
+}
+
+function runDemo() {
+  var canvas = document.querySelector('canvas#demo');
+  var context = canvas.getContext('2d');
+  context.drawImage(sprites.tree, 30, 10);
+  context.drawImage(sprites.snake, 70, 10);
+}
+
+loadMySprites().then(runDemo);</code></pre>
+
+  </div>
+
+
+

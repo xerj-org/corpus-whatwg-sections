@@ -1,0 +1,12 @@
+WHATWG HTML — section common-parser-idioms — Common parser idioms
+
+  <h4>Common parser idioms</h4>
+
+  <p var-scope>Some of the micro-parsers described below follow the pattern of having an <var>input</var>
+  variable that holds the string being parsed, and having a <var>position</var> variable pointing at
+  the next character to parse in <var>input</var>.</p>
+
+  </div>
+
+
+

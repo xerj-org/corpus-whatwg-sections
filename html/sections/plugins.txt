@@ -1,0 +1,53 @@
+WHATWG HTML — section plugins — Plugins
+
+  <h4>Plugins</h4>
+
+  <p>The term <dfn>plugin</dfn> refers to an <span>implementation-defined</span> set of content
+  handlers used by the user agent that can take part in the user agent's rendering of a
+  <code>Document</code> object, but that neither act as <span data-x="child navigable">child
+  navigables</span> of the <code>Document</code> nor introduce any <code>Node</code> objects to the
+  <code>Document</code>'s DOM.</p>
+
+  <p>Typically such content handlers are provided by third parties, though a user agent can also
+  designate built-in content handlers as plugins.</p>
+
+  <div w-nodev>
+
+  <p>A user agent must not consider the types <code>text/plain</code> and
+  <code>application/octet-stream</code> as having a registered <span>plugin</span>.</p> <!-- because
+  of the way <object> elements handles those types, if nothing else (it also doesn't make any sense
+  to have a plugin registered for those types, of course) -->
+
+  </div>
+
+  <p class="example">One example of a plugin would be a PDF viewer that is instantiated in a
+  <span>navigable</span> when the user navigates to a PDF file. This would count as a plugin
+  regardless of whether the party that implemented the PDF viewer component was the same as that
+  which implemented the user agent itself. However, a PDF viewer application that launches separate
+  from the user agent (as opposed to using the same interface) is not a plugin by this
+  definition.</p>
+
+  <p class="note">This specification does not define a mechanism for interacting with plugins, as it
+  is expected to be user-agent- and platform-specific. Some UAs might opt to support a plugin
+  mechanism such as the Netscape Plugin API; others might use remote content converters or have
+  built-in support for certain types. Indeed, this specification doesn't require user agents to
+  support plugins at all. <ref>NPAPI</ref></p>
+
+  <div w-nodev>
+
+  <p class="warning">Browsers should take extreme care when interacting with external content
+  intended for <span data-x="plugin">plugins</span>. When third-party software is run with the same
+  privileges as the user agent itself, vulnerabilities in the third-party software become as
+  dangerous as those in the user agent.</p>
+
+  <p>
+  <!--INSERT TRACKING-->
+  Since different users having different sets of <span data-x="plugin">plugins</span> provides a
+  tracking vector that increases the chances of users being uniquely identified, user agents are
+  encouraged to support the exact same set of <span data-x="plugin">plugins</span> for each
+  user.</p>
+
+  </div>
+
+
+

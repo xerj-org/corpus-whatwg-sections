@@ -1,0 +1,17 @@
+WHATWG HTML — section dependencies/the-no-vary-search-http-response-header-field — The No-Vary-Search HTTP Response Header Field
+
+   <dt>The No-Vary-Search HTTP Response Header Field</dt>
+
+   <dd>
+    <p>The following terms are defined in <cite>The No-Vary-Search HTTP Response Header
+    Field</cite>: <ref>NOVARYSEARCH</ref></p>
+
+    <ul class="brief">
+     <li>`<dfn data-x-href="https://httpwg.org/http-extensions/draft-ietf-httpbis-no-vary-search.html#name-http-header-field-definitio"><code>No-Vary-Search</code></dfn>`</li>
+     <li><dfn data-x-href="https://httpwg.org/http-extensions/draft-ietf-httpbis-no-vary-search.html#parse-a-url-search-variance">parse a URL search variance</dfn></li>
+     <li><dfn data-x-href="https://httpwg.org/http-extensions/draft-ietf-httpbis-no-vary-search.html#name-data-model">URL search variance</dfn></li>
+     <li><dfn data-x-href="https://httpwg.org/http-extensions/draft-ietf-httpbis-no-vary-search.html#name-data-model">default URL search variance</dfn></li>
+     <li><dfn data-x-href="https://httpwg.org/http-extensions/draft-ietf-httpbis-no-vary-search.html#name-comparing">equivalent modulo search variance</dfn></li>
+    </ul>
+   </dd>
+

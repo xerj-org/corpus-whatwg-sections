@@ -1,0 +1,538 @@
+WHATWG HTML — section the-canvas-element/the-offscreencanvas-interface — The <code>OffscreenCanvas</code> interface
+
+  <h5>The <code>OffscreenCanvas</code> interface</h5>
+
+  <pre><code class="idl">typedef (<span>OffscreenCanvasRenderingContext2D</span> or <span>ImageBitmapRenderingContext</span> or <span>WebGLRenderingContext</span> or <span>WebGL2RenderingContext</span> or <span>GPUCanvasContext</span>) <dfn typedef>OffscreenRenderingContext</dfn>;
+
+dictionary <dfn dictionary>ImageEncodeOptions</dfn> {
+  DOMString <span data-x="image-encode-options-type">type</span> = "image/png";
+  unrestricted double <span data-x="image-encode-options-quality">quality</span>;
+};
+
+enum <dfn enum>OffscreenRenderingContextId</dfn> { "<span data-x="offscreen-context-type-2d">2d</span>", "<span data-x="offscreen-context-type-bitmaprenderer">bitmaprenderer</span>", "<span data-x="offscreen-context-type-webgl">webgl</span>", "<span data-x="offscreen-context-type-webgl2">webgl2</span>", "<span data-x="offscreen-context-type-webgpu">webgpu</span>" };
+
+[Exposed=(Window,Worker), <span>Transferable</span>]
+interface <dfn interface>OffscreenCanvas</dfn> : <span>EventTarget</span> {
+  <span data-x="dom-OffscreenCanvas">constructor</span>([EnforceRange] unsigned long long width, [EnforceRange] unsigned long long height);
+
+  attribute [EnforceRange] unsigned long long <span data-x="dom-OffscreenCanvas-width">width</span>;
+  attribute [EnforceRange] unsigned long long <span data-x="dom-OffscreenCanvas-height">height</span>;
+
+  <span>OffscreenRenderingContext</span>? <span data-x="dom-OffscreenCanvas-getContext">getContext</span>(<span>OffscreenRenderingContextId</span> contextId, optional any options = null);
+  <span>ImageBitmap</span> <span data-x="dom-OffscreenCanvas-transferToImageBitmap">transferToImageBitmap</span>();
+  <span data-x="idl-Promise">Promise</span>&lt;<span>Blob</span>> <span data-x="dom-OffscreenCanvas-convertToBlob">convertToBlob</span>(optional <span>ImageEncodeOptions</span> options = {});
+
+  attribute <span>EventHandler</span> <span data-x="handler-offscreencanvas-oncontextlost">oncontextlost</span>;
+  attribute <span>EventHandler</span> <span data-x="handler-offscreencanvas-oncontextrestored">oncontextrestored</span>;
+};</code></pre>
+
+  <p class="note"><code>OffscreenCanvas</code> is an <code>EventTarget</code>, so both
+  <code>OffscreenCanvasRenderingContext2D</code> and WebGL can fire events at it.
+  <code>OffscreenCanvasRenderingContext2D</code> can fire <code
+  data-x="event-contextlost">contextlost</code> and <code
+  data-x="event-contextrestored">contextrestored</code>, and WebGL can fire <code
+  data-x="">webglcontextlost</code> and <code data-x="">webglcontextrestored</code>.
+  <ref>WEBGL</ref></p>
+
+  <p><code>OffscreenCanvas</code> objects are used to create rendering contexts, much like an
+  <code>HTMLCanvasElement</code>, but with no connection to the DOM. This makes it possible to
+  use canvas rendering contexts in <a href="#workers">workers</a>.</p>
+
+  <p>An <code>OffscreenCanvas</code> object may hold a weak reference to a <dfn
+  data-x="offscreencanvas-placeholder">placeholder <code>canvas</code> element</dfn>, which is
+  typically in the DOM, whose embedded content is provided by the <code>OffscreenCanvas</code>
+  object. The bitmap of the <code>OffscreenCanvas</code> object is pushed to the <span
+  data-x="offscreencanvas-placeholder">placeholder <code>canvas</code> element</span> as part of
+  the <code>OffscreenCanvas</code>'s <span>relevant agent</span>'s <span
+  data-x="concept-agent-event-loop">event loop</span>'s <span>update the rendering</span>
+  steps.</p>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>offscreenCanvas</var> = new <span subdfn data-x="dom-OffscreenCanvas">OffscreenCanvas</span>(<var>width</var>,
+   <var>height</var>)</code></dt>
+   <dd>
+    <p>Returns a new <code>OffscreenCanvas</code> object that is not linked to a <span
+    data-x="offscreencanvas-placeholder">placeholder <code>canvas</code> element</span>, and whose
+    bitmap's size is determined by the <var>width</var> and <var>height</var> arguments.</p>
+   </dd>
+
+   <dt><code data-x=""><var>context</var> = <var>offscreenCanvas</var>.<span subdfn data-x="dom-OffscreenCanvas-getContext">getContext</span>(<var>contextId</var> [,
+   <var>options</var> ])</code></dt>
+   <dd>
+    <p>Returns an object that exposes an API for drawing on the <code>OffscreenCanvas</code> object.
+    <var>contextId</var> specifies the desired API: "<code
+    data-x="offscreen-context-type-2d">2d</code>", "<code
+    data-x="offscreen-context-type-bitmaprenderer">bitmaprenderer</code>", "<code
+    data-x="offscreen-context-type-webgl">webgl</code>", "<code
+    data-x="offscreen-context-type-webgl2">webgl2</code>", or "<code
+    data-x="offscreen-context-type-webgpu">webgpu</code>". <var>options</var> is handled by that
+    API.</p>
+
+    <p>This specification defines the "<code data-x="canvas-context-2d">2d</code>" context below,
+    which is similar but distinct from the "<code data-x="offscreen-context-type-2d">2d</code>"
+    context that is created from a <code>canvas</code> element. The WebGL specifications define the
+    "<code data-x="offscreen-context-type-webgl">webgl</code>" and "<code
+    data-x="offscreen-context-type-webgl2">webgl2</code>" contexts. <cite>WebGPU</cite> defines the
+    "<code data-x="offscreen-context-type-webgpu">webgpu</code>" context. <ref>WEBGL</ref>
+    <ref>WEBGPU</ref></p>
+
+    <p>Returns null if the canvas has already been initialized with another context type (e.g.,
+    trying to get a "<code data-x="offscreen-context-type-2d">2d</code>" context after getting a
+    "<code data-x="offscreen-context-type-webgl">webgl</code>" context).</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <p>An <code>OffscreenCanvas</code> object has an internal <dfn
+  data-x="offscreencanvas-bitmap">bitmap</dfn> that is initialized when the object
+  is created. The width and height of the <span data-x="offscreencanvas-bitmap">bitmap</span> are
+  equal to the values of the <code data-x="dom-OffscreenCanvas-width">width</code> and <code
+  data-x="dom-OffscreenCanvas-height">height</code> attributes of the <code>OffscreenCanvas</code>
+  object. Initially, all the bitmap's pixels are <span>transparent black</span>.</p>
+
+  <p>An <code>OffscreenCanvas</code> object has an internal <dfn
+  data-x="offscreencanvas-inherited-lang">inherited language</dfn> and <dfn
+  data-x="offscreencanvas-inherited-direction">inherited direction</dfn> set when
+  the <code>OffscreenCanvas</code> is created.</p>
+
+  <p>An <code>OffscreenCanvas</code> object can have a rendering context bound to it. Initially,
+  it does not have a bound rendering context. To keep track of whether it has a rendering context
+  or not, and what kind of rendering context it is, an <code>OffscreenCanvas</code> object also
+  has a <dfn data-x="offscreencanvas-context-mode">context mode</dfn>, which is initially <dfn
+  data-x="offscreencanvas-context-none">none</dfn> but can be changed to either <dfn
+  data-x="offscreencanvas-context-2d">2d</dfn>, <dfn
+  data-x="offscreencanvas-context-bitmaprenderer">bitmaprenderer</dfn>, <dfn
+  data-x="offscreencanvas-context-webgl">webgl</dfn>, <dfn
+  data-x="offscreencanvas-context-webgl2">webgl2</dfn>, <dfn
+  data-x="offscreencanvas-context-webgpu">webgpu</dfn>, or <dfn
+  data-x="offscreencanvas-context-detached">detached</dfn> by algorithms defined in this
+  specification.</p>
+
+  <div algorithm>
+  <p>The <dfn constructor for="OffscreenCanvas"><code data-x="dom-OffscreenCanvas">new OffscreenCanvas(<var>width</var>,
+  <var>height</var>)</code></dfn> constructor steps are:</p>
+
+  <ol>
+   <li><p>Initialize the <span data-x="offscreencanvas-bitmap">bitmap</span> of <span>this</span>
+   to a rectangular array of <span>transparent black</span> pixels of the dimensions specified
+   by <var>width</var> and <var>height</var>.</p></li>
+
+   <li><p>Initialize the <code data-x="dom-OffscreenCanvas-width">width</code> of <span>this</span>
+   to <var>width</var>.</p></li>
+
+   <li><p>Initialize the <code data-x="dom-OffscreenCanvas-height">height</code> of
+   <span>this</span> to <var>height</var>.</p></li>
+
+   <li><p>Set <span>this</span>'s <span data-x="offscreencanvas-inherited-lang">inherited
+   language</span> to <span data-x="concept-explicitly-unknown">explicitly unknown</span>.</p></li>
+
+   <li><p>Set <span>this</span>'s <span data-x="offscreencanvas-inherited-direction">inherited
+   direction</span> to "<code data-x="">ltr</code>".</p></li>
+
+   <li><p>Let <var>global</var> be the <span>relevant global object</span> of
+   <span>this</span>.</p></li>
+
+   <li>
+    <p>If <var>global</var> is a <code>Window</code> object:</p>
+
+    <ol>
+     <li><p>Let <var>element</var> be the <span>document element</span> of <var>global</var>'s
+     <span data-x="concept-document-window">associated <code>Document</code></span>.</p></li>
+
+     <li>
+      <p>If <var>element</var> is not null:</p>
+
+      <ol>
+       <li><p>Set the <span data-x="offscreencanvas-inherited-lang">inherited language</span>
+       of <span>this</span> to <var>element</var>'s <span
+       data-x="language">language</span>.</p></li>
+
+       <li><p>Set the <span data-x="offscreencanvas-inherited-direction">inherited
+       direction</span> of <span>this</span> to <var>element</var>'s <span
+       data-x="the directionality">directionality</span>.</p></li>
+      </ol>
+     </li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p><code>OffscreenCanvas</code> objects are <span data-x="transferable
+  objects">transferable</span>. Their <span>transfer steps</span>, given <var>value</var> and
+  <var>dataHolder</var>, are as follows:</p>
+
+  <ol>
+   <li><p>If <var>value</var>'s <span data-x="offscreencanvas-context-mode">context mode</span> is
+   not equal to <span data-x="offscreencanvas-context-none">none</span>, then throw an
+   <span>"<code>InvalidStateError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>Set <var>value</var>'s <span data-x="offscreencanvas-context-mode">context mode</span> to
+   <span data-x="offscreencanvas-context-detached">detached</span>.</p></li>
+
+   <li><p>Let <var>width</var> and <var>height</var> be the dimensions of <var>value</var>'s <span
+   data-x="offscreencanvas-bitmap">bitmap</span>.</p></li>
+
+   <li><p>Let <var>language</var> and <var>direction</var> be the values of <var>value</var>'s
+   <span data-x="offscreencanvas-inherited-lang">inherited language</span> and
+   <span data-x="offscreencanvas-inherited-direction">inherited direction</span>.</p></li>
+
+   <li><p>Unset <var>value</var>'s <span data-x="offscreencanvas-bitmap">bitmap</span>.</p></li>
+
+   <li><p>Set <var>dataHolder</var>.[[Width]] to <var>width</var> and
+   <var>dataHolder</var>.[[Height]] to <var>height</var>.</p></li>
+
+   <li><p>Set <var>dataHolder</var>.[[Language]] to <var>language</var> and
+   <var>dataHolder</var>.[[Direction]] to <var>direction</var>.</p></li>
+
+   <li><p>Set <var>dataHolder</var>.[[PlaceholderCanvas]] to be a weak reference to
+   <var>value</var>'s <span data-x="offscreencanvas-placeholder">placeholder <code>canvas</code>
+   element</span>, if <var>value</var> has one, or null if it does not.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>Their <span>transfer-receiving steps</span>, given <var>dataHolder</var> and <var>value</var>,
+  are:</p>
+
+  <ol>
+   <li><p>Initialize <var>value</var>'s <span data-x="offscreencanvas-bitmap">bitmap</span> to a
+   rectangular array of <span>transparent black</span> pixels with width given by
+   <var>dataHolder</var>.[[Width]] and height given by <var>dataHolder</var>.[[Height]].</p></li>
+
+   <li><p>Set <var>value</var>'s <span data-x="offscreencanvas-inherited-lang">inherited
+   language</span> to <var>dataHolder</var>.[[Language]] and its <span
+   data-x="offscreencanvas-inherited-direction">inherited direction</span> to
+   <var>dataHolder</var>.[[Direction]].</p></li>
+
+   <li><p>If <var>dataHolder</var>.[[PlaceholderCanvas]] is not null, set <var>value</var>'s <span
+   data-x="offscreencanvas-placeholder">placeholder <code>canvas</code> element</span> to
+   <var>dataHolder</var>.[[PlaceholderCanvas]] (while maintaining the weak reference
+   semantics).</p></li>
+  </ol>
+  </div>
+
+  <hr>
+
+  <div algorithm>
+  <p>The <dfn method for="OffscreenCanvas"><code
+  data-x="dom-OffscreenCanvas-getContext">getContext(<var>contextId</var>,
+  <var>options</var>)</code></dfn> method of an <code>OffscreenCanvas</code> object, when invoked,
+  must run these steps:</p>
+
+  <ol>
+   <li><p>If <var>options</var> is not an <span data-x="idl-object">object</span>, then set
+   <var>options</var> to null.</p></li>
+
+   <li><p>Set <var>options</var> to the result of <span
+   data-x="concept-idl-convert">converting</span> <var>options</var> to a JavaScript value.</p></li>
+
+   <li>
+    <p>Run the steps in the cell of the following table whose column header matches this
+    <code>OffscreenCanvas</code> object's <span data-x="offscreencanvas-context-mode">context
+    mode</span> and whose row header matches <var>contextId</var>:</p>
+
+    <table>
+     <thead>
+      <tr>
+       <td>
+       <th><span data-x="offscreencanvas-context-none">none</span>
+       <th><span data-x="offscreencanvas-context-2d">2d</span>
+       <th><span data-x="offscreencanvas-context-bitmaprenderer">bitmaprenderer</span>
+       <th><span data-x="offscreencanvas-context-webgl">webgl</span> or <span
+       data-x="offscreencanvas-context-webgl2">webgl2</span>
+       <th><span data-x="offscreencanvas-context-webgpu">webgpu</span>
+       <th><span data-x="offscreencanvas-context-detached">detached</span>
+     <tbody>
+      <tr>
+       <th>"<dfn><code data-x="offscreen-context-type-2d">2d</code></dfn>"
+       <td>
+        <ol>
+         <li><p>Let <var>context</var> be the result of running the
+         <span>offscreen 2D context creation algorithm</span> given
+         <span>this</span> and <var>options</var>.</p></li>
+
+         <li><p>Set <span>this</span>'s <span data-x="offscreencanvas-context-mode">context
+         mode</span> to <span data-x="offscreencanvas-context-2d">2d</span>.</p></li>
+
+         <li><p>Return <var>context</var>.</p></li>
+        </ol>
+       <td>
+        Return the same object as was returned the last time the method was invoked with this same
+        first argument.
+       <td>
+        Return null.
+       <td>
+        Return null.
+       <td>
+        Return null.
+       <td>
+        Throw an <span>"<code>InvalidStateError</code>"</span> <code>DOMException</code>.
+      <tr>
+       <th>"<dfn><code data-x="offscreen-context-type-bitmaprenderer">bitmaprenderer</code></dfn>"
+       <td>
+        <ol>
+         <li><p>Let <var>context</var> be the result of running the
+         <span><code>ImageBitmapRenderingContext</code> creation
+         algorithm</span> given <span>this</span> and <var>options</var>.</p></li>
+
+         <li><p>Set <span>this</span>'s <span data-x="offscreencanvas-context-mode">context
+         mode</span> to <span
+         data-x="offscreencanvas-context-bitmaprenderer">bitmaprenderer</span>.</p></li>
+
+         <li><p>Return <var>context</var>.</p></li>
+        </ol>
+       <td>
+        Return null.
+       <td>
+        Return the same object as was returned the last time the method was invoked with this same
+        first argument.
+       <td>
+        Return null.
+       <td>
+        Return null.
+       <td>
+        Throw an <span>"<code>InvalidStateError</code>"</span> <code>DOMException</code>.
+      <tr>
+       <th>"<dfn><code data-x="offscreen-context-type-webgl">webgl</code></dfn>" or "<dfn><code
+       data-x="offscreen-context-type-webgl2">webgl2</code></dfn>"
+       <td>
+        <ol>
+         <li><p>Let <var>context</var> be the result of following the instructions given in the
+         WebGL specifications' <i>Context Creation</i> sections. <ref>WEBGL</ref></p></li>
+
+         <li><p>If <var>context</var> is null, then return null; otherwise set
+         <span>this</span>'s <span data-x="offscreencanvas-context-mode">context
+         mode</span> to <span data-x="offscreencanvas-context-webgl">webgl</span> or <span
+         data-x="offscreencanvas-context-webgl2">webgl2</span>.</p></li>
+
+         <li><p>Return <var>context</var>.</p></li>
+        </ol>
+       <td>
+        Return null.
+       <td>
+        Return null.
+       <td>
+        Return the same value as was returned the last time the method was invoked with this same
+        first argument.
+       <td>
+        Return null.
+       <td>
+        Throw an <span>"<code>InvalidStateError</code>"</span> <code>DOMException</code>.
+      <tr>
+       <th>"<dfn><code data-x="offscreen-context-type-webgpu">webgpu</code></dfn>"
+       <td>
+        <ol>
+         <li><p>Let <var>context</var> be the result of following the instructions given in
+         <cite>WebGPU</cite>'s <a
+         href="https://gpuweb.github.io/gpuweb/#canvas-rendering">Canvas Rendering</a> section.
+         <ref>WEBGPU</ref></p></li>
+
+         <li><p>If <var>context</var> is null, then return null; otherwise set <span>this</span>'s
+         <span data-x="offscreencanvas-context-mode">context mode</span> to <span
+         data-x="offscreencanvas-context-webgpu">webgpu</span>.</p></li>
+
+         <li><p>Return <var>context</var>.</p></li>
+        </ol>
+       <td>
+        Return null.
+       <td>
+        Return null.
+       <td>
+        Return null.
+       <td>
+        Return the same value as was returned the last time the method was invoked with this same
+        first argument.
+       <td>
+        Throw an <span>"<code>InvalidStateError</code>"</span> <code>DOMException</code>.
+    </table>
+   </li>
+  </ol>
+  </div>
+
+  <hr>
+
+  </div>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>offscreenCanvas</var>.<span subdfn data-x="dom-OffscreenCanvas-width">width</span> [
+   = <var>value</var> ]</code></dt>
+
+   <dt><code data-x=""><var>offscreenCanvas</var>.<span subdfn data-x="dom-OffscreenCanvas-height">height</span> [
+   = <var>value</var> ]</code></dt>
+
+   <dd>
+    <p>These attributes return the dimensions of the <code>OffscreenCanvas</code> object's <span
+    data-x="offscreencanvas-bitmap">bitmap</span>.</p>
+
+    <p>They can be set, to replace the <span data-x="offscreencanvas-bitmap">bitmap</span> with a
+    new, <span>transparent black</span> bitmap of the specified dimensions (effectively resizing
+    it).</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>If either the <dfn attribute for="OffscreenCanvas"><code
+  data-x="dom-OffscreenCanvas-width">width</code></dfn> or <dfn attribute
+  for="OffscreenCanvas"><code data-x="dom-OffscreenCanvas-height">height</code></dfn> attributes of
+  an <code>OffscreenCanvas</code> object are set (to a new value or to the same value as before) and
+  the <code>OffscreenCanvas</code> object's <span data-x="offscreencanvas-context-mode">context
+  mode</span> is <span data-x="offscreencanvas-context-2d">2d</span>, then <span>reset the rendering
+  context to its default state</span> and resize the <code>OffscreenCanvas</code> object's <span
+  data-x="offscreencanvas-bitmap">bitmap</span> to the new values of the <code
+  data-x="dom-OffscreenCanvas-width">width</code> and <code
+  data-x="dom-OffscreenCanvas-height">height</code> attributes.</p>
+  </div>
+
+  <p>The resizing behavior for "<code data-x="offscreen-context-type-webgl">webgl</code>" and "<code
+  data-x="offscreen-context-type-webgl2">webgl2</code>" contexts is defined in the WebGL
+  specifications. <ref>WEBGL</ref></p>
+
+  <p>The resizing behavior for "<code data-x="offscreen-context-type-webgpu">webgpu</code>" context
+  is defined in <cite>WebGPU</cite>. <ref>WEBGPU</ref></p>
+
+  </div>
+
+  <p class="note">If an <code>OffscreenCanvas</code> object whose dimensions were changed has
+  a <span data-x="offscreencanvas-placeholder">placeholder <code>canvas</code> element</span>, then
+  the <span data-x="offscreencanvas-placeholder">placeholder <code>canvas</code> element</span>'s
+  <span data-x="natural dimensions">natural size</span> will only be updated during the
+  <code>OffscreenCanvas</code>'s <span>relevant agent</span>'s <span
+  data-x="concept-agent-event-loop">event loop</span>'s <span>update the rendering</span> steps.</p>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>promise</var> = <var>offscreenCanvas</var>.<span subdfn data-x="dom-OffscreenCanvas-convertToBlob">convertToBlob</span>([<var>options</var>])</code></dt>
+
+   <dd>
+    <p>Returns a promise that will fulfill with a new <code>Blob</code> object representing a file
+    containing the image in the <code>OffscreenCanvas</code> object.</p>
+
+    <p>The argument, if provided, is a dictionary that controls the encoding options of the image
+    file to be created. The <code data-x="image-encode-options-type">type</code> field specifies the
+    file format and has a default value of "<code>image/png</code>"; that type is also used if the
+    requested type isn't supported. If the image format supports variable quality (such as
+    "<code>image/jpeg</code>"), then the <code data-x="image-encode-options-quality">quality</code>
+    field is a number in the range 0.0 to 1.0 inclusive indicating the desired quality level for the
+    resulting image.</p>
+   </dd>
+
+   <dt><code data-x=""><var>canvas</var>.<span subdfn data-x="dom-OffscreenCanvas-transferToImageBitmap">transferToImageBitmap</span>()</code></dt>
+
+   <dd>
+    <p>Returns a newly created <code>ImageBitmap</code> object with the image in the
+    <code>OffscreenCanvas</code> object. The image in the <code>OffscreenCanvas</code> object is
+    replaced with a new blank image.</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn method for="OffscreenCanvas"><code
+  data-x="dom-OffscreenCanvas-convertToBlob">convertToBlob(<var>options</var>)</code></dfn> method
+  steps are:</p>
+
+  <ol>
+   <li><p>If the value of <span>this</span>'s <span>[[Detached]]</span> internal slot is true, then
+   return <span>a promise rejected with</span> an <span>"<code>InvalidStateError</code>"</span>
+   <code>DOMException</code>.</p></li>
+
+   <li><p>If <span>this</span>'s <span data-x="offscreencanvas-context-mode">context mode</span> is
+   <span data-x="offscreencanvas-context-2d">2d</span> and the rendering context's <span>output
+   bitmap</span>'s <span data-x="concept-canvas-origin-clean">origin-clean</span> flag is set to
+   false, then return <span>a promise rejected with</span> a
+   <span>"<code>SecurityError</code>"</span> <code>DOMException</code>.</p>
+
+   <li><p>If <span>this</span>'s <span data-x="offscreencanvas-bitmap">bitmap</span> has no pixels
+   (i.e., either its horizontal dimension or its vertical dimension is zero), then return <span>a
+   promise rejected with</span> an <span>"<code>IndexSizeError</code>"</span>
+   <code>DOMException</code>.</p></li>
+
+   <li><p>Let <var>bitmap</var> be a copy of <span>this</span>'s <span
+   data-x="offscreencanvas-bitmap">bitmap</span>.</p></li>
+
+   <li><p>Let <var>result</var> be a new promise object.</p></li>
+
+   <li><p>Let <var>global</var> be <span>this</span>'s <span>relevant global object</span>.</p></li>
+
+   <li>
+    <p>Run these steps <span>in parallel</span>:</p>
+
+    <ol>
+     <li><p>Let <var>file</var> be <span data-x="a serialization of the bitmap as a file">a
+     serialization of <var>bitmap</var> as a file</span>, with <var>options</var>'s <dfn><code
+     data-x="image-encode-options-type">type</code></dfn> and <dfn><code
+     data-x="image-encode-options-quality">quality</code></dfn> if present.</p></li>
+
+     <li>
+      <p><span>Queue a global task</span> on the <span>canvas blob serialization task source</span>
+      given <var>global</var> to run these steps:</p>
+
+      <ol>
+       <li><p>If <var>file</var> is null, then reject <var>result</var> with an
+       <span>"<code>EncodingError</code>"</span> <code>DOMException</code>.</p></li>
+
+       <li><p>Otherwise, resolve <var>result</var> with a new <code>Blob</code> object, created in
+       <var>global</var>'s <span data-x="concept-relevant-realm">relevant realm</span>, representing
+       <var>file</var>. <ref>FILEAPI</ref></p></li>
+      </ol>
+     </li>
+    </ol>
+   </li>
+
+   <li><p>Return <var>result</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="OffscreenCanvas"><code
+  data-x="dom-OffscreenCanvas-transferToImageBitmap">transferToImageBitmap()</code></dfn> method,
+  when invoked, must run the following steps:</p>
+  <ol>
+   <li><p>If the value of this <code>OffscreenCanvas</code> object's <span>[[Detached]]</span>
+   internal slot is set to true, then throw an <span>"<code>InvalidStateError</code>"</span>
+   <code>DOMException</code>.</p></li>
+
+   <li><p>If this <code>OffscreenCanvas</code> object's <span
+   data-x="offscreencanvas-context-mode">context mode</span> is set to <span
+   data-x="offscreencanvas-context-none">none</span>, then throw an
+   <span>"<code>InvalidStateError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>Let <var>image</var> be a newly created <code>ImageBitmap</code> object that references
+   the same underlying bitmap data as this <code>OffscreenCanvas</code> object's <span
+   data-x="offscreencanvas-bitmap">bitmap</span>.</p></li>
+
+   <li>
+    <p>Set this <code>OffscreenCanvas</code> object's <span
+    data-x="offscreencanvas-bitmap">bitmap</span> to reference a newly created bitmap of the same
+    dimensions and color space as the previous bitmap, and with its pixels initialized to
+    <span>transparent black</span>, or <span>opaque black</span> if the rendering context's <span
+    data-x="concept-canvas-alpha">alpha</span> is false.</p>
+
+    <p class="note">This means that if the rendering context of this <code>OffscreenCanvas</code> is
+    a <code>WebGLRenderingContext</code>, the value of <code
+    data-x="WebGLContextAttributes">preserveDrawingBuffer</code> will have no effect.
+    <ref>WEBGL</ref></p>
+   </li>
+
+   <li><p>Return <var>image</var>.</p></li>
+  </ol>
+  </div>
+  </div>
+
+  <p>The following are the <span>event handlers</span> (and their corresponding <span data-x="event
+  handler event type">event handler event types</span>) <span w-nodev>that must be</span> supported,
+  as <span>event handler IDL attributes</span>, by all objects implementing the
+  <code>OffscreenCanvas</code> interface:</p>
+
+  <table>
+   <thead>
+    <tr><th><span data-x="event handlers">Event handler</span> <th><span>Event handler event type</span>
+   <tbody>
+    <tr><td><dfn attribute for="OffscreenCanvas"><code data-x="handler-offscreencanvas-oncontextlost">oncontextlost</code></dfn> <td> <code data-x="event-contextlost">contextlost</code>
+    <tr><td><dfn attribute for="OffscreenCanvas"><code data-x="handler-offscreencanvas-oncontextrestored">oncontextrestored</code></dfn> <td> <code data-x="event-contextrestored">contextrestored</code>
+  </table>
+

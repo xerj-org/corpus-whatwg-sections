@@ -1,0 +1,526 @@
+WHATWG HTML — section the-object-element — The <dfn element><code>object</code></dfn> element
+
+  <h4>The <dfn element><code>object</code></dfn> element</h4>
+
+  <dl class="element">
+   <dt><span data-x="concept-element-categories">Categories</span>:</dt>
+   <dd><span>Flow content</span>.</dd>
+   <dd><span>Phrasing content</span>.</dd>
+   <dd><span>Embedded content</span>.</dd>
+   <!-- Interactive content when showing a plugin or a child navigable, but checking that statically is hard... -->
+   <dd><span data-x="category-listed">Listed</span> <span>form-associated element</span>.</dd>
+   <dd><span>Palpable content</span>.</dd>
+   <dt><span data-x="concept-element-contexts">Contexts in which this element can be used</span>:</dt>
+   <dd>Where <span>embedded content</span> is expected.</dd>
+   <dt><span data-x="concept-element-content-model">Content model</span>:</dt>
+   <dd><span>Transparent</span>.</dd>
+   <dt><span data-x="concept-element-attributes">Content attributes</span>:</dt>
+   <dd><span>Global attributes</span></dd>
+   <dd><code data-x="attr-object-data">data</code></dd>
+   <dd><code data-x="attr-object-type">type</code></dd>
+   <dd><code data-x="attr-object-name">name</code></dd>
+   <dd><code data-x="attr-fae-form">form</code></dd>
+   <dd><code data-x="attr-dim-width">width</code></dd>
+   <dd><code data-x="attr-dim-height">height</code></dd>
+   <dt><span
+   data-x="concept-element-accessibility-considerations">Accessibility considerations</span>:</dt>
+   <dd><a href="https://w3c.github.io/html-aria/#el-object">For authors</a>.</dd>
+   <dd><a href="https://w3c.github.io/html-aam/#el-object">For implementers</a>.</dd>
+   <dt><span data-x="concept-element-sanitization">Sanitization</span>:</dt>
+   <dd><span data-x="sanitizer-category-unsafe">Unsafe</span>.</dd>
+   <dt><span data-x="concept-element-dom">DOM interface</span>:</dt>
+   <dd w-nodev>
+    <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>HTMLObjectElement</dfn> : <span>HTMLElement</span> {
+  [<span>HTMLConstructor</span>] constructor();
+
+  [<span>CEReactions</span>, <span data-x="xattr-ReflectURL">ReflectURL</span>] attribute USVString <dfn attribute for="HTMLObjectElement" data-x="dom-object-data">data</dfn>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute DOMString <dfn attribute for="HTMLObjectElement" data-x="dom-object-type">type</dfn>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute DOMString <dfn attribute for="HTMLObjectElement" data-x="dom-object-name">name</dfn>;
+  readonly attribute <span>HTMLFormElement</span>? <span data-x="dom-fae-form">form</span>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute DOMString <dfn attribute for="HTMLObjectElement" data-x="dom-object-width">width</dfn>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute DOMString <dfn attribute for="HTMLObjectElement" data-x="dom-object-height">height</dfn>;
+  readonly attribute <span>Document</span>? <span data-x="dom-object-contentDocument">contentDocument</span>;
+  readonly attribute <span>WindowProxy</span>? <span data-x="dom-object-contentWindow">contentWindow</span>;
+  <span>Document</span>? <span data-x="dom-media-getSVGDocument">getSVGDocument</span>();
+
+  readonly attribute boolean <span data-x="dom-cva-willValidate">willValidate</span>;
+  readonly attribute <span>ValidityState</span> <span data-x="dom-cva-validity">validity</span>;
+  readonly attribute DOMString <span data-x="dom-cva-validationMessage">validationMessage</span>;
+  boolean <span data-x="dom-cva-checkValidity">checkValidity</span>();
+  boolean <span data-x="dom-cva-reportValidity">reportValidity</span>();
+  undefined <span data-x="dom-cva-setCustomValidity">setCustomValidity</span>(DOMString error);
+
+  // <a href="#HTMLObjectElement-partial">also has obsolete members</a>
+};</code></pre>
+    <p>Depending on the type of content instantiated by the
+    <code>object</code> element, the node also supports other
+    interfaces.</p>
+   </dd>
+   <dd w-dev>Uses <code>HTMLObjectElement</code>.</dd>
+  </dl>
+
+  <p>The <code>object</code> element can represent an external resource, which, depending on the
+  type of the resource, will either be treated as an image or as a <span>child
+  navigable</span>.</p>
+
+  <p>The <dfn element-attr for="object"><code data-x="attr-object-data">data</code></dfn> attribute
+  specifies the <span>URL</span> of the resource. It must be present, and must contain a
+  <span>valid non-empty URL potentially surrounded by spaces</span>.</p>
+
+  <p>The <dfn element-attr for="object"><code data-x="attr-object-type">type</code></dfn> attribute,
+  if present, specifies the type of the resource. If present, the attribute must be a <span>valid
+  MIME type string</span>.</p>
+
+  <p>The <dfn element-attr for="object"><code data-x="attr-object-name">name</code></dfn>
+  attribute, if present, must be a <span>valid navigable target name</span>. The given value is
+  used to name the element's <span>content navigable</span>, if applicable, and if present when the
+  element's <span>content navigable</span> is <span data-x="create a new child
+  navigable">created</span>.</p>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>Whenever one of the following conditions occur:</p>
+
+  <ul>
+   <li>the element is created,
+
+   <li>the element is popped off the <span>stack of open elements</span> of an <span>HTML
+   parser</span> or <span>XML parser</span>,
+
+   <li>the element is not on the <span>stack of open elements</span> of an <span>HTML parser</span>
+   or <span>XML parser</span>, and it is either <span data-x="node is inserted into a
+   document">inserted into a document</span> or <span data-x="node is removed from a
+   document">removed from a document</span>,
+
+   <li>the element's <span>node document</span> changes whether it is <span>fully active</span>,
+
+   <li>one of the element's ancestor <code>object</code> elements changes to or from showing its
+   <span>fallback content</span>,
+
+   <li>the element's <code data-x="attr-object-classid">classid</code> attribute is set, changed, or
+   removed,
+
+   <li>the element's <code data-x="attr-object-classid">classid</code> attribute is not present, and
+   its <code data-x="attr-object-data">data</code> attribute is set, changed, or removed,
+
+   <li>neither the element's <code data-x="attr-object-classid">classid</code> attribute nor its
+   <code data-x="attr-object-data">data</code> attribute are present, and its <code
+   data-x="attr-object-type">type</code> attribute is set, changed, or removed,
+
+   <li>the element changes from <span>being rendered</span> to not being rendered, or vice versa,
+  </ul> <!-- Changing the base URL doesn't trigger this. -->
+
+  <p>...the user agent must <span>queue an element task</span> on the <span>DOM manipulation task
+  source</span> given the <code>object</code> element to run the following steps to (re)determine
+  what the <code>object</code> element represents. This <span data-x="concept-task">task</span>
+  being <span data-x="queue a task">queued</span> or actively running must <span>delay the load
+  event</span> of the element's <span>node document</span>. <!--As described in the algorithm, once
+  the algorithm starts fetching a resource, the fetch is what starts delaying the load event. But to
+  tide us over from when the parser finds the <object> element and the fetching begins, we have to
+  block the load event like this, lest the parse end before this task gets run.--></p>
+
+  <ol>
+   <li>
+    <p>If the user has indicated a preference that this <code>object</code> element's <span>fallback
+    content</span> be shown instead of the element's usual behavior, then jump to the step below
+    labeled <i>fallback</i>.</p>
+
+    <p class="note">For example, a user could ask for the element's <span>fallback content</span> to
+    be shown because that content uses a format that the user finds more accessible.</p>
+   </li>
+
+   <li><p>If the element has an ancestor <span>media element</span>, or has an ancestor
+   <code>object</code> element that is <em>not</em> showing its <span>fallback content</span>, or if
+   the element is not <span>in a document</span> whose <span data-x="concept-document-bc">browsing
+   context</span> is non-null, or if the element's <span>node document</span> is not <span>fully
+   active</span>, or if the element is still in the <span>stack of open elements</span> of an
+   <span>HTML parser</span> or <span>XML parser</span>, or if the element is not <span>being
+   rendered</span>, then jump to the step below labeled <i>fallback</i>.</p></li>
+
+   <!-- (v2?)
+   we may have to define magic fallback to <param> if it turns out to
+   be needed in testing:
+   <hyatt> apparently your url can come from <param>
+   <hyatt> not just the data attribute
+   <hyatt> our code looks for params with "src", "movie", "code" and "url"
+   <hyatt> and also tries to find the type on a param
+   <Hixie> oh that's you trying to have hacky activex support
+   <Hixie> opera does that too
+   <hyatt> yeah we support activex versions of plugins that are common
+   <hyatt> like flash and quicktime and realaudio
+   <Hixie> that would be a step 1b. if no data attribute, then look for a <param> to get you a URL instead.
+   <Hixie> and if you find one, carry on as if that was your data="".
+   -->
+
+   <li><p>If the <code data-x="attr-object-data">data</code> attribute is present and its value is
+   not the empty string:</p>
+
+    <ol>
+     <li><p>If the <code data-x="attr-object-type">type</code> attribute is present and its value is
+     not a type that the user agent supports, then the user agent may jump to the step below labeled
+     <i>fallback</i> without fetching the content to examine its real type.</p></li>
+
+     <li><p>Let <var>url</var> be the result of <span>encoding-parsing a URL</span> given the <code
+     data-x="attr-object-data">data</code> attribute's value, relative to the element's <span>node
+     document</span>.</p></li>
+
+     <li><p>If <var>url</var> is failure, then <span data-x="concept-event-fire">fire an
+     event</span> named <code data-x="event-error">error</code> at the element and jump to the step
+     below labeled <i>fallback</i>.</p></li>
+
+     <!-- identical for <embed>/<object> -->
+     <li><p>Let <var>request</var> be a new <span data-x="concept-request">request</span> whose
+     <span data-x="concept-request-url">URL</span> is <var>url</var>, <span
+     data-x="concept-request-client">client</span> is the element's <span>node document</span>'s
+     <span>relevant settings object</span>, <span
+     data-x="concept-request-destination">destination</span> is "<code data-x="">object</code>",
+     <span data-x="concept-request-credentials-mode">credentials mode</span> is "<code
+     data-x="">include</code>", <span data-x="concept-request-mode">mode</span> is "<code
+     data-x="">navigate</code>", <span data-x="concept-request-initiator-type">initiator
+     type</span> is "<code data-x="">object</code>", and whose <span>use-URL-credentials
+     flag</span> is set.</p></li>
+
+     <li>
+      <p><!--FETCH--><span data-x="concept-fetch">Fetch</span> <var>request</var>.</p>
+
+      <!-- similar text in various places -->
+      <p>Fetching the resource must <span>delay the load event</span> of the element's <span>node
+      document</span> until the <span data-x="concept-task">task</span> that is <span data-x="queue
+      a task">queued</span> by the <span>networking task source</span> once the resource has been
+      fetched (defined next) has been run.</p>
+     </li>
+
+     <li><p>If the resource is not yet available (e.g. because the resource was not available in the
+     cache, so that loading the resource required making a request over the network), then jump to
+     the step below labeled <i>fallback</i>. The <span data-x="concept-task">task</span> that is
+     <span data-x="queue a task">queued</span> by the <span>networking task source</span> once the
+     resource is available must restart this algorithm from this step. Resources can load
+     incrementally; user agents may opt to consider a resource "available" whenever enough data has
+     been obtained to begin processing the resource.</p></li>
+
+     <li><p>If the load failed (e.g. there was an HTTP 404 error, there was a DNS error), <span
+     data-x="concept-event-fire">fire an event</span> named <code data-x="event-error">error</code>
+     at the element, then jump to the step below labeled <i>fallback</i>.</p></li>
+
+     <li id="object-type-detection">
+
+      <p>Determine the <var>resource type</var>, as follows:</p>
+
+<!-- Hopefully this step is exactly equivalent to the following:
+
+ START
+   |
+   V
+ Is there a Content-Type and is the UA going to obey it blindly?
+   |                   |
+   | YES               | NO
+   |                   V                                                          YES
+   |                 Is there a type="" attribute whose value is a plugin type? ============================================-.
+   |                   |                                                                                                     |
+   |                   | NO                                                                                                  |
+   |                   V                        NO                                       YES                                 |
+   |                 Is there a Content type? ========-> Is there a type="" attribute? ==========> Let TYPE be type=""       |
+   |                   |                                                           |      attribute value           |
+   |                   | YES                                                       | NO                    |                 |
+   V            NO     V                                                           |                       V                 |
+   +-<============== Is it text/plain or application/octet-stream?                 `==> Let TYPE be  =====>+                 |
+   |                   |                                     |                          Sniffed type       |                 |
+   |                   | text/plain                          | octet-stream                                V                 |
+   |                   V                              YES    V                                          Is TYPE              |
+   |                 Does the page sniff as binary? ======> Is there a type="" attribute?       application/octet-stream?    |
+   |                   |                                     |              |                      |                |        |
+   |                   | NO                                  | YES          | NO                   | YES            | NO     |
+   |                   |                                     |       YES    V                      V                |        |
+   |                   |                  application/octet-stream? =====> Extension that is plugin type?           |        |
+   |                   |                                     |                          |          |                |        |
+   |                   |                                     | NO                       | NO       | YES            |        |
+   |                   |                                     V                          |          |                |        |
+   |                   |                           Type attribute is XML or     YES     V          |                |        |
+   |                   |                           doesn't start with image/* ======> FALLBACK     |                |        |
+   |                   |                           and is not a plugin type?                       |                |        |
+   |                   |                                          |                                |                |        |
+   |                   |                                          | NO                             |                |        V
+   V                   V                                          V                                V                V       Use
+  Use                 Use                                        Use it (will be                  Use              Use      type=""
+  Content-Type        text/plain                                 bitmap or plugin)                extension        TYPE     attribute
+   |                   |                                          |                                |                |        |
+   |                   V                                          V                                V                V        |
+   `================->-+========================================>-+==============>-+-<============-+-<==============+-<======'
+                                                                                   |
+                                                                                   V
+                                                                  Continue following rules in the spec, which might
+                                                                  result in a plugin, a browsing context, an image,
+                                                                  or using fallback, depending on the UA and the type.
+
+
+   "Extension that is plugin type?" means "Is there an extension that matches one that a plugin supports?".
+   Plugins are not allowed to register text/plain or application/octet-stream.
+
+-->
+
+      <ol>
+       <li>
+        <p>Let the <var>resource type</var> be unknown.</p>
+       </li>
+
+       <li>
+        <!-- by request: https://www.w3.org/Bugs/Public/show_bug.cgi?id=8479 -->
+
+        <p>If the user agent is configured to strictly obey Content-Type headers for this resource,
+        and the resource has associated <span data-x="Content-Type">Content-Type metadata</span>,
+        then let the <var>resource type</var> be the type specified in the resource's <span
+        data-x="Content-Type">Content-Type metadata</span>, and jump to the step below
+        labeled <i>handler</i>.</p>
+
+        <p class="warning">This can introduce a vulnerability, wherein a site is trying to embed a
+        resource that uses a particular type, but the remote site overrides that and instead
+        furnishes the user agent with a resource that triggers a different type of content with different
+        security characteristics. <!-- e.g. the example given above, where the site is expecting
+        Flash with allowScriptAccess=never, and instead gets back Java with its unrestricted DOM
+        access --></p>
+       </li>
+
+       <li>
+        <p>Run the appropriate set of steps from the following
+        list:</p>
+
+        <dl class="switch">
+
+         <dt>If the resource has associated <span data-x="Content-Type">Content-Type
+         metadata</span></dt>
+
+         <dd>
+          <ol>
+           <li>
+            <p>Let <var>binary</var> be false.</p>
+           </li>
+
+           <li>
+            <p>If the type specified in the resource's <span data-x="Content-Type">Content-Type
+            metadata</span> is "<code>text/plain</code>", and the result of applying the <span
+            data-x="Content-Type sniffing: text or binary">rules for distinguishing if a resource is
+            text or binary</span> to the resource is that the resource is not
+            <code>text/plain</code>, then set <var>binary</var> to true.</p>
+           </li>
+
+           <li>
+            <p>If the type specified in the resource's <span data-x="Content-Type">Content-Type
+            metadata</span> is "<code>application/octet-stream</code>", then set <var>binary</var> to true.</p>
+           </li>
+
+           <li>
+            <p>If <var>binary</var> is false, then let the <var>resource type</var> be the type
+            specified in the resource's <span data-x="Content-Type">Content-Type metadata</span>,
+            and jump to the step below labeled <i>handler</i>.</p>
+           </li>
+
+           <li>
+            <p>If there is a <code data-x="attr-object-type">type</code> attribute present on the
+            <code>object</code> element, and its value is not <code>application/octet-stream</code>,
+            then run the following steps:</p>
+
+            <ol>
+             <li>
+              <p>If the attribute's value is a type that starts with "<code data-x="">image/</code>" that is
+              not also an <span>XML MIME type</span>, then let the <var>resource type</var> be the
+              type specified in that <code data-x="attr-object-type">type</code> attribute.</p>
+             </li>
+
+             <li>
+              <p>Jump to the step below labeled <i>handler</i>.</p>
+             </li>
+            </ol>
+           </li>
+          </ol>
+         </dd>
+
+         <dt>Otherwise, if the resource does not have associated <span
+         data-x="Content-Type">Content-Type metadata</span></dt>
+
+         <dd>
+          <ol>
+           <li>
+            <p>If there is a <code data-x="attr-object-type">type</code> attribute present on the
+            <code>object</code> element, then let the <var>tentative type</var> be the type
+            specified in that <code data-x="attr-object-type">type</code> attribute.</p>
+
+            <p>Otherwise, let <var>tentative type</var> be the <span data-x="content-type
+            sniffing">computed type of the resource</span>.</p>
+           </li>
+
+           <li>
+            <p>If <var>tentative type</var> is <em>not</em>
+            <code>application/octet-stream</code>, then let <var>resource type</var> be
+            <var>tentative type</var> and jump to the step below labeled
+            <i>handler</i>.</p>
+           </li>
+          </ol>
+         </dd>
+        </dl>
+       </li>
+
+       <li>
+        <!-- if we get to this point we know we can successfully parsed the URL, since this
+        algorithm is only used after fetching the resource in the steps above -->
+
+        <p>If applying the <span>URL parser</span> algorithm to the <span>URL</span> of the
+        specified resource (after any redirects) results in a <span>URL record</span> whose <span
+        data-x="concept-url-path">path</span> component matches a pattern that a <span>plugin</span>
+        supports, then let <var>resource type</var> be the type that that plugin can
+        handle.</p>
+
+        <p class="example">For example, a plugin might say that it can handle resources with <span
+        data-x="concept-url-path">path</span> components that end with the four character string
+        "<code data-x="">.swf</code>".</p>
+
+        <!-- it's sad that we have to do extension sniffing. sigh. -->
+        <!-- see also <embed> which has a similar step -->
+       </li>
+      </ol>
+
+      <p class="note">It is possible for this step to finish, or for one of the substeps above to
+      jump straight to the next step, with <var>resource type</var> still being unknown. In
+      both cases, the next step will trigger fallback.</p>
+     </li>
+
+     <li><p><i>Handler</i>: Handle the content as given by the first of the following cases that
+     matches:</p>
+
+      <dl class="switch">
+       <dt>If the <var>resource type</var> is an <span>XML MIME type</span>, or <!-- (redundant with
+       the next one) if the <var>resource type</var> is HTML, or --> if the <var>resource type</var>
+       does not start with "<code data-x="">image/</code>"</dt>
+
+       <dd>
+        <p>If the <code>object</code> element's <span>content navigable</span> is null, then
+        <span>create a new child navigable</span> for the element.</p>
+
+        <p>Let <var>response</var> be the <span data-x="concept-response">response</span> from
+        <span data-x="concept-fetch">fetch</span>.</p>
+
+        <p>If <var>response</var>'s <span data-x="concept-response-url">URL</span> does not <span
+        data-x="matches about:blank">match <code>about:blank</code></span>, then
+        <span>navigate</span><!-- DONAV object --> the element's <span>content navigable</span> to
+        <var>response</var>'s <span data-x="concept-response-url">URL</span> using the element's
+        <span>node document</span>, with <i data-x="navigation-hh">historyHandling</i> set to
+        "<code data-x="NavigationHistoryBehavior-replace">replace</code>".</p>
+
+        <p class="note">The <code data-x="attr-object-data">data</code> attribute of the
+        <code>object</code> element doesn't get updated if the <span>content navigable</span> gets
+        further <span data-x="navigate">navigated</span> to other locations.</p>
+
+        <p>The <code>object</code> element <span>represents</span> its <span>content
+        navigable</span>.</p>
+
+        <!-- note that malformed XML files don't cause fallback -->
+       </dd>
+
+
+       <dt>If the <var>resource type</var> starts with "<code data-x="">image/</code>", and support
+       for images has not been disabled</dt>
+
+       <dd>
+        <p><span>Destroy a child navigable</span> given the <code>object</code> element.</p>
+
+        <p>Apply the <span data-x="content-type sniffing: image">image sniffing</span> rules to
+        determine the type of the image.</p>
+
+        <p>The <code>object</code> element <span>represents</span> the specified image.</p>
+
+        <p>If the image cannot be rendered, e.g. because it is malformed or in an unsupported
+        format, jump to the step below labeled <i>fallback</i>.</p>
+       </dd>
+
+
+       <dt>Otherwise</dt>
+
+       <dd>
+        <p>The given <var>resource type</var> is not supported. Jump to the step below
+        labeled <i>fallback</i>.</p>
+
+        <p class="note">If the previous step ended with the <var>resource type</var> being
+        unknown, this is the case that is triggered.</p>
+       </dd>
+      </dl>
+     </li>
+
+     <li><p>The element's contents are not part of what the <code>object</code> element
+     represents.</p>
+
+     <li>
+      <p>If the <code>object</code> element does not represent its <span>content navigable</span>,
+      then once the resource is completely loaded, <span>queue an element task</span> on the
+      <span>DOM manipulation task source</span> given the <code>object</code> element to <span
+      data-x="concept-event-fire">fire an event</span> named <code data-x="event-load">load</code>
+      at the element.</p>
+
+      <p class="note">If the element <em>does</em> represent its <span>content navigable</span>,
+      then an analogous task will be queued when the created <code>Document</code> is <span
+      data-x="completely finish loading">completely finished loading</span>.</p>
+     </li>
+
+     <li><p>Return.</p></li>
+    </ol>
+   </li>
+
+   <li><p><i>Fallback</i>: The <code>object</code> element <span>represents</span> the element's
+   children. This is the element's <span>fallback content</span>. <span>Destroy a child
+   navigable</span> given the element.</p></li>
+  </ol>
+  </div>
+
+  <p>Due to the algorithm above, the contents of <code>object</code> elements act as <span>fallback
+  content</span>, used only when referenced resources can't be shown (e.g. because it returned a 404
+  error). This allows multiple <code>object</code> elements to be nested inside each other,
+  targeting multiple user agents with different capabilities, with the user agent picking the first
+  one it supports.</p>
+
+  <p>The <code>object</code> element <span>potentially delays the load event</span>.</p>
+
+  </div>
+
+  <p>The <code data-x="attr-fae-form">form</code> attribute is used to explicitly associate the
+  <code>object</code> element with its <span>form owner</span>.</p>
+
+  <p>The <code>object</code> element supports <span>dimension attributes</span>.</p>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLObjectElement"><code
+  data-x="dom-object-contentDocument">contentDocument</code></dfn> getter steps are to return
+  <span>this</span>'s <span>content document</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLObjectElement"><code
+  data-x="dom-object-contentWindow">contentWindow</code></dfn> getter steps are to return
+  <span>this</span>'s <span>content window</span>.</p>
+  </div>
+
+  <p>The <code data-x="dom-cva-willValidate">willValidate</code>, <code
+  data-x="dom-cva-validity">validity</code>, and <code
+  data-x="dom-cva-validationMessage">validationMessage</code> attributes, and the <code
+  data-x="dom-cva-checkValidity">checkValidity()</code>, <code
+  data-x="dom-cva-reportValidity">reportValidity()</code>, and <code
+  data-x="dom-cva-setCustomValidity">setCustomValidity()</code> methods, are part of the
+  <span>constraint validation API</span>. The <code data-x="dom-fae-form">form</code> IDL attribute
+  is part of the element's forms API.</p>
+
+  </div>
+
+  <div class="example">
+
+   <p>In this example, an HTML page is embedded in another using the <code>object</code>
+   element.</p>
+
+   <pre><code class="html">&lt;figure>
+ &lt;object data="clock.html">&lt;/object>
+ &lt;figcaption>My HTML Clock&lt;/figcaption>
+&lt;/figure></code></pre>
+
+  </div>
+
+

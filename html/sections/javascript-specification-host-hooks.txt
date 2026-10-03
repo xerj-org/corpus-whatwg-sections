@@ -1,0 +1,897 @@
+WHATWG HTML — section javascript-specification-host-hooks — JavaScript specification host hooks
+
+  <h4>JavaScript specification host hooks</h4>
+
+  <p>The JavaScript specification contains a number of <span>implementation-defined</span> abstract
+  operations, that vary depending on the host environment. This section defines them for user
+  agent hosts.</p>
+
+  <div algorithm>
+  <h5 id="the-hostensurecanaddprivateelement-implementation"><dfn>HostEnsureCanAddPrivateElement</dfn>(<var>O</var>)</h5>
+
+  <p>JavaScript contains an <span>implementation-defined</span> <span
+  data-x="js-HostEnsureCanAddPrivateElement">HostEnsureCanAddPrivateElement</span>(<var>O</var>)
+  abstract operation. User agents must use the following implementation: <ref>JAVASCRIPT</ref>
+
+  <ol>
+   <li><p>If <var>O</var> is a <code>WindowProxy</code> object, or <span>implements</span>
+   <code>Location</code>, then return <span>ThrowCompletion</span>(a new
+   <code>TypeError</code>).</li>
+
+   <li><p>Return <span>NormalCompletion</span>(unused).</p></li>
+  </ol>
+  </div>
+
+  <p class="note">JavaScript private fields can be applied to arbitrary objects. Since this can
+  dramatically complicate implementation for particularly-exotic host objects, the JavaScript
+  language specification provides this hook to allow hosts to reject private fields on objects
+  meeting a host-defined criteria. In the case of HTML, <code>WindowProxy</code> and
+  <code>Location</code> have complicated semantics &mdash; particularly around navigation and
+  security &mdash; that make implementation of private field semantics challenging, so our
+  implementation simply rejects those objects.</p>
+
+  <div algorithm>
+  <h5><dfn
+  data-x="the-hostensurecancompilestrings-implementation">HostEnsureCanCompileStrings</dfn>(<var>realm</var>,
+  <var>parameterStrings</var>, <var>bodyString</var>, <var>codeString</var>, <var>compilationType</var>,
+  <var>parameterArgs</var>, <var>bodyArg</var>)</h5>
+
+  <p>JavaScript contains an <span>implementation-defined</span> <span
+  data-x="js-HostEnsureCanCompileStrings">HostEnsureCanCompileStrings</span> abstract operation,
+  redefined by the <cite>Dynamic Code Brand Checks</cite> proposal. User agents must use
+  the following implementation: <ref>JAVASCRIPT</ref> <ref>JSDYNAMICCODEBRANDCHECKS</ref>
+
+  <ol>
+   <li><p>Perform ? <span
+   data-x="csp-EnsureCSPDoesNotBlockStringCompilation">EnsureCSPDoesNotBlockStringCompilation</span>(<var>realm</var>,
+   <var>parameterStrings</var>, <var>bodyString</var>, <var>codeString</var>,
+   <var>compilationType</var>, <var>parameterArgs</var>, <var>bodyArg</var>).
+   <ref>CSP</ref></p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <h5><dfn
+  data-x="the-hostgetcodeforeval-implementation">HostGetCodeForEval</dfn>(<var>argument</var>)</h5>
+
+  <p>The <cite>Dynamic Code Brand Checks</cite> proposal contains an
+  <span>implementation-defined</span> <span
+  data-x="js-HostGetCodeForEval">HostGetCodeForEval</span>(<var>argument</var>) abstract operation.
+  User agents must use the following implementation: <ref>JSDYNAMICCODEBRANDCHECKS</ref>
+
+  <ol>
+   <li><p>If <var>argument</var> is a <code data-x="tt-trustedscript">TrustedScript</code> object,
+   then return <var>argument</var>'s <span data-x="tt-trustedscript-data">data</span>.</p></li>
+
+   <li><p>Otherwise, return no-code.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <h5 id="the-hostpromiserejectiontracker-implementation"><dfn>HostPromiseRejectionTracker</dfn>(<var>promise</var>, <var>operation</var>)</h5>
+
+  <p>JavaScript contains an <span>implementation-defined</span> <span
+  data-x="js-HostPromiseRejectionTracker">HostPromiseRejectionTracker</span>(<var>promise</var>,
+  <var>operation</var>) abstract operation. User agents must use the following implementation:
+  <ref>JAVASCRIPT</ref></p>
+
+  <ol>
+   <li><p>Let <var>script</var> be the <span>running script</span>.</p></li>
+
+   <li><p>If <var>script</var> is a <span>classic script</span> and <var>script</var>'s <span>muted
+   errors</span> is true, then return.</p></li>
+
+   <li><p>Let <var>settingsObject</var> be the <span>current settings object</span>.</p></li>
+
+   <li><p>If <var>script</var> is not null, then set <var>settingsObject</var> to
+   <var>script</var>'s <span data-x="concept-script-settings-object">settings
+   object</span>.</p></li>
+
+   <li><p>Let <var>global</var> be <var>settingsObject</var>'s <span
+   data-x="concept-settings-object-global">global object</span>.</p></li>
+
+   <li>
+    <p>If <var>operation</var> is "<code data-x="">reject</code>":</p>
+
+    <ol>
+     <li><p><span data-x="list append">Append</span> <var>promise</var> to <var>global</var>'s
+     <span>about-to-be-notified rejected promises list</span>.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p>If <var>operation</var> is "<code data-x="">handle</code>":</p>
+
+    <ol>
+     <li><p>If <var>global</var>'s <span>about-to-be-notified rejected promises list</span> <span
+     data-x="list contains">contains</span> <var>promise</var>, then <span data-x="list
+     remove">remove</span> <var>promise</var> from that list and return.</p></li>
+
+     <li><p>If <var>global</var>'s <span>outstanding rejected promises weak set</span> does not
+     <span data-x="list contains">contain</span> <var>promise</var>, then return.</p></li>
+
+     <li><p><span data-x="list remove">Remove</span> <var>promise</var> from <var>global</var>'s
+     <span>outstanding rejected promises weak set</span>.</p></li>
+
+     <li><p><span>Queue a global task</span> on the <span>DOM manipulation task source</span> given
+     <var>global</var> to <span data-x="concept-event-fire">fire an event</span> named <code
+     data-x="event-rejectionhandled">rejectionhandled</code> at <var>global</var>, using
+     <code>PromiseRejectionEvent</code>, with the <code
+     data-x="dom-PromiseRejectionEvent-promise">promise</code> attribute initialized to
+     <var>promise</var>, and the <code data-x="dom-PromiseRejectionEvent-reason">reason</code>
+     attribute initialized to <var>promise</var>.[[PromiseResult]].</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <h5 id="hostsystemutcepochnanoseconds"><dfn>HostSystemUTCEpochNanoseconds</dfn>(<var>global</var>)</h5>
+
+  <p>The Temporal proposal contains an <span>implementation-defined</span> <span
+  data-x="js-HostSystemUTCEpochNanoseconds">HostSystemUTCEpochNanoseconds</span> abstract operation.
+  User agents must use the following implementation: <ref>JSTEMPORAL</ref></p>
+
+  <ol>
+   <li><p>Let <var>settingsObject</var> be <var>global</var>'s <span>relevant settings
+   object</span>.</p></li>
+
+   <li><p>Let <var>time</var> be <var>settingsObject</var>'s <span>current wall
+   time</span>.</p></li>
+
+   <li><p>Let <var>ns</var> be the number of nanoseconds from the <span>Unix epoch</span> to
+   <var>time</var>, rounded to the nearest integer.</p></li>
+
+   <li><p>Return the result of <span>clamping</span> <var>ns</var> between
+   <span>nsMinInstant</span> and <span>nsMaxInstant</span>.</p></li>
+  </ol>
+  </div>
+
+  <h5 id="integration-with-javascript-jobs">Job-related host hooks</h5>
+
+  <p>The JavaScript specification defines Jobs to be scheduled and run later by the host, as well as
+  <span data-x="JobCallback Record">JobCallback Records</span> which encapsulate JavaScript
+  functions that are called as part of jobs. The JavaScript specification contains a number of
+  <span>implementation-defined</span> abstract operations that lets the host define how jobs are
+  scheduled and how JobCallbacks are handled. HTML uses these abstract operations to <span
+  id="incumbent-settings-object-tracking-in-promises">track the <span>incumbent settings
+  object</span> in promises and <code>FinalizationRegistry</code> callbacks</span> by saving and
+  restoring the <span>incumbent settings object</span> and a <span>JavaScript execution
+  context</span> for the <span>active script</span> in JobCallbacks. This section defines them for
+  user agent hosts.</p>
+
+  <div algorithm>
+  <h6 id="hostcalljobcallback"><dfn>HostCallJobCallback</dfn>(<var>callback</var>, <var>V</var>,
+  <var>argumentsList</var>)</h6>
+
+  <p>JavaScript contains an <span>implementation-defined</span> <span
+  data-x="js-HostCallJobCallback">HostCallJobCallback</span>(<var>callback</var>, <var>V</var>,
+  <var>argumentsList</var>) abstract operation to let hosts restore state when invoking JavaScript
+  callbacks from inside tasks. User agents must use the following implementation:
+  <ref>JAVASCRIPT</ref></p>
+
+  <ol>
+   <li><p>Let <var>incumbent settings</var> be
+   <var>callback</var>.[[HostDefined]].[[IncumbentSettings]].</p></li>
+
+   <li><p>Let <var>script execution context</var> be
+   <var>callback</var>.[[HostDefined]].[[ActiveScriptContext]].</li>
+
+   <li>
+    <p><span>Prepare to run a callback</span> with <var>incumbent settings</var>.</p>
+
+    <p class="note">This affects the <span data-x="concept-incumbent-everything">incumbent</span>
+    concept while the callback runs.</p>
+   </li>
+
+   <li>
+    <p>If <var>script execution context</var> is not null, then <span data-x="stack
+    push">push</span> <var>script execution context</var> onto the <span>JavaScript execution
+    context stack</span>.</p>
+
+    <p class="note">This affects the <span>active script</span> while the callback runs.</p>
+   </li>
+
+   <li><p>Let <var>result</var> be <span>Call</span>(<var>callback</var>.[[Callback]], <var>V</var>,
+   <var>argumentsList</var>).</p></li>
+
+   <li><p>If <var>script execution context</var> is not null, then <span data-x="stack
+   pop">pop</span> <var>script execution context</var> from the <span>JavaScript execution context
+   stack</span>.</p></li>
+
+   <li><p><span>Clean up after running a callback</span> with <var>incumbent
+   settings</var>.</p></li>
+
+   <li><p>Return <var>result</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <h6
+  id="hostenqueuefinalizationregistrycleanupjob"><dfn>HostEnqueueFinalizationRegistryCleanupJob</dfn>(<var>finalizationRegistry</var>)</h6>
+
+  <p>JavaScript has the ability to register objects with <code>FinalizationRegistry</code> objects,
+  in order to schedule a cleanup action if they are found to be garbage collected. The JavaScript
+  specification contains an <span>implementation-defined</span> <span
+  data-x="js-HostEnqueueFinalizationRegistryCleanupJob">HostEnqueueFinalizationRegistryCleanupJob</span>(<var>finalizationRegistry</var>)
+  abstract operation to schedule the cleanup action.</p>
+
+  <p class="note">The timing and occurrence of cleanup work is <span>implementation-defined</span>
+  in the JavaScript specification. User agents might differ in when and whether an object is garbage
+  collected, affecting both whether the return value of the <code>WeakRef.prototype.deref()</code>
+  method is undefined, and whether <code>FinalizationRegistry</code> cleanup callbacks occur. There
+  are well-known cases in popular web browsers where objects are not accessible to JavaScript, but
+  they remain retained by the garbage collector indefinitely. HTML clears kept-alive
+  <code>WeakRef</code> objects in the <span>perform a microtask checkpoint</span> algorithm. Authors
+  would be best off not depending on the timing details of garbage collection implementations.</p>
+
+  <p>Cleanup actions do not take place interspersed with synchronous JavaScript execution, but
+  rather happen in queued <span data-x="concept-task">tasks</span>. User agents must use the
+  following implementation: <ref>JAVASCRIPT</ref></p>
+
+  <ol>
+   <li><p>Let <var>global</var> be <var>finalizationRegistry</var>.[[Realm]]'s <span>global
+   object</span>.</p></li>
+
+   <li>
+    <p><span>Queue a global task</span> on the <dfn>JavaScript engine task source</dfn> given
+    <var>global</var> to perform the following steps:</p>
+
+    <ol>
+     <li><p>Let <var>entry</var> be
+     <var>finalizationRegistry</var>.[[CleanupCallback]].[[Callback]].[[Realm]]'s <span
+     data-x="concept-realm-settings-object">environment settings object</span>.</p></li>
+
+     <li>
+      <p><span>Prepare to run script</span> with <var>entry</var>.</p>
+
+      <p class="note">This affects the <span data-x="concept-entry-everything">entry</span> concept
+      while the cleanup callback runs.</p>
+     </li>
+
+     <li><p>Let <var>result</var> be the result of performing
+     <span>CleanupFinalizationRegistry</span>(<var>finalizationRegistry</var>).</p></li>
+
+     <li><p><span>Clean up after running script</span> with <var>entry</var>.</p></li>
+
+     <li><p>If <var>result</var> is an <span data-x="Completion Record">abrupt completion</span>,
+     then <span>report an exception</span> given by <var>result</var>.[[Value]] for
+     <var>global</var>.</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <h6 id="hostenqueuegenericjob"><dfn>HostEnqueueGenericJob</dfn>(<var>job</var>,
+  <var>realm</var>)</h6>
+
+  <p>JavaScript contains an <span>implementation-defined</span> <span
+  data-x="js-HostEnqueueGenericJob">HostEnqueueGenericJob</span>(<var>job</var>, <var>realm</var>)
+  abstract operation to perform generic jobs in a particular realm (e.g., resolve promises resulting
+  from <code>Atomics.waitAsync</code>). User agents must use the following implementation:
+  <ref>JAVASCRIPT</ref></p>
+
+  <ol>
+   <li><p>Let <var>global</var> be <var>realm</var>'s <span data-x="concept-realm-global">global
+   object</span>.</p></li>
+
+   <li><p><span>Queue a global task</span> on the <span>JavaScript engine task source</span> given
+   <var>global</var> to perform <var>job</var>().</p></li>
+  </ol>
+  </div>
+
+  <span id="integration-with-the-javascript-job-queue"></span>
+  <span id="enqueuejob(queuename,-job,-arguments)"></span>
+  <div algorithm>
+  <h6 id="hostenqueuepromisejob"><dfn>HostEnqueuePromiseJob</dfn>(<var>job</var>,
+  <var>realm</var>)</h6>
+
+  <p>JavaScript contains an <span>implementation-defined</span> <span
+  data-x="js-HostEnqueuePromiseJob">HostEnqueuePromiseJob</span>(<var>job</var>, <var>realm</var>)
+  abstract operation to schedule Promise-related operations. HTML schedules these operations in the
+  microtask queue. User agents must use the following implementation: <ref>JAVASCRIPT</ref></p>
+
+  <ol>
+   <li>
+    <p>If <var>realm</var> is not null, then let <var>job settings</var> be the <span
+    data-x="concept-realm-settings-object">settings object</span> for <var>realm</var>. Otherwise,
+    let <var>job settings</var> be null.</p>
+
+     <div class="note">
+      <p>If <var>realm</var> is not null, it is the <span>realm</span> of the author code that will
+      run. When <var>job</var> is returned by <span>NewPromiseReactionJob</span>, it is the realm of
+      the promise's handler function. When <var>job</var> is returned by
+      <span>NewPromiseResolveThenableJob</span>, it is the realm of the <code data-x="">then</code>
+      function.
+
+      <p>If <var>realm</var> is null, either no author code will run or author code is guaranteed to
+      throw. For the former, the author may not have passed in code to run, such as in <code
+      data-x="">promise.then(null, null)</code>. For the latter, it is because a revoked Proxy was
+      passed. In both cases, all the steps below that would otherwise use <var>job settings</var>
+      get skipped.</p>
+
+      <p class="XXX"><a
+      href="https://tc39.es/ecma262/#sec-newpromiseresolvethenablejob">NewPromiseResolveThenableJob</a>
+      and <a href="https://tc39.es/ecma262/#sec-newpromisereactionjob">NewPromiseReactionJob</a>
+      both seem to provide non-null realms (the current Realm Record) in the case of a revoked
+      proxy. The previous text could be updated to reflect that.</p>
+     </div>
+   </li>
+
+   <li>
+    <p><span>Queue a microtask</span> to perform the following steps:</p>
+
+    <ol>
+     <li>
+      <p>If <var>job settings</var> is not null, then <span>prepare to run script</span> with
+      <var>job settings</var>.</p>
+
+      <p class="note">This affects the <span data-x="concept-entry-everything">entry</span> concept
+      while the job runs.</p>
+     </li>
+
+     <li>
+      <p>Let <var>result</var> be <var>job</var>().</p>
+
+      <p class="note"><var>job</var> is an <span>abstract closure</span> returned by
+      <span>NewPromiseReactionJob</span> or <span>NewPromiseResolveThenableJob</span>. The promise's
+      handler function when <var>job</var> is returned by <span>NewPromiseReactionJob</span>, and
+      the <code data-x="">then</code> function when <var>job</var> is returned by
+      <span>NewPromiseResolveThenableJob</span>, are wrapped in <span data-x="JobCallback
+      Record">JobCallback Records</span>. HTML saves the <span>incumbent settings object</span> and
+      a <span>JavaScript execution context</span> for to the <span>active script</span> in
+      <span>HostMakeJobCallback</span> and restores them in <span>HostCallJobCallback</span>.</p>
+     </li>
+
+     <li><p>If <var>job settings</var> is not null, then <span>clean up after running script</span>
+     with <var>job settings</var>.</p></li>
+
+     <li>
+      <p>If <var>result</var> is an <span data-x="Completion Record">abrupt completion</span>, then
+      <span>report an exception</span> given by <var>result</var>.[[Value]] for <var>realm</var>'s
+      <span data-x="concept-realm-global">global object</span>.</p>
+
+      <p class="XXX">There is a very gnarly case where HostEnqueuePromiseJob is called with a null
+      realm (e.g., because Promise.prototype.then was called with null handlers) but also the job
+      returns abruptly (because the promise capability's resolve or reject handler threw, possibly
+      because this is a subclass of Promise that takes the supplied functions and wraps them in
+      throwing functions before passing them on to the function passed to the Promise superclass
+      constructor). Which global is to be used then, considering that the current realm could be
+      different at each of those steps, by using a Promise constructor or Promise.prototype.then
+      from another realm? See <a href="https://github.com/whatwg/html/issues/10526">issue
+      #10526</a>.</p>
+     </li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <h6 id="hostenqueuetimeoutjob"><dfn>HostEnqueueTimeoutJob</dfn>(<var>job</var>, <var>realm</var>,
+  <var>milliseconds</var>)</h6>
+
+  <p>JavaScript contains an <span>implementation-defined</span> <span
+  data-x="js-HostEnqueueTimeoutJob">HostEnqueueTimeoutJob</span>(<var>job</var>,
+  <var>milliseconds</var>) abstract operation to schedule an operation to be performed after a
+  timeout. HTML schedules these operations using <span>run steps after a timeout</span>. User agents
+  must use the following implementation: <ref>JAVASCRIPT</ref></p>
+
+  <ol>
+   <li><p>Let <var>global</var> be <var>realm</var>'s <span data-x="concept-realm-global">global
+   object</span>.</p></li>
+
+   <li><p>Let <var>timeoutStep</var> be an algorithm step which <span data-x="queue a global
+   task">queues a global task</span> on the <span>JavaScript engine task source</span> given
+   <var>global</var> to perform <var>job</var>().</p></li>
+
+   <li><p><span>Run steps after a timeout</span> given <var>global</var>, "<code
+   data-x="">JavaScript</code>", <var>milliseconds</var>, and <var>timeoutStep</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <h6 id="hostmakejobcallback"><dfn>HostMakeJobCallback</dfn>(<var>callable</var>)</h6>
+
+  <p>JavaScript contains an <span>implementation-defined</span> <span
+  data-x="js-HostMakeJobCallback">HostMakeJobCallback</span>(<var>callable</var>) abstract operation
+  to let hosts attach state to JavaScript callbacks that are called from inside <span
+  data-x="concept-task">task</span>s. User agents must use the following implementation:
+  <ref>JAVASCRIPT</ref></p>
+
+  <ol>
+   <li><p>Let <var>incumbent settings</var> be the <span>incumbent settings object</span>.</p></li>
+
+   <li><p>Let <var>active script</var> be the <span>active script</span>.</p></li>
+
+   <li><p>Let <var>script execution context</var> be null.</p></li>
+
+   <li>
+    <p>If <var>active script</var> is not null, set <var>script execution context</var> to a new
+    <span>JavaScript execution context</span>, with its Function field set to null, its Realm field
+    set to <var>active script</var>'s <span data-x="concept-script-settings-object">settings
+    object</span>'s <span data-x="environment settings object's realm">realm</span>, and its
+    ScriptOrModule set to <var>active script</var>'s
+    <span data-x="concept-script-record">record</span>.</p>
+
+    <p class="note">As seen below, this is used in order to propagate the current <span>active
+    script</span> forward to the time when the job callback is invoked.</p>
+
+    <div class="example">
+     <p>A case where <var>active script</var> is non-null, and saving it in this way is useful, is
+     the following:</p>
+
+     <pre><code class="js" data-x="">Promise.resolve('import(`./example.mjs`)').then(eval);</code></pre>
+
+     <p>Without this step (and the steps that use it in <span>HostCallJobCallback</span>), there
+     would be no <span>active script</span> when the <code>import()</code> expression is evaluated,
+     since <code>eval()</code> is a built-in function that does not originate from any particular
+     <span data-x="concept-script">script</span>.</p>
+
+     <p>With this step in place, the active script is propagated from the above code into the job,
+     allowing <code>import()</code> to use the original script's <span
+     data-x="concept-script-base-url">base URL</span> appropriately.</p>
+    </div>
+
+    <div class="example">
+     <p><var>active script</var> can be null if the user clicks on the following button:</p>
+
+     <pre><code class="html" data-x="">&lt;button onclick="Promise.resolve('import(`./example.mjs`)').then(eval)">Click me&lt;/button></code></pre>
+
+     <p>In this case, the JavaScript function for the <span data-x="event handlers">event
+     handler</span> will be created by the <span data-x="getting the current value of the event
+     handler">get the current value of the event handler</span> algorithm, which creates a function
+     with null [[ScriptOrModule]] value. Thus, when the promise machinery calls
+     <span>HostMakeJobCallback</span>, there will be no <span>active script</span> to pass
+     along.</p>
+
+     <p>As a consequence, this means that when the <code>import()</code> expression is evaluated,
+     there will still be no <span>active script</span>. Fortunately that is handled by our
+     implementation of <span>HostLoadImportedModule</span> by falling back to using the
+     <span>current settings object</span>'s <span>API base URL</span>.</p>
+    </div>
+   </li>
+
+   <li><p>Return the <span>JobCallback Record</span> { [[Callback]]: <var>callable</var>,
+   [[HostDefined]]: { [[IncumbentSettings]]: <var>incumbent settings</var>, [[ActiveScriptContext]]:
+   <var>script execution context</var> } }.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+
+  <h5 id="integration-with-the-javascript-module-system">Module-related host hooks</h5>
+
+  <p>The JavaScript specification defines a syntax for modules, as well as some host-agnostic parts
+  of their processing model. This specification defines the rest of their processing model: how the
+  module system is bootstrapped, via the <code>script</code> element with <code
+  data-x="attr-script-type">type</code> attribute set to "<code data-x="">module</code>", and how
+  modules are fetched, resolved, and executed. <ref>JAVASCRIPT</ref></p>
+
+  <p class="note">Although the JavaScript specification speaks in terms of "scripts" versus
+  "modules", in general this specification speaks in terms of <span data-x="classic script">classic
+  scripts</span> versus <span data-x="module script">module scripts</span>, since both of them use
+  the <code>script</code> element.</p>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>modulePromise</var> = <span data-x="import()">import(<var>specifier</var>)</span></code></dt>
+
+   <dd>
+    <p>Returns a promise for the module namespace object for the <span>module script</span>
+    identified by <var>specifier</var>. This allows dynamic importing of module scripts at runtime,
+    instead of statically using the <code data-x="">import</code> statement form. The specifier will
+    be <span data-x="resolve a module specifier">resolved</span> relative to the <span>active
+    script</span>.</p>
+
+    <p>The returned promise will be rejected if an invalid specifier is given, or if a failure is
+    encountered while <span data-x="HostLoadImportedModule">fetching</span> or evaluating the
+    resulting module graph.</p>
+
+    <p>This syntax can be used inside both <span data-x="classic script">classic</span> and <span
+    data-x="module script">module scripts</span>. It thus provides a bridge into the module-script
+    world, from the classic-script world.</p>
+   </dd>
+
+   <dt><code data-x=""><var>url</var> = <span data-x="import.meta">import.meta</span>.<span data-x="import-meta-url">url</span></code></dt>
+
+   <dd>
+    <p>Returns the <span data-x="active script">active module script</span>'s <span
+    data-x="concept-script-base-url">base URL</span>.</p>
+
+    <p>This syntax can only be used inside <span data-x="module script">module scripts</span>.</p>
+   </dd>
+
+   <dt><code data-x=""><var>url</var> = <span data-x="import.meta">import.meta</span>.<span data-x="import-meta-resolve">resolve</span>(<var>specifier</var>)</code></dt>
+
+   <dd>
+    <p>Returns <var>specifier</var>, <span data-x="resolve a module specifier">resolved</span>
+    relative to the <span>active script</span>. That is, this returns the URL that would be imported
+    by using <code data-x="import()">import(<var>specifier</var>)</code>.</p>
+
+    <p>Throws a <code>TypeError</code> exception if an invalid specifier is given.</p>
+
+    <p>This syntax can only be used inside <span data-x="module script">module scripts</span>.</p>
+   </dd>
+  </dl>
+
+  <p><span w-nodev>A <dfn>module map</dfn> is a <span data-x="ordered map">map</span> keyed by <span
+  data-x="tuple">tuples</span> consisting of a <span>URL record</span> and a <span>string</span>.
+  The <span>URL record</span> is the <span data-x="concept-request-url">request URL</span> at which
+  the module was fetched, and the <span>string</span> indicates the type of the module (e.g. "<code
+  data-x="">javascript-or-wasm</code>"). The <span>module map</span>'s values are either a
+  <span>module script</span> or a <span>list</span> of algorithms (that are waiting for the fetch to
+  complete).</span> <span data-x="module map">Module maps</span> are used to ensure that imported
+  module scripts are only fetched, parsed, and evaluated once per <code>Document</code> or <a
+  href="#workers">worker</a>.</p>
+
+  <div class="example">
+   <p>Since <span data-x="module map">module maps</span> are keyed by (URL, module type), the
+   following code will create three separate entries in the <span>module map</span>, since it
+   results in three different (URL, module type) <span data-x="tuple">tuples</span> (all with "<code
+   data-x="">javascript-or-wasm</code>" type):</p>
+
+   <pre><code class="js">import "https://example.com/module.mjs";
+import "https://example.com/module.mjs#map-buster";
+import "https://example.com/module.mjs?debug=true";</code></pre>
+
+   <p>That is, URL <span data-x="concept-url-query">queries</span> and <span
+   data-x="concept-url-fragment">fragments</span> can be varied to create distinct entries in the
+   <span>module map</span>; they are not ignored. Thus, three separate fetches and three separate
+   module evaluations will be performed.</p>
+
+   <p>In contrast, the following code would only create a single entry in the <span>module
+   map</span>, since after applying the <span>URL parser</span> to these inputs, the resulting <span
+   data-x="URL record">URL records</span> are equal:</p>
+
+   <pre><code class="js">import "https://example.com/module2.mjs";
+import "https:example.com/module2.mjs";
+import "https://///example.com\\module2.mjs";
+import "https://example.com/foo/../module2.mjs";</code></pre>
+
+   <p>So in this second example, only one fetch and one module evaluation will occur.</p>
+
+   <p>Note that this behavior is the same as how <span
+   data-x="SharedWorker">shared workers</span> are keyed by their parsed <span
+   data-x="concept-SharedWorkerGlobalScope-constructor-url">constructor URL</span>.</p>
+  </div>
+
+  <div class="example">
+   <p>Since module type is also part of the <span>module map</span> key, the following code will
+   create two separate entries in the <span>module map</span> (the type is "<code
+   data-x="">javascript-or-wasm</code>" for the first, and "<code data-x="">css</code>" for the
+   second):</p>
+
+   <pre><code class="html" data-x="">&lt;script type=module&gt;
+  import "https://example.com/module";
+&lt;/script&gt;
+&lt;script type=module&gt;
+  import "https://example.com/module" with { type: "css" };
+&lt;/script&gt;</code></pre>
+
+   <p>This can result in two separate fetches and two separate module evaluations being performed.</p>
+
+   <p class="XXX">In practice, due to the as-yet-unspecified memory cache (see issue <a
+   href="https://github.com/whatwg/html/issues/6110">#6110</a>) the resource may only be fetched
+   once in WebKit and Blink-based browsers. Additionally, as long as all module types are mutually
+   exclusive, the module type check in <span>fetch a single module script</span> will fail for at
+   least one of the imports, so at most one module evaluation will occur.</p>
+
+   <p>The purpose of including the type in the <span>module map</span> key is so that an import
+   with the wrong type attribute does not prevent a different import of the same specifier but with
+   the correct type from succeeding.</p>
+  </div>
+
+  <div class="example">
+   <p>JavaScript module scripts are the default import type when importing from another JavaScript
+    module; that is, when an <code data-x="">import</code> statement lacks a <code
+    data-x="">type</code> import attribute the imported module script's type will be JavaScript.
+    Attempting to import a JavaScript resource using an <code data-x="">import</code> statement with
+    a <code data-x="">type</code> import attribute will fail:</p>
+
+    <pre><code class="html">&lt;script type="module">
+    // All of the following will fail, assuming that the imported .mjs files are served with a
+    // JavaScript MIME type. JavaScript module scripts are the default and cannot be imported with
+    // any import type attribute.
+    import foo from "./foo.mjs" with { type: "javascript" };
+    import foo2 from "./foo2.mjs" with { type: "js" };
+    import foo3 from "./foo3.mjs" with { type: "" };
+    await import("./foo4.mjs", { with: { type: null } });
+    await import("./foo5.mjs", { with: { type: undefined } });
+&lt;/script></code></pre>
+  </div>
+
+  <div w-nodev>
+
+
+  <div algorithm>
+  <h6
+  id="hostgetimportmetaproperties"><dfn>HostGetImportMetaProperties</dfn>(<var>moduleRecord</var>)</h6>
+
+  <p>JavaScript contains an <span>implementation-defined</span> <span
+  data-x="js-HostGetImportMetaProperties">HostGetImportMetaProperties</span> abstract operation.
+  User agents must use the following implementation: <ref>JAVASCRIPT</ref></p>
+
+  <ol>
+   <li><p>Let <var>moduleScript</var> be <var>moduleRecord</var>.[[HostDefined]].</p></li>
+
+   <li><p><span>Assert</span>: <var>moduleScript</var>'s <span data-x="concept-script-base-url">base
+   URL</span> is not null, as <var>moduleScript</var> is a <span>JavaScript module
+   script</span>.</p></li>
+
+   <li><p>Let <var>urlString</var> be <var>moduleScript</var>'s <span
+   data-x="concept-script-base-url">base URL</span>, <span
+   data-x="concept-url-serializer">serialized</span>.</p></li>
+
+   <li>
+    <p>Let <var>steps</var> be the following steps, given the argument <var>specifier</var>:</p>
+
+    <ol>
+     <li><p>Set <var>specifier</var> to ? <span>ToString</span>(<var>specifier</var>).</p></li>
+
+     <li><p>Let <var>url</var> be the result of <span data-x="resolve a module specifier">resolving
+     a module specifier</span> given <var>moduleScript</var> and <var>specifier</var>.</p></li>
+
+     <li><p>Return the <span data-x="concept-url-serializer">serialization</span> of
+     <var>url</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Let <var>resolveFunction</var> be ! <span>CreateBuiltinFunction</span>(<var>steps</var>,
+   1, "<code data-x="">resolve</code>", « »).</p></li>
+
+   <li><p>Return « <span>Record</span> { [[Key]]: "<dfn><code
+   data-x="import-meta-url">url</code></dfn>", [[Value]]: <var>urlString</var> },
+   <span>Record</span> { [[Key]]: "<dfn><code data-x="import-meta-resolve">resolve</code></dfn>",
+   [[Value]]: <var>resolveFunction</var> } ».</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <h6 id="hostgetsupportedimportattributes"><span
+  id="hostgetsupportedimportassertions"></span><dfn>HostGetSupportedImportAttributes</dfn>()</h6>
+
+  <p>JavaScript contains an <span>implementation-defined</span> <span
+  data-x="js-HostGetSupportedImportAttributes">HostGetSupportedImportAttributes</span> abstract
+  operation. User agents must use the following implementation: <ref>JAVASCRIPT</ref></p>
+
+  <ol>
+   <li><p>Return « "<code data-x="">type</code>" ».</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <h6 id="hostloadimportedmodule"><dfn>HostLoadImportedModule</dfn>(<var>referrer</var>,
+  <var>moduleRequest</var>, <var>loadState</var>, <var>payload</var>)</h6>
+
+  <p>JavaScript contains an <span>implementation-defined</span> <span
+  data-x="js-HostLoadImportedModule">HostLoadImportedModule</span> abstract operation. User agents
+  must use the following implementation: <ref>JAVASCRIPT</ref></p>
+
+  <ol>
+   <li><p>Let <var>settingsObject</var> be the <span>current settings object</span>.</p></li>
+
+   <li>
+    <p>If <var>settingsObject</var>'s <span data-x="concept-settings-object-global">global
+    object</span> implements <code>WorkletGlobalScope</code> or <code>ServiceWorkerGlobalScope</code>
+    and <var>loadState</var> is undefined:</p>
+
+    <p class="note"><var>loadState</var> is undefined when the current fetching process has been
+    initiated by a dynamic <code>import()</code> call, either directly or when loading the
+    transitive dependencies of the dynamically imported module.</p>
+
+    <ol>
+     <li><p>Perform <span>FinishLoadingImportedModule</span>(<var>referrer</var>,
+     <var>moduleRequest</var>, <var>payload</var>, <span>ThrowCompletion</span>(a new
+     <code>TypeError</code>)).</p></li>
+
+     <li><p>Return.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Let <var>referencingScript</var> be null.</p></li>
+
+   <li><p>Let <var>originalFetchOptions</var> be the <span>default script fetch
+   options</span>.</p></li>
+
+   <li><p>Let <var>fetchReferrer</var> be "<code data-x="">client</code>".</p></li>
+
+   <li>
+    <p>If <var>referrer</var> is a <span>Script Record</span> or a <span>Cyclic Module
+    Record</span>:</p>
+
+    <ol>
+     <li><p>Set <var>referencingScript</var> to <var>referrer</var>.[[HostDefined]].</p>
+
+     <li><p>Set <var>settingsObject</var> to <var>referencingScript</var>'s <span
+     data-x="concept-script-settings-object">settings object</span>.</p></li>
+
+     <li><p>Set <var>fetchReferrer</var> to <var>referencingScript</var>'s <span
+     data-x="concept-script-base-url">base URL</span>.</p></li>
+
+     <li><p>Set <var>originalFetchOptions</var> to <var>referencingScript</var>'s <span
+     data-x="concept-script-script-fetch-options">fetch options</span>.</p></li>
+    </ol>
+
+    <div class="example">
+     <p><var>referrer</var> is usually a <span>Script Record</span> or a <span>Cyclic Module
+     Record</span>, but it will not be so for event handlers per the <span data-x="getting the
+     current value of the event handler">get the current value of the event handler</span>
+     algorithm. For example, given:</p>
+
+     <pre><code class="html">&lt;button onclick="import('./foo.mjs')">Click me&lt;/button></code></pre>
+
+     <p>If a <code data-x="event-click">click</code> event occurs, then at the time the
+     <code>import()</code> expression runs, <span>GetActiveScriptOrModule</span> will return null,
+     and this operation will receive the <span>current realm</span> as a fallback
+     <var>referrer</var>.</p>
+    </div>
+   </li>
+
+   <li>
+    <p>If <var>referrer</var> is a <span>Cyclic Module Record</span> and <var>moduleRequest</var>
+    is equal to the first element of <var>referrer</var>.[[RequestedModules]]:</p>
+
+    <ol>
+     <li id="validate-requested-module-specifiers">
+      <p><span data-x="list iterate">For each</span> <span>ModuleRequest record</span>
+      <var>requested</var> of <var>referrer</var>.[[RequestedModules]]:</p>
+
+      <ol>
+       <li>
+        <p>If <var>requested</var>.[[Attributes]] contains a <span>Record</span> <var>entry</var>
+        such that <var>entry</var>.[[Key]] is not "<code data-x="">type</code>":</p>
+
+        <ol>
+         <li><p>Let <var>error</var> be a new <code>SyntaxError</code> exception.</p></li>
+
+         <li><p>If <var>loadState</var> is not undefined and <var>loadState</var>.[[ErrorToRethrow]]
+         is null, set <var>loadState</var>.[[ErrorToRethrow]] to <var>error</var>.</p></li>
+
+         <li><p>Perform <span>FinishLoadingImportedModule</span>(<var>referrer</var>,
+         <var>moduleRequest</var>, <var>payload</var>,
+         <span>ThrowCompletion</span>(<var>error</var>)).</p></li>
+
+         <li><p>Return.</p></li>
+        </ol>
+
+        <p class="note">The JavaScript specification re-performs this validation but it is duplicated
+        here to avoid unnecessarily loading any of the dependencies on validation failure.</p>
+       </li>
+
+       <li><p><span>Resolve a module specifier</span> given <var>referencingScript</var> and
+       <var>requested</var>.[[Specifier]], catching any exceptions. If they throw an exception, let
+       <var>resolutionError</var> be the thrown exception.</p></li>
+
+       <li>
+        <p>If the previous step threw an exception:</p>
+
+        <ol>
+         <li><p>If <var>loadState</var> is not undefined and <var>loadState</var>.[[ErrorToRethrow]]
+         is null, set <var>loadState</var>.[[ErrorToRethrow]] to
+         <var>resolutionError</var>.</p></li>
+
+         <li><p>Perform <span>FinishLoadingImportedModule</span>(<var>referrer</var>,
+         <var>moduleRequest</var>, <var>payload</var>,
+         <span>ThrowCompletion</span>(<var>resolutionError</var>)).</p></li>
+
+         <li><p>Return.</p></li>
+        </ol>
+       </li>
+
+       <li><p>Let <var>moduleType</var> be the result of running the <span>module type from module
+       request</span> steps given <var>requested</var>.</p></li>
+
+       <li>
+        <p>If the result of running the <span>module type allowed</span> steps given
+        <var>moduleType</var> and <var>settingsObject</var> is false:</p>
+
+        <ol>
+         <li><p>Let <var>error</var> be a new <code>TypeError</code> exception.</p></li>
+
+         <li><p>If <var>loadState</var> is not undefined and <var>loadState</var>.[[ErrorToRethrow]]
+         is null, set <var>loadState</var>.[[ErrorToRethrow]] to <var>error</var>.</p></li>
+
+         <li><p>Perform <span>FinishLoadingImportedModule</span>(<var>referrer</var>,
+         <var>moduleRequest</var>, <var>payload</var>,
+         <span>ThrowCompletion</span>(<var>error</var>)).</p></li>
+
+         <li><p>Return.</p></li>
+        </ol>
+       </li>
+      </ol>
+
+      <p class="note">This step is essentially validating all of the requested module specifiers and
+      type attributes when the first call to <span>HostLoadImportedModule</span> for a static module
+      dependency list is made, to avoid further loading operations in the case any one of the
+      dependencies has a static error. We treat a module with unresolvable module specifiers or
+      unsupported type attributes the same as one that cannot be parsed; in both cases, a syntactic
+      issue makes it impossible to ever contemplate linking the module later.</p>
+     </li>
+    </ol>
+   </li>
+
+   <li><p>Let <var>url</var> be the result of <span data-x="resolve a module specifier">resolving a
+   module specifier</span> given <var>referencingScript</var> and
+   <var>moduleRequest</var>.[[Specifier]], catching any exceptions. If they throw an exception, let
+   <var>resolutionError</var> be the thrown exception.</p></li>
+
+   <li>
+    <p>If the previous step threw an exception:</p>
+
+    <ol>
+     <li><p>If <var>loadState</var> is not undefined and <var>loadState</var>.[[ErrorToRethrow]] is
+     null, set <var>loadState</var>.[[ErrorToRethrow]] to <var>resolutionError</var>.</p></li>
+
+     <li><p>Perform <span>FinishLoadingImportedModule</span>(<var>referrer</var>,
+     <var>moduleRequest</var>, <var>payload</var>,
+     <span>ThrowCompletion</span>(<var>resolutionError</var>)).</p></li>
+
+     <li><p>Return.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Let <var>fetchOptions</var> be the result of <span data-x="get the descendant script
+   fetch options">getting the descendant script fetch options</span> given
+   <var>originalFetchOptions</var>, <var>url</var>, and <var>settingsObject</var>.</p></li>
+
+   <li><p>Let <var>destination</var> be <code data-x="">"script"</code>.</p></li>
+
+   <li><p>Let <var>fetchClient</var> be <var>settingsObject</var>.</p></li>
+
+   <li>
+    <p>If <var>loadState</var> is not undefined:</p>
+
+    <ol>
+     <li><p>Set <var>destination</var> to <var>loadState</var>.[[Destination]].</p></li>
+
+     <li><p>Set <var>fetchClient</var> to <var>loadState</var>.[[FetchClient]].</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p><span>Fetch a single imported module script</span> given <var>url</var>,
+    <var>fetchClient</var>, <var>destination</var>, <var>fetchOptions</var>,
+    <var>settingsObject</var>, <var>fetchReferrer</var>, <var>moduleRequest</var>, and
+    <var>onSingleFetchComplete</var> as defined below. If <var>loadState</var> is not undefined and
+    <var>loadState</var>.[[PerformFetch]] is not null, pass <var>loadState</var>.[[PerformFetch]]
+    along as well.</p>
+
+    <p><var>onSingleFetchComplete</var> given <var>moduleScript</var> is the following
+    algorithm:</p>
+
+    <ol>
+     <li><p>Let <var>completion</var> be null.</p></li>
+
+     <li><p>If <var>moduleScript</var> is null, then set <var>completion</var> to
+     <span>ThrowCompletion</span>(a new <code>TypeError</code>).</p></li>
+
+     <li>
+      <p>Otherwise, if <var>moduleScript</var>'s <span data-x="concept-script-parse-error">parse
+      error</span> is not null:</p>
+
+      <ol>
+       <li><p>Let <var>parseError</var> be <var>moduleScript</var>'s <span
+       data-x="concept-script-parse-error">parse error</span>.</p></li>
+
+       <li><p>Set <var>completion</var> to
+       <span>ThrowCompletion</span>(<var>parseError</var>).</p></li>
+
+       <li><p>If <var>loadState</var> is not undefined and <var>loadState</var>.[[ErrorToRethrow]] is
+       null, set <var>loadState</var>.[[ErrorToRethrow]] to <var>parseError</var>.</p></li>
+      </ol>
+     </li>
+
+     <li><p>Otherwise, set <var>completion</var> to
+     <span>NormalCompletion</span>(<var>moduleScript</var>'s <span
+     data-x="concept-script-record">record</span>).</p></li>
+
+     <li><p>Perform <span>FinishLoadingImportedModule</span>(<var>referrer</var>,
+     <var>moduleRequest</var>, <var>payload</var>, <var>completion</var>).</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  </div>
+

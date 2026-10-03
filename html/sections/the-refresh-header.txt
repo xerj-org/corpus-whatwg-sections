@@ -1,0 +1,14 @@
+WHATWG HTML — section the-refresh-header — The `<code>Refresh</code>` header
+
+  <h3>The `<code>Refresh</code>` header</h3>
+
+  <p>The `<dfn http-header><code>Refresh</code></dfn>` HTTP response header is the HTTP-equivalent
+  to a <code>meta</code> element with an <code data-x="attr-meta-http-equiv">http-equiv</code>
+  attribute in the <span data-x="attr-meta-http-equiv-refresh">Refresh state</span>. It takes <a
+  href="#conformance-attr-meta-http-equiv-refresh">the same value</a> and works largely the
+  same.<span w-nodev> Its processing model is detailed in <span
+  data-x="create-the-document-object">create and initialize a <code>Document</code>
+  object</span>.</span></p>
+  <!-- This might be a retcon. -->
+
+

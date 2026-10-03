@@ -1,0 +1,120 @@
+WHATWG HTML — section nav-traversal-ui — <span id="history-notes"></span>Browser user interface considerations (+webappapis) (+scripting)
+
+  <h3 id="nav-traversal-ui"><span id="history-notes"></span>Browser user interface
+  considerations</h3>
+
+  <p>Browser user agents should provide the ability to <!-- DONAV browser UI
+  --><span>navigate</span>, <span>reload</span>, and <span data-x="nav-stop">stop loading</span>
+  any <span>top-level traversable</span> in their <span>top-level traversable set</span>.</p>
+
+  <p class="example">For example, via a location bar and reload/stop button UI.</p>
+
+  <p>Browser user agents should provide the ability to <span data-x="traverse the history by a
+  delta">traverse by a delta</span> any <span>top-level traversable</span> in their <span>top-level
+  traversable set</span>.</p>
+
+  <p class="example">For example, via back and forward buttons, possibly including long-press
+  abilities to change the delta.</p>
+
+  <p>It is suggested that such user agents allow traversal by deltas greater than one, to avoid
+  letting a page "trap" the user by stuffing the session history with spurious entries. (For
+  example, via repeated calls to <code data-x="dom-history-pushState">history.pushState()</code> or
+  <span data-x="navigate-fragid">fragment navigations</span>.)</p>
+
+  <p class="note">Some user agents have heuristics for translating a single "back" or "forward"
+  button press into a larger delta, specifically to overcome such abuses. We are contemplating
+  specifying these heuristics in <a href="https://github.com/whatwg/html/issues/7832">issue
+  #7832</a>.</p>
+
+  <p>Browser user agents should offer users the ability to <span>create a fresh top-level
+  traversable</span>, given a user-provided or user agent-determined initial <span>URL</span>.</p>
+
+  <p class="example">For example, via a "new tab" or "new window" button.</p>
+
+  <p>Browser user agents should offer users the ability to arbitrarily <span data-x="close a
+  top-level traversable">close</span> any <span>top-level traversable</span> in their
+  <span>top-level traversable set</span>.</p>
+
+  <p class="example">For example, by clicking a "close tab" button.</p>
+
+  <hr>
+
+  <p>Browser user agents may provide ways for the user to explicitly cause any
+  <span>navigable</span> (not just a <span>top-level traversable</span>) to <!-- DONAV browser UI
+  --><span>navigate</span>, <span>reload</span>, or <span data-x="nav-stop">stop
+  loading</span>.</p>
+
+  <p class="example">For example, via a context menu.</p>
+
+  <p>Browser user agents may provide the ability for users to <span>destroy a top-level
+  traversable</span>.</p>
+
+  <p class="example">For example, by force-closing a window containing one or more such <span
+  data-x="top-level traversable">top-level traversables</span>.</p>
+
+  <hr>
+
+  <p>When a user requests a <span>reload</span> of a <span>navigable</span> whose <span
+  data-x="nav-active-history-entry">active session history entry</span>'s <span
+  data-x="she-document-state">document state</span>'s <span
+  data-x="document-state-resource">resource</span> is a <span>POST resource</span>, the user agent
+  should prompt the user to confirm the operation first, since otherwise transactions (e.g.,
+  purchases or database modifications) could be repeated.</p>
+
+  <p>When a user requests a <span>reload</span> of a <span>navigable</span>, user agents may provide
+  a mechanism for ignoring any caches when reloading.</p>
+
+  <hr>
+
+  <p>All calls to <span>navigate</span> initiated by the mechanisms mentioned above must have the <i
+  data-x="navigation-user-involvement">userInvolvement</i> argument set to "<code
+  data-x="uni-browser-ui">browser UI</code>".</p>
+
+  <p>All calls to <span>reload</span> initiated by the mechanisms mentioned above must have the <i
+  data-x="reload-user-involvement">userInvolvement</i> argument set to "<code
+  data-x="uni-browser-ui">browser UI</code>".</p>
+
+  <p>All calls to <span>traverse the history by a delta</span> initiated by the mechanisms mentioned
+  above must not pass a value for the <i data-x="traverse-sourceDocument">sourceDocument</i>
+  argument.</p>
+
+  <hr>
+
+  <p>The above recommendations, and the data structures in this specification, are not meant to
+  place restrictions on how user agents represent the session history to the user.</p>
+
+  <p>For example, although a <span>top-level traversable</span>'s <span
+  data-x="tn-session-history-entries">session history entries</span> are stored and maintained as a
+  list, and the user agent is recommended to give an interface for <span data-x="traverse the
+  history by a delta">traversing that list by a delta</span>, a novel user agent could instead or
+  in addition present a tree-like view, with each page having multiple "forward" pages that the user
+  can choose between.</p>
+
+  <p>Similarly, although session history for all descendant <span
+  data-x="navigable">navigables</span> is stored in their <span>traversable navigable</span>, user
+  agents could present the user with a more nuanced per-<span>navigable</span> view of the session
+  history.</p>
+
+  <hr>
+
+  <p>Browser user agents may use a <span>top-level browsing context</span>'s <span>is
+  popup</span> boolean for the following purposes:
+
+  <ul>
+   <li><p>Deciding whether or not to provide a minimal web browser user interface for the
+   corresponding <span>top-level traversable</span>.</p></li>
+
+   <li><p>Performing the optional steps in <span>set up browsing context features</span>.</p></li>
+  </ul>
+
+  <p>In both cases user agents might additionally incorporate user preferences, or present a choice
+  as to whether to go down the popup route.</p>
+
+  <p>User agents that provide a minimal user interface for such popups are encouraged to not hide
+  the browser's location bar.</p>
+
+
+  <h2 split-filename="webappapis" id="webappapis">Web application APIs</h2>
+
+  <h3 id="scripting">Scripting</h3>
+

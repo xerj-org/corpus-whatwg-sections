@@ -1,0 +1,102 @@
+WHATWG HTML — section printing — Printing (+system-state-and-capabilities)
+
+  <h4>Printing</h4>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>window</var>.<span subdfn data-x="dom-print">print</span>()</code></dt>
+
+   <dd><p>Prompts the user to print the page.</p></dd>
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn method for="Window"><code data-x="dom-print">print()</code></dfn> method steps
+  are:</p>
+
+  <ol>
+   <li><p>Let <var>document</var> be <span>this</span>'s <span
+   data-x="concept-document-window">associated <code>Document</code></span>.</p></li>
+
+   <li><p>If <var>document</var> is not <span>fully active</span>, then return.</p></li>
+
+   <li><p>If <var>document</var>'s <span>unload counter</span> is greater than 0, then
+   return.</p></li>
+
+   <li><p>If <var>document</var> is <span>ready for post-load tasks</span>, then run the
+   <span>printing steps</span> for <var>document</var>.</p></li>
+
+   <li><p>Otherwise, set <var>document</var>'s <dfn>print when loaded</dfn> flag.</p></li>
+  </ol>
+  </div>
+
+  <p>User agents should also run the <span>printing steps</span> whenever the user asks for the
+  opportunity to <span>obtain a physical form</span> (e.g. printed copy), or the representation of a
+  physical form (e.g. PDF copy), of a document.</p>
+
+  <div algorithm>
+  <p>The <dfn>printing steps</dfn> for a <code>Document</code> <var>document</var> are:</p>
+
+  <ol>
+   <li>
+    <p>The user agent may display a message to the user or return (or both).</p>
+
+    <p class="example">For instance, a kiosk browser could silently ignore any invocations of the
+    <code data-x="dom-print">print()</code> method.</p>
+
+    <p class="example">For instance, a browser on a mobile device could detect that there are no
+    printers in the vicinity and display a message saying so before continuing to offer a "save to
+    PDF" option.</p>
+   </li>
+
+   <li>
+    <p>If the <span>active sandboxing flag set</span> of <var>document</var> has the <span>sandboxed
+    modals flag</span> set, then return.</p>
+
+    <p class="note">If the printing dialog is blocked by a <code>Document</code>'s sandbox,
+    then neither the <code data-x="event-beforeprint">beforeprint</code> nor <code
+    data-x="event-afterprint">afterprint</code> events will be fired.</p>
+   </li>
+
+   <li>
+    <p>The user agent must <span data-x="concept-event-fire">fire an event</span> named <code
+    data-x="event-beforeprint">beforeprint</code> at the <span>relevant global object</span> of
+    <var>document</var>, as well as any <span data-x="child navigable">child navigable</span> in
+    it.</p>
+
+    <p class="XXX">Firing in children only doesn't seem right here, and some tasks likely need to
+    be queued. See <a href="https://github.com/whatwg/html/issues/5096">issue #5096</a>.</p>
+
+    <p class="example">The <code data-x="event-beforeprint">beforeprint</code> event can be used to
+    annotate the printed copy, for instance adding the time at which the document was printed.</p>
+   </li>
+
+   <li><p>The user agent should offer the user the opportunity to <span>obtain a physical
+   form</span> (or the representation of a physical form) of <var>document</var>. The user agent may
+   wait for the user to either accept or decline before returning; if so, the user agent must
+   <span>pause</span> while the method is waiting. Even if the user agent doesn't wait at this
+   point, the user agent must use the state of the relevant documents as they are at this point in
+   the algorithm if and when it eventually creates the alternate form.</p></li>
+
+   <li>
+    <p>The user agent must <span data-x="concept-event-fire">fire an event</span> named <code
+    data-x="event-afterprint">afterprint</code> at the <span>relevant global object</span> of
+    <var>document</var>, as well as any <span data-x="child navigable">child navigables</span> in
+    it.</p>
+
+    <p class="XXX">Firing in children only doesn't seem right here, and some tasks likely need to
+    be queued. See <a href="https://github.com/whatwg/html/issues/5096">issue #5096</a>.</p>
+
+    <p class="example">The <code data-x="event-afterprint">afterprint</code> event can be used to
+    revert annotations added in the earlier event, as well as showing post-printing UI. For
+    instance, if a page is walking the user through the steps of applying for a home loan, the
+    script could automatically advance to the next step after having printed a form or other.</p>
+   </li>
+  </ol>
+  </div>
+
+  </div>
+
+
+  <h3 split-filename="system-state">System state and capabilities</h3>
+

@@ -1,0 +1,254 @@
+WHATWG HTML — section unloading-documents — Unloading documents
+
+  <h4>Unloading documents</h4>
+
+  <p>A <code>Document</code> has a <dfn
+  data-x="concept-document-salvageable"><i>salvageable</i></dfn> state, which must initially be
+  true, and a <dfn>page showing</dfn> boolean, which is initially false. The <span>page
+  showing</span> boolean is used to ensure that scripts receive <code
+  data-x="event-pageshow">pageshow</code> and <code data-x="event-pagehide">pagehide</code> events
+  in a consistent manner (e.g., that they never receive two <code
+  data-x="event-pagehide">pagehide</code> events in a row without an intervening <code
+  data-x="event-pageshow">pageshow</code>, or vice versa).</p>
+
+  <p>A <code>Document</code> has a <code>DOMHighResTimeStamp</code> <dfn>suspension time</dfn>,
+  initially 0.</p>
+
+  <p>A <code>Document</code> has a <span>list</span> of <dfn>suspended timer handles</dfn>,
+  initially empty.</p>
+
+  <p><span data-x="event loop">Event loops</span> have a <dfn>termination nesting level</dfn>
+  counter, which must initially be 0.</p>
+
+  <p id="ignore-opens-during-unload-counter"><code>Document</code> objects have an <dfn>unload
+  counter</dfn>, which is used to ignore certain operations while the below algorithms run.
+  Initially, the counter must be set to zero.</p>
+
+  <div algorithm>
+  <p>To <dfn data-x="unload a document">unload</dfn> a <code>Document</code>
+  <var>oldDocument</var>, given an optional <code>Document</code> <var>newDocument</var>:</p>
+
+  <ol>
+   <li><p><span>Assert</span>: this is running as part of a <span data-x="concept-task">task</span>
+   queued on <var>oldDocument</var>'s <span>relevant agent</span>'s <span
+   data-x="concept-agent-event-loop">event loop</span>.</p></li>
+
+   <li><p>Let <var>unloadTimingInfo</var> be a new <span>document unload timing
+   info</span>.</p></li>
+
+   <li>
+    <p>If <var>newDocument</var> is not given, then set <var>unloadTimingInfo</var> to null.</p>
+
+    <p class="note">In this case there is no new document that needs to know about how long it took
+    <var>oldDocument</var> to unload.</p>
+   </li>
+
+   <li>
+    <p>Otherwise, if <var>newDocument</var>'s <span>event loop</span> is not
+    <var>oldDocument</var>'s <span>event loop</span>, then the user agent may be <span
+    data-x="unload a document">unloading</span> <var>oldDocument</var> <span>in parallel</span>. In
+    that case, the user agent should set <var>unloadTimingInfo</var> to null.</p>
+
+    <p class="note">In this case <var>newDocument</var>'s loading is not impacted by how long it
+    takes to unload <var>oldDocument</var>, so it would be meaningless to communicate that timing
+    info.</p>
+   </li>
+
+   <li>
+    <p>Let <var>intendToKeepInBfcache</var> be true if the user agent intends to keep
+    <var>oldDocument</var> alive in a <span>session history entry</span>, such that it can later be
+    <a href="#note-bfcache">used for history traversal</a>.</p>
+
+    <p>This must be false if <var>oldDocument</var> is not <i
+    data-x="concept-document-salvageable">salvageable</i>, or if there are any descendants of
+    <var>oldDocument</var> which the user agent does not intend to keep alive in the same way
+    (including due to their lack of <i
+    data-x="concept-document-salvageable">salvageability</i>).</p>
+   </li>
+
+   <li><p>Let <var>eventLoop</var> be <var>oldDocument</var>'s <span>relevant agent</span>'s <span
+   data-x="concept-agent-event-loop">event loop</span>.</p></li>
+
+   <li><p>Increase <var>eventLoop</var>'s <span>termination nesting level</span> by 1.</p></li>
+
+   <li><p>Increase <var>oldDocument</var>'s <span>unload counter</span> by 1.</p></li>
+
+   <li><p>If <var>intendToKeepInBfcache</var> is false, then set <var>oldDocument</var>'s <i
+   data-x="concept-document-salvageable">salvageable</i> state to false.</p></li>
+
+   <li>
+    <p>If <var>oldDocument</var>'s <span>page showing</span> is true:</p>
+
+    <ol>
+     <li><p>Set <var>oldDocument</var>'s <span>page showing</span> to false.</p></li>
+
+     <li><p><span>Fire a page transition event</span> named <code
+     data-x="event-pagehide">pagehide</code> at <var>oldDocument</var>'s <span>relevant global
+     object</span> with <var>oldDocument</var>'s <i
+     data-x="concept-document-salvageable">salvageable</i> state.</p></li>
+
+     <li><p><span>Update the visibility state</span> of <var>oldDocument</var> to
+     "<code data-x="">hidden</code>".</p></li>
+    </ol>
+   </li>
+
+   <li><p>If <var>unloadTimingInfo</var> is not null, then set <var>unloadTimingInfo</var>'s
+   <span>unload event start time</span> to the <span>current high resolution time</span> given
+   <var>newDocument</var>'s <span>relevant global object</span>, <span data-x="coarsen
+   time">coarsened</span> given <var>oldDocument</var>'s <span>relevant settings object</span>'s
+   <span data-x="concept-settings-object-cross-origin-isolated-capability">cross-origin isolated
+   capability</span>.</p></li>
+
+   <li><p>If <var>oldDocument</var>'s <i data-x="concept-document-salvageable">salvageable</i>
+   state is false, then <span data-x="concept-event-fire">fire an event</span> named <code
+   data-x="event-unload">unload</code> at <var>oldDocument</var>'s <span>relevant global
+   object</span>, with <i>legacy target override flag</i> set.</p></li>
+
+   <li><p>If <var>unloadTimingInfo</var> is not null, then set <var>unloadTimingInfo</var>'s
+   <span>unload event end time</span> to the <span>current high resolution time</span> given
+   <var>newDocument</var>'s <span>relevant global object</span>, <span data-x="coarsen
+   time">coarsened</span> given <var>oldDocument</var>'s <span>relevant settings object</span>'s
+   <span data-x="concept-settings-object-cross-origin-isolated-capability">cross-origin isolated
+   capability</span>.</p></li>
+
+   <li><p>Decrease <var>eventLoop</var>'s <span>termination nesting level</span> by 1.</p></li>
+
+   <li><p>Set <var>oldDocument</var>'s <span>suspension time</span> to the <span>current high
+   resolution time</span> given <var>document</var>'s <span>relevant global object</span>.</p></li>
+
+   <li><p>Set <var>oldDocument</var>'s <span>suspended timer handles</span> to the result of
+   <span data-x="map get the keys">getting the keys</span> for the
+   <span>map of active timers</span>.</p></li>
+
+   <li><p>Set <var>oldDocument</var>'s <span>has been scrolled by the user</span> to false.</p></li>
+
+   <li><p>Run any <span>unloading document cleanup steps</span> for <var>oldDocument</var> that are
+   defined by this specification and <span>other applicable specifications</span>.</p></li>
+
+   <li><p>If <var>oldDocument</var>'s <span>node navigable</span> is a <span>top-level
+   traversable</span>, <span>build not restored reasons for a top-level traversable and its
+   descendants</span> given <var>oldDocument</var>'s <span>node navigable</span>.</p></li>
+
+   <li><p>If <var>oldDocument</var>'s <i data-x="concept-document-salvageable">salvageable</i> state
+   is false, then <span data-x="destroy a document">destroy</span> <var>oldDocument</var>.</p></li>
+
+   <li><p>Decrease <var>oldDocument</var>'s <span>unload counter</span> by 1.</p></li>
+
+   <li><p>If <var>newDocument</var> is given, <var>newDocument</var>'s <span>was created via
+   cross-origin redirects</span> is false, and <var>newDocument</var>'s <span
+   data-x="concept-document-origin">origin</span> is the <span data-x="same origin">same</span> as
+   <var>oldDocument</var>'s <span data-x="concept-document-origin">origin</span>, then set
+   <var>newDocument</var>'s <span>previous document unload timing</span> to
+   <var>unloadTimingInfo</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>unload a document and its descendants</dfn>, given a <code>Document</code>
+  <var>document</var>, an optional <code>Document</code>-or-null <var>newDocument</var> (default
+  null), an optional set of steps <var>afterAllUnloads</var>, and an optional set of steps
+  <var>firePageSwapSteps</var>:</p>
+
+  <ol>
+   <li><p><span>Assert</span>: this is running within <var>document</var>'s <span>node
+   navigable</span>'s <span data-x="nav-traversable">traversable navigable</span>'s <span
+   data-x="tn-session-history-traversal-queue">session history traversal queue</span>.</p></li>
+
+   <li><p>Let <var>childNavigables</var> be <var>document</var>'s <span data-x="child
+   navigable">child navigables</span>.</p></li>
+
+   <li><p>Let <var>numberUnloaded</var> be 0.</p></li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>childNavigable</var> of
+    <var>childNavigables</var> <span class="XXX" data-x="">in what order?</span>, <span>queue a
+    global task</span> on the <span>navigation and traversal task source</span> given
+    <var>childNavigable</var>'s <span data-x="nav-window">active window</span> to perform the
+    following steps:</p>
+
+    <ol>
+     <li><p>Let <var>incrementUnloaded</var> be an algorithm step which increments
+     <var>numberUnloaded</var>.</p></li>
+
+     <li><p><span>Unload a document and its descendants</span> given <var>childNavigable</var>'s
+     <span data-x="nav-document">active document</span>, null, and
+     <var>incrementUnloaded</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Wait until <var>numberUnloaded</var> equals <var>childNavigable</var>'s <span
+   data-x="list size">size</span>.</p></li>
+
+   <li>
+    <p><span>Queue a global task</span> on the <span>navigation and traversal task source</span>
+    given <var>document</var>'s <span>relevant global object</span> to perform the following
+    steps:</p>
+
+    <ol>
+     <li><p>If <var>firePageSwapSteps</var> is given, then run <var>firePageSwapSteps</var>.</p></li>
+
+     <li><p><span data-x="unload a document">Unload</span> <var>document</var>, passing along
+     <var>newDocument</var> if it is not null.</p></li>
+
+     <li><p>If <var>afterAllUnloads</var> was given, then run it.</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>This specification defines the following <dfn export>unloading document cleanup steps</dfn>.
+  Other specifications can define more. Given a <code>Document</code> <var>document</var>:</p>
+
+  <ol>
+   <li><p>Let <var>window</var> be <var>document</var>'s <span>relevant global
+   object</span>.</p></li>
+
+   <li>
+    <p>For each <code>WebSocket</code> object <var>webSocket</var> whose <span>relevant global
+    object</span> is <var>window</var>, <span>make disappear</span> <var>webSocket</var>.</p>
+
+    <p>If this affected any <code>WebSocket</code> objects, then <span>make document
+    unsalvageable</span> given <var>document</var> and "<code
+    data-x="blocking-websocket">websocket</code>".</p>
+   </li>
+
+   <li><p>For each <code>WebTransport</code> object <var>transport</var> whose <span>relevant global
+   object</span> is <var>window</var>, run the <span>context cleanup steps</span> given
+   <var>transport</var>.</p></li>
+
+   <li>
+    <p>If <var>document</var>'s <i data-x="concept-document-salvageable">salvageable</i>
+    state is false:</p>
+
+    <ol>
+     <li><p>For each <code>EventSource</code> object <var>eventSource</var> whose <span>relevant
+     global object</span> is equal to <var>window</var>, <span
+     data-x="concept-EventSource-forcibly-close">forcibly close</span>
+     <var>eventSource</var>.</p></li>
+
+     <li><p><span data-x="map clear">Clear</span> <var>window</var>'s
+     <span>map of active timers</span>.</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <div class="XXX">
+   <p>It would be better if specification authors sent a pull request to add calls from here into
+   their specifications directly, instead of using the <span>unloading document cleanup
+   steps</span> hook, to ensure well-defined cross-specification call order. As of the time of this
+   writing the following specifications are known to have <span>unloading document cleanup
+   steps</span>, which will be run in an unspecified order: <cite>Fullscreen API</cite>, <cite>Web
+   NFC</cite>, <cite>WebDriver BiDi</cite>, <cite>Compute Pressure</cite>, <cite>File API</cite>,
+   <cite>Media Capture and Streams</cite>, <cite>Picture-in-Picture</cite>, <cite>Screen
+   Orientation</cite>, <cite>Service Workers</cite>, <cite>WebLocks API</cite>, <cite>WebAudio
+   API</cite>, <cite>WebRTC</cite>. <ref>FULLSCREEN</ref> <ref>WEBNFC</ref> <ref>WEBDRIVERBIDI</ref>
+   <ref>COMPUTEPRESSURE</ref> <ref>FILEAPI</ref> <ref>MEDIASTREAM</ref> <ref>PICTUREINPICTURE</ref>
+   <ref>SCREENORIENTATION</ref> <ref>SW</ref> <ref>WEBLOCKS</ref> <ref>WEBAUDIO</ref>
+   <ref>WEBRTC</ref>
+
+   <p><a href="https://github.com/whatwg/html/issues/8906">Issue #8906</a> tracks the work to make
+   the order of these steps clear.</p>
+  </div>
+

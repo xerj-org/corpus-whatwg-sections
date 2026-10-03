@@ -1,0 +1,18 @@
+WHATWG HTML — section the-sec-speculation-tags-header — The `<code>Sec-Speculation-Tags</code>` header
+
+  <h4>The `<code>Sec-Speculation-Tags</code>` header</h4>
+
+  <p>The `<dfn http-header><code>Sec-Speculation-Tags</code></dfn>` HTTP request header specifies
+  the web developer-provided tags associated with the speculative navigation request. It can also be
+  used to distinguish speculative navigation requests from speculative subresource requests, since
+  `<code>Sec-Purpose</code>` can be sent by both categories of requests.</p>
+
+  <p>The header is a <span data-x="http-structured-header">structured header</span> whose value must
+  be a <span data-x="http-structured-header-list">list</span>. The list can contain either <span
+  data-x="http-structured-header-token">token</span> or <span
+  data-x="http-structured-header-string">string</span> values. String values represent
+  developer-provided tags, whereas token values represent predefined tags. As of now, the only
+  predefined tag is <code data-x="">null</code>, which indicates a speculative navigation request
+  with no developer-defined tag.</p>
+
+

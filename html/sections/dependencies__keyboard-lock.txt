@@ -1,0 +1,13 @@
+WHATWG HTML — section dependencies/keyboard-lock — Keyboard Lock
+
+  <dt>Keyboard Lock</dt>
+
+  <dd>
+   <p>The following terms are defined in <cite>Keyboard Lock</cite>:</p>
+
+   <ul class="brief">
+    <li><dfn data-x-href="https://wicg.github.io/keyboard-lock/#keyboard"><code>Keyboard</code></dfn></li>
+    <li><dfn data-x-href="https://wicg.github.io/keyboard-lock/#dom-keyboard-lock" data-x="dom-Keyboard-lock"><code>lock()</code></dfn></li>
+   </ul>
+  </dd>
+

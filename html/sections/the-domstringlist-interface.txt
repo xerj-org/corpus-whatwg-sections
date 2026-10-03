@@ -1,0 +1,64 @@
+WHATWG HTML — section the-domstringlist-interface — The <code>DOMStringList</code> interface
+
+  <h4>The <code>DOMStringList</code> interface</h4>
+
+  <p>The <code>DOMStringList</code> interface is a non-fashionable retro way of representing a list
+  of strings.</p>
+
+  <pre><code class="idl">[Exposed=(Window,Worker)]
+interface <dfn interface>DOMStringList</dfn> {
+  readonly attribute unsigned long <span data-x="dom-DOMStringList-length">length</span>;
+  getter DOMString? <span data-x="dom-DOMStringList-item">item</span>(unsigned long index);
+  boolean <span data-x="dom-DOMStringList-contains">contains</span>(DOMString string);
+};</code></pre>
+
+  <p w-nodev class="warning">New APIs must use <code data-x="">sequence&lt;DOMString></code> or
+  equivalent rather than <code>DOMStringList</code>.</p>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>strings</var>.<span subdfn data-x="dom-DOMStringList-length">length</span></code></dt>
+   <dd><p>Returns the number of strings in <var>strings</var>.</p></dd>
+
+   <dt><code data-x=""><var>strings</var>[<var>index</var>]</code></dt>
+   <dt><code data-x=""><var>strings</var>.<span subdfn data-x="dom-DOMStringList-item">item</span>(<var>index</var>)</code></dt>
+   <dd><p>Returns the string with index <var>index</var> from <var>strings</var>.</p></dd>
+
+   <dt><code data-x=""><var>strings</var>.<span subdfn data-x="dom-DOMStringList-contains">contains</span>(<var>string</var>)</code></dt>
+   <dd><p>Returns true if <var>strings</var> contains <var>string</var>, and false
+   otherwise.</p></dd>
+  </dl>
+
+  <div w-nodev>
+
+  <p>Each <code>DOMStringList</code> object has an associated <span>list</span>.</p>
+
+  <div algorithm>
+  <p>The <code>DOMStringList</code> interface <span>supports indexed properties</span>. The
+  <span>supported property indices</span> are the <span>indices</span> of <span>this</span>'s
+  associated list.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="DOMStringList"
+  data-x="dom-DOMStringList-length"><code>length</code></dfn> getter steps are to return
+  <span>this</span>'s associated list's <span data-x="list size">size</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="DOMStringList"
+  data-x="dom-DOMStringList-item"><code>item(<var>index</var>)</code></dfn> method steps are to
+  return the <var>index</var>th item in <span>this</span>'s associated list, or null if
+  <var>index</var> plus one is greater than <span>this</span>'s associated list's <span data-x="list
+  size">size</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="DOMStringList"
+  data-x="dom-DOMStringList-contains"><code>contains(<var>string</var>)</code></dfn> method steps
+  are to return true if <span>this</span>'s associated list <span data-x="list
+  contains">contains</span> <var>string</var>, and false otherwise.</p>
+  </div>
+
+  </div>
+
+

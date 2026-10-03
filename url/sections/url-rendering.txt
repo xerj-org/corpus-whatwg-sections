@@ -1,0 +1,10 @@
+WHATWG URL — section url-rendering — URL rendering
+
+<h3 id=url-rendering>URL rendering</h3>
+<!-- See https://www.w3.org/Bugs/Public/show_bug.cgi?id=27641 for context -->
+
+<p>A <a for=/>URL</a> should be rendered in its <a lt="URL serializer">serialized</a> form, with
+modifications described below, when the primary purpose of displaying a URL is to have the user make
+a security or trust decision. For example, users are expected to make trust decisions based on a URL
+rendered in the browser address bar.
+

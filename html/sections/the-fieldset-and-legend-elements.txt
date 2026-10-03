@@ -1,0 +1,307 @@
+WHATWG HTML — section the-fieldset-and-legend-elements — The <code>fieldset</code> and <code>legend</code> elements
+
+  <h4>The <code>fieldset</code> and <code>legend</code> elements</h4>
+
+  <pre><code class="css">@namespace "http://www.w3.org/1999/xhtml";
+
+fieldset {
+  display: block;
+  margin-inline: 2px;
+  border: groove 2px ThreeDFace;
+  padding-block: 0.35em 0.625em;
+  padding-inline: 0.75em;
+  min-inline-size: min-content;
+}
+
+legend {
+  padding-inline: 2px;
+}
+
+legend[align=left i] {
+  justify-self: left;
+}
+
+legend[align=center i] {
+  justify-self: center;
+}
+
+legend[align=right i] {
+  justify-self: right;
+}</code></pre>
+
+  <div algorithm>
+  <p>The <code>fieldset</code> element, when it generates a <span>CSS box</span>, is
+  <span>expected</span> to act as follows:</p>
+
+  <ul>
+   <li><p>The element is <span>expected</span> to establish a new <span>block formatting
+   context</span>.</p></li>
+
+   <li>
+    <p>The <span>'display'</span> property is <span>expected</span> to act as follows:</p>
+
+    <ul>
+     <li><p>If the computed value of <span>'display'</span> is a value such that the <span>outer
+     display type</span> is 'inline', then behave as 'inline-block'.</p></li>
+
+     <li><p>Otherwise, behave as 'flow-root'.</p></li>
+    </ul>
+
+    <p class="note">This does not change the computed value.</p>
+   </li>
+
+   <li>
+    <p>If the element's box has a child box that matches the conditions in the list below, then the
+    first such child box is the 'fieldset' element's <dfn>rendered legend</dfn>:</p>
+
+    <ul class="brief">
+     <li>The child is a <code>legend</code> element.</li>
+     <li>The child's used value of <span>'float'</span> is 'none'.</li>
+     <li>The child's used value of <span>'position'</span> is not 'absolute' or 'fixed'.</li>
+    </ul>
+   </li>
+
+   <li>
+    <p>If the element has a <span>rendered legend</span>, then the border is <span>expected</span>
+    to not be painted behind the rectangle defined as follows, using the writing mode of the
+    fieldset:</p>
+
+    <ol>
+     <li><p>The block-start edge of the rectangle is the smaller of the block-start edge of the
+     <span>rendered legend</span>'s margin rectangle at its static position (ignoring transforms),
+     and the block-start outer edge of the <code>fieldset</code>'s border.</p></li>
+
+     <li><p>The block-end edge of the rectangle is the larger of the block-end edge of the
+     <span>rendered legend</span>'s margin rectangle at its static position (ignoring transforms),
+     and the block-end outer edge of the <code>fieldset</code>'s border.</p></li>
+
+     <li><p>The inline-start edge of the rectangle is the smaller of the inline-start edge of the
+     <span>rendered legend</span>'s border rectangle at its static position (ignoring transforms),
+     and the inline-start outer edge of the <code>fieldset</code>'s border.</p></li>
+
+     <li><p>The inline-end edge of the rectangle is the larger of the inline-end edge of the
+     <span>rendered legend</span>'s border rectangle at its static position (ignoring transforms),
+     and the inline-end outer edge of the <code>fieldset</code>'s border.</p></li>
+    </ol>
+   </li>
+
+   <li><p>The space allocated for the element's border on the block-start side is
+   <span>expected</span> to be the element's <span>'border-block-start-width'</span> or the
+   <span>rendered legend</span>'s margin box size in the <code>fieldset</code>'s block-flow
+   direction, whichever is greater.</p></li>
+
+   <li><p>For the purpose of calculating the used <span>'block-size'</span>, if the computed
+   <span>'block-size'</span> is not 'auto', the space allocated for the <span>rendered
+   legend</span>'s margin box that spills out past the border, if any, is <span>expected</span> to
+   be subtracted from the <span>'block-size'</span>. If the content box's block-size would be
+   negative, then let the content box's block-size be 0 instead.</p></li>
+
+   <li><p>If the element has a <span>rendered legend</span>, then that element is
+   <span>expected</span> to be the first child box.</p></li>
+
+   <li><p>The <span>anonymous fieldset content box</span> is <span>expected</span> to appear after
+   the <span>rendered legend</span> and is <span>expected</span> to contain the content (including
+   the '::before' and '::after' pseudo-elements) of the <code>fieldset</code> element except for
+   the <span>rendered legend</span>, if there is one.</p></li>
+
+   <li><p>The used value of the <span>'padding-top'</span>, <span>'padding-right'</span>,
+   <span>'padding-bottom'</span>, and <span>'padding-left'</span> properties are
+   <span>expected</span> to be zero.</p></li>
+
+   <li><p>For the purpose of calculating the min-content inline size, use the greater of the
+   min-content inline size of the <span>rendered legend</span> and the min-content inline size of
+   the <span>anonymous fieldset content box</span>.</p></li>
+
+   <li><p>For the purpose of calculating the max-content inline size, use the greater of the
+   max-content inline size of the <span>rendered legend</span> and the max-content inline size of
+   the <span>anonymous fieldset content box</span>.</p></li>
+ </ul>
+  </div>
+
+  <div algorithm>
+  <p>A <code>fieldset</code> element's <span>rendered legend</span>, if any, is
+  <span>expected</span> to act as follows:</p>
+
+  <ul>
+   <li><p>The element is <span>expected</span> to establish a new <span>formatting context</span>
+   for its contents. The type of this <span>formatting context</span> is determined by its
+   <span>'display'</span> value, as usual.</p></li>
+
+   <li>
+    <p>The <span>'display'</span> property is <span>expected</span> to behave as if its computed
+    value was blockified.</p>
+
+    <p class="note">This does not change the computed value.</p>
+   </li>
+
+   <li><p>If the <span>computed value</span> of <span>'inline-size'</span> is 'auto', then the
+   <span>used value</span> is the <span>fit-content inline size</span>.</p></li>
+
+   <li><p>The element is <span>expected</span> to be positioned in the inline direction as is
+   normal for blocks (e.g., taking into account margins and the <span>'justify-self'</span>
+   property).</p></li>
+
+   <li>
+    <p>The element's box is <span>expected</span> to be constrained in the inline direction by the
+    inline content size of the <code>fieldset</code> as if it had used its computed inline
+    padding.</p>
+
+    <div class="example">
+     <p>For example, if the <code>fieldset</code> has a specified padding of 50px, then the
+     <span>rendered legend</span> will be positioned 50px in from the <code>fieldset</code>'s
+     border. The padding will further apply to the <span>anonymous fieldset content box</span>
+     instead of the <code>fieldset</code> element itself.</p>
+    </div>
+   </li>
+
+   <li><p>The element is <span>expected</span> to be positioned in the block-flow direction such
+   that its border box is centered over the border on the block-start side of the
+   <code>fieldset</code> element.</p></li>
+  </ul>
+  </div>
+
+
+  <div algorithm>
+  <p>A <code>fieldset</code> element's <dfn>anonymous fieldset content box</dfn> is
+  <span>expected</span> to act as follows:</p>
+
+  <ul>
+   <li>
+    <p>The <span>'display'</span> property is <span>expected</span> to act as follows:</p>
+
+    <ul>
+     <li><p>If the computed value of <span>'display'</span> on the <code>fieldset</code> element
+     is 'grid' or 'inline-grid', then set the used value to 'grid'.</p></li>
+
+     <li><p>If the computed value of <span>'display'</span> on the <code>fieldset</code> element
+     is 'flex' or 'inline-flex', then set the used value to 'flex'.</p></li>
+
+     <li><p>Otherwise, set the used value to 'flow-root'.</p></li>
+    </ul>
+   </li>
+
+   <li>
+    <p>The following properties are <span>expected</span> to inherit from the <code>fieldset</code>
+    element:</p>
+
+    <ul class="brief">
+     <li><span>'align-content'</span></li>
+     <li><span>'align-items'</span></li>
+     <li><span>'border-radius'</span></li>
+     <li><span>'column-count'</span></li>
+     <li><span>'column-fill'</span></li>
+     <li><span>'column-width'</span></li>
+     <li><span>'flex-direction'</span></li>
+     <li><span>'flex-wrap'</span></li>
+     <li><span>'gap'</span></li>
+     <li><span>'grid-auto-columns'</span></li>
+     <li><span>'grid-auto-flow'</span></li>
+     <li><span>'grid-auto-rows'</span></li>
+     <li><span>'grid-template-areas'</span></li>
+     <li><span>'grid-template-columns'</span></li>
+     <li><span>'grid-template-rows'</span></li>
+     <li><span>'justify-content'</span></li>
+     <li><span>'justify-items'</span></li>
+     <li><span>'overflow'</span></li>
+     <li><span>'padding-bottom'</span></li>
+     <li><span>'padding-left'</span></li>
+     <li><span>'padding-right'</span></li>
+     <li><span>'padding-top'</span></li>
+     <li><span>'rule'</span></li>
+     <li><span>'rule-break'</span></li>
+     <li><span>'rule-inset'</span></li>
+     <li><span>'rule-overlap'</span></li>
+     <li><span>'rule-visibility-items'</span></li>
+     <li><span>'text-overflow'</span></li>
+     <li><span>'unicode-bidi'</span></li>
+    </ul>
+   </li>
+
+   <li><p>The <span>'block-size'</span> property is <span>expected</span> to be set to
+   '100%'.</p></li>
+
+   <li><p>For the purpose of calculating percentage padding, act as if the padding was calculated
+   for the <code>fieldset</code> element.</p></li>
+  </ul>
+  </div>
+
+  <div class="note" id="fieldset-layout-model">
+   <figure>
+    <svg viewBox="0 0 400 270" width="480" height="324" role="img" aria-label="Fieldset layout
+    model">
+
+     <defs>
+      <marker id='arrow-red' orient='auto' markerWidth='5' markerHeight='4'
+              refX='0.1' refY='2'>
+       <path d='M0,0 V4 L5,2 Z' fill='red' />
+      </marker>
+      <marker id='arrow-blue' orient='auto' markerWidth='5' markerHeight='4'
+              refX='0.1' refY='2'>
+       <path d='M0,0 V4 L5,2 Z' fill='blue' />
+      </marker>
+     </defs>
+
+     <!-- outer outline -->
+     <rect stroke-dasharray="6" stroke-width="1" stroke="black" width="304" height="176" x="48"
+     y="48" fill="none"/>
+
+     <line marker-end="url(#arrow-blue)" x1="200" x2="200" y1="48" y2="20" stroke-width="2"
+     stroke="blue"/>
+     <line marker-end="url(#arrow-blue)" x1="48" x2="20" y1="136" y2="136" stroke-width="2"
+     stroke="blue"/>
+     <line marker-end="url(#arrow-blue)" x1="352" x2="380" y1="136" y2="136" stroke-width="2"
+     stroke="blue"/>
+     <line marker-end="url(#arrow-blue)" x1="200" x2="200" y1="224" y2="250" stroke-width="2"
+     stroke="blue"/>
+     <text x="210" y="35" font-size="12" font-family="sans-serif" font-style="normal"
+     fill="blue">fieldset's margin</text>
+
+     <!-- fieldset -->
+     <rect stroke-width="2" stroke="blue" width="300" height="116.5" x="50" y="105" fill="white"/>
+
+     <!-- rendered legend -->
+     <rect stroke-width="2" stroke="red" width="85" height="60" x="100" y="75" fill="white"/>
+     <text x="120" y="105" dominant-baseline="central" fill="red" font-family="serif"
+     font-style="normal">legend</text>
+
+     <!-- legend padding -->
+     <rect x="110" y="85" width="65" height="40" fill="none" stroke="#eee" stroke-width="18"/>
+     <text x="133" y="88" font-size="12" font-family="sans-serif" font-style="normal"
+     fill="gray">padding</text>
+
+     <line marker-end="url(#arrow-red)" x1="185" x2="325" y1="90" y2="90" stroke-width="2"
+     stroke="red"/>
+     <text x="210" y="85" font-size="12" font-family="sans-serif" font-style="normal"
+     fill="red">legend's margin</text>
+
+     <line marker-end="url(#arrow-red)" x1="100" x2="75" y1="90" y2="90" stroke-width="2"
+     stroke="red"/>
+     <line marker-end="url(#arrow-red)" x1="143" x2="143" y1="75" y2="60" stroke-width="2"
+     stroke="red"/>
+     <line marker-end="url(#arrow-red)" x1="143" x2="143" y1="135" y2="150" stroke-width="2"
+     stroke="red"/>
+
+     <!-- fieldset padding -->
+     <rect x="60" y="171" width="280" height="40" fill="none" stroke="#eee" stroke-width="18"/>
+     <text x="297" y="174" font-size="12" font-family="sans-serif" font-style="normal"
+     fill="gray">padding</text>
+
+     <!-- anonymous fieldset content box outline -->
+     <rect stroke-dasharray="6" stroke-width="1" stroke="black" width="296" height="58" x="52"
+     y="161" fill="none"/>
+     <text x="170" y="156" font-size="12" font-family="sans-serif" font-style="normal">anonymous
+     fieldset content box</text>
+     <text x="70" y="191" dominant-baseline="central" fill="blue" font-family="serif"
+     font-style="normal">content</text>
+
+    </svg>
+
+    <figcaption>The legend is rendered over the top border, and the top border area reserves
+    vertical space for the legend. The fieldset's top margin starts at the top margin edge of the
+    legend. The legend's horizontal margins, or the <span>'justify-self'</span> property, gives
+    its horizontal position. The <span>anonymous fieldset content box</span> appears below the
+    legend.</figcaption>
+   </figure>
+  </div>
+
+

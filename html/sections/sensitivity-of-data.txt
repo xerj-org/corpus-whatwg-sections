@@ -1,0 +1,16 @@
+WHATWG HTML — section sensitivity-of-data — Sensitivity of data (+security-storage)
+
+  <h4>Sensitivity of data</h4>
+
+  <p>User agents should treat persistently stored data as potentially sensitive; it's quite possible
+  for emails, calendar appointments, health records, or other confidential documents to be stored
+  in this mechanism.</p>
+
+  <p>To this end, user agents should ensure that when deleting data, it is promptly deleted from the
+  underlying storage.</p>
+
+  </div>
+
+
+  <h3 id="security-storage">Security</h3>
+

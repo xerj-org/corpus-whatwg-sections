@@ -1,0 +1,926 @@
+WHATWG HTML — section realms-and-their-counterparts — Realms and their counterparts
+
+  <h4>Realms and their counterparts</h4>
+
+  <p>The JavaScript specification introduces the <span>realm</span> concept, representing a global
+  environment in which script is run. Each realm comes with an <span>implementation-defined</span>
+  <span>global object</span>; much of this specification is devoted to defining that global object
+  and its properties.</p>
+
+  <p>For web specifications, it is often useful to associate values or algorithms with a
+  realm/global object pair. When the values are specific to a particular type of realm, they are
+  associated directly with the global object in question, e.g., in the definition of the
+  <code>Window</code> or <code>WorkerGlobalScope</code> interfaces. When the values have utility
+  across multiple realms, we use the <span>environment settings object</span> concept.</p>
+
+  <p>Finally, in some cases it is necessary to track associated values before a
+  realm/global object/environment settings object even comes into existence (for example, during
+  <span data-x="navigate">navigation</span>). These values are tracked in the
+  <span>environment</span> concept.</p>
+
+  <h5>Environments</h5>
+
+  <p>An <dfn export>environment</dfn> is an object that identifies the settings of a current or
+  potential execution environment (i.e., a <span data-x="navigation params">navigation
+  params</span>'s <span data-x="navigation-params-reserved-environment">reserved environment</span>
+  or a <span data-x="concept-request">request</span>'s <span
+  data-x="concept-request-reserved-client">reserved client</span>). An <span>environment</span> has
+  the following fields:</p>
+
+  <dl>
+   <dt>An <dfn data-x="concept-environment-id" export
+   for="environment">id</dfn></dt>
+   <dd><p>An opaque string that uniquely identifies this <span>environment</span>.</p></dd>
+
+   <dt>A <dfn data-x="concept-environment-creation-url" export
+   for="environment">creation URL</dfn></dt>
+   <dd>
+    <p>A <span>URL</span> that represents the location of the resource with which this
+    <span>environment</span> is associated.</p>
+
+    <p class="note">In the case of a <code>Window</code> <span>environment settings object</span>,
+    this URL might be distinct from its <span data-x="concept-settings-object-global">global
+    object</span>'s <span data-x="concept-document-window">associated
+    <code>Document</code></span>'s <span data-x="concept-document-url">URL</span>, due to
+    mechanisms such as <code data-x="dom-history-pushstate">history.pushState()</code> which modify
+    the latter.</p>
+   </dd>
+
+   <dt>A <dfn id="concept-environment-top-level-creation-url" export
+   for="environment">top-level creation URL</dfn></dt>
+   <dd><p>Null or a <span>URL</span> that represents the <span
+   data-x="concept-environment-creation-url">creation URL</span> of the "top-level"
+   <span>environment</span>. It is null for workers and worklets.</p></dd>
+
+   <dt>A <dfn id="concept-environment-top-level-origin" export
+   for="environment">top-level origin</dfn></dt>
+   <dd>
+    <p>A <span class="XXX" data-x="">for now</span> <span>implementation-defined</span> value, null,
+    or an <span>origin</span>. For a "top-level" potential execution environment it is null (i.e.,
+    when there is no response yet); otherwise it is the "top-level" <span>environment</span>'s <span
+    data-x="concept-settings-object-origin">origin</span>. For a dedicated worker or worklet it is
+    the <span>top-level origin</span> of its creator. For a shared or service worker it is an
+    <span>implementation-defined</span> value.</p>
+
+    <p class="note">This is distinct from the <span>top-level creation URL</span>'s <span
+    data-x="concept-url-origin">origin</span> when sandboxing, workers, and worklets are
+    involved.</p>
+   </dd>
+
+   <dt>A <dfn data-x="concept-environment-target-browsing-context" export
+   for="environment">target browsing context</dfn></dt>
+   <dd><p>Null or a target <span>browsing context</span> for a <span
+   data-x="navigation-request">navigation request</span>.</p></dd>
+
+   <dt>An <dfn data-x="concept-environment-active-service-worker" export
+   for="environment">active service worker</dfn></dt>
+   <dd><p>Null or a <span data-x="dfn-service-worker">service worker</span> that <span
+   data-x="dfn-control">controls</span> the <span>environment</span>.</p></dd>
+
+   <dt>An <dfn data-x="concept-environment-execution-ready-flag" export
+   for="environment">execution ready flag</dfn></dt>
+   <dd><p>A flag that indicates whether the environment setup is done. It is initially
+   unset.</p></dd>
+  </dl>
+
+  <p>Specifications may define <dfn export>environment discarding steps</dfn> for environments. The
+  steps take an <span>environment</span> as input.</p>
+
+  <p class="note">The <span data-x="environment discarding steps">environment discarding
+  steps</span> are run for only a select few environments: the ones that will
+  never become execution ready because, for example, they failed to load.</p>
+
+  <h5>Environment settings objects</h5>
+
+  <p>An <dfn export>environment settings object</dfn> is an <span>environment</span> that
+  additionally specifies algorithms for:</p>
+
+  <dl>
+   <dt>A <dfn export for="environment settings object">realm execution
+   context</dfn></dt>
+
+   <dd>
+    <p>A <span>JavaScript execution context</span> shared by all
+    <span data-x="script">scripts</span> that use this settings object, i.e., all scripts in a given
+    <span>realm</span>. When we <span>run a classic script</span> or <span>run a module
+    script</span>, this execution context becomes the top of the <span>JavaScript execution context
+    stack</span>, on top of which another execution context specific to the script in question is
+    pushed. (This setup ensures <span>Source Text Module Record</span>'s
+    <span data-x="js-Evaluate">Evaluate</span> knows which realm to use.)</p>
+   </dd>
+
+   <dt>A <dfn data-x="concept-settings-object-module-map" export for="environment
+   settings object">module map</dfn></dt>
+
+   <dd>
+    <p>A <span>module map</span> that is used when importing JavaScript modules.</p>
+   </dd>
+
+   <dt>An <dfn export for="environment settings object">API base URL</dfn></dt>
+
+   <dd>
+    <p>A <span>URL</span> used by APIs called by scripts that use this <span>environment settings
+    object</span> to <span data-x="parse a URL">parse URLs</span>.</p>
+   </dd>
+
+   <dt>An <dfn data-x="concept-settings-object-origin" export for="environment
+   settings object">origin</dfn></dt>
+
+   <dd>
+    <p>An <span>origin</span> used in security checks.</p>
+   </dd>
+
+   <dt>A <dfn data-x="concept-settings-object-has-cross-site-ancestor" export
+   for="environment settings object">has cross-site ancestor</dfn></dt>
+   <dd><p>A boolean used in security checks.</p></dd>
+
+   <dt>A <dfn data-x="concept-settings-object-policy-container" export
+   for="environment settings object">policy container</dfn></dt>
+
+   <dd>
+    <p>A <span>policy container</span> containing policies used for security checks.</p>
+   </dd>
+
+   <dt>A <dfn data-x="concept-settings-object-cross-origin-isolated-capability" export
+   for="environment settings object">cross-origin isolated capability</dfn></dt>
+
+   <dd><p>A boolean representing whether scripts that use this <span>environment settings
+   object</span> are allowed to use APIs that require cross-origin isolation.</p></dd>
+
+   <dt>A <dfn data-x="concept-settings-object-time-origin" export
+   for="environment settings object">time origin</dfn></dt>
+
+   <dd>A number used as the baseline for performance-related timestamps. <ref>HRT</ref></dd>
+  </dl>
+
+  <div algorithm>
+  <p>An <span>environment settings object</span>'s <dfn export for="environment settings
+  object">responsible event loop</dfn> is its <span data-x="concept-settings-object-global">global
+  object</span>'s <span>relevant agent</span>'s <span data-x="concept-agent-event-loop">event
+  loop</span>.</p>
+  </div>
+
+  <h5 id="realms-settings-objects-global-objects">Realms, settings objects, and global objects</h5>
+
+  <div algorithm>
+  <p>A <dfn export>global object</dfn> is a JavaScript object that is the [[GlobalObject]] field of
+  a <span>realm</span>.</p>
+  </div>
+
+  <p class="note">In this specification, all <span data-x="realm">realms</span> are <span
+  data-x="creating a new realm">created</span> with <span data-x="global object">global
+  objects</span> that are either <code>Window</code>, <code>WorkerGlobalScope</code>, or
+  <code>WorkletGlobalScope</code> objects.</p>
+
+  <p>A <span>global object</span> has an <dfn for="global object">in error reporting mode</dfn>
+  boolean, which is initially false.</p>
+
+  <p>A <span>global object</span> has an <dfn>outstanding rejected promises weak set</dfn>, a
+  <span>set</span> of <code data-x="idl-Promise">Promise</code> objects, initially empty. This set
+  must not create strong references to any of its members, and implementations are free to limit
+  its size in an <span>implementation-defined</span> manner, e.g., by removing old entries from it
+  when new ones are added.</p>
+
+  <p>A <span>global object</span> has an <dfn>about-to-be-notified rejected promises list</dfn>, a
+  <span>list</span> of <code data-x="idl-Promise">Promise</code> objects, initially empty.</p>
+
+  <p>A <span>global object</span> has an <dfn data-x="concept-global-import-map">import map</dfn>,
+  initially an <span>empty import map</span>.</p>
+
+  <p class="note">For now, only <code>Window</code> <span data-x="global object">global
+  objects</span> have their <span data-x="concept-global-import-map">import map</span> modified
+  from the initial empty one. The <span data-x="concept-global-import-map">import map</span> is
+  only accessed for the resolution of a root <span>module script</span>.</p>
+
+  <p>A <span>global object</span> has a <dfn>resolved module set</dfn>, a <span>set</span>
+  of <span data-x="specifier resolution record">specifier resolution records</span>, initially
+  empty.</p>
+
+  <p class="note">The <span>resolved module set</span> ensures that module specifier resolution
+  returns the same result when called multiple times with the same (referrer, specifier) pair. It
+  does that by ensuring that <span>import map</span> rules that impact the specifier in its
+  referrer's scope cannot be defined after its initial resolution. For now, only <code>Window</code>
+  <span data-x="global object">global objects</span> have their module set data structures modified
+  from the initial empty one.</p>
+
+  <hr>
+
+  <p>There is always a 1-to-1-to-1 mapping between <span data-x="realm">realms</span>, <span
+  data-x="global object">global objects</span>, and <span data-x="environment settings
+  object">environment settings objects</span>:</p>
+
+  <ul>
+   <li>
+    <div algorithm>
+    <p>A <span>realm</span> has a [[HostDefined]] field, which contains <dfn
+    data-x="concept-realm-settings-object" export data-lt="settings object" for="realm">the realm's
+    settings object</dfn>.</p>
+    </div>
+   </li>
+
+   <li>
+    <div algorithm>
+    <p>A <span>realm</span> has a [[GlobalObject]] field, which contains <dfn
+    data-x="concept-realm-global" export data-lt="global object" for="realm">the realm's global
+    object</dfn>.</p>
+    </div>
+   </li>
+
+   <li><p>Each <span>global object</span> in this specification is created during the <span
+   data-x="creating a new realm">creation</span> of a corresponding <span>realm</span>, known as
+   <dfn data-x="concept-global-object-realm" export data-lt="realm" for="global object">the global
+   object's realm</dfn>.</p></li>
+
+   <li id="relevant-settings-object-for-a-global-object"><p>Each <span>global object</span> in this
+   specification is created alongside a corresponding <span>environment settings object</span>,
+   known as its <span>relevant settings object</span>.</p>
+
+   <li>
+    <div algorithm>
+    <p>An <span>environment settings object</span>'s <span>realm execution context</span>'s
+    Realm component is <dfn data-x="environment settings object's realm" export data-lt="realm"
+    for="environment settings object">the environment settings object's realm</dfn>.</p>
+    </div>
+   </li>
+
+   <li>
+    <div algorithm>
+    <p>An <span>environment settings object</span>'s <span data-x="environment settings object's
+    realm">realm</span> then has a [[GlobalObject]] field, which contains <dfn export
+    data-x="concept-settings-object-global" data-lt="global object" for="environment settings
+    object">the environment settings object's global object</dfn>.</p>
+    </div>
+   </li>
+  </ul>
+
+  <div algorithm>
+  <p>To <dfn data-x="creating a new realm" export id="creating-a-new-javascript-realm">create a new
+  realm</dfn> in an <span>agent</span> <var>agent</var>, optionally with instructions to create a
+  global object or a global <b>this</b> binding (or both), the following steps are taken:</p>
+
+  <ol>
+   <li><p>Perform <span data-x="js-InitializeHostDefinedRealm">InitializeHostDefinedRealm</span>()
+   with the provided customizations for creating the global object and the global <b>this</b>
+   binding.</p></li>
+
+   <li>
+    <p>Let <var>realm execution context</var> be the <span>running JavaScript execution
+    context</span>.</p>
+
+    <p class="note">This is the <span>JavaScript execution context</span> created in the previous
+    step.</p>
+   </li>
+
+   <li><p>Remove <var>realm execution context</var> from the <span>JavaScript execution context
+   stack</span>.</p></li>
+
+   <li><p>Let <var>realm</var> be <var>realm execution context</var>'s Realm component.</p></li>
+
+   <li>
+    <p>If <var>agent</var>'s <span>agent cluster</span>'s <span
+    data-x="agent-cluster-cross-origin-isolation">cross-origin isolation mode</span> is "<code
+    data-x="cross-origin-isolation-none">none</code>":</p>
+
+    <ol>
+     <li><p>Let <var>global</var> be <var>realm</var>'s <span data-x="concept-realm-global">global
+     object</span>.</p></li>
+
+     <li><p>Let <var>status</var> be ! <var>global</var>.[[Delete]]("<code
+     data-x="">SharedArrayBuffer</code>").</p></li>
+
+     <li><p><span>Assert</span>: <var>status</var> is true.</p></li>
+    </ol>
+
+    <p class="note">This is done for compatibility with web content and there is some hope that this
+    can be removed in the future. Web developers can still get at the constructor through
+    <code class="js" data-x="">new WebAssembly.Memory({ shared:true, initial:0, maximum:0
+    }).buffer.constructor</code>.</p>
+   </li>
+
+   <li><p>Return <var>realm execution context</var>.</p></li>
+  </ol>
+  </div>
+
+  <hr>
+
+  <p>When defining algorithm steps throughout this specification, it is often important to indicate
+  what <span>realm</span> is to be used—or, equivalently, what <span>global object</span> or
+  <span>environment settings object</span> is to be used. In general, there are at least four
+  possibilities:</p>
+
+  <dl>
+    <dt><dfn data-x="concept-entry-everything">Entry</dfn></dt>
+    <dd>This corresponds to the script that initiated the currently running script action: i.e.,
+    the function or script that the user agent called into when it called into author code.</dd>
+
+    <dt><dfn data-x="concept-incumbent-everything">Incumbent</dfn></dt>
+    <dd>This corresponds to the most-recently-entered author function or script on the stack, or the
+    author function or script that originally scheduled the currently-running callback.</dd>
+
+    <dt><dfn data-x="concept-current-everything">Current</dfn></dt>
+    <dd>This corresponds to the currently-running function object, including built-in user-agent
+    functions which might not be implemented as JavaScript. (It is derived from the <span>current
+    realm</span>.)</dd>
+
+    <dt><dfn data-x="concept-relevant-everything">Relevant</dfn></dt>
+    <dd>Every <span>platform object</span> has a <span data-x="concept-relevant-realm">relevant
+    realm</span>, which is roughly the <span>realm</span> in which it was created. When writing
+    algorithms, the most prominent <span>platform object</span> whose <span
+    data-x="concept-relevant-realm">relevant realm</span> might be important is the <b>this</b>
+    value of the currently-running function object. In some cases, there can be other important
+    <span data-x="concept-relevant-realm">relevant realms</span>, such as those of any
+    arguments.</dd>
+  </dl>
+
+  <p>Note how the <span data-x="concept-entry-everything">entry</span>, <span
+  data-x="concept-incumbent-everything">incumbent</span>, and <span
+  data-x="concept-current-everything">current</span> concepts are usable without qualification,
+  whereas the <span data-x="concept-relevant-everything">relevant</span> concept must be applied to
+  a particular <span>platform object</span>.</p>
+
+  <p class="warning">The <span data-x="concept-incumbent-everything">incumbent</span> and <span
+  data-x="concept-entry-everything">entry</span> concepts should not be used by new specifications,
+  as they are excessively complicated and unintuitive to work with. We are working to remove almost
+  all existing uses from the platform: see <a
+  href="https://github.com/whatwg/html/issues/1430">issue #1430</a> for <span
+  data-x="concept-incumbent-everything">incumbent</span>, and <a
+  href="https://github.com/whatwg/html/issues/1431">issue #1431</a> for <span
+  data-x="concept-entry-everything">entry</span>.</p>
+
+  <p>In general, web platform specifications should use the <span
+  data-x="concept-relevant-everything">relevant</span> concept, applied to the object being operated
+  on (usually the <b>this</b> value of the current method). This mismatches the JavaScript
+  specification, where <span data-x="concept-current-everything">current</span> is generally used as
+  the default (e.g., in determining the <span>realm</span> whose <code data-x="">Array</code>
+  constructor should be used to construct the result in <code data-x="">Array.prototype.map</code>).
+  But this inconsistency is so embedded in the platform that we have to accept it going forward.</p>
+
+  <div class="example">
+
+   <p>Consider the following pages, with <code data-x="">a.html</code> being loaded in a browser
+   window, <code data-x="">b.html</code> being loaded in an <code>iframe</code> as shown, and <code
+   data-x="">c.html</code> and <code data-x="">d.html</code> omitted (they can simply be empty
+   documents):</p>
+
+   <pre><code class="html">&lt;!-- a.html -->
+&lt;!DOCTYPE html>
+&lt;html lang="en">
+&lt;title>Entry page&lt;/title>
+
+&lt;iframe src="b.html">&lt;/iframe>
+&lt;button onclick="frames[0].hello()">Hello&lt;/button>
+
+&lt;!--b.html -->
+&lt;!DOCTYPE html>
+&lt;html lang="en">
+&lt;title>Incumbent page&lt;/title>
+
+&lt;iframe src="c.html" id="c">&lt;/iframe>
+&lt;iframe src="d.html" id="d">&lt;/iframe>
+
+&lt;script>
+  const c = document.querySelector("#c").contentWindow;
+  const d = document.querySelector("#d").contentWindow;
+
+  window.hello = () => {
+    c.print.call(d);
+  };
+&lt;/script></code></pre>
+
+   <p>Each page has its own <span>browsing context</span>, and thus its own <span>realm</span>,
+   <span>global object</span>, and <span>environment settings object</span>.</p>
+
+   <p>When the <code data-x="dom-print">print()</code> method is called in response to pressing the
+   button in <code data-x="">a.html</code>:</p>
+
+   <ul>
+    <li><p>The <span data-x="concept-entry-realm">entry realm</span> is that of <code
+    data-x="">a.html</code>.</p></li>
+    <li><p>The <span data-x="concept-incumbent-realm">incumbent realm</span> is that of <code
+    data-x="">b.html</code>.</p></li>
+    <li><p>The <span>current realm</span> is that of <code data-x="">c.html</code> (since it is the
+    <code data-x="dom-print">print()</code> method from <code data-x="">c.html</code> whose code is
+    running).</p></li>
+    <li><p>The <span data-x="concept-relevant-realm">relevant realm</span> of the object on which
+    the <code data-x="dom-print">print()</code> method is being called is that of <code
+    data-x="">d.html</code>.</p></li>
+   </ul>
+  </div>
+
+  <div class="example">
+   <p>One reason why the <span data-x="concept-relevant-everything">relevant</span> concept is
+   generally a better default choice than the <span
+   data-x="concept-current-everything">current</span> concept is that it is more suitable for
+   creating an object that is to be persisted and returned multiple times. For example, the <code
+   data-x="dom-navigator-getBattery">navigator.getBattery()</code> method creates promises in the
+   <span data-x="concept-relevant-realm">relevant realm</span> for the <code>Navigator</code> object
+   on which it is invoked. This has the following impact: <ref>BATTERY</ref>
+
+   <pre><code class="html">&lt;!-- outer.html -->
+&lt;!DOCTYPE html>
+&lt;html lang="en">
+&lt;title>Relevant realm demo: outer page&lt;/title>
+&lt;script>
+  function doTest() {
+    const promise = navigator.getBattery.call(frames[0].navigator);
+
+    console.log(promise instanceof Promise);           // logs false
+    console.log(promise instanceof frames[0].Promise); // logs true
+
+    frames[0].hello();
+  }
+&lt;/script>
+&lt;iframe src="inner.html" onload="doTest()">&lt;/iframe>
+
+&lt;!-- inner.html -->
+&lt;!DOCTYPE html>
+&lt;html lang="en">
+&lt;title>Relevant realm demo: inner page&lt;/title>
+&lt;script>
+  function hello() {
+    const promise = navigator.getBattery();
+
+    console.log(promise instanceof Promise);        // logs true
+    console.log(promise instanceof parent.Promise); // logs false
+  }
+&lt;/script></code></pre>
+
+   <p>If the algorithm for the <code data-x="dom-navigator-getBattery">getBattery()</code> method
+   had instead used the <span>current realm</span>, all the results would be reversed. That is,
+   after the first call to <code data-x="dom-navigator-getBattery">getBattery()</code> in <code
+   data-x="">outer.html</code>, the <code>Navigator</code> object in <code
+   data-x="">inner.html</code> would be permanently storing a <code data-x="">Promise</code> object
+   created in <code data-x="">outer.html</code>'s <span>realm</span>, and calls like that inside the
+   <code data-x="">hello()</code> function would thus return a promise from the "wrong" realm. Since
+   this is undesirable, the algorithm instead uses the <span
+   data-x="concept-relevant-realm">relevant realm</span>, giving the sensible results indicated in
+   the comments above.</p>
+  </div>
+
+  <hr>
+
+  <p>The rest of this section deals with formally defining the <span
+  data-x="concept-entry-everything">entry</span>, <span
+  data-x="concept-incumbent-everything">incumbent</span>, <span
+  data-x="concept-current-everything">current</span>, and <span
+  data-x="concept-relevant-everything">relevant</span> concepts.</p>
+
+  <h6>Entry</h6>
+
+  <p>The process of <a href="#calling-scripts">calling scripts</a> will push or pop <span
+  data-x="realm execution context">realm execution contexts</span> onto the <span>JavaScript
+  execution context stack</span>, interspersed with other <span data-x="JavaScript execution
+  context">execution contexts</span>.</p>
+
+  <div algorithm>
+  <p>With this in hand, we define the <dfn>entry execution context</dfn> to be the most recently
+  pushed item in the <span>JavaScript execution context stack</span> that is a <span data-x="realm
+  execution context">realm execution context</span>. The <dfn data-x="concept-entry-realm">entry
+  realm</dfn> is the <span>entry execution context</span>'s Realm component.</p>
+  </div>
+
+  <div algorithm>
+  <p>Then, the <dfn>entry settings object</dfn> is the <span
+  data-x="concept-realm-settings-object">environment settings object</span> of the <span
+  data-x="concept-entry-realm">entry realm</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>Similarly, the <dfn>entry global object</dfn> is the <span
+  data-x="concept-realm-global">global object</span> of the <span data-x="concept-entry-realm">entry
+  realm</span>.</p>
+  </div>
+
+  <h6>Incumbent</h6>
+
+  <p>All <span data-x="JavaScript execution context">JavaScript execution contexts</span> must
+  contain, as part of their code evaluation state, a <dfn>skip-when-determining-incumbent
+  counter</dfn> value, which is initially zero. In the process of <span data-x="prepare to run a
+  callback">preparing to run a callback</span> and <span data-x="clean up after running a
+  callback">cleaning up after running a callback</span>, this value will be incremented and
+  decremented.</p>
+
+  <p>Every <span>event loop</span> has an associated <dfn>backup incumbent settings object
+  stack</dfn>, initially empty. Roughly speaking, it is used to determine the <span>incumbent
+  settings object</span> when no author code is on the stack, but author code is responsible for the
+  current algorithm having been run in some way. The process of <span data-x="prepare to run a
+  callback">preparing to run a callback</span> and <span data-x="clean up after running a
+  callback">cleaning up after running a callback</span> manipulate this stack. <ref>WEBIDL</ref></p>
+
+  <p>When Web IDL is used to <span data-x="es-invoking-callback-functions">invoke</span> author
+  code, or when <span>HostEnqueuePromiseJob</span> invokes a promise job, they use the following
+  algorithms to track relevant data for determining the <span>incumbent settings object</span>:</p>
+
+  <div algorithm>
+  <p>To <dfn export>prepare to run a callback</dfn> with an <span>environment settings object</span>
+  <var>settings</var>:</p>
+
+  <ol>
+   <li><p>Push <var>settings</var> onto the <span>backup incumbent settings object
+   stack</span>.</p></li>
+
+   <li><p>Let <var>context</var> be the <span>topmost script-having execution
+   context</span>.</p></li>
+
+   <li><p>If <var>context</var> is not null, increment <var>context</var>'s
+   <span>skip-when-determining-incumbent counter</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn export>clean up after running a callback</dfn> with an <span>environment settings
+  object</span> <var>settings</var>:</p>
+
+  <ol>
+   <li>
+    <p>Let <var>context</var> be the <span>topmost script-having execution context</span>.</p>
+
+    <p class="note">This will be the same as the <span>topmost script-having execution
+    context</span> inside the corresponding invocation of <span>prepare to run a
+    callback</span>.</p>
+   </li>
+
+   <li><p>If <var>context</var> is not null, decrement <var>context</var>'s
+   <span>skip-when-determining-incumbent counter</span>.</p></li>
+
+   <li><p><span>Assert</span>: the topmost entry of the <span>backup incumbent settings object
+   stack</span> is <var>settings</var>.</p></li>
+
+   <li><p>Remove <var>settings</var> from the <span>backup incumbent settings object
+   stack</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>Here, the <dfn>topmost script-having execution context</dfn> is the topmost entry of the
+  <span>JavaScript execution context stack</span> that has a non-null ScriptOrModule component, or
+  null if there is no such entry in the <span>JavaScript execution context stack</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>With all this in place, the <dfn export>incumbent settings object</dfn> is determined as
+  follows:</p>
+
+  <ol>
+   <li><p>Let <var>context</var> be the <span>topmost script-having execution
+   context</span>.</p></li>
+
+   <li>
+    <p>If <var>context</var> is null, or if <var>context</var>'s
+    <span>skip-when-determining-incumbent counter</span> is greater than zero:</p>
+
+    <ol>
+     <li>
+      <p><span>Assert</span>: the <span>backup incumbent settings object stack</span> is not
+      empty.</p>
+
+      <p class="note">This assert would fail if you try to obtain the <span>incumbent settings
+      object</span> from inside an algorithm that was triggered neither by <a
+      href="#calling-scripts">calling scripts</a> nor by Web IDL <span
+      data-x="es-invoking-callback-functions">invoking</span> a callback. For example, it would
+      trigger if you tried to obtain the <span>incumbent settings object</span> inside an algorithm
+      that ran periodically as part of the <span>event loop</span>, with no involvement of author
+      code. In such cases the <span data-x="concept-incumbent-everything">incumbent</span> concept
+      cannot be used.</p>
+     </li>
+
+     <li><p>Return the topmost entry of the <span>backup incumbent settings object
+     stack</span>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Return <var>context</var>'s Realm component's <span
+   data-x="concept-realm-settings-object">settings object</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>Then, the <dfn export data-x="concept-incumbent-realm">incumbent realm</dfn> is the <span
+  data-x="environment settings object's realm">realm</span> of the <span>incumbent settings
+  object</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>Similarly, the <dfn export data-x="concept-incumbent-global">incumbent global object</dfn> is
+  the <span data-x="concept-settings-object-global">global object</span> of the <span>incumbent
+  settings object</span>.</p>
+  </div>
+
+  <hr>
+
+  <p>The following series of examples is intended to make it clear how all of the different
+  mechanisms contribute to the definition of the <a href="#incumbent">incumbent</a> concept:</p>
+
+  <div class="example" id="example-incumbent-1">
+   <p>Consider the following starter example:</p>
+
+   <pre><code class="html">&lt;!DOCTYPE html>
+&lt;iframe>&lt;/iframe>
+&lt;script>
+  frames[0].postMessage("some data", "*");
+&lt;/script></code></pre>
+
+   <p>There are two interesting <span data-x="environment settings object">environment settings
+   objects</span> here: that of <code data-x="">window</code>, and that of <code
+   data-x="">frames[0]</code>. Our concern is: what is the <span>incumbent settings object</span> at
+   the time that the algorithm for <code data-x="dom-window-postMessage">postMessage()</code>
+   executes?</p>
+
+   <p>It should be that of <code data-x="">window</code>, to capture the intuitive notion that the
+   author script responsible for causing the algorithm to happen is executing in <code
+   data-x="">window</code>, not <code data-x="">frames[0]</code>. This makes sense: the <span>window
+   post message steps</span> use the <span>incumbent settings object</span> to determine the <code
+   data-x="dom-MessageEvent-source">source</code> property of the resulting
+   <code>MessageEvent</code>, and in this case <code data-x="">window</code> is definitely the
+   source of the message.</p>
+
+   <p>Let us now explain how the steps given above give us our intuitively-desired result of <code
+   data-x="">window</code>'s <span>relevant settings object</span>.</p>
+
+   <p>When the <span>window post message steps</span> look up the <span>incumbent settings
+   object</span>, the <span>topmost script-having execution context</span> will be that
+   corresponding to the <code>script</code> element: it was pushed onto the <span>JavaScript
+   execution context stack</span> as part of <span
+   data-x="js-ScriptEvaluation">ScriptEvaluation</span> during the <span>run a classic script</span>
+   algorithm. Since there are no Web IDL callback invocations involved, the context's
+   <span>skip-when-determining-incumbent counter</span> is zero, so it is used to determine the
+   <span>incumbent settings object</span>; the result is the <span>environment settings
+   object</span> of <code data-x="">window</code>.</p>
+
+   <p>(Note how the <span>environment settings object</span> of <code data-x="">frames[0]</code> is
+   the <span>relevant settings object</span> of <span>this</span> at the time the <code
+   data-x="dom-window-postMessage">postMessage()</code> method is called, and thus is involved in
+   determining the <em>target</em> of the message. Whereas the incumbent is used to determine the
+   <em>source</em>.)
+  </div>
+
+  <div class="example" id="example-incumbent-2">
+   <p>Consider the following more complicated example:</p>
+
+   <pre><code class="html">&lt;!DOCTYPE html>
+&lt;iframe>&lt;/iframe>
+&lt;script>
+  const bound = frames[0].postMessage.bind(frames[0], "some data", "*");
+  window.setTimeout(bound);
+&lt;/script></code></pre>
+
+   <p>This example is very similar to the previous one, but with an extra indirection through <code
+   data-x="">Function.prototype.bind</code> as well as <code
+   data-x="dom-setTimeout">setTimeout()</code>. But, the answer should be the same: invoking
+   algorithms asynchronously should not change the <span
+   data-x="concept-incumbent-everything">incumbent</span> concept.</p>
+
+   <p>This time, the result involves more complicated mechanisms:</p>
+
+   <p>When <code data-x="">bound</code> is <span data-x="concept-idl-convert">converted</span> to a
+   Web IDL callback type, the <span>incumbent settings object</span> is that corresponding to <code
+   data-x="">window</code> (in the same manner as in our starter example above). Web IDL stores this
+   as the resulting callback value's <span>callback context</span>.</p>
+
+   <p>When the <span data-x="concept-task">task</span> posted by <code
+   data-x="dom-setTimeout">setTimeout()</code> executes, the algorithm for that task uses Web IDL to
+   <span data-x="es-invoking-callback-functions">invoke</span> the stored callback value. Web IDL in
+   turn calls the above <span>prepare to run a callback</span> algorithm. This pushes the stored
+   <span>callback context</span> onto the <span>backup incumbent settings object stack</span>. At
+   this time (inside the timer task) there is no author code on the stack, so the <span>topmost
+   script-having execution context</span> is null, and nothing gets its
+   <span>skip-when-determining-incumbent counter</span> incremented.</p>
+
+   <p>Invoking the callback then calls <code data-x="">bound</code>, which in turn calls
+   the <code data-x="dom-window-postMessage">postMessage()</code> method of <code
+   data-x="">frames[0]</code>. When the <code data-x="dom-window-postMessage">postMessage()</code>
+   algorithm looks up the <span>incumbent settings object</span>, there is still no author code on
+   the stack, since the bound function just directly calls the built-in method. So the
+   <span>topmost script-having execution context</span> will be null: the <span>JavaScript execution
+   context</span> stack only contains an execution context corresponding to <code
+   data-x="dom-window-postMessage">postMessage()</code>, with no <span
+   data-x="js-ScriptEvaluation">ScriptEvaluation</span> context or similar below it.</p>
+
+   <p>This is where we fall back to the <span>backup incumbent settings object stack</span>. As
+   noted above, it will contain as its topmost entry the <span>relevant settings object</span> of
+   <code data-x="">window</code>. So that is what is used as the <span>incumbent settings
+   object</span> while executing the <code data-x="dom-window-postMessage">postMessage()</code>
+   algorithm.</p>
+  </div>
+
+  <div class="example" id="example-incumbent-3">
+   <p>Consider this final, even more convoluted example:</p>
+
+   <pre><code class="html">&lt;!-- a.html -->
+&lt;!DOCTYPE html>
+&lt;button>click me&lt;/button>
+&lt;iframe>&lt;/iframe>
+&lt;script>
+const bound = frames[0].location.assign.bind(frames[0].location, "https://example.com/");
+document.querySelector("button").addEventListener("click", bound);
+&lt;/script></code></pre>
+
+   <pre><code class="html">&lt;!-- b.html -->
+&lt;!DOCTYPE html>
+&lt;iframe src="a.html">&lt;/iframe>
+&lt;script>
+  const iframe = document.querySelector("iframe");
+  iframe.onload = function onLoad() {
+    iframe.contentWindow.document.querySelector("button").click();
+  };
+&lt;/script></code></pre>
+
+   <p>Again there are two interesting <span data-x="environment settings object">environment
+   settings objects</span> in play: that of <code data-x="">a.html</code>, and that of <code
+   data-x="">b.html</code>. When the <code data-x="dom-location-assign">location.assign()</code>
+   method triggers the <span><code>Location</code>-object navigate</span> algorithm, what will be
+   the <span>incumbent settings object</span>? As before, it should intuitively be that of <code
+   data-x="">a.html</code>: the <code data-x="event-click">click</code> listener was originally
+   scheduled by <code data-x="">a.html</code>, so even if something involving <code
+   data-x="">b.html</code> causes the listener to fire, the <span
+   data-x="concept-incumbent-everything">incumbent</span> responsible is that of <code
+   data-x="">a.html</code>.</p>
+
+   <p>The callback setup is similar to the previous example: when <code data-x="">bound</code> is
+   <span data-x="concept-idl-convert">converted</span> to a Web IDL callback type, the
+   <span>incumbent settings object</span> is that corresponding to <code data-x="">a.html</code>,
+   which is stored as the callback's <span>callback context</span>.</p>
+
+   <p>When the <code data-x="dom-click">click()</code> method is called inside <code
+   data-x="">b.html</code>, it <span data-x="concept-event-dispatch">dispatches</span> a <code
+   data-x="event-click">click</code> event on the button that is inside <code
+   data-x="">a.html</code>. This time, when the <span>prepare to run a callback</span> algorithm
+   executes as part of event dispatch, there <em>is</em> author code on the stack; the <span>topmost
+   script-having execution context</span> is that of the <code data-x="">onLoad</code> function,
+   whose <span>skip-when-determining-incumbent counter</span> gets incremented. Additionally, <code
+   data-x="">a.html</code>'s <span>environment settings object</span> (stored as the
+   <code>EventHandler</code>'s <span>callback context</span>) is pushed onto the
+   <span>backup incumbent settings object stack</span>.</p>
+
+   <p>Now, when the <span><code>Location</code>-object navigate</span> algorithm looks up the
+   <span>incumbent settings object</span>, the <span>topmost script-having execution
+   context</span> is still that of the <code data-x="">onLoad</code> function (due to the fact we
+   are using a bound function as the callback). Its <span>skip-when-determining-incumbent
+   counter</span> value is one, however, so we fall back to the <span>backup incumbent settings
+   object stack</span>. This gives us the <span>environment settings object</span> of <code
+   data-x="">a.html</code>, as expected.</p>
+
+   <p>Note that this means that even though it is the <code>iframe</code> inside <code
+   data-x="">a.html</code> that navigates, it is <code data-x="">a.html</code> itself that is used
+   as the source <code>Document</code>, which determines among other things the <span
+   data-x="concept-request-client">request client</span>. This is <a
+   href="https://www.w3.org/Bugs/Public/show_bug.cgi?id=26603#c36">perhaps the only justifiable use
+   of the incumbent concept on the web platform</a>; in all other cases the consequences of using it
+   are simply confusing and we hope to one day switch them to use <span
+   data-x="concept-current-everything">current</span> or <span
+   data-x="concept-relevant-everything">relevant</span> as appropriate.</p>
+  </div>
+
+  <h6>Current</h6>
+
+  <p>The JavaScript specification defines the <span>current realm</span>, also known as the "current
+  Realm Record". <ref>JAVASCRIPT</ref></p>
+
+  <div algorithm>
+  <p>Then, the <dfn export>current settings object</dfn> is the <span
+  data-x="concept-realm-settings-object">environment settings object</span> of the <span>current
+  realm</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>Similarly, the <dfn export>current global object</dfn> is the <span
+  data-x="concept-realm-global">global object</span> of the <span>current realm</span>.</p>
+  </div>
+
+  <h6>Relevant</h6>
+
+  <div algorithm>
+  <p>The <dfn export data-x="concept-relevant-realm">relevant realm</dfn> for a <span>platform
+  object</span> is the value of <span data-x="[[Realm]] field of a platform object">its [[Realm]]
+  field</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>Then, the <dfn export>relevant settings object</dfn> for a <span>platform object</span>
+  <var>o</var> is the <span data-x="concept-realm-settings-object">environment settings
+  object</span> of the <span data-x="concept-relevant-realm">relevant realm</span> for
+  <var>o</var>.</p>
+  </div>
+
+  <div algorithm>
+  <p>Similarly, the <dfn export id="concept-relevant-global">relevant global object</dfn> for a
+  <span>platform object</span> <var>o</var> is the <span data-x="concept-realm-global">global
+  object</span> of the <span data-x="concept-relevant-realm">relevant realm</span> for
+  <var>o</var>.</p>
+  </div>
+
+  <h5>Enabling and disabling scripting</h5>
+
+  <div algorithm>
+  <p id="concept-bc-script"><dfn data-x="concept-environment-script">Scripting is enabled</dfn> for
+  an <span>environment settings object</span> <var>settings</var> when all of the following
+  conditions are true:</p>
+
+  <ul>
+   <li>The user agent supports scripting.</li>
+
+   <li>
+   <!--INSERT TRACKING-->
+   The user has not disabled scripting for <var>settings</var> at this time. (User agents may
+   provide users with the option to disable scripting globally, or in a finer-grained manner, e.g.,
+   on a per-origin basis, down to the level of individual <span data-x="environment settings
+   object">environment settings objects</span>.)</li>
+
+   <li id="sandboxScriptBlocked">Either <var>settings</var>'s <span
+   data-x="concept-settings-object-global">global object</span> is not a <code>Window</code> object,
+   or <var>settings</var>'s <span data-x="concept-settings-object-global">global object</span>'s
+   <span data-x="concept-document-window">associated <code>Document</code></span>'s <span>active
+   sandboxing flag set</span> does not have its <span>sandboxed scripts browsing context flag</span>
+   set.</li>
+
+   <li id="WebDriverBiDiScriptingIsEnabled">The result of <span>WebDriver BiDi scripting is
+   enabled</span> with <var>settings</var> is true.</li>
+  </ul>
+  </div>
+
+  <div algorithm>
+  <p id="concept-bc-noscript"><dfn data-x="concept-environment-noscript">Scripting is disabled</dfn>
+  for an <span>environment settings object</span> when scripting is not <span
+  data-x="concept-environment-script">enabled</span> for it, i.e., when any of the above conditions
+  are false.</p>
+  </div>
+
+  <hr>
+
+  <div algorithm>
+  <p><dfn data-x="concept-n-noscript">Scripting is disabled</dfn> for a <span>platform
+  object</span> <var>object</var> if any of the following are true:</p>
+
+  <ul>
+   <li><p><span data-x="concept-environment-noscript">Scripting is disabled</span> for
+   <var>object</var>'s <span>relevant settings object</span>.</p></li>
+
+   <li><p>The <var>object</var> implements <code>Node</code>, and <var>object</var>'s <span>node
+   document</span>'s <span data-x="concept-document-bc">browsing context</span> is null.</p></li>
+
+   <li><p>The <var>object</var> implements <code>Window</code> and <var>object</var>'s <span
+   data-x="concept-document-window">associated <code>Document</code></span>'s <span
+   data-x="concept-document-bc">browsing context</span> is null.</p></li>
+  </ul>
+  </div>
+
+  <div algorithm>
+  <p><dfn data-x="concept-n-script">Scripting is enabled</dfn> for a <span>platform object</span>
+  <var>object</var>, when <var>object</var>'s scripting is not <span
+  data-x="concept-n-noscript">disabled</span>.</p>
+  </div>
+
+  <h5>Secure contexts</h5>
+
+  <div algorithm>
+  <p>An <span>environment</span> <var>environment</var> is a <dfn export data-lt="secure context|Is
+  an environment settings object contextually secure?">secure context</dfn> if the following
+  algorithm returns true:</p>
+
+  <ol>
+   <li>
+    <p>If <var>environment</var> is an <span>environment settings object</span>:</p>
+
+    <ol>
+     <li><p>Let <var>global</var> be <var>environment</var>'s <span
+     data-x="concept-settings-object-global">global object</span>.</p></li>
+
+     <li>
+      <p>If <var>global</var> is a <code>WorkerGlobalScope</code>:
+
+      <ol>
+       <li>
+        <p>If <var>global</var>'s <span>owner set</span>[0]'s <span>relevant settings object</span>
+        is a <span>secure context</span>, then return true.</p>
+
+        <p class="note">We only need to check the 0th item since they will necessarily all be
+        consistent.</p>
+       </li>
+
+       <li><p>Return false.</p></li>
+      </ol>
+     </li>
+
+     <li>
+      <p>If <var>global</var> is a <code>WorkletGlobalScope</code>, then return true.</p>
+
+      <p class="note">Worklets can only be created in secure contexts.</p>
+     </li>
+    </ol>
+   </li>
+
+   <li><p>If the result of <span>Is url potentially trustworthy?</span> given
+   <var>environment</var>'s <span>top-level creation URL</span> is "<code data-x="">Potentially
+   Trustworthy</code>", then return true.</p></li>
+
+   <li><p>Return false.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>An <span>environment</span> is a <dfn export>non-secure context</dfn> if it is not a
+  <span>secure context</span>.</p>
+  </div>
+
+  </div>
+

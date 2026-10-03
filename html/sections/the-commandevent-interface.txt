@@ -1,0 +1,51 @@
+WHATWG HTML — section the-commandevent-interface — The <code>CommandEvent</code> interface
+
+  <h4>The <code>CommandEvent</code> interface</h4>
+
+  <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>CommandEvent</dfn> : <span>Event</span> {
+  constructor(DOMString type, optional <span>CommandEventInit</span> eventInitDict = {});
+  readonly attribute Element? <span data-x="dom-CommandEvent-source">source</span>;
+  readonly attribute DOMString <span data-x="dom-CommandEvent-command">command</span>;
+};
+
+dictionary <dfn dictionary>CommandEventInit</dfn> : <span>EventInit</span> {
+  Element? source = null;
+  DOMString command = "";
+};</code></pre>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>event</var>.<span subdfn
+   data-x="dom-CommandEvent-command">command</span></code></dt>
+
+   <dd>
+    <p>Returns what action the element can take.</p>
+   </dd>
+
+   <dt><code data-x=""><var>event</var>.<span subdfn
+   data-x="dom-CommandEvent-source">source</span></code></dt>
+
+   <dd>
+    <p>Returns the <code>Element</code> that was interacted with in order to cause this event.</p>
+   </dd>
+  </dl>
+
+  <div algorithm>
+  <p>The <dfn attribute for="CommandEvent"><code
+  data-x="dom-CommandEvent-command">command</code></dfn> attribute must return the value it was
+  initialized to.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute
+  for="CommandEvent"><code data-x="dom-CommandEvent-source">source</code></dfn> getter steps are to
+  return the result of <span data-x="dom-retarget">retargeting</span> <code
+  data-x="dom-CommandEvent-source">source</code> against <span>this</span>'s <code
+  data-x="dom-Event-currentTarget">currentTarget</code>.</p>
+  </div>
+
+  <p class="XXX"><a href="https://github.com/whatwg/dom/issues/1328">DOM standard issue #1328</a>
+  tracks how to better standardize associated event data in a way which makes sense on Events.
+  Currently an event attribute initialized to a value cannot also have a getter, and so an internal
+  slot (or map of additional fields) is required to properly specify this.</p>
+

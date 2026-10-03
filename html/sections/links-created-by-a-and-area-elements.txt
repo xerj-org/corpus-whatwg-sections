@@ -1,0 +1,132 @@
+WHATWG HTML — section links-created-by-a-and-area-elements — Links created by <code>a</code> and <code>area</code> elements
+
+  <h4>Links created by <code>a</code> and <code>area</code> elements</h4>
+
+  <p>The <dfn element-attr for="a,area"><code data-x="attr-hyperlink-href">href</code></dfn>
+  attribute on <code>a</code> and <code>area</code> elements must have a value that is a <span>valid
+  URL potentially surrounded by spaces</span>.</p>
+
+  <p class="note">The <code data-x="attr-hyperlink-href">href</code> attribute on <code>a</code> and
+  <code>area</code> elements is not required; when those elements do not have <code
+  data-x="attr-hyperlink-href">href</code> attributes they do not create hyperlinks.</p>
+
+  <p>The <dfn element-attr for="a,area"><code data-x="attr-hyperlink-target">target</code></dfn>
+  attribute, if present, must be a <span>valid navigable target name or keyword</span>. It gives the
+  name of the <span>navigable</span> that will be used. <span w-nodev>User agents use this
+  name when <span>following hyperlinks</span>.</span></p>
+
+  <p>The <dfn element-attr for="a,area"><code data-x="attr-hyperlink-download">download</code></dfn>
+  attribute, if present, indicates that the author intends the hyperlink to be used for <span
+  data-x="downloading hyperlinks">downloading a resource</span>. The attribute may have a value; the
+  value, if any, specifies the default filename that the author recommends for use in labeling the
+  resource in a local file system. There are no restrictions on allowed values, but authors are
+  cautioned that most file systems have limitations with regard to what punctuation is supported in
+  filenames, and user agents are likely to adjust filenames accordingly.</p>
+
+  <p>The <dfn id="ping" element-attr for="a,area"
+  data-x="attr-hyperlink-ping"><code>ping</code></dfn> attribute, if present, gives the URLs of the
+  resources that are interested in being notified if the user follows the hyperlink. The value must
+  be a <span>set of space-separated tokens</span>, each of which must be a <span>valid non-empty
+  URL</span> whose <span data-x="concept-url-scheme">scheme</span> is an <span>HTTP(S)
+  scheme</span>. <span w-nodev>The value is used by the user agent for <span>hyperlink
+  auditing</span>.</span></p>
+
+  <p><span w-dev subdfn data-x="dom-a-rellist"></span>The <dfn element-attr for="a,area"><code
+  data-x="attr-hyperlink-rel">rel</code></dfn> attribute on <code>a</code> and <code>area</code>
+  elements controls what kinds of links the elements create. The attribute's value must be an
+  <span>unordered set of unique space-separated tokens</span>. The <a href="#linkTypes">allowed
+  keywords and their meanings</a> are defined below.</p>
+
+  <p><code data-x="attr-hyperlink-rel">rel</code>'s <span
+  data-x="concept-supported-tokens">supported tokens</span> are the keywords defined in <a
+  href="#linkTypes">HTML link types</a> which are allowed on <code>a</code> and <code>area</code>
+  elements, impact the processing model, and are supported by the user agent. The possible <span
+  data-x="concept-supported-tokens">supported tokens</span> are <code
+  data-x="rel-noreferrer">noreferrer</code>, <code data-x="rel-noopener">noopener</code>, and <code
+  data-x="rel-opener">opener</code>. <code data-x="attr-hyperlink-rel">rel</code>'s <span
+  data-x="concept-supported-tokens">supported tokens</span> must only include the tokens from this
+  list that the user agent implements the processing model for.</p>
+
+  <p>The <code data-x="attr-hyperlink-rel">rel</code> attribute has no default value. If the
+  attribute is omitted or if none of the values in the attribute are recognized by the user agent,
+  then the document has no particular relationship with the destination resource other than there
+  being a hyperlink between the two.</p>
+
+  <p>The <dfn element-attr for="a,area"><code
+  data-x="attr-hyperlink-referrerpolicy">referrerpolicy</code></dfn> attribute is a <span>referrer
+  policy attribute</span>. Its purpose is to set the <span>referrer policy</span> used when
+  <span>following hyperlinks</span>. <ref>REFERRERPOLICY</ref></p>
+
+  <hr>
+
+  <p>When an <code>a</code> or <code>area</code> element's <span>activation behavior</span> is
+  invoked, the user agent may allow the user to indicate a preference regarding whether the
+  hyperlink is to be used for <span data-x="navigate">navigation</span> or whether the resource it
+  specifies is to be downloaded.</p>
+
+  <p>In the absence of a user preference, the default should be navigation if the element has no
+  <code data-x="attr-hyperlink-download">download</code> attribute, and should be to download the
+  specified resource if it does.</p>
+
+  <div algorithm>
+  <p>The <span>activation behavior</span> of an <code>a</code> or <code>area</code> element
+  <var>element</var> given an event <var>event</var> is:</p>
+
+  <ol>
+   <li><p>If <var>element</var> has no <code data-x="attr-hyperlink-href">href</code> attribute,
+   then return.</p></li>
+
+   <li><p>Let <var>hyperlinkSuffix</var> be null.</p></li>
+
+   <li><p>If <var>element</var> is an <code>a</code> element, and <var>event</var>'s <span
+   data-x="concept-event-target">target</span> is an <code>img</code> with an <code
+   data-x="attr-img-ismap">ismap</code> attribute specified:</p>
+
+    <ol>
+     <!-- https://software.hixie.ch/utilities/js/live-dom-viewer/?%3C%21DOCTYPE%20html%3E%0A...%3Ca%20href%3D%22%23%22%3E%3Cimg%20ismap%20usemap%3D%22%23a%22%20src%3D/resources/images/smallcats%3E%3C/a%3E%0A%3Cmap%20name%3Da%3E%3Carea%20shape%3Drect%20coords%3D0%2C0%2C50%2C50%20href%3Db%3E%3C/map%3E -->
+
+     <li><p>Let <var>x</var> and <var>y</var> be 0.</p></li>
+
+     <li><p>If <var>event</var>'s <code data-x="dom-Event-isTrusted">isTrusted</code> attribute is
+     initialized to true, then set <var>x</var> to the distance in <span data-x="'px'">CSS
+     pixels</span> from the left edge of the image to the location of the click, and set
+     <var>y</var> to the distance in <span data-x="'px'">CSS pixels</span> from the top edge of the
+     image to the location of the click.</p></li>
+
+     <li><p>If <var>x</var> is negative, set <var>x</var> to 0.</p></li>
+
+     <li><p>If <var>y</var> is negative, set <var>y</var> to 0.</p></li>
+
+     <li><p>Set <var>hyperlinkSuffix</var> to the concatenation of U+003F (?), the value of
+     <var>x</var> expressed as a base-ten integer using <span>ASCII digits</span>, U+002C (,), and
+     the value of <var>y</var> expressed as a base-ten integer using <span>ASCII
+     digits</span>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Let <var>userInvolvement</var> be <var>event</var>'s <span data-x="event-uni">user
+   navigation involvement</span>.</p></li>
+
+   <li>
+    <p>If the user has expressed a preference to download the hyperlink, then set
+    <var>userInvolvement</var> to "<code data-x="uni-browser-ui">browser UI</code>".</p>
+
+    <p class="note">That is, if the user has expressed a specific preference for downloading, this
+    no longer counts as merely "<code data-x="uni-activation">activation</code>".</p>
+   </li>
+
+   <li><p>If <var>element</var> has a <code data-x="attr-hyperlink-download">download</code>
+   attribute, or if the user has expressed a preference to download the hyperlink, then <span
+   data-x="downloading hyperlinks">download the hyperlink</span> created by <var>element</var> with
+   <i data-x="downloading-hyperlinkSuffix">hyperlinkSuffix</i> set to <var>hyperlinkSuffix</var> and
+   <i data-x="downloading-userInvolvement">userInvolvement</i> set to
+   <var>userInvolvement</var>.</p></li>
+
+   <li><p>Otherwise, <span data-x="following hyperlinks">follow the hyperlink</span> created by
+   <var>element</var> with <i data-x="following-hyperlinkSuffix">hyperlinkSuffix</i> set to
+   <var>hyperlinkSuffix</var> and <i data-x="following-userInvolvement">userInvolvement</i> set to
+   <var>userInvolvement</var>.</p></li>
+  </ol>
+  </div>
+
+

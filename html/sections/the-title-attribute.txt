@@ -1,0 +1,38 @@
+WHATWG HTML — section the-title-attribute — The <code data-x="attr-title">title</code> attribute
+
+  <h4>The <code data-x="attr-title">title</code> attribute</h4>
+
+  <p>User agents are <span>expected</span> to expose the <span>advisory information</span> of
+  elements upon user request, and to make the user aware of the presence of such information.</p>
+
+  <p>On interactive graphical systems where the user can use a pointing device, this could take the
+  form of a tooltip. When the user is unable to use a pointing device, then the user agent is
+  <span>expected</span> to make the content available in some other fashion, e.g. by making the
+  element a <span>focusable area</span> and always displaying the <span>advisory information</span>
+  of the currently <span>focused</span> element, or by showing the <span>advisory
+  information</span> of the elements under the user's finger on a touch device as the user pans
+  around the screen.</p>
+
+  <p>U+000A LINE FEED (LF) characters are <span>expected</span> to cause line breaks in the
+  tooltip; U+0009 CHARACTER TABULATION (tab) characters are <span>expected</span> to render as a
+  nonzero horizontal shift that lines up the next glyph with the next tab stop, with tab stops
+  occurring at points that are multiples of 8 times the width of a U+0020 SPACE character.</p>
+
+  <div class="example">
+
+   <p>For example, a visual user agent could make elements with a <code
+   data-x="attr-title">title</code> attribute <span>focusable</span>, and could make
+   any <span>focused</span> element with a <code data-x="attr-title">title</code> attribute
+   show its tooltip under the element while the element has focus. This would allow a user to tab
+   around the document to find all the advisory text.</p>
+
+  </div>
+
+  <div class="example">
+
+   <p>As another example, a screen reader could provide an audio cue when reading an element with a
+   tooltip, with an associated key to read the last tooltip for which a cue was played.</p>
+
+  </div>
+
+

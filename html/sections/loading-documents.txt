@@ -1,0 +1,53 @@
+WHATWG HTML — section loading-documents — Finishing the loading process
+
+  <h4 id="loading-documents">Finishing the loading process</h4>
+
+  <p>A <code>Document</code> has a <dfn>completely loaded time</dfn> (a time or null), which is
+  initially null.</p>
+
+  <div algorithm>
+  <p>A <code>Document</code> is considered <dfn>completely loaded</dfn> if its <span>completely
+  loaded time</span> is non-null.
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>completely finish loading</dfn> a <code>Document</code> <var>document</var>:</p>
+
+  <ol>
+   <li><p><span>Assert</span>: <var>document</var>'s <span data-x="concept-document-bc">browsing
+   context</span> is non-null.</p></li>
+
+   <li><p>Set <var>document</var>'s <span>completely loaded time</span> to the current
+   time.</p></li>
+
+   <li>
+    <p>Let <var>container</var> be <var>document</var>'s <span>node navigable</span>'s <span
+    data-x="nav-container">container</span>.</p>
+
+    <div class="note">
+     <p>This will be null in the case where <var>document</var> is the <span data-x="is initial
+     about:blank">initial <code>about:blank</code></span> <code>Document</code> in a
+     <code>frame</code> or <code>iframe</code>, since at the point of <span data-x="creating a new
+     browsing context and document">browsing context creation</span> which calls this algorithm,
+     the container relationship has not yet been established. (That happens in a subsequent step of
+     <span>create a new child navigable</span>.)</p>
+
+     <p>The consequence of this is that the following steps do nothing, i.e., we do not fire an
+     asynchronous <code data-x="event-load">load</code> event on the container element for such
+     cases. Instead, a synchronous <code data-x="event-load">load</code> event is fired in a special
+     initial-insertion case when <span data-x="process the iframe attributes">processing the
+     <code>iframe</code> attributes</span>.</p>
+    </div>
+   </li>
+
+   <li><p>If <var>container</var> is an <code>iframe</code> element, then <span>queue an element
+   task</span> on the <span>DOM manipulation task source</span> given <var>container</var> to run
+   the <span>iframe load event steps</span> given <var>container</var>.</p></li>
+
+   <li><p>Otherwise, if <var>container</var> is non-null, then <span>queue an element task</span> on
+   the <span>DOM manipulation task source</span> given <var>container</var> to <span
+   data-x="concept-event-fire">fire an event</span> named <code data-x="event-load">load</code> at
+   <var>container</var>.</p>
+  </ol>
+  </div>
+

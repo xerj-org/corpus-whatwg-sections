@@ -1,0 +1,203 @@
+WHATWG HTML — section policy-containers — Policy containers (+nav-traversal-apis)
+
+  <h4 id="policy-containers">Policy containers</h4>
+
+  <p>A <dfn export>policy container</dfn> is a <span>struct</span> containing policies that apply to
+  a <code>Document</code>, a <code>WorkerGlobalScope</code>, or a <code>WorkletGlobalScope</code>.
+  It has the following <span data-x="struct item">items</span>:</p>
+
+  <!-- Note: each item has to define a default value for creating a new policy container. -->
+
+  <ul>
+   <li><p>A <dfn export for="policy container" data-x="policy-container-csp-list">CSP list</dfn>,
+   which is a <span data-x="concept-csp-list">CSP list</span>. It is initially empty.</p></li>
+
+   <li><p>An <dfn export for="policy container" data-x="policy-container-embedder-policy">embedder
+   policy</dfn>, which is an <span>embedder policy</span>. It is initially a new <span>embedder
+   policy</span>.</p></li>
+
+   <li><p>A <dfn export for="policy container" data-x="policy-container-referrer-policy">referrer
+   policy</dfn>, which is a <span>referrer policy</span>. It is initially the <span>default referrer
+   policy</span>.</p></li>
+
+   <li><p>An <dfn export for="policy container" data-x="policy-container-integrity-policy">integrity
+   policy</dfn>, which is an <span data-x="integrity policy">integrity policy</span>, initially a new
+   <span data-x="integrity policy">integrity policy</span>.</p></li>
+
+   <li><p>A <dfn export for="policy container"
+   data-x="policy-container-report-only-integrity-policy">report-only integrity policy</dfn>, which
+   is an <span data-x="integrity policy">integrity policy</span>, initially a new <span
+   data-x="integrity policy">integrity policy</span>.</p></li>
+  </ul>
+
+  <p class="XXX">Move other policies into the policy container.</p>
+
+  <div algorithm>
+  <p>To <dfn export>clone a policy container</dfn> given a <span>policy container</span>
+  <var>policyContainer</var>:</p>
+
+  <ol>
+   <li><p>Let <var>clone</var> be a new <span>policy container</span>.</p></li>
+
+   <li><p><span data-x="list iterate">For each</span> <var>policy</var> in
+   <var>policyContainer</var>'s <span data-x="policy-container-csp-list">CSP list</span>, <span
+   data-x="list append">append</span> a copy of <var>policy</var> into <var>clone</var>'s <span
+   data-x="policy-container-csp-list">CSP list</span>.</p></li>
+
+   <li><p>Set <var>clone</var>'s <span data-x="policy-container-embedder-policy">embedder
+   policy</span> to a copy of <var>policyContainer</var>'s <span
+   data-x="policy-container-embedder-policy">embedder policy</span>.</p></li>
+
+   <li><p>Set <var>clone</var>'s <span data-x="policy-container-referrer-policy">referrer
+   policy</span> to <var>policyContainer</var>'s <span
+   data-x="policy-container-referrer-policy">referrer policy</span>.</p></li>
+
+   <li><p>Set <var>clone</var>'s <span data-x="policy-container-integrity-policy">integrity
+   policy</span> to a copy of <var>policyContainer</var>'s <span
+   data-x="policy-container-integrity-policy">integrity policy</span>.</p></li>
+
+   <li><p>Return <var>clone</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To determine whether a <span>URL</span> <var>url</var> <dfn>requires storing the policy
+  container in history</dfn>:</p>
+
+  <ol>
+   <li><p>If <var>url</var>'s <span data-x="concept-url-scheme">scheme</span> is "<code
+   data-x="">blob</code>", then return false.</p></li>
+   <!-- Note that we are not storing the policy container in history for blob URLs since we can
+   always retrieve again a blob URL entry's environment's policy container during a history
+   navigation. Indeed, as per https://www.w3.org/TR/FileAPI/#lifeTime, if the environment that
+   created the blob URL is dead at the point of the history navigation, then the blob URL itself
+   must have been deleted, too. We might want to store the policy container alongside the blob URL
+   entry directly (https://github.com/w3c/FileAPI/issues/142), and then reconsider this. -->
+
+   <!-- See about:srcdoc discussion:
+   https://github.com/whatwg/html/issues/6809#issuecomment-1170924595 -->
+   <li><p>If <var>url</var> <span data-x="is-local">is local</span>, then return true.</p></li>
+
+   <li><p>Return false.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn export data-lt="creating a policy container from a fetch response" data-x="creating a
+  policy container from a fetch response">create a policy container from a fetch response</dfn>
+  given a <span data-x="concept-response">response</span> <var>response</var> and an
+  <span>environment</span>-or-null <var>environment</var>:</p>
+
+  <ol>
+   <li><p>If <var>response</var>'s <span data-x="concept-response-url">URL</span>'s <span
+   data-x="concept-url-scheme">scheme</span> is "<code data-x="">blob</code>", then return a <span
+   data-x="clone a policy container">clone</span> of <var>response</var>'s <span
+   data-x="concept-response-url">URL</span>'s <span data-x="concept-url-blob-entry">blob URL
+   entry</span>'s <span data-x="blob-url-entry-environment">environment</span>'s <span
+   data-x="concept-settings-object-policy-container">policy container</span>.</p></li>
+
+   <li><p>Let <var>result</var> be a new <span>policy container</span>.</p></li>
+
+   <li><p>Set <var>result</var>'s <span data-x="policy-container-csp-list">CSP list</span> to the
+   result of <span data-x="parse-response-csp">parsing a response's Content Security Policies</span>
+   given <var>response</var>.</p></li>
+
+   <li><p>If <var>environment</var> is non-null, then set <var>result</var>'s <span
+   data-x="policy-container-embedder-policy">embedder policy</span> to the result of <span
+   data-x="obtain an embedder policy">obtaining an embedder policy</span> given <var>response</var>
+   and <var>environment</var>. Otherwise, set it to "<code
+   data-x="coep-unsafe-none">unsafe-none</code>".</p></li>
+
+   <li><p>Set <var>result</var>'s <span data-x="policy-container-referrer-policy">referrer
+   policy</span> to the result of <span data-x="parse-referrer-policy-header">parsing the
+   `<code>Referrer-Policy</code>` header</span> given <var>response</var>.
+   <ref>REFERRERPOLICY</ref></p></li>
+
+   <li><p><span data-x="parse Integrity-Policy headers">Parse Integrity-Policy headers</span> with
+   <var>response</var> and <var>result</var>.</p></li>
+
+   <li><p>Return <var>result</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="determining navigation params policy container">determine navigation params
+  policy container</dfn> given a <span>URL</span> <var>responseURL</var> and four <span
+  data-x="policy container">policy container</span>-or-nulls <var>historyPolicyContainer</var>,
+  <var>initiatorPolicyContainer</var>, <var>parentPolicyContainer</var>, and
+  <var>responsePolicyContainer</var>:</p>
+
+  <ol>
+   <li>
+    <p>If <var>historyPolicyContainer</var> is not null:</p>
+
+    <ol>
+     <li><p><span>Assert</span>: <var>responseURL</var> <span>requires storing the policy container
+     in history</span>.</p></li>
+
+     <li><p>Return a <span data-x="clone a policy container">clone</span> of
+     <var>historyPolicyContainer</var>.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p>If <var>responseURL</var> is <code>about:srcdoc</code>:</p>
+
+    <ol>
+     <li><p><span>Assert</span>: <var>parentPolicyContainer</var> is not null.</p></li>
+
+     <li><p>Return a <span data-x="clone a policy container">clone</span> of
+     <var>parentPolicyContainer</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>If <var>responseURL</var> <span data-x="is-local">is local</span> and
+   <var>initiatorPolicyContainer</var> is not null, then return a <span data-x="clone a policy
+   container">clone</span> of <var>initiatorPolicyContainer</var>.</p></li>
+
+   <li><p>If <var>responsePolicyContainer</var> is not null, then return
+   <var>responsePolicyContainer</var>.</p></li>
+
+   <li><p>Return a new <span>policy container</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="initialize worker policy container">initialize a worker global scope's policy
+  container</dfn> given a <code>WorkerGlobalScope</code> <var>workerGlobalScope</var>, a <span
+  data-x="concept-response">response</span> <var>response</var>, and an <span>environment</span>
+  <var>environment</var>:</p>
+
+  <ol>
+   <li>
+    <p>If <var>workerGlobalScope</var>'s <span data-x="concept-WorkerGlobalScope-url">url</span>
+    <span data-x="is-local">is local</span> but its <span data-x="concept-url-scheme">scheme</span>
+    is not "<code data-x="">blob</code>":</p>
+
+    <ol>
+     <li><p><span>Assert</span>: <var>workerGlobalScope</var>'s <span>owner set</span>'s <span
+     data-x="list size">size</span> is 1.</p></li>
+
+     <li><p>Set <var>workerGlobalScope</var>'s <span
+     data-x="concept-WorkerGlobalScope-policy-container">policy container</span> to a <span
+     data-x="clone a policy container">clone</span> of <var>workerGlobalScope</var>'s <span>owner
+     set</span>[0]'s <span>relevant settings object</span>'s <span
+     data-x="concept-settings-object-policy-container">policy container</span>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Otherwise, set <var>workerGlobalScope</var>'s <span
+   data-x="concept-WorkerGlobalScope-policy-container">policy container</span> to the result of
+   <span>creating a policy container from a fetch response</span> given
+   <var>response</var> and <var>environment</var>.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+
+  <h3 id="nav-traversal-apis" split-filename="nav-history-apis">APIs related to navigation and
+  session history</h3>
+
+  <div w-nodev>
+

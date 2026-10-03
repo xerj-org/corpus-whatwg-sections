@@ -1,0 +1,25 @@
+WHATWG HTML — section abstract — Where does this specification fit?
+
+  <h3 id="abstract">Where does this specification fit?</h3>
+
+  <p>This specification defines a big part of the web platform, in lots of detail. Its place in the
+  web platform specification stack relative to other specifications can be best summed up as
+  follows:</p>
+
+  <svg viewBox="0 0 398 359" width=398 height=359 role=img aria-label="It consists of everything else, above such core technologies as HTTP, TLS, DOM, Unicode, Web IDL, MIME, URL, XML, JavaScript, and Encoding; below higher-level technologies like CSS, SVG, MathML, and Service Workers; and to the side of technologies like IndexedDB, Fetch, CSP, AV1, Opus, and PNG." id="abstractimg">
+   <rect width=398 height=80 />
+   <text x=199 y=45 class=horizontal>CSS SVG MathML Service&thinsp;Workers</text>
+   <rect width=67 height=177 y=85 />
+   <text transform="translate(25 173.5) rotate(-90)" class="left">IDB Fetch CSP</text>
+   <text transform="translate(50 173.5) rotate(-90)" class="left">AV1 Opus PNG</text>
+   <!-- https://www.flickr.com/photos/wonderlane/2986252088/ -->
+   <image x=72 y=85 width=326 height=177 xlink:href="/images/abstract.jpeg"/>
+   <text x=130 y=250 class=right>THIS SPECIFICATION</text>
+   <rect width=398 height=92 y=267 />
+   <text x=199 y=300 class=horizontal>HTTP TLS DOM Unicode Web&thinsp;IDL</text>
+   <text x=199 y=330 class=horizontal>MIME URL XML JavaScript Encoding</text>
+  </svg>
+
+  </div>
+
+

@@ -1,0 +1,108 @@
+WHATWG HTML — section page-visibility — Page visibility
+
+  <h3>Page visibility</h3>
+
+  <p>A <span>traversable navigable</span>'s <span>system visibility state</span>, including its
+  initial value upon creation, is determined by the user agent. It represents, for example, whether
+  the browser window is minimized, a browser tab is currently in the background, or a system
+  element such as a task switcher obscures the page.</p>
+
+  <div algorithm>
+  <p>When a user agent determines that the <span>system visibility state</span> for
+  <span>traversable navigable</span> <var>traversable</var> has changed to <var>newState</var>, it
+  must run the following steps:</p>
+
+  <ol>
+   <li><p>Let <var>navigables</var> be the <span>inclusive descendant navigables</span> of
+   <var>traversable</var>'s <span data-x="nav-document">active document</span>.</p></li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>navigable</var> of <var>navigables</var>
+    <span data-x="" class="XXX">in what order?</span>:</p>
+
+    <ol>
+     <li><p>Let <var>document</var> be <var>navigable</var>'s <span data-x="nav-document">active
+     document</span>.</p></li>
+
+     <li><p><span>Queue a global task</span> on the <span>user interaction task source</span> given
+     <var>document</var>'s <span>relevant global object</span> to <span>update the visibility
+     state</span> of <var>document</var> with <var>newState</var>.</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <p>A <code>Document</code> has a <dfn for="Document" export>visibility state</dfn>, which is
+  either "<code data-x="">hidden</code>" or "<code data-x="">visible</code>", initially set to
+  "<code data-x="">hidden</code>".</p>
+
+  <div algorithm>
+  <p>The <dfn attribute for="Document"><code
+  data-x="dom-document-visibilityState">visibilityState</code></dfn> getter steps are to return
+  <span>this</span>'s <span>visibility state</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="Document"><code data-x="dom-document-hidden">hidden</code></dfn> getter
+  steps are to return true if <span>this</span>'s <span>visibility state</span> is
+  "<code data-x="">hidden</code>", otherwise false.</p>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>update the visibility state</dfn> of <code>Document</code> <var>document</var> to
+  <var>visibilityState</var>:</p>
+
+  <ol>
+   <li><p>If <var>document</var>'s <span>visibility state</span> equals <var>visibilityState</var>,
+   then return.</p></li>
+
+   <li><p>Set <var>document</var>'s <span>visibility state</span> to
+   <var>visibilityState</var>.</p></li>
+
+   <li><p><span data-x="queue a performance entry">Queue</span> a new
+   <code>VisibilityStateEntry</code> whose
+   <span data-x="VisibilityStateEntry-state">visibility state</span> is
+   <var>visibilityState</var> and whose <span
+   data-x="VisibilityStateEntry-timestamp">timestamp</span> is
+   the <span>current high resolution time</span> given <var>document</var>'s
+   <span>relevant global object</span>.</p>
+
+   <li><p>Run the <span>screen orientation change steps</span> with <var>document</var>.
+   <ref>SCREENORIENTATION</ref></p></li>
+
+   <li><p>Run the <span>view transition page visibility change steps</span> with
+   <var>document</var>.</p></li>
+
+   <li>
+    <p>Run any <dfn export>page visibility change steps</dfn> which may be defined in other
+    specifications, with <span>visibility state</span> and <var>document</var>.</p>
+
+    <p class="XXX">It would be better if specification authors sent a pull request to add calls
+    from here into their specifications directly, instead of using the <span>page visibility change
+    steps</span> hook, to ensure well-defined cross-specification call order. As of the time of
+    this writing the following specifications are known to have <span>page visibility change
+    steps</span>, which will be run in an unspecified order: <cite>Device Posture API</cite> and
+    <cite>Web NFC</cite>. <ref>DEVICEPOSTURE</ref> <ref>WEBNFC</ref></p>
+   </li>
+
+   <li><p><span data-x="concept-event-fire">Fire an event</span> named <code data-x="event-visibilitychange">visibilitychange</code> at
+   <var>document</var>, with its <code data-x="dom-Event-bubbles">bubbles</code> attribute
+   initialized to true.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>set the initial visibility state</dfn> of <code>Document</code> <var>document</var> to
+  <var>visibilityState</var>:</p>
+
+  <ol>
+   <li><p>Set <var>document</var>'s <span>visibility state</span> to
+   <var>visibilityState</var>.</p></li>
+
+   <li><p><span data-x="queue a performance entry">Queue</span> a new
+   <code>VisibilityStateEntry</code> whose <span data-x="VisibilityStateEntry-state">visibility
+   state</span> is <var>document</var>'s <span>visibility state</span> and whose <span
+   data-x="VisibilityStateEntry-timestamp">timestamp</span> is 0.</p></li>
+  </ol>
+  </div>
+

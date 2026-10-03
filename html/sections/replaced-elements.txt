@@ -1,0 +1,9 @@
+WHATWG HTML — section replaced-elements — Replaced elements
+
+  <h3>Replaced elements</h3>
+
+  <p class="note">The following elements can be <span data-x="replaced element">replaced
+  elements</span>: <code>audio</code>, <code>canvas</code>, <code>embed</code>, <code>iframe</code>,
+  <code>img</code>, <code>input</code>, <code>object</code>, and <code>video</code>.</p>
+
+

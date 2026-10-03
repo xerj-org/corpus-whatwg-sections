@@ -1,0 +1,13 @@
+WHATWG HTML — section dependencies/webassembly — WebAssembly
+
+   <dt>WebAssembly</dt>
+
+   <dd>
+    <p>The following term is defined in <cite>WebAssembly JavaScript Interface</cite>:
+    <ref>WASMJS</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://webassembly.github.io/spec/js-api/#module"><code>WebAssembly.Module</code></dfn></li>
+    </ul>
+   </dd>
+

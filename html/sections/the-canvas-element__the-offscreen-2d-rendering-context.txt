@@ -1,0 +1,114 @@
+WHATWG HTML — section the-canvas-element/the-offscreen-2d-rendering-context — The offscreen 2D rendering context
+
+  <h6>The offscreen 2D rendering context</h6>
+
+  <pre><code class="idl">[Exposed=(Window,Worker)]
+interface <dfn interface>OffscreenCanvasRenderingContext2D</dfn> {
+  readonly attribute <span>OffscreenCanvas</span> <span data-x="offscreencontext2d-canvas">canvas</span>;
+};
+
+<span>OffscreenCanvasRenderingContext2D</span> includes <span>CanvasSettings</span>;
+<span>OffscreenCanvasRenderingContext2D</span> includes <span>CanvasState</span>;
+<span>OffscreenCanvasRenderingContext2D</span> includes <span>CanvasTransform</span>;
+<span>OffscreenCanvasRenderingContext2D</span> includes <span>CanvasCompositing</span>;
+<span>OffscreenCanvasRenderingContext2D</span> includes <span>CanvasImageSmoothing</span>;
+<span>OffscreenCanvasRenderingContext2D</span> includes <span>CanvasFillStrokeStyles</span>;
+<span>OffscreenCanvasRenderingContext2D</span> includes <span>CanvasShadowStyles</span>;
+<span>OffscreenCanvasRenderingContext2D</span> includes <span>CanvasFilters</span>;
+<span>OffscreenCanvasRenderingContext2D</span> includes <span>CanvasRect</span>;
+<span>OffscreenCanvasRenderingContext2D</span> includes <span>CanvasDrawPath</span>;
+<span>OffscreenCanvasRenderingContext2D</span> includes <span>CanvasText</span>;
+<span>OffscreenCanvasRenderingContext2D</span> includes <span>CanvasDrawImage</span>;
+<span>OffscreenCanvasRenderingContext2D</span> includes <span>CanvasImageData</span>;
+<span>OffscreenCanvasRenderingContext2D</span> includes <span>CanvasPathDrawingStyles</span>;
+<span>OffscreenCanvasRenderingContext2D</span> includes <span>CanvasTextDrawingStyles</span>;
+<span>OffscreenCanvasRenderingContext2D</span> includes <span>CanvasPath</span>;</code></pre>
+
+  <p>The <code>OffscreenCanvasRenderingContext2D</code> object is a rendering context for drawing to
+  the <span data-x="offscreencanvas-bitmap">bitmap</span> of an <code>OffscreenCanvas</code> object.
+  It is similar to the <code>CanvasRenderingContext2D</code> object, with the following
+  differences:</p>
+
+  <ul>
+   <li><p>there is no support for <span data-x="CanvasUserInterface">user interface</span>
+   features;</p></li>
+   <li><p>its <code data-x="offscreencontext2d-canvas">canvas</code> attribute refers to an
+   <code>OffscreenCanvas</code> object rather than a <code>canvas</code> element;</p></li>
+  </ul>
+
+  <p>An <code>OffscreenCanvasRenderingContext2D</code> object has an <dfn>associated
+  <code>OffscreenCanvas</code> object</dfn>, which is the <code>OffscreenCanvas</code> object
+  from which the <code>OffscreenCanvasRenderingContext2D</code> object was created.
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>offscreenCanvas</var> = <var>offscreenCanvasRenderingContext2D</var>.<span subdfn data-x="offscreencontext2d-canvas">canvas</span></code></dt>
+
+   <dd><p>Returns the <span>associated <code>OffscreenCanvas</code> object</span>.</p></dd>
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn>offscreen 2D context creation algorithm</dfn>, which is passed a
+  <var>target</var> (an <code>OffscreenCanvas</code> object) and optionally some arguments,
+  consists of running the following steps:</p>
+
+  <ol>
+   <li><p>If the algorithm was passed some arguments, let <var>arg</var> be the first such
+   argument. Otherwise, let <var>arg</var> be undefined.</p></li>
+
+   <li><p>Let <var>settings</var> be the result of <span
+   data-x="concept-idl-convert">converting</span> <var>arg</var> to the dictionary type
+   <code>CanvasRenderingContext2DSettings</code>. (This can throw an exception.)</p></li>
+
+   <li><p>Let <var>context</var> be a new <code>OffscreenCanvasRenderingContext2D</code>
+   object.</p></li>
+
+   <li><p>Set <var>context</var>'s <span>associated <code>OffscreenCanvas</code> object</span> to
+   <var>target</var>.</p></li>
+
+   <li><p>Run the <span data-x="canvas-setting-init-bitmap">canvas settings output bitmap
+   initialization algorithm</span>, given <var>context</var> and <var>settings</var>.</li>
+
+   <li><p>Set <var>context</var>'s <span>output bitmap</span> to a newly created bitmap with the
+   dimensions specified by the <code data-x="dom-OffscreenCanvas-width">width</code> and <code
+   data-x="dom-OffscreenCanvas-height">height</code> attributes of <var>target</var>, and set
+   <var>target</var>'s bitmap to the same bitmap (so that they are shared).</p></li>
+
+   <li><p>If <var>context</var>'s <span data-x="concept-canvas-alpha">alpha</span> flag is set to
+   true, initialize all the pixels of <var>context</var>'s <span>output bitmap</span> to
+   <span>transparent black</span>. Otherwise, initialize the pixels to <span>opaque
+   black</span>.</p></li>
+
+   <li><p>Return <var>context</var>.</p></li>
+  </ol>
+  </div>
+
+  <p class="note">Implementations are encouraged to short-circuit the graphics update steps of
+  the <span>window event loop</span> for the purposes of updating the contents of a <span
+  data-x="offscreencanvas-placeholder">placeholder <code>canvas</code> element</span> to the
+  display. This could mean, for example, that the bitmap contents are copied directly to a graphics
+  buffer that is mapped to the physical display location of the <span
+  data-x="offscreencanvas-placeholder">placeholder <code>canvas</code> element</span>. This or
+  similar short-circuiting approaches can significantly reduce display latency, especially in cases
+  where the <code>OffscreenCanvas</code> is updated from a
+  <span>worker event loop</span> and the <span>window event loop</span> of the <span
+  data-x="offscreencanvas-placeholder">placeholder <code>canvas</code> element</span> is busy.
+  However, such shortcuts cannot have any script-observable side-effects. This means that the
+  committed bitmap still needs to be sent to the <span
+  data-x="offscreencanvas-placeholder">placeholder <code>canvas</code> element</span>, in case the
+  element is used as a <code>CanvasImageSource</code>, as an <code>ImageBitmapSource</code>, or in
+  case <code data-x="dom-canvas-toDataURL">toDataURL()</code> or <code
+  data-x="dom-canvas-toBlob">toBlob()</code> are called on it.</p>
+
+  <div algorithm>
+  <p>The <dfn attribute for="OffscreenCanvas"><code
+  data-x="offscreencontext2d-canvas">canvas</code></dfn> attribute, on getting, must return this
+  <code>OffscreenCanvasRenderingContext2D</code>'s <span>associated <code>OffscreenCanvas</code>
+  object</span>.
+  </div>
+
+  </div>
+
+  <div w-nodev>
+

@@ -1,0 +1,221 @@
+WHATWG HTML — section the-autofocus-attribute — <span id="autofocusing-a-form-control:-the-autofocus-attribute"></span>The <code data-x="attr-fe-autofocus">autofocus</code> attribute (+assigning-keyboard-shortcuts)
+
+  <h4><span id="autofocusing-a-form-control:-the-autofocus-attribute"></span>The <code
+  data-x="attr-fe-autofocus">autofocus</code> attribute</h4>
+
+  <p>The <dfn element-attr for="html-global"><code data-x="attr-fe-autofocus">autofocus</code></dfn>
+  content attribute allows the author to indicate that an element is to be focused as soon as the
+  page is loaded, allowing the user to just start typing without having to manually focus the main
+  element.</p>
+
+  <p>When the <code data-x="attr-fe-autofocus">autofocus</code> attribute is specified on an element
+  inside <code>dialog</code> elements or <span>HTML elements</span> whose <code
+  data-x="attr-popover">popover</code> attribute is set, then it will be focused when the dialog or
+  popover becomes shown.</p>
+
+  <p>The <code data-x="attr-fe-autofocus">autofocus</code> attribute is a <span>boolean
+  attribute</span>.</p>
+
+  <div algorithm>
+  <p>To find the <dfn>nearest ancestor autofocus scoping root element</dfn> given an
+  <code>Element</code> <var>element</var>:</p>
+
+  <ol>
+   <li><p>If <var>element</var> is a <code>dialog</code> element, then return
+   <var>element</var>.</p></li>
+
+   <li><p>If <var>element</var>'s <code data-x="attr-popover">popover</code> attribute is not in the
+   <span data-x="attr-popover-none-state">No Popover</span> state, then return
+   <var>element</var>.</p></li>
+
+   <li><p>Let <var>ancestor</var> be <var>element</var>.</p></li>
+
+   <li>
+    <p>While <var>ancestor</var> has a <span>parent element</span>:</p>
+
+    <ol>
+     <li><p>Set <var>ancestor</var> to <var>ancestor</var>'s <span>parent element</span>.</p></li>
+
+     <li><p>If <var>ancestor</var> is a <code>dialog</code> element, then return
+     <var>ancestor</var>.</p></li>
+
+     <li><p>If <var>ancestor</var>'s <code data-x="attr-popover">popover</code> attribute is not in
+     the <span data-x="attr-popover-none-state">No Popover</span> state, then return
+     <var>ancestor</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Return <var>ancestor</var>.</p></li>
+  </ol>
+  </div>
+
+  <p>There must not be two elements with the same <span>nearest ancestor autofocus scoping root
+  element</span> that both have the <code data-x="attr-fe-autofocus">autofocus</code> attribute
+  specified.</p>
+
+  <div w-nodev>
+
+  <p>Each <code>Document</code> has an <dfn>autofocus candidates</dfn> <span>list</span>,
+  initially empty.</p>
+
+  <p>Each <code>Document</code> has an <dfn>autofocus processed flag</dfn> boolean, initially
+  false.</p>
+
+  <div algorithm>
+  <p>When an element with the <code data-x="attr-fe-autofocus">autofocus</code> attribute specified
+  is <span data-x="node is inserted into a document">inserted into a document</span>, run the
+  following steps:</p>
+
+  <ol>
+   <li><p>If the user has indicated (for example, by starting to type in a form control) that they
+   do not wish focus to be changed, then optionally return.</p></li>
+
+   <li><p>Let <var>target</var> be the element's <span>node document</span>.</p></li>
+
+   <li><p>If <var>target</var> is not <span>fully active</span>, then return.</p></li>
+
+   <li><p>If <var>target</var>'s <span>active sandboxing flag set</span> has the
+   <span>sandboxed automatic features browsing context flag</span>, then return.</p></li>
+
+   <li><p>If the <span>allow focus steps</span> given <var>target</var> return false, then
+   return.</p></li>
+
+   <li><p>Let <var>topDocument</var> be <var>target</var>'s <span>node navigable</span>'s <span
+   data-x="nav-top">top-level traversable</span>'s <span data-x="nav-document">active
+   document</span>.</p></li>
+
+   <li><p>If <var>topDocument</var>'s <span>autofocus processed flag</span> is false, then
+   <span data-x="list remove">remove</span> the element from <var>topDocument</var>'s
+   <span>autofocus candidates</span>, and <span data-x="list append">append</span> the element to
+   <var>topDocument</var>'s <span>autofocus candidates</span>.</p></li>
+  </ol>
+  </div>
+
+  <p class="note">We do not check if an element is a <span>focusable area</span> before storing it
+  in the <span>autofocus candidates</span> list, because even if it is not a focusable area when it
+  is inserted, it could become one by the time <span>flush autofocus candidates</span> sees it.</p>
+
+  <div algorithm>
+  <p>To <dfn>flush autofocus candidates</dfn> for a document <var>topDocument</var>, run these
+  steps:</p>
+
+  <ol>
+   <li><p>If <var>topDocument</var>'s <span>autofocus processed flag</span> is true, then
+   return.</p></li>
+
+   <li><p>Let <var>candidates</var> be <var>topDocument</var>'s <span>autofocus
+   candidates</span>.</p></li>
+
+   <li><p>If <var>candidates</var> <span data-x="list is empty">is empty</span>, then
+   return.</p></li>
+
+   <li>
+    <p>If <var>topDocument</var>'s <span data-x="focused area of the document">focused area</span>
+    is not <var>topDocument</var> itself, or <var>topDocument</var> has non-null
+    <span>target element</span>:</p>
+
+    <ol>
+     <li><p><span data-x="list empty">Empty</span> <var>candidates</var>.</p></li>
+
+     <li><p>Set <var>topDocument</var>'s <span>autofocus processed flag</span> to true.</p></li>
+
+     <li><p>Return.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p>While <var>candidates</var> is not <span data-x="list is empty">empty</span>:</p>
+
+    <ol>
+     <li><p>Let <var>element</var> be <var>candidates</var>[0].</p></li>
+
+     <li><p>Let <var>doc</var> be <var>element</var>'s <span>node document</span>.</p></li>
+
+     <li><p>If <var>doc</var> is not <span>fully active</span>, then
+     <span data-x="list remove">remove</span> <var>element</var> from <var>candidates</var>, and
+     <span>continue</span>.</p></li>
+
+     <li><p>If <var>doc</var>'s <span>node navigable</span>'s <span data-x="nav-top">top-level
+     traversable</span> is not the same as <var>topDocument</var>'s <span>node navigable</span>,
+     then <span data-x="list remove">remove</span> <var>element</var> from <var>candidates</var>,
+     and <span>continue</span>.</p></li>
+
+     <li>
+      <p>If <var>doc</var>'s <span>script-blocking style sheet set</span> is not <span data-x="list
+      is empty">empty</span>, then return.</p>
+
+      <p class="note">In this case, <var>element</var> is the currently-best candidate, but
+      <var>doc</var> is not ready for autofocusing. We'll try again next time <span>flush
+      autofocus candidates</span> is called.</p>
+     </li>
+
+     <li><p><span data-x="list remove">Remove</span> <var>element</var> from
+     <var>candidates</var>.</p></li>
+
+     <li><p>Let <var>inclusiveAncestorDocuments</var> be a <span>list</span> consisting of the
+     <span data-x="nav-document">active document</span> of <var>doc</var>'s <span>inclusive
+     ancestor navigables</span>.</p></li>
+
+     <li><p>If any <code>Document</code> in <var>inclusiveAncestorDocuments</var> has non-null
+     <span>target element</span>, then <span>continue</span>.</p></li>
+
+     <li><p>Let <var>target</var> be <var>element</var>.</p></li>
+
+     <li>
+      <p>If <var>target</var> is not a <span>focusable area</span>, then set <var>target</var> to
+      the result of <span data-x="get the focusable area">getting the focusable area</span> for
+      <var>target</var>.</p>
+
+      <p class="note"><span>Autofocus candidates</span> can <span data-x="list
+      contains">contain</span> elements which are not <span data-x="focusable area">focusable
+      areas</span>. In addition to the special cases handled in the <span>get the focusable
+      area</span> algorithm, this can happen because a non-<span>focusable area</span> element with
+      an <code data-x="attr-fe-autofocus">autofocus</code> attribute was <span data-x="node is
+      inserted into a document">inserted into a document</span> and it never became focusable, or
+      because the element was focusable but its status changed while it was stored in
+      <span>autofocus candidates</span>.</p>
+     </li>
+
+     <li>
+      <p>If <var>target</var> is not null:</p>
+
+      <ol>
+       <li><p><span data-x="list empty">Empty</span> <var>candidates</var>.</p></li>
+
+       <li><p>Set <var>topDocument</var>'s <span>autofocus processed flag</span> to true.</p></li>
+
+       <li><p>Run the <span>focusing steps</span> for <var>target</var>.</p></li>
+      </ol>
+     </li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <p class="note">This handles the automatic focusing during document load. The <code
+  data-x="dom-dialog-show">show()</code> and <code data-x="dom-dialog-showModal">showModal()</code>
+  methods of <code>dialog</code> elements also processes the <code
+  data-x="attr-fe-autofocus">autofocus</code> attribute.</p>
+
+  <p class="note">Focusing the element does not imply that the user agent has to focus the browser
+  window if it has lost focus.</p>
+
+  </div>
+
+  <div class="example">
+   <p>In the following snippet, the text control would be focused when
+   the document was loaded.</p>
+   <pre><code class="html">&lt;input maxlength="256" name="q" value="" autofocus&gt;
+&lt;input type="submit" value="Search"&gt;</code></pre>
+  </div>
+
+  <div class="example">
+   <p>The <code data-x="attr-fe-autofocus">autofocus</code> attribute applies to all elements, not
+   just to form controls. This allows examples such as the following:</p>
+   <pre><code class="html">&lt;div contenteditable autofocus&gt;Edit &lt;strong>me!&lt;/strong>&lt;div></code></pre>
+  </div>
+
+
+
+  <h3>Assigning keyboard shortcuts</h3>
+

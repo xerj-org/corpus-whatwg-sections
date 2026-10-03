@@ -1,0 +1,655 @@
+WHATWG HTML — section dependencies/css-modules — CSS modules
+
+   <dt>CSS modules</dt>
+
+   <dd>
+    <p>While support for CSS as a whole is not required of implementations of this specification
+    (though it is encouraged, at least for web browsers), some features are defined in terms of
+    specific CSS requirements.</p>
+
+    <p>When this specification requires that something be <dfn data-x="parse something according to
+    a CSS grammar" data-x-href="https://drafts.csswg.org/css-syntax/#parse-grammar">parsed according
+    to a particular CSS grammar</dfn>, the relevant algorithm in <cite>CSS Syntax</cite> must be
+    followed, including error handling rules. <ref>CSSSYNTAX</ref></p>
+
+    <p class="example">For example, user agents are required to close all open constructs upon
+    finding the end of a style sheet unexpectedly. Thus, when parsing the string "<code
+    data-x="">rgb(0,0,0</code>" (with a missing close-parenthesis) for a color value, the close
+    parenthesis is implied by this error handling rule, and a value is obtained (the color 'black').
+    However, the similar construct "<code data-x="">rgb(0,0,</code>" (with both a missing
+    parenthesis and a missing "blue" value) cannot be parsed, as closing the open construct does not
+    result in a viable value.</p>
+
+    <p>The following terms and features are defined in <cite>Cascading Style Sheets</cite>
+    (<cite>CSS</cite>): <ref>CSS</ref></p>
+
+    <ul class="brief">
+      <li><dfn data-x-href="https://drafts.csswg.org/css2/#viewport">viewport</dfn></li>
+      <li><dfn data-x-href="https://drafts.csswg.org/css2/#line-box">line box</dfn></li>
+      <li><dfn data-x-href="https://drafts.csswg.org/css2/#out-of-flow">out-of-flow</dfn></li>
+      <li><dfn data-x-href="https://drafts.csswg.org/css2/#in-flow">in-flow</dfn></li>
+      <li><dfn data-x-href="https://drafts.csswg.org/css2/#collapsing-margins">collapsing margins</dfn></li>
+      <li><dfn data-x-href="https://drafts.csswg.org/css2/#containing-block-details">containing block</dfn></li>
+      <li><dfn data-x-href="https://drafts.csswg.org/css2/#inline-box">inline box</dfn></li>
+      <li><dfn data-x-href="https://drafts.csswg.org/css2/#block-boxes%E2%91%A0">block box</dfn></li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css2/#propdef-top">'top'</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css2/#propdef-bottom">'bottom'</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css2/#propdef-left">'left'</dfn>, and
+              <dfn data-x-href="https://drafts.csswg.org/css2/#propdef-right">'right'</dfn> properties</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css2/#float-position">'float'</dfn> property</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css2/#flow-control">'clear'</dfn> property</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css2/#the-width-property">'width'</dfn> property</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css2/#the-height-property">'height'</dfn> property</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css2/#min-max-widths">'min-width'</dfn> property</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css2/#min-max-heights">'min-height'</dfn> property</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css2/#min-max-widths">'max-width'</dfn> property</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css2/#min-max-heights">'max-height'</dfn> property</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css2/#propdef-line-height">'line-height'</dfn> property</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css2/#propdef-vertical-align">'vertical-align'</dfn> property</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css2/#content%E2%91%A0">'content'</dfn> property</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css2/#value-def-inline-block">'inline-block'</dfn> value of the <span>'display'</span> property</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css2/#propdef-visibility">'visibility'</dfn> property</li>
+    </ul>
+
+    <p>The basic version of the <dfn
+    data-x-href="https://drafts.csswg.org/css2/#display-prop">'display'</dfn> property
+    is defined in <cite>CSS</cite>, and the property is extended by other CSS modules.
+    <ref>CSS</ref> <ref>CSSRUBY</ref> <ref>CSSTABLE</ref></p>
+
+    <p>The following terms and features are defined in <cite>CSS Box Model</cite>:
+    <ref>CSSBOX</ref></p>
+
+    <ul>
+      <li><dfn data-x-href="https://drafts.csswg.org/css-box/#content-area">content area</dfn></li>
+      <li><dfn data-x-href="https://drafts.csswg.org/css-box/#content-box">content box</dfn></li>
+      <li><dfn data-x-href="https://drafts.csswg.org/css-box/#border-box">border box</dfn></li>
+      <li><dfn data-x-href="https://drafts.csswg.org/css-box/#margin-box">margin box</dfn></li>
+      <li><dfn data-x-href="https://drafts.csswg.org/css-box/#border-edge">border edge</dfn></li>
+      <li><dfn data-x-href="https://drafts.csswg.org/css-box/#margin-edge">margin edge</dfn></li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-box/#propdef-margin-top">'margin-top'</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-box/#propdef-margin-bottom">'margin-bottom'</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-box/#propdef-margin-left">'margin-left'</dfn>, and
+              <dfn data-x-href="https://drafts.csswg.org/css-box/#propdef-margin-right">'margin-right'</dfn> properties</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-box/#propdef-padding-top">'padding-top'</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-box/#propdef-padding-bottom">'padding-bottom'</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-box/#propdef-padding-left">'padding-left'</dfn>, and
+              <dfn data-x-href="https://drafts.csswg.org/css-box/#propdef-padding-right">'padding-right'</dfn> properties</li>
+    </ul>
+
+    <p>The following features are defined in <cite>CSS Logical Properties</cite>:
+    <ref>CSSLOGICAL</ref></p>
+
+    <ul class="brief">
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-logical/#propdef-margin-block">'margin-block'</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-logical/#propdef-margin-block-start">'margin-block-start'</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-logical/#propdef-margin-block-end">'margin-block-end'</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-logical/#propdef-margin-inline">'margin-inline'</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-logical/#propdef-margin-inline-start">'margin-inline-start'</dfn>, and
+              <dfn data-x-href="https://drafts.csswg.org/css-logical/#propdef-margin-inline-end">'margin-inline-end'</dfn> properties</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-logical/#propdef-padding-block">'padding-block'</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-logical/#propdef-padding-block-start">'padding-block-start'</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-logical/#propdef-padding-block-end">'padding-block-end'</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-logical/#propdef-padding-inline">'padding-inline'</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-logical/#propdef-padding-inline-start">'padding-inline-start'</dfn>, and
+              <dfn data-x-href="https://drafts.csswg.org/css-logical/#propdef-padding-inline-end">'padding-inline-end'</dfn> properties</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-logical/#propdef-border-block-width">'border-block-width'</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-logical/#propdef-border-block-start-width">'border-block-start-width'</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-logical/#propdef-border-block-end-width">'border-block-end-width'</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-logical/#propdef-border-inline-width">'border-inline-width'</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-logical/#propdef-border-inline-start-width">'border-inline-start-width'</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-logical/#propdef-border-inline-end-width">'border-inline-end-width'</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-logical/#propdef-border-block-style">'border-block-style'</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-logical/#propdef-border-block-start-style">'border-block-start-style'</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-logical/#propdef-border-block-end-style">'border-block-end-style'</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-logical/#propdef-border-inline-style">'border-inline-style'</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-logical/#propdef-border-inline-start-style">'border-inline-start-style'</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-logical/#propdef-border-inline-end-style">'border-inline-end-style'</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-logical/#propdef-border-block-start-color">'border-block-start-color'</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-logical/#propdef-border-block-end-color">'border-block-end-color'</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-logical/#propdef-border-inline-start-color">'border-inline-start-color'</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-logical/#propdef-border-inline-end-color">'border-inline-end-color'</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-logical/#propdef-border-start-start-radius">'border-start-start-radius'</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-logical/#propdef-border-start-end-radius">'border-start-end-radius'</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-logical/#propdef-border-end-start-radius">'border-end-start-radius'</dfn>, and
+              <dfn data-x-href="https://drafts.csswg.org/css-logical/#propdef-border-end-end-radius">'border-end-end-radius'</dfn>
+              properties</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-logical/#propdef-block-size">'block-size'</dfn> property</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-logical/#propdef-inline-size">'inline-size'</dfn> property</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-logical/#propdef-inset-block-start">'inset-block-start'</dfn> property</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-logical/#propdef-inset-block-end">'inset-block-end'</dfn> property</li>
+    </ul>
+
+    <p>The following terms and features are defined in <cite>CSS Color</cite>:
+    <ref>CSSCOLOR</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://drafts.csswg.org/css-color/#named-color">named color</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-color/#typedef-color">&lt;color></dfn></li>
+     <li>The <dfn data-x-href="https://drafts.csswg.org/css-color/#the-color-property">'color'</dfn> property</li>
+     <li>The <dfn data-x-href="https://drafts.csswg.org/css-color/#valdef-color-currentcolor" id="currentcolor">'currentcolor'</dfn> value</li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-color/#opaque-black">opaque black</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-color/#transparent-black">transparent black</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-color/#valdef-color-srgb">'srgb'</dfn> color space</li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-color/#valdef-color-srgb-linear">'srgb-linear'</dfn> color space</li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-color/#valdef-color-display-p3">'display-p3'</dfn> color space</li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-color/#display-p3-linear-space">'display-p3-linear'</dfn> color space</li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-color-5/#valdef-color-profile-rendering-intent-relative-colorimetric">'relative-colorimetric'</dfn> rendering intent</li>
+     <li><dfn id="parsed-as-a-css-color-value" data-x-href="https://drafts.csswg.org/css-color/#parse-a-css-color-value">parse a CSS &lt;color> value</dfn></li>
+     <li><!--en-GB--><dfn id="serialisation-of-a-color" data-x-href="https://drafts.csswg.org/css-color/#serializing-color-values">serialize a CSS &lt;color> value</dfn> including <dfn data-x-href="https://drafts.csswg.org/css-color/#color-serialization-html-compatible-serialization-is-requested">HTML-compatible serialization is requested</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-color/#color-conversion">Converting Colors</dfn></li>
+     <li><dfn id="color-function" data-x-href="https://drafts.csswg.org/css-color/#color-function">'color()'</dfn></li>
+    </ul>
+
+    <p>The following terms are defined in <cite>CSS Images</cite>: <ref>CSSIMAGES</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://drafts.csswg.org/css-images/#default-object-size">default object size</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-images/#default-sizing">default sizing algorithm</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-images/#concrete-object-size">concrete object size</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-images/#natural-dimensions">natural dimensions</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-images/#natural-height">natural height</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-images/#natural-width">natural width</dfn></li>
+     <li>The <dfn data-x-href="https://drafts.csswg.org/css-images-3/#the-image-orientation">'image-orientation'</dfn> property</li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-images-4/#funcdef-conic-gradient">'conic-gradient'</dfn></li>
+     <li>The <dfn data-x-href="https://drafts.csswg.org/css-images/#the-object-fit">'object-fit'</dfn> property</li>
+    </ul>
+
+    <p>The term <dfn data-x-href="https://drafts.csswg.org/css-images-4/#paint-source">paint
+    source</dfn> is used as defined in <cite>CSS Images Level 4</cite>
+    to define the interaction of certain HTML elements with the CSS 'element()' function.
+    <ref>CSSIMAGES4</ref></p>
+
+    <p>The following features are defined in <cite>CSS Backgrounds and Borders</cite>:
+    <ref>CSSBG</ref></p>
+
+    <ul class="brief">
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-backgrounds/#propdef-background-color">'background-color'</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-backgrounds/#propdef-background-image">'background-image'</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-backgrounds/#propdef-background-repeat">'background-repeat'</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-backgrounds/#propdef-background-attachment">'background-attachment'</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-backgrounds/#propdef-background-position">'background-position'</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-backgrounds/#propdef-background-clip">'background-clip'</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-backgrounds/#propdef-background-origin">'background-origin'</dfn>, and
+              <dfn data-x-href="https://drafts.csswg.org/css-backgrounds/#propdef-background-size">'background-size'</dfn>
+              properties</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-backgrounds/#propdef-border-radius">'border-radius'</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-backgrounds/#propdef-border-top-left-radius">'border-top-left-radius'</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-backgrounds/#propdef-border-top-right-radius">'border-top-right-radius'</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-backgrounds/#propdef-border-bottom-right-radius">'border-bottom-right-radius'</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-backgrounds/#propdef-border-bottom-left-radius">'border-bottom-left-radius'</dfn>
+              properties</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-backgrounds/#propdef-border-image-source">'border-image-source'</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-backgrounds/#propdef-border-image-slice">'border-image-slice'</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-backgrounds/#propdef-border-image-width">'border-image-width'</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-backgrounds/#propdef-border-image-outset">'border-image-outset'</dfn>, and
+              <dfn data-x-href="https://drafts.csswg.org/css-backgrounds/#propdef-border-image-repeat">'border-image-repeat'</dfn>
+              properties</li>
+    </ul>
+
+    <p><cite>CSS Backgrounds and Borders</cite> also defines the following border properties:
+    <ref>CSSBG</ref></p>
+
+    <table>
+     <caption>Border properties
+     <tbody>
+      <tr>
+       <td>
+       <th>Top
+       <th>Bottom
+       <th>Left
+       <th>Right
+      <tr>
+       <th>Width
+       <td><dfn data-x-href="https://drafts.csswg.org/css-backgrounds/#propdef-border-top-width">'border-top-width'</dfn>
+       <td><dfn data-x-href="https://drafts.csswg.org/css-backgrounds/#propdef-border-bottom-width">'border-bottom-width'</dfn>
+       <td><dfn data-x-href="https://drafts.csswg.org/css-backgrounds/#propdef-border-left-width">'border-left-width'</dfn>
+       <td><dfn data-x-href="https://drafts.csswg.org/css-backgrounds/#propdef-border-right-width">'border-right-width'</dfn>
+      <tr>
+       <th>Style
+       <td><dfn data-x-href="https://drafts.csswg.org/css-backgrounds/#propdef-border-top-style">'border-top-style'</dfn>
+       <td><dfn data-x-href="https://drafts.csswg.org/css-backgrounds/#propdef-border-bottom-style">'border-bottom-style'</dfn>
+       <td><dfn data-x-href="https://drafts.csswg.org/css-backgrounds/#propdef-border-left-style">'border-left-style'</dfn>
+       <td><dfn data-x-href="https://drafts.csswg.org/css-backgrounds/#propdef-border-right-style">'border-right-style'</dfn>
+      <tr>
+       <th>Color
+       <td><dfn data-x-href="https://drafts.csswg.org/css-backgrounds/#propdef-border-top-color">'border-top-color'</dfn>
+       <td><dfn data-x-href="https://drafts.csswg.org/css-backgrounds/#propdef-border-bottom-color">'border-bottom-color'</dfn>
+       <td><dfn data-x-href="https://drafts.csswg.org/css-backgrounds/#propdef-border-left-color">'border-left-color'</dfn>
+       <td><dfn data-x-href="https://drafts.csswg.org/css-backgrounds/#propdef-border-right-color">'border-right-color'</dfn>
+    </table>
+
+    <p>The following features are defined in <cite>CSS Box Alignment</cite>: <ref>CSSALIGN</ref></p>
+
+    <ul class="brief">
+     <li>The <dfn data-x-href="https://drafts.csswg.org/css-align/#propdef-align-content">'align-content'</dfn> property</li>
+     <li>The <dfn data-x-href="https://drafts.csswg.org/css-align/#propdef-align-items">'align-items'</dfn> property</li>
+     <li>The <dfn data-x-href="https://drafts.csswg.org/css-align/#propdef-align-self">'align-self'</dfn> property</li>
+     <li>The <dfn data-x-href="https://drafts.csswg.org/css-align/#propdef-justify-self">'justify-self'</dfn> property</li>
+     <li>The <dfn data-x-href="https://drafts.csswg.org/css-align/#propdef-justify-content">'justify-content'</dfn> property</li>
+     <li>The <dfn data-x-href="https://drafts.csswg.org/css-align/#propdef-justify-items">'justify-items'</dfn> property</li>
+    </ul>
+
+    <p>The following terms and features are defined in <cite>CSS Display</cite>:
+    <ref>CSSDISPLAY</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://drafts.csswg.org/css-display/#outer-display-type">outer display type</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-display/#inner-display-type">inner display type</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-display/#block-level">block-level</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-display/#block-container">block container</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-display/#formatting-context">formatting context</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-display/#block-formatting-context">block formatting context</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-display/#inline-formatting-context">inline formatting context</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-display/#replaced-element">replaced element</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-display/#css-box">CSS box</dfn></li>
+    </ul>
+
+    <p>The following features are defined in <cite>CSS Flexible Box Layout</cite>:
+    <ref>CSSFLEXBOX</ref></p>
+
+    <ul class="brief">
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-flexbox/#propdef-flex-direction">'flex-direction'</dfn> property</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-flexbox/#propdef-flex-wrap">'flex-wrap'</dfn> property</li>
+    </ul>
+
+    <p>The following terms and features are defined in <cite>CSS Fonts</cite>:
+    <ref>CSSFONTS</ref></p>
+
+    <ul class="brief">
+      <li><dfn data-x-href="https://drafts.csswg.org/css-fonts/#first-available-font">first available font</dfn></li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-fonts/#font-family-prop">'font-family'</dfn> property</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-fonts/#font-weight-prop">'font-weight'</dfn> property</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-fonts/#font-size-prop">'font-size'</dfn> property</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-fonts/#font-prop">'font'</dfn> property</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-fonts/#propdef-font-kerning">'font-kerning'</dfn> property</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-fonts/#propdef-font-stretch">'font-stretch'</dfn> property</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-fonts/#propdef-font-variant-caps">'font-variant-caps'</dfn> property</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-fonts/#valdef-font-variant-caps-small-caps">'small-caps'</dfn> value</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-fonts/#valdef-font-variant-caps-all-small-caps">'all-small-caps'</dfn> value</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-fonts/#valdef-font-variant-caps-petite-caps">'petite-caps'</dfn> value</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-fonts/#valdef-font-variant-caps-all-petite-caps">'all-petite-caps'</dfn> value</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-fonts/#valdef-font-variant-caps-unicase">'unicase'</dfn> value</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-fonts/#valdef-font-variant-caps-titling-caps">'titling-caps'</dfn> value</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-fonts/#valdef-font-stretch-ultra-condensed">'ultra-condensed'</dfn> value</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-fonts/#valdef-font-stretch-extra-condensed">'extra-condensed'</dfn> value</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-fonts/#valdef-font-stretch-condensed">'condensed'</dfn> value</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-fonts/#valdef-font-stretch-semi-condensed">'semi-condensed'</dfn> value</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-fonts/#valdef-font-stretch-semi-expanded">'semi-expanded'</dfn> value</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-fonts/#valdef-font-stretch-expanded">'expanded'</dfn> value</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-fonts/#valdef-font-stretch-extra-expanded">'extra-expanded'</dfn> value</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-fonts/#valdef-font-stretch-ultra-expanded">'ultra-expanded'</dfn> value</li>
+    </ul>
+
+    <p>The following features are defined in <cite>CSS Forms</cite>:
+    <ref>CSSFORMS</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://drafts.csswg.org/css-forms/#picker-pseudo">'::picker'</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-forms/#checkmark">'::checkmark'</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-forms/#selectordef-picker-icon">'::picker-icon'</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-forms/#typedef-picker-form-control-identifier">picker form control identifier</dfn></li>
+      <li>The concept <dfn data-x-href="https://drafts.csswg.org/css-forms/#element-with-default-preferred-size">element with default preferred size</dfn></li>
+    </ul>
+
+    <p>The following features are defined in <cite>CSS Gaps</cite>:
+    <ref>CSSGAPS</ref></p>
+
+    <ul class="brief">
+     <li>The <dfn data-x-href="https://drafts.csswg.org/css-gaps/#propdef-gap">'gap'</dfn> property</li>
+     <li>The <dfn data-x-href="https://drafts.csswg.org/css-gaps/#propdef-rule">'rule'</dfn> property</li>
+     <li>The <dfn data-x-href="https://drafts.csswg.org/css-gaps/#propdef-rule-break">'rule-break'</dfn> property</li>
+     <li>The <dfn data-x-href="https://drafts.csswg.org/css-gaps/#propdef-rule-inset">'rule-inset'</dfn> property</li>
+     <li>The <dfn data-x-href="https://drafts.csswg.org/css-gaps/#propdef-rule-overlap">'rule-overlap'</dfn> property</li>
+     <li>The <dfn data-x-href="https://drafts.csswg.org/css-gaps/#propdef-rule-visibility-items">'rule-visibility-items'</dfn> property</li>
+    </ul>
+
+    <p>The following features are defined in <cite>CSS Grid Layout</cite>: <ref>CSSGRID</ref></p>
+
+    <ul class="brief">
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-grid/#propdef-grid-auto-columns">'grid-auto-columns'</dfn> property</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-grid/#propdef-grid-auto-flow">'grid-auto-flow'</dfn> property</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-grid/#propdef-grid-auto-rows">'grid-auto-rows'</dfn> property</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-grid/#propdef-grid-template-areas">'grid-template-areas'</dfn> property</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-grid/#propdef-grid-template-columns">'grid-template-columns'</dfn> property</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-grid/#propdef-grid-template-rows">'grid-template-rows'</dfn> property</li>
+    </ul>
+
+    <p>The following terms are defined in <cite>CSS Inline Layout</cite>: <ref>CSSINLINE</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://drafts.csswg.org/css-inline/#alphabetic-baseline">alphabetic baseline</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-inline/#ascent-metric">ascent metric</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-inline/#descent-metric">descent metric</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-inline/#em-over-baseline">em-over baseline</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-inline/#em-under-baseline">em-under baseline</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-inline/#hanging-baseline">hanging baseline</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-inline/#ideographic-under-baseline">ideographic-under baseline</dfn></li>
+    </ul>
+
+    <p>The following terms and features are defined in <cite>CSS Box Sizing</cite>:
+    <ref>CSSSIZING</ref></p>
+
+    <ul class="brief">
+      <li><dfn data-x-href="https://drafts.csswg.org/css-sizing/#fit-content-inline-size">fit-content inline size</dfn></li>
+      <li><dfn data-x-href="https://drafts.csswg.org/css-sizing-4/#aspect-ratio">'aspect-ratio'</dfn> property</li>
+      <li><dfn data-x-href="https://drafts.csswg.org/css-sizing/#intrinsic-size">intrinsic size</dfn></li>
+    </ul>
+
+    <p>The following features are defined in <cite>CSS Lists and Counters</cite>.
+    <ref>CSSLISTS</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://drafts.csswg.org/css-lists/#list-item" data-x="css-list-item">list item</dfn></li>
+     <li>The <dfn data-x-href="https://drafts.csswg.org/css-lists/#propdef-counter-reset">'counter-reset'</dfn> property</li>
+     <li>The <dfn data-x-href="https://drafts.csswg.org/css-lists/#propdef-counter-set">'counter-set'</dfn> property</li>
+     <li>The <dfn data-x-href="https://drafts.csswg.org/css-lists/#propdef-list-style-type">'list-style-type'</dfn> property</li>
+    </ul>
+
+    <p>The following features are defined in <cite>CSS Overflow</cite>. <ref>CSSOVERFLOW</ref></p>
+
+    <ul class="brief">
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-overflow/#propdef-overflow">'overflow'</dfn> property and its <dfn data-x-href="https://drafts.csswg.org/css-overflow/#valdef-overflow-hidden">'hidden'</dfn> value</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-overflow/#propdef-text-overflow">'text-overflow'</dfn> property</li>
+      <li>The term <dfn data-x-href="https://drafts.csswg.org/css-overflow/#scroll-container">scroll container</dfn>
+    </ul>
+
+    <p>The following terms and features are defined in <cite>CSS Positioned Layout</cite>:
+    <ref>CSSPOSITION</ref></p>
+
+    <ul class="brief">
+      <li><dfn data-x-href="https://drafts.csswg.org/css-position/#absolute-position">absolutely-positioned</dfn></li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-position/#position-property">'position'</dfn> property and its
+              <dfn data-x-href="https://drafts.csswg.org/css-position/#valdef-position-static">'static'</dfn> value</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-position-4/#document-top-layer">top layer</dfn>
+              (an <span data-x="set">ordered set</span>)</li>
+      <li><dfn data-x-href="https://drafts.csswg.org/css-position-4/#add-an-element-to-the-top-layer">add an element to the top layer</dfn></li>
+      <li><dfn data-x-href="https://drafts.csswg.org/css-position-4/#request-an-element-to-be-removed-from-the-top-layer">request an element to be removed from the top layer</dfn></li>
+      <li><dfn data-x-href="https://drafts.csswg.org/css-position-4/#remove-an-element-from-the-top-layer-immediately">remove an element from the top layer immediately</dfn></li>
+      <li><dfn data-x-href="https://drafts.csswg.org/css-position-4/#process-top-layer-removals">process top layer removals</dfn></li>
+    </ul>
+
+    <p>The following features are defined in <cite>CSS Multi-column Layout</cite>.
+    <ref>CSSMULTICOL</ref></p>
+
+    <ul class="brief">
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-multicol/#propdef-column-count">'column-count'</dfn> property</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-multicol/#propdef-column-fill">'column-fill'</dfn> property</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-multicol/#propdef-column-width">'column-width'</dfn> property</li>
+    </ul>
+
+    <p>The <dfn
+    data-x-href="https://drafts.csswg.org/css-ruby/#valdef-display-ruby-base">'ruby-base'</dfn>
+    value of the <span>'display'</span> property is defined in <cite>CSS Ruby Layout</cite>.
+    <ref>CSSRUBY</ref></p>
+
+    <p>The following features are defined in <cite>CSS Table</cite>: <ref>CSSTABLE</ref></p>
+
+    <ul class="brief">
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-tables/#propdef-border-spacing">'border-spacing'</dfn> property</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-tables/#border-collapse-property">'border-collapse'</dfn> property</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-tables/#table-cell">'table-cell'</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-tables/#table-row">'table-row'</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-tables/#table-caption">'table-caption'</dfn>, and
+              <dfn data-x-href="https://drafts.csswg.org/css-tables/#table">'table'</dfn> values of the <span>'display'</span> property</li>
+    </ul>
+
+    <p>The following features are defined in <cite>CSS Text</cite>: <ref>CSSTEXT</ref></p>
+
+    <ul class="brief">
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-text-4/#content-language">content language</dfn> concept</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-text/#text-transform-property">'text-transform'</dfn> property</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-text/#white-space-property">'white-space'</dfn> property</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-text/#text-align-property">'text-align'</dfn> property</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-text/#letter-spacing-property">'letter-spacing'</dfn> property</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-text/#propdef-word-spacing">'word-spacing'</dfn> property</li>
+    </ul>
+
+    <p>The following features are defined in <cite>CSS Writing Modes</cite>: <ref>CSSWM</ref></p>
+
+    <ul class="brief">
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-writing-modes/#direction">'direction'</dfn> property</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-writing-modes/#unicode-bidi">'unicode-bidi'</dfn> property</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-writing-modes/#propdef-writing-mode">'writing-mode'</dfn> property</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-writing-modes/#block-flow-direction">block flow direction</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-writing-modes/#block-axis">block axis</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-writing-modes/#inline-axis">inline axis</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-writing-modes/#block-size">block size</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-writing-modes/#inline-size">inline size</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-writing-modes/#block-start">block-start</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-writing-modes/#block-end">block-end</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-writing-modes/#inline-start">inline-start</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-writing-modes/#inline-end">inline-end</dfn>,
+              <dfn data-x-href="https://drafts.csswg.org/css-writing-modes/#line-left">line-left</dfn>, and
+              <dfn data-x-href="https://drafts.csswg.org/css-writing-modes/#line-right">line-right</dfn> concepts</li>
+    </ul>
+
+    <p>The following features are defined in <cite>CSS Basic User Interface</cite>:
+    <ref>CSSUI</ref></p>
+
+    <ul class="brief">
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-ui/#outline">'outline'</dfn> property</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-ui/#cursor">'cursor'</dfn> property</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-ui/#appearance-switching">'appearance'</dfn> property, its
+              <dfn data-x-href="https://drafts.csswg.org/css-ui/#typedef-appearance-compat-auto">&lt;compat-auto></dfn> non-terminal value type, its
+              <dfn data-x-href="https://drafts.csswg.org/css-ui/#valdef-appearance-textfield">'textfield'</dfn> value, and its
+              <dfn data-x-href="https://drafts.csswg.org/css-ui/#valdef-appearance-menulist-button">'menulist-button'</dfn> value.</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-ui/#field-sizing">'field-sizing'</dfn> property, and its
+              <dfn data-x-href="https://drafts.csswg.org/css-ui/#valdef-field-sizing-content" data-x="field-sizing-content">'content'</dfn> value.</li>
+      <li>The concept <dfn data-x-href="https://drafts.csswg.org/css-ui/#widget">widget</dfn></li>
+      <li>The concept <dfn data-x-href="https://drafts.csswg.org/css-ui/#native-appearance">native appearance</dfn></li>
+      <li>The concept <dfn data-x-href="https://drafts.csswg.org/css-ui/#primitive-appearance">primitive appearance</dfn></li>
+      <li>The concept <dfn data-x-href="https://drafts.csswg.org/css-ui/#base-appearance">base appearance</dfn></li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-ui/#non-devolvable">non-devolvable widget</dfn> and
+              <dfn data-x-href="https://drafts.csswg.org/css-ui/#devolvable">devolvable widget</dfn> classification, and the related
+              <dfn data-x-href="https://drafts.csswg.org/css-ui/#devolved">devolved widget</dfn> state.</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-ui-4/#pointer-events-control">'pointer-events'</dfn> property</li>
+      <li>The <dfn data-x-href="https://drafts.csswg.org/css-ui-4/#content-selection">'user-select'</dfn> property</li>
+    </ul>
+
+    <p>The algorithm to <dfn
+    data-x-href="https://drafts.csswg.org/web-animations-1/#update-animations-and-send-events">update
+    animations and send events</dfn> is defined in <cite>Web Animations</cite>.
+    <ref>WEBANIMATIONS</ref></p>
+
+    <p>Implementations that support scripting must support the CSS Object Model. The following
+    features and terms are defined in the CSSOM specifications: <ref>CSSOM</ref>
+    <ref>CSSOMVIEW</ref>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://drafts.csswg.org/cssom-view/#the-screen-interface"><code>Screen</code></dfn> interface</li>
+     <li><dfn data-x-href="https://drafts.csswg.org/cssom/#the-linkstyle-interface"><code>LinkStyle</code></dfn> interface</li>
+     <li><dfn data-x-href="https://drafts.csswg.org/cssom/#the-cssstyledeclaration-interface"><code>CSSStyleDeclaration</code></dfn> interface</li>
+     <li><dfn data-x="dom-style" data-x-href="https://drafts.csswg.org/cssom/#dom-elementcssinlinestyle-style"><code>style</code></dfn> IDL attribute</li>
+     <li><dfn data-x="dom-CSSStyleDeclaration-cssText" data-x-href="https://drafts.csswg.org/cssom/#dom-cssstyledeclaration-csstext"><code>cssText</code></dfn> attribute of <code>CSSStyleDeclaration</code></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/cssom/#the-stylesheet-interface"><code>StyleSheet</code></dfn> interface</li>
+     <li><dfn data-x-href="https://drafts.csswg.org/cssom/#the-cssstylesheet-interface"><code>CSSStyleSheet</code></dfn> interface</li>
+     <li><dfn data-x-href="https://drafts.csswg.org/cssom/#create-a-css-style-sheet">create a CSS style sheet</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/cssom/#remove-a-css-style-sheet">remove a CSS style sheet</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/cssom/#associated-css-style-sheet">associated CSS style sheet</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/cssom/#create-a-constructed-cssstylesheet">create a constructed <code>CSSStyleSheet</code></dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/cssom/#synchronously-replace-the-rules-of-a-cssstylesheet">synchronously replace the rules of a <code>CSSStyleSheet</code></dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/cssom/#disable-a-css-style-sheet">disable a CSS style sheet</dfn></li>
+     <li>
+      <dfn data-x="CSS style sheet"
+      data-x-href="https://drafts.csswg.org/cssom/#css-style-sheet">CSS style sheets</dfn> and their
+      properties:
+      <ul class="brief">
+       <li><dfn data-x="concept-css-style-sheet-type" data-x-href="https://drafts.csswg.org/cssom/#concept-css-style-sheet-type">type</dfn></li>
+       <li><dfn data-x="concept-css-style-sheet-location" data-x-href="https://drafts.csswg.org/cssom/#concept-css-style-sheet-location">location</dfn></li>
+       <li><dfn data-x="concept-css-style-sheet-parent-CSS-style-sheet" data-x-href="https://drafts.csswg.org/cssom/#concept-css-style-sheet-parent-css-style-sheet">parent CSS style sheet</dfn></li>
+       <li><dfn data-x="concept-css-style-sheet-owner-node" data-x-href="https://drafts.csswg.org/cssom/#concept-css-style-sheet-owner-node">owner node</dfn></li>
+       <li><dfn data-x="concept-css-style-sheet-owner-CSS-rule" data-x-href="https://drafts.csswg.org/cssom/#concept-css-style-sheet-owner-css-rule">owner CSS rule</dfn></li>
+       <li><dfn data-x="concept-css-style-sheet-media" data-x-href="https://drafts.csswg.org/cssom/#concept-css-style-sheet-media">media</dfn></li>
+       <li><dfn data-x="concept-css-style-sheet-title" data-x-href="https://drafts.csswg.org/cssom/#concept-css-style-sheet-title">title</dfn></li>
+       <li><dfn data-x="concept-css-style-sheet-alternate-flag" data-x-href="https://drafts.csswg.org/cssom/#concept-css-style-sheet-alternate-flag">alternate flag</dfn></li>
+       <li><dfn data-x="concept-css-style-sheet-disabled-flag" data-x-href="https://drafts.csswg.org/cssom/#concept-css-style-sheet-disabled-flag">disabled flag</dfn></li>
+       <li><dfn data-x="concept-css-style-sheet-CSS-rules" data-x-href="https://drafts.csswg.org/cssom/#concept-css-style-sheet-css-rules">CSS rules</dfn></li>
+       <li><dfn data-x="concept-css-style-sheet-origin-clean-flag" data-x-href="https://drafts.csswg.org/cssom/#concept-css-style-sheet-origin-clean-flag">origin-clean flag</dfn></li>
+      </ul>
+     </li>
+     <li><dfn data-x-href="https://drafts.csswg.org/cssom/#css-style-sheet-set">CSS style sheet set</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/cssom/#css-style-sheet-set-name">CSS style sheet set name</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/cssom/#preferred-css-style-sheet-set-name">preferred CSS style sheet set name</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/cssom/#change-the-preferred-css-style-sheet-set-name">change the preferred CSS style sheet set name</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/cssom/#serialize-a-css-value">Serializing a CSS value</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/cssom-view/#document-run-the-resize-steps">run the resize steps</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/cssom-view/#document-run-the-scroll-steps">run the scroll steps</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/cssom-view/#evaluate-media-queries-and-report-changes">evaluate media queries and report changes</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/cssom-view/#scroll-a-target-into-view">Scroll a target into view</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/cssom-view/#scroll-to-the-beginning-of-the-document">Scroll to the beginning of the document</dfn></li>
+     <li>The <dfn data-x="event-resize" data-x-href="https://drafts.csswg.org/cssom-view/#eventdef-window-resize"><code>resize</code></dfn> event</li>
+     <li>The <dfn data-x="event-scroll" data-x-href="https://drafts.csswg.org/cssom-view/#eventdef-document-scroll"><code>scroll</code></dfn> event</li>
+     <li>The <dfn data-x="event-scrollend" data-x-href="https://drafts.csswg.org/cssom-view/#eventdef-document-scrollend"><code>scrollend</code></dfn> event</li>
+     <li><dfn data-x-href="https://drafts.csswg.org/cssom-view/#set-up-browsing-context-features">set up browsing context features</dfn></li>
+     <li>The <dfn data-x="mouseevent-clientx" data-x-href="https://drafts.csswg.org/cssom-view/#dom-mouseevent-clientx">clientX</dfn> and <dfn data-x="mouseevent-clienty" data-x-href="https://drafts.csswg.org/cssom-view/#dom-mouseevent-clienty">clientY</dfn> extension attributes of the <span>MouseEvent</span> interface</li>
+    </ul>
+
+    <p>The following features and terms are defined in <cite>CSS Syntax</cite>:
+    <ref>CSSSYNTAX</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://drafts.csswg.org/css-syntax/#w3c-conformance-classes">conformant style sheet</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-syntax/#parse-a-list-of-component-values">parse a list of component values</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-syntax/#parse-a-comma-separated-list-of-component-values">parse a comma-separated list of component values</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-syntax/#component-value">component value</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-syntax/#environment-encoding">environment encoding</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-syntax/#typedef-whitespace-token">&lt;whitespace-token></dfn></li>
+    </ul>
+
+    <p>The following terms are defined in <cite>Selectors</cite>: <ref>SELECTORS</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://drafts.csswg.org/selectors/#typedef-selector-list"><code>&lt;selector-list></code></dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/selectors/#parse-a-selector">parse a selector</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/selectors/#selector">selector</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/selectors/#type-selector">type selector</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/selectors/#attribute-selector">attribute selector</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/selectors/#pseudo-class">pseudo-class</dfn></li>
+     <li><dfn
+     data-x-href="https://drafts.csswg.org/selectors/#the-focus-visible-pseudo"><code>:focus-visible</code></dfn>
+     pseudo-class</li>
+     <li><dfn data-x-href="https://drafts.csswg.org/selectors/#indicate-focus">indicate focus</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/selectors/#pseudo-element">pseudo-element</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/selectors/#match-a-selector-against-an-element">match a selector against an element</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/selectors/#scoping-root">scoping root</dfn></li>
+    </ul>
+
+    <p>The following features are defined in <cite>CSS Values and Units</cite>:
+    <ref>CSSVALUES</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://drafts.csswg.org/css-values/#lengths">&lt;length></dfn></li>
+     <li>The <dfn data-x-href="https://drafts.csswg.org/css-values/#em">'em'</dfn> unit</li>
+     <li>The <dfn data-x-href="https://drafts.csswg.org/css-values/#ex">'ex'</dfn> unit</li>
+     <li>The <dfn data-x-href="https://drafts.csswg.org/css-values/#vw">'vw'</dfn> unit</li>
+     <li>The <dfn data-x-href="https://drafts.csswg.org/css-values/#in">'in'</dfn> unit</li>
+     <li>The <dfn data-x-href="https://drafts.csswg.org/css-values/#px">'px'</dfn> unit</li>
+     <li>The <dfn data-x-href="https://drafts.csswg.org/css-values/#pt">'pt'</dfn> unit</li>
+     <li>The <dfn data-x-href="https://drafts.csswg.org/css-values-5/#funcdef-attr">'attr()'</dfn> function</li>
+     <li>The <dfn data-x-href="https://drafts.csswg.org/css-values/#math-function">math functions</dfn></li>
+    </ul>
+
+    <p>The following features are defined in <cite>CSS View Transitions</cite>:
+    <ref>CSSVIEWTRANSITIONS</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://drafts.csswg.org/css-view-transitions/#perform-pending-transition-operations">perform pending transition operations</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-view-transitions/#document-rendering-suppression-for-view-transitions">rendering suppression for view transitions</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-view-transitions/#activate-view-transition">activate view transition</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-view-transitions/#viewtransition"><code>ViewTransition</code></dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-view-transitions/#view-transition-page-visibility-change-steps">view transition page visibility change steps</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-view-transitions-2/#resolve-inbound-cross-document-view-transition">resolving inbound cross-document view-transition</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-view-transitions-2/#setup-cross-document-view-transition">setting up a cross-document view-transition</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-view-transitions-2/#can-navigation-trigger-a-cross-document-view-transition">can navigation trigger a cross-document view-transition?</dfn>
+    </ul>
+
+    <p>The term <dfn data-x="css-styling-attribute"
+    data-x-href="https://drafts.csswg.org/css-style-attr/#style-attribute">style attribute</dfn> is
+    defined in <cite>CSS Style Attributes</cite>. <ref>CSSATTR</ref></p>
+
+    <p>The following terms are defined in the <cite>CSS Cascading and Inheritance</cite>:
+    <ref>CSSCASCADE</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://drafts.csswg.org/css-cascade/#cascaded-value">cascaded value</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-cascade/#specified-value">specified value</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-cascade/#computed-value">computed value</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-cascade/#used-value">used value</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-cascade/#origin">cascade origin</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-cascade/#cascade-origin-author">Author Origin</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-cascade/#cascade-origin-user">User Origin</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-cascade/#cascade-origin-ua">User Agent Origin</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-cascade/#cascade-origin-animation">Animation Origin</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-cascade/#cascade-origin-transition">Transition Origin</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-cascade/#initial-value">initial value</dfn></li>
+    </ul>
+
+    <p>The <code>CanvasRenderingContext2D</code> object's use of fonts depends on the features
+    described in the CSS <cite>Fonts</cite> and <cite>Font Loading</cite> specifications, including
+    in particular <dfn><code>FontFace</code></dfn> objects and the <dfn
+    data-x-href="https://drafts.csswg.org/css-font-loading/#font-source">font source</dfn> concept.
+    <ref>CSSFONTS</ref> <ref>CSSFONTLOAD</ref></p>
+
+    <p>The following interfaces and terms are defined in <cite>Geometry Interfaces</cite>:
+    <ref>GEOMETRY</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://drafts.csswg.org/geometry/#dommatrix"><code>DOMMatrix</code></dfn> interface, and associated
+         <dfn data-x-href="https://drafts.csswg.org/geometry/#matrix-m11-element">m11 element</dfn>,
+         <dfn data-x-href="https://drafts.csswg.org/geometry/#matrix-m12-element">m12 element</dfn>,
+         <dfn data-x-href="https://drafts.csswg.org/geometry/#matrix-m21-element">m21 element</dfn>,
+         <dfn data-x-href="https://drafts.csswg.org/geometry/#matrix-m22-element">m22 element</dfn>,
+         <dfn data-x-href="https://drafts.csswg.org/geometry/#matrix-m41-element">m41 element</dfn>, and
+         <dfn data-x-href="https://drafts.csswg.org/geometry/#matrix-m42-element">m42 element</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/geometry/#dictdef-dommatrix2dinit"><code>DOMMatrix2DInit</code></dfn> and
+         <dfn data-x-href="https://drafts.csswg.org/geometry/#dictdef-dommatrixinit"><code>DOMMatrixInit</code></dfn> dictionaries</li>
+     <li>The <dfn data-x-href="https://drafts.csswg.org/geometry/#create-a-dommatrix-from-the-dictionary">create a <code>DOMMatrix</code> from a dictionary</dfn>
+         and <dfn data-x-href="https://drafts.csswg.org/geometry/#create-a-dommatrix-from-the-2d-dictionary">create a <code>DOMMatrix</code> from a 2D dictionary</dfn>
+         algorithms for <code>DOMMatrix2DInit</code> or <code>DOMMatrixInit</code></li>
+
+     <li>The <dfn data-x-href="https://drafts.csswg.org/geometry/#dictdef-dompointinit"><code>DOMPointInit</code></dfn> dictionary, and associated
+         <dfn data-x="DOMPointInit-x" data-x-href="https://drafts.csswg.org/geometry/#dom-dompointinit-x">x</dfn> and
+         <dfn data-x="DOMPointInit-y" data-x-href="https://drafts.csswg.org/geometry/#dom-dompointinit-y">y</dfn> members</li>
+      <li><dfn data-x-href="https://drafts.csswg.org/geometry/#matrix-multiply">Matrix multiplication</dfn></li>
+    </ul>
+
+    <p>The following terms are defined in the <cite>CSS Scoping</cite>: <ref>CSSSCOPING</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://drafts.csswg.org/css-scoping/#flat-tree">flat tree</dfn></li>
+    </ul>
+
+    <p>The following terms and features are defined in <cite>CSS Color Adjustment</cite>:
+    <ref>CSSCOLORADJUST</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://drafts.csswg.org/css-color-adjust/#color-scheme-prop">'color-scheme'</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-color-adjust/#pages-supported-color-schemes">page's supported color-schemes</dfn></li>
+    </ul>
+
+    <p>The following terms are defined in <cite>CSS Pseudo-Elements</cite>: <ref>CSSPSEUDO</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://drafts.csswg.org/css-pseudo/#details-content-pseudo">'::details-content'</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-pseudo/#file-selector-button-pseudo">'::file-selector-button'</dfn></li>
+    </ul>
+
+    <p>The following terms are defined in <cite>CSS Containment</cite>: <ref>CSSCONTAIN</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://drafts.csswg.org/css-contain/#skips-its-contents">skips its contents</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-contain/#relevant-to-the-user">relevant to the user</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-contain/#proximity-to-the-viewport">proximity to the viewport</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-contain/#containment-layout">layout containment</dfn></li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-contain/#content-visibility">'content-visibility'</dfn> property</li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-contain/#propdef-content-visibility" data-x="content-visibility-auto">'auto'</dfn> value for <span>'content-visibility'</span></li>
+    </ul>
+
+    <p>The following terms are defined in <cite>CSS Anchor Positioning</cite>: <ref>CSSANCHOR</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://drafts.csswg.org/css-anchor-position/#implicit-anchor-element">implicit anchor element</dfn></li>
+    </ul>
+   </dd>
+
+

@@ -1,0 +1,228 @@
+WHATWG HTML — section navigation-api/the-navigationhistoryentry-interface — The <code>NavigationHistoryEntry</code> interface
+
+  <h5>The <code>NavigationHistoryEntry</code> interface</h5>
+
+  <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>NavigationHistoryEntry</dfn> : <span>EventTarget</span> {
+  readonly attribute USVString? <span data-x="dom-NavigationHistoryEntry-url">url</span>;
+  readonly attribute DOMString <span data-x="dom-NavigationHistoryEntry-key">key</span>;
+  readonly attribute DOMString <span data-x="dom-NavigationHistoryEntry-id">id</span>;
+  readonly attribute long long <span data-x="dom-NavigationHistoryEntry-index">index</span>;
+  readonly attribute boolean <span data-x="dom-NavigationHistoryEntry-sameDocument">sameDocument</span>;
+
+  any <span data-x="dom-NavigationHistoryEntry-getState">getState</span>();
+
+  attribute <span>EventHandler</span> <span data-x="handler-NavigationHistoryEntry-ondispose">ondispose</span>;
+};</code></pre>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>entry</var>.<span subdfn data-x="dom-NavigationHistoryEntry-url">url</span></code></dt>
+   <dd>
+    <p>The URL of this navigation history entry.</p>
+
+    <p>This can return null if the entry corresponds to a different <code>Document</code> than the
+    current one (i.e., if <code data-x="dom-NavigationHistoryEntry-sameDocument">sameDocument</code>
+    is false), and that <code>Document</code> was fetched with a <span>referrer policy</span> of
+    "<code data-x="">no-referrer</code>" or "<code data-x="">origin</code>", since that indicates
+    the <code>Document</code> in question is hiding its URL even from other same-origin pages.</p>
+   </dd>
+
+   <dt><code data-x=""><var>entry</var>.<span subdfn data-x="dom-NavigationHistoryEntry-key">key</span></code></dt>
+   <dd>
+    <p>A user agent-generated random UUID string representing this navigation history entry's place
+    in the navigation history list. This value will be reused by other
+    <code>NavigationHistoryEntry</code> instances that replace this one due to "<code
+    data-x="dom-NavigationType-replace">replace</code>" navigations, and will survive reloads and
+    session restores.</p>
+
+    <p>This is useful for navigating back to this entry in the navigation history list, using <code
+    data-x="dom-Navigation-traverseTo">navigation.traverseTo(key)</code>.</p>
+   </dd>
+
+   <dt><code data-x=""><var>entry</var>.<span subdfn data-x="dom-NavigationHistoryEntry-id">id</span></code></dt>
+   <dd>
+    <p>A user agent-generated random UUID string representing this specific navigation history
+    entry. This value will <em>not</em> be reused by other <code>NavigationHistoryEntry</code>
+    instances. This value will survive reloads and session restores.</p>
+
+    <p>This is useful for associating data with this navigation history entry using other storage
+    APIs.</p>
+   </dd>
+
+   <dt><code data-x=""><var>entry</var>.<span subdfn data-x="dom-NavigationHistoryEntry-index">index</span></code></dt>
+   <dd><p>The index of this <code>NavigationHistoryEntry</code> within <code
+   data-x="dom-Navigation-entries">navigation.entries()</code>, or &minus;1 if the entry is not in
+   the navigation history entry list.</p></dd>
+
+   <dt><code data-x=""><var>entry</var>.<span subdfn data-x="dom-NavigationHistoryEntry-sameDocument">sameDocument</span></code></dt>
+   <dd><p>Indicates whether or not this navigation history entry is for the same
+   <code>Document</code> as the current one, or not. This will be true, for example, when the entry
+   represents a fragment navigation or single-page app navigation.</p></dd>
+
+   <dt><code data-x=""><var>entry</var>.<span subdfn data-x="dom-NavigationHistoryEntry-getState">getState</span>()</code></dt>
+   <dd>
+    <p>Returns the <span data-x="StructuredDeserialize">deserialization</span> of the state stored
+    in this entry, which was added to the entry using <code
+    data-x="dom-Navigation-navigate">navigation.navigate()</code> or <code
+    data-x="dom-Navigation-updateCurrentEntry">navigation.updateCurrentEntry()</code>. This state
+    survives reloads and session restores.</p>
+
+    <p>Note that in general, unless the state value is a primitive, <code class="js"
+    data-x="">entry.getState() !== entry.getState()</code>, since a fresh deserialization is
+    returned each time.</p>
+
+    <p>This state is unrelated to the classic history API's <code
+    data-x="dom-history-state">history.state</code>.</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <p>Each <code>NavigationHistoryEntry</code> has an associated <dfn data-x="nhe-she">session
+  history entry</dfn>, which is a <span>session history entry</span>.</p>
+
+  <div algorithm>
+  <p>The <dfn data-x="concept-NavigationHistoryEntry-key">key</dfn> of a
+  <code>NavigationHistoryEntry</code> <var>nhe</var> is given by the return value of the following
+  algorithm:</p>
+
+  <ol>
+   <li><p>If <var>nhe</var>'s <span>relevant global object</span>'s <span
+   data-x="concept-document-window">associated <code>Document</code></span> is not <span>fully
+   active</span>, then return the empty string.</p></li>
+
+   <li><p>Return <var>nhe</var>'s <span data-x="nhe-she">session history entry</span>'s <span
+   data-x="she-navigation-api-key">navigation API key</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn data-x="concept-NavigationHistoryEntry-id">ID</dfn> of a
+  <code>NavigationHistoryEntry</code> <var>nhe</var> is given by the return value of the following
+  algorithm:</p>
+
+  <ol>
+   <li><p>If <var>nhe</var>'s <span>relevant global object</span>'s <span
+   data-x="concept-document-window">associated <code>Document</code></span> is not <span>fully
+   active</span>, then return the empty string.</p></li>
+
+   <li><p>Return <var>nhe</var>'s <span data-x="nhe-she">session history entry</span>'s <span
+   data-x="she-navigation-api-id">navigation API ID</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn data-x="concept-NavigationHistoryEntry-index">index</dfn> of a
+  <code>NavigationHistoryEntry</code> <var>nhe</var> is given by the return value of the following
+  algorithm:</p>
+
+  <ol>
+   <li><p>If <var>nhe</var>'s <span>relevant global object</span>'s <span
+   data-x="concept-document-window">associated <code>Document</code></span> is not <span>fully
+   active</span>, then return &minus;1.</p></li>
+
+   <li><p>Return the result of <span>getting the navigation API entry index</span> of
+   <span>this</span>'s <span data-x="nhe-she">session history entry</span> within
+   <span>this</span>'s <span>relevant global object</span>'s <span
+   data-x="window-navigation-api">navigation API</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="NavigationHistoryEntry"><code
+  data-x="dom-NavigationHistoryEntry-url">url</code></dfn> getter steps are:</p>
+
+  <ol>
+   <li><p>Let <var>document</var> be <span>this</span>'s <span>relevant global object</span>'s <span
+   data-x="concept-document-window">associated <code>Document</code></span>.</p></li>
+
+   <li><p>If <var>document</var> is not <span>fully active</span>, then return the empty
+   string.</p></li>
+
+   <li><p>Let <var>she</var> be <span>this</span>'s <span data-x="nhe-she">session history
+   entry</span>.</p></li>
+
+   <li><p>If <var>she</var>'s <span data-x="she-document">document</span> does not equal
+   <var>document</var>, and <var>she</var>'s <span data-x="she-document-state">document
+   state</span>'s <span data-x="document-state-request-referrer-policy">request referrer
+   policy</span> is "<code data-x="">no-referrer</code>" or "<code data-x="">origin</code>", then
+   return null.</p></li>
+
+   <li><p>Return <var>she</var>'s <span data-x="she-url">URL</span>, <span
+   data-x="concept-url-serializer">serialized</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="NavigationHistoryEntry"><code
+  data-x="dom-NavigationHistoryEntry-key">key</code></dfn> getter steps are to return
+  <span>this</span>'s <span data-x="concept-NavigationHistoryEntry-key">key</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="NavigationHistoryEntry"><code
+  data-x="dom-NavigationHistoryEntry-id">id</code></dfn> getter steps are to return
+  <span>this</span>'s <span data-x="concept-NavigationHistoryEntry-id">ID</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="NavigationHistoryEntry"><code
+  data-x="dom-NavigationHistoryEntry-index">index</code></dfn> getter steps are to return
+  <span>this</span>'s <span data-x="concept-NavigationHistoryEntry-index">index</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="NavigationHistoryEntry"><code
+  data-x="dom-NavigationHistoryEntry-sameDocument">sameDocument</code></dfn> getter steps are:</p>
+
+  <ol>
+   <li><p>Let <var>document</var> be <span>this</span>'s <span>relevant global object</span>'s <span
+   data-x="concept-document-window">associated <code>Document</code></span>.</p></li>
+
+   <li><p>If <var>document</var> is not <span>fully active</span>, then return false.</p></li>
+
+   <li><p>Return true if <span>this</span>'s <span data-x="nhe-she">session history entry</span>'s
+   <span data-x="she-document">document</span> equals <var>document</var>, and false
+   otherwise.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="NavigationHistoryEntry"><code
+  data-x="dom-NavigationHistoryEntry-getState">getState()</code></dfn> method steps are:</p>
+
+  <ol>
+   <li><p>If <span>this</span>'s <span>relevant global object</span>'s <span
+   data-x="concept-document-window">associated <code>Document</code></span> is not <span>fully
+   active</span>, then return undefined.</p></li>
+
+   <li>
+    <p>Return <span>StructuredDeserialize</span>(<span>this</span>'s <span data-x="nhe-she">session
+    history entry</span>'s <span data-x="she-navigation-api-state">navigation API state</span>).
+    Rethrow any exceptions.</p>
+
+    <p class="note">This can in theory throw an exception, if attempting to deserialize a large
+    <code data-x="idl-ArrayBuffer">ArrayBuffer</code> when not enough memory is available.</p>
+   </li>
+  </ol>
+  </div>
+
+  </div>
+
+  <p>The following are the <span>event handlers</span> (and their corresponding <span data-x="event
+  handler event type">event handler event types</span>) <span w-nodev>that must be</span> supported,
+  as <span>event handler IDL attributes</span>, by all objects implementing the
+  <code>NavigationHistoryEntry</code> interface:</p>
+
+  <table>
+   <thead>
+    <tr>
+     <th><span data-x="event handlers">Event handler</span>
+     <th><span>Event handler event type</span>
+   <tbody>
+    <tr>
+     <td><dfn attribute for="NavigationHistoryEntry"><code data-x="handler-NavigationHistoryEntry-ondispose">ondispose</code></dfn>
+     <td><code data-x="event-dispose">dispose</code>
+  </table>
+
+

@@ -1,0 +1,122 @@
+WHATWG HTML — section autocorrection — Autocorrection
+
+  <h4>Autocorrection</h4>
+
+  <p>Some methods of entering text assist users by automatically correcting misspelled words while
+  typing, a process also known as autocorrection. User agents can support autocorrection of editable
+  text, either in form controls (such as the value of <code>textarea</code> elements), or in
+  elements in an <span>editing host</span> (e.g., using <code
+  data-x="attr-contenteditable">contenteditable</code>). Autocorrection may be accompanied by user
+  interfaces indicating that text is about to be autocorrected or has been autocorrected, and is
+  commonly performed when inserting punctuation characters, spaces, or new paragraphs after
+  misspelled words. The <code data-x="attr-autocorrect">autocorrect</code> attribute allows authors
+  to control such behavior.</p>
+
+  <p>The <code data-x="attr-autocorrect">autocorrect</code> attribute can be used on an editing host
+  to control autocorrection behavior for the hosted editable region, on an <code>input</code> or
+  <code>textarea</code> element to control the behavior when inserting text into that element, or on
+  a <code>form</code> element to control the default behavior for all <span
+  data-x="category-autocapitalize-and-autocorrect">autocapitalize-and-autocorrect inheriting
+  elements</span> associated with the <code>form</code> element.</p>
+
+  <p>The <code data-x="attr-autocorrect">autocorrect</code> attribute never causes autocorrection to
+  be enabled for <code>input</code> elements whose <code data-x="attr-input-type">type</code>
+  attribute is in one of the <span data-x="attr-input-type-url">URL</span>, <span
+  data-x="attr-input-type-email">Email</span>, or <span
+  data-x="attr-input-type-password">Password</span> states.<span w-nodev> (This behavior is included
+  in the <span>used autocorrection state</span> algorithm below.)</span></p>
+
+  <p>The <dfn element-attr for="html-global"><code
+  data-x="attr-autocorrect">autocorrect</code></dfn> attribute is an enumerated attribute with the
+  following keywords and states:</p>
+
+  <table>
+   <thead>
+    <tr>
+     <th>Keyword
+     <th>State
+     <th>Brief description
+   <tbody>
+    <tr>
+     <td><dfn attr-value for="html-global/autocorrect"><code
+     data-x="attr-autocorrect-on">on</code></dfn>
+     <td><dfn data-x="concept-autocorrection-on">On</dfn>
+     <td>The user agent is permitted to automatically correct spelling errors while the user types.
+     Whether spelling is automatically corrected while typing left is for the user agent to decide,
+     and may depend on the element as well as the user's preferences.
+    <tr>
+     <td><dfn attr-value for="html-global/autocorrect"><code data-x="attr-autocorrect-off">off</code></dfn>
+     <td><dfn data-x="concept-autocorrection-off">Off</dfn>
+     <td>The user agent is not allowed to automatically correct spelling while the user types.
+  </table>
+
+  <div algorithm>
+  <p>The attribute's <i data-x="invalid value default">invalid value default</i>, <i data-x="missing
+  value default">missing value default</i>, and <i data-x="empty value default">empty value
+  default</i> are all the <span data-x="concept-autocorrection-on">On</span> state.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLElement"><code data-x="dom-autocorrect">autocorrect</code></dfn>
+  getter steps are: return true if the element's <span>used autocorrection state</span> is <span
+  data-x="concept-autocorrection-on">On</span> and false if the element's <span>used autocorrection
+  state</span> is <span data-x="concept-autocorrection-off">Off</span>. The setter steps are: if the
+  given value is true, then the element's <code data-x="attr-autocorrect">autocorrect</code>
+  attribute must be set to "<code data-x="">on</code>"; otherwise it must be set to "<code
+  data-x="">off</code>".</p>
+  </div>
+
+  <div algorithm>
+  <p>To compute the <dfn>used autocorrection state</dfn> of an element <var>element</var>, run these
+  steps:</p>
+
+  <ol>
+   <li><p>If <var>element</var> is an <code>input</code> element whose <code
+   data-x="attr-input-type">type</code> attribute is in one of the <span
+   data-x="attr-input-type-url">URL</span>, <span data-x="attr-input-type-email">Email</span>, or
+   <span data-x="attr-input-type-password">Password</span> states, then return <span
+   data-x="concept-autocorrection-off">Off</span>.</p></li>
+
+   <li><p>If the <code data-x="attr-autocorrect">autocorrect</code> content attribute is present on
+   <var>element</var>, then return the state of the attribute.</p></li>
+
+   <li><p>If <var>element</var> is an <span
+   data-x="category-autocapitalize-and-autocorrect">autocapitalize-and-autocorrect inheriting
+   element</span> and has a non-null <span>form owner</span>, then return the state of
+   <var>element</var>'s <span>form owner</span>'s <code data-x="attr-autocorrect">autocorrect</code>
+   attribute.</p></li>
+
+   <li><p>Return <span data-x="concept-autocorrection-on">On</span>.</p></li>
+  </ol>
+  </div>
+
+  <dl class="domintro">
+   <dt><var>element</var> . <code subdfn data-x="dom-autocorrect">autocorrect</code></dt>
+   <dd><p>Returns the autocorrection behavior of the element. Note that for <span
+   data-x="category-autocapitalize-and-autocorrect">autocapitalize-and-autocorrect inheriting
+   elements</span> that inherit their state from a <code>form</code> element, this will return the
+   autocorrection behavior of the <code>form</code> element, but for an element in an editable
+   region, this will not return the autocorrection behavior of the <span>editing host</span> (unless
+   this element is, in fact, the <span>editing host</span>).</p></dd>
+
+   <dt><var>element</var> . <code data-x="dom-autocorrect">autocorrect</code> =
+   <var>value</var></dt>
+   <dd><p>Updates the <code data-x="attr-autocorrect">autocorrect</code> content attribute (and
+   thereby changes the autocorrection behavior of the element).</p></dd>
+  </dl>
+
+  <div class="example">
+   <p>The <code>input</code> element in the following example would not allow autocorrection, since
+   it does not have an <code data-x="attr-autocorrect">autocorrect</code> content attribute and
+   therefore inherits from the <code>form</code> element, which has an attribute of "<code
+   data-x="attr-autocorrect-off">off</code>". However, the <code>textarea</code> element would allow
+   autocorrection, since it has an <code data-x="attr-autocorrect">autocorrect</code> content
+   attribute with a value of "<code data-x="attr-autocorrect-on">on</code>".</p>
+
+   <pre><code class="html" data-x="">&lt;form autocorrect="off"&gt;
+ &lt;input type="search"&gt;
+ &lt;textarea autocorrect="on"&gt;&lt;/textarea&gt;
+&lt;/form&gt;</code></pre>
+  </div>
+
+

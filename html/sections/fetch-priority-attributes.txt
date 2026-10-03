@@ -1,0 +1,46 @@
+WHATWG HTML — section fetch-priority-attributes — Fetch priority attributes (+common-dom-interfaces)
+
+  <h4>Fetch priority attributes</h4>
+
+  <p>A <dfn>fetch priority attribute</dfn> is an <span>enumerated attribute</span> with the
+  following keywords and states:</p>
+
+  <table>
+   <thead>
+    <tr>
+     <th>Keyword
+     <th>State
+     <th>Brief description
+   <tbody>
+    <tr>
+     <td><dfn attr-value
+     for="img/fetchpriority,script/fetchpriority,link/fetchpriority"
+     data-x="attr-fetchpriority-high"><code>high</code></dfn>
+     <td><dfn data-x="attr-fetchpriority-high-state">High</dfn>
+     <td>Signals a high-priority <span data-x="concept-fetch">fetch</span> relative to other
+     resources with the same <span data-x="concept-request-destination">destination</span>.
+    <tr>
+     <td><dfn attr-value
+     for="img/fetchpriority,script/fetchpriority,link/fetchpriority"
+     data-x="attr-fetchpriority-low"><code>low</code></dfn>
+     <td><dfn data-x="attr-fetchpriority-low-state">Low</dfn>
+     <td>Signals a low-priority <span data-x="concept-fetch">fetch</span> relative to other
+     resources with the same <span data-x="concept-request-destination">destination</span>.
+    <tr>
+     <td><dfn attr-value
+     for="img/fetchpriority,script/fetchpriority,link/fetchpriority"
+     data-x="attr-fetchpriority-auto"><code>auto</code></dfn>
+     <td><dfn data-x="attr-fetchpriority-auto-state">Auto</dfn>
+     <td>Signals automatic determination of <span data-x="concept-fetch">fetch</span> priority
+     relative to other resources with the same <span
+     data-x="concept-request-destination">destination</span>.
+  </table>
+
+  <div algorithm>
+  <p>The attribute's <i data-x="missing value default">missing value default</i> and
+  <i data-x="invalid value default">invalid value default</i> are both the
+  <span data-x="attr-fetchpriority-auto-state">Auto</span> state.</p>
+  </div>
+
+  <h3 split-filename="common-dom-interfaces">Common DOM interfaces</h3>
+

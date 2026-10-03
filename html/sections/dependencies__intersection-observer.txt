@@ -1,0 +1,20 @@
+WHATWG HTML — section dependencies/intersection-observer — Intersection Observer
+
+   <dt>Intersection Observer</dt>
+
+   <dd>
+    <p>The following term is defined in <cite>Intersection Observer</cite>:
+    <ref>INTERSECTIONOBSERVER</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://w3c.github.io/IntersectionObserver/#run-the-update-intersection-observations-steps">run the update intersection observations steps</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/IntersectionObserver/#intersectionobserver"><code>IntersectionObserver</code></dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/IntersectionObserver/#dictdef-intersectionobserverinit"><code>IntersectionObserverInit</code></dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/IntersectionObserver/#dom-intersectionobserver-observe" data-x="dom-IntersectionObserver-observe"><code>observe</code></dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/IntersectionObserver/#dom-intersectionobserver-unobserve" data-x="dom-IntersectionObserver-unobserve"><code>unobserve</code></dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/IntersectionObserver/#dom-intersectionobserverentry-isintersecting" data-x="dom-IntersectionObserverEntry-isIntersecting"><code>isIntersecting</code></dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/IntersectionObserver/#dom-intersectionobserverentry-target" data-x="dom-IntersectionObserverEntry-target"><code>target</code></dfn></li>
+    </ul>
+   </dd>
+
+

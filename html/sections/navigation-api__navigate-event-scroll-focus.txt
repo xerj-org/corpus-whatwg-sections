@@ -1,0 +1,167 @@
+WHATWG HTML — section navigation-api/navigate-event-scroll-focus — Scroll and focus behavior
+
+  <h6 id="navigate-event-scroll-focus">Scroll and focus behavior</h6>
+
+  <p>By calling <code data-x="dom-NavigateEvent-intercept">navigateEvent.intercept()</code>, web
+  developers can suppress the normal scroll and focus behavior for same-document navigations,
+  instead invoking cross-document navigation-like behavior at a later time. The algorithms in this
+  section are called at those appropriate later points.</p>
+
+  <div algorithm>
+  <p>To <dfn data-x="NavigateEvent-finish">finish</dfn> a <code>NavigateEvent</code>
+  <var>event</var>, given a boolean <var>didFulfill</var>:</p>
+
+  <ol>
+   <li><p><span>Assert</span>: <var>event</var>'s <span
+   data-x="concept-NavigateEvent-interception-state">interception state</span> is not "<code
+   data-x="">finished</code>".</p></li>
+
+   <li>
+    <p>If <var>event</var>'s <span data-x="concept-NavigateEvent-interception-state">interception
+    state</span> is "<code data-x="">intercepted</code>":</p>
+
+    <ol>
+     <li><p><span>Assert</span>: <var>didFulfill</var> is false.</p></li>
+
+     <li>
+      <p><span>Assert</span>: <var>event</var>'s <span
+      data-x="concept-NavigateEvent-navigation-precommit-handler-list">navigation precommit handler
+      list</span> <span data-x="list is empty">is not empty</span>.</p>
+
+      <p class="note">Only precommit handlers can cancel a navigation before it is committed.</p>
+     </li>
+
+     <li><p>Set <var>event</var>'s <span
+     data-x="concept-NavigateEvent-interception-state">interception state</span> to "<code
+     data-x="">finished</code>".</p></li>
+
+     <li><p>Return.</p></li>
+    </ol>
+
+   <li><p>If <var>event</var>'s <span data-x="concept-NavigateEvent-interception-state">interception
+   state</span> is "<code data-x="">none</code>", then return.</p></li>
+
+   <li><p><span>Potentially reset the focus</span> given <var>event</var>.</p></li>
+
+   <li><p>If <var>didFulfill</var> is true, then <span>potentially process scroll behavior</span>
+   given <var>event</var>.</p></li>
+
+   <li><p>Set <var>event</var>'s <span
+   data-x="concept-NavigateEvent-interception-state">interception state</span> to "<code
+   data-x="">finished</code>".</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>potentially reset the focus</dfn> given a <code>NavigateEvent</code>
+  <var>event</var>:</p>
+
+  <ol>
+   <li><p><span>Assert</span>: <var>event</var>'s <span
+   data-x="concept-NavigateEvent-interception-state">interception state</span> is "<code
+   data-x="">committed</code>" or "<code data-x="">scrolled</code>".</p></li>
+
+   <li><p>Let <var>navigation</var> be <var>event</var>'s <span>relevant global object</span>'s
+   <span data-x="window-navigation-api">navigation API</span>.</p></li>
+
+   <li><p>Let <var>focusChanged</var> be <var>navigation</var>'s <span>focus changed during ongoing
+   navigation</span>.</p></li>
+
+   <li><p>Set <var>navigation</var>'s <span>focus changed during ongoing navigation</span> to
+   false.</p></li>
+
+   <li><p>If <var>focusChanged</var> is true, then return.</p></li>
+
+   <li>
+    <p>If <var>event</var>'s <span data-x="concept-NavigateEvent-focusReset">focus reset
+    behavior</span> is "<code data-x="dom-NavigationFocusReset-manual">manual</code>", then
+    return.</p>
+
+    <p class="note">If it was left as null, then we treat that as "<code
+    data-x="dom-NavigationFocusReset-after-transition">after-transition</code>", and continue
+    onward.</p>
+   </li>
+
+   <li><p>Let <var>document</var> be <var>event</var>'s <span>relevant global object</span>'s <span
+   data-x="concept-document-window">associated <code>Document</code></span>.</p></li>
+
+   <li><p>Let <var>focusTarget</var> be the <span>autofocus delegate</span> for
+   <var>document</var>.</p></li>
+
+   <li><p>If <var>focusTarget</var> is null, then set <var>focusTarget</var> to
+   <var>document</var>'s <span data-x="the body element">body element</span>.</p></li>
+
+   <li><p>If <var>focusTarget</var> is null, then set <var>focusTarget</var> to
+   <var>document</var>'s <span>document element</span>.</p></li>
+
+   <li><p>Run the <span>focusing steps</span> for <var>focusTarget</var>, with <var>document</var>'s
+   <span>viewport</span> as the <i>fallback target</i>.</p></li>
+
+   <li><p>Move the <span>sequential focus navigation starting point</span> to
+   <var>focusTarget</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>potentially process scroll behavior</dfn> given a <code>NavigateEvent</code>
+  <var>event</var>:</p>
+
+  <ol>
+   <li><p><span>Assert</span>: <var>event</var>'s <span
+   data-x="concept-NavigateEvent-interception-state">interception state</span> is "<code
+   data-x="">committed</code>" or "<code data-x="">scrolled</code>".</p></li>
+
+   <li><p>If <var>event</var>'s <span data-x="concept-NavigateEvent-interception-state">interception
+   state</span> is "<code data-x="">scrolled</code>", then return.</p></li>
+
+   <li>
+    <p>If <var>event</var>'s <span data-x="concept-NavigateEvent-scroll">scroll behavior</span> is
+    "<code data-x="dom-NavigationScrollBehavior-manual">manual</code>", then return.</p>
+
+    <p class="note">If it was left as null, then we treat that as "<code
+    data-x="dom-NavigationScrollBehavior-after-transition">after-transition</code>", and continue
+    onward.</p>
+   </li>
+
+   <li><p><span>Process scroll behavior</span> given <var>event</var>.</p>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>process scroll behavior</dfn> given a <code>NavigateEvent</code> <var>event</var>:</p>
+
+  <ol>
+   <li><p><span>Assert</span>: <var>event</var>'s <span
+   data-x="concept-NavigateEvent-interception-state">interception state</span> is "<code
+   data-x="">committed</code>".</p></li>
+
+   <li><p>Set <var>event</var>'s <span
+   data-x="concept-NavigateEvent-interception-state">interception state</span> to "<code
+   data-x="">scrolled</code>".</p></li>
+
+   <li><p>If <var>event</var>'s <code
+   data-x="dom-NavigateEvent-navigationType">navigationType</code> was initialized to "<code
+   data-x="dom-NavigationType-traverse">traverse</code>" or "<code
+   data-x="dom-NavigationType-reload">reload</code>", then <span>restore scroll position data</span>
+   given <var>event</var>'s <span>relevant global object</span>'s <span data-x="window
+   navigable">navigable</span>'s <span data-x="nav-active-history-entry">active session history
+   entry</span>.</p></li>
+
+   <li>
+    <p>Otherwise:</p>
+
+    <ol>
+     <li><p>Let <var>document</var> be <var>event</var>'s <span>relevant global object</span>'s
+     <span data-x="concept-document-window">associated <code>Document</code></span>.</p></li>
+
+     <li><p>If <var>document</var>'s <span>indicated part</span> is null, then <span>scroll to the
+     beginning of the document</span> given <var>document</var>. <ref>CSSOMVIEW</ref></p></li>
+
+     <li><p>Otherwise, <span>scroll to the fragment</span> given <var>document</var>.</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  </div>
+

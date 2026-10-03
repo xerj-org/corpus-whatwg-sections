@@ -1,0 +1,70 @@
+WHATWG HTML — section parsing-xhtml-fragments — Parsing XML fragments
+
+  <h3 id="parsing-xhtml-fragments">Parsing XML fragments</h3>
+
+  <div algorithm>
+  <p>The <dfn>XML fragment parsing algorithm</dfn> given an <code>Element</code> or
+  <code>DocumentFragment</code> node <var>target</var> and a string <var>input</var>, runs the
+  following steps. They return a <code>DocumentFragment</code>.</p>
+
+  <ol>
+   <li><p>Let <var data-x="concept-frag-parse-context">context</var> be <var>target</var> if
+   <var>target</var> is an <code>Element</code>; otherwise <var>target</var>'s <span
+   data-x="concept-DocumentFragment-host">host</span>.</p></li>
+
+   <li><p><span>Assert</span>: <var data-x="concept-frag-parse-context">context</var> is
+   non-null.</p></li>
+
+   <li><p>Create a new <span>XML parser</span>.</p></li>
+
+   <li>
+    <p><span>Feed the parser</span> just created the string corresponding to the start tag of <var
+    data-x="concept-frag-parse-context">context</var>, declaring all the namespace prefixes that are
+    in scope on that element in the DOM, as well as declaring the default namespace (if any) that is
+    in scope on that element in the DOM.</p>
+
+    <p>A namespace prefix is in scope if the DOM <code data-x="">lookupNamespaceURI()</code> method
+    on the element would return a non-null value for that prefix.</p>
+
+    <p>The default namespace is the namespace for which the DOM <code
+    data-x="">isDefaultNamespace()</code> method on the element would return true.</p>
+
+    <p class="note">No <code data-x="">DOCTYPE</code> is passed to the parser, and therefore no
+    external subset is referenced, and therefore no entities will be recognized.</p>
+   </li>
+
+   <li><p><span>Feed the parser</span> just created the string <var>input</var>.</p></li>
+
+   <li><p><span>Feed the parser</span> just created the string corresponding to the end tag of <var
+   data-x="concept-frag-parse-context">context</var>.</p></li>
+
+   <li><p>If there is an XML well-formedness or XML namespace well-formedness error, then throw a
+   <span>"<code>SyntaxError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>If the <span>document element</span> of the resulting <code>Document</code> has any
+   sibling nodes, then throw a <span>"<code>SyntaxError</code>"</span>
+   <code>DOMException</code>.</p></li>
+   <!-- This is technically redundant, but apparently it has gone wrong in the past:
+        https://software.hixie.ch/utilities/js/live-dom-viewer/?saved=1443 -->
+
+   <li><p>Let <var>newChildren</var> be the resulting <code>Document</code> node's <span>document
+   element</span>'s <span
+   data-x="concept-tree-child">children</span>, in <span>tree order</span>.</p></li>
+
+   <li><p>Let <var>fragment</var> be the result of <span data-x="create a document fragment">creating
+   a document fragment</span> given <var>context</var>'s <span>node
+   document</span>.</p></li>
+
+   <li><p>For each <var>node</var> of <var>newChildren</var>, in <span>tree order</span>: <span
+   data-x="concept-node-append">append</span> <var>node</var> to <var>fragment</var>.</p></li>
+
+   <li><p>Return <var>fragment</var>.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+
+
+  <div w-nodev>
+

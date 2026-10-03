@@ -1,0 +1,130 @@
+WHATWG HTML — section dependencies/infra — Infra
+
+   <dt>Infra</dt>
+
+   <dd>
+    <p>The following terms are defined in <cite>Infra</cite>: <ref>INFRA</ref></p>
+
+    <ul class="brief">
+     <li>The general iteration terms <dfn data-x-href="https://infra.spec.whatwg.org/#iteration-while">while</dfn>,
+             <dfn data-x-href="https://infra.spec.whatwg.org/#iteration-continue">continue</dfn>, and
+             <dfn data-x-href="https://infra.spec.whatwg.org/#iteration-break">break</dfn>.</li>
+     <li><dfn data-x-href="https://infra.spec.whatwg.org/#assert">Assert</dfn></li>
+     <li><dfn data-x-href="https://infra.spec.whatwg.org/#implementation-defined">implementation-defined</dfn></li>
+     <li><dfn data-x-href="https://infra.spec.whatwg.org/#willful-violation">willful violation</dfn></li>
+     <li id="fingerprint"><span id="fingerprinting-vector"></span>
+     <!--INSERT TRACKING-->
+     <dfn data-x-href="https://infra.spec.whatwg.org/#tracking-vector">tracking vector</dfn></li>
+     <li><dfn data-x-href="https://infra.spec.whatwg.org/#code-point">code point</dfn> and its synonym
+         <dfn data-x-href="https://infra.spec.whatwg.org/#code-point">character</dfn></li>
+     <li><dfn data-x-href="https://infra.spec.whatwg.org/#surrogate">surrogate</dfn></li>
+     <li><dfn data-x-href="https://infra.spec.whatwg.org/#scalar-value">scalar value</dfn></li>
+     <li><dfn data-x-href="https://infra.spec.whatwg.org/#tuple">tuple</dfn></li>
+     <li><dfn data-x-href="https://infra.spec.whatwg.org/#noncharacter">noncharacter</dfn></li>
+     <li><dfn data-x-href="https://infra.spec.whatwg.org/#string">string</dfn>,
+         <dfn data-x-href="https://infra.spec.whatwg.org/#code-unit">code unit</dfn>,
+         <dfn data-x-href="https://infra.spec.whatwg.org/#code-unit-prefix">code unit prefix</dfn>,
+         <dfn data-x-href="https://infra.spec.whatwg.org/#code-unit-less-than">code unit less than</dfn>,
+         <dfn data-x-href="https://infra.spec.whatwg.org/#string-starts-with">starts with</dfn>,
+         <dfn data-x-href="https://infra.spec.whatwg.org/#string-ends-with">ends with</dfn>,
+         <dfn data-x-href="https://infra.spec.whatwg.org/#string-length">length</dfn>, and
+         <dfn data-x-href="https://infra.spec.whatwg.org/#string-code-point-length">code point length</dfn></li>
+     <li id="case-sensitive">The string equality operations <dfn data-x-href="https://infra.spec.whatwg.org/#string-is">is</dfn> and
+         <dfn data-x-href="https://infra.spec.whatwg.org/#string-is">identical to</dfn></li>
+     <li><dfn data-x-href="https://infra.spec.whatwg.org/#scalar-value-string">scalar value string</dfn></li>
+     <li><dfn data-x-href="https://infra.spec.whatwg.org/#javascript-string-convert">convert</dfn></li>
+     <li><dfn data-x-href="https://infra.spec.whatwg.org/#ascii-string">ASCII string</dfn></li>
+     <li><dfn data-x-href="https://infra.spec.whatwg.org/#ascii-tab-or-newline">ASCII tab or newline</dfn></li>
+     <li><dfn id="space-characters" data-x-href="https://infra.spec.whatwg.org/#ascii-whitespace">ASCII whitespace</dfn></li>
+     <li><dfn data-x-href="https://infra.spec.whatwg.org/#control">control</dfn></li>
+     <li><dfn data-x="ASCII digits" data-x-href="https://infra.spec.whatwg.org/#ascii-digit">ASCII digit</dfn></li>
+     <li><dfn id="uppercase-ascii-hex-digits" data-x-href="https://infra.spec.whatwg.org/#ascii-upper-hex-digit">ASCII upper hex digit</dfn></li>
+     <li><dfn id="lowercase-ascii-hex-digits" data-x-href="https://infra.spec.whatwg.org/#ascii-lower-hex-digit">ASCII lower hex digit</dfn></li>
+     <li><dfn data-x="ASCII hex digits" data-x-href="https://infra.spec.whatwg.org/#ascii-hex-digit">ASCII hex digit</dfn></li>
+     <li><dfn id="uppercase-ascii-letters" data-x-href="https://infra.spec.whatwg.org/#ascii-upper-alpha">ASCII upper alpha</dfn></li>
+     <li><dfn id="lowercase-ascii-letters" data-x-href="https://infra.spec.whatwg.org/#ascii-lower-alpha">ASCII lower alpha</dfn></li>
+     <li><dfn id="ascii-letters" data-x-href="https://infra.spec.whatwg.org/#ascii-alpha">ASCII alpha</dfn></li>
+     <li><dfn id="alphanumeric-ascii-characters" data-x-href="https://infra.spec.whatwg.org/#ascii-alphanumeric">ASCII alphanumeric</dfn></li>
+     <li><dfn data-x-href="https://infra.spec.whatwg.org/#isomorphic-decode">isomorphic decode</dfn></li>
+     <li><dfn data-x-href="https://infra.spec.whatwg.org/#isomorphic-encode">isomorphic encode</dfn></li>
+     <li><dfn data-x="converted to ASCII lowercase" data-x-href="https://infra.spec.whatwg.org/#ascii-lowercase">ASCII lowercase</dfn></li>
+     <li><dfn data-x="converted to ASCII uppercase" data-x-href="https://infra.spec.whatwg.org/#ascii-uppercase">ASCII uppercase</dfn></li>
+     <li><dfn data-x-href="https://infra.spec.whatwg.org/#ascii-case-insensitive">ASCII case-insensitive</dfn></li>
+     <li><dfn data-x-href="https://infra.spec.whatwg.org/#strip-newlines">strip newlines</dfn></li>
+     <li><dfn data-x-href="https://infra.spec.whatwg.org/#normalize-newlines">normalize newlines</dfn></li>
+     <li><dfn data-x-href="https://infra.spec.whatwg.org/#strip-leading-and-trailing-ascii-whitespace">strip leading and trailing ASCII whitespace</dfn></li>
+     <li><dfn data-x-href="https://infra.spec.whatwg.org/#strip-and-collapse-ascii-whitespace">strip and collapse ASCII whitespace</dfn></li>
+     <li><dfn id="split-a-string-on-spaces" data-x-href="https://infra.spec.whatwg.org/#split-on-ascii-whitespace">split a string on ASCII whitespace</dfn></li>
+     <li><dfn data-x-href="https://infra.spec.whatwg.org/#split-on-commas">split a string on commas</dfn></li>
+     <li><dfn data-x-href="https://infra.spec.whatwg.org/#collect-a-sequence-of-code-points">collect a sequence of code points</dfn> and its associated
+         <dfn data-x-href="https://infra.spec.whatwg.org/#string-position-variable">position variable</dfn></li>
+     <li><dfn data-x-href="https://infra.spec.whatwg.org/#skip-ascii-whitespace">skip ASCII whitespace</dfn></li>
+     <li>The <dfn data-x-href="https://infra.spec.whatwg.org/#ordered-map">ordered map</dfn> data structure and the associated definitions for
+             <dfn data-x="map key" data-x-href="https://infra.spec.whatwg.org/#map-key">key</dfn>,
+             <dfn data-x="map value" data-x-href="https://infra.spec.whatwg.org/#map-value">value</dfn>,
+             <dfn data-x="map empty" data-x-href="https://infra.spec.whatwg.org/#map-is-empty">empty</dfn>,
+             <dfn data-x="map entry" data-x-href="https://infra.spec.whatwg.org/#map-entry">entry</dfn>,
+             <dfn data-x="map exists" data-x-href="https://infra.spec.whatwg.org/#map-exists">exists</dfn>,
+             <dfn data-x="map get" data-x-href="https://infra.spec.whatwg.org/#map-get">getting the value of an entry</dfn>,
+             <dfn data-x="map set" data-x-href="https://infra.spec.whatwg.org/#map-set">setting the value of an entry</dfn>,
+             <dfn data-x="map with default" data-x-href="https://infra.spec.whatwg.org/#map-with-default">with default</dfn>,
+             <dfn data-x="map remove" data-x-href="https://infra.spec.whatwg.org/#map-remove">removing an entry</dfn>,
+             <dfn data-x="map clear" data-x-href="https://infra.spec.whatwg.org/#map-clear">clear</dfn>,
+             <dfn data-x="map get the keys" data-x-href="https://infra.spec.whatwg.org/#map-getting-the-keys">getting the keys</dfn>,
+             <dfn data-x="map get the values" data-x-href="https://infra.spec.whatwg.org/#map-getting-the-values">getting the values</dfn>,
+             <dfn data-x="map sort descending" data-x-href="https://infra.spec.whatwg.org/#map-sort-in-descending-order">sorting in descending order</dfn>,
+             <dfn data-x="map size" data-x-href="https://infra.spec.whatwg.org/#map-size">size</dfn>, and
+             <dfn data-x="map iterate" data-x-href="https://infra.spec.whatwg.org/#map-iterate">iterate</dfn></li>
+     <li>The <dfn data-x-href="https://infra.spec.whatwg.org/#list">list</dfn> data structure and the associated definitions for
+             <dfn data-x="list append" data-x-href="https://infra.spec.whatwg.org/#list-append">append</dfn>,
+             <dfn data-x="list extend" data-x-href="https://infra.spec.whatwg.org/#list-extend">extend</dfn>,
+             <dfn data-x="list has duplicates" data-x-href="https://infra.spec.whatwg.org/#list-has-duplicates">has duplicates</dfn>,
+             <dfn data-x="list prepend" data-x-href="https://infra.spec.whatwg.org/#list-prepend">prepend</dfn>,
+             <dfn data-x="list replace" data-x-href="https://infra.spec.whatwg.org/#list-replace">replace</dfn>,
+             <dfn data-x="list remove" data-x-href="https://infra.spec.whatwg.org/#list-remove">remove</dfn>,
+             <dfn data-x="list empty" data-x-href="https://infra.spec.whatwg.org/#list-empty">empty</dfn>,
+             <dfn data-x="list contains" data-x-href="https://infra.spec.whatwg.org/#list-contain">contains</dfn>,
+             <dfn data-x="list size" data-x-href="https://infra.spec.whatwg.org/#list-size">size</dfn>,
+             <dfn data-x-href="https://infra.spec.whatwg.org/#list-get-the-indices">indices</dfn>,
+             <dfn data-x="list is empty" data-x-href="https://infra.spec.whatwg.org/#list-is-empty">is empty</dfn>,
+             <dfn data-x="list item" data-x-href="https://infra.spec.whatwg.org/#list-item">item</dfn>,
+             <dfn data-x="list iterate" data-x-href="https://infra.spec.whatwg.org/#list-iterate">iterate</dfn>,
+             <dfn data-x="list clone" data-x-href="https://infra.spec.whatwg.org/#list-clone">clone</dfn>,
+             <dfn data-x="list sort" data-x-href="https://infra.spec.whatwg.org/#list-sort-in-ascending-order">sort in ascending order</dfn>,
+             <dfn data-x="list sort descending" data-x-href="https://infra.spec.whatwg.org/#list-sort-in-descending-order">sort in descending order</dfn>,
+             <dfn data-x="list slice" data-x-href="https://infra.spec.whatwg.org/#list-slice">slice</dfn> (and its
+             <dfn data-x="list slice from" data-x-href="https://infra.spec.whatwg.org/#list-slice-from">from</dfn> and
+             <dfn data-x="list slice to" data-x-href="https://infra.spec.whatwg.org/#list-slice-to">to</dfn> arguments), and
+             <dfn data-x="list reverse" data-x-href="https://infra.spec.whatwg.org/#list-reverse">reverse</dfn></li>
+     <li>The <dfn data-x-href="https://infra.spec.whatwg.org/#stack">stack</dfn> data structure and the associated definitions for
+             <dfn data-x="stack push" data-x-href="https://infra.spec.whatwg.org/#stack-push">push</dfn> and
+             <dfn data-x="stack pop" data-x-href="https://infra.spec.whatwg.org/#stack-pop">pop</dfn></li>
+     <li>The <dfn data-x-href="https://infra.spec.whatwg.org/#queue">queue</dfn> data structure and the associated definitions for
+             <dfn data-x-href="https://infra.spec.whatwg.org/#queue-enqueue">enqueue</dfn> and
+             <dfn data-x-href="https://infra.spec.whatwg.org/#queue-dequeue">dequeue</dfn></li>
+     <li>The <dfn data-x="set" data-x-href="https://infra.spec.whatwg.org/#ordered-set">ordered set</dfn> data structure and the associated definition for
+             <dfn data-x="set append" data-x-href="https://infra.spec.whatwg.org/#set-append">append</dfn>,
+             <dfn data-x="set create" data-x-href="https://infra.spec.whatwg.org/#set-create">create</dfn>,
+             <dfn data-x="set difference" data-x-href="https://infra.spec.whatwg.org/#set-difference">difference</dfn>,
+             <dfn data-x="set intersection" data-x-href="https://infra.spec.whatwg.org/#set-intersection">intersection</dfn>,
+             <dfn data-x="set subset" data-x-href="https://infra.spec.whatwg.org/#set-subset">subset</dfn> and
+             <dfn data-x="set union" data-x-href="https://infra.spec.whatwg.org/#set-union">union</dfn></li>
+     <li>The <dfn data-x-href="https://infra.spec.whatwg.org/#struct">struct</dfn> specification type and the associated definition for
+             <dfn data-x="struct item" data-x-href="https://infra.spec.whatwg.org/#struct-item">item</dfn></li>
+     <li>The <dfn data-x-href="https://infra.spec.whatwg.org/#byte-sequence">byte sequence</dfn> data structure</li>
+     <li>The <dfn data-x-href="https://infra.spec.whatwg.org/#allowed">allowed</dfn> and
+             <dfn data-x-href="https://infra.spec.whatwg.org/#blocked">blocked</dfn> singletons</li>
+     <li>The <dfn data-x-href="https://infra.spec.whatwg.org/#forgiving-base64-encode">forgiving-base64 encode</dfn> and
+             <dfn data-x-href="https://infra.spec.whatwg.org/#forgiving-base64-decode">forgiving-base64 decode</dfn> algorithms</li>
+     <li><dfn data-x-href="https://infra.spec.whatwg.org/#the-exclusive-range">exclusive range</dfn></li>
+     <li><dfn data-x-href="https://infra.spec.whatwg.org/#parse-a-json-string-to-an-infra-value">parse a JSON string to an Infra value</dfn></li>
+     <li><dfn data-x-href="https://infra.spec.whatwg.org/#html-namespace">HTML namespace</dfn></li>
+     <li><dfn data-x-href="https://infra.spec.whatwg.org/#mathml-namespace">MathML namespace</dfn></li>
+     <li><dfn data-x-href="https://infra.spec.whatwg.org/#svg-namespace">SVG namespace</dfn></li>
+     <li><dfn data-x-href="https://infra.spec.whatwg.org/#xlink-namespace">XLink namespace</dfn></li>
+     <li><dfn data-x-href="https://infra.spec.whatwg.org/#xml-namespace">XML namespace</dfn></li>
+     <li><dfn data-x-href="https://infra.spec.whatwg.org/#xmlns-namespace">XMLNS namespace</dfn></li>
+     <li><dfn data-x-href="https://infra.spec.whatwg.org/#success">success</dfn></li>
+    </ul>
+   </dd>
+

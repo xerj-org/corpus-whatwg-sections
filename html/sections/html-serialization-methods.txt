@@ -1,0 +1,46 @@
+WHATWG HTML — section html-serialization-methods — HTML serialization methods
+
+  <h4>HTML serialization methods</h4>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>html</var> = <var>element</var>.<span subdfn data-x="dom-Element-getHTML">getHTML</span>({ <span data-x="dom-GetHTMLOptions-serializableShadowRoots">serializableShadowRoots</span>, <span data-x="dom-GetHTMLOptions-shadowRoots">shadowRoots</span> })</code></dt>
+   <dd>
+    <p>Returns the result of serializing <var>element</var> to HTML. <span data-x="shadow root">Shadow roots</span> within <var>element</var> are serialized according to the provided options:</p>
+
+    <ul>
+     <li><p>If <code data-x="dom-GetHTMLOptions-serializableShadowRoots">serializableShadowRoots</code> is true, then all shadow roots marked as <span data-x="shadow-serializable">serializable</span> are serialized.</p></li>
+
+     <li><p>If the <code data-x="dom-GetHTMLOptions-shadowRoots">shadowRoots</code> array is provided, then all shadow roots specified in the array are serialized, regardless of whether or not they are marked as serializable.</p></li>
+    </ul>
+
+    <p>If neither option is provided, then no shadow roots are serialized.</p>
+   </dd>
+
+   <dt><code data-x=""><var>html</var> = <var>shadowRoot</var>.<span subdfn data-x="dom-ShadowRoot-getHTML">getHTML</span>({ <span data-x="dom-GetHTMLOptions-serializableShadowRoots">serializableShadowRoots</span>, <span data-x="dom-GetHTMLOptions-shadowRoots">shadowRoots</span> })</code></dt>
+   <dd>
+    <p>Returns the result of serializing <var>shadowRoot</var> to HTML, using its <span data-x="concept-DocumentFragment-host">shadow host</span> as the context element. <span data-x="shadow root">Shadow roots</span> within <var>shadowRoot</var> are serialized according to the provided options, as above.</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p><code>Element</code>'s <dfn method for="Element"><code
+  data-x="dom-Element-getHTML">getHTML(<var>options</var>)</code></dfn> method steps
+  are to return the result of <span>HTML fragment serialization algorithm</span> with
+  <span>this</span>, <var>options</var>["<code
+  data-x="dom-GetHTMLOptions-serializableShadowRoots">serializableShadowRoots</code>"],
+  and <var>options</var>["<code data-x="dom-GetHTMLOptions-shadowRoots">shadowRoots</code>"].</p>
+  </div>
+
+  <div algorithm>
+  <p><code>ShadowRoot</code>'s <dfn method for="ShadowRoot"><code
+  data-x="dom-ShadowRoot-getHTML">getHTML(<var>options</var>)</code></dfn> method steps
+  are to return the result of <span>HTML fragment serialization algorithm</span> with
+  <span>this</span>, <var>options</var>["<code
+  data-x="dom-GetHTMLOptions-serializableShadowRoots">serializableShadowRoots</code>"],
+  and <var>options</var>["<code data-x="dom-GetHTMLOptions-shadowRoots">shadowRoots</code>"].</p>
+  </div>
+
+  </div>
+

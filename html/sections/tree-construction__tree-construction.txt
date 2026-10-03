@@ -1,0 +1,1081 @@
+WHATWG HTML — section tree-construction/tree-construction — <dfn>Tree construction</dfn>
+
+  <h4><dfn>Tree construction</dfn></h4>
+
+  <p>The input to the tree construction stage is a sequence of tokens from the
+  <span>tokenization</span> stage. The tree construction stage is associated with a DOM
+  <code>Document</code> object when a parser is created. The "output" of this stage consists of
+  dynamically modifying or extending that document's DOM tree.</p>
+
+  <p>This specification does not define when an interactive user agent has to render the
+  <code>Document</code> so that it is available to the user, or when it has to begin accepting user
+  input.</p>
+
+  <hr>
+
+  <div algorithm>
+  <p>As each token is emitted from the tokenizer, the user agent must follow the appropriate steps
+  from the following list, known as the <dfn>tree construction dispatcher</dfn>:</p>
+
+  <dl class="switch">
+
+   <dt>If the <span>stack of open elements</span> is empty</dt>
+   <dt>If the <span>adjusted current node</span> is an element in the <span>HTML namespace</span></dt>
+   <dt>If the <span>adjusted current node</span> is a <span>MathML text integration point</span> and the token is a start tag whose tag name is neither "mglyph" nor "malignmark"</dt>
+   <dt>If the <span>adjusted current node</span> is a <span>MathML text integration point</span> and the token is a character token</dt>
+   <dt>If the <span>adjusted current node</span> is a <span>MathML <code>annotation-xml</code></span> element and the token is a start tag whose tag name is "svg"</dt>
+   <dt>If the <span>adjusted current node</span> is an <span>HTML integration point</span> and the token is a start tag</dt>
+   <dt>If the <span>adjusted current node</span> is an <span>HTML integration point</span> and the token is a character token</dt>
+   <dt>If the token is an end-of-file token</dt>
+
+   <dd>Process the token according to the rules given in the section corresponding to the current
+   <span>insertion mode</span> in HTML content.</dd>
+
+   <dt>Otherwise</dt>
+
+   <dd>Process the token according to the rules given in the section for parsing tokens <span
+   data-x="insertion mode: in foreign content">in foreign content</span>.</dd>
+  </dl>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn>next token</dfn> is the token that is about to be processed by the <span>tree
+  construction dispatcher</span> (even if the token is subsequently just ignored).</p>
+  </div>
+
+  <div algorithm>
+  <p>A node is a <dfn>MathML text integration point</dfn> if it is one of the following
+  elements:</p>
+
+  <ul class="brief">
+   <li>A <span>MathML <code>mi</code></span> element</li>
+   <li>A <span>MathML <code>mo</code></span> element</li>
+   <li>A <span>MathML <code>mn</code></span> element</li>
+   <li>A <span>MathML <code>ms</code></span> element</li>
+   <li>A <span>MathML <code>mtext</code></span> element</li>
+  </ul>
+  </div>
+
+  <div algorithm>
+  <p>A node is an <dfn>HTML integration point</dfn> if it is one of the following elements:</p>
+
+  <ul class="brief">
+   <li>A <span>MathML <code>annotation-xml</code></span> element whose start tag token had an
+   attribute with the name "encoding" whose value was an <span>ASCII case-insensitive</span> match
+   for "<code data-x="">text/html</code>"</li>
+   <li>A <span>MathML <code>annotation-xml</code></span> element whose start tag token had an
+   attribute with the name "encoding" whose value was an <span>ASCII case-insensitive</span> match
+   for "<code data-x="">application/xhtml+xml</code>"</li>
+   <li>An <span>SVG <code>foreignObject</code></span> element</li>
+   <li>An <span>SVG <code>desc</code></span> element</li>
+   <li>An <span>SVG <code>title</code></span> element</li>
+  </ul>
+  </div>
+
+  <p class="note">If the node in question is the parser's <span>fragment context element</span>,
+  then the start tag token for that element is the "fake" token created by the <span>HTML fragment
+  parsing algorithm</span>.</p>
+
+  <hr>
+
+  <p class="note">Not all of the tag names mentioned below are conformant tag names in this
+  specification; many are included to handle legacy content. They still form part of the algorithm
+  that implementations are required to implement to claim conformance.</p>
+
+  <p class="note">The algorithm described below places no limit on the depth of the DOM tree
+  generated, or on the length of tag names, attribute names, attribute values, <code>Text</code>
+  nodes, etc. While implementers are encouraged to <a
+  href="https://infra.spec.whatwg.org/#algorithm-limits">avoid arbitrary limits</a>, it is
+  recognized that practical concerns will likely force user agents to impose nesting depth
+  constraints.</p>
+
+
+  <h5>Creating and inserting nodes</h5>
+
+  <p>An <dfn>insertion location</dfn> is a <span>tuple</span> consisting of a <dfn
+  data-x="insertion-location-target-parent">target parent</dfn> (a <code>Node</code>) and a <dfn
+  data-x="insertion-location-reference-child">reference child</dfn> (a <code>Node</code> or
+  null).</p>
+
+  <p>While the parser is processing a token, it can enable or disable <dfn data-x="foster
+  parent">foster parenting</dfn>. This affects the following algorithm.</p>
+
+  <div algorithm>
+  <p>To find the <dfn>appropriate place for inserting a node</dfn>, given an optional
+  <code>Node</code> <var>overrideTarget</var> (default null), perform the following steps. They
+  return an <span>insertion location</span>.</p>
+
+  <ol>
+   <li><p>Let <var>targetParent</var> be <var>overrideTarget</var> if it is not null; otherwise the
+   <span>current node</span>.</p></li>
+
+   <li><p>Let <var>referenceChild</var> be null.</p></li>
+
+   <li>
+    <p>If <span data-x="foster parent">foster parenting</span> is enabled and
+    <var>targetParent</var> is a <code>table</code>, <code>tbody</code>, <code>tfoot</code>,
+    <code>thead</code>, or <code>tr</code> element:</p> <!-- same list as handling of characters
+    in "in table" mode -->
+
+    <p class="note">Foster parenting happens when content is misnested in tables.</p>
+
+    <ol>
+     <li><p>Let <var>lastTemplateOrTable</var> be the last <code>template</code> or
+     <code>table</code> element in the <span>stack of open elements</span> if there is one;
+     otherwise null.</p></li>
+
+     <li><p>If <var>lastTemplateOrTable</var> is null, then return (the first element in the
+     <span>stack of open elements</span> (the <code>html</code> element), null).
+     (<span>fragment case</span>)</p></li>
+
+     <li><p>If <var>lastTemplateOrTable</var> is a <code>template</code> element, then set
+     <var>targetParent</var> to <var>lastTemplateOrTable</var>.</p></li>
+
+     <li><p>Otherwise, if <var>lastTemplateOrTable</var>'s <span>parent</span> is not null, then set
+     <var>targetParent</var> to <var>lastTemplateOrTable</var>'s <span>parent</span> and set
+     <var>referenceChild</var> to <var>lastTemplateOrTable</var>.</p></li>
+
+     <li><p>Otherwise, set <var>targetParent</var> to the element immediately above
+     <var>lastTemplateOrTable</var> in the <span>stack of open elements</span>.</p></li>
+    </ol>
+
+    <p class="note">These steps are involved in part because it's possible for elements, the
+    <code>table</code> element in this case in particular, to have been moved by a script around in
+    the DOM, or indeed removed from the DOM entirely, after the element was inserted by the
+    parser.</p>
+   </li>
+
+   <li><p>If <var>targetParent</var> is not a <code>template</code> element, then return
+   (<var>targetParent</var>, <var>referenceChild</var>).</p></li>
+
+   <li><p>Let <var>patchInsertionTarget</var> be <var>targetParent</var>'s
+   <span>insertion target</span>.</p></li>
+
+   <li><p>If <var>patchInsertionTarget</var> is null, then return (<var>targetParent</var>'s
+   <span>template contents</span>, null).</p></li>
+
+   <li>
+    <p>If <var>targetParent</var>'s <span>insertion end marker</span> is not null and its
+    <span>parent</span> is <var>patchInsertionTarget</var>, then return
+    (<var>patchInsertionTarget</var>, <var>targetParent</var>'s
+    <span>insertion end marker</span>).</p>
+
+    <p class="note">If the end marker has been removed or moved to another node, nodes are
+    instead appended to <var>patchInsertionTarget</var> in the following step.</p>
+   </li>
+
+   <li><p>Return (<var>patchInsertionTarget</var>, null).</p></li>
+  </ol>
+  </div>
+
+  <hr>
+
+  <div algorithm>
+  <p>To <dfn data-x="create an element for the token">create an element for a token</dfn>, given a
+  token <var>token</var>, a string <var>namespace</var>, and a <code>Node</code> object
+  <var>intendedParent</var>:</p>
+
+  <ol>
+   <li><p>If the <span>active speculative HTML parser</span> is not null, then return the result of
+   <span data-x="create a speculative mock element">creating a speculative mock element</span>
+   given <var>namespace</var>, <var>token</var>'s tag name, and <var>token</var>'s
+   attributes.</p></li>
+
+   <li>
+    <p>Otherwise, optionally <span>create a speculative mock element</span> given
+    <var>namespace</var>, <var>token</var>'s tag name, and <var>token</var>'s attributes.</p>
+
+    <p class="note">The result is not used. This step allows for a <span>speculative fetch</span> to
+    be initiated from non-speculative parsing. The fetch is still speculative at this point,
+    because, for example, by the time the element is inserted, <var>intendedParent</var> might have
+    been removed from the document.</p>
+   </li>
+
+   <li><p>Let <var>document</var> be <var>intendedParent</var>'s <span>node document</span>.</li>
+
+   <li><p>Let <var>localName</var> be <var>token</var>'s tag name.</p></li>
+
+   <li><p>Let <var>is</var> be the value of the "<code data-x="attr-is">is</code>" attribute in
+   <var>token</var>, if such an attribute exists; otherwise null.</p></li>
+
+   <li><p>Let <var>registry</var> be the result of <span data-x="look up a custom element
+   registry">looking up a custom element registry</span> given <var>intendedParent</var>.</p></li>
+
+   <li><p>Let <var>definition</var> be the result of <span data-x="look up a custom element
+   definition">looking up a custom element definition</span> given <var>registry</var>,
+   <var>namespace</var>, <var>localName</var>, and <var>is</var>.</p></li>
+
+   <li><p>Let <var>willExecuteScript</var> be true if <var>definition</var> is non-null and the
+   parser's <span>fragment context element</span> is null; otherwise false.</p></li>
+
+   <li>
+    <p>If <var>willExecuteScript</var> is true:</p>
+
+    <ol>
+     <li><p>Increment <var>document</var>'s <span>throw-on-dynamic-markup-insertion
+     counter</span>.</p></li>
+
+     <li><p>If the <span>JavaScript execution context stack</span> is empty, then <span>perform a
+     microtask checkpoint</span>.</p></li>
+
+     <li><p>Push a new <span>element queue</span> onto <var>document</var>'s <span>relevant
+     agent</span>'s <span>custom element reactions stack</span>.</li>
+    </ol>
+   </li>
+
+   <li>
+    <p>Let <var>element</var> be the result of <span data-x="create an element">creating an
+    element</span> given <var>document</var>, <var>localName</var>, <var>namespace</var>, null,
+    <var>is</var>, <var>willExecuteScript</var>, and <var>registry</var>.</p>
+
+    <p class="note">This will cause <span data-x="custom element constructor">custom element
+    constructors</span> to run, if <var>willExecuteScript</var> is true. However, since we
+    incremented the <span>throw-on-dynamic-markup-insertion counter</span>, this cannot cause <span
+    data-x="dom-document-write">new characters to be inserted into the tokenizer</span>, or <span
+    data-x="dom-document-open">the document to be blown away</span>.</p>
+   </li>
+
+   <li>
+    <p><span data-x="concept-element-attributes-append">Append</span> each attribute in the given
+    token to <var>element</var>.</p>
+
+    <p class="note">This can <span>enqueue a custom element callback reaction</span> for the
+    <code data-x="">attributeChangedCallback</code>, which might run immediately (in the next
+    step).</p>
+
+    <p class="note">Even though the <code data-x="attr-is">is</code> attribute governs the <span
+    data-x="create an element">creation</span> of a <span>customized built-in element</span>, it is
+    not present during the execution of the relevant <span>custom element constructor</span>; it is
+    appended in this step, along with all other attributes.</p>
+   </li>
+
+   <li>
+    <p>If <var>willExecuteScript</var> is true:</p>
+
+    <ol>
+     <li><p>Let <var>queue</var> be the result of popping from <var>document</var>'s <span>relevant
+     agent</span>'s <span>custom element reactions stack</span>. (This will be the same
+     <span>element queue</span> as was pushed above.)</p></li>
+
+     <li><p><span>Invoke custom element reactions</span> in <var>queue</var>.</p></li>
+
+     <li><p>Decrement <var>document</var>'s <span>throw-on-dynamic-markup-insertion
+     counter</span>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>If <var>element</var> has an <code data-x="">xmlns</code> attribute <em>in the <span>XMLNS
+   namespace</span></em> whose value is not exactly the same as the element's namespace, that is a
+   <span>parse error</span>. Similarly, if <var>element</var> has an <code
+   data-x="">xmlns:xlink</code> attribute in the <span>XMLNS namespace</span> whose value is not the
+   <span>XLink Namespace</span>, that is a <span>parse error</span>.</p></li>
+
+   <li><p>If <var>element</var> is a <span data-x="category-reset">resettable element</span> and not
+   a <span>form-associated custom element</span>, then invoke its <span
+   data-x="concept-form-reset-control">reset algorithm</span>. (This initializes the element's <span
+   data-x="concept-fe-value">value</span> and <span data-x="concept-fe-checked">checkedness</span>
+   based on the element's attributes.)</p></li>
+
+   <li><p>If <var>element</var> is a <span>form-associated element</span> and not a
+   <span>form-associated custom element</span>, the
+   <span><code data-x="">form</code> element pointer</span> is not null, the parser is not
+   <span>parsing template contents</span>, the parser's <span>fragment context element</span> is
+   null, <var>element</var> is either not <span data-x="category-listed">listed</span> or doesn't
+   have a <code data-x="attr-fae-form">form</code> attribute, and the <var>intendedParent</var> is
+   in the same <span>tree</span> as the element pointed to by the <span><code
+   data-x="">form</code> element pointer</span>, then <span
+   data-x="concept-form-association">associate</span> <var>element</var> with the <code>form</code>
+   element pointed to by the <span><code data-x="">form</code> element pointer</span> and set
+   <var>element</var>'s <span>parser inserted flag</span>.</p></li>
+
+   <li><p>Return <var>element</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To compute the <dfn>adjusted insertion location</dfn> with an optional <span>insertion
+  location</span> <var>insertionLocation</var> (default null):</p>
+
+  <ol>
+   <li><p>Let <var>overrideTarget</var> be null if <var>insertionLocation</var> is null;
+   otherwise <var>insertionLocation</var>'s <span
+   data-x="insertion-location-target-parent">target parent</span>.</p></li>
+
+   <li><p>Let <var>adjustedInsertionLocation</var> be the <span>appropriate place for inserting a
+   node</span> given <var>overrideTarget</var>.</p></li>
+
+   <li><p>If <var>adjustedInsertionLocation</var>'s <span
+   data-x="insertion-location-target-parent">target parent</span> is the first element in the
+   <span>stack of open elements</span> and the parser's <span>root insertion target</span> is
+   non-null, then set <var>adjustedInsertionLocation</var> to (the parser's <span>root insertion
+   target</span>, null).</p></li>
+
+   <li><p>Return <var>adjustedInsertionLocation</var>.</p></li>
+  </ol>
+  </div>
+
+  <hr>
+
+  <div algorithm>
+  <p>To <dfn>insert an element at the adjusted insertion location</dfn> with an element
+  <var>element</var> and an optional <span>insertion location</span> <var>insertionLocation</var>
+  (default null):</p>
+
+  <ol>
+   <li><p>Let (<var>targetParent</var>, <var>referenceChild</var>) be the <span>adjusted insertion
+   location</span> given <var>insertionLocation</var>.</p></li>
+
+   <li>
+    <p>If any of the following are true:</p>
+
+    <ul>
+     <li><var>element</var>'s <span>parent</span> is non-null;</li>
+
+     <li><var>element</var> is a <span>host-including inclusive ancestor</span> of
+     <var>targetParent</var>; or</li>
+
+     <li><var>targetParent</var> is a <code>Document</code> node that already has an element
+     child,</li>
+    </ul>
+
+    <p>then return.</p>
+   </li>
+
+   <li><p><span>Assert</span>: <span>ensure pre-insert validity</span> given <var>element</var>,
+   <var>targetParent</var>, <var>referenceChild</var>, and « » does not throw.</p></li>
+
+   <li><p>If the parser's <span>fragment context element</span> is null, then push a new
+   <span>element queue</span> onto <var>element</var>'s <span>relevant agent</span>'s <span>custom
+   element reactions stack</span>.</p></li>
+
+   <li><p><span data-x="concept-node-insert">Insert</span> <var>element</var> into
+   <var>targetParent</var> before <var>referenceChild</var>.</p></li>
+
+   <li><p>If the parser's <span>fragment context element</span> is null, then pop the <span>element
+   queue</span> from <var>element</var>'s <span>relevant agent</span>'s <span>custom element
+   reactions stack</span>, and <span>invoke custom element reactions</span> in that queue.</p></li>
+  </ol>
+  </div>
+
+  <!-- The names of these algorithms are kinda confusing; e.g. see the confusion in
+         https://www.w3.org/Bugs/Public/show_bug.cgi?id=18367
+       Not sure what we could call them instead, though... -->
+
+  <div algorithm>
+  <p>To <dfn>insert a foreign element</dfn>, given a token <var>token</var>, a string
+  <var>namespace</var>, and a boolean <var>onlyAddToElementStack</var>:</p>
+
+  <ol>
+   <li><p>Let <var>adjustedInsertionLocation</var> be the <span>appropriate place for inserting a
+   node</span>.</p></li>
+
+   <!-- this insertion stuff should be cleaned up: https://github.com/whatwg/html/issues/1706 -->
+
+   <li><p>Let <var>element</var> be the result of <span data-x="create an element for the
+   token">creating an element for the token</span> given <var>token</var>, <var>namespace</var>,
+   and <var>adjustedInsertionLocation</var>'s <span
+   data-x="insertion-location-target-parent">target parent</span>.</p></li>
+
+   <li><p>If <var>onlyAddToElementStack</var> is false, then run <span>insert an element at the
+   adjusted insertion location</span> with <var>element</var>.</p></li>
+
+   <li><p>Push <var>element</var> onto the <span>stack of open elements</span> so that it is the new
+   <span>current node</span>.</p></li>
+
+   <li><p>Return <var>element</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>insert an HTML element</dfn> given a token <var>token</var>: <span>insert a foreign
+  element</span> given <var>token</var>, the <span>HTML namespace</span>, and false.</p>
+  </div>
+
+  <hr>
+
+  <div algorithm>
+  <p>When the steps below require the user agent to <dfn>adjust MathML attributes</dfn> for a token,
+  then, if the token has an attribute named <code data-x="">definitionurl</code>, change its name to
+  <code data-x="">definitionURL</code> (note the case difference).</p>
+  </div>
+
+  <div algorithm>
+  <p>When the steps below require the user agent to <dfn>adjust SVG attributes</dfn> for a token,
+  then, for each attribute on the token whose attribute name is one of the ones in the first column
+  of the following table, change the attribute's name to the name given in the corresponding cell in
+  the second column. (This fixes the case of SVG attributes that are not all lowercase.)</p>
+
+  <table>
+   <thead>
+    <tr> <th> Attribute name on token <th> Attribute name on element
+   <tbody>
+    <tr> <td> <code data-x="">attributename</code> <td> <code data-x="">attributeName</code>
+    <tr> <td> <code data-x="">attributetype</code> <td> <code data-x="">attributeType</code>
+    <tr> <td> <code data-x="">basefrequency</code> <td> <code data-x="">baseFrequency</code>
+    <tr> <td> <code data-x="">baseprofile</code> <td> <code data-x="">baseProfile</code>
+    <tr> <td> <code data-x="">calcmode</code> <td> <code data-x="">calcMode</code>
+    <tr> <td> <code data-x="">clippathunits</code> <td> <code data-x="">clipPathUnits</code>
+    <tr> <td> <code data-x="">diffuseconstant</code> <td> <code data-x="">diffuseConstant</code>
+    <tr> <td> <code data-x="">edgemode</code> <td> <code data-x="">edgeMode</code>
+    <tr> <td> <code data-x="">filterunits</code> <td> <code data-x="">filterUnits</code>
+    <tr> <td> <code data-x="">glyphref</code> <td> <code data-x="">glyphRef</code>
+    <tr> <td> <code data-x="">gradienttransform</code> <td> <code data-x="">gradientTransform</code>
+    <tr> <td> <code data-x="">gradientunits</code> <td> <code data-x="">gradientUnits</code>
+    <tr> <td> <code data-x="">kernelmatrix</code> <td> <code data-x="">kernelMatrix</code>
+    <tr> <td> <code data-x="">kernelunitlength</code> <td> <code data-x="">kernelUnitLength</code>
+    <tr> <td> <code data-x="">keypoints</code> <td> <code data-x="">keyPoints</code>
+    <tr> <td> <code data-x="">keysplines</code> <td> <code data-x="">keySplines</code>
+    <tr> <td> <code data-x="">keytimes</code> <td> <code data-x="">keyTimes</code>
+    <tr> <td> <code data-x="">lengthadjust</code> <td> <code data-x="">lengthAdjust</code>
+    <tr> <td> <code data-x="">limitingconeangle</code> <td> <code data-x="">limitingConeAngle</code>
+    <tr> <td> <code data-x="">markerheight</code> <td> <code data-x="">markerHeight</code>
+    <tr> <td> <code data-x="">markerunits</code> <td> <code data-x="">markerUnits</code>
+    <tr> <td> <code data-x="">markerwidth</code> <td> <code data-x="">markerWidth</code>
+    <tr> <td> <code data-x="">maskcontentunits</code> <td> <code data-x="">maskContentUnits</code>
+    <tr> <td> <code data-x="">maskunits</code> <td> <code data-x="">maskUnits</code>
+    <tr> <td> <code data-x="">numoctaves</code> <td> <code data-x="">numOctaves</code>
+    <tr> <td> <code data-x="">pathlength</code> <td> <code data-x="">pathLength</code>
+    <tr> <td> <code data-x="">patterncontentunits</code> <td> <code data-x="">patternContentUnits</code>
+    <tr> <td> <code data-x="">patterntransform</code> <td> <code data-x="">patternTransform</code>
+    <tr> <td> <code data-x="">patternunits</code> <td> <code data-x="">patternUnits</code>
+    <tr> <td> <code data-x="">pointsatx</code> <td> <code data-x="">pointsAtX</code>
+    <tr> <td> <code data-x="">pointsaty</code> <td> <code data-x="">pointsAtY</code>
+    <tr> <td> <code data-x="">pointsatz</code> <td> <code data-x="">pointsAtZ</code>
+    <tr> <td> <code data-x="">preservealpha</code> <td> <code data-x="">preserveAlpha</code>
+    <tr> <td> <code data-x="">preserveaspectratio</code> <td> <code data-x="">preserveAspectRatio</code>
+    <tr> <td> <code data-x="">primitiveunits</code> <td> <code data-x="">primitiveUnits</code>
+    <tr> <td> <code data-x="">refx</code> <td> <code data-x="">refX</code>
+    <tr> <td> <code data-x="">refy</code> <td> <code data-x="">refY</code>
+    <tr> <td> <code data-x="">repeatcount</code> <td> <code data-x="">repeatCount</code>
+    <tr> <td> <code data-x="">repeatdur</code> <td> <code data-x="">repeatDur</code>
+    <tr> <td> <code data-x="">requiredextensions</code> <td> <code data-x="">requiredExtensions</code>
+    <tr> <td> <code data-x="">requiredfeatures</code> <td> <code data-x="">requiredFeatures</code>
+    <tr> <td> <code data-x="">specularconstant</code> <td> <code data-x="">specularConstant</code>
+    <tr> <td> <code data-x="">specularexponent</code> <td> <code data-x="">specularExponent</code>
+    <tr> <td> <code data-x="">spreadmethod</code> <td> <code data-x="">spreadMethod</code>
+    <tr> <td> <code data-x="">startoffset</code> <td> <code data-x="">startOffset</code>
+    <tr> <td> <code data-x="">stddeviation</code> <td> <code data-x="">stdDeviation</code>
+    <tr> <td> <code data-x="">stitchtiles</code> <td> <code data-x="">stitchTiles</code>
+    <tr> <td> <code data-x="">surfacescale</code> <td> <code data-x="">surfaceScale</code>
+    <tr> <td> <code data-x="">systemlanguage</code> <td> <code data-x="">systemLanguage</code>
+    <tr> <td> <code data-x="">tablevalues</code> <td> <code data-x="">tableValues</code>
+    <tr> <td> <code data-x="">targetx</code> <td> <code data-x="">targetX</code>
+    <tr> <td> <code data-x="">targety</code> <td> <code data-x="">targetY</code>
+    <tr> <td> <code data-x="">textlength</code> <td> <code data-x="">textLength</code>
+    <tr> <td> <code data-x="">viewbox</code> <td> <code data-x="">viewBox</code>
+    <tr> <td> <code data-x="">viewtarget</code> <td> <code data-x="">viewTarget</code>
+    <tr> <td> <code data-x="">xchannelselector</code> <td> <code data-x="">xChannelSelector</code>
+    <tr> <td> <code data-x="">ychannelselector</code> <td> <code data-x="">yChannelSelector</code>
+    <tr> <td> <code data-x="">zoomandpan</code> <td> <code data-x="">zoomAndPan</code>
+  </table>
+  </div>
+
+  <div algorithm>
+  <p>When the steps below require the user agent to <dfn>adjust foreign attributes</dfn> for a
+  token, then, if any of the attributes on the token match the strings given in the first column of
+  the following table, let the attribute be a namespaced attribute, with the prefix being the string
+  given in the corresponding cell in the second column, the local name being the string given in the
+  corresponding cell in the third column, and the namespace being the namespace given in the
+  corresponding cell in the fourth column. (This fixes the use of namespaced attributes, in
+  particular <span data-x="attr-xml-lang"><code data-x="">lang</code> attributes in the <span>XML
+  namespace</span></span>.)</p>
+
+  <table>
+   <thead>
+    <tr> <th> Attribute name <th> Prefix <th> Local name <th> Namespace
+   <tbody>
+    <tr> <td> <code data-x="">xlink:actuate</code> <td> <code data-x="">xlink</code> <td> <code data-x="">actuate</code> <td> <span>XLink namespace</span>
+    <tr> <td> <code data-x="">xlink:arcrole</code> <td> <code data-x="">xlink</code> <td> <code data-x="">arcrole</code> <td> <span>XLink namespace</span>
+    <tr> <td> <code data-x="">xlink:href</code> <td> <code data-x="">xlink</code> <td> <code data-x="">href</code> <td> <span>XLink namespace</span>
+    <tr> <td> <code data-x="">xlink:role</code> <td> <code data-x="">xlink</code> <td> <code data-x="">role</code> <td> <span>XLink namespace</span>
+    <tr> <td> <code data-x="">xlink:show</code> <td> <code data-x="">xlink</code> <td> <code data-x="">show</code> <td> <span>XLink namespace</span>
+    <tr> <td> <code data-x="">xlink:title</code> <td> <code data-x="">xlink</code> <td> <code data-x="">title</code> <td> <span>XLink namespace</span>
+    <tr> <td> <code data-x="">xlink:type</code> <td> <code data-x="">xlink</code> <td> <code data-x="">type</code> <td> <span>XLink namespace</span>
+    <tr> <td> <code data-x="">xml:lang</code> <td> <code data-x="">xml</code> <td> <code data-x="">lang</code> <td> <span>XML namespace</span>
+    <tr> <td> <code data-x="">xml:space</code> <td> <code data-x="">xml</code> <td> <code data-x="">space</code> <td> <span>XML namespace</span>
+    <tr> <td> <code data-x="">xmlns</code> <td> (none) <td> <code data-x="">xmlns</code> <td> <span>XMLNS namespace</span>
+    <tr> <td> <code data-x="">xmlns:xlink</code> <td> <code data-x="">xmlns</code> <td> <code data-x="">xlink</code> <td> <span>XMLNS namespace</span>
+  </table>
+  </div>
+
+  <hr>
+
+  <div algorithm>
+  <p>When the steps below require the user agent to <dfn>insert a character</dfn> while processing a
+  token, the user agent must run the following steps:</p>
+
+  <ol>
+   <li><p>Let <var>data</var> be the characters passed to the algorithm, or, if no characters were
+   explicitly specified, the character of the character token being processed.</p></li>
+
+   <li><p>Let (<var>targetParent</var>, <var>referenceChild</var>) be the <span>adjusted insertion
+   location</span>.</p></li>
+
+   <li>
+    <p>If <var>targetParent</var> is a <code>Document</code> node, then return.</p>
+
+    <p class="note">The DOM will not let <code>Document</code> nodes have <code>Text</code> node
+    children, so they are dropped on the floor.</p>
+   </li>
+
+   <li><p>Let <var>previousSibling</var> be <var>referenceChild</var>'s <span>previous
+   sibling</span> if <var>referenceChild</var> is non-null; otherwise <var>targetParent</var>'s
+   <span>last child</span>.</p></li>
+
+   <li>
+    <p>If <var>previousSibling</var> is a <code>Text</code> node, then append <var>data</var> to
+    <var>previousSibling</var>'s <span data-x="concept-cd-data">data</span>.</p>
+
+    <p>Otherwise, let <var>text</var> be the result of <span data-x="create a text node">creating a
+    text node</span> given <var>targetParent</var>'s <span>node document</span> and <var>data</var>,
+    and <span data-x="concept-node-insert">insert</span> <var>text</var> into
+    <var>targetParent</var> before <var>referenceChild</var>.</p>
+   </li>
+  </ol>
+  </div>
+
+  <div class="example">
+
+   <p>Here are some sample inputs to the parser and the corresponding number of <code>Text</code>
+   nodes that they result in, assuming a user agent that executes scripts.</p>
+
+   <table>
+    <thead>
+     <tr>
+      <th>Input <th>Number of <code>Text</code> nodes
+    <tbody>
+     <tr>
+      <td><pre><code class="html">A&lt;script>
+var&nbsp;script&nbsp;=&nbsp;document.getElementsByTagName('script')[0];
+document.body.removeChild(script);
+&lt;/script>B</code></pre>
+      <td>One <code>Text</code> node in the document, containing "AB".
+     <tr>
+      <td><pre><code class="html">A&lt;script>
+var&nbsp;text&nbsp;=&nbsp;document.createTextNode('B');
+document.body.appendChild(text);
+&lt;/script>C</code></pre>
+      <td>Three <code>Text</code> nodes; "A" before the script, the script's contents, and "BC" after the script (the parser appends to the <code>Text</code> node created by the script).
+     <tr>
+      <td><pre><code class="html">A&lt;script>
+var&nbsp;text&nbsp;=&nbsp;document.getElementsByTagName('script')[0].firstChild;
+text.data&nbsp;=&nbsp;'B';
+document.body.appendChild(text);
+&lt;/script>C</code></pre>
+      <td>Two adjacent <code>Text</code> nodes in the document, containing "A" and "BC".
+     <tr>
+      <td><pre><code class="html">A&lt;table>B&lt;tr>C&lt;/tr>D&lt;/table></code></pre>
+      <td>One <code>Text</code> node before the table, containing "ABCD". (This is caused by <span data-x="foster parent">foster parenting</span>.)
+     <tr>
+      <td><pre><code class="html">A&lt;table>&lt;tr>&nbsp;B&lt;/tr>&nbsp;C&lt;/table></code></pre>
+      <td>One <code>Text</code> node before the table, containing "A&nbsp;B&nbsp;C" (A-space-B-space-C). (This is caused by <span data-x="foster parent">foster parenting</span>.)
+     <tr>
+      <td><pre><code class="html">A&lt;table>&lt;tr>&nbsp;B&lt;/tr>&nbsp;&lt;/em>C&lt;/table></code></pre>
+      <td>One <code>Text</code> node before the table, containing "A&nbsp;BC" (A-space-B-C), and one <code>Text</code> node inside the table (as a child of a <code>tbody</code>) with a single space character. (Space characters separated from non-space characters by non-character tokens are not affected by <span data-x="foster parent">foster parenting</span>, even if those other tokens then get ignored.)
+   </table>
+
+  </div>
+
+  <hr>
+
+  <div algorithm>
+  <p>When the steps below require the user agent to <dfn>insert a comment</dfn> while processing a
+  comment token, with an optional <span>insertion location</span> <var>insertionLocation</var>
+  (default null), the user agent must run the following steps:</p>
+
+  <ol>
+   <li><p>Let <var>data</var> be the data given in the comment token being
+   processed.</p></li>
+
+   <li><p>Let (<var>targetParent</var>, <var>referenceChild</var>) be the <span>adjusted insertion
+   location</span> given <var>insertionLocation</var>.</p></li>
+
+   <li><p>Let <var>comment</var> be the result of <span data-x="create a comment node">creating a
+   comment node</span> given <var>targetParent</var>'s <span>node document</span> and
+   <var>data</var>.</p></li>
+
+   <li><p><span data-x="concept-node-insert">Insert</span> <var>comment</var> into
+   <var>targetParent</var> before <var>referenceChild</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>When the steps below require the user agent to <dfn>insert a processing instruction</dfn> while
+  processing a processing instruction token, with an optional <span>insertion location</span>
+  <var>insertionLocation</var> (default null), the user agent must run the following steps:</p>
+
+  <ol>
+   <li><p>Let <var>piTarget</var> be the target given in the processing instruction token being
+   processed.</p></li>
+
+   <li><p>Let <var>data</var> be the data given in the processing instruction token being
+   processed.</p></li>
+
+   <li><p>Let (<var>targetParent</var>, <var>referenceChild</var>) be the <span>adjusted insertion
+   location</span> given <var>insertionLocation</var>.</p></li>
+
+   <li><p>Let <var>pi</var> be the result of <span data-x="create a processing instruction
+   node">creating a processing instruction node</span> given <var>targetParent</var>'s <span>node
+   document</span>, <var>piTarget</var>, and <var>data</var>.</p></li>
+
+   <li><p><span data-x="concept-node-insert">Insert</span> <var>pi</var> into
+   <var>targetParent</var> before <var>referenceChild</var>.</p></li>
+  </ol>
+  </div>
+
+  <h5>Parsing elements that contain only text</h5>
+
+  <div algorithm>
+  <p>The <dfn>generic raw text element parsing algorithm</dfn> and the <dfn>generic RCDATA element
+  parsing algorithm</dfn> consist of the following steps. These algorithms are always invoked in
+  response to a start tag token.</p>
+
+  <ol>
+   <li><p><span>Insert an HTML element</span> for the token.</p></li>
+
+   <li><p>If the algorithm that was invoked is the <span>generic raw text element parsing
+   algorithm</span>, switch the tokenizer to the <span>RAWTEXT state</span>; otherwise the algorithm
+   invoked was the <span>generic RCDATA element parsing algorithm</span>, switch the tokenizer to
+   the <span>RCDATA state</span>.</p></li>
+
+   <li><p>Set the <span>original insertion mode</span> to the current <span>insertion
+   mode</span>.</p>
+
+   <li><p>Then, switch the <span>insertion mode</span> to "<span data-x="insertion mode:
+   text">text</span>".</p></li>
+  </ol>
+  </div>
+
+
+  <h5>Closing elements that have implied end tags</h5>
+
+  <div algorithm>
+  <p>When the steps below require the UA to <dfn>generate implied end tags</dfn>, then, while the
+  <span>current node</span> is a <code>dd</code> element, a <code>dt</code> element, an
+  <code>li</code> element, an <code>optgroup</code> element, an <code>option</code> element, a
+  <code>p</code> element, an <code>rb</code> element, an <code>rp</code> element, an <code>rt</code>
+  element, or an <code>rtc</code> element, the UA must pop the <span>current node</span> off the
+  <span>stack of open elements</span>.</p>
+
+  <p>If a step requires the UA to generate implied end tags but lists an element to exclude from the
+  process, then the UA must perform the above steps as if that element was not in the above
+  list.</p>
+  </div>
+
+  <div algorithm>
+  <p>When the steps below require the UA to <dfn>generate all implied end tags thoroughly</dfn>,
+  then, while the <span>current node</span> is a <code>caption</code> element, a
+  <code>colgroup</code> element, a <code>dd</code> element, a <code>dt</code> element, an
+  <code>li</code> element, an <code>optgroup</code> element, an <code>option</code> element, a
+  <code>p</code> element, an <code>rb</code> element, an <code>rp</code> element, an <code>rt</code>
+  element, an <code>rtc</code> element, a <code>tbody</code> element, a <code>td</code> element, a
+  <code>tfoot</code> element, a <code>th</code> element, a <code>thead</code> element, or a
+  <code>tr</code> element, the UA must pop the <span>current node</span> off the
+  <span>stack of open elements</span>.</p>
+  </div>
+
+
+
+  <h5 id="parsing-main-inhtml">The rules for parsing tokens in HTML content</h5>
+
+
+  <h6>The "<dfn data-x="insertion mode: initial">initial</dfn>" insertion mode</h6>
+
+  <p>A <code>Document</code> object has an associated <dfn>parser cannot change the mode flag</dfn>
+  (a boolean). It is initially false.</p>
+
+  <div algorithm>
+  <p>When the user agent is to apply the rules for the "<span data-x="insertion mode:
+  initial">initial</span>" <span>insertion mode</span>, the user agent must handle the token as
+  follows:</p>
+
+  <dl class="switch">
+
+   <dt>A character token that is one of U+0009 CHARACTER
+   TABULATION, U+000A LINE FEED (LF), U+000C FORM FEED (FF),
+   U+000D CARRIAGE RETURN (CR), or U+0020 SPACE</dt>
+   <dd>
+    <p>Ignore the token.</p>
+   </dd>
+
+   <dt>A comment token</dt>
+   <dd>
+    <p><span>Insert a comment</span> given (the <code>Document</code> object, null).</p>
+   </dd>
+
+   <dt>A processing instruction token</dt>
+   <dd>
+    <p><span>Insert a processing instruction</span> given (the <code>Document</code> object,
+    null).</p>
+   </dd>
+
+   <dt>A DOCTYPE token</dt>
+   <dd>
+    <p>If the DOCTYPE token's name is not "<code data-x="">html</code>", or the token's public
+    identifier is not missing, or the token's system identifier is neither missing nor
+    "<code>about:legacy-compat</code>", then there is a <span>parse error</span>.</p>
+
+    <p>Let <var>doctype</var> be the result of <span data-x="create a doctype">creating a
+    doctype</span> given the <code>Document</code> node, the name given in the DOCTYPE token (or the
+    empty string if the name was missing), the public identifier given in the DOCTYPE token (or the
+    empty string if the public identifier was missing), and the system identifier given in the
+    DOCTYPE token (or the empty string if the system identifier was missing). Then, if the
+    <code>Document</code> node has neither a <code>DocumentType</code> child nor an element child,
+    append <var>doctype</var> to the <code>Document</code> node.</p>
+
+    <p class="note">This also ensures that the <code>DocumentType</code> node is returned as the
+    value of the <code data-x="dom-Document-doctype">doctype</code> attribute of the
+    <code>Document</code> object.</p>
+
+    <p id="quirks-mode-doctypes">Then, if the document is <em>not</em> <span>an <code>iframe</code>
+    <code data-x="attr-iframe-srcdoc">srcdoc</code> document</span>, and the <span>parser cannot
+    change the mode flag</span> is false, and the DOCTYPE token matches one of the conditions in the
+    following list, then set the <code>Document</code> to <span>quirks mode</span>:</p>
+
+    <ul class="brief">
+     <li> The <i data-x="force-quirks flag">force-quirks flag</i> is set to <i>on</i>. </li>
+     <li> The name is not "<code data-x="">html</code>". </li>
+     <li> The public identifier is set to: "<code data-x="">-//W3O//DTD W3 HTML Strict 3.0//EN//</code>" </li>
+     <li> The public identifier is set to: "<code data-x="">-/W3C/DTD HTML 4.0 Transitional/EN</code>" </li>
+     <li> The public identifier is set to: "<code data-x="">HTML</code>" </li>
+     <li> The system identifier is set to: "<code data-x="">http://www.ibm.com/data/dtd/v11/ibmxhtml1-transitional.dtd</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">+//Silmaril//dtd html Pro v0r11 19970101//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//AS//DTD HTML 3.0 asWedit + extensions//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//AdvaSoft Ltd//DTD HTML 3.0 asWedit + extensions//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//IETF//DTD HTML 2.0 Level 1//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//IETF//DTD HTML 2.0 Level 2//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//IETF//DTD HTML 2.0 Strict Level 1//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//IETF//DTD HTML 2.0 Strict Level 2//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//IETF//DTD HTML 2.0 Strict//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//IETF//DTD HTML 2.0//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//IETF//DTD HTML 2.1E//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//IETF//DTD HTML 3.0//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//IETF//DTD HTML 3.2 Final//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//IETF//DTD HTML 3.2//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//IETF//DTD HTML 3//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//IETF//DTD HTML Level 0//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//IETF//DTD HTML Level 1//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//IETF//DTD HTML Level 2//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//IETF//DTD HTML Level 3//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//IETF//DTD HTML Strict Level 0//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//IETF//DTD HTML Strict Level 1//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//IETF//DTD HTML Strict Level 2//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//IETF//DTD HTML Strict Level 3//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//IETF//DTD HTML Strict//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//IETF//DTD HTML//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//Metrius//DTD Metrius Presentational//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//Microsoft//DTD Internet Explorer 2.0 HTML Strict//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//Microsoft//DTD Internet Explorer 2.0 HTML//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//Microsoft//DTD Internet Explorer 2.0 Tables//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//Microsoft//DTD Internet Explorer 3.0 HTML Strict//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//Microsoft//DTD Internet Explorer 3.0 HTML//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//Microsoft//DTD Internet Explorer 3.0 Tables//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//Netscape Comm. Corp.//DTD HTML//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//Netscape Comm. Corp.//DTD Strict HTML//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//O'Reilly and Associates//DTD HTML 2.0//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//O'Reilly and Associates//DTD HTML Extended 1.0//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//O'Reilly and Associates//DTD HTML Extended Relaxed 1.0//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//SQ//DTD HTML 2.0 HoTMetaL + extensions//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//SoftQuad Software//DTD HoTMetaL PRO 6.0::19990601::extensions to HTML 4.0//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//SoftQuad//DTD HoTMetaL PRO 4.0::19971010::extensions to HTML 4.0//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//Spyglass//DTD HTML 2.0 Extended//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//Sun Microsystems Corp.//DTD HotJava HTML//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//Sun Microsystems Corp.//DTD HotJava Strict HTML//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//W3C//DTD HTML 3 1995-03-24//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//W3C//DTD HTML 3.2 Draft//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//W3C//DTD HTML 3.2 Final//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//W3C//DTD HTML 3.2//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//W3C//DTD HTML 3.2S Draft//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//W3C//DTD HTML 4.0 Frameset//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//W3C//DTD HTML 4.0 Transitional//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//W3C//DTD HTML Experimental 19960712//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//W3C//DTD HTML Experimental 970421//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//W3C//DTD W3 HTML//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//W3O//DTD W3 HTML 3.0//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//WebTechs//DTD Mozilla HTML 2.0//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//WebTechs//DTD Mozilla HTML//</code>" </li>
+     <li> The system identifier is missing or the empty string, and the public identifier starts with: "<code data-x="">-//W3C//DTD HTML 4.01 Frameset//</code>" </li>
+     <li> The system identifier is missing or the empty string, and the public identifier starts with: "<code data-x="">-//W3C//DTD HTML 4.01 Transitional//</code>" </li>
+    </ul>
+
+    <p>Otherwise, if the document is <em>not</em> <span>an <code>iframe</code> <code
+    data-x="attr-iframe-srcdoc">srcdoc</code> document</span>, and the <span>parser cannot change
+    the mode flag</span> is false, and the DOCTYPE token matches one of the conditions in the
+    following list, then set the <code>Document</code> to <span>limited-quirks mode</span>:</p>
+
+    <ul class="brief">
+     <li> The public identifier starts with: "<code data-x="">-//W3C//DTD XHTML 1.0 Frameset//</code>" </li>
+     <li> The public identifier starts with: "<code data-x="">-//W3C//DTD XHTML 1.0 Transitional//</code>" </li>
+     <li> The system identifier is neither missing nor the empty string, and the public identifier starts with: "<code data-x="">-//W3C//DTD HTML 4.01 Frameset//</code>" </li>
+     <li> The system identifier is neither missing nor the empty string, and the public identifier starts with: "<code data-x="">-//W3C//DTD HTML 4.01 Transitional//</code>" </li>
+    </ul>
+
+    <p>The system identifier and public identifier strings must be compared to the values given in
+    the lists above in an <span>ASCII case-insensitive</span> manner. A system identifier whose
+    value is the empty string is not considered missing for the purposes of the conditions
+    above.</p>
+
+    <p>Then, switch the <span>insertion mode</span> to "<span data-x="insertion mode: before
+    html">before html</span>".</p>
+   </dd>
+
+   <dt>Anything else</dt>
+   <dd>
+    <p>If the document is <em>not</em> <span>an <code>iframe</code> <code
+    data-x="attr-iframe-srcdoc">srcdoc</code> document</span>, then this is a <span>parse
+    error</span>; if the <span>parser cannot change the mode flag</span> is false, set the
+    <code>Document</code> to <span>quirks mode</span>.</p>
+
+    <p>In any case, switch the <span>insertion mode</span> to "<span data-x="insertion mode: before
+    html">before html</span>", then reprocess the token.</p>
+   </dd>
+  </dl>
+  </div>
+
+
+  <h6>The "<dfn data-x="insertion mode: before html">before html</dfn>" insertion mode</h6>
+
+  <div algorithm>
+  <p>When the user agent is to apply the rules for the "<span data-x="insertion mode: before
+  html">before html</span>" <span>insertion mode</span>, the user agent must handle the token as
+  follows:</p>
+
+  <dl class="switch">
+
+   <dt>A DOCTYPE token</dt>
+   <dd>
+    <p><span>Parse error</span>. Ignore the token.</p>
+   </dd>
+
+   <dt>A comment token</dt>
+   <dd>
+    <p><span>Insert a comment</span> given (the <code>Document</code> object, null).</p>
+   </dd>
+
+   <dt>A processing instruction token</dt>
+   <dd>
+    <p><span>Insert a processing instruction</span> given (the <code>Document</code> object,
+    null).</p>
+   </dd>
+
+   <dt>A character token that is one of U+0009 CHARACTER TABULATION, U+000A LINE FEED (LF), U+000C
+   FORM FEED (FF), U+000D CARRIAGE RETURN (CR), or U+0020 SPACE</dt>
+   <dd>
+    <p>Ignore the token.</p>
+   </dd>
+
+   <dt>A start tag whose tag name is "html"</dt>
+   <dd>
+    <p><span>Create an element for the token</span> in the <span>HTML namespace</span>, with the
+    <code>Document</code> as the intended parent. <span>Insert an element at the adjusted insertion
+    location</span> with that element and (the <code>Document</code>, null). Put this element in the
+    <span>stack of open elements</span>.</p>
+
+    <p>Switch the <span>insertion mode</span> to "<span data-x="insertion mode: before head">before
+    head</span>".</p>
+   </dd>
+
+   <dt>An end tag whose tag name is one of: "head", "body", "html", "br"</dt>
+   <dd>
+    <p>Act as described in the "anything else" entry below.</p>
+   </dd>
+
+   <dt>Any other end tag</dt>
+   <dd>
+    <p><span>Parse error</span>. Ignore the token.</p>
+   </dd>
+
+   <dt>Anything else</dt>
+   <dd>
+    <p>Create an <code>html</code> element whose <span>node document</span> is the <code>Document</code> object. Append
+    it to the <code>Document</code> object. Put this element in the <span>stack of open
+    elements</span>.</p>
+
+    <p>Switch the <span>insertion mode</span> to "<span data-x="insertion mode: before head">before
+    head</span>", then reprocess the token.</p>
+   </dd>
+  </dl>
+  </div>
+
+  <p>The <span>document element</span> can end up being removed from the <code>Document</code>
+  object, e.g. by scripts; nothing in particular happens in such cases, content continues being
+  appended to the nodes as described in the next section.</p>
+
+
+  <h6>The "<dfn data-x="insertion mode: before head">before head</dfn>" insertion mode</h6>
+
+  <div algorithm>
+  <p>When the user agent is to apply the rules for the "<span data-x="insertion mode: before
+  head">before head</span>" <span>insertion mode</span>, the user agent must handle the token as
+  follows:</p>
+
+  <dl class="switch">
+
+   <dt>A character token that is one of U+0009 CHARACTER
+   TABULATION, U+000A LINE FEED (LF), U+000C FORM FEED (FF),
+   U+000D CARRIAGE RETURN (CR), or U+0020 SPACE</dt>
+   <dd>
+    <p>Ignore the token.</p> <!-- :-( -->
+   </dd>
+
+   <dt>A comment token</dt>
+   <dd>
+    <p><span>Insert a comment</span>.</p>
+   </dd>
+
+   <dt>A processing instruction token</dt>
+   <dd>
+    <p><span>Insert a processing instruction</span>.</p>
+   </dd>
+
+   <dt>A DOCTYPE token</dt>
+   <dd>
+    <p><span>Parse error</span>. Ignore the token.</p>
+   </dd>
+
+   <dt>A start tag whose tag name is "html"</dt>
+   <dd>
+    <p>Process the token <span>using the rules for</span> the "<span data-x="insertion mode: in
+    body">in body</span>" <span>insertion mode</span>.</p>
+   </dd>
+
+   <dt>A start tag whose tag name is "head"</dt>
+   <dd>
+    <p><span>Insert an HTML element</span> for the token.</p>
+
+    <p>Set the <span><code data-x="">head</code> element pointer</span> to the newly created
+    <code>head</code> element.</p>
+
+    <p>Switch the <span>insertion mode</span> to "<span data-x="insertion mode: in head">in
+    head</span>".</p>
+   </dd>
+
+   <dt>An end tag whose tag name is one of: "head", "body", "html", "br"</dt>
+   <dd>
+    <p>Act as described in the "anything else" entry below.</p>
+   </dd>
+
+   <dt>Any other end tag</dt>
+   <dd>
+    <p><span>Parse error</span>. Ignore the token.</p>
+   </dd>
+
+   <dt>Anything else</dt>
+   <dd>
+    <!-- fake <head> -->
+
+    <p><span>Insert an HTML element</span> for a "head" start tag token with no attributes.</p>
+
+    <p>Set the <span><code data-x="">head</code> element pointer</span> to the newly created
+    <code>head</code> element.</p>
+
+    <p>Switch the <span>insertion mode</span> to "<span data-x="insertion mode: in head">in
+    head</span>".</p>
+
+    <!-- end of fake <head> -->
+
+    <p>Reprocess the current token.</p>
+   </dd>
+  </dl>
+  </div>
+
+
+  <h6 id="parsing-main-inhead">The "<dfn data-x="insertion mode: in head">in head</dfn>" insertion mode</h6>
+
+  <div algorithm>
+  <p>When the user agent is to apply the rules for the "<span data-x="insertion mode: in head">in
+  head</span>" <span>insertion mode</span>, the user agent must handle the token as follows:</p>
+
+  <dl class="switch">
+
+   <dt>A character token that is one of U+0009 CHARACTER
+   TABULATION, U+000A LINE FEED (LF), U+000C FORM FEED (FF),
+   U+000D CARRIAGE RETURN (CR), or U+0020 SPACE</dt>
+   <dd>
+    <p><span data-x="insert a character">Insert the character</span>.</p>
+   </dd>
+
+   <dt>A comment token</dt>
+   <dd>
+    <p><span>Insert a comment</span>.</p>
+   </dd>
+
+   <dt>A processing instruction token</dt>
+   <dd>
+    <p><span>Insert a processing instruction</span>.</p>
+   </dd>
+
+   <dt>A DOCTYPE token</dt>
+   <dd>
+    <p><span>Parse error</span>. Ignore the token.</p>
+   </dd>
+
+   <dt>A start tag whose tag name is "html"</dt>
+   <dd>
+    <p>Process the token <span>using the rules for</span> the "<span data-x="insertion mode: in
+    body">in body</span>" <span>insertion mode</span>.</p>
+   </dd>
+
+   <dt>A start tag whose tag name is one of: "base", "basefont",
+   "bgsound", "link"</dt>
+   <dd>
+    <p><span>Insert an HTML element</span> for the token. Immediately pop the <span>current
+    node</span> off the <span>stack of open elements</span>.</p>
+
+    <p><span data-x="acknowledge self-closing flag">Acknowledge the token's <i data-x="self-closing flag">self-closing
+    flag</i></span>, if it is set.</p>
+   </dd>
+
+   <dt>A start tag whose tag name is "meta"</dt>
+   <dd>
+    <p><span>Insert an HTML element</span> for the token. Immediately pop the <span>current
+    node</span> off the <span>stack of open elements</span>.</p>
+
+    <p><span data-x="acknowledge self-closing flag">Acknowledge the token's <i data-x="self-closing flag">self-closing
+    flag</i></span>, if it is set.</p>
+
+    <p>If the <span>active speculative HTML parser</span> is null:</p>
+
+    <ol>
+     <li><p id="meta-charset-during-parse">If the element has a <code
+     data-x="attr-meta-charset">charset</code> attribute, and <span>getting an encoding</span> from
+     its value results in an <span>encoding</span>, and the
+     <span data-x="concept-encoding-confidence">confidence</span> is currently <i>tentative</i>,
+     then <span>change the encoding</span> to the resulting encoding.</p></li>
+
+     <li><p>Otherwise, if the element has an <code data-x="attr-meta-http-equiv">http-equiv</code>
+     attribute whose value is an <span>ASCII case-insensitive</span> match for "<code
+     data-x="">Content-Type</code>", and the element has a <code
+     data-x="attr-meta-content">content</code> attribute, and applying the <span>algorithm for
+     extracting a character encoding from a <code>meta</code> element</span> to that attribute's
+     value returns an <span>encoding</span>, and the
+     <span data-x="concept-encoding-confidence">confidence</span> is currently <i>tentative</i>,
+     then <span>change the encoding</span> to the extracted encoding.</p></li>
+    </ol>
+
+    <p class="note">The <span>speculative HTML parser</span> doesn't speculatively apply character
+    encoding declarations in order to reduce implementation complexity.</p>
+   </dd>
+
+   <dt>A start tag whose tag name is "title"</dt>
+   <dd>
+    <p>Follow the <span>generic RCDATA element parsing algorithm</span>.</p>
+   </dd>
+
+   <dt>A start tag whose tag name is "noscript", if <span>scripting mode</span> is not <span
+   data-x="scripting-mode-disabled">Disabled</span></dt>
+   <dt>A start tag whose tag name is one of: "noframes", "style"</dt>
+   <dd>
+    <p>Follow the <span>generic raw text element parsing algorithm</span>.</p>
+   </dd>
+
+   <dt>A start tag whose tag name is "noscript", if <span>scripting mode</span> is <span
+   data-x="scripting-mode-disabled">Disabled</span></dt>
+   <dd>
+    <p><span>Insert an HTML element</span> for the token.</p>
+
+    <p>Switch the <span>insertion mode</span> to "<span data-x="insertion mode: in head noscript">in
+    head noscript</span>".</p>
+   </dd>
+
+

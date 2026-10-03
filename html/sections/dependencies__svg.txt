@@ -1,0 +1,139 @@
+WHATWG HTML — section dependencies/svg — SVG
+
+   <dt>SVG</dt>
+
+   <dd>
+    <p>While support for SVG as a whole is not required by this specification (though it is
+    encouraged, at least for web browsers), certain features depend upon parts of SVG being
+    implemented.</p>
+
+    <p>User agents that implement SVG must implement the <cite>SVG 2</cite> specification, and not
+    any earlier revisions.</p>
+
+    <p>The following features are defined in the <cite>SVG 2</cite> specification:
+    <ref>SVG</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://svgwg.org/svg2-draft/types.html#InterfaceSVGElement"><code>SVGElement</code></dfn> interface</li>
+     <li><dfn data-x-href="https://svgwg.org/svg2-draft/embedded.html#InterfaceSVGImageElement"><code>SVGImageElement</code></dfn> interface</li>
+     <li><dfn data-x-href="https://svgwg.org/svg2-draft/interact.html#InterfaceSVGScriptElement"><code>SVGScriptElement</code></dfn> interface</li>
+     <li><dfn data-x-href="https://svgwg.org/svg2-draft/struct.html#InterfaceSVGSVGElement"><code>SVGSVGElement</code></dfn> interface</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/linking.html#elementdef-a">SVG <code>a</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/animate.html#elementdef-animate">SVG <code>animate</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/animate.html#elementdef-animateTransform">SVG <code>animateTransform</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/shapes.html#elementdef-circle">SVG <code>circle</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/struct.html#elementdef-defs">SVG <code>defs</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/struct.html#elementdef-desc">SVG <code>desc</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/shapes.html#elementdef-ellipse">SVG <code>ellipse</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/embedded.html#elementdef-foreignObject">SVG <code>foreignObject</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/struct.html#elementdef-g">SVG <code>g</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/embedded.html#elementdef-image">SVG <code>image</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/shapes.html#elementdef-line">SVG <code>line</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/painting.html#elementdef-marker">SVG <code>marker</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/struct.html#elementdef-metadata">SVG <code>metadata</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/paths.html#elementdef-path">SVG <code>path</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/shapes.html#elementdef-polygon">SVG <code>polygon</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/shapes.html#elementdef-polyline">SVG <code>polyline</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/shapes.html#elementdef-rect">SVG <code>rect</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/interact.html#elementdef-script">SVG <code>script</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/animate.html#elementdef-set">SVG <code>set</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/struct.html#elementdef-svg">SVG <code>svg</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/text.html#elementdef-text">SVG <code>text</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/text.html#elementdef-textPath">SVG <code>textPath</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/struct.html#elementdef-title">SVG <code>title</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/text.html#elementdef-tspan">SVG <code>tspan</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/struct.html#elementdef-use">SVG <code>use</code></dfn> element</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/interact.html">SVG <code>action</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/specs/animations/#AttributeNameAttribute">SVG <code>attributeName</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/geometry.html#CxProperty">SVG <code>cx</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/geometry.html#CyProperty">SVG <code>cy</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/paths.html#DProperty">SVG <code>d</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/text.html#TextElementDXAttribute">SVG <code>dx</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/text.html#TextElementDYAttribute">SVG <code>dy</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/interact.html">SVG <code>formaction</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/geometry.html#HeightProperty">SVG <code>height</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/linking.html#AElementHrefAttribute">SVG <code>href</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/linking.html#AElementHreflangAttribute">SVG <code>hreflang</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/text.html#TextElementLengthAdjustAttribute">SVG <code>lengthAdjust</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/painting.html#MarkerHeightAttribute">SVG <code>markerHeight</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/painting.html#MarkerUnitsAttribute">SVG <code>markerUnits</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/painting.html#MarkerWidthAttribute">SVG <code>markerWidth</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/text.html#TextPathElementMethodAttribute">SVG <code>method</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/painting.html#OrientAttribute">SVG <code>orient</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/text.html#TextPathElementPathAttribute">SVG <code>path</code> attribute</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/paths.html#PathLengthAttribute">SVG <code>pathLength</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/shapes.html#PointsAttribute">SVG <code>points</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/coords.html#PreserveAspectRatioAttribute">SVG <code>preserveAspectRatio</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/geometry.html#RProperty">SVG <code>r</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/painting.html#MarkerElementRefXAttribute">SVG <code>refX</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/painting.html#MarkerElementRefYAttribute">SVG <code>refY</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/text.html#TextElementRotateAttribute">SVG <code>rotate</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/geometry.html#RxProperty">SVG <code>rx</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/geometry.html#RyProperty">SVG <code>ry</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/text.html#TextPathElementSideAttribute">SVG <code>side</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/text.html#TextPathElementSpacingAttribute">SVG <code>spacing</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/text.html#TextPathElementStartOffsetAttribute">SVG <code>startOffset</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/text.html#TextElementTextLengthAttribute">SVG <code>textLength</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/linking.html#AElementTypeAttribute">SVG <code>type</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/coords.html#ViewBoxAttribute">SVG <code>viewBox</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/geometry.html#WidthProperty">SVG <code>width</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/geometry.html#XProperty">SVG <code>x</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/shapes.html#LineElementX1Attribute">SVG <code>x1</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/shapes.html#LineElementX2Attribute">SVG <code>x2</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/geometry.html#YProperty">SVG <code>y</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/shapes.html#LineElementY1Attribute">SVG <code>y1</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://w3c.github.io/svgwg/svg2-draft/shapes.html#LineElementY2Attribute">SVG <code>y2</code></dfn> attribute</li>
+     <li><dfn data-x-href="https://svgwg.org/svg2-draft/painting.html#TextRendering">SVG <code>text-rendering</code></dfn> property</li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-inline-3/#propdef-alignment-baseline">SVG <code>alignment-baseline</code></dfn> property</li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-inline-3/#propdef-baseline-shift">SVG <code>baseline-shift</code></dfn> property</li>
+     <li><dfn data-x-href="https://drafts.fxtf.org/css-masking-1/#propdef-clip-path">SVG <code>clip-path</code></dfn> property</li>
+     <li><dfn data-x-href="https://drafts.fxtf.org/css-masking-1/#propdef-clip-rule">SVG <code>clip-rule</code></dfn> property</li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-color-4/#propdef-color">SVG <code>color</code></dfn> property</li>
+     <li><dfn data-x-href="https://svgwg.org/svg2-draft/painting.html#ColorInterpolationProperty">SVG <code>color-interpolation</code></dfn> property</li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-ui-4/#propdef-cursor">SVG <code>cursor</code></dfn> property</li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-writing-modes-4/#propdef-direction">SVG <code>direction</code></dfn> property</li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-display-4/#propdef-display">SVG <code>display</code></dfn> property</li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-inline-3/#propdef-dominant-baseline">SVG <code>dominant-baseline</code></dfn> property</li>
+     <li><dfn data-x-href="https://svgwg.org/svg2-draft/painting.html#FillProperty">SVG <code>fill</code></dfn> property</li>
+     <li><dfn data-x-href="https://svgwg.org/svg2-draft/painting.html#FillOpacityProperty">SVG <code>fill-opacity</code></dfn> property</li>
+     <li><dfn data-x-href="https://svgwg.org/svg2-draft/painting.html#FillRuleProperty">SVG <code>fill-rule</code></dfn> property</li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-fonts-4/#propdef-font-family">SVG <code>font-family</code></dfn> property</li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-fonts-4/#propdef-font-size">SVG <code>font-size</code></dfn> property</li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-fonts-5/#propdef-font-size-adjust">SVG <code>font-size-adjust</code></dfn> property</li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-fonts-4/#propdef-font-stretch">SVG <code>font-stretch</code></dfn> property</li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-fonts-4/#propdef-font-style">SVG <code>font-style</code></dfn> property</li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-fonts-4/#propdef-font-variant">SVG <code>font-variant</code></dfn> property</li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-fonts-4/#propdef-font-weight">SVG <code>font-weight</code></dfn> property</li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-text-4/#propdef-letter-spacing">SVG <code>letter-spacing</code></dfn> property</li>
+     <li><dfn data-x-href="https://svgwg.org/svg2-draft/painting.html#MarkerEndProperty">SVG <code>marker-end</code></dfn> property</li>
+     <li><dfn data-x-href="https://svgwg.org/svg2-draft/painting.html#MarkerMidProperty">SVG <code>marker-mid</code></dfn> property</li>
+     <li><dfn data-x-href="https://svgwg.org/svg2-draft/painting.html#MarkerStartProperty">SVG <code>marker-start</code></dfn> property</li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-color-4/#propdef-opacity">SVG <code>opacity</code></dfn> property</li>
+     <li><dfn data-x-href="https://svgwg.org/svg2-draft/painting.html#PaintOrderProperty">SVG <code>paint-order</code></dfn> property</li>
+     <li><dfn data-x-href="https://svgwg.org/svg2-draft/interact.html#PointerEventsProperty">SVG <code>pointer-events</code></dfn> property</li>
+     <li><dfn data-x-href="https://svgwg.org/svg2-draft/painting.html#ShapeRenderingProperty">SVG <code>shape-rendering</code></dfn> property</li>
+     <li><dfn data-x-href="https://svgwg.org/svg2-draft/pservers.html#StopColorProperty">SVG <code>stop-color</code></dfn> property</li>
+     <li><dfn data-x-href="https://svgwg.org/svg2-draft/pservers.html#StopOpacityProperty">SVG <code>stop-opacity</code></dfn> property</li>
+     <li><dfn data-x-href="https://svgwg.org/svg2-draft/painting.html#StrokeProperty">SVG <code>stroke</code></dfn> property</li>
+     <li><dfn data-x-href="https://svgwg.org/svg2-draft/painting.html#StrokeDasharrayProperty">SVG <code>stroke-dasharray</code></dfn> property</li>
+     <li><dfn data-x-href="https://svgwg.org/svg2-draft/painting.html#StrokeDashoffsetProperty">SVG <code>stroke-dashoffset</code></dfn> property</li>
+     <li><dfn data-x-href="https://svgwg.org/svg2-draft/painting.html#StrokeLinecapProperty">SVG <code>stroke-linecap</code></dfn> property</li>
+     <li><dfn data-x-href="https://svgwg.org/svg2-draft/painting.html#StrokeLinejoinProperty">SVG <code>stroke-linejoin</code></dfn> property</li>
+     <li><dfn data-x-href="https://svgwg.org/svg2-draft/painting.html#StrokeMiterlimitProperty">SVG <code>stroke-miterlimit</code></dfn> property</li>
+     <li><dfn data-x-href="https://svgwg.org/svg2-draft/painting.html#StrokeOpacityProperty">SVG <code>stroke-opacity</code></dfn> property</li>
+     <li><dfn data-x-href="https://svgwg.org/svg2-draft/painting.html#StrokeWidthProperty">SVG <code>stroke-width</code></dfn> property</li>
+     <li><dfn data-x-href="https://svgwg.org/svg2-draft/text.html#TextAnchorProperty">SVG <code>text-anchor</code></dfn> property</li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-text-decor-4/#propdef-text-decoration">SVG <code>text-decoration</code></dfn> property</li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-ui-3/#propdef-text-overflow">SVG <code>text-overflow</code></dfn> property</li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-transforms-1/#propdef-transform">SVG <code>transform</code></dfn> property</li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-transforms-1/#propdef-transform-origin">SVG <code>transform-origin</code></dfn> property</li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-writing-modes-4/#propdef-unicode-bidi">SVG <code>unicode-bidi</code></dfn> property</li>
+     <li><dfn data-x-href="https://svgwg.org/svg2-draft/coords.html#VectorEffectProperty">SVG <code>vector-effect</code></dfn> property</li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-display-4/#propdef-visibility">SVG <code>visibility</code></dfn> property</li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-text-4/#propdef-white-space">SVG <code>white-space</code></dfn> property</li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-text-4/#propdef-word-spacing">SVG <code>word-spacing</code></dfn> property</li>
+     <li><dfn data-x-href="https://drafts.csswg.org/css-writing-modes-4/#propdef-writing-mode">SVG <code>writing-mode</code></dfn> property</li>
+    </ul>
+   </dd>
+
+

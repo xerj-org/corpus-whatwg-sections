@@ -1,0 +1,594 @@
+WHATWG HTML — section custom-elements-intro — Introduction
+
+  <h4 id="custom-elements-intro">Introduction</h4>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p><span data-x="custom element">Custom elements</span> provide a way for authors to build their
+  own fully-featured DOM elements. Although authors could always use non-standard elements in their
+  documents, with application-specific behavior added after the fact by scripting or similar, such
+  elements have historically been non-conforming and not very functional. By <span
+  data-x="element definition">defining</span> a custom element, authors can inform the parser how to
+  properly construct an element and how elements of that class should react to changes.</p>
+
+  <p>Custom elements are part of a larger effort to "rationalise the platform", by explaining
+  existing platform features (like the elements of HTML) in terms of lower-level author-exposed
+  extensibility points (like custom element definition). Although today there are many limitations
+  on the capabilities of custom elements—both functionally and semantically—that prevent them from
+  fully explaining the behaviors of HTML's existing elements, we hope to shrink this gap over
+  time.</p>
+
+  <h5 id="custom-elements-autonomous-example">Creating an autonomous custom element</h5>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>For the purposes of illustrating how to create an <span>autonomous custom element</span>, let's
+  define a custom element that encapsulates rendering a small icon for a country flag. Our goal is
+  to be able to use it like so:</p>
+
+  <pre><code class="html">&lt;flag-icon country="nl">&lt;/flag-icon></code></pre>
+
+  <p>To do this, we first declare a class for the custom element, extending
+  <code>HTMLElement</code>:</p>
+
+  <pre><code class="js">class FlagIcon extends HTMLElement {
+  constructor() {
+    super();
+    this._countryCode = null;
+  }
+
+  static observedAttributes = ["country"];
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    // name will always be "country" due to observedAttributes
+    this._countryCode = newValue;
+    this._updateRendering();
+  }
+  connectedCallback() {
+    this._updateRendering();
+  }
+
+  get country() {
+    return this._countryCode;
+  }
+  set country(v) {
+    this.setAttribute("country", v);
+  }
+
+  _updateRendering() {
+    // Left as an exercise for the reader. But, you'll probably want to
+    // check this.ownerDocument.defaultView to see if we've been
+    // inserted into a document with a browsing context, and avoid
+    // doing any work if not.
+  }
+}</code></pre>
+
+  <p>We then need to use this class to define the element:</p>
+
+  <pre><code class="js">customElements.define("flag-icon", FlagIcon);</code></pre>
+
+  <p>At this point, our above code will work! The parser, whenever it sees the <code
+  data-x="">flag-icon</code> tag, will construct a new instance of our <code
+  data-x="">FlagIcon</code> class, and tell our code about its new <code data-x="">country</code>
+  attribute, which we then use to set the element's internal state and update its rendering (when
+  appropriate).</p>
+
+  <p>You can also create <code data-x="">flag-icon</code> elements using the DOM API:</p>
+
+  <pre><code class="js">const flagIcon = document.createElement("flag-icon")
+flagIcon.country = "jp"
+document.body.appendChild(flagIcon)</code></pre>
+
+  <p>Finally, we can also use the <span>custom element constructor</span> itself. That is, the above
+  code is equivalent to:</p>
+
+  <pre><code class="js">const flagIcon = new FlagIcon()
+flagIcon.country = "jp"
+document.body.appendChild(flagIcon)</code></pre>
+
+  <h5 id="custom-elements-face-example">Creating a form-associated custom element</h5>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>Adding a static <code data-x="">formAssociated</code> property, with a true value, makes an
+  <span>autonomous custom element</span> a <span>form-associated custom element</span>. The
+  <code>ElementInternals</code> interface helps you to implement functions and properties common
+  to form control elements.</p>
+
+  <pre><code class="js">class MyCheckbox extends HTMLElement {
+  static formAssociated = true;
+  static observedAttributes = ['checked'];
+
+  constructor() {
+    super();
+    this._internals = this.attachInternals();
+    this.addEventListener('click', this._onClick.bind(this));
+  }
+
+  get form() { return this._internals.form; }
+  get name() { return this.getAttribute('name'); }
+  get type() { return this.localName; }
+
+  get checked() { return this.hasAttribute('checked'); }
+  set checked(flag) { this.toggleAttribute('checked', Boolean(flag)); }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    // name will always be "checked" due to observedAttributes
+    this._internals.setFormValue(this.checked ? 'on' : null);
+  }
+
+  _onClick(event) {
+    this.checked = !this.checked;
+  }
+}
+customElements.define('my-checkbox', MyCheckbox);</code></pre>
+
+  <p>You can use the custom element <code data-x="">my-checkbox</code> like a built-in
+  form-associated element. For example, putting it in <code>form</code> or <code>label</code>
+  associates the <code data-x="">my-checkbox</code> element with them, and submitting the
+  <code>form</code> will send data provided by <code data-x="">my-checkbox</code> implementation.
+  </p>
+
+  <pre><code class="html">&lt;form action="..." method="...">
+  &lt;label>&lt;my-checkbox name="agreed">&lt;/my-checkbox> I read the agreement.&lt;/label>
+  &lt;input type="submit">
+&lt;/form>
+</code></pre>
+
+  <h5 id="custom-elements-accessibility-example">Creating a custom element with default accessible roles, states, and properties</h5>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>By using the appropriate properties of <code>ElementInternals</code>, your custom element can
+  have default accessibility semantics. The following code expands our form-associated checkbox from
+  the previous section to properly set its default role and checkedness, as viewed by accessibility
+  technology:</p>
+
+  <pre><code class="js" data-x="">class MyCheckbox extends HTMLElement {
+  static formAssociated = true;
+  static observedAttributes = ['checked'];
+
+  constructor() {
+    super();
+    this._internals = this.attachInternals();
+    this.addEventListener('click', this._onClick.bind(this));
+
+<mark>    this._internals.role = 'checkbox';
+    this._internals.ariaChecked = 'false';</mark>
+  }
+
+  get form() { return this._internals.form; }
+  get name() { return this.getAttribute('name'); }
+  get type() { return this.localName; }
+
+  get checked() { return this.hasAttribute('checked'); }
+  set checked(flag) { this.toggleAttribute('checked', Boolean(flag)); }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    // name will always be "checked" due to observedAttributes
+    this._internals.setFormValue(this.checked ? 'on' : null);
+<mark>    this._internals.ariaChecked = this.checked;</mark>
+  }
+
+  _onClick(event) {
+    this.checked = !this.checked;
+  }
+}
+customElements.define('my-checkbox', MyCheckbox);</code></pre>
+
+  <p>Note that, like for built-in elements, these are only defaults, and can be overridden by the
+  page author using the <code data-x="attr-aria-role">role</code> and <code
+  data-x="attr-aria-*">aria-*</code> attributes:</p>
+
+  <pre class="bad"><code class="html" data-x="">&lt;!-- This markup is non-conforming -->
+&lt;input type="checkbox" checked role="button" aria-checked="false"></code></pre>
+
+<pre class="bad"><code class="html" data-x="">&lt;!-- This markup is probably not what the custom element author intended -->
+&lt;my-checkbox role="button" checked aria-checked="false"></code></pre>
+
+  <p>Custom element authors are encouraged to state what aspects of their accessibility semantics
+  are strong native semantics, i.e., should not be overridden by users of the custom element. In our
+  example, the author of the <code data-x="">my-checkbox</code> element would state that its
+  <span>role</span> and <code data-x="attr-aria-checked">aria-checked</code> values are strong
+  native semantics, thus discouraging code such as the above.</p>
+
+  <h5 id="custom-elements-customized-builtin-example">Creating a customized built-in element</h5>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p><span data-x="customized built-in element">Customized built-in elements</span> are a distinct
+  kind of <span>custom element</span>, which are defined slightly differently and used very
+  differently compared to <span data-x="autonomous custom element">autonomous custom
+  elements</span>. They exist to allow reuse of behaviors from the existing elements of HTML, by
+  extending those elements with new custom functionality. This is important since many of the
+  existing behaviors of HTML elements can unfortunately not be duplicated by using purely <span
+  data-x="autonomous custom element">autonomous custom elements</span>. Instead, <span
+  data-x="customized built-in element">customized built-in elements</span> allow the installation of
+  custom construction behavior, lifecycle hooks, and prototype chain onto existing elements,
+  essentially "mixing in" these capabilities on top of the already-existing element.</p>
+
+  <p><span data-x="customized built-in element">Customized built-in elements</span> require a
+  distinct syntax from <span data-x="autonomous custom element">autonomous custom elements</span>
+  because user agents and other software key off an element's local name in order to identify the
+  element's semantics and behavior. That is, the concept of <span data-x="customized built-in
+  element">customized built-in elements</span> building on top of existing behavior depends
+  crucially on the extended elements retaining their original local name.</p>
+
+  <p>In this example, we'll be creating a <span>customized built-in element</span> named <code
+  data-x="">plastic-button</code>, which behaves like a normal button but gets fancy animation
+  effects added whenever you click on it. We start by defining a class, just like before, although
+  this time we extend <code>HTMLButtonElement</code> instead of <code>HTMLElement</code>:</p>
+
+  <pre><code class="js">class PlasticButton extends HTMLButtonElement {
+  constructor() {
+    super();
+
+    this.addEventListener("click", () => {
+      // Draw some fancy animation effects!
+    });
+  }
+}</code></pre>
+
+  <p>When defining our custom element, we have to also specify the <code
+  data-x="dom-ElementDefinitionOptions-extends">extends</code> option:</p>
+
+  <pre><code class="js">customElements.define("plastic-button", PlasticButton, { extends: "button" });</code></pre>
+
+  <p>In general, the name of the element being extended cannot be determined simply by looking at
+  what element interface it extends, as many elements share the same interface (such as
+  <code>q</code> and <code>blockquote</code> both sharing <code>HTMLQuoteElement</code>).</p>
+
+  <p>To construct our <span>customized built-in element</span> from parsed HTML source text, we use
+  the <code data-x="attr-is">is</code> attribute on a <code>button</code> element:</p>
+
+  <pre><code class="html">&lt;button is="plastic-button">Click Me!&lt;/button></code></pre>
+
+  <p>Trying to use a <span>customized built-in element</span> as an <span>autonomous custom
+  element</span> will <em>not</em> work; that is, <code data-x="">&lt;plastic-button>Click
+  me?&lt;/plastic-button></code> will simply create an <code>HTMLElement</code> with no special
+  behavior.</p>
+
+  <p>If you need to create a customized built-in element programmatically, you can use the following
+  form of <code data-x="dom-Document-createElement">createElement()</code>:</p>
+
+  <pre><code class="js">const plasticButton = document.createElement("button", { is: "plastic-button" });
+plasticButton.textContent = "Click me!";</code></pre>
+
+  <p>And as before, the constructor will also work:</p>
+
+  <pre><code class="js">const plasticButton2 = new PlasticButton();
+console.log(plasticButton2.localName);  // will output "button"
+console.assert(plasticButton2 instanceof PlasticButton);
+console.assert(plasticButton2 instanceof HTMLButtonElement);</code></pre>
+
+  <p>Note that when creating a customized built-in element programmatically, the <code
+  data-x="attr-is">is</code> attribute will not be present in the DOM, since it was not explicitly
+  set. However, <a href="#attr-is-during-serialization">it will be added to the output when
+  serializing</a>:</p>
+
+  <pre><code class="js">console.assert(!plasticButton.hasAttribute("is"));
+console.log(plasticButton.outerHTML); // will output '&lt;button is="plastic-button">&lt;/button>'</code></pre>
+
+  <p>Regardless of how it is created, all of the ways in which <code>button</code> is special
+  apply to such "plastic buttons" as well: their focus behavior, ability to participate in <span
+  data-x="concept-form-submit">form submission</span>, the <code
+  data-x="attr-fe-disabled">disabled</code> attribute, and so on.</p>
+
+  <p id="customized-built-in-element-restrictions"><span data-x="customized built-in
+  element">Customized built-in elements</span> are designed to allow extension of existing HTML
+  elements that have useful user-agent supplied behavior or APIs. As such, they can only extend
+  existing HTML elements defined in this specification, and cannot extend legacy elements such as
+  <code>bgsound</code>, <code>blink</code>, <code>isindex</code>, <code>keygen</code>,
+  <code>multicol</code>, <code>nextid</code>, or <code>spacer</code> that have been defined to use
+  <code>HTMLUnknownElement</code> as their <span>element interface</span>.</p>
+
+  <p>One reason for this requirement is future-compatibility: if a <span>customized built-in
+  element</span> was defined that extended a currently-unknown element, for example <code
+  data-x="">combobox</code>, this would prevent this specification from defining a <code
+  data-x="">combobox</code> element in the future, as consumers of the derived <span>customized
+  built-in element</span> would have come to depend on their base element having no interesting
+  user-agent-supplied behavior.</p>
+
+  <h5 id="custom-elements-autonomous-drawbacks">Drawbacks of autonomous custom elements</h5>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>As specified below, and alluded to above, simply defining and using an element called
+  <code data-x="">taco-button</code> does not mean that such elements <span
+  data-x="represents">represent</span> buttons. That is, tools such as web browsers, search engines,
+  or accessibility technology will not automatically treat the resulting element as a button just
+  based on its defined name.</p>
+
+  <p>To convey the desired button semantics to a variety of users, while still using an
+  <span>autonomous custom element</span>, a number of techniques would need to be employed:</p>
+
+  <ul>
+   <li><p>The addition of the <code data-x="attr-tabindex">tabindex</code> attribute would make the
+   <code data-x="">taco-button</code> <span>focusable</span>. Note that if the
+   <code data-x="">taco-button</code> were to become logically disabled, the <code
+   data-x="attr-tabindex">tabindex</code> attribute would need to be removed.</p></li>
+
+   <li><p>The addition of an ARIA role and various ARIA states and properties helps convey semantics
+   to accessibility technology. For example, setting the <span>role</span> to "<code
+   data-x="attr-aria-role-button">button</code>" will convey the semantics that this is a button,
+   enabling users to successfully interact with the control using usual button-like interactions in
+   their accessibility technology. Setting the <code data-x="attr-aria-label">aria-label</code>
+   property is necessary to give the button an <span data-x="concept-accessible-name">accessible
+   name</span>, instead of having accessibility technology traverse its child text nodes and
+   announce them. And setting the <code data-x="attr-aria-disabled">aria-disabled</code> state to
+   "<code data-x="">true</code>" when the button is logically disabled conveys to accessibility
+   technology the button's disabled state.</p></li>
+
+   <li><p>The addition of event handlers to handle commonly-expected button behaviors helps convey
+   the semantics of the button to web browser users. In this case, the most relevant event handler
+   would be one that proxies appropriate <code data-x="event-keydown">keydown</code> events to
+   become <code data-x="event-click">click</code> events, so that you can activate the button both
+   with keyboard and by clicking.</li>
+
+   <li><p>In addition to any default visual styling provided for <code data-x="">taco-button</code>
+   elements, the visual styling will also need to be updated to reflect changes in logical state,
+   such as becoming disabled; that is, whatever style sheet has rules for <code
+   data-x="">taco-button</code> will also need to have rules for <code
+   data-x="">taco-button[disabled]</code>.</p></li>
+  </ul>
+
+  <p>With these points in mind, a full-featured <code data-x="">taco-button</code> that took on the
+  responsibility of conveying button semantics (including the ability to be disabled) might look
+  something like this:</p>
+
+  <pre id="custom-elements-autonomous-drawbacks-example"><code
+  class="js">class TacoButton extends HTMLElement {
+  static observedAttributes = ["disabled"];
+
+  constructor() {
+    super();
+    this._internals = this.attachInternals();
+    this._internals.role = "button";
+
+    this.addEventListener("keydown", e => {
+      if (e.code === "Enter" || e.code === "Space") {
+        this.dispatchEvent(new PointerEvent("click", {
+          bubbles: true,
+          cancelable: true
+        }));
+      }
+    });
+
+    this.addEventListener("click", e => {
+      if (this.disabled) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+      }
+    });
+
+    this._observer = new MutationObserver(() => {
+      this._internals.ariaLabel = this.textContent;
+    });
+  }
+
+  connectedCallback() {
+    this.setAttribute("tabindex", "0");
+
+    this._observer.observe(this, {
+      childList: true,
+      characterData: true,
+      subtree: true
+    });
+  }
+
+  disconnectedCallback() {
+    this._observer.disconnect();
+  }
+
+  get disabled() {
+    return this.hasAttribute("disabled");
+  }
+  set disabled(flag) {
+    this.toggleAttribute("disabled", Boolean(flag));
+  }
+
+  attributeChangedCallback(name, oldValue, newValue) {
+    // name will always be "disabled" due to observedAttributes
+    if (this.disabled) {
+      this.removeAttribute("tabindex");
+      this._internals.ariaDisabled = "true";
+    } else {
+      this.setAttribute("tabindex", "0");
+      this._internals.ariaDisabled = "false";
+    }
+  }
+}</code></pre>
+
+  <p>Even with this rather-complicated element definition, the element is not a pleasure to use for
+  consumers: it will be continually "sprouting" <code data-x="attr-tabindex">tabindex</code>
+  attributes of its own volition, and its choice of <code data-x="">tabindex="0"</code> focusability
+  behavior may not match the <code>button</code> behavior on the current platform. This is because
+  as of now there is no way to specify default focus behavior for custom elements, forcing the use
+  of the <code data-x="attr-tabindex">tabindex</code> attribute to do so (even though it is usually
+  reserved for allowing the consumer to override default behavior).</p>
+
+  <p>In contrast, a simple <span>customized built-in element</span>, as shown in the previous
+  section, would automatically inherit the semantics and behavior of the <code>button</code>
+  element, with no need to implement these behaviors manually. In general, for any elements with
+  nontrivial behavior and semantics that build on top of existing elements of HTML, <span
+  data-x="customized built-in element">customized built-in elements</span> will be easier to
+  develop, maintain, and consume.</p>
+
+  <h5 id="custom-elements-upgrades-examples">Upgrading elements after their creation</h5>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>Because <span>element definition</span> can occur at any time, a non-custom element could be
+  <span data-x="create an element">created</span>, and then later become a <span>custom
+  element</span> after an appropriate <span data-x="custom element definition">definition</span> is
+  registered. We call this process "upgrading" the element, from a normal element into a custom
+  element.</p>
+
+  <p><span data-x="custom-element-upgrades">Upgrades</span> enable scenarios where it may be
+  preferable for <span data-x="custom element definition">custom element definitions</span> to be
+  registered after relevant elements have been initially created, such as by the parser. They allow
+  progressive enhancement of the content in the custom element. For example, in the following HTML
+  document the element definition for <code data-x="">img-viewer</code> is loaded
+  asynchronously:</p>
+
+  <pre><code class="html">&lt;!DOCTYPE html>
+&lt;html lang="en">
+&lt;title>Image viewer example&lt;/title>
+
+&lt;img-viewer filter="Kelvin">
+  &lt;img src="images/tree.jpg" alt="A beautiful tree towering over an empty savannah">
+&lt;/img-viewer>
+
+&lt;script src="js/elements/img-viewer.js" async>&lt;/script></code></pre>
+
+  <p>The definition for the <code data-x="">img-viewer</code> element here is loaded using a
+  <code>script</code> element marked with the <code data-x="attr-script-async">async</code>
+  attribute, placed after the <code data-x="">&lt;img-viewer></code> tag in the markup. While the
+  script is loading, the <code data-x="">img-viewer</code> element will be treated as an undefined
+  element, similar to a <code>span</code>. Once the script loads, it will define the <code
+  data-x="">img-viewer</code> element, and the existing <code data-x="">img-viewer</code> element on
+  the page will be upgraded, applying the custom element's definition (which presumably includes
+  applying an image filter identified by the string "Kelvin", enhancing the image's visual
+  appearance).</p>
+
+  <hr>
+
+  <p>Note that <span data-x="custom-element-upgrades">upgrades</span> only apply to elements in the
+  document tree. (Formally, elements that are <span>connected</span>.) An element that is not
+  inserted into a document will stay un-upgraded. An example illustrates this point:</p>
+
+  <pre><code class="html">&lt;!DOCTYPE html>
+&lt;html lang="en">
+&lt;title>Upgrade edge-cases example&lt;/title>
+
+&lt;example-element>&lt;/example-element>
+
+&lt;script>
+  "use strict";
+
+  const inDocument = document.querySelector("example-element");
+  const outOfDocument = document.createElement("example-element");
+
+  // Before the element definition, both are HTMLElement:
+  console.assert(inDocument instanceof HTMLElement);
+  console.assert(outOfDocument instanceof HTMLElement);
+
+  class ExampleElement extends HTMLElement {}
+  customElements.define("example-element", ExampleElement);
+
+  // After element definition, the in-document element was upgraded:
+  console.assert(inDocument instanceof ExampleElement);
+  console.assert(!(outOfDocument instanceof ExampleElement));
+
+  document.body.appendChild(outOfDocument);
+
+  // Now that we've moved the element into the document, it too was upgraded:
+  console.assert(outOfDocument instanceof ExampleElement);
+&lt;/script></code></pre>
+
+  <h5>Scoped custom element registries</h5>
+
+  <p>To allow multiple libraries to co-exist without explicit coordination,
+  <code>CustomElementRegistry</code> can be used in a scoped fashion as well.</p>
+
+  <pre><code class="js">const scoped = new CustomElementRegistry();
+scoped.define("example-element", ExampleElement);
+
+const element = document.createElement("example-element", { customElementRegistry: scoped });</code></pre>
+
+  <p>A node with an associated scoped <code>CustomElementRegistry</code> will use that registry for
+  all its operations, such as when invoking <code
+  data-x="dom-Element-setHTMLUnsafe">setHTMLUnsafe()</code>.</p>
+
+  <h5>Exposing custom element states</h5>
+
+  <p>Built-in elements provided by user agents have certain states that can change over time
+  depending on user interaction and other factors, and are exposed to web authors through <span
+  data-x="pseudo-class">pseudo-classes</span>. For example, some form controls have the "invalid"
+  state, which is exposed through the <code data-x="selector-invalid">:invalid</code>
+  <span>pseudo-class</span>.</p>
+
+  <p>Like built-in elements, <span data-x="custom element">custom elements</span> can have various
+  states to be in too, and <span>custom element</span> authors want to expose these states in a
+  similar fashion as the built-in elements.</p>
+
+  <p>This is done via the <code data-x="selector-custom">:state()</code> pseudo-class. A custom
+  element author can use the <code data-x="dom-ElementInternals-states">states</code> property of
+  <code>ElementInternals</code> to add and remove such custom states, which are then exposed as
+  arguments to the <code data-x="selector-custom">:state()</code> pseudo-class.
+
+  <div class="example">
+   <p>The following shows how <code data-x="selector-custom">:state()</code> can be used to style a
+   custom checkbox element. Assume that <code data-x="">LabeledCheckbox</code> doesn't expose its
+   "checked" state via a content attribute.</p>
+
+   <pre><code class="html">&lt;script>
+class LabeledCheckbox extends HTMLElement {
+  constructor() {
+    super();
+    this._internals = this.attachInternals();
+    this.addEventListener('click', this._onClick.bind(this));
+
+    const shadowRoot = this.attachShadow({mode: 'closed'});
+    shadowRoot.innerHTML =
+      &#96;&lt;style>
+       :host::before {
+         content: '[ ]';
+         white-space: pre;
+         font-family: monospace;
+       }
+       :host(:state(checked))::before { content: '[x]' }
+       &lt;/style>
+       &lt;slot>Label&lt;/slot>&#96;;
+  }
+
+  get checked() { return this._internals.states.has('checked'); }
+
+  set checked(flag) {
+    if (flag)
+      this._internals.states.add('checked');
+    else
+      this._internals.states.delete('checked');
+  }
+
+  _onClick(event) {
+    this.checked = !this.checked;
+  }
+}
+
+customElements.define('labeled-checkbox', LabeledCheckbox);
+&lt;/script>
+
+&lt;style>
+labeled-checkbox { border: dashed red; }
+labeled-checkbox:state(checked) { border: solid; }
+&lt;/style>
+
+&lt;labeled-checkbox>You need to check this&lt;/labeled-checkbox></code></pre>
+  </div>
+
+  <div class="example">
+   <p>Custom pseudo-classes can even target shadow parts. An extension of the above example shows
+   this:</p>
+
+   <pre><code class="html">&lt;script>
+class QuestionBox extends HTMLElement {
+  constructor() {
+    super();
+    const shadowRoot = this.attachShadow({mode: 'closed'});
+    shadowRoot.innerHTML =
+      &#96;&lt;div>&lt;slot>Question&lt;/slot>&lt;/div>
+       &lt;labeled-checkbox part='checkbox'>Yes&lt;/labeled-checkbox>&#96;;
+  }
+}
+customElements.define('question-box', QuestionBox);
+&lt;/script>
+
+&lt;style>
+question-box::part(checkbox) { color: red; }
+question-box::part(checkbox):state(checked) { color: green; }
+&lt;/style>
+
+&lt;question-box>Continue?&lt;/question-box></code></pre>
+  </div>
+

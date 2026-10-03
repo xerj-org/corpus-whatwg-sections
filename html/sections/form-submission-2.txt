@@ -1,0 +1,1042 @@
+WHATWG HTML — section form-submission-2 — <dfn id="form-submission">Form submission</dfn>
+
+  <h4 id="form-submission-2"><dfn id="form-submission">Form submission</dfn></h4>
+
+  <div w-nodev>
+
+  <h5>Introduction</h5>
+
+  </div>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>When a form is submitted, the data in the form is converted into the structure specified by the
+  <span data-x="concept-fs-enctype">enctype</span>, and then sent to the destination specified by the
+  <span data-x="concept-fs-action">action</span> using the given <span
+  data-x="concept-fs-method">method</span>.</p>
+
+  <p>For example, take the following form:</p>
+
+  <pre><code class="html">&lt;form action="/find.cgi" method=get>
+ &lt;input type=text name=t>
+ &lt;input type=search name=q>
+ &lt;input type=submit>
+&lt;/form></code></pre>
+
+  <p>If the user types in "cats" in the first field and "fur" in the second, and then hits the
+  submit button, then the user agent will load <code data-x="">/find.cgi?t=cats&amp;q=fur</code>.</p>
+
+  <p>On the other hand, consider this form:</p>
+
+  <pre><code class="html">&lt;form action="/find.cgi" method=post enctype="multipart/form-data">
+ &lt;input type=text name=t>
+ &lt;input type=search name=q>
+ &lt;input type=submit>
+&lt;/form></code></pre>
+
+  <p>Given the same user input, the result on submission is quite different: the user agent instead
+  does an HTTP POST to the given URL, with as the entity body something like the following text:</p>
+
+  <pre>------kYFrd4jNJEgCervE
+Content-Disposition: form-data; name="t"
+
+cats
+------kYFrd4jNJEgCervE
+Content-Disposition: form-data; name="q"
+
+fur
+------kYFrd4jNJEgCervE--</pre>
+
+
+
+  <div w-nodev>
+
+  <h5>Implicit submission</h5>
+
+  <div algorithm>
+  <p>A <code>form</code> element's <dfn>default button</dfn> is the first <span
+  data-x="concept-submit-button">submit button</span> in <span>tree order</span> whose <span>form
+  owner</span> is that <code>form</code> element.</p>
+  </div>
+
+  <div algorithm>
+  <p>If the user agent supports letting the user submit a form implicitly (for example, on some
+  platforms hitting the "enter" key while a text control is <span>focused</span> implicitly submits
+  the form), then doing so for a form, whose <span>default button</span> has <span>activation
+  behavior</span> and is not <span data-x="concept-fe-disabled">disabled</span>, must cause the user
+  agent to <span>fire a <code data-x="event-click">click</code> event</span> at that <span>default
+  button</span>.</p>
+  </div>
+
+  <p class="note">There are pages on the web that are only usable if there is a way to implicitly
+  submit forms, so user agents are strongly encouraged to support this.</p>
+
+  <div algorithm>
+  <p><!-- For web compatibility reasons caused by obscure historical accidents, -->If the form has
+  no <span data-x="concept-submit-button">submit button</span>, then the implicit submission
+  mechanism must perform the following steps:
+
+  <ol>
+   <li><p>If the form has more than one <span>field that blocks implicit submission</span>, then
+   return.</p></li>
+
+   <li><p><span data-x="concept-form-submit">Submit</span> the <code>form</code> element from the
+   <code>form</code> element itself with <i data-x="submit-user-involvement">userInvolvement</i> set
+   to "<code data-x="uni-activation">activation</code>".</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>For the purpose of the previous paragraph, an element is a <dfn>field that blocks implicit
+  submission</dfn> of a <code>form</code> element if it is an <code>input</code> element whose
+  <span>form owner</span> is that <code>form</code> element and whose <code
+  data-x="attr-input-type">type</code> attribute is in one of the following states:
+  <span data-x="attr-input-type-text">Text</span>,
+  <span data-x="attr-input-type-search">Search</span>,
+  <span data-x="attr-input-type-tel">Telephone</span>,
+  <span data-x="attr-input-type-url">URL</span>,
+  <span data-x="attr-input-type-email">Email</span>,
+  <span data-x="attr-input-type-password">Password</span>,
+  <span data-x="attr-input-type-date">Date</span>,
+  <span data-x="attr-input-type-month">Month</span>,
+  <span data-x="attr-input-type-week">Week</span>,
+  <span data-x="attr-input-type-time">Time</span>,
+  <span data-x="attr-input-type-datetime-local">Local Date and Time</span>,
+  <span data-x="attr-input-type-number">Number</span>
+  </p>
+  </div>
+
+  </div>
+
+
+  <div w-nodev>
+
+  <h5>Form submission algorithm</h5>
+
+  <p>Each <code>form</code> element has a <dfn>constructing entry list</dfn> boolean, initially
+  false.</p>
+
+  <p>Each <code>form</code> element has a <dfn>firing submission events</dfn> boolean, initially
+  false.</p>
+
+  <div algorithm>
+  <p>To <dfn data-x="concept-form-submit">submit</dfn> a <code>form</code> element <var>form</var>
+  from an element <var>submitter</var> (typically a button), given an optional boolean <dfn
+  data-x="submit-subbmitted-from-method"><var>submitted from <code
+  data-x="dom-form-submit">submit()</code> method</var></dfn> (default false) and an optional
+  <span>user navigation involvement</span> <dfn
+  data-x="submit-user-involvement"><var>userInvolvement</var></dfn> (default "<code
+  data-x="uni-none">none</code>"):</p>
+
+  <ol>
+   <li><p>If <var>form</var> <span>cannot navigate</span>, then return.</p></li>
+
+   <li><p>If <var>form</var>'s <span>constructing entry list</span> is true, then return.</p></li>
+
+   <li><p>Let <var>form document</var> be <var>form</var>'s <span>node document</span>.</p></li>
+
+   <li id="sandboxSubmitBlocked"><p>If <var>form document</var>'s <span>active sandboxing flag
+   set</span> has its <span>sandboxed forms browsing context flag</span> set, then return.</p></li>
+
+   <li>
+    <p>If <var>submitted from <code data-x="dom-form-submit">submit()</code> method</var> is
+    false:</p>
+
+    <ol>
+     <li><p>If <var>form</var>'s <span>firing submission events</span> is true, then
+     return.</p></li>
+
+     <li><p>Set <var>form</var>'s <span>firing submission events</span> to true.</p></li>
+
+     <li><p>For each element <var>field</var> in the list of
+     <span data-x="category-submit">submittable elements</span> whose <span>form owner</span> is
+     <var>form</var>, set <var>field</var>'s <span>user validity</span> to true.
+
+     <li>
+      <p>If the <var>submitter</var> element's <span data-x="concept-fs-novalidate">no-validate
+      state</span> is false, then <span>interactively validate the constraints</span> of
+      <var>form</var> and examine the result. If the result is negative (i.e., the constraint
+      validation concluded that there were invalid fields and probably informed the user of
+      this):</p>
+
+      <ol>
+       <li><p>Set <var>form</var>'s <span>firing submission events</span> to false.</p></li>
+
+       <li><p>Return.</p></li>
+      </ol>
+     </li>
+
+     <li><p>Let <var>submitterButton</var> be null if <var>submitter</var> is <var>form</var>.
+     Otherwise, let <var>submitterButton</var> be <var>submitter</var>.</p></li>
+
+     <li><p>Let <var>shouldContinue</var> be the result of <span data-x="concept-event-fire">firing an
+     event</span> named <code data-x="event-submit">submit</code> at <var>form</var> using
+     <code>SubmitEvent</code>, with the <code data-x="dom-SubmitEvent-submitter">submitter</code>
+     attribute initialized to <var>submitterButton</var>, the <code
+     data-x="dom-Event-bubbles">bubbles</code> attribute initialized to true, and the <code
+     data-x="dom-Event-cancelable">cancelable</code> attribute initialized to true.</p></li>
+
+     <li><p>Set <var>form</var>'s <span>firing submission events</span> to false.</p></li>
+
+     <li><p>If <var>shouldContinue</var> is false, then return.</p></li>
+
+     <li>
+      <p>If <var>form</var> <span>cannot navigate</span>, then return.</p>
+
+      <p class="note"><span>Cannot navigate</span> is run again as dispatching the <code
+      data-x="event-submit">submit</code> event could have changed the outcome.</p>
+     </li>
+    </ol>
+   </li>
+
+   <li><p>Let <var>encoding</var> be the result of <span>picking an encoding for the
+   form</span>.</p>
+
+   <li><p>Let <var>entry list</var> be the result of <span>constructing the entry list</span> with
+   <var>form</var>, <var>submitter</var>, and <var>encoding</var>.</p></li>
+
+   <li><p><span>Assert</span>: <var>entry list</var> is not null.</p></li>
+
+   <li>
+    <p>If <var>form</var> <span>cannot navigate</span>, then return.</p>
+
+    <p class="note"><span>Cannot navigate</span> is run again as dispatching the <code
+    data-x="event-formdata">formdata</code> event in <span>constructing the entry list</span>
+    could have changed the outcome.</p>
+   </li>
+
+   <li><p>Let <var>method</var> be the <var>submitter</var> element's <span
+   data-x="concept-fs-method">method</span>.</p></li>
+
+   <li>
+    <p>If <var>method</var> is <span data-x="attr-fs-method-dialog">dialog</span>:
+
+    <ol>
+     <li><p>If <var>form</var> does not have an ancestor <code>dialog</code> element, then
+     return.</p></li>
+
+     <li><p>Let <var>subject</var> be <var>form</var>'s nearest ancestor <code>dialog</code>
+     element.</p></li>
+
+     <li><p>Let <var>result</var> be null.</p></li>
+
+     <li>
+      <p>If <var>submitter</var> is an <code>input</code> element whose <code
+      data-x="attr-input-type">type</code> attribute is in the <span
+      data-x="attr-input-type-image">Image Button</span> state:</p>
+
+      <ol>
+       <li><p>Let (<var>x</var>, <var>y</var>) be the <span
+       data-x="concept-input-type-image-coordinate">selected coordinate</span>.</p></li>
+
+       <li><p>Set <var>result</var> to the concatenation of <var>x</var>, "<code
+       data-x="">,</code>", and <var>y</var>.</p></li>
+      </ol>
+     </li>
+
+     <li><p>Otherwise, if <var>submitter</var> is a <span data-x="concept-submit-button">submit
+     button</span>, then set <var>result</var> to <var>submitter</var>'s <span
+     data-x="concept-fe-optional-value">optional value</span>.</p></li>
+
+     <li><p><span>Close the dialog</span> <var>subject</var> with <var>result</var> and
+     null.</p></li>
+
+     <li><p>Return.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Let <var>action</var> be the <var>submitter</var> element's <span
+   data-x="concept-fs-action">action</span>.</p></li>
+
+   <li>
+    <p>If <var>action</var> is the empty string, let <var>action</var> be the <span
+    data-x="concept-document-url">URL</span> of the <var>form document</var>.</p>
+
+    <!-- Don't ask me why. But that's what IE does. It even treats action="" differently from
+    action=" " or action="#" (the latter two resolve to the base URL, the first one resolves to the
+    doc URL). And other browsers concur. It is even required, see e.g.
+      https://bugs.webkit.org/show_bug.cgi?id=7763
+      https://bugzilla.mozilla.org/show_bug.cgi?id=297761
+    -->
+   </li>
+
+   <li><p>Let <var>parsed action</var> be the result of <span>encoding-parsing a URL</span> given
+   <var>action</var>, relative to <var>submitter</var>'s <span>node document</span>.</p></li>
+
+   <li><p>If <var>parsed action</var> is failure, then return.</p></li>
+
+   <li><p>Let <var>scheme</var> be the <span data-x="concept-url-scheme">scheme</span> of
+   <var>parsed action</var>.</p></li>
+
+   <li><p>Let <var>enctype</var> be the <var>submitter</var> element's <span
+   data-x="concept-fs-enctype">enctype</span>.</p></li>
+
+   <li><p>Let <var>formTarget</var> be null.</p></li>
+
+   <li><p>If the <var>submitter</var> element is a <span data-x="concept-submit-button">submit
+   button</span> and it has a <code data-x="attr-fs-formtarget">formtarget</code> attribute, then
+   set <var>formTarget</var> to the <code data-x="attr-fs-formtarget">formtarget</code> attribute
+   value.</p></li>
+
+   <li><p>Let <var>target</var> be the result of <span data-x="get an element's target">getting an
+   element's target</span> given <var>submitter</var>'s <span>form owner</span> and
+   <var>formTarget</var>.</p></li>
+
+   <li><p>Let <var>noopener</var> be the result of <span data-x="get an element's noopener">getting
+   an element's noopener</span> with <var>form</var>, <var>parsed action</var>, and
+   <var>target</var>.</p></li>
+
+   <li><p>Let <var>targetNavigable</var> be the first return value of applying <span>the rules for
+   choosing a navigable</span> given <var>target</var>, <var>form</var>'s <span>node
+   navigable</span>, and <var>noopener</var>.</p></li>
+
+   <li><p>If <var>targetNavigable</var> is null, then return.</p></li>
+
+   <li><p>Let <var>historyHandling</var> be "<code
+   data-x="NavigationHistoryBehavior-auto">auto</code>".</p></li>
+
+   <li><p>If <var>form document</var> equals <var>targetNavigable</var>'s <span
+   data-x="nav-document">active document</span>, and <var>form document</var> has not yet
+   <span>completely loaded</span>, then set <var>historyHandling</var> to "<code
+   data-x="NavigationHistoryBehavior-replace">replace</code>".</p></li>
+
+   <li>
+    <p>Select the appropriate row in the table below based on <var>scheme</var> as given by the
+    first cell of each row. Then, select the appropriate cell on that row based on <var>method</var>
+    as given in the first cell of each column. Then, jump to the steps named in that cell and
+    defined below the table.</p>
+
+    <table>
+     <thead>
+     <tr>
+      <td>
+      <th> <span data-x="attr-fs-method-GET">GET</span>
+      <th> <span data-x="attr-fs-method-POST">POST</span>
+     <tbody>
+     <tr>
+      <th> <code data-x="">http</code>
+      <td> <span data-x="submit-mutate-action">Mutate action URL</span>
+      <td> <span data-x="submit-body">Submit as entity body</span>
+     <tr>
+      <th> <code data-x="">https</code>
+      <td> <span data-x="submit-mutate-action">Mutate action URL</span>
+      <td> <span data-x="submit-body">Submit as entity body</span>
+     <tr>
+      <th> <code data-x="">ftp</code>
+      <td> <span data-x="submit-get-action">Get action URL</span>
+      <td> <span data-x="submit-get-action">Get action URL</span>
+     <tr>
+      <th> <code data-x="">javascript</code>
+      <td> <span data-x="submit-get-action">Get action URL</span>
+      <td> <span data-x="submit-get-action">Get action URL</span>
+     <tr>
+      <th> <code data-x="">data</code>
+      <td> <span data-x="submit-mutate-action">Mutate action URL</span>
+      <td> <span data-x="submit-get-action">Get action URL</span>
+     <tr>
+      <th> <code data-x="">mailto</code>
+      <td> <span data-x="submit-mailto-headers">Mail with headers</span>
+      <td> <span data-x="submit-mailto-body">Mail as body</span>
+    </table>
+
+    <p>If <var>scheme</var> is not one of those listed in this table, then the behavior is
+    not defined by this specification. User agents should, in the absence of another specification
+    defining this, act in a manner analogous to that defined in this specification for similar
+    schemes.</p>
+
+    <p>Each <code>form</code> element has a <dfn>planned navigation</dfn>, which is either null or a
+    <span data-x="concept-task">task</span>; when the <code>form</code> is first created, its
+    <span>planned navigation</span> must be set to null. In the behaviors described below, when the
+    user agent is required to <dfn>plan to navigate</dfn> to a <span>URL</span> <var>url</var> given
+    an optional <span>POST resource</span>-or-null <var>postResource</var> (default null), it must
+    run the following steps:</p>
+
+    <ol>
+     <li><p>Let <var>referrerPolicy</var> be the empty string.</p></li>
+
+     <li><p>If the <code>form</code> element's <a href="#linkTypes">link types</a> include the <code
+     data-x="rel-noreferrer">noreferrer</code> keyword, then set <var>referrerPolicy</var> to "<code
+     data-x="">no-referrer</code>".</p></li>
+
+     <li><p>If the <code>form</code> has a non-null <span>planned navigation</span>, remove it from
+     its <span>task queue</span>.</p></li>
+
+     <li>
+      <p><span>Queue an element task</span> on the <span>DOM manipulation task source</span> given
+      the <code>form</code> element and the following steps:</p>
+
+      <ol>
+       <li><p>Set the <code>form</code>'s <span>planned navigation</span> to null.</p></li>
+
+       <li><p><span>Navigate</span><!--DONAV form--> <var>targetNavigable</var> to <var>url</var>
+       using the <code>form</code> element's <span>node document</span>, with <i
+       data-x="navigation-hh">historyHandling</i> set to <var>historyHandling</var>, <i
+       data-x="navigation-user-involvement">userInvolvement</i> set to <var>userInvolvement</var>,
+       <i data-x="navigation-source-element">sourceElement</i> set to <var>submitter</var>,
+       <i data-x="navigation-referrer-policy">referrerPolicy</i> set to <var>referrerPolicy</var>,
+       <i data-x="navigation-resource">documentResource</i> set to <var>postResource</var>, and <i
+       data-x="navigation-form-data-entry-list">formDataEntryList</i> set to <var>entry
+       list</var>.</p>
+      </ol>
+     </li>
+
+     <li><p>Set the <code>form</code>'s <span>planned navigation</span> to the just-queued <span
+     data-x="concept-task">task</span>.</p>
+    </ol>
+
+    <p>The behaviors are as follows:</p>
+
+    <dl>
+     <dt><dfn data-x="submit-mutate-action">Mutate action URL</dfn>
+     <dd>
+      <p>Let <var>pairs</var> be the result of <span data-x="convert to a list of name-value
+      pairs">converting to a list of name-value pairs</span> with <var>entry list</var>.</p>
+
+      <p>Let <var>query</var> be the result of running the
+      <span><code>application/x-www-form-urlencoded</code> serializer</span> with <var>pairs</var>
+      and <var>encoding</var>.</p>
+
+      <p>Set <var>parsed action</var>'s <span data-x="concept-url-query">query</span>
+      component to <var>query</var>.</p>
+
+      <p><span>Plan to navigate</span> to <var>parsed action</var>.</p>
+     </dd>
+
+     <dt><dfn data-x="submit-body">Submit as entity body</dfn>
+     <dd>
+      <p><span>Assert</span>: <var>method</var> is <span
+      data-x="attr-fs-method-post">POST</span>.</p>
+
+      <p>Switch on <var>enctype</var>:
+
+      <dl class="switch">
+       <dt><code data-x="attr-fs-enctype-urlencoded">application/x-www-form-urlencoded</code></dt>
+
+       <dd>
+        <p>Let <var>pairs</var> be the result of <span data-x="convert to a list of name-value
+        pairs">converting to a list of name-value pairs</span> with <var>entry list</var>.</p>
+
+        <p>Let <var>body</var> be the result of running the
+        <span><code>application/x-www-form-urlencoded</code> serializer</span> with <var>pairs</var>
+        and <var>encoding</var>.</p>
+
+        <p>Set <var>body</var> to the result of <span data-x="UTF-8 encode">encoding</span>
+        <var>body</var>.</p>
+
+        <p>Let <var>mimeType</var> be `<code>application/x-www-form-urlencoded</code>`.</p>
+       </dd>
+
+       <dt><code data-x="attr-fs-enctype-formdata">multipart/form-data</code></dt>
+
+       <dd>
+        <p>Let <var>body</var> be the result of running the <span><code
+        data-x="">multipart/form-data</code> encoding algorithm</span> with <var>entry list</var>
+        and <var>encoding</var>.</p>
+
+        <p>Let <var>mimeType</var> be the <span data-x="isomorphic encode">isomorphic
+        encoding</span> of the concatenation of "<code
+        data-x="">multipart/form-data; boundary=</code>" and the <span><code
+        data-x="">multipart/form-data</code> boundary string</span> generated by the <span><code
+        data-x="">multipart/form-data</code> encoding algorithm</span>.</p>
+       </dd>
+
+       <dt><code data-x="attr-fs-enctype-text">text/plain</code></dt>
+
+       <dd>
+        <p>Let <var>pairs</var> be the result of <span data-x="convert to a list of name-value
+        pairs">converting to a list of name-value pairs</span> with <var>entry list</var>.</p>
+
+        <p>Let <var>body</var> be the result of running the <span><code data-x="">text/plain</code>
+        encoding algorithm</span> with <var>pairs</var>.</p>
+
+        <p>Set <var>body</var> to the result of <span data-x="encode">encoding</span>
+        <var>body</var> using <var>encoding</var>.</p>
+
+        <p>Let <var>mimeType</var> be `<code>text/plain</code>`.</p>
+       </dd>
+      </dl>
+
+      <p><span>Plan to navigate</span> to <var>parsed action</var> given a <span>POST
+      resource</span> whose <span data-x="post-resource-request-body">request body</span> is
+      <var>body</var> and <span data-x="post-resource-request-content-type">request
+      content-type</span> is <var>mimeType</var>.</p>
+     </dd>
+
+     <dt><dfn data-x="submit-get-action">Get action URL</dfn>
+     <dd>
+      <p><span>Plan to navigate</span> to <var>parsed action</var>.</p>
+
+      <p class="note"><var>entry list</var> is discarded.</p>
+     </dd>
+
+     <dt><dfn data-x="submit-mailto-headers">Mail with headers</dfn>
+     <dd>
+      <p>Let <var>pairs</var> be the result of <span data-x="convert to a list of name-value
+      pairs">converting to a list of name-value pairs</span> with <var>entry list</var>.</p>
+
+      <p>Let <var>headers</var> be the result of running the
+      <span><code>application/x-www-form-urlencoded</code> serializer</span> with <var>pairs</var>
+      and <var>encoding</var>.</p>
+
+      <p>Replace occurrences of U+002B PLUS SIGN characters (+) in <var>headers</var> with
+      the string "<code data-x="">%20</code>".</p>
+
+      <p>Set <var>parsed action</var>'s <span data-x="concept-url-query">query</span> to
+      <var>headers</var>.</p>
+
+      <p><span>Plan to navigate</span> to <var>parsed action</var>.</p>
+     </dd>
+
+     <dt><dfn data-x="submit-mailto-body">Mail as body</dfn>
+     <dd>
+      <p>Let <var>pairs</var> be the result of <span data-x="convert to a list of name-value
+      pairs">converting to a list of name-value pairs</span> with <var>entry list</var>.</p>
+
+      <p>Switch on <var>enctype</var>:
+
+      <dl class="switch">
+       <dt><code data-x="attr-fs-enctype-text">text/plain</code></dt>
+
+       <dd>
+        <p>Let <var>body</var> be the result of running the <span><code data-x="">text/plain</code>
+        encoding algorithm</span> with <var>pairs</var>.</p>
+
+        <p>Set <var>body</var> to the result of running <span>UTF-8 percent-encode</span> on
+        <var>body</var> using the <span>default encode set</span>. <ref>URL</ref></p>
+       </dd>
+
+       <dt>Otherwise</dt>
+
+       <dd><p>Let <var>body</var> be the result of running the
+       <span><code>application/x-www-form-urlencoded</code> serializer</span> with <var>pairs</var>
+       and <var>encoding</var>.</p></dd>
+      </dl>
+
+      <p>If <var>parsed action</var>'s <span data-x="concept-url-query">query</span> is null, then
+      set it to the empty string.
+
+      <p>If <var>parsed action</var>'s <span data-x="concept-url-query">query</span> is not the
+      empty string, then append a single U+0026 AMPERSAND character (&amp;) to it.
+
+      <p>Append "<code data-x="">body=</code>" to <var>parsed action</var>'s <span
+      data-x="concept-url-query">query</span>.</p>
+
+      <p>Append <var>body</var> to <var>parsed action</var>'s <span
+      data-x="concept-url-query">query</span>.</p>
+
+      <p><span>Plan to navigate</span> to <var>parsed action</var>.</p>
+     </dd>
+    </dl>
+   </li>
+  </ol>
+  </div>
+
+
+  <h5 id="constructing-form-data-set">Constructing the entry list</h5>
+
+  <p>An <dfn export>entry list</dfn> is a <span>list</span> of <span data-x="form
+  entry">entries</span>, typically representing the contents of a form. An <dfn data-x="form entry"
+  for="entry list" export>entry</dfn> is a tuple consisting of a <dfn data-x="form entry name"
+  for="entry list/entry" export>name</dfn> (a <span>scalar value string</span>) and a <dfn
+  data-x="form entry value" for="entry list/entry" export>value</dfn> (either a <span>scalar value
+  string</span> or a <code>File</code> object).</p>
+
+  <div algorithm>
+  <p id="append-an-entry">To <dfn export for="entry list">create an entry</dfn> given a string
+  <var>name</var>, a string or <code>Blob</code> object <var>value</var>, and optionally a
+  <span>scalar value string</span> <var>filename</var>:</p>
+
+  <ol>
+   <li><p>Set <var>name</var> to the result of <span data-x="convert">converting</span>
+   <var>name</var> into a <span>scalar value string</span>.</p></li>
+
+   <li><p>If <var>value</var> is a string, then set <var>value</var> to the result of <span
+   data-x="convert">converting</span> <var>value</var> into a <span>scalar value
+   string</span>.</p></li>
+
+   <li>
+    <p>Otherwise:</p>
+
+    <ol>
+     <li><p>If <var>value</var> is not a <code>File</code> object, then set <var>value</var> to a
+     new <code>File</code> object, representing the same bytes, whose <code
+     data-x="dom-File-name">name</code> attribute value is "<code data-x="">blob</code>".</p></li>
+     <!-- XXX at some point File API should get internal slots for this -->
+
+     <li><p>If <var>filename</var> is given, then set <var>value</var> to a new <code>File</code>
+     object, representing the same bytes, whose <code data-x="dom-File-name">name</code> attribute
+     is <var>filename</var>.</p></li>
+    </ol>
+
+    <p class="note">These operations will create a new <code>File</code> object if either
+    <var>filename</var> is given or the passed <code>Blob</code> is not a <code>File</code> object.
+    In those cases, the identity of the passed <code>Blob</code> object is not kept.</p>
+   </li>
+
+   <li><p>Return an <span data-x="form entry">entry</span> whose <span data-x="form entry
+   name">name</span> is <var>name</var> and whose <span data-x="form entry value">value</span> is
+   <var>value</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn id="constructing-the-form-data-set" export data-lt="constructing the entry list"
+  data-x="constructing the entry list">construct the entry list</dfn> given a <var>form</var>, an
+  optional <var>submitter</var> (default null), and an optional <var>encoding</var> (default
+  <span>UTF-8</span>):
+
+  <ol>
+   <li><p>If <var>form</var>'s <span>constructing entry list</span> is true, then return
+   null.</p></li>
+
+   <li><p>Set <var>form</var>'s <span>constructing entry list</span> to true.</p></li>
+
+   <li><p>Let <var>controls</var> be a list of all the <span
+   data-x="category-submit">submittable elements</span> whose <span>form owner</span> is <var>form</var>, in <span>tree order</span>.</p></li>
+
+   <li><p>Let <var>entry list</var> be a new empty <span>entry list</span>.</p></li>
+
+   <li>
+    <p>For each element <var>field</var> in <var>controls</var>, in <span>tree order</span>:</p>
+
+    <ol>
+     <li>
+      <p>If any of the following are true:</p>
+
+      <ul>
+       <li><p><var>field</var> has a <code>datalist</code> element ancestor;</p></li>
+
+       <li><p><var>field</var> is <span data-x="concept-fe-disabled">disabled</span>;</p></li>
+
+       <li><p><var>field</var> is a <span data-x="concept-button">button</span> but it is not
+       <var>submitter</var>;</p></li>
+
+       <li><p><var>field</var> is an <code>input</code> element whose <code
+       data-x="attr-input-type">type</code> attribute is in the <span
+       data-x="attr-input-type-checkbox">Checkbox</span> state and whose <span
+       data-x="concept-fe-checked">checkedness</span> is false; or</p></li>
+
+       <li><p><var>field</var> is an <code>input</code> element whose <code
+       data-x="attr-input-type">type</code> attribute is in the <span
+       data-x="attr-input-type-radio">Radio Button</span> state and whose <span
+       data-x="concept-fe-checked">checkedness</span> is false,</p></li>
+      </ul>
+
+      <p>then <span>continue</span>.</p>
+     </li>
+
+     <li>
+      <p>If the <var>field</var> element is an <code>input</code> element whose <code
+      data-x="attr-input-type">type</code> attribute is in the <span
+      data-x="attr-input-type-image">Image Button</span> state:</p>
+
+      <ol>
+       <li><p>If the <var>field</var> element is not <var>submitter</var>, then
+       <span>continue</span>.</p></li>
+
+       <li><p>If the <var>field</var> element has a <code data-x="attr-fe-name">name</code>
+       attribute specified and its value is not the empty string, let <var>name</var> be that value
+       followed by U+002E (.). Otherwise, let <var>name</var> be the empty string.</p></li>
+
+       <li><p>Let <var>name<sub>x</sub></var> be the concatenation of <var>name</var> and
+       U+0078 (x).</p></li>
+
+       <li><p>Let <var>name<sub>y</sub></var> be the concatenation of <var>name</var> and
+       U+0079 (y).</p></li>
+
+       <li><p>Let (<var>x</var>, <var>y</var>) be the <span
+       data-x="concept-input-type-image-coordinate">selected coordinate</span>.</p></li>
+
+       <li><p><span>Create an entry</span> with <var>name<sub>x</sub></var> and <var>x</var>, and
+       <span data-x="list append">append</span> it to <var>entry list</var>.</p></li>
+
+       <li><p><span>Create an entry</span> with <var>name<sub>y</sub></var> and <var>y</var>, and
+       <span data-x="list append">append</span> it to <var>entry list</var>.</p></li>
+
+       <li><p><span>Continue</span>.</p></li>
+      </ol>
+     </li>
+
+     <li><p>If the <var>field</var> is a <span>form-associated custom element</span>, then perform
+     the <span data-x="face-entry-construction">entry construction algorithm</span> given
+     <var>field</var> and <var>entry list</var>, then <span>continue</span>.</p></li>
+
+     <li><p>If either the <var>field</var> element does not have a
+     <code data-x="attr-fe-name">name</code> attribute specified, or its
+     <code data-x="attr-fe-name">name</code> attribute's value is the empty string, then
+     <span>continue</span>.</p></li>
+
+     <li><p>Let <var>name</var> be the value of the <var>field</var> element's
+     <code data-x="attr-fe-name">name</code> attribute.</p></li>
+
+     <li><p>If the <var>field</var> element is a <code>select</code> element, then for each
+     <code>option</code> element in the <code>select</code> element's <span
+     data-x="concept-select-option-list">list of options</span> whose <span
+     data-x="concept-option-selectedness">selectedness</span> is true and that is not <span
+     data-x="concept-option-disabled">disabled</span>, <span>create an entry</span> with
+     <var>name</var> and the <span data-x="concept-option-value">value</span> of the
+     <code>option</code> element, and <span data-x="list append">append</span> it to <var>entry
+     list</var>.</p></li>
+
+     <li>
+      <p>Otherwise, if the <var>field</var> element is an <code>input</code> element whose
+      <code data-x="attr-input-type">type</code> attribute is in the <span
+      data-x="attr-input-type-checkbox">Checkbox</span> state or the <span
+      data-x="attr-input-type-radio">Radio Button</span> state:</p>
+
+      <ol>
+       <li><p>If the <var>field</var> element has a <code
+       data-x="attr-input-value">value</code> attribute specified, then let <var>value</var>
+       be the value of that attribute; otherwise, let <var>value</var> be the string "<code
+       data-x="">on</code>".</p></li>
+
+       <li><p><span>Create an entry</span> with <var>name</var> and <var>value</var>, and <span
+       data-x="list append">append</span> it to <var>entry list</var>.</p></li>
+      </ol>
+     </li>
+
+     <li>
+      <p>Otherwise, if the <var>field</var> element is an <code>input</code> element whose <code
+      data-x="attr-input-type">type</code> attribute is in the <span
+      data-x="attr-input-type-file">File Upload</span> state:</p>
+
+      <ol>
+       <li><p>If there are no <span data-x="concept-input-type-file-selected">selected files</span>,
+       then <span>create an entry</span> with <var>name</var> and a new <code>File</code> object
+       with an empty name, <code>application/octet-stream</code> as type, and an empty body, and
+       <span data-x="list append">append</span> it to <var>entry list</var>.</p></li>
+       <!-- https://bugzilla.mozilla.org/show_bug.cgi?id=529859 -->
+
+       <li><p>Otherwise, for each file in <span data-x="concept-input-type-file-selected">selected
+       files</span>, <span>create an entry</span> with <var>name</var> and a <code>File</code>
+       object representing the file, and <span data-x="list append">append</span> it to <var>entry
+       list</var>.</p></li>
+      </ol>
+     </li>
+
+     <li>
+      <p>Otherwise, if the <var>field</var> element is an <code>input</code> element whose <code
+      data-x="attr-input-type">type</code> attribute is in the <span
+      data-x="attr-input-type-hidden">Hidden</span> state and <var>name</var> is an <span>ASCII
+      case-insensitive</span> match for "<code data-x="attr-fe-name-charset">_charset_</code>":</p>
+
+      <ol>
+       <li><p>Let <var>charset</var> be the <span data-x="encoding name">name</span> of
+       <var>encoding</var>.</p></li>
+
+       <li><p><span>Create an entry</span> with <var>name</var> and <var>charset</var>, and <span
+       data-x="list append">append</span> it to <var>entry list</var>.</p></li>
+      </ol>
+     </li>
+
+     <li><p>Otherwise, <span>create an entry</span> with <var>name</var> and the <span
+     data-x="concept-fe-value">value</span> of the <var>field</var> element, and <span
+     data-x="list append">append</span> it to <var>entry list</var>.</p></li>
+
+     <li>
+      <p>If the element has a <code data-x="attr-fe-dirname">dirname</code> attribute, that
+      attribute's value is not the empty string, and the element is an <span
+      data-x="auto-directionality form-associated elements">auto-directionality form-associated
+      element</span>:
+
+      <ol>
+       <li><p>Let <var>dirname</var> be the value of the element's <code
+       data-x="attr-fe-dirname">dirname</code> attribute.</p></li>
+
+       <li><p>Let <var>dir</var> be the string "<code data-x="">ltr</code>" if <span>the
+       directionality</span> of the element is '<span data-x="concept-ltr">ltr</span>', and "<code
+       data-x="">rtl</code>" otherwise (i.e., when <span>the directionality</span> of the element is
+       '<span data-x="concept-rtl">rtl</span>').</p></li>
+
+       <li><p><span>Create an entry</span> with <var>dirname</var> and <var>dir</var>, and <span
+       data-x="list append">append</span> it to <var>entry list</var>.</p></li>
+      </ol>
+     </li>
+    </ol>
+   </li>
+
+   <li><p>Let <var>form data</var> be a new <code>FormData</code> object associated with
+   <var>entry list</var>.</p></li>
+
+   <li><p><span data-x="concept-event-fire">Fire an event</span> named
+   <code data-x="event-formdata">formdata</code> at <var>form</var> using
+   <code>FormDataEvent</code>, with the <code data-x="dom-FormDataEvent-formData">formData</code>
+   attribute initialized to <var>form data</var> and the
+   <code data-x="dom-Event-bubbles">bubbles</code> attribute initialized to true.</p></li>
+
+   <li><p>Set <var>form</var>'s <span>constructing entry list</span> to false.</p></li>
+
+   <li><p>Return a <span data-x="list clone">clone</span> of <var>entry list</var>.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+
+  <div w-nodev>
+
+  <h5>Selecting a form submission encoding</h5>
+
+  <div algorithm>
+  <p>If the user agent is to <dfn data-x="picking an encoding for the form">pick an encoding for a
+  form</dfn>, it must run the following steps:</p>
+
+  <ol>
+   <li><p>Let <var>encoding</var> be the <span>document's character encoding</span>.</p></li>
+
+   <li>
+    <p>If the <code>form</code> element has an <code
+    data-x="attr-form-accept-charset">accept-charset</code> attribute, set <var>encoding</var> to
+    the return value of running these substeps:</p>
+
+    <ol>
+     <li><p>Let <var>input</var> be the value of the <code>form</code> element's <code
+     data-x="attr-form-accept-charset">accept-charset</code> attribute.</p></li>
+
+     <li><p>Let <var>candidate encoding labels</var> be the result of <span data-x="split a string
+     on ASCII whitespace">splitting <var>input</var> on ASCII whitespace</span>.</p></li>
+
+     <li><p>Let <var>candidate encodings</var> be an empty list of <span data-x="encoding">character
+     encodings</span>.</p></li>
+
+     <li><p>For each token in <var>candidate encoding labels</var> in turn (in the order in which
+     they were found in <var>input</var>), <span data-x="getting an encoding">get an encoding</span>
+     for the token and, if this does not result in failure, append the <span>encoding</span> to
+     <var>candidate encodings</var>.</p></li>
+
+     <li><p>If <var>candidate encodings</var> is empty, return <span>UTF-8</span>.</p></li>
+
+     <li><p>Return the first encoding in <var>candidate encodings</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Return the result of <span data-x="get an output encoding">getting an output
+   encoding</span> from <var>encoding</var>.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+  <div w-nodev>
+
+  <h5>Converting an entry list to a list of name-value pairs</h5>
+
+  <p>The <code>application/x-www-form-urlencoded</code> and <code data-x="text/plain encoding
+  algorithm">text/plain</code> encoding algorithms take a list of name-value pairs, where the values
+  must be strings, rather than an <span>entry list</span> where the value can be a
+  <code>File</code>. The following algorithm performs the conversion.</p>
+
+  <div algorithm>
+  <p>To <dfn>convert to a list of name-value pairs</dfn> an <span>entry list</span> <var>entry
+  list</var>, run these steps:</p>
+
+  <ol>
+   <li><p>Let <var>list</var> be an empty <span>list</span> of name-value pairs.</p></li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>entry</var> of <var>entry list</var>:</p>
+
+    <ol>
+     <li><p>Let <var>name</var> be <var>entry</var>'s <span data-x="form entry name">name</span>,
+     with every occurrence of U+000D (CR) not followed by U+000A (LF), and every occurrence of
+     U+000A (LF) not preceded by U+000D (CR), replaced by a string consisting of U+000D (CR) and
+     U+000A (LF).</p></li>
+
+     <li><p>If <var>entry</var>'s <span data-x="form entry value">value</span> is a
+     <code>File</code> object, then let <var>value</var> be <var>entry</var>'s <span data-x="form
+     entry value">value</span>'s <code data-x="dom-file-name">name</code>. Otherwise, let
+     <var>value</var> be <var>entry</var>'s <span data-x="form entry value">value</span>.</p></li>
+
+     <li><p>Replace every occurrence of U+000D (CR) not followed by U+000A (LF), and every occurrence
+     of U+000A (LF) not preceded by U+000D (CR), in <var>value</var>, by a string consisting of
+     U+000D (CR) and U+000A (LF).</p></li>
+
+     <li><p><span data-x="list append">Append</span> to <var>list</var> a new name-value pair whose
+     name is <var>name</var> and whose value is <var>value</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Return <var>list</var>.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+
+  <h5>URL-encoded form data</h5>
+
+  <p id="application-x-www-form-urlencoded-encoding-algorithm"><span
+  id="application/x-www-form-urlencoded-encoding-algorithm"></span>See <cite>URL</cite> for details
+  on <code>application/x-www-form-urlencoded</code>. <ref>URL</ref></p>
+
+
+  <h5>Multipart form data</h5>
+
+  <div w-nodev>
+
+  <!-- https://hixie.ch/tests/adhoc/html/forms/submission/multipart_form-data/ -->
+
+  <!-- NOTE: This algorithm is also used by
+  https://fetch.spec.whatwg.org/#concept-bodyinit-extract -->
+
+  <div algorithm>
+  <p>The <dfn export><code>multipart/form-data</code> encoding algorithm</dfn>, given an <span>entry
+  list</span> <var>entry list</var> and an <span>encoding</span> <var>encoding</var>, is as
+  follows:</p>
+
+  <ol>
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>entry</var> of <var>entry list</var>:</p>
+
+    <ol>
+     <li><p>Replace every occurrence of U+000D (CR) not followed by U+000A (LF), and every
+     occurrence of U+000A (LF) not preceded by U+000D (CR), in <var>entry</var>'s <span data-x="form
+     entry name">name</span>, by a string consisting of a U+000D (CR) and U+000A (LF).</p></li>
+
+     <li><p>If <var>entry</var>'s <span data-x="form entry value">value</span> is not a
+     <code>File</code> object, then replace every occurrence of U+000D (CR) not followed by U+000A
+     (LF), and every occurrence of U+000A (LF) not preceded by U+000D (CR), in <var>entry</var>'s
+     <span data-x="form entry value">value</span>, by a string consisting of a U+000D (CR) and
+     U+000A (LF).</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p>Return the byte sequence resulting from encoding the <var>entry list</var> using the rules
+    described by RFC 7578, <cite>Returning Values from Forms: <code
+    data-x="">multipart/form-data</code></cite>, given the following conditions:
+    <ref>RFC7578</ref></p>
+
+    <ul>
+     <li><p>Each <span data-x="form entry">entry</span> in <var>entry list</var> is a <i>field</i>,
+     the <span data-x="form entry name">name</span> of the entry is the <i>field name</i> and the
+     <span data-x="form entry value">value</span> of the entry is the <i>field value</i>.</p></li>
+
+     <li><p>The order of parts must be the same as the order of fields in <var>entry list</var>.
+     Multiple entries with the same name must be treated as distinct fields.</p></li>
+
+     <li><p>Field names, field values for non-file fields, and filenames for file fields, in the
+     generated <code>multipart/form-data</code> resource must be set to the result of <span
+     data-x="encode">encoding</span> the corresponding entry's name or value with
+     <var>encoding</var>, converted to a byte sequence.</p></li>
+
+     <li><p>For field names and filenames for file fields, the result of the encoding in the
+     previous bullet point must be escaped by replacing any 0x0A (LF) bytes with the byte sequence
+     `<code data-x="">%0A</code>`, 0x0D (CR) with `<code data-x="">%0D</code>` and 0x22 (") with
+     `<code data-x="">%22</code>`. The user agent must not perform any other escapes.</p></li>
+
+     <li><p>The parts of the generated <code>multipart/form-data</code> resource that correspond to
+     non-file fields must not have a `<code>Content-Type</code>` header specified.</p></li>
+
+     <li><p>The boundary used by the user agent in generating the return value of this algorithm is
+     the <dfn export><code>multipart/form-data</code> boundary string</dfn>. (This value is used to
+     generate the MIME type of the form submission payload generated by this algorithm.)</p></li>
+    </ul>
+   </li>
+  </ol>
+  </div>
+
+  </div>
+
+  <p>For details on how to interpret <code>multipart/form-data</code> payloads, see RFC 7578.
+  <ref>RFC7578</ref></p>
+
+
+  <h5>Plain text form data</h5>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn><code data-x="">text/plain</code> encoding algorithm</dfn>, given a list of name-value
+  pairs <var>pairs</var>, is as follows:</p>
+
+  <ol>
+   <li><p>Let <var>result</var> be the empty string.</p></li>
+
+   <li>
+    <p>For each <var>pair</var> in <var>pairs</var>:</p>
+
+    <ol>
+     <li><p>Append <var>pair</var>'s name to <var>result</var>.</p></li>
+
+     <li><p>Append a single U+003D EQUALS SIGN character (=) to <var>result</var>.</p></li>
+
+     <li><p>Append <var>pair</var>'s value to <var>result</var>.</p></li>
+
+     <li><p>Append a U+000D CARRIAGE RETURN (CR) U+000A LINE FEED (LF) character pair to <var>result</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Return <var>result</var>.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+  <p>Payloads using the <code>text/plain</code> format are intended to be human readable. They are
+  not reliably interpretable by computer, as the format is ambiguous (for example, there is no way
+  to distinguish a literal newline in a value from the newline at the end of the value).</p>
+
+  <h5>The <code>SubmitEvent</code> interface</h5>
+
+  <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>SubmitEvent</dfn> : <span>Event</span> {
+  constructor(DOMString type, optional <span>SubmitEventInit</span> eventInitDict = {});
+
+  readonly attribute <span>HTMLElement</span>? <span data-x="dom-SubmitEvent-submitter">submitter</span>;
+};
+
+dictionary <dfn dictionary>SubmitEventInit</dfn> : <span>EventInit</span> {
+  <span>HTMLElement</span>? submitter = null;
+};</code></pre>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>event</var>.<span data-x="dom-SubmitEvent-submitter">submitter</span></code></dt>
+   <dd><p>Returns the element representing the <span data-x="concept-submit-button">submit
+   button</span> that triggered the <span>form submission</span>, or null if the submission was not
+   triggered by a button.</p></dd>
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn attribute for="SubmitEvent"><code
+  data-x="dom-SubmitEvent-submitter">submitter</code></dfn> attribute must return the value it was
+  initialized to.</p>
+  </div>
+
+  </div>
+
+  <h5>The <code>FormDataEvent</code> interface</h5>
+
+  <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>FormDataEvent</dfn> : <span>Event</span> {
+  constructor(DOMString type, <span>FormDataEventInit</span> eventInitDict);
+
+  readonly attribute <span>FormData</span> <span data-x="dom-FormDataEvent-formData">formData</span>;
+};
+
+dictionary <dfn dictionary>FormDataEventInit</dfn> : <span>EventInit</span> {
+  required <span>FormData</span> formData;
+};</code></pre>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>event</var>.<span data-x="dom-FormDataEvent-formData">formData</span></code></dt>
+
+   <dd>
+    <p>Returns a <code>FormData</code> object representing names and values of elements associated
+    to the target <code>form</code>. Operations on the <code>FormData</code> object will affect form
+    data to be submitted.</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn attribute for="FormDataEvent"><code
+  data-x="dom-FormDataEvent-formData">formData</code></dfn> attribute must return the value it was
+  initialized to. It represents a <code>FormData</code> object associated to the <span>entry
+  list</span> that is <span data-x="constructing the entry list">constructed</span> when the
+  <code>form</code> is submitted.</p>
+  </div>
+

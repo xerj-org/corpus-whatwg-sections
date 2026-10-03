@@ -1,0 +1,249 @@
+WHATWG HTML — section form-control-infrastructure — Form control infrastructure
+
+  <h4 split-filename="form-control-infrastructure">Form control infrastructure</h4>
+
+  <h5>A form control's value</h5>
+
+  <p>Most form controls have a <dfn data-x="concept-fe-value">value</dfn> and a <dfn
+  data-x="concept-fe-checked">checkedness</dfn>. (The latter is only used by <code>input</code>
+  elements.) These are used to describe how the user interacts with the control.</p>
+
+  <p>A control's <span data-x="concept-fe-value">value</span> is its internal state. As such, it
+  might not match the user's current input.</p>
+
+  <p class="example">For instance, if a user enters the word "<kbd>three</kbd>" into <span
+  data-x="attr-input-type-number">a numeric field</span> that expects digits, the user's input would
+  be the string "three" but the control's <span data-x="concept-fe-value">value</span> would remain
+  unchanged. Or, if a user enters the email address "<kbd>&nbsp;&nbsp;awesome@example.com</kbd>"
+  (with leading whitespace) into <span data-x="attr-input-type-email">an email field</span>, the
+  user's input would be the string "&nbsp;&nbsp;awesome@example.com" but the browser's UI for
+  email fields might translate that into a <span data-x="concept-fe-value">value</span> of "<code
+  data-x="">awesome@example.com</code>" (without the leading whitespace).</p>
+
+  <p id="concept-input-value-dirty-flag"><span id="concept-textarea-dirty"></span><code>input</code>
+  and <code>textarea</code> elements have a <dfn data-x="concept-fe-dirty">dirty value flag</dfn>.
+  This is used to track the interaction between the <span data-x="concept-fe-value">value</span> and
+  default value. If it is false, <span data-x="concept-fe-value">value</span> mirrors the default
+  value. If it is true, the default value is ignored.</p>
+
+  <p>Some form controls also have an <dfn data-x="concept-fe-optional-value">optional value</dfn>.
+  This largely mirrors the <span data-x="concept-fe-value">value</span> but doesn't normalize to an
+  empty string. <span class="note">This ought to be used sparingly, you generally want <span
+  data-x="concept-fe-value">value</span></span>.</p>
+
+  <p><code>input</code>, <code>textarea</code>, and <code>select</code> elements have a
+  <dfn>user validity</dfn> boolean. It is initially set to false.</p>
+
+  <p>To define the behavior of constraint validation in the face of the <code>input</code>
+  element's <code data-x="attr-input-multiple">multiple</code> attribute, <code>input</code> elements
+  can also have separately defined <dfn data-x="concept-fe-values">value<em>s</em></dfn>.</p>
+
+  <p>To define the behavior of the <code data-x="attr-fe-maxlength">maxlength</code> and <code
+  data-x="attr-fe-minlength">minlength</code> attributes, as well as other APIs specific to the
+  <code>textarea</code> element, all form control with a <span
+  data-x="concept-fe-value">value</span> also have an algorithm for obtaining an <span
+  id="concept-textarea-api-value"></span><dfn data-x="concept-fe-api-value">API value</dfn>. By
+  default this algorithm is to simply return the control's <span
+  data-x="concept-fe-value">value</span>.</p>
+
+  <p>The <code>select</code> element does not have a <span data-x="concept-fe-value">value</span>;
+  the <span data-x="concept-option-selectedness">selectedness</span> of its <code>option</code>
+  elements is what is used instead.</p>
+
+
+  <h5>Mutability</h5>
+
+  <p>A form control can be designated as <dfn data-x="concept-fe-mutable">mutable</dfn>.</p>
+
+  <p class="note">This determines (by means of definitions and requirements in this specification
+  that rely on whether an element is so designated) whether or not the user can modify the <span
+  data-x="concept-fe-value">value</span> or <span data-x="concept-fe-checked">checkedness</span> of a
+  form control, or whether or not a control can be automatically prefilled.</p>
+  <!-- or the concept-option-selectedness, or the concept-fe-values... -->
+
+
+  <h5>Association of controls and forms</h5>
+
+  <p>A <span>form-associated element</span> can have a relationship with a <code>form</code>
+  element, which is called the element's <dfn export
+  for="button,fieldset,input,object,output,select,textarea,img,form-associated custom element">form
+  owner</dfn>. If a <span>form-associated element</span> is not associated with a <code>form</code>
+  element, its <span>form owner</span> is said to be null.</p>
+
+  <p>A <span>form-associated element</span> has an associated <dfn>parser inserted flag</dfn>.</p>
+
+  <p>A <span>form-associated element</span> is, by default, associated with its <span
+  w-nodev>nearest</span> ancestor <code>form</code> element<span w-nodev> (as described
+  below)</span>, but, if it is <span data-x="category-listed">listed</span>, may have a <dfn
+  element-attr for="button,fieldset,input,object,output,select,textarea"><code
+  data-x="attr-fae-form">form</code></dfn> attribute specified to override this.</p>
+
+  <p class="note">This feature allows authors to work around the lack of support for nested
+  <code>form</code> elements.</p>
+
+  <div algorithm>
+  <p>If a <span data-x="category-listed">listed</span> <span>form-associated element</span> has a
+  <code data-x="attr-fae-form">form</code> attribute specified, then that attribute's value must be
+  the <span data-x="concept-id">ID</span> of a <code>form</code> element in the element's
+  <span>tree</span>.</p>
+  </div>
+
+  <div w-nodev>
+
+  <p class="note">The rules in this section are complicated by the fact that although conforming
+  documents or <span data-x="tree">trees</span> will never contain nested <code>form</code>
+  elements, it is quite possible (e.g., using a script that performs DOM manipulation) to generate
+  <span data-x="tree">trees</span> that have such nested elements. They are also complicated by
+  rules in the HTML parser that, for historical reasons, can result in a <span>form-associated
+  element</span> being associated with a <code>form</code> element that is not its ancestor.</p>
+
+  <div algorithm>
+  <p>When a <span>form-associated element</span> is created, its <span>form owner</span> must be
+  initialized to null (no owner).</p>
+  </div>
+
+  <div algorithm>
+  <p>When a <span>form-associated element</span> is to be <dfn
+  data-x="concept-form-association">associated</dfn> with a form, its <span>form owner</span> must
+  be set to that form.</p>
+  </div>
+
+  <div algorithm>
+  <p>When a <span data-x="category-listed">listed</span> <span>form-associated element</span>'s
+  <code data-x="attr-fae-form">form</code> attribute is set, changed, or removed, then the user
+  agent must <span>reset the form owner</span> of that element.</p>
+  </div>
+
+  <div algorithm>
+  <p>When a <span data-x="category-listed">listed</span> <span>form-associated element</span> has a
+  <code data-x="attr-fae-form">form</code> attribute and the <span data-x="concept-id">ID</span> of
+  any of the elements in the <span>tree</span> changes, then the user agent must <span>reset the
+  form owner</span> of that <span>form-associated element</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>When a <span data-x="category-listed">listed</span> <span>form-associated element</span> has a
+  <code data-x="attr-fae-form">form</code> attribute and an element with an <span
+  data-x="concept-id">ID</span> is <span data-x="node is inserted into a document">inserted
+  into</span> or <span data-x="node is removed from a document">removed from</span> the
+  <code>Document</code>, or its <span>HTML element moving steps</span> are run, then the user agent
+  must <span>reset the form owner</span> of that <span>form-associated element</span>.</p>
+  </div>
+
+  <p class="note">The form owner is also reset by the <span>HTML element insertion steps</span>,
+  <span>HTML element removing steps</span>, and <span>HTML element moving steps</span>.</p>
+
+  <div algorithm>
+  <p>To <dfn>reset the form owner</dfn> of a <span>form-associated element</span>
+  <var>element</var>:</p>
+
+  <ol>
+   <li><p>Unset <var>element</var>'s <span>parser inserted flag</span>.</p></li>
+
+   <li>
+    <p>If all of the following are true:</p>
+
+    <ul>
+     <li><p><var>element</var>'s <span>form owner</span> is not null;</p></li>
+
+     <li><p><var>element</var> is not <span data-x="category-listed">listed</span> or its <code
+     data-x="attr-fae-form">form</code> content attribute is not present; and</p></li>
+
+     <li><p><var>element</var>'s <span>form owner</span> is its nearest <code>form</code> element
+     ancestor after the change to the ancestor chain,</p></li>
+    </ul>
+
+    <p>then return.</p>
+   </li>
+
+   <li><p>Set <var>element</var>'s <span>form owner</span> to null.</p></li>
+
+   <li>
+    <p>If <var>element</var> is <span data-x="category-listed">listed</span>, has a <code
+    data-x="attr-fae-form">form</code> content attribute, and is <span>connected</span>:</p>
+
+    <ol>
+     <li><p>If the first element in <var>element</var>'s <span>tree</span>, in <span>tree
+     order</span>, to have an <span data-x="concept-id">ID</span> that is <span>identical to</span>
+     <var>element</var>'s <code data-x="attr-fae-form">form</code> content attribute's value, is a
+     <code>form</code> element, then <span data-x="concept-form-association">associate</span> the
+     <var>element</var> with that <code>form</code> element.</p></li>
+     <!-- note that this ignores the name="" attribute and is unaffected by quirks mode (it's always
+          case sensitive) -->
+    </ol>
+   </li>
+
+   <li><p>Otherwise, if <var>element</var> has an ancestor <code>form</code> element, then <span
+   data-x="concept-form-association">associate</span> <var>element</var> with the nearest such
+   ancestor <code>form</code> element.</p></li>
+  </ol>
+  </div>
+
+  <div class="example">
+
+   <p>In the following non-conforming snippet</p>
+
+   <pre class="bad"><code class="html">...
+ &lt;form id="a">
+  &lt;div id="b">&lt;/div>
+ &lt;/form>
+ &lt;script>
+  document.getElementById('b').innerHTML =
+     '&lt;table>&lt;tr>&lt;td>&lt;/form>&lt;form id="c">&lt;input id="d">&lt;/table>' +
+     '&lt;input id="e">';
+ &lt;/script>
+...</code></pre>
+
+   <p>the <span>form owner</span> of "d" would be the inner nested form "c", while the <span>form
+   owner</span> of "e" would be the outer form "a".</p>
+
+   <p>This happens as follows: First, the "e" node gets associated with "c" in the <span>HTML
+   parser</span>. Then, the <code data-x="dom-element-innerHTML">innerHTML</code> algorithm moves the nodes
+   from the temporary document to the "b" element. At this point, the nodes see their ancestor chain
+   change, and thus all the "magic" associations done by the parser are reset to normal ancestor
+   associations.</p>
+
+   <p>This example is a non-conforming document, though, as it is a violation of the content models
+   to nest <code>form</code> elements, and there is a <span>parse error</span> for the <code
+   data-x="">&lt;/form></code> tag.</p>
+
+  </div>
+
+  </div>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>element</var>.<span subdfn data-x="dom-fae-form">form</span></code></dt>
+
+   <dd>
+    <p>Returns the element's <span>form owner</span>.</p>
+
+    <p>Returns null if there isn't one.</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p><span data-x="category-listed">Listed</span> <span data-x="form-associated
+  element">form-associated elements</span> except for <span data-x="form-associated custom
+  element">form-associated custom elements</span> have a <dfn attribute
+  for="HTMLObjectElement,HTMLInputElement,HTMLButtonElement,HTMLSelectElement,HTMLTextAreaElement,HTMLOutputElement,HTMLFieldSetElement"><code
+  data-x="dom-fae-form">form</code></dfn> IDL attribute, which, on getting, must return the
+  element's <span>form owner</span>, or null if there isn't one.</p>
+  </div>
+
+  <div algorithm>
+  <p><span data-x="form-associated custom element">Form-associated custom elements</span> don't have
+  a <code data-x="dom-fae-form">form</code> IDL attribute. Instead, their
+  <code>ElementInternals</code> object has a <dfn attribute for="ElementInternals"><code
+  data-x="dom-ElementInternals-form">form</code></dfn> IDL attribute. On getting, it must throw a
+  <span>"<code>NotSupportedError</code>"</span> <code>DOMException</code> if the <span
+  data-x="internals-target">target element</span> is not a <span>form-associated custom
+  element</span>. Otherwise, it must return the element's <span>form owner</span>, or null if there
+  isn't one.</p>
+  </div>
+
+  </div>
+
+
+

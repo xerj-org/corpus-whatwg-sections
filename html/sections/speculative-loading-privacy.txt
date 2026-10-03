@@ -1,0 +1,105 @@
+WHATWG HTML — section speculative-loading-privacy — Privacy considerations
+
+  <h4 id="speculative-loading-privacy">Privacy considerations</h4>
+
+
+  <h5 id="speculative-loading-heuristics">Heuristics and optionality</h5>
+
+  <p>The <span>consider speculative loads</span> algorithm contains a crucial "may" step, which
+  encourages user agents to <span data-x="start a referrer-initiated navigational prefetch">start
+  referrer-initiated navigational prefetches</span> based on a combination of the <span>speculation
+  rule eagerness</span> and other features of the user's environment. Because it can be observable
+  to the document whether speculative loads are performed, user agents must take care to protect
+  privacy when making such decisions—for instance by only using information which is already
+  available to the origin. If these heuristics depend on any persistent state, that state must be
+  erased whenever the user erases other site data. If the user agent automatically clears other site
+  data from time to time, it must erase such persistent state at the same time.</p>
+
+  <p class="note">The use of <span>origin</span> instead of <span>site</span> here is intentional.
+  Although same-site origins are generally allowed to coordinate if they wish, the web's security
+  model is premised on preventing origins from accessing the data of other origins, even same-site
+  ones. Thus, the user agent needs to be sure not to leak such data unintentionally across origins,
+  not just across sites.</p>
+
+  <p>Examples of inputs which would be already known to the document:</p>
+
+  <ul>
+   <li><p>author-supplied <span data-x="speculation rule eagerness">eagerness</span></p></li>
+   <li><p>order of appearance in the document</p></li>
+   <li><p>whether a link is in the viewport</p></li>
+   <li><p>whether the cursor is near a link</p></li>
+   <li><p>rendered size of a link</p></li>
+  </ul>
+
+  <p>Examples of persistent data related to the origin (which the origin could have gathered itself)
+  but which must be erased according to user intent:</p>
+
+  <ul>
+   <li><p>whether the user has clicked this or similar links on this document or other documents on
+   the same origin</p></li>
+  </ul>
+
+  <p>Examples of device information which might be valuable in deciding whether speculative loading
+  is appropriate, but which needs to be considered as part of the user agent's overall privacy
+  posture because it can make the user more identifiable across origins:</p>
+
+  <ul>
+   <li><p>coarse device class (CPU, memory)</p></li>
+   <li><p>coarse battery level</p></li>
+   <li><p>whether the network connection is known to be metered</p></li>
+   <li><p>any user-toggleable settings, such as a speculative loading toggle, a battery-saver
+   toggle, or a data-saver toggle</p></li>
+  </ul>
+
+
+  <h5 id="speculative-loading-state-partitioning">State partitioning</h5>
+
+  <p>The <span>start a referrer-initiated navigational prefetch</span> algorithm is designed to
+  ensure that the HTTP requests that it issues behave consistently with how user agents partition
+  <span>credentials</span> according to <span data-x="storage key">storage keys</span>. This
+  property is maintained even for cross-partition prefetches, as follows.</p>
+
+  <p>If a future navigation using a prefetched response would load a document in the same partition,
+  then at prefetch time, the partitioned credentials can be sent, as they can with subresource
+  requests and scripted fetches. If such a future navigation would instead load a document in
+  another partition, it would be inconsistent with the partitioning scheme to use partitioned
+  credentials for the destination partition (since this would cross the boundary between partitions
+  without a top-level navigation) and also inconsistent to use partitioned credentials within the
+  originating partition (since this would result in the user seeing a document with different state
+  than a non-prefetched navigation). Instead, a third, initially empty, partition is used for such
+  requests. These requests therefore send along no credentials from either partition. However, the
+  resulting prefetched response body constructed using this initially-empty partition can only be
+  used if, at activation time, the destination partition contains no credentials.</p>
+
+  <p>This is somewhat similar to the behavior of only sending such prefetch requests if the
+  destination partition is known ahead of time to not contain credentials. However, to avoid such
+  behavior being used a way of probing for the presence of credentials, instead such prefetch
+  requests are always completed, and in the case of conflicting credentials, their results are not
+  used.</p>
+
+  <p>Redirects are possible between these two types of requests. A redirect from a same- to
+  cross-partition URL could contain information derived from partitioned credentials in the
+  originating partition; however, this is equivalent to the originating document fetching the
+  same-partition URL itself and then issuing a request for the cross-partition URL. A redirect from
+  a cross- to same-origin URL could carry credentials from the isolated partition, but since this
+  partition has no prior state this does not enable tracking based on the user's prior browsing
+  activity on that site, and the document could construct the same state by issuing uncredentialed
+  requests itself.</p>
+
+
+  <h5 id="speculative-loading-identity-joining">Identity joining</h5>
+
+  <p>Speculative loads provide a mechanism through which HTTP requests for later top-level
+  navigation can be made without a user gesture. It is natural to ask whether it is possible for two
+  coordinating sites to connect user identities.</p>
+
+  <p>Since existing <span>credentials</span> for the destination site are not sent (as explained in
+  the previous section), that site is limited in its ability to identify the user before navigation
+  in a similar way to if the referrer site had simply used <code>fetch()</code> to make an
+  uncredentialed request. Upon navigation, this becomes similar to ordinary navigation (e.g., by
+  clicking a link that was not speculatively loaded).</p>
+
+  <p>To the extent that user agents attempt to mitigate identity joining for ordinary fetches and
+  navigations, they can apply similar mitigations to speculatively-loaded navigations.</p>
+
+

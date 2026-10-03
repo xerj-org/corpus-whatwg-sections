@@ -1,0 +1,65 @@
+WHATWG HTML — section worklets-example-registering — Registering a class and invoking its methods (+worklets-infrastructure)
+
+  <h4 id="worklets-example-registering">Registering a class and invoking its methods</h4>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>Let's say that one of the intended usages of our fake worklet by web developers is to allow
+  them to customize the highly-complex process of boolean negation. They might register their
+  customization as follows:</p>
+
+  <pre><code class="js">// script.mjs
+registerFake('negation-processor', class {
+  process(arg) {
+    return !arg;
+  }
+});</code></pre>
+
+  <pre><code class="js">// app.mjs
+window.fakeWorklet1.addModule("script.mjs");</code></pre>
+
+  <div algorithm>
+  <p>To make use of such registered classes, the specification for fake worklets could define a <dfn
+  data-x="FakeWorkletGlobalScope-process">find the opposite of true</dfn> algorithm, given a
+  <code>Worklet</code> <var>worklet</var><span w-dev>, which invokes the <code
+  data-x="">process</code> method on any class registered to one of <var>worklet</var>'s global
+  scopes as having type "<code data-x="">negation-processor</code>", with true as the argument, and
+  then uses the result in some way.</span><span w-nodev>:</span></p>
+
+  <ol w-nodev>
+   <li><p>Optionally, <span>create a worklet global scope</span> for <var>worklet</var>.</p></li>
+
+   <li><p>Let <var>workletGlobalScope</var> be one of <var>worklet</var>'s <span
+   data-x="concept-Worklet-global-scopes">global scopes</span>, chosen in an
+   <span>implementation-defined</span> manner.</p></li>
+
+   <li><p>Let <var>classConstructor</var> be <var>workletGlobalScope</var>'s <span>registered class
+   constructors map</span>["<code data-x="">negation-processor</code>"].</p></li>
+
+   <li><p>Let <var>classInstance</var> be the result of <span
+   data-x="es-constructing-callback-functions">constructing</span> <var>classConstructor</var>, with
+   no arguments.</p></li>
+
+   <li><p>Let <var>function</var> be <span data-x="js-Get">Get</span>(<var>classInstance</var>,
+   "<code data-x="">process</code>"). Rethrow any exceptions.</p>
+
+   <li><p>Let <var>callback</var> be the result of <span
+   data-x="concept-idl-convert">converting</span> <var>function</var> to a Web IDL <code
+   data-x="idl-Function">Function</code> instance.</p></li>
+
+   <li><p>Return the result of <span data-x="es-invoking-callback-functions">invoking</span>
+   <var>callback</var> with « true » and "<code data-x="">rethrow</code>", and with <i
+   data-x="dfn-callback-this-value">callback this value</i> set to
+   <var>classInstance</var>.</p></li>
+  </ol>
+  </div>
+
+  <p class="note" w-nodev>Another, perhaps better, specification architecture would be to extract the "<code
+  data-x="">process</code>" property and convert it into a <code
+  data-x="idl-Function">Function</code> at registration time, as part of the <code
+  data-x="dom-FakeWorkletGlobalScope-registerFake">registerFake()</code> method steps.</p>
+
+  </div>
+
+  <h3 id="worklets-infrastructure">Infrastructure</h3>
+

@@ -1,0 +1,299 @@
+WHATWG HTML — section navigation-api/navigation-api-entry-updates — Initializing and updating the entry list
+
+  <h5 id="navigation-api-entry-updates">Initializing and updating the entry list</h5>
+
+  <div algorithm>
+  <p>To <dfn>initialize the navigation API entries for a new document</dfn> given a
+  <code>Navigation</code> <var>navigation</var>, a <span>list</span> of <span data-x="session
+  history entry">session history entries</span> <var>newSHEs</var>, and a <span>session history
+  entry</span> <var>initialSHE</var>:</p>
+
+  <ol>
+   <li><p><span>Assert</span>: <var>navigation</var>'s <span data-x="navigation-entry-list">entry
+   list</span> <span data-x="list is empty">is empty</span>.</p></li>
+
+   <li><p><span>Assert</span>: <var>navigation</var>'s <span
+   data-x="navigation-current-entry-index">current entry index</span> is &minus;1.</p></li>
+
+   <li><p>If <var>navigation</var> <span>has entries and events disabled</span>, then
+   return.</p></li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>newSHE</var> of <var>newSHEs</var>:</p>
+
+    <ol>
+     <li><p>Let <var>newNHE</var> be a <span>new</span> <code>NavigationHistoryEntry</code> created
+     in the <span data-x="concept-relevant-realm">relevant realm</span> of
+     <var>navigation</var>.</p></li>
+
+     <li><p>Set <var>newNHE</var>'s <span data-x="nhe-she">session history entry</span> to
+     <var>newSHE</var>.</p></li>
+
+     <li><p><span data-x="list append">Append</span> <var>newNHE</var> to <var>navigation</var>'s
+     <span data-x="navigation-entry-list">entry list</span>.</p></li>
+    </ol>
+
+    <p class="note"><var>newSHEs</var> will have originally come from <span>getting session history
+    entries for the navigation API</span>, and thus each <var>newSHE</var> will be contiguous <span
+    data-x="same origin">same</span> <span data-x="document-state-origin">origin</span> with
+    <var>initialSHE</var>.</p>
+   </li>
+
+   <li><p>Set <var>navigation</var>'s <span data-x="navigation-current-entry-index">current entry
+   index</span> to the result of <span>getting the navigation API entry index</span> of
+   <var>initialSHE</var> within <var>navigation</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>update the navigation API entries for reactivation</dfn> given a
+  <code>Navigation</code> <var>navigation</var>, a <span>list</span> of <span data-x="session
+  history entry">session history entries</span> <var>newSHEs</var>, and a <span>session history
+  entry</span> <var>reactivatedSHE</var>:</p>
+
+  <ol>
+   <li><p>If <var>navigation</var> <span>has entries and events disabled</span>, then
+   return.</p></li>
+
+   <li><p>Let <var>newNHEs</var> be a new empty <span>list</span>.</p></li>
+
+   <li><p>Let <var>oldNHEs</var> be a <span data-x="list clone">clone</span> of
+   <var>navigation</var>'s <span data-x="navigation-entry-list">entry list</span>.</p></li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>newSHE</var> of <var>newSHEs</var>:</p>
+
+    <ol>
+     <li><p>Let <var>newNHE</var> be null.</p></li>
+
+     <li>
+      <p>If <var>oldNHEs</var> <span data-x="list contains">contains</span> a
+      <code>NavigationHistoryEntry</code> <var>matchingOldNHE</var> whose <span
+      data-x="nhe-she">session history entry</span> is <var>newSHE</var>:</p>
+
+      <ol>
+       <li><p>Set <var>newNHE</var> to <var>matchingOldNHE</var>.</p></li>
+
+       <li><p><span data-x="list remove">Remove</span> <var>matchingOldNHE</var> from
+       <var>oldNHEs</var>.</p></li>
+      </ol>
+     </li>
+
+     <li>
+      <p>Otherwise:</p>
+
+      <ol>
+       <li><p>Set <var>newNHE</var> to a <span>new</span> <code>NavigationHistoryEntry</code>
+       created in the <span data-x="concept-relevant-realm">relevant realm</span> of
+       <var>navigation</var>.</p></li>
+
+       <li><p>Set <var>newNHE</var>'s <span data-x="nhe-she">session history entry</span> to
+       <var>newSHE</var>.</p></li>
+      </ol>
+     </li>
+
+     <li><p><span data-x="list append">Append</span> <var>newNHE</var> to
+     <var>newNHEs</var>.</p></li>
+    </ol>
+
+    <p class="note"><var>newSHEs</var> will have originally come from <span>getting session history
+    entries for the navigation API</span>, and thus each <var>newSHE</var> will be contiguous <span
+    data-x="same origin">same</span> <span data-x="document-state-origin">origin</span> with
+    <var>reactivatedSHE</var>.</p>
+
+    <p class="note">By the end of this loop, all <code>NavigationHistoryEntry</code>s that remain in
+    <var>oldNHEs</var> represent <span data-x="session history entry">session history entries</span>
+    which have been disposed while the <code>Document</code> was in <a
+    href="#note-bfcache">bfcache</a>.</p>
+   </li>
+
+   <li><p>Set <var>navigation</var>'s <span>entry list</span> to <var>newNHEs</var>.</p></li>
+
+   <li><p>Set <var>navigation</var>'s <span data-x="navigation-current-entry-index">current entry
+   index</span> to the result of <span>getting the navigation API entry index</span> of
+   <var>reactivatedSHE</var> within <var>navigation</var>.</p></li>
+
+   <li>
+    <p><span>Queue a global task</span> on the <span>navigation and traversal task source</span>
+    given <var>navigation</var>'s <span>relevant global object</span> to run the following
+    steps:</p>
+
+    <ol>
+     <li>
+      <p><span data-x="list iterate">For each</span> <var>disposedNHE</var> of
+      <var>oldNHEs</var>:</p>
+
+      <ol>
+       <li><p><span data-x="concept-event-fire">Fire an event</span> named <code
+       data-x="event-dispose">dispose</code> at <var>disposedNHE</var>.</p></li>
+      </ol>
+     </li>
+    </ol>
+
+    <div class="note">
+     <p>We delay these steps by a task to ensure that <code data-x="event-dispose">dispose</code>
+     events will fire after the <code data-x="event-pageshow">pageshow</code> event. This ensures
+     that <code data-x="event-pageshow">pageshow</code> is the first event a page receives upon
+     <span data-x="reactivate a document">reactivation</span>.</p>
+
+     <p>(However, the rest of this algorithm runs before the <code
+     data-x="event-pageshow">pageshow</code> event fires. This ensures that <code
+     data-x="dom-Navigation-entries">navigation.entries()</code> and <code
+     data-x="dom-Navigation-currentEntry">navigation.currentEntry</code> will have correctly-updated
+     values during any <code data-x="event-pageshow">pageshow</code> event handlers.)</p>
+    </div>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>update the navigation API entries for a same-document navigation</dfn> given a
+  <code>Navigation</code> <var>navigation</var>, a <span>session history entry</span>
+  <var>destinationSHE</var>, and a <code>NavigationType</code> <var>navigationType</var>:</p>
+
+  <ol>
+   <li><p>If <var>navigation</var> <span>has entries and events disabled</span>, then
+   return.</p></li>
+
+   <li><p>Let <var>oldCurrentNHE</var> be the <span data-x="navigation-current-entry">current
+   entry</span> of <var>navigation</var>.</p></li>
+
+   <li><p>Let <var>disposedNHEs</var> be a new empty <span>list</span>.</p></li>
+
+   <li>
+    <p>If <var>navigationType</var> is "<code
+    data-x="dom-NavigationType-traverse">traverse</code>":</p>
+
+    <ol>
+     <li><p>Set <var>navigation</var>'s <span data-x="navigation-current-entry-index">current entry
+     index</span> to the result of <span>getting the navigation API entry index</span> of
+     <var>destinationSHE</var> within <var>navigation</var>.</p></li>
+
+     <li><p><span>Assert</span>: <var>navigation</var>'s <span
+     data-x="navigation-current-entry-index">current entry index</span> is not &minus;1.</p></li>
+    </ol>
+
+    <p class="note">This algorithm is only called for same-document traversals. Cross-document
+    traversals will instead call either <span>initialize the navigation API entries for a new
+    document</span> or <span>update the navigation API entries for reactivation</span>.</p>
+   </li>
+
+   <li>
+    <p>Otherwise, if <var>navigationType</var> is "<code
+    data-x="dom-NavigationType-push">push</code>":</p>
+
+    <ol>
+     <li><p>Set <var>navigation</var>'s <span data-x="navigation-current-entry-index">current entry
+     index</span> to <var>navigation</var>'s <span data-x="navigation-current-entry-index">current
+     entry index</span> + 1.</p></li>
+
+     <li><p>Let <var>i</var> be <var>navigation</var>'s <span
+     data-x="navigation-current-entry-index">current entry index</span>.</p></li>
+
+     <li>
+      <p><span>While</span> <var>i</var> &lt; <var>navigation</var>'s <span
+      data-x="navigation-entry-list">entry list</span>'s <span data-x="list size">size</span>:</p>
+
+      <ol>
+       <li><p><span data-x="list append">Append</span> <var>navigation</var>'s <span
+       data-x="navigation-entry-list">entry list</span>[<var>i</var>] to
+       <var>disposedNHEs</var>.</p></li>
+
+       <li><p>Set <var>i</var> to <var>i</var> + 1.</p></li>
+      </ol>
+     </li>
+
+     <li><p><span data-x="list remove">Remove</span> all items in <var>disposedNHEs</var> from
+     <var>navigation</var>'s <span data-x="navigation-entry-list">entry list</span>.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p>Otherwise, if <var>navigationType</var> is "<code
+    data-x="dom-NavigationType-replace">replace</code>":</p>
+
+    <ol>
+     <li><p><span data-x="list append">Append</span> <var>oldCurrentNHE</var> to
+     <var>disposedNHEs</var>.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p>If <var>navigationType</var> is "<code data-x="dom-NavigationType-push">push</code>" or
+    "<code data-x="dom-NavigationType-replace">replace</code>":</p>
+
+    <ol>
+     <li><p>Let <var>newNHE</var> be a <span>new</span> <code>NavigationHistoryEntry</code> created
+     in the <span data-x="concept-relevant-realm">relevant realm</span> of
+     <var>navigation</var>.</p></li>
+
+     <li><p>Set <var>newNHE</var>'s <span data-x="nhe-she">session history entry</span> to
+     <var>destinationSHE</var>.</p></li>
+
+     <li><p>Set <var>navigation</var>'s <span data-x="navigation-entry-list">entry
+     list</span>[<var>navigation</var>'s <span data-x="navigation-current-entry-index">current entry
+     index</span>] to <var>newNHE</var>.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p>If <var>navigation</var>'s <span>ongoing API method tracker</span> is non-null, then
+    <span>notify about the committed-to entry</span> given <var>navigation</var>'s <span>ongoing API
+    method tracker</span> and the <span data-x="navigation-current-entry">current entry</span> of
+    <var>navigation</var>.</p>
+
+    <p class="note">It is important to do this before firing the <code
+    data-x="event-dispose">dispose</code> or <code
+    data-x="event-currententrychange">currententrychange</code> events, since event handlers could
+    start another navigation, or otherwise change the value of <var>navigation</var>'s <span>ongoing
+    API method tracker</span>.</p>
+   </li>
+
+   <li><p>Let <var>navigateEvent</var> be <var>navigation</var>'s <span>ongoing <code
+   data-x="event-navigate">navigate</code> event</span>.</p></li>
+
+   <li><p>Let <var>apiMethodTracker</var> be <var>navigation</var>'s <span>ongoing API method tracker</span>.</p></li>
+
+   <li>
+    <p><span>Prepare to run script</span> given <var>navigation</var>'s <span>relevant settings
+    object</span>.</p>
+
+    <p class="note">See <a href="#note-suppress-microtasks-during-navigation-events">the discussion
+    for other navigation API events</a> to understand why we do this.</p>
+   </li>
+
+   <li><p><span data-x="concept-event-fire">Fire an event</span> named <code
+   data-x="event-currententrychange">currententrychange</code> at <var>navigation</var> using
+   <code>NavigationCurrentEntryChangeEvent</code>, with its <code
+   data-x="dom-NavigationCurrentEntryChangeEvent-navigationType">navigationType</code> attribute
+   initialized to <var>navigationType</var> and its <code
+   data-x="dom-NavigationCurrentEntryChangeEvent-from">from</code> initialized to
+   <var>oldCurrentNHE</var>.</p></li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>disposedNHE</var> of
+    <var>disposedNHEs</var>:</p>
+
+    <ol>
+     <li><p><span data-x="concept-event-fire">Fire an event</span> named <code
+     data-x="event-dispose">dispose</code> at <var>disposedNHE</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Run the <span>navigate event intercept commit handler steps</span> given
+   <var>navigation</var>, <var>navigateEvent</var>, and <var>apiMethodTracker</var>.</p></li>
+
+   <li><p><span>Clean up after running script</span> given <var>navigation</var>'s <span>relevant
+   settings object</span>.</p></li>
+  </ol>
+  </div>
+
+  <p class="XXX">In implementations, same-document navigations can cause <span data-x="session
+  history entry">session history entries</span> to be disposed by falling off the back of the
+  session history entry list. This is not yet handled by the above algorithm (or by any other part
+  of this standard). See <a href="https://github.com/whatwg/html/issues/8620">issue #8620</a> to
+  track progress on defining the correct behavior in such cases.</p>
+
+  </div>
+
+

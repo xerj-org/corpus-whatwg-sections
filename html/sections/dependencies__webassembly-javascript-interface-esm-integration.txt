@@ -1,0 +1,13 @@
+WHATWG HTML — section dependencies/webassembly-javascript-interface-esm-integration — WebAssembly JavaScript Interface: ESM Integration
+
+   <dt>WebAssembly JavaScript Interface: ESM Integration</dt>
+
+   <dd>
+    <p>The following terms are defined in <cite>WebAssembly JavaScript Interface: ESM Integration</cite>: <ref>WASMESM</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://webassembly.github.io/esm-integration/js-api/index.html#webassembly-module-record">WebAssembly Module Record</dfn></li>
+     <li><dfn data-x-href="https://webassembly.github.io/esm-integration/js-api/index.html#parse-a-webassembly-module">parse a WebAssembly module</dfn></li>
+    </ul>
+   </dd>
+

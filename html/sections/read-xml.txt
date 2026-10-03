@@ -1,0 +1,45 @@
+WHATWG HTML — section read-xml — <dfn data-x="navigate-xml">Loading XML documents</dfn>
+
+  <h4 id="read-xml"><dfn data-x="navigate-xml">Loading XML documents</dfn></h4>
+
+  <div algorithm>
+  <p>When faced with displaying an XML file inline, provided <span>navigation params</span>
+  <var>navigationParams</var> and a string <var>type</var>, user agents must follow the
+  requirements defined in <cite>XML</cite> and <cite>Namespaces in XML</cite>, <cite>XML Media
+  Types</cite>, <cite>DOM</cite>, and other relevant specifications to <span
+  data-x="create-the-document-object">create and initialize a <code>Document</code> object</span>
+  <var>document</var>, given "<code data-x="">xml</code>", <var>type</var>, and
+  <var>navigationParams</var>, and return that <code>Document</code>. They must also create a
+  corresponding <span>XML parser</span>. <ref>XML</ref> <ref>XMLNS</ref> <ref>RFC7303</ref>
+  <ref>DOM</ref></p>
+
+  <p class="note">At the time of writing, the XML specification community had not actually yet
+  specified how XML and the DOM interact.</p> <!--XMLPARSE-->
+
+  <p>The first <span data-x="concept-task">task</span> that the <span>networking task source</span>
+  places on the <span>task queue</span> while fetching runs must <span>process link headers</span>
+  given <var>document</var>, <var>navigationParams</var>'s <span
+  data-x="navigation-params-response">response</span>, and "<code data-x="">media</code>", after
+  the task has been processed by the <span>XML parser</span>.</p>
+
+  <p>The actual HTTP headers and other metadata, not the headers as mutated or implied by the
+  algorithms given in this specification, are the ones that must be used when determining the
+  character encoding according to the rules given in the above specifications. Once the character
+  encoding is established, the <span>document's character encoding</span> must be set to that
+  character encoding.</p>
+
+  <p>Before any script execution occurs, the user agent must wait for <span>scripts may run for the
+  newly-created document</span> to be true for the newly-created <code>Document</code>.</p>
+
+  <p>Once parsing is complete, the user agent must set <var>document</var>'s <span
+  data-x="concept-document-navigation-id">during-loading navigation ID for WebDriver BiDi</span> to
+  null.</p>
+  </div>
+
+  <p class="note">For HTML documents this is reset when parsing is complete, after firing the load
+  event.</p>
+
+  <p>Error messages from the parse process (e.g., XML namespace well-formedness errors) may be
+  reported inline by mutating the <code>Document</code>.</p>
+
+

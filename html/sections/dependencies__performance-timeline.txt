@@ -1,0 +1,19 @@
+WHATWG HTML — section dependencies/performance-timeline — Performance Timeline
+
+   <dt>Performance Timeline</dt>
+
+   <dd>
+    <p>The following terms are defined in <cite>Performance Timeline</cite>:
+    <ref>PERFORMANCETIMELINE</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://w3c.github.io/performance-timeline/#dom-performanceentry"><code>PerformanceEntry</code></dfn> and its
+         <dfn data-x="PerformanceEntry-name" data-x-href="https://w3c.github.io/performance-timeline/#dom-performanceentry-name"><code>name</code></dfn>,
+         <dfn data-x="PerformanceEntry-entryType" data-x-href="https://w3c.github.io/performance-timeline/#dom-performanceentry-entrytype"><code>entryType</code></dfn>,
+         <dfn data-x="PerformanceEntry-startTime" data-x-href="https://w3c.github.io/performance-timeline/#dom-performanceentry-starttime"><code>startTime</code></dfn>, and
+         <dfn data-x="PerformanceEntry-duration" data-x-href="https://w3c.github.io/performance-timeline/#dom-performanceentry-duration"><code>duration</code></dfn> attributes.</li>
+
+     <li><dfn data-x-href="https://w3c.github.io/performance-timeline/#queue-a-performanceentry">Queue a performance entry</dfn></li>
+     </ul>
+   </dd>
+

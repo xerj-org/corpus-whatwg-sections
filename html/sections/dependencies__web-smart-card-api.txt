@@ -1,0 +1,12 @@
+WHATWG HTML — section dependencies/web-smart-card-api — Web Smart Card API
+
+  <dt>Web Smart Card API</dt>
+
+  <dd>
+   <p>The following terms are defined in <cite>Web Smart Card API</cite>:</p>
+
+   <ul class="brief">
+    <li><dfn data-x-href="https://wicg.github.io/web-smart-card/#dom-smartcardconnection"><code>SmartCardConnection</code></dfn></li>
+   </ul>
+  </dd>
+

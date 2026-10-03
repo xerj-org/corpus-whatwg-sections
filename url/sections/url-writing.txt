@@ -1,0 +1,182 @@
+WHATWG URL — section url-writing — URL writing
+
+<h3 id=url-writing oldids=url-syntax>URL writing</h3>
+
+<!-- http://tantek.com/2011/238/b1/many-ways-slice-url-name-pieces -->
+
+<p>A <dfn export oldids=syntax-url>valid URL string</dfn> must be either a
+<a>relative-URL-with-fragment string</a> or an <a>absolute-URL-with-fragment string</a>.
+
+<p>An
+<dfn export oldids=syntax-url-absolute-with-fragment>absolute-URL-with-fragment string</dfn> must be
+an <a>absolute-URL string</a>, optionally followed by U+0023 (#) and a <a>URL-fragment string</a>.
+
+<p>An <dfn export oldids=syntax-url-absolute>absolute-URL string</dfn> must be one of the following:
+
+<ul class=brief>
+ <li><p>a <a>URL-scheme string</a> that is an <a>ASCII case-insensitive</a> match for a
+ <a>special scheme</a> and not an <a>ASCII case-insensitive</a> match for "<code>file</code>",
+ followed by U+003A (:) and a <a>scheme-relative-special-URL string</a>
+ <li><p>a <a>URL-scheme string</a> that is <em>not</em> an <a>ASCII case-insensitive</a> match for a
+ <a>special scheme</a>, followed by U+003A (:) and one of: a <a>scheme-relative-URL string</a>, a
+ <a>path-absolute-non-authority-URL string</a>, or an <a>opaque-path-URL string</a>
+ <li><p>a <a>URL-scheme string</a> that is an <a>ASCII case-insensitive</a> match for
+ "<code>file</code>", followed by U+003A (:) and a <a>scheme-relative-file-URL string</a>
+</ul>
+
+<p>any optionally followed by U+003F (?) and a <a>URL-query string</a>.
+
+<p>A <dfn export oldids=syntax-url-scheme>URL-scheme string</dfn> must be one <a>ASCII alpha</a>,
+followed by zero or more of <a>ASCII alphanumeric</a>, U+002B (+), U+002D (-), and U+002E (.).
+<a lt="URL-scheme string">Schemes</a> should be registered in the
+<cite>IANA URI [sic] Schemes</cite> registry.
+[[!IANA-URI-SCHEMES]]
+[[RFC7595]]
+
+<p>A <dfn export oldids=syntax-url-relative-with-fragment>relative-URL-with-fragment string</dfn>
+must be U+0023 (#) followed by a <a>URL-fragment string</a>, if <a>base URL</a> has an
+<a for=url>opaque path</a>; otherwise, a <a>relative-URL string</a>, optionally followed by U+0023
+(#) and a <a>URL-fragment string</a>.
+
+<p>A <dfn export oldids=syntax-url-relative>relative-URL string</dfn> must be:
+
+<ul>
+ <li><p>a <a>path-absolute-non-authority-URL string</a>,
+ <li><p>a <a>path-relative-scheme-less-URL string</a>,
+ <li>
+  <p>or, switching on <a>base URL</a>'s <a for=url>scheme</a>:
+
+  <dl class=switch>
+   <dt>A <a>special scheme</a> that is not "<code>file</code>"
+   <dd><p>a <a>scheme-relative-special-URL string</a>
+   <dt>"<code>file</code>"
+   <dd><p>a <a>scheme-relative-file-URL string</a>
+   <dt>Otherwise
+   <dd><p>a <a>scheme-relative-URL string</a>
+  </dl>
+</ul>
+
+<p>any optionally followed by U+003F (?) and a <a>URL-query string</a>.
+
+<p class=note>A non-null <a>base URL</a> is necessary when <a lt="URL parser">parsing</a> a
+<a>relative-URL-with-fragment string</a>.
+
+<p>A <dfn export>scheme-relative-special-URL string</dfn> must be "<code>//</code>", followed by a
+<a>valid host string</a>, optionally followed by U+003A (:) and a <a>URL-port string</a>, optionally
+followed by a <a>path-absolute-URL string</a>.
+
+<p>A <dfn export oldids=syntax-url-port>URL-port string</dfn> must be one of the following:
+
+<ul class=brief>
+ <li><p>the empty string
+ <li><p>one or more <a>ASCII digits</a> representing a decimal number that is a
+ <a for=/>16-bit unsigned integer</a>.
+</ul>
+
+<p>A <dfn export oldids=syntax-url-scheme-relative>scheme-relative-URL string</dfn> must be
+"<code>//</code>", followed by an <a>opaque-host-and-port string</a>, optionally followed by a
+<a>path-absolute-URL string</a>.
+
+<p>An <dfn export>opaque-host-and-port string</dfn> must be either the empty string or: a
+<a>valid opaque-host string</a>, optionally followed by U+003A (:) and a <a>URL-port string</a>.
+
+<p>A <dfn export oldids=syntax-url-file-scheme-relative>scheme-relative-file-URL string</dfn> must
+be "<code>//</code>", optionally followed by one of the following:
+
+<ul class=brief>
+ <li><p>a <a>valid host string</a>, optionally followed by a <a>path-absolute-URL string</a>
+ <li><p>a <a>path-absolute-URL string</a>.
+</ul>
+
+<p>A <dfn export oldids=syntax-url-path-absolute>path-absolute-URL string</dfn> must be U+002F (/),
+followed by zero or more <a>URL-path-segment strings</a>, separated from each other by U+002F (/).
+
+<p>A <dfn>path-absolute-non-authority-URL string</dfn> must be a <a>path-absolute-URL string</a>
+that does not start with two U+002F (/) code points.
+
+<p>A <dfn export oldids=syntax-url-path-relative>path-relative-URL string</dfn> must be zero or more
+<a>URL-path-segment strings</a>, separated from each other by U+002F (/), and not start with
+U+002F (/).
+
+<p>A
+<dfn export oldids=syntax-url-path-relative-scheme-less>path-relative-scheme-less-URL string</dfn>
+must be a <a>path-relative-URL string</a> that does not start with: a <a>URL-scheme string</a>,
+followed by U+003A (:).
+
+<p>An <dfn export>opaque-path-URL string</dfn> must be zero or more <a>URL units</a> excluding
+U+003F (?), the first of which (if any) is not U+002F (/).
+
+<p>A <dfn export oldids=syntax-url-path-segment>URL-path-segment string</dfn> must be one of the
+following:
+
+<ul class=brief>
+ <li><p>zero or more <a>URL units</a> excluding U+002F (/) and U+003F (?), that together are not a
+ <a>single-dot URL path segment</a> or a <a>double-dot URL path segment</a>.
+ <li><p>a <a>single-dot URL path segment</a>
+ <li><p>a <a>double-dot URL path segment</a>.
+</ul>
+
+<p>A <dfn export oldids=syntax-url-query>URL-query string</dfn> must be zero or more <a>URL units</a>.
+
+<p>A <dfn export oldids=syntax-url-fragment>URL-fragment string</dfn> must be zero or more
+<a>URL units</a>.
+
+<p>The <dfn export lt="URL code point" id=url-code-points>URL code points</dfn> are
+<a>ASCII alphanumeric</a>,
+U+0021 (!),<!-- sub-delims -->
+U+0024 ($),<!-- sub-delims -->
+U+0026 (&amp;),<!-- sub-delims -->
+U+0027 ('),<!-- sub-delims -->
+U+0028 LEFT PARENTHESIS,<!-- sub-delims -->
+U+0029 RIGHT PARENTHESIS,<!-- sub-delims -->
+U+002A (*),<!-- sub-delims -->
+U+002B (+),<!-- sub-delims -->
+U+002C (,),<!-- sub-delims -->
+U+002D (-),<!-- iunreserved -->
+U+002E (.),<!-- iunreserved -->
+U+002F (/),<!-- iquery/ifragment -->
+U+003A (:),<!-- ipchar -->
+U+003B (;),<!-- sub-delims -->
+U+003D (=),<!-- sub-delims -->
+U+003F (?),<!-- iquery/ifragment -->
+U+0040 (@),<!-- ipchar -->
+U+005F (_),<!-- iunreserved -->
+U+007E (~),<!-- iunreserved -->
+and <a>code points</a> in the range U+00A0 to U+10FFFD, inclusive, excluding <a>surrogates</a> and
+<a>noncharacters</a>.
+<!-- IRI also excludes the ranges U+E000 to U+F8FF, U+FFF0 to U+FFFD, and U+E0000 to U+E09FF, all
+     inclusive. We don't to align with HTML. -->
+
+<p class=note>Code points greater than U+007F DELETE will be converted to
+<a lt="percent-encoded byte">percent-encoded bytes</a> by the <a>URL parser</a>.
+
+<p class=note>In HTML, when the document encoding is a legacy encoding, code points in the
+<a>URL-query string</a> that are higher than U+007F DELETE will be converted to
+<a lt="percent-encoded byte">percent-encoded bytes</a> <em>using the document's encoding</em>. This
+can cause problems if a URL that works in one document is copied to another document that uses a
+different document encoding. Using the <a>UTF-8</a> encoding everywhere solves this problem.
+
+<div class=example id=query-encoding-example>
+ <p>For example, consider this HTML document:
+
+ <pre><code class="lang-html">
+ &lt;!doctype html>
+ &lt;meta charset="windows-1252">
+ &lt;a href="?sm&amp;ouml;rg&amp;aring;sbord">Test&lt;/a></code></pre>
+
+ <p>Since the document encoding is windows-1252, the link's <a for=/>URL</a>'s <a for=url>query</a>
+ will be "<code>sm%F6rg%E5sbord</code>". If the document encoding had been UTF-8, it would instead
+ be "<code>sm%C3%B6rg%C3%A5sbord</code>".
+</div>
+
+<p>The <dfn>URL units</dfn> are <a>URL code points</a> and <a>percent-encoded bytes</a>.
+
+<p class=note><a>Percent-encoded bytes</a> can be used to encode code points that are not
+<a>URL code points</a> or are excluded from being written.
+
+<hr>
+
+<p class=note>There is no way to express a <a for=url>username</a> or <a for=url>password</a> of a
+<a for=/>URL record</a> within a <a>valid URL string</a>.
+
+

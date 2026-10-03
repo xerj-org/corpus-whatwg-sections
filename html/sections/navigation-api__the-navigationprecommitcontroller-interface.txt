@@ -1,0 +1,166 @@
+WHATWG HTML — section navigation-api/the-navigationprecommitcontroller-interface — The <code>NavigationPrecommitController</code> interface
+
+  <h6>The <code>NavigationPrecommitController</code> interface</h6>
+
+  <pre><code class="idl">[Exposed=Window]
+  interface <dfn interface>NavigationPrecommitController</dfn> {
+    undefined <span data-x="dom-NavigationPrecommitController-redirect">redirect</span>(USVString url, optional <span>NavigationNavigateOptions</span> options = {});
+    undefined <span data-x="dom-NavigationPrecommitController-addHandler">addHandler</span>(<span>NavigationInterceptHandler</span> handler);
+  };
+
+  callback <dfn callback>NavigationPrecommitHandler</dfn> = <span data-x="idl-Promise">Promise</span>&lt;undefined> (<span>NavigationPrecommitController</span> controller);</code></pre>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>precommitController</var>.<span subdfn data-x="dom-NavigationPrecommitController-redirect">redirect</span>(USVString <var>url</var>, <span>NavigationNavigateOptions</span> <var>options</var>)</code></dt>
+   <dd>
+    <p>For "<code data-x="dom-NavigationType-push">push</code>" or "<code
+    data-x="dom-NavigationType-replace">replace</code>" navigations, sets the <code
+    data-x="dom-NavigationDestination-url">destination.url</code> to <var>url</var>.</p>
+
+    <p>If <var>options</var> is given, also sets the <code
+    data-x="dom-NavigateEvent-info">info</code> and the resulting
+    <code>NavigationHistoryEntry</code>'s <span
+    data-x="concept-NavigationDestination-state">state</span> to <var>options</var>'s <code
+    data-x="dom-NavigationOptions-info">info</code> and <code
+    data-x="dom-NavigationNavigateOptions-state">state</code>, if they are present. The <code
+    data-x="dom-NavigationNavigateOptions-history">history</code> option can also switch between
+    "<code data-x="dom-NavigationType-push">push</code>" or "<code
+    data-x="dom-NavigationType-replace">replace</code>" navigations types.</p>
+
+    <p>For "<code data-x="dom-NavigationType-reload">reload</code>" or "<code
+    data-x="dom-NavigationType-traverse">traverse</code>" navigations, an
+    <span>"<code>InvalidStateError</code>"</span> will be thrown.</p>
+
+    <p>If the current <code>Document</code> <span data-x="can have its URL rewritten">cannot have
+    its URL rewritten</span> to <var>url</var>, a <span>"<code>SecurityError</code>"</span>
+    <code>DOMException</code> will be thrown.</p>
+   </dd>
+
+   <dt><code data-x=""><var>precommitController</var>.<span subdfn data-x="dom-NavigationPrecommitController-addHandler">addHandler</span>(<span>NavigationInterceptHandler</span> <var>handler</var>)</code></dt>
+   <dd><p>Adds a <span>NavigationInterceptHandler</span> callback that would be called once the navigation is committed,
+   as if this method was passed to the <code
+   data-x="dom-NavigateEvent-intercept">navigateEvent.intercept()</code> method as a <code
+   data-x="dom-NavigationInterceptOptions-handler">handler</code>.</p></dd>
+  </dl>
+
+  <div w-nodev>
+
+  <p>Each <code>NavigationPrecommitController</code> has a <code>NavigateEvent</code> <dfn
+  data-x="concept-NavigationPrecommitController-event">event</dfn>.</p>
+
+  <div algorithm>
+  <p>The <dfn method for="NavigationPrecommitController"><code
+  data-x="dom-NavigationPrecommitController-redirect">redirect(<var>url</var>,
+  <var>options</var>)</code></dfn> method steps are:</p>
+
+  <ol>
+   <li><p><span>Assert</span>: <span>this</span>'s <span
+   data-x="concept-NavigationPrecommitController-event">event</span>'s <span
+   data-x="concept-NavigateEvent-interception-state">interception state</span> is not "<code
+   data-x="">none</code>".</p></li>
+
+   <li><p><span data-x="NavigateEvent-perform-shared-checks">Perform shared checks</span> given
+   <span>this</span>'s <span
+   data-x="concept-NavigationPrecommitController-event">event</span>.</p></li>
+
+   <li><p>If <span>this</span>'s <span
+   data-x="concept-NavigationPrecommitController-event">event</span>'s <span
+   data-x="concept-NavigateEvent-interception-state">interception state</span> is not "<code
+   data-x="">intercepted</code>", then throw an <span>"<code>InvalidStateError</code>"</span>
+   <code>DOMException</code>.</p></li>
+
+   <li><p>If <span>this</span>'s <span
+   data-x="concept-NavigationPrecommitController-event">event</span>'s <code
+   data-x="dom-NavigateEvent-navigationType">navigationType</code> is neither "<code
+   data-x="dom-NavigationType-push">push</code>" nor "<code
+   data-x="dom-NavigationType-replace">replace</code>", then throw an
+   <span>"<code>InvalidStateError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>Let <var>document</var> be <span>this</span>'s <span>relevant global object</span>'s <span
+   data-x="concept-document-window">associated <code>Document</code></span>.</p></li>
+
+   <li><p>Let <var>destinationURL</var> be the result of <span data-x="parse a URL">parsing</span>
+   <var>url</var> given <var>document</var>.</p></li>
+
+   <li><p>If <var>destinationURL</var> is failure, then throw a
+   <span>"<code>SyntaxError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>If <var>document</var> <span data-x="can have its URL rewritten">cannot have its URL
+   rewritten</span> to <var>destinationURL</var>, then throw a
+   <span>"<code>SecurityError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>If <var>options</var>["<code
+   data-x="dom-NavigationNavigateOptions-history">history</code>"] is "<code
+   data-x="NavigationHistoryBehavior-push">push</code>" or "<code
+   data-x="NavigationHistoryBehavior-replace">replace</code>", then set <span>this</span>'s <span
+   data-x="concept-NavigationPrecommitController-event">event</span>'s <code
+   data-x="dom-NavigateEvent-navigationType">navigationType</code> to <var>options</var>["<code
+   data-x="dom-NavigationNavigateOptions-history">history</code>"].</p></li>
+
+   <li>
+    <p>If <var>options</var>["<code data-x="dom-NavigationNavigateOptions-state">state</code>"]
+    <span data-x="map exists">exists</span>:</p>
+
+    <ol>
+     <li><p>Let <var>serializedState</var> be the result of calling
+     <span>StructuredSerializeForStorage</span>(<var>options</var>["<code
+     data-x="dom-NavigationReloadOptions-state">state</code>"]). This may throw an
+     exception.</p></li>
+
+     <li><p>Set <span>this</span>'s <span
+     data-x="concept-NavigationPrecommitController-event">event</span>'s <code
+     data-x="dom-NavigateEvent-destination">destination</code>'s <span
+     data-x="concept-NavigationDestination-state">state</span> to
+     <var>serializedState</var>.</p></li>
+
+     <li><p>Set <span>this</span>'s <span
+     data-x="concept-NavigationPrecommitController-event">event</span>'s  <span
+     data-x="concept-event-target">target</span>'s <span>ongoing API method tracker</span>'s <span
+     data-x="navigation-api-method-tracker-state">serialized state</span> to
+     <var>serializedState</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Set <span>this</span>'s <span
+   data-x="concept-NavigationPrecommitController-event">event</span>'s <code
+   data-x="dom-NavigateEvent-destination">destination</code>'s <span
+   data-x="concept-NavigationDestination-url">URL</span> to <var>destinationURL</var>.</p></li>
+
+   <li><p>If <var>options</var>["<code data-x="dom-NavigationOptions-info">info</code>"] <span
+   data-x="map exists">exists</span>, then set <span>this</span>'s  <span
+   data-x="concept-NavigationPrecommitController-event">event</span>'s <code
+   data-x="dom-NavigateEvent-info">info</code> to <var>options</var>["<code
+   data-x="dom-NavigationOptions-info">info</code>"].</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="NavigationPrecommitController"><code
+  data-x="dom-NavigationPrecommitController-addHandler">addHandler(<var>handler</var>,)</code></dfn>
+  method steps are:</p>
+
+  <ol>
+   <li><p><span>Assert</span>: <span>this</span>'s <span
+   data-x="concept-NavigationPrecommitController-event">event</span>'s <span
+   data-x="concept-NavigateEvent-interception-state">interception state</span> is not "<code
+   data-x="">none</code>".</p></li>
+
+   <li><p><span data-x="NavigateEvent-perform-shared-checks">Perform shared checks</span> given
+   <span>this</span>'s <span
+   data-x="concept-NavigationPrecommitController-event">event</span>.</p></li>
+
+   <li><p>If <span>this</span>'s <span
+   data-x="concept-NavigationPrecommitController-event">event</span>'s <span
+   data-x="concept-NavigateEvent-interception-state">interception state</span> is not "<code
+   data-x="">intercepted</code>", then throw an <span>"<code>InvalidStateError</code>"</span>
+   <code>DOMException</code>.</p></li>
+
+   <li><p><span data-x="list append">Append</span> <var>handler</var> to <span>this</span>'s <span
+   data-x="concept-NavigationPrecommitController-event">event</span>'s <span
+   data-x="concept-NavigateEvent-navigation-handler-list">navigation handler list</span>.</p></li>
+  </ol>
+  </div>
+
+
+  </div>
+

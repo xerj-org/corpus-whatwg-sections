@@ -1,0 +1,212 @@
+WHATWG HTML — section the-area-element — The <dfn element><code>area</code></dfn> element
+
+  <h4>The <dfn element><code>area</code></dfn> element</h4>
+
+  <dl class="element">
+   <dt><span data-x="concept-element-categories">Categories</span>:</dt>
+   <dd><span>Flow content</span>.</dd>
+   <dd><span>Phrasing content</span>.</dd>
+   <dt><span data-x="concept-element-contexts">Contexts in which this element can be used</span>:</dt>
+   <dd>Where <span>phrasing content</span> is expected, but only if there is a <code>map</code> element ancestor.</dd>
+   <dt><span data-x="concept-element-content-model">Content model</span>:</dt>
+   <dd><span data-x="concept-content-nothing">Nothing</span>.</dd>
+   <dt><span data-x="concept-element-attributes">Content attributes</span>:</dt>
+   <dd><span>Global attributes</span></dd>
+   <dd><code data-x="attr-area-alt">alt</code></dd>
+   <dd><code data-x="attr-area-coords">coords</code></dd>
+   <dd><code data-x="attr-area-shape">shape</code></dd>
+   <dd><code data-x="attr-hyperlink-href">href</code></dd>
+   <dd><code data-x="attr-hyperlink-target">target</code></dd>
+   <dd><code data-x="attr-hyperlink-download">download</code></dd>
+   <dd><code data-x="attr-hyperlink-ping">ping</code></dd>
+   <dd><code data-x="attr-hyperlink-rel">rel</code></dd>
+   <dd><code data-x="attr-hyperlink-referrerpolicy">referrerpolicy</code></dd>
+   <dd><code data-x="attr-hyperlink-hreflang">hreflang</code></dd>
+   <dd><code data-x="attr-hyperlink-type">type</code></dd>
+   <dt><span
+   data-x="concept-element-accessibility-considerations">Accessibility considerations</span>:</dt>
+   <dd>If the element has an <code data-x="attr-hyperlink-href">href</code> attribute: <a
+   href="https://w3c.github.io/html-aria/#el-area">for authors</a>; <a
+   href="https://w3c.github.io/html-aam/#el-area">for implementers</a>.</dd>
+   <dd>Otherwise: <a
+   href="https://w3c.github.io/html-aria/#el-area-no-href">for authors</a>; <a
+   href="https://w3c.github.io/html-aam/#el-area-no-href">for implementers</a>.</dd>
+   <dt><span data-x="concept-element-sanitization">Sanitization</span>:</dt>
+   <dd><span data-x="sanitizer-uncategorized">Uncategorized</span> with <span>navigating URL
+   attributes</span> <code data-x="attr-hyperlink-href">href</code>.</dd>
+   <dt><span data-x="concept-element-dom">DOM interface</span>:</dt>
+   <dd w-nodev>
+    <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>HTMLAreaElement</dfn> : <span>HTMLElement</span> {
+  [<span>HTMLConstructor</span>] constructor();
+
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute DOMString <dfn attribute for="HTMLAreaElement" data-x="dom-area-alt">alt</dfn>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute DOMString <dfn attribute for="HTMLAreaElement" data-x="dom-area-coords">coords</dfn>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute DOMString <dfn attribute for="HTMLAreaElement" data-x="dom-area-shape">shape</dfn>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute DOMString <dfn attribute for="HTMLAreaElement" data-x="dom-area-download">download</dfn>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute USVString <dfn attribute for="HTMLAreaElement" data-x="dom-area-ping">ping</dfn>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute DOMString <dfn attribute for="HTMLAreaElement" data-x="dom-area-rel">rel</dfn>;
+  [SameObject, PutForwards=<span data-x="dom-DOMTokenList-value">value</span>, <span data-x="xattr-Reflect">Reflect</span>="<span data-x="attr-hyperlink-rel">rel</span>"] readonly attribute <span>DOMTokenList</span> <dfn attribute for="HTMLAreaElement" data-x="dom-area-relList">relList</dfn>;
+  [<span>CEReactions</span>] attribute DOMString <span data-x="dom-area-referrerPolicy">referrerPolicy</span>;
+
+  // <a href="#HTMLAreaElement-partial">also has obsolete members</a>
+};
+<span>HTMLAreaElement</span> includes <span>HyperlinkElementUtils</span>;
+<span>HTMLAreaElement</span> includes <span>HTMLHyperlinkElementUtils</span>;</code></pre>
+   </dd>
+   <dd w-dev>Uses <code>HTMLAreaElement</code>.</dd>
+  </dl>
+
+  <p>The <code>area</code> element <span>represents</span> either a hyperlink with some text and a
+  corresponding area on an <span>image map</span>, or a dead area on an image map.</p>
+
+  <p>An <code>area</code> element with a parent node must have a <code>map</code> element
+  ancestor.</p>
+
+  <p>If the <code>area</code> element has an <code data-x="attr-hyperlink-href">href</code>
+  attribute, then the <code>area</code> element represents a <span>hyperlink</span>. In this case,
+  the <dfn element-attr for="area"><code data-x="attr-area-alt">alt</code></dfn> attribute must be
+  present. It specifies the text of the hyperlink. Its value must be text that, when presented with
+  the texts specified for the other hyperlinks of the <span>image map</span>, and with the
+  alternative text of the image, but without the image itself, provides the user with the same kind
+  of choice as the hyperlink would when used without its text but with its shape applied to the
+  image. The <code data-x="attr-area-alt">alt</code> attribute may be left blank if there is another
+  <code>area</code> element in the same <span>image map</span> that points to the same resource and
+  has a non-blank <code data-x="attr-area-alt">alt</code> attribute.</p>
+
+  <p>If the <code>area</code> element has no <code data-x="attr-hyperlink-href">href</code>
+  attribute, then the area represented by the element cannot be selected, and the <code
+  data-x="attr-area-alt">alt</code> attribute must be omitted.</p>
+
+  <p>In both cases, the <code data-x="attr-area-shape">shape</code> and <code
+  data-x="attr-area-coords">coords</code> attributes specify the area.</p>
+
+  <p>The <dfn element-attr for="area"><code data-x="attr-area-shape">shape</code></dfn> attribute is
+  an <span>enumerated attribute</span> with the following keywords and states:</p>
+
+  <table class="yesno">
+   <thead>
+    <tr>
+     <th>Keyword
+     <th w-nodev>Conforming
+     <th>State
+     <th w-nodev>Brief description
+   <tbody>
+    <tr>
+     <td><dfn><code data-x="attr-area-shape-keyword-circle">circle</code></dfn>
+     <td w-nodev>
+     <td w-nodev rowspan=2><span data-x="attr-area-shape-circle">Circle state</span>
+     <td w-dev><span data-x="attr-area-shape-circle">Circle state</span>
+     <td w-nodev rowspan=2>Designates a circle, using exactly three integers in the <code
+     data-x="attr-area-coords">coords</code> attribute.
+    <tr w-nodev>
+     <td><dfn><code data-x="attr-area-shape-keyword-circ">circ</code></dfn>
+     <td class="no">No
+    <tr>
+     <td><dfn><code data-x="attr-area-shape-keyword-default">default</code></dfn>
+     <td w-nodev>
+     <td><span data-x="attr-area-shape-default">Default state</span>
+     <td w-nodev>This area is the whole image. (The <code data-x="attr-area-coords">coords</code>
+     attribute is not used.)
+    <tr>
+     <td><dfn><code data-x="attr-area-shape-keyword-poly">poly</code></dfn>
+     <td w-nodev>
+     <td w-nodev rowspan=2><span data-x="attr-area-shape-poly">Polygon state</span>
+     <td w-dev><span data-x="attr-area-shape-poly">Polygon state</span>
+     <td w-nodev rowspan=2>Designates a polygon, using at-least six integers in the <code
+     data-x="attr-area-coords">coords</code> attribute.
+    <tr w-nodev>
+     <td><dfn><code data-x="attr-area-shape-keyword-polygon">polygon</code></dfn>
+     <td class="no">No
+    <tr>
+     <td><dfn><code data-x="attr-area-shape-keyword-rect">rect</code></dfn>
+     <td w-nodev>
+     <td w-nodev rowspan=2><span data-x="attr-area-shape-rect">Rectangle state</span>
+     <td w-dev><span data-x="attr-area-shape-rect">Rectangle state</span>
+     <td w-nodev rowspan=2>Designates a rectangle, using exactly four integers in the <code
+     data-x="attr-area-coords">coords</code> attribute.
+    <tr w-nodev>
+     <td><dfn><code data-x="attr-area-shape-keyword-rectangle">rectangle</code></dfn>
+     <td class="no">No
+  </table>
+
+  <div algorithm>
+  <p>The attribute's <i data-x="missing value default">missing value default</i> and <i
+  data-x="invalid value default">invalid value default</i> are both the <span
+  data-x="attr-area-shape-rect">rectangle</span> state.</p>
+  </div>
+
+  <p>The <dfn element-attr for="area"><code data-x="attr-area-coords">coords</code></dfn> attribute
+  must, if specified, contain a <span>valid list of floating-point numbers</span>. This attribute
+  gives the coordinates for the shape described by the <code data-x="attr-area-shape">shape</code>
+  attribute. <span w-nodev>The processing for this attribute is described as part of the <span>image
+  map</span> processing model.</span></p>
+
+  <!-- v2: It was suggested by John S. Urban that coords should support percentages as well as
+  pixels, so that one could use the same image map for images of various sizes. -->
+
+  <p>In the <dfn attr-value for="area/shape" data-x="attr-area-shape-circle">circle state</dfn>,
+  <code>area</code> elements must have a <code data-x="attr-area-coords">coords</code> attribute
+  present, with three integers, the last of which must be non-negative. The first integer must be
+  the distance in <span data-x="'px'">CSS pixels</span> from the left edge of the image to the
+  center of the circle, the second integer must be the distance in <span data-x="'px'">CSS
+  pixels</span> from the top edge of the image to the center of the circle, and the third integer
+  must be the radius of the circle, again in <span data-x="'px'">CSS pixels</span>.</p>
+
+  <p>In the <dfn attr-value for="area/shape" data-x="attr-area-shape-default">default state</dfn>,
+  <code>area</code> elements must not have a <code data-x="attr-area-coords">coords</code>
+  attribute. (The area is the whole image.)</p>
+
+  <p>In the <dfn attr-value for="area/shape" data-x="attr-area-shape-poly">polygon state</dfn>,
+  <code>area</code> elements must have a <code data-x="attr-area-coords">coords</code> attribute
+  with at least six integers, and the number of integers must be even. Each pair of integers must
+  represent a coordinate given as the distances from the left and the top of the image in <span
+  data-x="'px'">CSS pixels</span> respectively, and all the coordinates together must represent the
+  points of the polygon, in order.</p>
+
+  <p>In the <dfn attr-value for="area/shape" data-x="attr-area-shape-rect">rectangle state</dfn>,
+  <code>area</code> elements must have a <code data-x="attr-area-coords">coords</code> attribute
+  with exactly four integers, the first of which must be less than the third, and the second of
+  which must be less than the fourth. The four points must represent, respectively, the distance
+  from the left edge of the image to the left side of the rectangle, the distance from the top edge
+  to the top side, the distance from the left edge to the right side, and the distance from the top
+  edge to the bottom side, all in <span data-x="'px'">CSS pixels</span>.</p>
+
+  <div w-nodev>
+
+  <p>When user agents allow users to <span data-x="following hyperlinks">follow hyperlinks</span> or
+  <span data-x="downloading hyperlinks">download hyperlinks</span> created using the
+  <code>area</code> element, the <code data-x="attr-hyperlink-href">href</code>, <code
+  data-x="attr-hyperlink-target">target</code>, <code
+  data-x="attr-hyperlink-download">download</code>, and <code
+  data-x="attr-hyperlink-ping">ping</code> attributes decide how the link is followed. The <code
+  data-x="attr-hyperlink-rel">rel</code> attribute may be used to indicate to the user the likely
+  nature of the target resource before the user follows the link.</p>
+
+  </div>
+
+  <p>The <code data-x="attr-hyperlink-target">target</code>, <code
+  data-x="attr-hyperlink-download">download</code>, <code data-x="attr-hyperlink-ping">ping</code>,
+  <code data-x="attr-hyperlink-rel">rel</code>, <code
+  data-x="attr-hyperlink-referrerpolicy">referrerpolicy</code>, <code
+  data-x="attr-hyperlink-hreflang">hreflang</code>, and <code
+  data-x="attr-hyperlink-type">type</code> attributes must be omitted if the <code
+  data-x="attr-hyperlink-href">href</code> attribute is not present.</p>
+
+  <p>If the <code data-x="attr-itemprop">itemprop</code> attribute is specified on an
+  <code>area</code> element, then the <code data-x="attr-hyperlink-href">href</code> attribute must
+  also be specified.</p>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The IDL attribute <dfn attribute for="HTMLAreaElement"><code
+  data-x="dom-area-referrerPolicy">referrerPolicy</code></dfn> must <span>reflect</span> the <code
+  data-x="attr-hyperlink-referrerpolicy">referrerpolicy</code> content attribute, <span>limited to
+  only known values</span>.</p>
+  </div>
+
+  </div>
+
+
+

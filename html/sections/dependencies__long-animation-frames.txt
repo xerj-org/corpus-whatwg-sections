@@ -1,0 +1,20 @@
+WHATWG HTML — section dependencies/long-animation-frames — Long Animation Frames
+
+   <dt>Long Animation Frames</dt>
+
+   <dd>
+    <p>The following terms are defined in <cite>Long Animation Frames</cite>: <ref>LONGANIMATIONFRAMES</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://w3c.github.io/long-animation-frames/#record-task-start-time">record task start time</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/long-animation-frames/#record-task-end-time">record task end time</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/long-animation-frames/#record-rendering-time">record rendering time</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/long-animation-frames/#record-classic-script-creation-time">record classic script creation time</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/long-animation-frames/#record-classic-script-execution-start-time">record classic script execution start time</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/long-animation-frames/#record-module-script-execution-start-time">record module script execution start time</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/long-animation-frames/#record-pause-duration">Record pause duration</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/long-animation-frames/#record-timing-info-for-timer-handler">record timing info for timer handler</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/long-animation-frames/#record-timing-info-for-microtask-checkpoint">record timing info for microtask checkpoint</dfn></li>
+    </ul>
+   </dd>
+

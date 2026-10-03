@@ -1,0 +1,36 @@
+WHATWG HTML — section worklets-lifetime — The worklet's lifetime (+webstorage)
+
+  <h4 id="worklets-lifetime">The worklet's lifetime</h4>
+
+  <p>The lifetime of a <code>Worklet</code> has no special considerations; it is tied to the object
+  it belongs to, such as the <code>Window</code>.</p>
+
+  <div w-nodev>
+
+  <p>Each <code>Document</code> has a <dfn data-x="concept-Document-worklet-global-scopes">worklet
+  global scopes</dfn>, which is a <span>set</span> of <code>WorkletGlobalScope</code>s, initially
+  empty.</p>
+
+  </div>
+
+  <p>The lifetime of a <code>WorkletGlobalScope</code> is, at a minimum, tied to the
+  <code>Document</code> whose <span data-x="concept-Document-worklet-global-scopes">worklet global
+  scopes</span> contain it. In particular, <span data-x="destroy a document">destroying</span> the
+  <code>Document</code> will <span data-x="terminate a worklet global scope">terminate</span> the
+  corresponding <code>WorkletGlobalScope</code> and allow it to be garbage-collected.</p>
+
+  <p>Additionally, user agents may, at any time, <span data-x="terminate a worklet global
+  scope">terminate</span> a given <code>WorkletGlobalScope</code>, unless the specification defining
+  the corresponding worklet type says otherwise. For example, they might terminate them if the
+  <span>worklet agent</span>'s <span data-x="concept-agent-event-loop">event loop</span> has no
+  <span data-x="concept-task">tasks</span> queued, or if the user agent has no pending operations
+  planning to make use of the worklet, or if the user agent detects abnormal operations such as
+  infinite loops or callbacks exceeding imposed time limits.</p>
+
+  <p>Finally, specifications for specific worklet types can give more specific details on when to
+  <span data-x="create a worklet global scope">create</span> <code>WorkletGlobalScope</code>s for a
+  given worklet type. For example, they might create them during specific processes that call upon
+  worklet code, as in the <a href="#worklets-example-registering">example</a>.</p>
+
+  <h2 split-filename="webstorage" id="webstorage">Web storage</h2>
+

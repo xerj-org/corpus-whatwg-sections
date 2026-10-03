@@ -1,0 +1,69 @@
+WHATWG HTML — section read-media — Loading media documents
+
+  <h4 id="read-media">Loading media documents</h4>
+
+  <div algorithm>
+  <p>To <dfn data-x="navigate-media">load a media document</dfn>, given <var>navigationParams</var>
+  and a string <var>type</var>:</p>
+
+  <ol>
+   <li><p>Let <var>document</var> be the result of <span
+   data-x="create-the-document-object">creating and initializing a <code>Document</code>
+   object</span> given "<code data-x="">html</code>", <var>type</var>, and
+   <var>navigationParams</var>.</p></li>
+
+   <li><p>Set <var>document</var>'s <span data-x="concept-document-mode">mode</span>
+   to "<code data-x="">no-quirks</code>".</p></li>
+
+   <li><p><span>Populate with <code>html</code>/<code>head</code>/<code>body</code></span> given
+   <var>document</var>.</p></li>
+
+   <li><p>Append an element <var>host element</var> for the media, as described below, to the
+   <code>body</code> element.</p></li>
+
+   <li><p>Set the appropriate attribute of the element <var>host element</var>, as described below,
+   to the address of the image, video, or audio resource.</p></li>
+
+   <li><p>User agents may add content to the <code>head</code> element of <var>document</var>, or
+   attributes to <var>host element</var>, e.g., to link to a style sheet, to provide a script, to
+   give the document a <code>title</code>, or to make the media <span
+   data-x="attr-media-autoplay">autoplay</span>.</p></li>
+
+   <li><p><span>Process link headers</span> given <var>document</var>,
+   <var>navigationParams</var>'s <span data-x="navigation-params-response">response</span>, and
+   "<code data-x="">media</code>".</p></li>
+
+   <li><p>Act as if the user agent had <span data-x="stop parsing">stopped parsing</span>
+   <var>document</var>.</p></li>
+
+   <li><p>Return <var>document</var>.</p></li>
+  </ol>
+
+  <p>The element <var>host element</var> to create for the media is the element given in
+  the table below in the second cell of the row whose first cell describes the media. The
+  appropriate attribute to set is the one given by the third cell in that same row.</p>
+
+  <table>
+   <thead>
+    <tr> <th> Type of media
+         <th> Element for the media
+         <th> Appropriate attribute
+   <tbody>
+    <tr> <td> Image
+         <td> <code>img</code>
+         <td> <code data-x="attr-img-src">src</code>
+    <tr> <td> Video
+         <td> <code>video</code>
+         <td> <code data-x="attr-media-src">src</code>
+    <tr> <td> Audio
+         <td> <code>audio</code>
+         <td> <code data-x="attr-media-src">src</code>
+  </table>
+  </div>
+
+  <div algorithm>
+  <p>Before any script execution occurs, the user agent must wait for <span>scripts may run for the
+  newly-created document</span> to be true for the <code>Document</code>.</p>
+  </div>
+
+

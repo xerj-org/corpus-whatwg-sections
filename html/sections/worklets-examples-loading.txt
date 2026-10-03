@@ -1,0 +1,52 @@
+WHATWG HTML — section worklets-examples-loading — Loading scripts
+
+  <h4 id="worklets-examples-loading">Loading scripts</h4>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>To load scripts into <span>fake worklet 1</span>, a web developer would write:</p>
+
+  <pre><code class="js">window.fakeWorklet1.addModule('script1.mjs');
+window.fakeWorklet1.addModule('script2.mjs');</code></pre>
+
+  <p>Note that which script finishes fetching and runs first is dependent on network timing: it
+  could be either <code data-x="">script1.mjs</code> or <code data-x="">script2.mjs</code>. This
+  generally won't matter for well-written scripts intended to be loaded in worklets, if they follow
+  the suggestions about preparing for <a href="#worklets-speculative">speculative
+  evaluation</a>.</p>
+
+  <p>If a web developer wants to perform a task only after the scripts have successfully run and
+  loaded into some worklets, they could write:</p>
+
+  <pre><code class="js">Promise.all([
+    window.fakeWorklet1.addModule('script1.mjs'),
+    window.fakeWorklet2.addModule('script2.mjs')
+]).then(() => {
+    // Do something which relies on those scripts being loaded.
+});</code></pre>
+
+  <hr>
+
+  <p>Another important point about script-loading is that loaded scripts can be run in multiple
+  <code>WorkletGlobalScope</code>s per <code>Worklet</code>, as discussed in the section on <a
+  href="#worklets-idempotent">code idempotence</a>. In particular, the specification above
+  for <span>fake worklet 1</span> and <span>fake worklet 2</span> require this. So, consider a
+  scenario such as the following:</p>
+
+  <pre><code class="js">// script.mjs
+console.log("Hello from a FakeWorkletGlobalScope!");</code></pre>
+
+  <pre><code class="js">// app.mjs
+window.fakeWorklet1.addModule("script.mjs");</code></pre>
+
+  <p>This could result in output such as the following from a user agent's console:</p>
+
+  <pre><code data-x="">[fakeWorklet1#1] Hello from a FakeWorkletGlobalScope!
+[fakeWorklet1#4] Hello from a FakeWorkletGlobalScope!
+[fakeWorklet1#2] Hello from a FakeWorkletGlobalScope!
+[fakeWorklet1#3] Hello from a FakeWorkletGlobalScope!</code></pre>
+
+  <p>If the user agent at some point decided to kill and restart the third instance of
+  <code>FakeWorkletGlobalScope</code>, the console would again print <code
+  data-x="">[fakeWorklet1#3] Hello from a FakeWorkletGlobalScope!</code> when this occurs.</p>
+

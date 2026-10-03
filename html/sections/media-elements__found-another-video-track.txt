@@ -1,0 +1,43 @@
+WHATWG HTML — section media-elements/found-another-video-track — If the <span>media resource</span> is found to have a video track
+
+     <dt id="found-another-video-track">If the <span>media resource</span> is found to have a video
+     track</dt>
+
+     <dd>
+      <ol>
+       <li><p>Create a <code>VideoTrack</code> object to represent the video track.</p></li>
+
+       <li><p>Update the <span>media element</span>'s <code
+       data-x="dom-media-videoTracks">videoTracks</code> attribute's <code>VideoTrackList</code>
+       object with the new <code>VideoTrack</code> object.</p></li>
+
+       <li><p>Let <var>enable</var> be <i>unknown</i>.</p></li>
+
+       <li>
+        <p>If either the <span>media resource</span> or the <span>URL</span> of the <var>current
+        media resource</var> indicate a particular set of video tracks to enable, or if the user
+        agent has information that would facilitate the selection of specific video tracks to
+        improve the user's experience: if this video track is the first such video track, then
+        set <var>enable</var> to <i>true</i>, otherwise, set <var>enable</var>
+        to <i>false</i>.</p>
+
+        <p class="example">This could again be triggered by <span>media fragment syntax</span>.</p>
+       </li>
+
+       <li><p>If <var>enable</var> is still <i>unknown</i>, then, if the <span>media
+       element</span> does not yet have a <span data-x="dom-VideoTrack-selected">selected</span>
+       video track, then set <var>enable</var> to <i>true</i>, otherwise, set <var>enable</var> to <i>false</i>.</p></li>
+
+       <li><p>If <var>enable</var> is <i>true</i>, then select this track and unselect any
+       previously selected video tracks, otherwise, do not select this video track. If other tracks
+       are unselected, then <a href="#toggle-video-track">a <code
+       data-x="event-media-change">change</code> event will be fired</a>.</p></li>
+
+       <li><p><span data-x="concept-event-fire">Fire an event</span> named <code
+       data-x="event-media-addtrack">addtrack</code> at this <code>VideoTrackList</code> object,
+       using <code>TrackEvent</code>, with the <code data-x="dom-TrackEvent-track">track</code>
+       attribute initialized to the new <code>VideoTrack</code> object.</p></li>
+      </ol>
+     </dd>
+
+

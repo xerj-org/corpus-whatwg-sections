@@ -1,0 +1,150 @@
+WHATWG URL — section urls — URLs
+
+<h2 id=urls>URLs</h2>
+
+<!-- History behind URL as term:
+     https://lists.w3.org/Archives/Public/uri/2012Oct/0080.html -->
+
+<p>At a high level, a <a for=/>URL</a>, <a>valid URL string</a>, <a>URL parser</a>, and
+<a>URL serializer</a> relate as follows:
+
+<ul>
+ <li><p>The <a>URL parser</a> takes an arbitrary <a>scalar value string</a> and returns either
+ failure or a <a for=/>URL</a>. It might also record zero or more <a>validation errors</a>.
+
+ <li><p>A <a for=/>URL</a> can be seen as the in-memory representation.
+
+ <li><p>A <a>valid URL string</a> defines what input would not trigger a <a>validation error</a> or
+ failure when given to the <a>URL parser</a>. I.e., input that would be considered conforming or
+ valid.
+
+ <li><p>The <a>URL serializer</a> takes a <a for=/>URL</a> and returns an <a>ASCII string</a>. (If
+ that string is then <a lt="URL parser">parsed</a>, the result will <a for=url>equal</a> the <a
+ for=/>URL</a> that was <a lt="URL serializer">serialized</a>.) The output of the
+ <a>URL serializer</a> is not always a <a>valid URL string</a>.
+</ul>
+
+<div class=example id=example-url-parsing>
+ <table>
+  <tr>
+   <th>Input
+   <th>Base
+   <th>Valid
+   <th>Output
+  <tr>
+   <td><code>https:example.org</code>
+   <td>
+   <td>❌
+   <td><code>https://example.org/</code>
+  <tr>
+   <td><code>https://////example.com///</code>
+   <td>
+   <td>❌
+   <td><code>https://example.com///</code>
+  <tr>
+   <td><code>https://example.com/././foo</code>
+   <td>
+   <td>✅
+   <td><code>https://example.com/foo</code>
+  <tr>
+   <td><code>hello:world</code>
+   <td><code>https://example.com/</code>
+   <td>✅
+   <td><code>hello:world</code>
+  <tr>
+   <td><code>https:example.org</code>
+   <td><code>https://example.com/</code>
+   <td>❌
+   <td><code>https://example.com/example.org</code>
+  <tr>
+   <td><code>\example\..\demo/.\</code>
+   <td><code>https://example.com/</code>
+   <td>❌
+   <td><code>https://example.com/demo/</code>
+  <tr>
+   <td><code>example</code>
+   <td><code>https://example.com/demo</code>
+   <td>✅
+   <td><code>https://example.com/example</code>
+  <tr>
+   <td><code>file:///C|/demo</code>
+   <td>
+   <td>❌
+   <td><code>file:///C:/demo</code>
+  <tr>
+   <td><code>..</code>
+   <td><code>file:///C:/demo</code>
+   <td>✅
+   <td><code>file:///C:/</code>
+  <tr>
+   <td><code>file://localhost/</code>
+   <td>
+   <td>✅
+   <td><code>file:///</code>
+  <tr>
+   <td><code>file://loc%61lhost/</code>
+   <td>
+   <td>❌
+   <td><code>file:///</code>
+  <tr>
+   <td><code>https://user:password@example.org/</code>
+   <td>
+   <td>❌
+   <td><code>https://user:password@example.org/</code>
+  <tr>
+   <td><code>https://example.org/foo bar</code>
+   <td>
+   <td>❌
+   <td><code>https://example.org/foo%20bar</code>
+  <tr>
+   <td><code>https://EXAMPLE.com/../x</code>
+   <td>
+   <td>✅
+   <td><code>https://example.com/x</code>
+  <tr>
+   <td><code>https://ex ample.org/</code>
+   <td>
+   <td>❌
+   <td>Failure
+  <tr>
+   <td><code>example</code>
+   <td>
+   <td>❌, due to lack of base
+   <td>Failure
+  <tr>
+   <td><code>https://example.com:demo</code>
+   <td>
+   <td>❌
+   <td>Failure
+  <tr>
+   <td><code>http://[www.example.com]/</code>
+   <td>
+   <td>❌
+   <td>Failure
+  <tr>
+   <td><code>https://example.org//</code>
+   <td>
+   <td>✅
+   <td><code>https://example.org//</code>
+  <tr>
+   <td><code>https://example.com/[]?[]#[]</code>
+   <td>
+   <td>❌
+   <td><code>https://example.com/[]?[]#[]</code>
+  <tr>
+   <td><code>https://example/%?%#%</code>
+   <td>
+   <td>❌
+   <td><code>https://example/%?%#%</code>
+  <tr>
+   <td><code>https://example/%25?%25#%25</code>
+   <td>
+   <td>✅
+   <td><code>https://example/%25?%25#%25</code>
+ </table>
+
+ <p>The base and output <a lt="URL record">URL</a> are represented in
+ <a lt="URL serializer">serialized</a> form for brevity.
+</div>
+
+

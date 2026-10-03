@@ -1,0 +1,1944 @@
+WHATWG HTML — section applying-the-history-step — Applying the history step (+document-lifecycle)
+
+  <h4>Applying the history step</h4>
+
+  <p>For both navigation and traversal, once we have an idea of where we want to head to in the
+  session history, much of the work comes about in applying that notion to the <span>traversable
+  navigable</span> and the relevant <code>Document</code>. For navigations, this work generally
+  occurs toward the end of the process; for traversals, it is the beginning.</p>
+
+  <h5>Updating the traversable</h5>
+
+  <p>Ensuring a <span data-x="traversable navigable">traversable</span> ends up at the right
+  session history step is particularly complex, as it can involve coordinating across multiple
+  <span>navigable</span> descendants of the traversable, <a
+  href="#populating-a-session-history-entry">populating</a> them in parallel, and then
+  synchronizing back up to ensure everyone has the same view of the result. This is further
+  complicated by the existence of synchronous same-document navigations being mixed together with
+  cross-document navigations, and how web pages have come to have certain relative timing
+  expectations.</p>
+
+  <p>A <dfn>changing navigable continuation state</dfn> is used to store information during the
+  <span>apply the history step</span> algorithm, allowing parts of the algorithm to continue only
+  after other parts have finished. It is a <span>struct</span> with:</p>
+
+  <dl>
+   <dt><dfn data-x="changing-nav-continuation-displayed-document" for="changing navigable
+   continuation state">displayed document</dfn></dt>
+   <dd>A <code>Document</code></dd>
+
+   <dt><dfn data-x="changing-nav-continuation-target-entry" for="changing navigable continuation
+   state">target entry</dfn></dt>
+   <dd>A <span>session history entry</span></dd>
+
+   <dt><dfn data-x="changing-nav-continuation-navigable" for="changing navigable continuation
+   state">navigable</dfn></dt>
+   <dd>A <span>navigable</span></dd>
+
+   <dt><dfn data-x="changing-nav-continuation-update-only" for="changing navigable continuation
+   state">update only</dfn></dt>
+   <dd>A boolean</dd>
+  </dl>
+
+  <hr>
+
+  <p>Although all updates to the <span>traversable navigable</span> end up in the same <span>apply
+  the history step</span> algorithm, each possible entry point comes along with some minor
+  customizations:</p>
+
+  <div algorithm>
+  <p>To <dfn>update for navigable creation/destruction</dfn> given a <span>traversable
+  navigable</span> <var>traversable</var>:</p>
+
+  <ol>
+   <li><p>Let <var>step</var> be <var>traversable</var>'s <span
+   data-x="tn-current-session-history-step">current session history step</span>.</p></li>
+
+   <li><p>Return the result of <span data-x="apply the history step">applying the history
+   step</span> <var>step</var> to <var>traversable</var> given false, null, null, "<code
+   data-x="uni-none">none</code>", and null.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>apply the push/replace history step</dfn> given a non-negative integer <var>step</var>
+  to a <span>traversable navigable</span> <var>traversable</var>, given a <span>history handling
+  behavior</span> <var>historyHandling</var> and a <span>user navigation involvement</span>
+  <var>userInvolvement</var>:</p>
+
+  <ol>
+   <li><p>Return the result of <span data-x="apply the history step">applying the history
+   step</span> <var>step</var> to <var>traversable</var> given false, null, null,
+   <var>userInvolvement</var>, and <var>historyHandling</var>.</p></li>
+  </ol>
+  </div>
+
+  <p class="note"><span>Apply the push/replace history step</span> never passes <span>source
+  snapshot params</span> or an initiator <span>navigable</span> to <span>apply the history
+  step</span>. This is because those checks are done earlier in the <span
+  data-x="navigate">navigation</span> algorithm.</p>
+
+  <div algorithm>
+  <p>To <dfn>apply the reload history step</dfn> to a <span>traversable navigable</span>
+  <var>traversable</var> given <span>user navigation involvement</span>
+  <var>userInvolvement</var>:</p>
+
+  <ol>
+   <li><p>Let <var>step</var> be <var>traversable</var>'s <span
+   data-x="tn-current-session-history-step">current session history step</span>.</p></li>
+
+   <li><p>Return the result of <span data-x="apply the history step">applying the history
+   step</span> <var>step</var> to <var>traversable</var> given true, null, null,
+   <var>userInvolvement</var>, and "<code
+   data-x="dom-NavigationType-reload">reload</code>".</p></li>
+  </ol>
+  </div>
+
+  <p class="note"><span>Apply the reload history step</span> never passes <span>source snapshot
+  params</span> or an initiator <span>navigable</span> to <span>apply the history step</span>. This
+  is because reloading is always treated as if it were done by the <span>navigable</span> itself,
+  even in cases like <code data-x="">parent.location.reload()</code>.</p>
+
+  <div algorithm>
+  <p>To <dfn>apply the traverse history step</dfn> given a non-negative integer <var>step</var> to a
+  <span>traversable navigable</span> <var>traversable</var>, with <span>source snapshot
+  params</span> <var>sourceSnapshotParams</var>, <span>navigable</span> <var>initiatorToCheck</var>,
+  and <span>user navigation involvement</span> <var>userInvolvement</var>:</p>
+
+  <ol>
+   <li><p>Return the result of <span data-x="apply the history step">applying the history
+   step</span> <var>step</var> to <var>traversable</var> given true,
+   <var>sourceSnapshotParams</var>, <var>initiatorToCheck</var>,
+   <var>userInvolvement</var>, and "<code
+   data-x="dom-NavigationType-traverse">traverse</code>".</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>resume applying the traverse history step</dfn> given a non-negative integer
+  <var>step</var>, a <span>traversable navigable</span> <var>traversable</var>, and <span>user
+  navigation involvement</span> <var>userInvolvement</var>, <span data-x="apply the history
+  step">apply</span> <var>step</var> to <var>traversable</var> given false, null, null,
+  <var>userInvolvement</var>, and "<code data-x="dom-NavigationType-traverse">traverse</code>".</p>
+  </div>
+
+  <p class="note">When resuming a traverse, we are already past the cancelation, initiator, and
+  source snapshot checks, and this traversal has already been determined to be a same-document
+  traversal. Hence, we can pass false and null for those arguments.</p>
+
+  <hr>
+
+  <p>Now for the algorithm itself.</p>
+
+  <div algorithm>
+  <p id="update-the-session-history-with-the-new-page">To <dfn>apply the history step</dfn> given a
+  non-negative integer <var>step</var> to a <span>traversable navigable</span>
+  <var>traversable</var>, with boolean <var>checkForCancelation</var>, <span>source snapshot
+  params</span>-or-null <var>sourceSnapshotParams</var>, <span>navigable</span>-or-null
+  <var>initiatorToCheck</var>, <span>user navigation involvement</span> <var>userInvolvement</var>,
+  and <code>NavigationType</code>-or-null <var>navigationType</var>, perform the following steps.
+  They return "<code data-x="">initiator-disallowed</code>", "<code
+  data-x="">canceled-by-beforeunload</code>", "<code data-x="">canceled-by-navigate</code>", or
+  "<code data-x="">applied</code>".</p>
+
+  <ol>
+   <li><p><span>Assert</span>: This is running within <var>traversable</var>'s <span
+   data-x="tn-session-history-traversal-queue">session history traversal queue</span>.</p></li>
+
+   <li><p>Let <var>targetStep</var> be the result of <span>getting the used step</span> given
+   <var>traversable</var> and <var>step</var>.</p></li>
+
+   <li>
+    <p>If <var>initiatorToCheck</var> is not null:</p>
+
+    <ol>
+     <li><p><span>Assert</span>: <var>sourceSnapshotParams</var> is not null.</p></li>
+
+     <li><p><span data-x="list iterate">For each</span> <var>navigable</var> of <span>get all
+     navigables whose current session history entry will change or reload</span>: if
+     <var>initiatorToCheck</var> is not <span>allowed by sandboxing to navigate</span>
+     <var>navigable</var> given <var>sourceSnapshotParams</var>, then return "<code
+     data-x="">initiator-disallowed</code>".</p></li>
+    </ol>
+   </li>
+
+   <li><p>Let <var>navigablesCrossingDocuments</var> be the result of <span>getting all navigables
+   that might experience a cross-document traversal</span> given <var>traversable</var> and
+   <var>targetStep</var>.</p></li>
+
+   <li><p>If <var>checkForCancelation</var> is true, and the result of <span>checking if unloading
+   is canceled</span> given <var>navigablesCrossingDocuments</var>, <var>traversable</var>,
+   <var>targetStep</var>, and <var>userInvolvement</var> is not "<code data-x="">continue</code>",
+   then return that result.</p></li>
+
+   <li><p>Let <var>changingNavigables</var> be the result of <span>get all navigables whose current
+   session history entry will change or reload</span> given <var>traversable</var> and
+   <var>targetStep</var>.</p></li>
+
+   <li><p>Let <var>nonchangingNavigablesThatStillNeedUpdates</var> be the result of <span>getting
+   all navigables that only need history object length/index update</span> given
+   <var>traversable</var> and <var>targetStep</var>.</p></li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>navigable</var> of
+    <var>changingNavigables</var>:</p>
+
+    <ol>
+     <li><p>Let <var>targetEntry</var> be the result of <span>getting the target history
+     entry</span> given <var>navigable</var> and <var>targetStep</var>.</p></li>
+
+     <li><p>Set <var>navigable</var>'s <span data-x="nav-current-history-entry">current session
+     history entry</span> to <var>targetEntry</var>.</p></li>
+
+     <li>
+      <p>If <var>targetEntry</var>'s <span data-x="she-document">document</span> is not
+      <var>navigable</var>'s <span data-x="nav-document">active document</span>, then <span>queue a
+      global task</span> on the <span>navigation and traversal task source</span> of
+      <var>navigable</var>'s <span data-x="nav-window">active window</span> to run these steps:</p>
+
+      <ol>
+       <li><p>Let <var>navigation</var> be <var>navigable</var>'s <span data-x="nav-window">active
+       window</span>'s <span data-x="window-navigation-api">navigation API</span>.</p></li>
+
+       <li><p>Set <var>navigation</var>'s <span>ongoing <code
+       data-x="event-navigate">navigate</code> event</span> to null.</p></li>
+
+       <li><p>Set <var>navigation</var>'s <span>ongoing API method tracker</span> to null.</p></li>
+      </ol>
+
+      <p class="note">This prevents the <code data-x="event-navigateerror">navigateerror</code>
+      event and the corresponding <span data-x="dom-NavigateEvent-signal">signal</span> from firing
+      as a result of a successful cross-document navigation.</p>
+     </li>
+
+     <li><p>Set <var>navigable</var>'s <span>ongoing navigation</span> to "<code
+     data-x="">traversal</code>".</p></li>
+    </ol>
+   </li>
+
+   <li><p>Let <var>totalChangeJobs</var> be the <span data-x="list size">size</span> of
+   <var>changingNavigables</var>.</p></li>
+
+   <li><p>Let <var>completedChangeJobs</var> be 0.</p></li>
+
+   <li>
+    <p>Let <var>changingNavigableContinuations</var> be an empty <span>queue</span> of <span
+    data-x="changing navigable continuation state">changing navigable continuation
+    states</span>.</p>
+
+    <p class="note">This queue is used to split the operations on <var>changingNavigables</var>
+    into two parts. Specifically, <var>changingNavigableContinuations</var> holds data for the <a
+    href="#continuations-dequeue">second part</a>.</p>
+   </li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>navigable</var> of
+    <var>changingNavigables</var>, <span>queue a global task</span> on the <span>navigation and
+    traversal task source</span> of <var>navigable</var>'s <span data-x="nav-window">active
+    window</span> to run the steps:</p>
+
+    <p class="note">This set of steps are split into two parts to allow synchronous navigations to
+    be processed before documents unload. State is stored in
+    <var>changingNavigableContinuations</var> for the <a href="#continuations-dequeue">second
+    part</a>.</p>
+
+    <ol>
+     <li><p>Let <var>displayedEntry</var> be <var>navigable</var>'s <span
+     data-x="nav-active-history-entry">active session history entry</span>.</p></li>
+
+     <li><p>Let <var>targetEntry</var> be <var>navigable</var>'s <span
+     data-x="nav-current-history-entry">current session history entry</span>.</p></li>
+
+     <li>
+      <p>Let <var>changingNavigableContinuation</var> be a <span>changing navigable continuation
+      state</span> with:</p>
+
+      <dl class="props">
+       <dt><span data-x="changing-nav-continuation-displayed-document">displayed document</span></dt>
+       <dd><var>displayedEntry</var>'s <span data-x="she-document">document</span></dd>
+
+       <dt><span data-x="changing-nav-continuation-target-entry">target entry</span></dt>
+       <dd><var>targetEntry</var></dd>
+
+       <dt><span data-x="changing-nav-continuation-navigable">navigable</span></dt>
+       <dd><var>navigable</var></dd>
+
+       <dt><span data-x="changing-nav-continuation-update-only">update-only</span></dt>
+       <dd>false</dd>
+      </dl>
+     </li>
+
+     <li>
+      <p>If <var>displayedEntry</var> is <var>targetEntry</var> and <var>targetEntry</var>'s <span
+      data-x="she-document-state">document state</span>'s <span
+      data-x="document-state-reload-pending">reload pending</span> is false:</p>
+
+      <ol>
+       <li><p>Set <var>changingNavigableContinuation</var>'s <span
+       data-x="changing-nav-continuation-update-only">update-only</span> to true.</p></li>
+
+       <li><p><span>Enqueue</span> <var>changingNavigableContinuation</var> on
+       <var>changingNavigableContinuations</var>.</p></li>
+
+       <li><p>Abort these steps.</p></li>
+      </ol>
+
+      <p class="note">This case occurs due to a <span data-x="finalize a same-document
+      navigation">synchronous navigation</span> which already updated the <span
+      data-x="nav-active-history-entry">active session history entry</span>.</p>
+     </li>
+
+     <li>
+      <p>Switch on <var>navigationType</var>:</p>
+
+      <dl class=switch>
+       <dt>"<code data-x="dom-NavigationType-reload">reload</code>"</dt>
+       <dd><p><span>Assert</span>: <var>targetEntry</var>'s <span
+       data-x="she-document-state">document state</span>'s <span
+       data-x="document-state-reload-pending">reload pending</span> is true.</p></dd>
+
+       <dt>"<code data-x="dom-NavigationType-traverse">traverse</code>"</dt>
+       <dd><p><span>Assert</span>: <var>targetEntry</var>'s
+       <span data-x="she-document-state">document state</span>'s <span
+       data-x="document-state-ever-populated">ever populated</span> is true.</p></dd>
+
+       <dt>"<code data-x="dom-NavigationType-replace">replace</code>"</dt>
+       <dd><p><span>Assert</span>: <var>targetEntry</var>'s <span data-x="she-step">step</span>
+       is <var>displayedEntry</var>'s <span data-x="she-step">step</span> and
+       <var>targetEntry</var>'s <span data-x="she-document-state">document state</span>'s <span
+       data-x="document-state-ever-populated">ever populated</span> is false.</p></dd>
+
+       <dt>"<code data-x="dom-NavigationType-push">push</code>"</dt>
+       <dd><p><span>Assert</span>: <var>targetEntry</var>'s <span data-x="she-step">step</span> is
+       <var>displayedEntry</var>'s <span data-x="she-step">step</span> + 1 and
+       <var>targetEntry</var>'s <span data-x="she-document-state">document state</span>'s <span
+       data-x="document-state-ever-populated">ever populated</span> is false.</p></dd>
+      </dl>
+     </li>
+
+     <li><p>Let <var>oldOrigin</var> be <var>targetEntry</var>'s <span
+     data-x="she-document-state">document state</span>'s <span
+     data-x="document-state-origin">origin</span>.</p></li>
+
+     <li id="descendant-navigable-traversal-navigate-events">
+      <p>If all of the following are true:</p>
+
+      <ul>
+       <li><p><var>navigationType</var> is "<code
+       data-x="dom-NavigationType-traverse">traverse</code>";</p></li>
+
+       <li><p><var>navigable</var> is not <var>traversable</var>;</p></li>
+
+       <li><p><var>targetEntry</var> is not <var>displayedEntry</var>; and</p></li>
+
+       <li><p><var>oldOrigin</var> is the <span data-x="same origin">same</span> as
+       <var>displayedEntry</var>'s <span data-x="she-document-state">document state</span>'s <span
+       data-x="document-state-origin">origin</span>,</p></li>
+      </ul>
+
+      <p>then:</p>
+
+      <ol>
+       <li><p>Let <var>navigation</var> be <var>navigable</var>'s <span
+       data-x="nav-window">active window</span>'s <span
+       data-x="window-navigation-api">navigation API</span>.</p></li>
+
+       <li><p><span>Fire a traverse <code data-x="event-navigate">navigate</code> event</span> at
+       <var>navigation</var> given <var>targetEntry</var> and <var>userInvolvement</var>.</p></li>
+      </ol>
+     </li>
+
+     <li>
+      <p>If <var>targetEntry</var>'s <span data-x="she-document">document</span> is null, or
+      <var>targetEntry</var>'s <span data-x="she-document-state">document state</span>'s <span
+      data-x="document-state-reload-pending">reload pending</span> is true:</p>
+
+      <ol>
+       <li><p>Let <var>navTimingType</var> be "<code
+       data-x="dom-navigationtimingtype-back_forward">back_forward</code>" if
+       <var>targetEntry</var>'s <span data-x="she-document">document</span> is null; otherwise
+       "<code data-x="dom-navigationtimingtype-reload">reload</code>".</p></li>
+
+       <li><p>Let <var>targetSnapshotParams</var> be the result of <span>snapshotting target
+       snapshot params</span> given <var>navigable</var>.</p></li>
+
+       <li><p>Let <var>potentiallyTargetSpecificSourceSnapshotParams</var> be
+       <var>sourceSnapshotParams</var>.</p></li>
+
+       <li>
+        <p>If <var>potentiallyTargetSpecificSourceSnapshotParams</var> is null, then set it to the
+        result of <span>snapshotting source snapshot params</span> given <var>navigable</var>'s
+        <span data-x="nav-document">active document</span>.</p>
+
+        <p class="note">In this case there is no clear source of the traversal/reload. We treat this
+        situation as if <var>navigable</var> navigated itself, but note that some properties of
+        <var>targetEntry</var>'s original initiator are preserved in <var>targetEntry</var>'s <span
+        data-x="she-document-state">document state</span>, such as the <span
+        data-x="document-state-initiator-origin">initiator origin</span> and <span
+        data-x="document-state-request-referrer">referrer</span>, which will appropriately influence
+        the navigation.</p>
+       </li>
+
+       <li><p>Set <var>targetEntry</var>'s <span data-x="she-document-state">document
+       state</span>'s <span data-x="document-state-reload-pending">reload pending</span> to
+       false.</p></li>
+
+       <li><p>Let <var>allowPOST</var> be <var>targetEntry</var>'s <span
+       data-x="she-document-state">document state</span>'s <span
+       data-x="document-state-reload-pending">reload pending</span>.</p>
+
+       <li><p><span>In parallel</span>, <span>attempt to populate the history entry's
+       document</span> for <var>targetEntry</var>, given <var>navigable</var>,
+       <var>potentiallyTargetSpecificSourceSnapshotParams</var>, <var>targetSnapshotParams</var>,
+       <var>userInvolvement</var>, with <i data-x="attempt-to-populate-allow-post">allowPOST</i> set
+       to <var>allowPOST</var> and <span
+       data-x="attempt-to-populate-completion-steps"><i>completionSteps</i></span> set to
+       <span>queue a global task</span> on the <span>navigation and traversal task source</span>
+       given <var>navigable</var>'s <span data-x="nav-window">active window</span> to run
+       <var>afterDocumentPopulated</var>.</p></li>
+      </ol>
+
+      <p>Otherwise, run <var>afterDocumentPopulated</var> <span>immediately</span>.</p>
+
+      <p>In both cases, let <var>afterDocumentPopulated</var> be the following steps:</p>
+
+      <ol>
+       <li>
+        <p>If <var>targetEntry</var>'s <span data-x="she-document">document</span> is null, then
+        set <var>changingNavigableContinuation</var>'s <span
+        data-x="changing-nav-continuation-update-only">update-only</span> to true.</p>
+
+        <p class="note">This means we tried to populate the document, but were unable to do so,
+        e.g. because of the server returning a 204.</p>
+
+        <div class="note">
+         <p>These kinds of failed navigations or traversals will not be signaled to the <a
+         href="#navigation-api">navigation API</a> (e.g., through the promises of any
+         <span>navigation API method tracker</span>, or the <code
+         data-x="event-navigateerror">navigateerror</code> event). Doing so would leak information
+         about the timing of responses from other origins, in the cross-origin case, and providing
+         different results in the cross-origin vs. same-origin cases was deemed too confusing.</p>
+
+         <p>However, implementations could use this opportunity to clear any promise handlers for
+         the <code data-x="dom-NavigationTransition-finished">navigation.transition.finished</code>
+         promise, as they are guaranteed at this point to never run. And, they might wish to
+         <span>report a warning to the console</span> if any part of the navigation API initiated
+         these navigations, to make it clear to the web developer why their promises will never
+         settle and events will never fire.</p>
+        </div>
+       </li>
+
+       <li>
+        <p>If <var>targetEntry</var>'s <span data-x="she-document">document</span>'s <span
+        data-x="concept-document-origin">origin</span> is not <var>oldOrigin</var>, then set
+        <var>targetEntry</var>'s <span data-x="she-classic-history-api-state">classic history API
+        state</span> to <span>StructuredSerializeForStorage</span>(null).</p>
+
+        <p class="note">This clears history state when the origin changed vs a previous load of
+        <var>targetEntry</var> without a redirect occuring. This can happen due to a change in CSP
+        sandbox headers.</p>
+       </li>
+
+       <li>
+        <p>If all of the following are true:</p>
+
+        <ul>
+         <li><p><var>navigable</var>'s <span data-x="nav-parent">parent</span> is null;</p></li>
+
+         <li><p><var>targetEntry</var>'s <span data-x="she-document">document</span>'s <span
+         data-x="concept-document-bc">browsing context</span> is not an <span>auxiliary browsing
+         context</span> whose <span>opener browsing context</span> is non-null; and</p></li>
+
+         <li><p><var>targetEntry</var>'s <span data-x="she-document">document</span>'s <span
+         data-x="concept-document-origin">origin</span> is not <var>oldOrigin</var>,</p></li>
+        </ul>
+
+        <p>then set <var>targetEntry</var>'s <span data-x="she-document-state">document
+        state</span>'s <span data-x="document-state-nav-target-name">navigable target name</span>
+        to the empty string.</p>
+       </li>
+
+       <li>
+        <p><span>Enqueue</span> <var>changingNavigableContinuation</var> on
+        <var>changingNavigableContinuations</var>.</p>
+
+        <p class="note">The rest of this job <a href="#continuations-dequeue">runs later</a> in
+        this algorithm.</p>
+       </li>
+      </ol>
+     </li>
+    </ol>
+   </li>
+
+   <li><p>Let <var>navigablesThatMustWaitBeforeHandlingSyncNavigation</var> be an empty
+   <span>set</span>.</p></li>
+
+   <li>
+    <p>While <var>completedChangeJobs</var> does not equal <var>totalChangeJobs</var>:</p>
+
+    <ol>
+     <li>
+      <p>If <var>traversable</var>'s <span data-x="tn-running-nested-apply-history-step">running
+      nested apply history step</span> is false:</p>
+
+      <ol>
+       <li id="sync-navigations-jump-queue">
+        <p>While <var>traversable</var>'s <span data-x="tn-session-history-traversal-queue">session
+        history traversal queue</span>'s <span
+        data-x="session-history-traversal-parallel-queue-algorithm-set">algorithm set</span> <span
+        data-x="list contains">contains</span> one or more <span
+        data-x="session-history-traversal-parallel-queue-sync-nav-steps">synchronous navigation
+        steps</span> with a <span
+        data-x="session-history-traversal-parallel-queue-sync-nav-steps-target-nav">target
+        navigable</span> not <span data-x="list contains">contained</span> in
+        <var>navigablesThatMustWaitBeforeHandlingSyncNavigation</var>:</p>
+
+        <ol>
+         <li><p>Let <var>steps</var> be the first <span data-x="list item">item</span> in
+         <var>traversable</var>'s <span data-x="tn-session-history-traversal-queue">session history
+         traversal queue</span>'s <span
+         data-x="session-history-traversal-parallel-queue-algorithm-set">algorithm set</span> that
+         is <span data-x="session-history-traversal-parallel-queue-sync-nav-steps">synchronous
+         navigation steps</span> with a <span
+         data-x="session-history-traversal-parallel-queue-sync-nav-steps-target-nav">target
+         navigable</span> not <span data-x="list contains">contained</span> in
+         <var>navigablesThatMustWaitBeforeHandlingSyncNavigation</var>.</p></li>
+
+         <li><p><span data-x="list remove">Remove</span> <var>steps</var> from
+         <var>traversable</var>'s <span data-x="tn-session-history-traversal-queue">session history
+         traversal queue</span>'s <span
+         data-x="session-history-traversal-parallel-queue-algorithm-set">algorithm
+         set</span>.</p></li>
+
+         <li><p>Set <var>traversable</var>'s <span
+         data-x="tn-running-nested-apply-history-step">running nested apply history step</span> to
+         true.</p></li>
+
+         <li><p>Run <var>steps</var>.</p></li>
+
+         <li><p>Set <var>traversable</var>'s <span
+         data-x="tn-running-nested-apply-history-step">running nested apply history step</span> to
+         false.</p></li>
+        </ol>
+
+        <p class="note">Synchronous navigations that are intended to take place before this
+        traversal jump the queue at this point, so they can be added to the correct place in
+        <var>traversable</var>'s <span data-x="tn-session-history-entries">session history
+        entries</span> before this traversal potentially unloads their document. <a
+        href="#sync-navigation-steps-queue-jumping-examples">More details can be found
+        here</a>.</p>
+       </li>
+      </ol>
+     </li>
+
+     <li id="continuations-dequeue"><p>Let <var>changingNavigableContinuation</var> be the result
+     of <span data-x="dequeue">dequeuing</span> from
+     <var>changingNavigableContinuations</var>.</p></li>
+
+     <li><p>If <var>changingNavigableContinuation</var> is nothing, then
+     <span>continue</span>.</p></li>
+
+     <li><p>Let <var>displayedDocument</var> be <var>changingNavigableContinuation</var>'s <span
+     data-x="changing-nav-continuation-displayed-document">displayed document</span>.</p></li>
+
+     <li><p>Let <var>targetEntry</var> be <var>changingNavigableContinuation</var>'s <span
+     data-x="changing-nav-continuation-target-entry">target entry</span>.</p></li>
+
+     <li><p>Let <var>navigable</var> be <var>changingNavigableContinuation</var>'s <span
+     data-x="changing-nav-continuation-navigable">navigable</span>.</p></li>
+
+     <li>
+      <p>Let (<var>scriptHistoryLength</var>, <var>scriptHistoryIndex</var>) be the result of
+      <span>getting the history object length and index</span> given <var>traversable</var> and
+      <var>targetStep</var>.</p>
+
+      <p class="note">These values might have changed since they were last calculated.</p>
+     </li>
+
+     <li>
+      <p><span data-x="list append">Append</span> <var>navigable</var> to
+      <var>navigablesThatMustWaitBeforeHandlingSyncNavigation</var>.</p>
+
+      <p class="note">Once a navigable has reached this point in traversal, additionally queued
+      synchronous navigation steps are likely to be intended to occur after this traversal rather
+      than before it, so they no longer jump the queue. <a
+      href="#sync-navigation-steps-queue-jumping-examples">More details can be found here</a>.</p>
+     </li>
+
+     <li><p>Let <var>entriesForNavigationAPI</var> be the result of <span>getting session history
+     entries for the navigation API</span> given <var>navigable</var> and
+     <var>targetStep</var>.</p></li>
+
+     <li>
+      <p>If <var>changingNavigableContinuation</var>'s <span
+      data-x="changing-nav-continuation-update-only">update-only</span> is true, or
+      <var>targetEntry</var>'s <span data-x="she-document">document</span> is
+      <var>displayedDocument</var>:</p>
+
+      <p class="note">This is a same-document navigation: we proceed without unloading.</p>
+
+      <ol>
+       <li>
+        <p>Set <var>navigable</var>'s <span>ongoing navigation</span> to null.</p>
+
+        <p class="note">This allows new <span data-x="navigate">navigations</span> of
+        <var>navigable</var> to start, whereas during the traversal they were blocked.</p>
+       </li>
+
+       <li><p><span>Queue a global task</span> on the <span>navigation and traversal task
+       source</span> given <var>navigable</var>'s <span data-x="nav-window">active window</span> to
+       perform <var>afterPotentialUnloads</var>.</p></li>
+      </ol>
+     </li>
+
+     <li>
+      <p>Otherwise:</p>
+
+      <ol>
+       <li><p><span>Assert</span>: <var>navigationType</var> is not null.</p></li>
+
+       <li><p><span data-x="deactivate a document for a cross-document navigation">Deactivate</span>
+       <var>displayedDocument</var>, given <var>userInvolvement</var>, <var>targetEntry</var>,
+       <var>navigationType</var>, and <var>afterPotentialUnloads</var>.</p></li>
+      </ol>
+     </li>
+
+     <li>
+      <p>In both cases, let <var>afterPotentialUnloads</var> be the following steps:</p>
+
+      <ol>
+       <li><p>Let <var>previousEntry</var> be <var>navigable</var>'s <span
+       data-x="nav-active-history-entry">active session history entry</span>.</p></li>
+
+       <li><p>If <var>changingNavigableContinuation</var>'s <span
+       data-x="changing-nav-continuation-update-only">update-only</span> is false, then
+       <span>activate history entry</span> <var>targetEntry</var> for
+       <var>navigable</var>.</p></li>
+
+       <li><p>Let <var>updateDocument</var> be an algorithm step which performs <span>update
+       document for history step application</span> given <var>targetEntry</var>'s <span
+       data-x="she-document">document</span>, <var>targetEntry</var>,
+       <var>changingNavigableContinuation</var>'s <span
+       data-x="changing-nav-continuation-update-only">update-only</span>,
+       <var>scriptHistoryLength</var>, <var>scriptHistoryIndex</var>, <var>navigationType</var>,
+       <var>entriesForNavigationAPI</var>, and <var>previousEntry</var>.</p></li>
+
+       <li><p>If <var>targetEntry</var>'s <span data-x="she-document">document</span> is equal to
+       <var>displayedDocument</var>, then perform <var>updateDocument</var>.</p></li>
+
+       <li><p>Otherwise, <span>queue a global task</span> on the <span>navigation and traversal task
+       source</span> given <var>targetEntry</var>'s <span data-x="she-document">document</span>'s
+       <span>relevant global object</span> to perform <var>updateDocument</var>.</p></li>
+
+       <li><p>Increment <var>completedChangeJobs</var>.</p></li>
+      </ol>
+     </li>
+    </ol>
+   </li>
+
+   <li>
+    <p>Let <var>totalNonchangingJobs</var> be the <span data-x="list size">size</span> of
+    <var>nonchangingNavigablesThatStillNeedUpdates</var>.</p>
+
+    <p class="note">This step onwards deliberately waits for all the previous operations to
+    complete, as they include <a href="#sync-navigations-jump-queue">processing synchronous
+    navigations</a> which will also post tasks to update history length and index.</p>
+   </li>
+
+   <li><p>Let <var>completedNonchangingJobs</var> be 0.</p></li>
+
+   <li><p>Let (<var>scriptHistoryLength</var>, <var>scriptHistoryIndex</var>) be the result of
+   <span>getting the history object length and index</span> given <var>traversable</var> and
+   <var>targetStep</var>.</p></li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>navigable</var> of
+    <var>nonchangingNavigablesThatStillNeedUpdates</var>, <span>queue a global task</span> on the
+    <span>navigation and traversal task source</span> given <var>navigable</var>'s <span
+    data-x="nav-window">active window</span> to run the steps:</p>
+
+    <ol>
+     <li><p>Let <var>document</var> be <var>navigable</var>'s <span data-x="nav-document">active
+     document</span>.</p></li>
+
+     <li><p>Set <var>document</var>'s <span data-x="doc-history">history object</span>'s <span
+     data-x="concept-history-index">index</span> to <var>scriptHistoryIndex</var>.</p></li>
+
+     <li><p>Set <var>document</var>'s <span data-x="doc-history">history object</span>'s <span
+     data-x="concept-history-length">length</span> to <var>scriptHistoryLength</var>.</p></li>
+
+     <li><p>Increment <var>completedNonchangingJobs</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Wait for <var>completedNonchangingJobs</var> to equal
+   <var>totalNonchangingJobs</var>.</p></li>
+
+   <li><p>Set <var>traversable</var>'s <span data-x="tn-current-session-history-step">current
+   session history step</span> to <var>targetStep</var>.</p></li>
+
+   <li><p>Return "<code data-x="">applied</code>".</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>deactivate a document for a cross-document navigation</dfn> given a
+  <code>Document</code> <var>displayedDocument</var>, a <span>user navigation involvement</span>
+  <var>userNavigationInvolvement</var>, a <span>session history entry</span> <var>targetEntry</var>,
+  a <code>NavigationType</code> <var>navigationType</var>, and <var>afterPotentialUnloads</var>,
+  which is an algorithm that receives no arguments:</p>
+
+  <ol>
+   <li><p>Let <var>navigable</var> be <var>displayedDocument</var>'s
+   <span>node navigable</span>.</p></li>
+
+   <li><p>Let <var>potentiallyTriggerViewTransition</var> be false.</p></li>
+
+   <li><p>Let <var>isBrowserUINavigation</var> be true if
+   <var>userNavigationInvolvement</var> is "<code
+   data-x="uni-browser-ui">browser UI</code>"; otherwise false.</p></li>
+
+   <li><p>Set <var>potentiallyTriggerViewTransition</var> to the result of calling
+   <span>can navigation trigger a cross-document view-transition?</span> given
+   <var>displayedDocument</var>, <var>targetEntry</var>'s <span
+   data-x="she-document">document</span>, <var>navigationType</var>, and
+   <var>isBrowserUINavigation</var>.</p></li>
+
+   <li>
+    <p>If <var>potentiallyTriggerViewTransition</var> is false:</p>
+
+    <ol>
+     <li>
+      <p>Let <var>firePageSwapBeforeUnload</var> be the following step:</p>
+
+      <ol>
+       <li><p><span>Fire the <code data-x="event-pageswap">pageswap</code> event</span> given
+       <var>displayedDocument</var>, <var>targetEntry</var>, <var>navigationType</var>, and
+       null.</p></li>
+      </ol>
+     </li>
+
+     <li>
+      <p>Set <var>navigable</var>'s <span>ongoing navigation</span> to null.</p>
+
+      <p class="note">This allows new <span data-x="navigate">navigations</span> of
+      <var>navigable</var> to start, whereas during the traversal they were blocked.</p>
+     </li>
+
+     <li><p><span>Unload a document and its descendants</span> given
+     <var>displayedDocument</var>, <var>targetEntry</var>'s <span
+     data-x="she-document">document</span>, <var>afterPotentialUnloads</var>, and
+     <var>firePageSwapBeforeUnload</var>.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p>Otherwise, <span>queue a global task</span> on the
+    <span>navigation and traversal task source</span> given <var>navigable</var>'s <span
+    data-x="nav-window">active window</span> to run the steps:</p>
+
+    <ol>
+     <li>
+      <p>Let <var>proceedWithNavigationAfterViewTransitionCapture</var> be the following
+      step:</p>
+
+      <ol>
+       <li>
+        <p><span data-x="tn-append-session-history-traversal-steps">Append the following session
+        history traversal steps</span> to <var>navigable</var>'s <span
+        data-x="nav-traversable">traversable navigable</span>:</p>
+
+        <ol>
+         <li>
+          <p>Set <var>navigable</var>'s <span>ongoing navigation</span> to null.</p>
+
+          <p class="note">This allows new <span data-x="navigate">navigations</span> of
+          <var>navigable</var> to start, whereas during the traversal they were blocked.</p>
+         </li>
+
+         <li><p><span>Unload a document and its descendants</span> given
+         <var>displayedDocument</var>, <var>targetEntry</var>'s <span
+         data-x="she-document">document</span>, and <var>afterPotentialUnloads</var>.</p></li>
+        </ol>
+       </li>
+      </ol>
+     </li>
+
+     <li><p>Let <var>viewTransition</var> be the result of
+     <span>setting up a cross-document view-transition</span> given
+     <var>displayedDocument</var>, <var>targetEntry</var>'s <span
+     data-x="she-document">document</span>, <var>navigationType</var>, and
+     <var>proceedWithNavigationAfterViewTransitionCapture</var>.</p></li>
+
+     <li><p><span>Fire the <code data-x="event-pageswap">pageswap</code> event</span> given
+     <var>displayedDocument</var>, <var>targetEntry</var>, <var>navigationType</var>, and
+     <var>viewTransition</var>.</p>
+
+     <li>
+      <p>If <var>viewTransition</var> is null, then run
+      <var>proceedWithNavigationAfterViewTransitionCapture</var>.</p>
+
+      <p class="note">In the case where a view transition started, the view transitions
+      algorithms are responsible for calling
+      <var>proceedWithNavigationAfterViewTransitionCapture</var>.</p>
+     </li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>fire the <code data-x="event-pageswap">pageswap</code> event</dfn> given a
+  <code>Document</code> <var>displayedDocument</var>, a <span>session history entry</span>
+  <var>targetEntry</var>, a <code>NavigationType</code> <var>navigationType</var>, and a
+  <code>ViewTransition</code>-or-null <var>viewTransition</var>:</p>
+
+  <ol>
+   <li><p><span>Assert</span>: this is running as part of a <span
+   data-x="concept-task">task</span> queued on <var>displayedDocument</var>'s
+   <span>relevant agent</span>'s <span
+   data-x="concept-agent-event-loop">event loop</span>.</p></li>
+
+   <li><p>Let <var>navigation</var> be <var>displayedDocument</var>'s
+   <span>relevant global object</span>'s <span
+   data-x="window-navigation-api">navigation API</span>.</p></li>
+
+   <li><p>Let <var>activation</var> be null.</p></li>
+
+   <li>
+    <p>If all of the following are true:</p>
+
+    <ul>
+     <li><p><var>targetEntry</var>'s <span data-x="she-document">document</span>'s <span
+     data-x="concept-document-origin">origin</span> is <span>same origin</span> with
+     <var>displayedDocument</var>'s <span data-x="concept-document-origin">origin</span>;
+     and</p></li>
+
+     <li><p><var>targetEntry</var>'s <span data-x="she-document">document</span>'s
+     <span>was created via cross-origin redirects</span> is false, or <var>targetEntry</var>'s
+     <span data-x="she-document">document</span>'s <span>latest entry</span> is not null,</p></li>
+    </ul>
+
+    <p>then:</p>
+
+    <ol>
+     <li>
+      <p>Let <var>destinationEntry</var> be determined by switching on
+      <var>navigationType</var>:</p>
+
+      <dl class="switch">
+       <dt>"<code data-x="dom-NavigationType-reload">reload</code>"</dt>
+       <dd><p>The <span data-x="navigation-current-entry">current entry</span> of
+       <var>navigation</var></p></dd>
+
+       <dt>"<code data-x="dom-NavigationType-traverse">traverse</code>"</dt>
+       <dd><p>The <code>NavigationHistoryEntry</code> in <var>navigation</var>'s <span
+       data-x="navigation-entry-list">entry list</span> whose <span
+       data-x="nhe-she">session history entry</span> is <var>targetEntry</var></p></dd>
+
+       <dt>"<code data-x="dom-NavigationType-push">push</code>"</dt>
+       <dt>"<code data-x="dom-NavigationType-replace">replace</code>"</dt>
+       <dd><p>A new <code>NavigationHistoryEntry</code> in <var>displayedDocument</var>'s <span
+       data-x="concept-relevant-realm">relevant realm</span> with its <span
+       data-x="nhe-she">session history entry</span> set to <var>targetEntry</var></p></dd>
+      </dl>
+     </li>
+     <li>
+      <p>Set <var>activation</var> to a <span>new</span> <code>NavigationActivation</code>
+      created in <var>displayedDocument</var>'s <span data-x="concept-relevant-realm">relevant
+      realm</span>, with</p>
+
+      <dl class="props">
+       <dt><span data-x="nav-activation-old-entry">old entry</span></dt>
+       <dd>the <span data-x="navigation-current-entry">current entry</span> of
+       <var>navigation</var></dd>
+
+       <dt><span data-x="nav-activation-new-entry">new entry</span></dt>
+       <dd><var>destinationEntry</var></dd>
+
+       <dt><span data-x="nav-activation-navigation-type">navigation type</span></dt>
+       <dd><var>navigationType</var></dd>
+      </dl>
+     </li>
+    </ol>
+
+    <p class="note">This means that a cross-origin redirect during a navigation would result in a
+    null <code data-x="dom-PageSwapEvent-activation">activation</code> in the old document's
+    <code>PageSwapEvent</code>, unless the new document is being restored from <a
+    href="#note-bfcache">bfcache</a>.</p>
+   </li>
+
+   <li><p><span data-x="concept-event-fire">Fire an event</span> named
+   <code data-x="event-pageswap">pageswap</code> at <var>displayedDocument</var>'s
+   <span>relevant global object</span>, using <code>PageSwapEvent</code> with its <code
+   data-x="dom-PageSwapEvent-activation">activation</code> set to <var>activation</var>,
+   and its <code data-x="dom-PageSwapEvent-viewTransition">viewTransition</code> set to
+   <var>viewTransition</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>activate history entry</dfn> <span>session history entry</span> <var>entry</var> for
+  <span>navigable</span> <var>navigable</var>:</p>
+
+  <ol>
+   <li><p><span>Save persisted state</span> to the <span>navigable</span>'s <span
+   data-x="nav-active-history-entry">active session history entry</span>.</p></li>
+
+   <li><p>Let <var>newDocument</var> be <var>entry</var>'s <span
+   data-x="she-document">document</span>.</p></li>
+
+   <li><p><span>Assert</span>: <var>newDocument</var>'s <span>is initial
+   <code>about:blank</code></span> is false, i.e., we never traverse back to the <span data-x="is
+   initial about:blank">initial <code>about:blank</code></span> <code>Document</code> because it
+   always gets <a href="#navigate-convert-to-replace">replaced</a> when we navigate away from
+   it.</p></li>
+
+   <li><p>Set <var>navigable</var>'s <span data-x="nav-active-history-entry">active session history
+   entry</span> to <var>entry</var>.</p></li>
+
+   <li><p><span>Make active</span> <var>newDocument</var>.</p></li>
+
+   <li><p><span>Set the initial visibility state</span> of <var>newDocument</var> to
+   <var>navigable</var>'s <span data-x="nav-traversable">traversable navigable</span>'s <span>system visibility state</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="getting the used step">get the used step</dfn> given a <span>traversable
+  navigable</span> <var>traversable</var>, and a non-negative integer <var>step</var>, perform the
+  following steps. They return a non-negative integer.</p>
+
+  <ol>
+   <li><p>Let <var>steps</var> be the result of <span>getting all used history steps</span> within
+   <var>traversable</var>.</p></li>
+
+   <li>
+    <p>Return the greatest <span data-x="list item">item</span> in <var>steps</var> that is less
+    than or equal to <var>step</var>.</p>
+
+    <p class="note">This caters for situations where there's no <span>session history entry</span>
+    with <span data-x="she-step">step</span> <var>step</var>, due to the removal of a
+    <span>navigable</span>.</p>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="getting the history object length and index">get the history object length and
+  index</dfn> given a <span>traversable navigable</span> <var>traversable</var>, and a non-negative
+  integer <var>step</var>, perform the following steps. They return a <span>tuple</span> of two
+  non-negative integers.</p>
+
+  <ol>
+   <li><p>Let <var>steps</var> be the result of <span>getting all used history steps</span> within
+   <var>traversable</var>.</p></li>
+
+   <li><p>Let <var>scriptHistoryLength</var> be the <span data-x="list size">size</span> of
+   <var>steps</var>.</p></li>
+
+   <li>
+    <p><span>Assert</span>: <var>steps</var> <span data-x="list contains">contains</span>
+    <var>step</var>.</p>
+
+    <p class="note">It is assumed that <var>step</var> has been adjusted by <span>getting the used
+    step</span>.</p>
+   </li>
+
+   <li><p>Let <var>scriptHistoryIndex</var> be the index of <var>step</var> in
+   <var>steps</var>.</p></li>
+
+   <li><p>Return (<var>scriptHistoryLength</var>, <var>scriptHistoryIndex</var>).</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>get all navigables whose current session history entry will change or reload</dfn>
+  given a <span>traversable navigable</span> <var>traversable</var>, and a non-negative integer
+  <var>targetStep</var>, perform the following steps. They return a <span>list</span> of <span
+  data-x="navigable">navigables</span>.</p>
+
+  <ol>
+   <li><p>Let <var>results</var> be an empty <span>list</span>.</p></li>
+
+   <li>
+    <p>Let <var>navigablesToCheck</var> be « <var>traversable</var> ».</p>
+
+    <p class="note">This list is extended in the loop below.</p>
+   </li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>navigable</var> of
+    <var>navigablesToCheck</var>:</p>
+
+    <ol>
+     <li><p>Let <var>targetEntry</var> be the result of <span>getting the target history
+     entry</span> given <var>navigable</var> and <var>targetStep</var>.</p></li>
+
+     <li><p>If <var>targetEntry</var> is not <var>navigable</var>'s <span
+     data-x="nav-current-history-entry">current session history entry</span> or
+     <var>targetEntry</var>'s <span data-x="she-document-state">document state</span>'s <span
+     data-x="document-state-reload-pending">reload pending</span> is true, then <span data-x="list
+     append">append</span> <var>navigable</var> to <var>results</var>.</p></li>
+
+     <li>
+      <p>If <var>targetEntry</var>'s <span data-x="she-document">document</span> is
+      <var>navigable</var>'s <span data-x="nav-document">active document</span>, and
+      <var>targetEntry</var>'s <span data-x="she-document-state">document state</span>'s <span
+      data-x="document-state-reload-pending">reload pending</span> is false, then <span
+      data-x="list extend">extend</span> <var>navigablesToCheck</var> with the <span data-x="child
+      navigable">child navigables</span> of <var>navigable</var>.</p>
+
+      <p class="note">Adding <span data-x="child navigable">child navigables</span> to
+      <var>navigablesToCheck</var> means those navigables will also be checked by this loop. <span
+      data-x="child navigable">Child navigables</span> are only checked if the
+      <var>navigable</var>'s <span data-x="nav-document">active document</span> will not change as
+      part of this traversal.</p>
+     </li>
+    </ol>
+   </li>
+
+   <li><p>Return <var>results</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="getting all navigables that only need history object length/index update">get
+  all navigables that only need history object length/index update</dfn> given a <span>traversable
+  navigable</span> <var>traversable</var>, and a non-negative integer <var>targetStep</var>,
+  perform the following steps. They return a <span>list</span> of <span
+  data-x="navigable">navigables</span>.</p>
+
+  <p class="note">Other <span data-x="navigable">navigables</span> might not be impacted by the
+  traversal. For example, if the response is a 204, the currently active document will remain.
+  Additionally, going 'back' after a 204 will change the <span
+  data-x="nav-current-history-entry">current session history entry</span>, but the <span
+  data-x="nav-active-history-entry">active session history entry</span> will already be
+  correct.</p>
+
+  <ol>
+   <li><p>Let <var>results</var> be an empty <span>list</span>.</p></li>
+
+   <li>
+    <p>Let <var>navigablesToCheck</var> be « <var>traversable</var> ».</p>
+
+    <p class="note">This list is extended in the loop below.</p>
+   </li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>navigable</var> of
+    <var>navigablesToCheck</var>:</p>
+
+    <ol>
+     <li><p>Let <var>targetEntry</var> be the result of <span>getting the target history
+     entry</span> given <var>navigable</var> and <var>targetStep</var>.</p></li>
+
+     <li>
+      <p>If <var>targetEntry</var> is <var>navigable</var>'s <span
+      data-x="nav-current-history-entry">current session history entry</span> and
+      <var>targetEntry</var>'s <span data-x="she-document-state">document state</span>'s <span
+      data-x="document-state-reload-pending">reload pending</span> is false:</p>
+
+      <ol>
+       <li><p><span data-x="list append">Append</span> <var>navigable</var> to
+       <var>results</var>.</p></li>
+
+       <li>
+        <p><span data-x="list extend">Extend</span> <var>navigablesToCheck</var> with
+        <var>navigable</var>'s <span data-x="child navigable">child navigables</span>.</p>
+
+        <p class="note">Adding <span data-x="child navigable">child navigables</span> to
+        <var>navigablesToCheck</var> means those navigables will also be checked by this loop.
+        <span data-x="child navigable">child navigables</span> are only checked if the
+        <var>navigable</var>'s <span data-x="nav-document">active document</span> will not change
+        as part of this traversal.</p>
+       </li>
+      </ol>
+     </li>
+    </ol>
+   </li>
+
+   <li><p>Return <var>results</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="getting the target history entry">get the target history entry</dfn> given a
+  <span>navigable</span> <var>navigable</var>, and a non-negative integer <var>step</var>, perform
+  the following steps. They return a <span>session history entry</span>.</p>
+
+  <ol>
+   <li><p>Let <var>entries</var> be the result of <span>getting session history entries</span> for
+   <var>navigable</var>.</p></li>
+
+   <li><p>Return the <span data-x="list item">item</span> in <var>entries</var> that has the
+   greatest <span data-x="she-step">step</span> less than or equal to <var>step</var>.</p></li>
+  </ol>
+  </div>
+
+  <div class="example" id="example-getting-the-target-history-entry">
+   <p>To see why <span>getting the target history entry</span> returns the entry with the greatest
+   <span data-x="she-step">step</span> less than or equal to the input step, consider the following
+   <span>Jake diagram</span>:</p>
+
+   <!--https://domenic.github.io/jake-diagram-generator/#dG9wCiAgMC0yOiAvdCB8IGRvYzEKICAzOiAvdCNmb28gfCBkb2MxCmZyYW1lc1swXQogIDA6IC9pLTAtYQogIDEtMzogL2ktMC1i -->
+   <table class="jake-diagram"><thead><tr><td></td><th class="step">0</th><th class="step">1</th><th class="step">2</th><th class="step">3</th></tr></thead><tbody><tr><th><code data-x="">top</code></th><td colspan="3" class="doc-0">/t</td><td colspan="1" class="doc-0">/t#foo</td></tr><tr><th><code data-x="">frames[0]</code></th><td colspan="1" class="doc-1">/i-0-a</td><td colspan="3" class="doc-2">/i-0-b</td></tr></tbody></table>
+
+   <p>For the input step 1, the target history entry for the <code data-x="">top</code> navigable
+   is the <code data-x="">/t</code> entry, whose <span data-x="she-step">step</span> is 0, while the target history entry for the <code data-x="">frames[0]</code> navigable is the <code
+   data-x="">/i-0-b</code> entry, whose <span data-x="she-step">step</span> is 1:</p>
+
+   <!--https://domenic.github.io/jake-diagram-generator/#IWN1cnJlbnQgPSAxCnRvcAogIDAtMjogL3QgfCBkb2MxCiAgMzogL3QjZm9vIHwgZG9jMQpmcmFtZXNbMF0KICAwOiAvaS0wLWEKICAxLTM6IC9pLTAtYg== -->
+   <table class="jake-diagram"><thead><tr><td></td><th class="step">0</th><th class="step current">1</th><th class="step">2</th><th class="step">3</th></tr></thead><tbody><tr><th><code data-x="">top</code></th><td colspan="3" class="doc-0 current next-is-same-doc">/t</td><td colspan="1" class="doc-0 prev-is-same-doc">/t#foo</td></tr><tr><th><code data-x="">frames[0]</code></th><td colspan="1" class="doc-1">/i-0-a</td><td colspan="3" class="doc-2 current">/i-0-b</td></tr></tbody></table>
+
+   <p>Similarly, given the input step 3 we get the <code data-x="">top</code> entry whose <span
+   data-x="she-step">step</span> is 3, and the <code data-x="">frames[0]</code> entry whose <span
+   data-x="she-step">step</span> is 1:</p>
+
+   <!--https://domenic.github.io/jake-diagram-generator/#IWN1cnJlbnQgPSAzCnRvcAogIDAtMjogL3QgfCBkb2MxCiAgMzogL3QjZm9vIHwgZG9jMQpmcmFtZXNbMF0KICAwOiAvaS0wLWEKICAxLTM6IC9pLTAtYg== -->
+   <table class="jake-diagram"><thead><tr><td></td><th class="step">0</th><th class="step">1</th><th class="step">2</th><th class="step current">3</th></tr></thead><tbody><tr><th><code data-x="">top</code></th><td colspan="3" class="doc-0 next-is-same-doc">/t</td><td colspan="1" class="doc-0 current prev-is-same-doc">/t#foo</td></tr><tr><th><code data-x="">frames[0]</code></th><td colspan="1" class="doc-1">/i-0-a</td><td colspan="3" class="doc-2 current">/i-0-b</td></tr></tbody></table>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="getting all navigables that might experience a cross-document traversal">get
+  all navigables that might experience a cross-document traversal</dfn> given a <span>traversable
+  navigable</span> <var>traversable</var>, and a non-negative integer <var>targetStep</var>,
+  perform the following steps. They return a <span>list</span> of <span
+  data-x="navigable">navigables</span>.</p>
+
+  <div class="note">
+   <p>From <var>traversable</var>'s <span data-x="tn-session-history-traversal-queue">session
+   history traversal queue</span>'s perspective, these documents are candidates for going
+   cross-document during the traversal described by <var>targetStep</var>. They will not experience
+   a cross-document traversal if the status code for their target document is HTTP 204 No Content.</p>
+
+   <p>Note that if a given <span>navigable</span> might experience a cross-document traversal, this
+   algorithm will return <span>navigable</span> but not its <span data-x="child navigable">child
+   navigables</span>. Those would end up <span data-x="unload a document">unloaded</span>, not
+   traversed.</p>
+  </div>
+
+  <ol>
+   <li><p>Let <var>results</var> be an empty <span>list</span>.</p></li>
+
+   <li>
+    <p>Let <var>navigablesToCheck</var> be « <var>traversable</var> ».</p>
+
+    <p class="note">This list is extended in the loop below.</p>
+   </li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>navigable</var> of
+    <var>navigablesToCheck</var>:</p>
+
+    <ol>
+     <li><p>Let <var>targetEntry</var> be the result of <span>getting the target history
+     entry</span> given <var>navigable</var> and <var>targetStep</var>.</p></li>
+
+     <li>
+      <p>If <var>targetEntry</var>'s <span data-x="she-document">document</span> is not
+      <var>navigable</var>'s <span data-x="nav-document">active document</span> or
+      <var>targetEntry</var>'s <span data-x="she-document-state">document state</span>'s <span
+      data-x="document-state-reload-pending">reload pending</span> is true, then <span data-x="list
+      append">append</span> <var>navigable</var> to <var>results</var>.</p>
+
+      <p class="note">Although <var>navigable</var>'s <span
+      data-x="nav-active-history-entry">active history entry</span> can change synchronously, the
+      new entry will always have the same <code>Document</code>, so accessing
+      <var>navigable</var>'s <span data-x="nav-document">active document</span> is reliable.</p>
+     </li>
+
+     <li>
+      <p>Otherwise, <span data-x="list extend">extend</span> <var>navigablesToCheck</var> with
+      <var>navigable</var>'s <span data-x="child navigable">child navigables</span>.</p>
+
+      <p class="note">Adding <span data-x="child navigable">child navigables</span> to
+      <var>navigablesToCheck</var> means those navigables will also be checked by this loop. <span
+      data-x="child navigable">Child navigables</span> are only checked if the
+      <var>navigable</var>'s <span data-x="nav-document">active document</span> will not change as
+      part of this traversal.</p>
+     </li>
+    </ol>
+   </li>
+
+   <li><p>Return <var>results</var>.</p></li>
+  </ol>
+  </div>
+
+
+  <h5>Updating the document</h5>
+
+  <div algorithm>
+  <p>To <dfn>update document for history step application</dfn> given a <code>Document</code>
+  <var>document</var>, a <span>session history entry</span> <var>entry</var>, a boolean
+  <var>doNotReactivate</var>, integers <var>scriptHistoryLength</var> and
+  <var>scriptHistoryIndex</var>, <code>NavigationType</code>-or-null <var>navigationType</var>, an
+  optional <span>list</span> of <span data-x="session history entry">session history entries</span>
+  <var>entriesForNavigationAPI</var>, and an optional <span>session history entry</span>
+  <var>previousEntryForActivation</var>:</p>
+
+  <ol>
+   <li><p>Let <var>documentIsNew</var> be true if <var>document</var>'s <span>latest entry</span>
+   is null; otherwise false.</p></li>
+
+   <li><p>Let <var>documentsEntryChanged</var> be true if <var>document</var>'s <span>latest
+   entry</span> is not <var>entry</var>; otherwise false.</p></li>
+
+   <li><p>Set <var>document</var>'s <span data-x="doc-history">history object</span>'s <span
+   data-x="concept-history-index">index</span> to <var>scriptHistoryIndex</var>.</p></li>
+
+   <li><p>Set <var>document</var>'s <span data-x="doc-history">history object</span>'s <span
+   data-x="concept-history-length">length</span> to <var>scriptHistoryLength</var>.</p></li>
+
+   <li><p>Let <var>navigation</var> be <var>history</var>'s <span>relevant global object</span>'s
+   <span data-x="window-navigation-api">navigation API</span>.</p></li>
+
+   <li>
+    <p>If <var>documentsEntryChanged</var> is true:</p>
+
+    <ol>
+     <li><p>Let <var>oldURL</var> be <var>document</var>'s <span>latest entry</span>'s <span
+     data-x="she-url">URL</span>.</p></li>
+
+     <li><p>Set <var>document</var>'s <span>latest entry</span> to <var>entry</var>.</p></li>
+
+     <li><p><span>Restore the history object state</span> given <var>document</var> and
+     <var>entry</var>.</p></li>
+
+     <li>
+      <p>If <var>documentIsNew</var> is false:</p>
+
+      <ol>
+       <li><p><span>Assert</span>: <var>navigationType</var> is not null.</p></li>
+
+       <li><p><span>Update the navigation API entries for a same-document navigation</span> given
+       <var>navigation</var>, <var>entry</var>, and <var>navigationType</var>.</p></li>
+
+       <li><p><span data-x="concept-event-fire">Fire an event</span> named <code
+       data-x="event-popstate">popstate</code> at <var>document</var>'s <span>relevant global
+       object</span>, using <code>PopStateEvent</code>, with the <code
+       data-x="dom-PopStateEvent-state">state</code> attribute initialized to <var>document</var>'s
+       <span data-x="doc-history">history object</span>'s <span
+       data-x="concept-history-state">state</span> and <code
+       data-x="dom-PopStateEvent-hasUAVisualTransition">hasUAVisualTransition</code> initialized to
+       true if a visual transition, to display a cached rendered state of the <span>latest
+       entry</span>, was done by the user agent.</p>
+
+       <li><p><span>Restore persisted state</span> given <var>entry</var>.</p></li>
+
+       <li><p>If <var>oldURL</var>'s <span data-x="concept-url-fragment">fragment</span> is not
+       equal to <var>entry</var>'s <span data-x="she-url">URL</span>'s <span
+       data-x="concept-url-fragment">fragment</span>, then <span>queue a global task</span> on the
+       <span>DOM manipulation task source</span> given <var>document</var>'s <span>relevant global
+       object</span> to <span data-x="concept-event-fire">fire an event</span> named <code
+       data-x="event-hashchange">hashchange</code> at <var>document</var>'s <span>relevant global
+       object</span>, using <code>HashChangeEvent</code>, with the <code
+       data-x="dom-HashChangeEvent-oldURL">oldURL</code> attribute initialized to the <span
+       data-x="concept-url-serializer">serialization</span> of <var>oldURL</var> and the <code
+       data-x="dom-HashChangeEvent-newURL">newURL</code> attribute initialized to the <span
+       data-x="concept-url-serializer">serialization</span> of <var>entry</var>'s <span
+       data-x="she-url">URL</span>.</p></li>
+      </ol>
+     </li>
+
+     <li>
+      <p>Otherwise:</p>
+
+      <ol>
+       <li><p><span>Assert</span>: <var>entriesForNavigationAPI</var> is given.</p></li>
+
+       <li><p><span>Restore persisted state</span> given <var>entry</var>.</p></li>
+
+       <li><p><span>Initialize the navigation API entries for a new document</span> given
+       <var>navigation</var>, <var>entriesForNavigationAPI</var>, and <var>entry</var>.</p></li>
+      </ol>
+     </li>
+    </ol>
+   </li>
+
+   <li>
+    <p>If all the following are true:</p>
+
+    <ul>
+     <li><p><var>previousEntryForActivation</var> is given;</p></li>
+
+     <li><p><var>navigationType</var> is non-null; and</p></li>
+
+     <li><p><var>navigationType</var> is "<code data-x="dom-NavigationType-reload">reload</code>" or
+     <var>previousEntryForActivation</var>'s <span data-x="she-document">document</span> is not
+     <var>document</var>,</p></li>
+    </ul>
+
+    <p>then:</p>
+
+    <ol>
+     <li><p>If <var>navigation</var>'s <span
+     data-x="navigation-activation">activation</span> is null, then set <var>navigation</var>'s
+     <span data-x="navigation-activation">activation</span> to a new
+     <code>NavigationActivation</code> object in <var>navigation</var>'s
+     <span data-x="concept-relevant-realm">relevant realm</span>.</p></li>
+
+     <li><p>Let <var>previousEntryIndex</var> be the result of
+     <span>getting the navigation API entry index</span> of <var>previousEntryForActivation</var>
+     within <var>navigation</var>.</p></li>
+
+     <li><p>If <var>previousEntryIndex</var> is non-negative, then set <var>activation</var>'s
+     <span data-x="nav-activation-old-entry">old entry</span> to <var>navigation</var>'s <span
+     data-x="navigation-entry-list">entry list</span>[<var>previousEntryIndex</var>].</p></li>
+
+     <li>
+      <p>Otherwise, if all the following are true:</p>
+
+      <ul>
+       <li><p><var>navigationType</var> is "<code
+       data-x="dom-NavigationType-replace">replace</code>";</p></li>
+
+       <li><p><var>previousEntryForActivation</var>'s
+       <span data-x="she-document-state">document state</span>'s <span
+       data-x="document-state-origin">origin</span> is <span>same origin</span> with
+       <var>document</var>'s <span data-x="concept-document-origin">origin</span>; and</p></li>
+
+       <li><p><var>previousEntryForActivation</var>'s <span data-x="she-document">document</span>'s
+       <span data-x="is initial about:blank">is initial <code>about:blank</code></span> is
+       false,</p></li>
+      </ul>
+
+      <p>then set <var>activation</var>'s <span data-x="nav-activation-old-entry">old entry</span>
+      to a new <code>NavigationHistoryEntry</code> in <var>navigation</var>'s <span
+      data-x="concept-relevant-realm">relevant realm</span>, whose <span
+      data-x="nhe-she">session history entry</span> is
+      <var>previousEntryForActivation</var>.</p>
+     </li>
+
+     <li><p>Set <var>activation</var>'s <span data-x="nav-activation-new-entry">new entry</span> to
+     <var>navigation</var>'s <span data-x="navigation-current-entry">current entry</span>.</p></li>
+
+     <li><p>Set <var>activation</var>'s <span
+     data-x="nav-activation-navigation-type">navigation type</span> to
+     <var>navigationType</var>.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p>If <var>documentIsNew</var> is true:</p>
+
+    <ol>
+     <li><p><span>Assert</span>: <var>document</var>'s <span
+     data-x="concept-document-navigation-id">during-loading navigation ID for WebDriver BiDi</span>
+     is not null.</p></li>
+
+     <li><p>Invoke <span>WebDriver BiDi navigation committed</span> with <var>navigable</var> and a
+     new <span>WebDriver BiDi navigation status</span> whose <span
+     data-x="navigation-status-id">id</span> is <var>document</var>'s <span
+     data-x="concept-document-navigation-id">during-loading navigation ID for WebDriver BiDi</span>,
+     <span data-x="navigation-status-status">status</span> is "<code
+     data-x="navigation-status-committed">committed</code>", and <span
+     data-x="navigation-status-url">url</span> is <var>document</var>'s <span
+     data-x="concept-document-url">URL</span>.</p></li>
+
+     <li><p><span>Try to scroll to the fragment</span> for <var>document</var>.</p></li>
+
+     <li><p>At this point <dfn>scripts may run for the newly-created document</dfn>
+     <var>document</var>.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p>Otherwise, if <var>documentsEntryChanged</var> is false and <var>doNotReactivate</var> is
+    false:</p>
+
+    <ol>
+     <li><p><span>Assert</span>: <var>entriesForNavigationAPI</var> is given.</p></li>
+
+     <li><p><span data-x="reactivate a document">Reactivate</span> <var>document</var> given
+     <var>entry</var> and <var>entriesForNavigationAPI</var>.</p>
+    </ol>
+
+    <p class="note"><var>documentsEntryChanged</var> can be false for one of two reasons: either we
+    are restoring from <a href="#note-bfcache">bfcache</a>, or we are asynchronously finishing up a
+    synchronous navigation which already synchronously set <var>document</var>'s <span>latest
+    entry</span>. The <var>doNotReactivate</var> argument distinguishes between these two
+    cases.</p>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>restore the history object state</dfn> given <code>Document</code>
+  <var>document</var> and <span>session history entry</span> <var>entry</var>:</p>
+
+  <ol>
+   <li><p>Let <var>targetRealm</var> be <var>document</var>'s <span
+   data-x="concept-relevant-realm">relevant realm</span>.</p></li>
+
+   <li><p>Let <var>state</var> be <span>StructuredDeserialize</span>(<var>entry</var>'s <span
+   data-x="she-classic-history-api-state">classic history API state</span>, <var>targetRealm</var>).
+   If this throws an exception, catch it and let <var>state</var> be null.</p></li>
+
+   <li><p>Set <var>document</var>'s <span data-x="doc-history">history object</span>'s <span
+   data-x="concept-history-state">state</span> to <var>state</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>make active</dfn> a <code>Document</code> <var>document</var>:</p>
+
+  <ol>
+   <li><p>Let <var>window</var> be <var>document</var>'s <span>relevant global
+   object</span>.</p></li>
+
+   <li><p>Set <var>document</var>'s <span data-x="concept-document-bc">browsing context</span>'s
+   <span>active document</span> to <var>document</var>.</p></li>
+
+   <li><p>Set <var>document</var>'s <span data-x="concept-document-bc">browsing context</span>'s
+   <code>WindowProxy</code>'s <span data-x="concept-windowproxy-window">[[Window]]</span> internal
+   slot value to <var>window</var>.</p></li>
+
+   <li><p>Set <var>window</var>'s <span>relevant settings object</span>'s <span
+   data-x="concept-environment-execution-ready-flag">execution ready flag</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="reactivate a document" export for="Document">reactivate</dfn> a
+  <code>Document</code> <var>document</var> given a <span>session history entry</span>
+  <var>reactivatedEntry</var> and a <span>list</span> of <span data-x="session history
+  entry">session history entries</span> <var>entriesForNavigationAPI</var>:</p>
+
+  <p class="note">This algorithm updates <var>document</var> after it has come out of <a
+  href="#note-bfcache">bfcache</a>, i.e., after it has been made <span>fully active</span>
+  again. Other specifications that want to watch for this change to the <span>fully
+  active</span> state are encouraged to add steps into this algorithm, so that the ordering
+  of events that happen in effect of the change is clear.</p>
+
+  <ol>
+   <li id="history-autocomplete"><p><span data-x="list iterate">For each</span>
+   <var>formControl</var> of form controls in <var>document</var> with an <span>autofill field
+   name</span> of "<code data-x="attr-fe-autocomplete-off">off</code>", invoke the <span
+   data-x="concept-form-reset-control">reset algorithm</span> for <var>formControl</var>.</p></li>
+
+   <li>
+    <p>If <var>document</var>'s <span>suspended timer handles</span> is not <span data-x="list is
+    empty">empty</span>:</p>
+
+    <ol>
+     <li><p><span>Assert</span>: <var>document</var>'s <span>suspension time</span> is not
+     zero.</p></li>
+
+     <li><p>Let <var>suspendDuration</var> be the <span>current high resolution time</span> minus
+     <var>document</var>'s <span>suspension time</span>.</p></li>
+
+     <li><p>Let <var>activeTimers</var> be <var>document</var>'s <span>relevant global
+     object</span>'s <span>map of active timers</span>.</p></li>
+
+     <li><p>For each <var>handle</var> in <var>document</var>'s <span>suspended timer
+     handles</span>, if <var>activeTimers</var>[<var>handle</var>] <span data-x="map
+     exists">exists</span>, then increase <var>activeTimers</var>[<var>handle</var>] by
+     <var>suspendDuration</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p><span>Update the navigation API entries for reactivation</span> given
+   <var>document</var>'s <span>relevant global object</span>'s <span
+   data-x="window-navigation-api">navigation API</span>, <var>entriesForNavigationAPI</var>, and
+   <var>reactivatedEntry</var>.</p></li>
+
+   <li>
+    <p>If <var>document</var>'s <span>current document readiness</span> is "<code
+    data-x="">complete</code>", and <var>document</var>'s <span>page showing</span> is false:</p>
+
+    <ol>
+     <li><p>Set <var>document</var>'s <span>page showing</span> to true.</p></li>
+
+     <li><p>Set <var>document</var>'s <span>has been revealed</span> to false.</p>
+
+     <li><p><span>Update the visibility state</span> of <var>document</var> to "<code
+     data-x="">visible</code>".</p></li>
+
+     <li><p><span>Fire a page transition event</span> named <code
+     data-x="event-pageshow">pageshow</code> at <var>document</var>'s <span>relevant global
+     object</span> with true.</p></li>
+    </ol>
+
+    <!-- an interesting thing to test would be to traverse back during onload, before the first
+    pageshow has fired, and then to traverse forward again, and see if we get _two_ pageshows. If
+    so, it indicates that browsers don't have a "page showing" flag like this and that the history
+    traversal task source has a higher priority than the DOM manipulation task source. -->
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>try to scroll to the fragment</dfn> for a <code>Document</code> <var>document</var>,
+  perform the following steps <span>in parallel</span>:</p>
+
+  <ol>
+   <li><p>Wait for an <span>implementation-defined</span> amount of time. (This is intended to allow
+   the user agent to optimize the user experience in the face of performance concerns.)</p></li>
+
+   <li>
+    <p><span>Queue a global task</span> on the <span>navigation and traversal task source</span>
+    given <var>document</var>'s <span>relevant global object</span> to run these steps:</p>
+
+    <ol>
+     <li><p>If <var>document</var> has no parser, or its parser has <span data-x="stop
+     parsing">stopped parsing</span>, or the user agent has reason to believe the user is no longer
+     interested in scrolling to the <span data-x="concept-url-fragment">fragment</span>, then abort
+     these steps.</p></li>
+
+     <li><p><span>Scroll to the fragment</span> given <var>document</var>.</p></li>
+
+     <li><p>If <var>document</var>'s <span>indicated part</span> is still null, then <span>try to
+     scroll to the fragment</span> for <var>document</var>.</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn export>make document unsalvageable</dfn>, given a <code>Document</code>
+  <var>document</var> and a string <var>reason</var>:</p>
+
+  <ol>
+   <li><p>Let <var>details</var> be a new <span
+   data-x="nrr-details-struct">not restored reason details</span> whose <span
+   data-x="nrr-details-reason">reason</span> is <var>reason</var>.</p></li>
+
+   <li><p><span data-x="set append">Append</span> <var>details</var> to <var>document</var>'s
+   <span data-x="concept-document-bfcache-blocking-details">bfcache blocking details</span>.</p></li>
+
+   <li><p>Set <var>document</var>'s <i data-x="concept-document-salvageable">salvageable</i>
+   state to false.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>build not restored reasons for document state</dfn> given <code>Document</code>
+  <var>document</var>:</p>
+
+  <ol>
+   <li><p>Let <var>notRestoredReasonsForDocument</var> be a new <span
+   data-x="nrr-struct">not restored reasons</span>.</p></li>
+
+   <li><p>Set <var>notRestoredReasonsForDocument</var>'s <span data-x="nrr-url">URL</span> to
+   <var>document</var>'s <span data-x="concept-document-url">URL</span>.</p></li>
+
+   <li><p>Let <var>container</var> be <var>document</var>'s <span>node navigable</span>'s <span
+   data-x="nav-container">container</span>.</p></li>
+
+   <li>
+    <p>If <var>container</var> is an <code>iframe</code> element:</p>
+
+    <ol>
+     <li><p>Let <var>src</var> be the empty string.</p></li>
+
+     <li>
+      <p>If <var>container</var> has a <code data-x="dom-iframe-src">src</code> attribute:</p>
+
+      <ol>
+       <li><p>Let <var>src</var> be the result of <span>encoding-parsing-and-serializing a
+       URL</span> given <var>container</var>'s <code data-x="attr-iframe-src">src</code> attribute's
+       value, relative to <var>container</var>'s <span>node document</span>.</p></li>
+
+       <li><p>If <var>src</var> is failure, then set <var>src</var> to <var>container</var>'s <code
+       data-x="attr-iframe-src">src</code> attribute's value.</p></li>
+      </ol>
+     </li>
+
+     <li><p>Set <var>notRestoredReasonsForDocument</var>'s <span data-x="nrr-src">src</span> to
+     <var>src</var>.</p></li>
+
+     <li><p>Set <var>notRestoredReasonsForDocument</var>'s <span data-x="nrr-id">id</span> to
+     <var>container</var>'s <code data-x="attr-id">id</code> attribute's value, or the empty string
+     if it has no such attribute.</p></li>
+
+     <li><p>Set <var>notRestoredReasonsForDocument</var>'s <span data-x="nrr-name">name</span> to
+     <var>container</var>'s <code data-x="attr-iframe-name">name</code> attribute's value, or the
+     empty string if it has no such attribute.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Set <var>notRestoredReasonsForDocument</var>'s <span data-x="nrr-reasons">reasons</span>
+   to a <span data-x="list clone">clone</span> of <var>document</var>'s <span
+   data-x="concept-document-bfcache-blocking-details">bfcache blocking details</span>.</p></li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>navigable</var> of <var>document</var>'s
+    <span data-x="document-tree child navigables">document-tree child navigables</span>:</p>
+
+    <ol>
+     <li><p>Let <var>childDocument</var> be <var>navigable</var>'s <span
+     data-x="nav-document">active document</span>.</p></li>
+
+     <li><p><span>Build not restored reasons for document state</span> given
+     <var>childDocument</var>.</p></li>
+
+     <li><p><span data-x="list append">Append</span> <var>childDocument</var>'s <span
+     data-x="concept-document-nrr">not restored reasons</span> to
+     <var>notRestoredReasonsForDocument</var>'s <span data-x="nrr-children">children</span>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Set <var>document</var>'s <span>node navigable</span>'s <span
+   data-x="nav-active-history-entry">active session history entry</span>'s <span
+   data-x="she-document-state">document state</span>'s <span
+   data-x="document-state-not-restored-reasons">not restored reasons</span> to
+   <var>notRestoredReasonsForDocument</var>.</p></li>
+  </ol>
+  </div>
+
+ <div algorithm>
+ <p>To <dfn>build not restored reasons for a top-level traversable and its descendants</dfn>
+ given <span>top-level traversable</span> <var>topLevelTraversable</var>:
+ <ol>
+  <li><p><span>Build not restored reasons for document state</span> given
+  <var>topLevelTraversable</var>'s <span data-x="nav-document">active document</span>.</p></li>
+
+  <li><p>Let <var>crossOriginDescendants</var> be an empty <span>list</span>.</p></li>
+
+  <li>
+   <p><span data-x="list iterate">For each</span> <var>childNavigable</var> of
+   <var>topLevelTraversable</var>'s <span data-x="nav-document">active document</span>'s
+   <span>descendant navigables</span>:</p>
+   <ol>
+    <li><p>If <var>childNavigable</var>'s <span data-x="nav-document">active document</span>'s
+    <span data-x="concept-document-origin">origin</span> is not <span>same origin</span> with
+    <var>topLevelTraversable</var>'s <span data-x="nav-document">active document</span>'s <span
+    data-x="concept-document-origin">origin</span>, then <span data-x="list append">append</span>
+    <var>childNavigable</var> to <var>crossOriginDescendants</var>.</p></li>
+   </ol>
+  </li>
+
+  <li><p>Let <var>crossOriginDescendantsPreventsBfcache</var> be false.</p></li>
+
+  <li>
+   <p><span data-x="list iterate">For each</span> <var>crossOriginNavigable</var> of
+   <var>crossOriginDescendants</var>:</p>
+
+   <ol>
+    <li><p>Let <var>reasonsForCrossOriginChild</var> be <var>crossOriginNavigable</var>'s <span
+    data-x="nav-document">active document</span>'s <span>document state</span>'s <span
+    data-x="document-state-not-restored-reasons">not restored reasons</span>.</p></li>
+
+    <li><p>If <var>reasonsForCrossOriginChild</var>'s <span data-x="nrr-reasons">reasons</span>
+    is not empty, set <var>crossOriginDescendantsPreventsBfcache</var> to true.</p></li>
+
+    <li><p>Set <var>reasonsForCrossOriginChild</var>'s <span data-x="nrr-url">URL</span> to
+    null.</p></li>
+
+    <li><p>Set <var>reasonsForCrossOriginChild</var>'s <span data-x="nrr-reasons">reasons</span>
+    to null.</p></li>
+
+    <li><p>Set <var>reasonsForCrossOriginChild</var>'s <span data-x="nrr-children">children</span>
+    to null.</p></li>
+   </ol>
+  </li>
+
+  <li><p>If <var>crossOriginDescendantsPreventsBfcache</var> is true, <span>make document
+  unsalvageable</span> given <var>topLevelTraversable</var>'s <span
+  data-x="nav-document">active document</span> and "<code
+  data-x="blocking-masked">masked</code>".</p></li>
+ </ol>
+ </div>
+
+  <h5>Revealing the document</h5>
+
+  <p>A <code>Document</code> has a boolean <dfn>has been revealed</dfn>, initially false. It is used
+  to ensure that the <code data-x="event-pagereveal">pagereveal</code> event is fired once for each
+  activation of the <code>Document</code> (once when it's rendered initially, and once for each
+  <span data-x="reactivate a document">reactivation</span>).</p>
+
+  <div algorithm>
+  <p>To <dfn>reveal</dfn> a <code>Document</code> <var>document</var>:</p>
+
+  <ol>
+   <li><p>If <var>document</var>'s <span>has been revealed</span> is true, then return.</p></li>
+
+   <li><p>Set <var>document</var>'s <span>has been revealed</span> to true.</p></li>
+
+   <li><p>Let <var>transition</var> be the result of
+   <span>resolving inbound cross-document view-transition</span> for <var>document</var>.</p></li>
+
+   <li><p><span data-x="concept-event-fire">Fire an event</span> named
+   <code data-x="event-pagereveal">pagereveal</code> at <var>document</var>'s
+   <span>relevant global object</span>, using <code>PageRevealEvent</code> with its <code
+   data-x="dom-PageRevealEvent-viewTransition">viewTransition</code> set to
+   <var>transition</var>.</p></li>
+
+   <li>
+    <p>If <var>transition</var> is not null:</p>
+
+    <ol>
+     <li><p><span>Prepare to run script</span> given <var>document</var>'s
+     <span>relevant settings object</span>.</p></li>
+
+     <li><p><span data-x="activate view transition">Activate</span> <var>transition</var>.</p></li>
+
+     <li><p><span>Clean up after running script</span> given <var>document</var>'s
+     <span>relevant settings object</span>.</p></li>
+    </ol>
+
+    <p class="note">Activating a view transition might resolve/reject promises, so by wrapping the
+    activation with prepare/cleanup we ensure those promises are handled before the next rendering
+    step.</p>
+   </li>
+  </ol>
+  </div>
+
+  <p class="note">Though <code data-x="event-pagereveal">pagereveal</code> is guaranteed to be fired
+  during the first <span>update the rendering</span> step that displays an up-to-date version of the
+  page, user agents are free to display a cached frame of the page before firing it. This prevents
+  the presence of a <code data-x="event-pagereveal">pagereveal</code> handler from delaying the
+  presentation of such cached frame.</p>
+
+
+  <h5>Scrolling to a fragment</h5>
+
+  <div algorithm>
+  <p>To <dfn id="scroll-to-the-fragment-identifier">scroll to the fragment</dfn> given a
+  <code>Document</code> <var>document</var>:</p>
+
+  <ol>
+   <li><p>If <var>document</var>'s <span>indicated part</span> is null, then set
+   <var>document</var>'s <span>target element</span> to null.</p></li>
+
+   <li>
+    <p>Otherwise, if <var>document</var>'s <span>indicated part</span> is <span>top of the
+    document</span>:</p>
+
+    <ol>
+     <li><p>Set <var>document</var>'s <span>target element</span> to null.</p></li>
+
+     <li><p><span>Scroll to the beginning of the document</span> for <var>document</var>.
+     <ref>CSSOMVIEW</ref></p></li>
+
+     <li><p>Return.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p>Otherwise:</p>
+
+    <ol>
+     <li><p><span>Assert</span>: <var>document</var>'s <span>indicated part</span> is an
+     element.</p></li>
+
+     <li><p>Let <var>target</var> be <var>document</var>'s <span>indicated part</span>.</p></li>
+
+     <li><p>Set <var>document</var>'s <span>target element</span> to <var>target</var>.</p></li>
+
+     <li><p>Run the <span>ancestor revealing algorithm</span> on <var>target</var>.</p></li>
+
+     <li><p><span data-x="scroll a target into view">Scroll <var>target</var> into view</span>,
+     with <i>behavior</i> set to "auto", <i>block</i> set to "start", and <i>inline</i>
+     set to "nearest". <ref>CSSOMVIEW</ref></p></li>
+
+     <li><p>Run the <span>focusing steps</span> for <var>target</var>, with the
+     <code>Document</code>'s <span>viewport</span> as the <i>fallback target</i>.</p></li>
+
+     <li><p>Move the <span>sequential focus navigation starting point</span> to
+     <var>target</var>.</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>A <code>Document</code>'s <dfn id="the-indicated-part-of-the-document">indicated part</dfn> is
+  the one that its <span data-x="concept-document-url">URL</span>'s <span
+  data-x="concept-url-fragment">fragment</span> identifies, or null if the fragment does not
+  identify anything. The semantics of the <span data-x="concept-url-fragment">fragment</span> in
+  terms of mapping it to a node is defined by the specification that defines the <span>MIME
+  type</span> used by the <code>Document</code> (for example, the processing of <span
+  data-x="concept-url-fragment">fragments</span> for <span data-x="XML MIME type">XML MIME
+  types</span> is the responsibility of RFC7303). <ref>RFC7303</ref></p>
+  </div>
+
+  <p>There is also a <dfn>target element</dfn> for each <code>Document</code>, which is used in
+  defining the <code data-x="selector-target">:target</code> pseudo-class and is updated by the
+  above algorithm. It is initially null.</p>
+
+  <div algorithm>
+  <p>For an <span data-x="HTML documents">HTML document</span> <var>document</var>, its
+  <span>indicated part</span> is the result
+  of <span data-x="select the indicated part">selecting the indicated part</span> given
+  <var>document</var> and <var>document</var>'s <span
+  data-x="concept-document-url">URL</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>select the indicated part</dfn> given a <code>Document</code> <var>document</var> and a
+  <span>URL</span> <var>url</var>:</p>
+
+  <ol>
+   <li><p>If <var>document</var>'s <span
+   data-x="concept-document-url">URL</span> does not <span data-x="concept-url-equals">equal</span>
+   <var>url</var> with <i data-x="url equals exclude fragments">exclude fragments</i> set to
+   true, then return null.</p></li>
+
+   <li><p>Let <var>fragment</var> be <var>url</var>'s <span
+   data-x="concept-url-fragment">fragment</span>.</p></li>
+
+   <li><p>If <var>fragment</var> is the empty string, then return the special value <dfn>top of the
+   document</dfn>.</p></li>
+
+   <li><p>Let <var>potentialIndicatedElement</var> be the result of <span data-x="find a potential
+   indicated element">finding a potential indicated element</span> given <var>document</var> and
+   <var>fragment</var>.</p></li>
+
+   <li><p>If <var>potentialIndicatedElement</var> is not null, then return
+   <var>potentialIndicatedElement</var>.</p></li>
+
+   <li><p>Let <var>fragmentBytes</var> be the result of <span
+   data-x="percent-decode">percent-decoding</span> <var>fragment</var>.</p></li>
+
+   <li><p>Let <var>decodedFragment</var> be the result of running <span>UTF-8 decode without
+   BOM</span> on <var>fragmentBytes</var>.</p></li>
+
+   <li><p>Set <var>potentialIndicatedElement</var> to the result of <span data-x="find a potential
+   indicated element">finding a potential indicated element</span> given <var>document</var> and
+   <var>decodedFragment</var>.</p></li>
+
+   <li><p>If <var>potentialIndicatedElement</var> is not null, then return
+   <var>potentialIndicatedElement</var>.</p></li>
+
+   <li><p>If <var>decodedFragment</var> is an <span>ASCII case-insensitive</span> match for the
+   string <code data-x="">top</code>, then return the <span>top of the document</span>.</p></li>
+
+   <li><p>Return null.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>find a potential indicated element</dfn> given a <code>Document</code>
+  <var>document</var> and a string <var>fragment</var>, run these steps:</p>
+
+  <ol>
+   <li><p>If there is an element <span data-x="in a document tree">in the document tree</span>
+   whose <span>root</span> is <var>document</var> and that has an <span
+   data-x="concept-id">ID</span> equal to <var>fragment</var>, then return the first such element
+   in <span>tree order</span>.</p></li>
+
+   <li><p>If there is an <code>a</code> element <span data-x="in a document tree">in the document
+   tree</span> whose <span>root</span> is <var>document</var> that has a <code
+   data-x="attr-a-name">name</code> attribute whose value is equal to <var>fragment</var>, then
+   return the first such element in <span>tree order</span>.</p></li>
+
+   <li><p>Return null.</p></li>
+  </ol>
+  </div>
+
+
+  <h5 id="persisted-user-state-restoration">Persisted history entry state</h5>
+
+  <div algorithm>
+  <p>To <dfn>save persisted state</dfn> to a <span>session history entry</span>
+  <var>entry</var>:</p>
+
+  <ol>
+   <li><p>Set the <span data-x="she-scroll-position">scroll position data</span> of <var>entry</var>
+   to contain the scroll positions for all of <var>entry</var>'s <span
+   data-x="she-document">document</span>'s <span>restorable scrollable regions</span>.</p></li>
+
+   <li><p>Optionally, update <var>entry</var>'s <span data-x="she-other">persisted user state</span>
+   to reflect any state that the user agent wishes to persist, such as the values of form
+   fields.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p id="restore-persisted-user-state">To <dfn>restore persisted state</dfn> from a <span>session
+  history entry</span> <var>entry</var>:</p>
+
+  <ol>
+   <li>
+    <p>If <var>entry</var>'s <span data-x="she-scroll-restoration-mode">scroll restoration
+    mode</span> is "<code data-x="dom-ScrollRestoration-auto">auto</code>", and <var>entry</var>'s
+    <span data-x="she-document">document</span>'s <span>relevant global object</span>'s <span
+    data-x="window-navigation-api">navigation API</span>'s <span>suppress normal scroll restoration
+    during ongoing navigation</span> is false, then <span>restore scroll position data</span> given
+    <var>entry</var>.</p>
+
+    <p class="note">The user agent not restoring scroll positions does not imply that scroll
+    positions will be left at any particular value (e.g., (0,0)). The actual scroll position depends
+    on the navigation type and the user agent's particular caching strategy. So web applications
+    cannot assume any particular scroll position but rather are urged to set it to what they want it
+    to be.</p>
+
+    <p class="note">If <span>suppress normal scroll restoration during ongoing navigation</span> is
+    true, then <span data-x="restore scroll position data">restoring scroll position data</span>
+    might still happen at a later point, as part of <span
+    data-x="NavigateEvent-finish">finishing</span> the relevant <code>NavigateEvent</code>, or via a
+    <code data-x="dom-NavigateEvent-scroll">navigateEvent.scroll()</code> method call.</p>
+   </li>
+
+   <li>
+    <p>Optionally, update other aspects of <var>entry</var>'s <span
+    data-x="she-document">document</span> and its rendering, for instance values of form fields,
+    that the user agent had previously recorded in <var>entry</var>'s <span
+    data-x="she-other">persisted user state</span>.</p>
+
+    <p class="note">This can even include updating the <code data-x="attr-dir">dir</code> attribute
+    of <code>textarea</code> elements or <code>input</code> elements whose <code
+    data-x="attr-input-type">type</code> attribute is in the <span
+    data-x="attr-input-type-text">Text</span>, <span data-x="attr-input-type-search">Search</span>,
+    <span data-x="attr-input-type-tel">Telephone</span>, <span
+    data-x="attr-input-type-url">URL</span>, or <span data-x="attr-input-type-email">Email</span>
+    state, if the persisted state includes the directionality of user input in such controls.</p>
+
+    <p class="note">Restoring the value of form controls as part of this process does not fire any
+    <code data-x="event-input">input</code> or <code data-x="event-change">change</code> events, but
+    can trigger the <code data-x="">formStateRestoreCallback</code> of <span data-x="form-associated
+    custom element">form-associated custom elements</span>.</p>
+   </li>
+  </ol>
+  </div>
+
+  <hr>
+
+  <p>Each <code>Document</code> has a boolean <dfn>has been scrolled by the user</dfn>, initially
+  false. If the user scrolls the document, the user agent must set that document's <span>has been
+  scrolled by the user</span> to true.</p>
+
+  <div algorithm>
+  <p>The <dfn>restorable scrollable regions</dfn> of a <code>Document</code> <var>document</var>
+  are <var>document</var>'s <span>viewport</span>, and all of <var>document</var>'s scrollable
+  regions excepting any <span data-x="navigable container">navigable containers</span>.</p>
+  </div>
+
+  <p class="note"><span>Child navigable</span> scroll restoration is handled as part of state
+  restoration for the <span>session history entry</span> for those <span
+  data-x="navigable">navigables</span>' <code>Document</code>s.</p>
+
+  <div algorithm>
+  <p>To <dfn>restore scroll position data</dfn> given a <span>session history entry</span>
+  <var>entry</var>:</p>
+
+  <ol>
+   <li><p>Let <var>document</var> be <var>entry</var>'s <span
+   data-x="she-document">document</span>.</p></li>
+
+   <li><p>If <var>document</var>'s <span>has been scrolled by the user</span> is true, then the
+   user agent should return.</p></li>
+
+   <li>
+    <p>The user agent should attempt to use <var>entry</var>'s <span
+    data-x="she-scroll-position">scroll position data</span> to restore the scroll positions of
+    <var>entry</var>'s <span data-x="she-document">document</span>'s <span>restorable scrollable
+    regions</span>. The user agent may continue to attempt to do so periodically, until
+    <var>document</var>'s <span>has been scrolled by the user</span> becomes true.</p>
+
+    <p class="note">This is formulated as an <em>attempt</em>, which is potentially repeated until
+    success or until the user scrolls, due to the fact that relevant content indicated by the <span
+    data-x="she-scroll-position">scroll position data</span> might take some time to load from the
+    network.</p>
+
+    <p class="note">Scroll restoration might be affected by scroll anchoring.
+    <ref>CSSSCROLLANCHORING</ref></p>
+   </li>
+  </ol>
+  </div>
+
+
+  <h3 split-filename="document-lifecycle">Document lifecycle</h3>
+

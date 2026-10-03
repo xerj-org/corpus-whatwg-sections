@@ -1,0 +1,199 @@
+WHATWG HTML — section simple-dialogs — Simple dialogs
+
+  <h4>Simple dialogs</h4>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>window</var>.<span subdfn data-x="dom-alert">alert</span>(<var>message</var>)</code></dt>
+   <dd><p>Displays a modal alert with the given message, and waits for the user to dismiss
+   it.</p></dd>
+
+   <dt><code data-x=""><var>result</var> = <var>window</var>.<span subdfn data-x="dom-confirm">confirm</span>(<var>message</var>)</code></dt>
+   <dd>
+    <p>Displays a modal OK/Cancel prompt with the given message, waits for the user to dismiss it,
+    and returns true if the user clicks OK and false if the user clicks Cancel.</p>
+   </dd>
+
+   <dt><code data-x=""><var>result</var> = <var>window</var>.<span subdfn data-x="dom-prompt">prompt</span>(<var>message</var> [, <var>default</var>])</code></dt>
+   <dd>
+    <p>Displays a modal text control prompt with the given message, waits for the user to dismiss
+    it, and returns the value that the user entered. If the user cancels the prompt, then returns
+    null instead. If the second argument is present, then the given value is used as a default.</p>
+   </dd>
+  </dl>
+
+  <p class="note">Logic that depends on <span data-x="concept-task">tasks</span> or <span
+  data-x="microtask">microtasks</span>, such as <span data-x="media element">media elements</span>
+  loading their <span>media data</span>, are stalled when these methods are invoked.</p>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn method for="Window"><code data-x="dom-alert-noargs">alert()</code></dfn> and <dfn
+  method for="Window"><code data-x="dom-alert">alert(<var>message</var>)</code></dfn> method steps
+  are:</p>
+
+  <ol>
+   <li><p>If we <span>cannot show simple dialogs</span> for <span>this</span>, then return.</p></li>
+
+   <li><p>If the method was invoked with no arguments, then let <var>message</var> be the
+   empty string; otherwise, let <var>message</var> be the method's first
+   argument.</p></li>
+
+   <li><p>Set <var>message</var> to the result of <span data-x="normalize newlines">normalizing
+   newlines</span> given <var>message</var>.</p></li>
+
+   <li><p>Set <var>message</var> to the result of <span data-x="optionally truncate a simple dialog
+   string">optionally truncating</span> <var>message</var>.</p></li>
+
+   <li><p>Let <var>userPromptHandler</var> be <span>WebDriver BiDi user prompt opened</span> with
+   <span>this</span>, "<code data-x="">alert</code>", and <var>message</var>.</p></li>
+
+   <li>
+    <p>If <var>userPromptHandler</var> is "<code data-x="">none</code>":</p>
+
+    <ol>
+     <li><p>Show <var>message</var> to the user, treating U+000A LF as a line break.</p></li>
+
+     <li><p>Optionally, <span>pause</span> while waiting for the user to acknowledge the
+     message.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Invoke <span>WebDriver BiDi user prompt closed</span> with <span>this</span>,
+   "<code data-x="">alert</code>", and true.</p></li>
+  </ol>
+  </div>
+
+  <p class="note">This method is defined using two overloads, instead of using an
+  <!--non-normative-->optional argument, for historical reasons. The practical impact of this is
+  that <code data-x="" class="js">alert(undefined)</code> is treated as <code data-x=""
+  class="js">alert("undefined")</code>, but <code data-x="" class="js">alert()</code> is treated as
+  <code data-x="" class="js">alert("")</code>.</p>
+
+  <div algorithm>
+  <p>The <dfn method for="Window"><code
+  data-x="dom-confirm">confirm(<var>message</var>)</code></dfn> method steps are:</p>
+
+  <ol>
+   <li><p>If we <span>cannot show simple dialogs</span> for <span>this</span>, then return
+   false.</p></li>
+
+   <li><p>Set <var>message</var> to the result of <span data-x="normalize newlines">normalizing
+   newlines</span> given <var>message</var>.</p></li>
+
+   <li><p>Set <var>message</var> to the result of <span data-x="optionally truncate a simple dialog
+   string">optionally truncating</span> <var>message</var>.</p></li>
+
+   <li><p>Show <var>message</var> to the user, treating U+000A LF as a line break, and ask the user
+   to respond with a positive or negative response.</p></li>
+
+   <li><p>Let <var>userPromptHandler</var> be <span>WebDriver BiDi user prompt opened</span> with
+   <span>this</span>, "<code data-x="">confirm</code>", and <var>message</var>.</p></li>
+
+   <li><p>Let <var>accepted</var> be false.</p></li>
+
+   <li>
+    <p>If <var>userPromptHandler</var> is "<code data-x="">none</code>":</p>
+
+    <ol>
+     <li><p><span>Pause</span> until the user responds either positively or negatively.</p></li>
+
+     <li><p>If the user responded positively, then set <var>accepted</var> to true.</p></li>
+    </ol>
+   </li>
+
+   <li><p>If <var>userPromptHandler</var> is "<code data-x="">accept</code>", then set
+   <var>accepted</var> to true.</p></li>
+
+   <li><p>Invoke <span>WebDriver BiDi user prompt closed</span> with <span>this</span>,
+   "<code data-x="">confirm</code>", and <var>accepted</var>.</p></li>
+
+   <li><p>Return <var>accepted</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="Window"><code data-x="dom-prompt">prompt(<var>message</var>,
+  <var>default</var>)</code></dfn> method steps are:</p>
+
+  <ol>
+   <li><p>If we <span>cannot show simple dialogs</span> for <span>this</span>, then return
+   null.</p></li>
+
+   <li><p>Set <var>message</var> to the result of <span data-x="normalize newlines">normalizing
+   newlines</span> given <var>message</var>.</p></li>
+
+   <li><p>Set <var>message</var> to the result of <span data-x="optionally truncate a simple dialog
+   string">optionally truncating</span> <var>message</var>.</p></li>
+
+   <li><p>Set <var>default</var> to the result of <span data-x="optionally truncate a simple dialog
+   string">optionally truncating</span> <var>default</var>.</p></li>
+
+   <li><p>Show <var>message</var> to the user, treating U+000A LF as a line break, and ask the user
+   to either respond with a string value or abort. The response must be defaulted to the value given
+   by <var>default</var>.</p></li>
+
+   <li><p>Let <var>userPromptHandler</var> be <span>WebDriver BiDi user prompt opened</span> with
+   <span>this</span>, "<code data-x="">prompt</code>", and <var>message</var>.</p></li>
+
+   <li><p>Let <var>result</var> be null.</p></li>
+
+   <li>
+    <p>If <var>userPromptHandler</var> is "<code data-x="">none</code>":</p>
+
+    <ol>
+     <li><p><span>Pause</span> while waiting for the user's response.</p></li>
+
+     <li><p>If the user did not abort, then set <var>result</var> to the string that the user
+     responded with.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Otherwise, if <var>userPromptHandler</var> is "<code data-x="">accept</code>", then set
+   <var>result</var> to the empty string.</p></li>
+
+   <li><p>Invoke <span>WebDriver BiDi user prompt closed</span> with <span>this</span>,
+   "<code data-x="">prompt</code>", false if <var>result</var> is null or true otherwise,
+   and <var>result</var>.</p></li>
+
+   <li><p>Return <var>result</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>optionally truncate a simple dialog string</dfn> <var>s</var>, return either
+  <var>s</var> itself or some string derived from <var>s</var> that is shorter. User agents should
+  not provide UI for displaying the elided portion of <var>s</var>, as this makes it too easy for
+  abusers to create dialogs of the form "Important security alert! Click 'Show More' for full
+  details!".</p>
+  </div>
+
+  <p class="note">For example, a user agent might want to only display the first 100 characters of a
+  message. Or, a user agent might replace the middle of the string with "&hellip;". These types of
+  modifications can be useful in limiting the abuse potential of unnaturally large,
+  trustworthy-looking system dialogs.</p>
+
+  <div algorithm>
+  <p>We <dfn>cannot show simple dialogs</dfn> for a <code>Window</code> <var>window</var> when the
+  following algorithm returns true:</p>
+
+  <ol>
+   <li><p>If the <span>active sandboxing flag set</span> of <var>window</var>'s <span
+   data-x="concept-document-window">associated <code>Document</code></span> has the <span>sandboxed
+   modals flag</span> set, then return true.</p></li>
+
+   <li>If <var>window</var>'s <span>relevant agent</span>'s <span
+   data-x="concept-agent-event-loop">event loop</span>'s <span>termination nesting level</span> is
+   nonzero, then optionally return true.</li>
+
+   <li><p>Optionally, return true. (For example, the user agent might give the
+   user the option to ignore all modal dialogs, and would thus abort at this step whenever the method was
+   invoked.)</p></li>
+
+   <li><p>Return false.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+

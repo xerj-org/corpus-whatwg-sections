@@ -1,0 +1,46 @@
+WHATWG HTML — section button-layout — Button layout
+
+  <h4>Button layout</h4>
+
+  <div algorithm>
+  <p>When an element uses <span>button layout</span>, it is a <span>devolvable widget</span>, and
+  its <span>native appearance</span> is that of a button.</p>
+  </div>
+
+  <div algorithm>
+  <p><dfn>Button layout</dfn> is as follows:</p>
+
+  <ul>
+   <li>
+    <p>If the element is a <code>button</code> element, then the <span>'display'</span> property is
+    <span>expected</span> to act as follows:</p>
+
+    <ul>
+     <li><p>If the computed value of <span>'display'</span> is 'inline-grid', 'grid',
+     'inline-flex', 'flex', 'none', or 'contents', then behave as the computed value.</p></li>
+
+     <li><p>Otherwise, if the computed value of <span>'display'</span> is a value such that the
+     <span>outer display type</span> is 'inline', then behave as 'inline-block'.</p></li>
+
+     <li><p>Otherwise, behave as 'flow-root'.</p></li>
+    </ul>
+   </li>
+
+   <li><p>The element is <span>expected</span> to establish a new <span>formatting context</span>
+   for its contents. The type of this formatting context is determined by its
+   <span>'display'</span> value, as usual.</p></li>
+
+   <li><p>If the element is <span>absolutely-positioned</span>, then for the purpose of the
+   <a href="https://drafts.csswg.org/css2/#visuren">CSS visual formatting model</a>, act as if
+   the element is a <span>replaced element</span>. <ref>CSS</ref></p></li>
+
+   <li><p>If the <span>computed value</span> of <span>'inline-size'</span> is 'auto', then the
+   <span>used value</span> is the <span>fit-content inline size</span>.</p></li>
+
+   <li><p>For the purpose of the 'normal' keyword of the <span>'align-self'</span> property, act
+   as if the element is a replaced element.</p></li>
+  </ul>
+  </div>
+
+  <p class="XXX">Need to define the <span>primitive appearance</span>.</p>
+

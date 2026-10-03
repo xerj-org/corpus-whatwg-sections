@@ -1,0 +1,33 @@
+WHATWG HTML — section dependencies/webxr-device-api — WebXR Device API
+
+  <dt>WebXR Device API</dt>
+
+  <dd>
+   <p>The following terms are defined in <cite>WebXR Device API</cite>:</p>
+
+   <ul class="brief">
+    <li><dfn data-x-href="https://immersive-web.github.io/webxr/#xrsystem"><code>XRSystem</code></dfn></li>
+   </ul>
+  </dd>
+
+ </dl>
+
+  <hr>
+
+  <p>This specification does not <em>require</em> support of any particular network protocol, style
+  sheet language, scripting language, or any of the DOM specifications beyond those required in the
+  list above. However, the language described by this specification is biased towards CSS as the
+  styling language, JavaScript as the scripting language, and HTTP as the network protocol, and
+  several features assume that those languages and protocols are in use.</p>
+
+  <p>A user agent that implements the HTTP protocol must implement <cite>HTTP State Management
+  Mechanism</cite> (Cookies) as well. <ref>HTTP</ref> <ref>COOKIES</ref></p>
+
+  <p class="note">This specification might have certain additional requirements on character
+  encodings, image formats, audio formats, and video formats in the respective sections.</p>
+
+  </div>
+
+
+
+

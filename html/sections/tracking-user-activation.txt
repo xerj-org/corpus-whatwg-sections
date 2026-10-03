@@ -1,0 +1,11 @@
+WHATWG HTML — section tracking-user-activation — Tracking <dfn export>user activation</dfn>
+
+  <h3>Tracking <dfn export>user activation</dfn></h3>
+
+  <p>To prevent abuse of certain APIs that could be annoying to users (e.g., opening popups or
+  vibrating phones), user agents allow these APIs only when the user is actively interacting with
+  the web page or has interacted with the page at least once. This "active interaction" state is
+  maintained through the mechanisms defined in this section.</p>
+
+  <div w-nodev>
+

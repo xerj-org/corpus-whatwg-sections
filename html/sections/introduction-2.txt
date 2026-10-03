@@ -1,0 +1,565 @@
+WHATWG HTML — section introduction — Introduction
+
+  <h4>Introduction</h4>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>A form is a component of a web page that has form controls, such as text, buttons, checkboxes,
+  range, or color picker controls. A user can interact with such a form, providing data that can
+  then be sent to the server for further processing (e.g. returning the results of a search or
+  calculation). No client-side scripting is needed in many cases, though an API is available so that
+  scripts can augment the user experience or use forms for purposes other than submitting data to a
+  server.</p>
+
+  <p>Writing a form consists of several steps, which can be performed in any order: writing the user
+  interface, implementing the server-side processing, and configuring the user interface to
+  communicate with the server.</p>
+
+
+  <h5>Writing a form's user interface</h5>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>For the purposes of this brief introduction, we will create a pizza ordering form.</p>
+
+  <p>Any form starts with a <code>form</code> element, inside which are placed the controls. Most
+  controls are represented by the <code>input</code> element, which by default provides a text
+  control. To label a control, the <code>label</code> element is used; the label text and the
+  control itself go inside the <code>label</code> element. Each part of a form is considered a
+  <span>paragraph</span>, and is typically separated from other parts using <code>p</code> elements.
+  Putting this together, here is how one might ask for the customer's name:</p>
+
+  <pre><code class="html"><strong>&lt;form>
+ &lt;p>&lt;label>Customer name: &lt;input>&lt;/label>&lt;/p>
+&lt;/form></strong></code></pre>
+
+  <p>To let the user select the size of the pizza, we can use a set of radio buttons. Radio buttons
+  also use the <code>input</code> element, this time with a <code
+  data-x="attr-input-type">type</code> attribute with the value <code
+  data-x="attr-input-type-radio">radio</code>. To make the radio buttons work as a group, they are
+  given a common name using the <code data-x="attr-fe-name">name</code> attribute. To group a batch
+  of controls together, such as, in this case, the radio buttons, one can use the
+  <code>fieldset</code> element. The title of such a group of controls is given by the first element
+  in the <code>fieldset</code>, which has to be a <code>legend</code> element.</p>
+
+  <pre><code class="html">&lt;form>
+ &lt;p>&lt;label>Customer name: &lt;input>&lt;/label>&lt;/p>
+<strong> &lt;fieldset>
+  &lt;legend> Pizza Size &lt;/legend>
+  &lt;p>&lt;label> &lt;input type=radio name=size> Small &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=radio name=size> Medium &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=radio name=size> Large &lt;/label>&lt;/p>
+ &lt;/fieldset></strong>
+&lt;/form></code></pre>
+
+  <p class="note">Changes from the previous step are highlighted.</p>
+
+  <p>To pick toppings, we can use checkboxes. These use the <code>input</code> element with a <code
+  data-x="attr-input-type">type</code> attribute with the value <code
+  data-x="attr-input-type-checkbox">checkbox</code>:</p>
+
+  <pre><code class="html">&lt;form>
+ &lt;p>&lt;label>Customer name: &lt;input>&lt;/label>&lt;/p>
+ &lt;fieldset>
+  &lt;legend> Pizza Size &lt;/legend>
+  &lt;p>&lt;label> &lt;input type=radio name=size> Small &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=radio name=size> Medium &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=radio name=size> Large &lt;/label>&lt;/p>
+ &lt;/fieldset>
+<strong> &lt;fieldset>
+  &lt;legend> Pizza Toppings &lt;/legend>
+  &lt;p>&lt;label> &lt;input type=checkbox> Bacon &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=checkbox> Extra Cheese &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=checkbox> Onion &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=checkbox> Mushroom &lt;/label>&lt;/p>
+ &lt;/fieldset></strong>
+&lt;/form></code></pre>
+
+  <p>The pizzeria for which this form is being written is always making mistakes, so it needs a way
+  to contact the customer. For this purpose, we can use form controls specifically for telephone
+  numbers (<code>input</code> elements with their <code data-x="attr-input-type">type</code>
+  attribute set to <code data-x="attr-input-type-tel">tel</code>) and email addresses
+  (<code>input</code> elements with their <code data-x="attr-input-type">type</code> attribute set
+  to <code data-x="attr-input-type-email">email</code>):</p>
+
+  <pre><code class="html">&lt;form>
+ &lt;p>&lt;label>Customer name: &lt;input>&lt;/label>&lt;/p>
+<strong> &lt;p>&lt;label>Telephone: &lt;input type=tel>&lt;/label>&lt;/p>
+ &lt;p>&lt;label>Email address: &lt;input type=email>&lt;/label>&lt;/p></strong>
+ &lt;fieldset>
+  &lt;legend> Pizza Size &lt;/legend>
+  &lt;p>&lt;label> &lt;input type=radio name=size> Small &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=radio name=size> Medium &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=radio name=size> Large &lt;/label>&lt;/p>
+ &lt;/fieldset>
+ &lt;fieldset>
+  &lt;legend> Pizza Toppings &lt;/legend>
+  &lt;p>&lt;label> &lt;input type=checkbox> Bacon &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=checkbox> Extra Cheese &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=checkbox> Onion &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=checkbox> Mushroom &lt;/label>&lt;/p>
+ &lt;/fieldset>
+&lt;/form></code></pre>
+
+  <p>We can use an <code>input</code> element with its <code data-x="attr-input-type">type</code>
+  attribute set to <code data-x="attr-input-type-time">time</code> to ask for a delivery time. Many
+  of these form controls have attributes to control exactly what values can be specified; in this
+  case, three attributes of particular interest are <code data-x="attr-input-min">min</code>, <code
+  data-x="attr-input-max">max</code>, and <code data-x="attr-input-step">step</code>. These set the
+  minimum time, the maximum time, and the interval between allowed values (in seconds). This
+  pizzeria only delivers between 11am and 9pm, and doesn't promise anything better than 15 minute
+  increments, which we can mark up as follows:</p>
+
+  <pre><code class="html">&lt;form>
+ &lt;p>&lt;label>Customer name: &lt;input>&lt;/label>&lt;/p>
+ &lt;p>&lt;label>Telephone: &lt;input type=tel>&lt;/label>&lt;/p>
+ &lt;p>&lt;label>Email address: &lt;input type=email>&lt;/label>&lt;/p>
+ &lt;fieldset>
+  &lt;legend> Pizza Size &lt;/legend>
+  &lt;p>&lt;label> &lt;input type=radio name=size> Small &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=radio name=size> Medium &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=radio name=size> Large &lt;/label>&lt;/p>
+ &lt;/fieldset>
+ &lt;fieldset>
+  &lt;legend> Pizza Toppings &lt;/legend>
+  &lt;p>&lt;label> &lt;input type=checkbox> Bacon &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=checkbox> Extra Cheese &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=checkbox> Onion &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=checkbox> Mushroom &lt;/label>&lt;/p>
+ &lt;/fieldset>
+<strong> &lt;p>&lt;label>Preferred delivery time: &lt;input type=time min="11:00" max="21:00" step="900">&lt;/label>&lt;/p></strong>
+&lt;/form></code></pre>
+
+  <p>The <code>textarea</code> element can be used to provide a multiline text control. In this
+  instance, we are going to use it to provide a space for the customer to give delivery
+  instructions:</p>
+
+  <pre><code class="html">&lt;form>
+ &lt;p>&lt;label>Customer name: &lt;input>&lt;/label>&lt;/p>
+ &lt;p>&lt;label>Telephone: &lt;input type=tel>&lt;/label>&lt;/p>
+ &lt;p>&lt;label>Email address: &lt;input type=email>&lt;/label>&lt;/p>
+ &lt;fieldset>
+  &lt;legend> Pizza Size &lt;/legend>
+  &lt;p>&lt;label> &lt;input type=radio name=size> Small &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=radio name=size> Medium &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=radio name=size> Large &lt;/label>&lt;/p>
+ &lt;/fieldset>
+ &lt;fieldset>
+  &lt;legend> Pizza Toppings &lt;/legend>
+  &lt;p>&lt;label> &lt;input type=checkbox> Bacon &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=checkbox> Extra Cheese &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=checkbox> Onion &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=checkbox> Mushroom &lt;/label>&lt;/p>
+ &lt;/fieldset>
+ &lt;p>&lt;label>Preferred delivery time: &lt;input type=time min="11:00" max="21:00" step="900">&lt;/label>&lt;/p>
+<strong> &lt;p>&lt;label>Delivery instructions: &lt;textarea>&lt;/textarea>&lt;/label>&lt;/p></strong>
+&lt;/form></code></pre>
+
+  <p>Finally, to make the form submittable we use the <code>button</code> element:</p>
+
+  <pre><code class="html">&lt;form>
+ &lt;p>&lt;label>Customer name: &lt;input>&lt;/label>&lt;/p>
+ &lt;p>&lt;label>Telephone: &lt;input type=tel>&lt;/label>&lt;/p>
+ &lt;p>&lt;label>Email address: &lt;input type=email>&lt;/label>&lt;/p>
+ &lt;fieldset>
+  &lt;legend> Pizza Size &lt;/legend>
+  &lt;p>&lt;label> &lt;input type=radio name=size> Small &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=radio name=size> Medium &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=radio name=size> Large &lt;/label>&lt;/p>
+ &lt;/fieldset>
+ &lt;fieldset>
+  &lt;legend> Pizza Toppings &lt;/legend>
+  &lt;p>&lt;label> &lt;input type=checkbox> Bacon &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=checkbox> Extra Cheese &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=checkbox> Onion &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=checkbox> Mushroom &lt;/label>&lt;/p>
+ &lt;/fieldset>
+ &lt;p>&lt;label>Preferred delivery time: &lt;input type=time min="11:00" max="21:00" step="900">&lt;/label>&lt;/p>
+ &lt;p>&lt;label>Delivery instructions: &lt;textarea>&lt;/textarea>&lt;/label>&lt;/p>
+<strong> &lt;p>&lt;button>Submit order&lt;/button>&lt;/p></strong>
+&lt;/form></code></pre>
+
+
+  <h5>Implementing the server-side processing for a form</h5>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>The exact details for writing a server-side processor are out of scope for this specification.
+  For the purposes of this introduction, we will assume that the script at <code
+  data-x="">https://pizza.example.com/order.cgi</code> is configured to accept submissions using the
+  <code data-x="attr-fs-enctype-urlencoded">application/x-www-form-urlencoded</code> format,
+  expecting the following parameters sent in an HTTP POST body:</p>
+
+  <dl>
+   <dt><code data-x="">custname</code></dt>
+   <dd>Customer's name</dd>
+
+   <dt><code data-x="">custtel</code></dt>
+   <dd>Customer's telephone number</dd>
+
+   <dt><code data-x="">custemail</code></dt>
+   <dd>Customer's email address</dd>
+
+   <dt><code data-x="">size</code></dt>
+   <dd>The pizza size, either <code data-x="">small</code>, <code data-x="">medium</code>, or <code data-x="">large</code></dd>
+
+   <dt><code data-x="">topping</code></dt>
+   <dd>A topping, specified once for each selected topping, with the allowed values being <code data-x="">bacon</code>, <code data-x="">cheese</code>, <code data-x="">onion</code>, and <code data-x="">mushroom</code></dd>
+
+   <dt><code data-x="">delivery</code></dt>
+   <dd>The requested delivery time</dd>
+
+   <dt><code data-x="">comments</code></dt>
+   <dd>The delivery instructions</dd>
+  </dl>
+
+
+  <h5>Configuring a form to communicate with a server</h5>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>Form submissions are exposed to servers in a variety of ways, most commonly as HTTP GET or POST
+  requests. To specify the exact method used, the <code data-x="attr-fs-method">method</code>
+  attribute is specified on the <code>form</code> element. This doesn't specify how the form data is
+  encoded, though; to specify that, you use the <code data-x="attr-fs-enctype">enctype</code>
+  attribute. You also have to specify the <span>URL</span> of the service that will handle the
+  submitted data, using the <code data-x="attr-fs-action">action</code> attribute.</p>
+
+  <p>For each form control you want submitted, you then have to give a name that will be used to
+  refer to the data in the submission. We already specified the name for the group of radio buttons;
+  the same attribute (<code data-x="attr-fe-name">name</code>) also specifies the submission name.
+  Radio buttons can be distinguished from each other in the submission by giving them different
+  values, using the <code data-x="attr-input-value">value</code> attribute.</p>
+
+  <p>Multiple controls can have the same name; for example, here we give all the checkboxes the same
+  name, and the server distinguishes which checkbox was checked by seeing which values are submitted
+  with that name &mdash; like the radio buttons, they are also given unique values with the <code
+  data-x="attr-input-value">value</code> attribute.</p>
+
+  <p>Given the settings in the previous section, this all becomes:</p>
+
+  <pre><code class="html">&lt;form<strong> method="post"
+      enctype="application/x-www-form-urlencoded"
+      action="https://pizza.example.com/order.cgi"</strong>>
+ &lt;p>&lt;label>Customer name: &lt;input<strong> name="custname"</strong>>&lt;/label>&lt;/p>
+ &lt;p>&lt;label>Telephone: &lt;input type=tel<strong> name="custtel"</strong>>&lt;/label>&lt;/p>
+ &lt;p>&lt;label>Email address: &lt;input type=email<strong> name="custemail"</strong>>&lt;/label>&lt;/p>
+ &lt;fieldset>
+  &lt;legend> Pizza Size &lt;/legend>
+  &lt;p>&lt;label> &lt;input type=radio name=size<strong> value="small"</strong>> Small &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=radio name=size<strong> value="medium"</strong>> Medium &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=radio name=size<strong> value="large"</strong>> Large &lt;/label>&lt;/p>
+ &lt;/fieldset>
+ &lt;fieldset>
+  &lt;legend> Pizza Toppings &lt;/legend>
+  &lt;p>&lt;label> &lt;input type=checkbox<strong> name="topping" value="bacon"</strong>> Bacon &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=checkbox<strong> name="topping" value="cheese"</strong>> Extra Cheese &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=checkbox<strong> name="topping" value="onion"</strong>> Onion &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=checkbox<strong> name="topping" value="mushroom"</strong>> Mushroom &lt;/label>&lt;/p>
+ &lt;/fieldset>
+ &lt;p>&lt;label>Preferred delivery time: &lt;input type=time min="11:00" max="21:00" step="900"<strong> name="delivery"</strong>>&lt;/label>&lt;/p>
+ &lt;p>&lt;label>Delivery instructions: &lt;textarea<strong> name="comments"</strong>>&lt;/textarea>&lt;/label>&lt;/p>
+ &lt;p>&lt;button>Submit order&lt;/button>&lt;/p>
+&lt;/form></code></pre>
+
+  <p class="note">There is no particular significance to the way some of the attributes have their
+  values quoted and others don't. The HTML syntax allows a variety of equally valid ways to specify
+  attributes, as discussed <span data-x="syntax-attributes">in the syntax section</span>.</p>
+
+  <p>For example, if the customer entered "Denise Lawrence" as their name, "555-321-8642" as their
+  telephone number, did not specify an email address, asked for a medium-sized pizza, selected the
+  Extra Cheese and Mushroom toppings, entered a delivery time of 7pm, and left the delivery
+  instructions text control blank, the user agent would submit the following to the online web
+  service:</p>
+
+  <pre><code class="html">custname=Denise+Lawrence&amp;custtel=555-321-8642&amp;custemail=&amp;size=medium&amp;topping=cheese&amp;topping=mushroom&amp;delivery=19%3A00&amp;comments=</code></pre>
+
+
+  <h5>Client-side form validation</h5>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>Forms can be annotated in such a way that the user agent will check the user's input before the
+  form is submitted. The server still has to verify the input is valid (since hostile users can
+  easily bypass the form validation), but it allows the user to avoid the wait incurred by having
+  the server be the sole checker of the user's input.</p>
+
+  <p>The simplest annotation is the <code data-x="attr-input-required">required</code> attribute,
+  which can be specified on <code>input</code> elements to indicate that the form is not to be
+  submitted until a value is given. By adding this attribute to the customer name, pizza size, and
+  delivery time fields, we allow the user agent to notify the user when the user submits the form
+  without filling in those fields:</p>
+
+  <pre><code class="html">&lt;form method="post"
+      enctype="application/x-www-form-urlencoded"
+      action="https://pizza.example.com/order.cgi">
+ &lt;p>&lt;label>Customer name: &lt;input name="custname"<strong> required</strong>>&lt;/label>&lt;/p>
+ &lt;p>&lt;label>Telephone: &lt;input type=tel name="custtel">&lt;/label>&lt;/p>
+ &lt;p>&lt;label>Email address: &lt;input type=email name="custemail">&lt;/label>&lt;/p>
+ &lt;fieldset>
+  &lt;legend> Pizza Size &lt;/legend>
+  &lt;p>&lt;label> &lt;input type=radio name=size<strong> required</strong> value="small"> Small &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=radio name=size<strong> required</strong> value="medium"> Medium &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=radio name=size<strong> required</strong> value="large"> Large &lt;/label>&lt;/p>
+ &lt;/fieldset>
+ &lt;fieldset>
+  &lt;legend> Pizza Toppings &lt;/legend>
+  &lt;p>&lt;label> &lt;input type=checkbox name="topping" value="bacon"> Bacon &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=checkbox name="topping" value="cheese"> Extra Cheese &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=checkbox name="topping" value="onion"> Onion &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=checkbox name="topping" value="mushroom"> Mushroom &lt;/label>&lt;/p>
+ &lt;/fieldset>
+ &lt;p>&lt;label>Preferred delivery time: &lt;input type=time min="11:00" max="21:00" step="900" name="delivery"<strong> required</strong>>&lt;/label>&lt;/p>
+ &lt;p>&lt;label>Delivery instructions: &lt;textarea name="comments">&lt;/textarea>&lt;/label>&lt;/p>
+ &lt;p>&lt;button>Submit order&lt;/button>&lt;/p>
+&lt;/form></code></pre>
+
+  <p>It is also possible to limit the length of the input, using the <code
+  data-x="attr-fe-maxlength">maxlength</code> attribute. By adding this to the <code>textarea</code>
+  element, we can limit users to 1000 characters, preventing them from writing huge essays to the
+  busy delivery drivers instead of staying focused and to the point:</p>
+
+  <pre><code class="html">&lt;form method="post"
+      enctype="application/x-www-form-urlencoded"
+      action="https://pizza.example.com/order.cgi">
+ &lt;p>&lt;label>Customer name: &lt;input name="custname" required>&lt;/label>&lt;/p>
+ &lt;p>&lt;label>Telephone: &lt;input type=tel name="custtel">&lt;/label>&lt;/p>
+ &lt;p>&lt;label>Email address: &lt;input type=email name="custemail">&lt;/label>&lt;/p>
+ &lt;fieldset>
+  &lt;legend> Pizza Size &lt;/legend>
+  &lt;p>&lt;label> &lt;input type=radio name=size required value="small"> Small &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=radio name=size required value="medium"> Medium &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=radio name=size required value="large"> Large &lt;/label>&lt;/p>
+ &lt;/fieldset>
+ &lt;fieldset>
+  &lt;legend> Pizza Toppings &lt;/legend>
+  &lt;p>&lt;label> &lt;input type=checkbox name="topping" value="bacon"> Bacon &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=checkbox name="topping" value="cheese"> Extra Cheese &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=checkbox name="topping" value="onion"> Onion &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=checkbox name="topping" value="mushroom"> Mushroom &lt;/label>&lt;/p>
+ &lt;/fieldset>
+ &lt;p>&lt;label>Preferred delivery time: &lt;input type=time min="11:00" max="21:00" step="900" name="delivery" required>&lt;/label>&lt;/p>
+ &lt;p>&lt;label>Delivery instructions: &lt;textarea name="comments"<strong> maxlength=1000</strong>>&lt;/textarea>&lt;/label>&lt;/p>
+ &lt;p>&lt;button>Submit order&lt;/button>&lt;/p>
+&lt;/form></code></pre>
+
+  <p class="note">When a form is submitted, <code data-x="event-invalid">invalid</code> events are
+  fired at each form control that is invalid. This can be useful for displaying a summary of the
+  problems with the form, since typically the browser itself will only report one problem at a
+  time.</p>
+
+
+
+  <h5>Enabling client-side automatic filling of form controls</h5>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>Some browsers attempt to aid the user by automatically filling form controls rather than having
+  the user reenter their information each time. For example, a field asking for the user's telephone
+  number can be automatically filled with the user's phone number.</p>
+
+  <p>To help the user agent with this, the <code data-x="attr-fe-autocomplete">autocomplete</code>
+  attribute can be used to describe the field's purpose. In the case of this form, we have three
+  fields that can be usefully annotated in this way: the information about who the pizza is to be
+  delivered to. Adding this information looks like this:</p>
+
+  <pre><code class="html">&lt;form method="post"
+      enctype="application/x-www-form-urlencoded"
+      action="https://pizza.example.com/order.cgi">
+ &lt;p>&lt;label>Customer name: &lt;input name="custname" required <strong>autocomplete="shipping name"</strong>>&lt;/label>&lt;/p>
+ &lt;p>&lt;label>Telephone: &lt;input type=tel name="custtel" <strong>autocomplete="shipping tel"</strong>>&lt;/label>&lt;/p>
+ &lt;p>&lt;label>Email address: &lt;input type=email name="custemail" <strong>autocomplete="shipping email"</strong>>&lt;/label>&lt;/p>
+ &lt;fieldset>
+  &lt;legend> Pizza Size &lt;/legend>
+  &lt;p>&lt;label> &lt;input type=radio name=size required value="small"> Small &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=radio name=size required value="medium"> Medium &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=radio name=size required value="large"> Large &lt;/label>&lt;/p>
+ &lt;/fieldset>
+ &lt;fieldset>
+  &lt;legend> Pizza Toppings &lt;/legend>
+  &lt;p>&lt;label> &lt;input type=checkbox name="topping" value="bacon"> Bacon &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=checkbox name="topping" value="cheese"> Extra Cheese &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=checkbox name="topping" value="onion"> Onion &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=checkbox name="topping" value="mushroom"> Mushroom &lt;/label>&lt;/p>
+ &lt;/fieldset>
+ &lt;p>&lt;label>Preferred delivery time: &lt;input type=time min="11:00" max="21:00" step="900" name="delivery" required>&lt;/label>&lt;/p>
+ &lt;p>&lt;label>Delivery instructions: &lt;textarea name="comments" maxlength=1000>&lt;/textarea>&lt;/label>&lt;/p>
+ &lt;p>&lt;button>Submit order&lt;/button>&lt;/p>
+&lt;/form></code></pre>
+
+
+  <h5>Improving the user experience on mobile devices</h5>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>Some devices, in particular those with virtual keyboards can provide the user with multiple
+  input modalities. For example, when typing in a credit card number the user may wish to only see
+  keys for digits 0-9, while when typing in their name they may wish to see a form field that by
+  default capitalizes each word.</p>
+
+  <p>Using the <code data-x="attr-inputmode">inputmode</code> attribute we can select appropriate
+  input modalities:</p>
+
+  <pre><code class="html">&lt;form method="post"
+      enctype="application/x-www-form-urlencoded"
+      action="https://pizza.example.com/order.cgi">
+ &lt;p>&lt;label>Customer name: &lt;input name="custname" required autocomplete="shipping name">&lt;/label>&lt;/p>
+ &lt;p>&lt;label>Telephone: &lt;input type=tel name="custtel" autocomplete="shipping tel">&lt;/label>&lt;/p>
+ &lt;p>&lt;label>Buzzer code: &lt;input name="custbuzz" <strong>inputmode="numeric"</strong>>&lt;/label>&lt;/p>
+ &lt;p>&lt;label>Email address: &lt;input type=email name="custemail" autocomplete="shipping email">&lt;/label>&lt;/p>
+ &lt;fieldset>
+  &lt;legend> Pizza Size &lt;/legend>
+  &lt;p>&lt;label> &lt;input type=radio name=size required value="small"> Small &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=radio name=size required value="medium"> Medium &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=radio name=size required value="large"> Large &lt;/label>&lt;/p>
+ &lt;/fieldset>
+ &lt;fieldset>
+  &lt;legend> Pizza Toppings &lt;/legend>
+  &lt;p>&lt;label> &lt;input type=checkbox name="topping" value="bacon"> Bacon &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=checkbox name="topping" value="cheese"> Extra Cheese &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=checkbox name="topping" value="onion"> Onion &lt;/label>&lt;/p>
+  &lt;p>&lt;label> &lt;input type=checkbox name="topping" value="mushroom"> Mushroom &lt;/label>&lt;/p>
+ &lt;/fieldset>
+ &lt;p>&lt;label>Preferred delivery time: &lt;input type=time min="11:00" max="21:00" step="900" name="delivery" required>&lt;/label>&lt;/p>
+ &lt;p>&lt;label>Delivery instructions: &lt;textarea name="comments" maxlength=1000>&lt;/textarea>&lt;/label>&lt;/p>
+ &lt;p>&lt;button>Submit order&lt;/button>&lt;/p>
+&lt;/form></code></pre>
+
+
+
+  <h5>The difference between the field type, the autofill field name, and the input modality</h5>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>The <code data-x="attr-input-type">type</code>, <code
+  data-x="attr-fe-autocomplete">autocomplete</code>, and <code
+  data-x="attr-inputmode">inputmode</code> attributes can seem confusingly similar. For instance,
+  in all three cases, the string "<code data-x="">email</code>" is a valid value. This section
+  attempts to illustrate the difference between the three attributes and provides advice suggesting
+  how to use them.</p>
+
+  <p>The <code data-x="attr-input-type">type</code> attribute on <code>input</code> elements decides
+  what kind of control the user agent will use to expose the field. Choosing between different
+  values of this attribute is the same choice as choosing whether to use an <code>input</code>
+  element, a <code>textarea</code> element, a <code>select</code> element, etc.</p>
+
+  <p>The <code data-x="attr-fe-autocomplete">autocomplete</code> attribute, in contrast, describes
+  what the value that the user will enter actually represents. Choosing between different values of
+  this attribute is the same choice as choosing what the label for the element will be.</p>
+
+  <p>First, consider telephone numbers. If a page is asking for a telephone number from the user,
+  the right form control to use is <code data-x="attr-input-type-tel">&lt;input type=tel></code>.
+  However, which <code data-x="attr-fe-autocomplete">autocomplete</code> value to use depends on
+  which phone number the page is asking for, whether they expect a telephone number in the
+  international format or just the local format, and so forth.</p>
+
+  <p>For example, a page that forms part of a checkout process on an e-commerce site for a customer
+  buying a gift to be shipped to a friend might need both the buyer's telephone number (in case of
+  payment issues) and the friend's telephone number (in case of delivery issues). If the site
+  expects international phone numbers (with the country code prefix), this could thus look like
+  this:</p>
+
+  <pre><code class="html">&lt;p>&lt;label>Your phone number: &lt;input type=tel name=custtel autocomplete="billing tel">&lt;/label>
+&lt;p>&lt;label>Recipient's phone number: &lt;input type=tel name=shiptel autocomplete="shipping tel">&lt;/label>
+&lt;p>Please enter complete phone numbers including the country code prefix, as in "+1 555 123 4567".</code></pre>
+
+  <p>But if the site only supports British customers and recipients, it might instead look like this
+  (notice the use of <code data-x="attr-fe-autocomplete-tel-national">tel-national</code> rather than
+  <code data-x="attr-fe-autocomplete-tel">tel</code>):</p>
+
+  <pre><code class="html">&lt;p>&lt;label>Your phone number: &lt;input type=tel name=custtel autocomplete="billing tel-national">&lt;/label>
+&lt;p>&lt;label>Recipient's phone number: &lt;input type=tel name=shiptel autocomplete="shipping tel-national">&lt;/label>
+&lt;p>Please enter complete UK phone numbers, as in "(01632) 960 123".</code></pre>
+
+  <p>Now, consider a person's preferred languages. The right <code
+  data-x="attr-fe-autocomplete">autocomplete</code> value is <code
+  data-x="attr-fe-autocomplete-language">language</code>. However, there could be a number of
+  different form controls used for the purpose: a text control (<code
+  data-x="attr-input-type-text">&lt;input type=text></code>), a drop-down list (<code
+  data-x="select">&lt;select></code>), radio buttons (<code data-x="attr-input-type-radio">&lt;input
+  type=radio></code>), etc. It only depends on what kind of interface is desired.</p>
+
+  <p>Finally, consider names. If a page just wants one name from the user, then the relevant control
+  is <code data-x="attr-input-type-text">&lt;input type=text></code>. If the page is asking for the
+  user's full name, then the relevant <code data-x="attr-fe-autocomplete">autocomplete</code> value
+  is <code data-x="attr-fe-autocomplete-name">name</code>.
+
+  <pre><code class="html">&lt;p>&lt;label>Japanese name: &lt;input name="j" type="text" autocomplete="section-jp name">&lt;/label>
+&lt;label>Romanized name: &lt;input name="e" type="text" autocomplete="section-en name">&lt;/label></code></pre>
+
+  <p>In this example, the "<code data-x="attr-fe-autocomplete-section">section-*</code>" keywords in
+  the <code data-x="attr-fe-autocomplete">autocomplete</code> attributes' values tell the user agent
+  that the two fields expect <em>different</em> names. Without them, the user agent could
+  automatically fill the second field with the value given in the first field when the user gave a
+  value to the first field.</p>
+
+  <p class="note">The "<code data-x="">-jp</code>" and "<code data-x="">-en</code>" parts of the
+  keywords are opaque to the user agent; the user agent cannot guess, from those, that the two names
+  are expected to be in Japanese and English respectively.</p>
+
+  <p>Separate from the choices regarding <code data-x="attr-input-type">type</code> and <code
+  data-x="attr-fe-autocomplete">autocomplete</code>, the <code
+  data-x="attr-inputmode">inputmode</code> attribute decides what kind of input modality (e.g.,
+  virtual keyboard) to use, when the control is a text control.</p>
+
+  <p>Consider credit card numbers. The appropriate input type is <em>not</em> <code
+  data-x="attr-input-type-number">&lt;input type=number></code>, <a
+  href="#when-number-is-not-appropriate">as explained below</a>; it is instead <code
+  data-x="attr-input-type-text">&lt;input type=text></code>. To encourage the user agent to use a
+  numeric input modality anyway (e.g., a virtual keyboard displaying only digits), the page would
+  use</p>
+
+  <pre><code class="html">&lt;p>&lt;label>Credit card number:
+                &lt;input name="cc" type="text" inputmode="numeric" pattern="[0-9]{8,19}" autocomplete="cc-number">
+&lt;/label>&lt;/p></code></pre>
+
+
+
+  <h5 id="input-author-notes">Date, time, and number formats</h5>
+  <!-- ID referenced from other parts of the spec -->
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>In this pizza delivery example, the times are specified in the format "HH:MM": two digits for
+  the hour, in 24-hour format, and two digits for the time. (Seconds could also be specified, though
+  they are not necessary in this example.)</p>
+
+  <p>In some locales, however, times are often expressed differently when presented to users. For
+  example, in the United States, it is still common to use the 12-hour clock with an am/pm
+  indicator, as in "2pm". In France, it is common to separate the hours from the minutes using an
+  "h" character, as in "14h00".</p>
+
+  <p>Similar issues exist with dates, with the added complication that even the order of the
+  components is not always consistent &mdash; for example, in Cyprus the first of February 2003
+  would typically be written "1/2/03", while that same date in Japan would typically be written as
+  "2003&#x5E74;02&#x6708;01&#x65E5;" &mdash; and even with numbers, where locales differ, for
+  example, in what punctuation is used as the decimal separator and the thousands separator.</p>
+
+  <p>It is therefore important to distinguish the time, date, and number formats used in HTML and in
+  form submissions, which are always the formats defined in this specification (and based on the
+  well-established ISO 8601 standard for computer-readable date and time formats), from the time,
+  date, and number formats presented to the user by the browser and accepted as input from the user
+  by the browser.</p>
+
+  <p>The format used "on the wire", i.e., in HTML markup and in form submissions, is intended to be
+  computer-readable and consistent irrespective of the user's locale. Dates, for instance, are
+  always written in the format "YYYY-MM-DD", as in "2003-02-01". While some users might see this
+  format, others might see it as "01.02.2003" or "February 1, 2003".</p>
+
+  <p>The time, date, or number given by the page in the wire format is then translated to the user's
+  preferred presentation (based on user preferences or on the locale of the page itself), before
+  being displayed to the user. Similarly, after the user inputs a time, date, or number using their
+  preferred format, the user agent converts it back to the wire format before putting it in the DOM
+  or submitting it.</p>
+
+  <p>This allows scripts in pages and on servers to process times, dates, and numbers in a
+  consistent manner without needing to support dozens of different formats, while still supporting
+  the users' needs.</p>
+
+  <div w-nodev>
+  <p class="note">See also the <a
+  href="#input-impl-notes">implementation notes</a> regarding
+  localization of form controls.</p>
+  </div>
+
+

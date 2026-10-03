@@ -1,0 +1,13 @@
+WHATWG HTML — section dependencies/battery-status — Battery Status
+
+   <dt>Battery Status</dt>
+
+   <dd>
+    <p>The following features are defined in <cite>Battery Status API</cite>: <ref>BATTERY</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x="dom-navigator-getBattery" data-x-href="https://w3c.github.io/battery/#dom-navigator-getbattery"><code>getBattery()</code></dfn> method</li>
+    </ul>
+   </dd>
+
+

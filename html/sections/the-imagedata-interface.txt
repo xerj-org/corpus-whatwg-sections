@@ -1,0 +1,287 @@
+WHATWG HTML — section the-imagedata-interface — The <code>ImageData</code> interface
+
+  <h4>The <code>ImageData</code> interface</h4>
+
+<pre><code class="idl">
+typedef (<span data-x="idl-Uint8ClampedArray">Uint8ClampedArray</span> or <span data-x="idl-Float16Array">Float16Array</span>) <dfn typedef>ImageDataArray</dfn>;
+
+enum <dfn enum>ImageDataPixelFormat</dfn> { "<span data-x="dom-ImageDataPixelFormat-rgba-unorm8">rgba-unorm8</span>", "<span data-x="dom-ImageDataPixelFormat-rgba-float16">rgba-float16</span>" };
+
+dictionary <dfn dictionary>ImageDataSettings</dfn> {
+  <span>PredefinedColorSpace</span> <span data-x="dom-PredefinedColorSpace-srgb">colorSpace</span>;
+  <span>ImageDataPixelFormat</span> <span data-x="dom-ImageDataSettings-pixelFormat">pixelFormat</span> = "<span data-x="dom-ImageDataPixelFormat-rgba-unorm8">rgba-unorm8</span>";
+};
+
+[Exposed=(Window,Worker),
+ <span>Serializable</span>]
+interface <dfn interface>ImageData</dfn> {
+  <span data-x="dom-imagedata">constructor</span>(unsigned long sw, unsigned long sh, optional <span>ImageDataSettings</span> settings = {});
+  <span data-x="dom-imagedata-with-data">constructor</span>(<span>ImageDataArray</span> data, unsigned long sw, optional unsigned long sh, optional <span>ImageDataSettings</span> settings = {});
+
+  readonly attribute unsigned long <span data-x="dom-imagedata-width">width</span>;
+  readonly attribute unsigned long <span data-x="dom-imagedata-height">height</span>;
+  readonly attribute <span>ImageDataArray</span> <span data-x="dom-imagedata-data">data</span>;
+  readonly attribute <span>ImageDataPixelFormat</span> <span data-x="dom-imagedata-pixelFormat">pixelFormat</span>;
+  readonly attribute <span>PredefinedColorSpace</span> <span data-x="dom-imagedata-colorSpace">colorSpace</span>;
+};
+</code></pre>
+
+  <p>An <code>ImageData</code> object <dfn data-x="concept-imagedata-bitmap-representation">
+  represents a rectanglar bitmap</dfn> with width equal to the <code data-x="dom-imagedata-width">
+  width</code> attribute and height equal to the <code data-x="dom-imagedata-height">height</code>
+  attribute. The pixel values of this bitmap are stored in the <code data-x="dom-imagedata-data">
+  data</code> attribute in left-to-right order, row by row from top to bottom, starting with 0 for
+  the top left pixel, with the order and numerical representation of the color components of each
+  pixel determined by the <code data-x="dom-imagedata-pixelFormat">pixelFormat</code> attribute.
+  The color space of the pixel values of the bitmap is determined by the <code
+  data-x="dom-imagedata-colorSpace">colorSpace</code> attribute.</p>
+
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>imageData</var> = new <span subdfn data-x="dom-imagedata">ImageData</span>(<var>sw</var>, <var>sh</var> [, <var>settings</var>])</code></dt>
+   <dd>
+    <p>Returns an <code>ImageData</code> object with the given dimensions and the color space
+    indicated by <var>settings</var>. All the pixels in the returned object are <span>transparent
+    black</span>.</p>
+
+    <p>Throws an <span>"<code>IndexSizeError</code>"</span> <code>DOMException</code> if either of
+    the width or height arguments are zero.</p>
+   </dd>
+
+   <dt><code data-x=""><var>imageData</var> = new <span subdfn data-x="dom-imagedata-with-data">ImageData</span>(<var>data</var>, <var>sw</var> [, <var>sh</var> [, <var>settings</var> ] ])</code></dt>
+   <dd>
+    <p>Returns an <code>ImageData</code> object using the data provided in the <code>ImageDataArray</code>
+    argument, interpreted using the given dimensions and the color space indicated by <var>settings</var>.</p>
+
+    <p>The byte length of the data needs to be a multiple of the number of bytes per pixel times the
+    given width. If the height is provided as well, then the length needs to be exactly the number of
+    bytes per pixel times the width times the height.</p>
+
+    <p>Throws an <span>"<code>IndexSizeError</code>"</span> <code>DOMException</code> if the given
+    data and dimensions can't be interpreted consistently, or if either dimension is zero.</p>
+   </dd>
+
+   <dt><code data-x=""><var>imageData</var>.<span subdfn data-x="dom-imagedata-width">width</span></code></dt>
+   <dt><code data-x=""><var>imageData</var>.<span subdfn data-x="dom-imagedata-height">height</span></code></dt>
+   <dd><p>Returns the actual dimensions of the data in the <code>ImageData</code> object, in
+   pixels.</p></dd>
+
+   <dt><code data-x=""><var>imageData</var>.<span subdfn data-x="dom-imagedata-data">data</span></code></dt>
+   <dd><p>Returns the one-dimensional array containing the data in RGBA order, as integers in the
+   range 0 to 255.</p></dd>
+
+   <dt><code data-x=""><var>imageData</var>.<span subdfn data-x="dom-imagedata-colorSpace">colorSpace</span></code></dt>
+   <dd><p>Returns the color space of the pixels.</p></dd>
+  </dl>
+
+  <div algorithm>
+  <p>The <dfn constructor for="ImageData"><code data-x="dom-imagedata">new ImageData(<var>sw</var>,
+  <var>sh</var>, <var>settings</var>)</code></dfn> constructor steps are:</p>
+
+  <ol>
+   <li><p>If one or both of <var>sw</var> and <var>sh</var> are zero, then throw an
+   <span>"<code>IndexSizeError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p><span data-x="Initialize an ImageData object">Initialize</span> <span>this</span> given
+   <var>sw</var>, <var>sh</var>, and <var>settings</var>.</p></li>
+
+   <li><p>Initialize the image data of <span>this</span> to <span>transparent black</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn constructor for="ImageData"><code data-x="dom-imagedata-with-data">new
+  ImageData(<var>data</var>, <var>sw</var>, <var>sh</var>, <var>settings</var>)</code></dfn>
+  constructor steps are:</p>
+
+  <ol>
+   <li><p>Let <var>bytesPerPixel</var> be 4 if
+   <var>settings</var>["<code data-x="dom-ImageDataSettings-pixelFormat">pixelFormat</code>"] is
+   "<span data-x="dom-ImageDataPixelFormat-rgba-unorm8">rgba-unorm8</span>"; otherwise 8.</p></li>
+
+   <li><p>Let <var>length</var> be the <span>buffer source byte length</span> of <var>data</var>.</p></li>
+
+   <li><p>If <var>length</var> is not a nonzero integral multiple of <var>bytesPerPixel</var>, then throw an
+   <span>"<code>InvalidStateError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>Let <var>length</var> be <var>length</var> divided by <var>bytesPerPixel</var>.</p>
+
+   <li>
+    <p>If <var>length</var> is not an integral multiple of <var>sw</var>, then throw an
+    <span>"<code>IndexSizeError</code>"</span> <code>DOMException</code>.</p>
+
+    <p class="note">At this step, the length is guaranteed to be greater than zero (otherwise the
+    second step above would have aborted the steps), so if <var>sw</var> is zero, this
+    step will throw the exception and return.</p>
+   </li>
+
+   <li><p>Let <var>height</var> be <var>length</var> divided by <var>sw</var>.</p></li>
+
+   <li><p>If <var>sh</var> was given and its value is not equal to <var>height</var>, then throw an
+   <span>"<code>IndexSizeError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li>
+    <p><span data-x="Initialize an ImageData object">Initialize</span> <span>this</span> given
+    <var>sw</var>, <var>sh</var>, <var>settings</var>, and
+    <i><span data-x="initialize-imagedata-source">source</span></i> set to <var>data</var>.</p>
+
+    <p class="note">This step does not set <span>this</span>'s data to a copy of <var>data</var>.
+    It sets it to the actual <code>ImageDataArray</code> object passed as <var>data</var>.</p>
+   </li>
+  </ol>
+  </div>
+
+
+  <div algorithm>
+  <p>To <dfn>initialize an <code>ImageData</code> object</dfn> <var>imageData</var>, given a
+  positive integer number of pixels per row <var>pixelsPerRow</var>, a positive integer number
+  of rows <var>rows</var>, an <code>ImageDataSettings</code> <var>settings</var>, an optional
+  <code>ImageDataArray</code> <dfn data-x="initialize-imagedata-source"><var>source</var></dfn>,
+  and an optional <code>PredefinedColorSpace</code> <dfn
+  data-x="initialize-imagedata-defaultcolorspace"><var>defaultColorSpace</var></dfn>:</p>
+
+  <ol>
+   <li>
+    <p>If <var>source</var> was given:</p>
+
+    <ol>
+     <li><p>If <var>settings</var>["<code data-x="dom-ImageDataSettings-pixelFormat">pixelFormat</code>"]
+     equals "<span data-x="dom-ImageDataPixelFormat-rgba-unorm8">rgba-unorm8</span>" and
+     <var>source</var> is not a <code data-x="idl-Uint8ClampedArray">Uint8ClampedArray</code>,
+     then throw an <span>"<code>InvalidStateError</code>"</span> <code>DOMException</code>.</p></li>
+
+     <li><p>If <var>settings</var>["<code data-x="dom-ImageDataSettings-pixelFormat">pixelFormat</code>"]
+     is "<span data-x="dom-ImageDataPixelFormat-rgba-float16">rgba-float16</span>" and
+     <var>source</var> is not a <code data-x="idl-Float16Array">Float16Array</code>,
+     then throw an <span>"<code>InvalidStateError</code>"</span> <code>DOMException</code>.</p></li>
+
+     <li><p>Initialize the <dfn attribute for="ImageData"><code
+     data-x="dom-imagedata-data">data</code></dfn> attribute of <var>imageData</var> to
+     <var>source</var>.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p>Otherwise (<var>source</var> was not given):</p>
+
+    <ol>
+     <li><p>If <var>settings</var>["<code
+     data-x="dom-ImageDataSettings-pixelFormat">pixelFormat</code>"] is "<span
+     data-x="dom-ImageDataPixelFormat-rgba-unorm8">rgba-unorm8</span>", then initialize the <code
+     data-x="dom-imagedata-data">data</code> attribute of <var>imageData</var> to a new <code
+     data-x="idl-Uint8ClampedArray">Uint8ClampedArray</code> object. The <code
+     data-x="idl-Uint8ClampedArray">Uint8ClampedArray</code> object must use a new
+     <code data-x="idl-ArrayBuffer">ArrayBuffer</code> for its storage, and must have
+     a zero byte offset and byte length equal to the length of its storage, in bytes.
+     The storage <code data-x="idl-ArrayBuffer">ArrayBuffer</code> must have a length
+     of 4 × <var>rows</var> × <var>pixelsPerRow</var> bytes.</p></li>
+
+     <li><p>Otherwise, if <var>settings</var>["<code
+     data-x="dom-ImageDataSettings-pixelFormat">pixelFormat</code>"] is "<span
+     data-x="dom-ImageDataPixelFormat-rgba-unorm8">rgba-float16</span>", then initialize the <code
+     data-x="dom-imagedata-data">data</code> attribute of <var>imageData</var> to a new <code
+     data-x="idl-Float16Array">Float16Array</code> object. The <code
+     data-x="idl-Float16Array">Float16Array</code> object must use a new
+     <code data-x="idl-ArrayBuffer">ArrayBuffer</code> for its storage, and must have
+     a zero byte offset and byte length equal to the length of its storage, in bytes.
+     The storage <code data-x="idl-ArrayBuffer">ArrayBuffer</code> must have a length
+     of 8 × <var>rows</var> × <var>pixelsPerRow</var> bytes.</p></li>
+
+     <li><p>If the storage <code data-x="idl-ArrayBuffer">ArrayBuffer</code> could not be
+     allocated, then rethrow the <code data-x="js-RangeError">RangeError</code> thrown by JavaScript,
+     and return.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Initialize the <dfn attribute for="ImageData"><code
+   data-x="dom-imagedata-width">width</code></dfn> attribute of <var>imageData</var> to
+   <var>pixelsPerRow</var>.</p></li>
+
+   <li><p>Initialize the <dfn attribute for="ImageData"><code
+   data-x="dom-imagedata-height">height</code></dfn> attribute of <var>imageData</var> to
+   <var>rows</var>.</p></li>
+
+   <li><p>Initialize the
+   <dfn attribute for="ImageData"><code data-x="dom-imagedata-pixelFormat">pixelFormat</code></dfn>
+   attribute of <var>imageData</var> to
+   <var>settings</var>["<dfn dict-member for="ImageDataSettings"><code
+   data-x="dom-ImageDataSettings-pixelFormat">pixelFormat</code></dfn>"].</p></li>
+
+   <li><p>If <var>settings</var>["<code data-x="dom-ImageDataSettings-colorSpace">colorSpace</code>"]
+   <span data-x="map exists">exists</span>, then initialize the <dfn attribute for="ImageData"><code
+   data-x="dom-imagedata-colorSpace">colorSpace</code></dfn> attribute of <var>imageData</var> to
+   <var>settings</var>["<dfn dict-member for="ImageDataSettings"><code
+   data-x="dom-ImageDataSettings-colorSpace">colorSpace</code></dfn>"].</p></li>
+
+   <li><p>Otherwise, if <var>defaultColorSpace</var> was given, then initialize the <code
+   data-x="dom-imagedata-colorSpace">colorSpace</code> attribute of <var>imageData</var> to
+   <var>defaultColorSpace</var>.</p></li>
+
+   <li><p>Otherwise, initialize the <code data-x="dom-imagedata-colorSpace">colorSpace</code>
+   attribute of <var>imageData</var> to "<span
+   data-x="dom-PredefinedColorSpace-srgb">srgb</span>".</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p><code>ImageData</code> objects are <span>serializable objects</span>. Their <span>serialization
+  steps</span>, given <var>value</var> and <var>serialized</var>, are:</p>
+
+  <ol>
+   <li><p>Set <var>serialized</var>.[[Data]] to the <span>sub-serialization</span> of the value of
+   <var>value</var>'s <code data-x="dom-imagedata-data">data</code> attribute.</p></li>
+
+   <li><p>Set <var>serialized</var>.[[Width]] to the value of <var>value</var>'s <code
+   data-x="dom-imagedata-width">width</code> attribute.</p></li>
+
+   <li><p>Set <var>serialized</var>.[[Height]] to the value of <var>value</var>'s <code
+   data-x="dom-imagedata-height">height</code> attribute.</p></li>
+
+   <li><p>Set <var>serialized</var>.[[ColorSpace]] to the value of <var>value</var>'s <code
+   data-x="dom-imagedata-colorSpace">colorSpace</code> attribute.</p></li>
+
+   <li><p>Set <var>serialized</var>.[[PixelFormat]] to the value of <var>value</var>'s <code
+   data-x="dom-imagedata-pixelFormat">pixelFormat</code> attribute.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>Their <span>deserialization steps</span>, given <var>serialized</var>, <var>value</var>,
+  and <var>targetRealm</var>, are:</p>
+
+  <ol>
+   <li><p>Initialize <var>value</var>'s <code data-x="dom-imagedata-data">data</code> attribute
+   to the <span>sub-deserialization</span> of <var>serialized</var>.[[Data]].</p></li>
+
+   <li><p>Initialize <var>value</var>'s <code data-x="dom-imagedata-width">width</code> attribute
+   to <var>serialized</var>.[[Width]].</p></li>
+
+   <li><p>Initialize <var>value</var>'s <code data-x="dom-imagedata-height">height</code> attribute
+   to <var>serialized</var>.[[Height]].</p></li>
+
+   <li><p>Initialize <var>value</var>'s <code data-x="dom-imagedata-colorSpace">colorSpace</code>
+   attribute to <var>serialized</var>.[[ColorSpace]].</p></li>
+
+   <li><p>Initialize <var>value</var>'s <code data-x="dom-imagedata-pixelFormat">pixelFormat</code>
+   attribute to <var>serialized</var>.[[PixelFormat]].</p></li>
+  </ol>
+  </div>
+
+  <p>The <code>ImageDataPixelFormat</code> enumeration is used to specify type of the
+  <code data-x="dom-imagedata-data">data</code> attribute of an <code>ImageData</code>
+  and the arrangement and numerical representation of the color components for each pixel.</p>
+
+  <p>The "<dfn enum-value for="ImageDataPixelFormat"><code
+  data-x="dom-ImageDataPixelFormat-rgba-unorm8">rgba-unorm8</code></dfn>" value indicates that the
+  <code data-x="dom-imagedata-data">data</code> attribute of an <code>ImageData</code> must be of
+  type <span data-x="idl-Uint8ClampedArray">Uint8ClampedArray</span>. The color components of each
+  pixel must be stored in four sequential elements in the order of red, green, blue, and then alpha.
+  Each element represents the 8-bit unsigned normalized value for that component.</p>
+
+  <p>The "<dfn enum-value for="ImageDataPixelFormat"><code
+  data-x="dom-ImageDataPixelFormat-rgba-float16">rgba-float16</code></dfn>" value indicates that the
+  <code data-x="dom-imagedata-data">data</code> attribute of an <code>ImageData</code> must be of
+  type <span data-x="idl-Float16Array">Float16Array</span>. The color components of each pixel must
+  be stored in four sequential elements in the order of red, green, blue, and then alpha. Each
+  element represents the value for that component.</p>
+

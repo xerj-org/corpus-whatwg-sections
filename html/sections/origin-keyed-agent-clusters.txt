@@ -1,0 +1,71 @@
+WHATWG HTML — section origin-keyed-agent-clusters — <span id="origin-isolation"></span>Origin-keyed agent clusters
+
+  <h4><span id="origin-isolation"></span>Origin-keyed agent clusters</h4>
+
+  <dl class="domintro">
+   <dt><code data-x="">window.<span subdfn data-x="dom-originAgentCluster">originAgentCluster</span></code></dt>
+
+   <dd>
+    <p>Returns true if this <code>Window</code> belongs to an <span>agent cluster</span> which is
+    <span>origin</span>-<span data-x="agent cluster key">keyed</span>, in the manner described in
+    this section.</p>
+   </dd>
+  </dl>
+
+  <p>A <code>Document</code> delivered over a <span>secure context</span> can request that it be
+  placed in an <span>origin</span>-<span data-x="agent cluster key">keyed</span> <span>agent
+  cluster</span>, by using the `<dfn http-header><code>Origin-Agent-Cluster</code></dfn>` HTTP
+  response header. This header is a <span data-x="http-structured-header">structured header</span>
+  whose value must be a <span data-x="http-structured-header-boolean">boolean</span>.
+  <ref>STRUCTURED-FIELDS</ref></p>
+
+  <p><span w-nodev>Per the processing model in the <span data-x="create-the-document-object">create
+  and initialize a new <code>Document</code> object</span>, values</span><span w-dev>Values</span>
+  that are not the <span data-x="http-structured-header-boolean">structured header boolean</span>
+  true value (i.e., `<code data-x="">?1</code>`) will be ignored.</p>
+
+  <p>The consequences of using this header are that <span w-nodev>the resulting
+  <code>Document</code>'s <span>agent cluster key</span> is its <span
+  data-x="concept-document-origin">origin</span>, instead of the <span data-x="obtain a
+  site">corresponding site</span>. In terms of observable effects, this means that
+  </span>attempting to <a href="#relaxing-the-same-origin-restriction">relax the same-origin
+  restriction</a> using <code data-x="dom-document-domain">document.domain</code> will instead do
+  nothing, and it will not be possible to send <code>WebAssembly.Module</code> objects to
+  cross-origin <code>Document</code>s (even if they are <span>same site</span>). Behind the scenes,
+  this isolation can allow user agents to allocate implementation-specific resources corresponding
+  to <span data-x="agent cluster">agent clusters</span>, such as processes or threads, more
+  efficiently.</p>
+
+  <p>Note that within a <span>browsing context group</span>, the
+  `<code>Origin-Agent-Cluster</code>` header can never cause same-origin <code>Document</code>
+  objects to end up in different <span data-x="agent cluster">agent clusters</span>, even if one
+  sends the header and the other doesn't.<span w-nodev> This is prevented by means of the
+  <span>historical agent cluster key map</span>.</span></p>
+
+  <p class="note">This means that the <code
+  data-x="dom-originAgentCluster">originAgentCluster</code> getter can return false, even if the
+  header is set, if the header was omitted on a previously-loaded same-origin page in the same
+  <span>browsing context group</span>. Similarly, it can return true even when the header is not
+  set.</p>
+
+  <div algorithm>
+  <p w-nodev>The <dfn attribute for="Window"><code
+  data-x="dom-originAgentCluster">originAgentCluster</code></dfn> getter steps are to return the
+  <span>surrounding agent</span>'s <span>agent cluster</span>'s <span>is origin-keyed</span>.</p>
+  </div>
+
+  <p class="note"><code>Document</code>s with an <span data-x="concept-origin-opaque">opaque
+  origin</span> can be considered unconditionally origin-keyed; for them the header has no effect,
+  and the <code data-x="dom-originAgentCluster">originAgentCluster</code> getter will always return
+  true.</p>
+
+  <p class="note">Similarly, <code>Document</code>s whose <span>agent cluster</span>'s <span
+  data-x="agent-cluster-cross-origin-isolation">cross-origin isolation mode</span> is not "<code
+  data-x="cross-origin-isolation-none">none</code>" are automatically origin-keyed. The
+  `<code>Origin-Agent-Cluster</code>` header might be useful as an additional hint to
+  implementations about resource allocation, since the `<code>Cross-Origin-Opener-Policy</code>`
+  and `<code>Cross-Origin-Embedder-Policy</code>` headers used to achieve cross-origin isolation
+  are more about ensuring that everything in the same address space opts in to being there. But
+  adding it would have no additional observable effects on author code.</p>
+
+

@@ -1,0 +1,313 @@
+WHATWG HTML — section the-windowproxy-exotic-object — The <code>WindowProxy</code> exotic object
+
+  <h4>The <code>WindowProxy</code> exotic object</h4>
+
+  <p>A <dfn interface><code>WindowProxy</code></dfn> is an exotic object that wraps a
+  <code>Window</code> ordinary object, indirecting most operations through to the wrapped object.
+  Each <span>browsing context</span> has an associated <code>WindowProxy</code> object. When the
+  <span>browsing context</span> is <span data-x="navigate">navigated</span>, the <code>Window</code>
+  object wrapped by the <span>browsing context</span>'s associated <code>WindowProxy</code> object
+  is changed.</p>
+
+  <div w-nodev>
+
+  <p>The <code>WindowProxy</code> exotic object must use the ordinary internal methods except where
+  it is explicitly specified otherwise below.</p>
+
+  <p>There is no <code>WindowProxy</code> <span>interface object</span>.</p>
+
+  <p>Every <code>WindowProxy</code> object has a <dfn data-x="concept-windowproxy-window"
+  export>[[Window]]</dfn> internal slot representing the wrapped <code>Window</code> object.</p>
+
+  <p class="note">Although <code>WindowProxy</code> is named as a "proxy", it does not do
+  polymorphic dispatch on its target's internal methods as a real proxy would, due to a desire to
+  reuse machinery between <code>WindowProxy</code> and <code>Location</code> objects. As long as the
+  <code>Window</code> object remains an ordinary object this is unobservable and can be implemented
+  either way.</p>
+
+  <div algorithm>
+  <h5 id="windowproxy-getprototypeof">[[GetPrototypeOf]] ( )</h5>
+
+  <ol>
+   <li><p>Let <var>W</var> be the value of the
+   <span data-x="concept-windowproxy-window">[[Window]]</span> internal slot of
+   <b>this</b>.</p></li>
+
+   <li><p>If <span>IsPlatformObjectSameOrigin</span>(<var>W</var>) is true, then return !
+   <span>OrdinaryGetPrototypeOf</span>(<var>W</var>).</p></li>
+
+   <li><p>Return null.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <h5 id="windowproxy-setprototypeof">[[SetPrototypeOf]] ( <var>V</var> )</h5>
+
+  <ol>
+   <li><p>Return ! <span>SetImmutablePrototype</span>(<b>this</b>, <var>V</var>).</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <h5 id="windowproxy-isextensible">[[IsExtensible]] ( )</h5>
+
+  <ol>
+   <li><p>Return true.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <h5 id="windowproxy-preventextensions">[[PreventExtensions]] ( )</h5>
+
+  <ol>
+   <li><p>Return false.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <h5 id="windowproxy-getownproperty">[[GetOwnProperty]] ( <var>P</var> )</h5>
+
+  <ol>
+   <li><p>Let <var>W</var> be the value of the
+   <span data-x="concept-windowproxy-window">[[Window]]</span> internal slot of
+   <b>this</b>.</p></li>
+
+   <li>
+    <p>If <var>P</var> is an <span>array index property name</span>:</p>
+
+    <ol>
+     <li><p>Let <var>index</var> be ! <span>ToUint32</span>(<var>P</var>).</p></li>
+
+     <li><p>Let <var>children</var> be the <span>document-tree child navigables</span> of
+     <var>W</var>'s <span data-x="concept-document-window">associated
+     <code>Document</code></span>.</p></li>
+
+     <li><p>Let <var>value</var> be undefined.</p></li>
+
+     <li>
+      <p>If <var>index</var> is less than <var>children</var>'s <span data-x="list
+      size">size</span>:</p>
+
+      <ol>
+       <li><p><span data-x="list sort">Sort</span> <var>children</var> in ascending order, with
+       <var>navigableA</var> being less than <var>navigableB</var> if <var>navigableA</var>'s <span
+       data-x="nav-container">container</span> was inserted into <var>W</var>'s <span
+       data-x="concept-document-window">associated <code>Document</code></span> earlier than
+       <var>navigableB</var>'s <span data-x="nav-container">container</span> was.</p></li>
+
+       <li><p>Set <var>value</var> to <var>children</var>[<var>index</var>]'s <span
+       data-x="nav-wp">active <code>WindowProxy</code></span>.</p></li>
+      </ol>
+     </li>
+
+     <!-- sort order: https://software.hixie.ch/utilities/js/live-dom-viewer/?saved=2860 -->
+
+     <li>
+      <p>If <var>value</var> is undefined:</p>
+
+      <ol>
+       <li><p>If <span>IsPlatformObjectSameOrigin</span>(<var>W</var>) is true, then return
+       undefined.</p></li>
+
+       <li><p>Throw a <span>"<code>SecurityError</code>"</span> <code>DOMException</code>.</p></li>
+      </ol>
+     </li>
+
+     <li><p>Return <span>PropertyDescriptor</span> {
+     [[Value]]: <var>value</var>,
+     [[Writable]]: false,
+     [[Enumerable]]: true,
+     [[Configurable]]: true }.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p>If <span>IsPlatformObjectSameOrigin</span>(<var>W</var>) is true, then return !
+    <span>OrdinaryGetOwnProperty</span>(<var>W</var>, <var>P</var>).</p>
+
+    <p class="note">This is a <span>willful violation</span> of the JavaScript specification's
+    <span>invariants of the essential internal methods</span> to maintain compatibility with
+    existing web content. See <a href="https://github.com/tc39/ecma262/issues/672">tc39/ecma262
+    issue #672</a> for more information. <ref>JAVASCRIPT</ref></p>
+   </li>
+
+   <li><p>Let <var>property</var> be <span>CrossOriginGetOwnPropertyHelper</span>(<var>W</var>,
+   <var>P</var>).</p></li>
+
+   <li><p>If <var>property</var> is not undefined, then return <var>property</var>.</p></li>
+
+   <li>
+    <p>If <var>property</var> is undefined and <var>P</var> is in <var>W</var>'s <span>document-tree
+    child navigable target name property set</span>:</p>
+
+    <ol>
+     <li><p>Let <var>value</var> be the <span data-x="nav-wp">active
+     <code>WindowProxy</code></span> of the <span data-x="dom-window-nameditem-filter">named
+     object</span> of <var>W</var> with the name <var>P</var>.</p></li>
+
+     <li>
+      <p>Return <span>PropertyDescriptor</span> {
+      [[Value]]: <var>value</var>,
+      [[Enumerable]]: false,
+      [[Writable]]: false,
+      [[Configurable]]: true }.</p>
+
+      <p class="note">The reason the property descriptors are non-enumerable, despite this
+      mismatching the same-origin behavior, is for compatibility with existing web content. See <a
+      href="https://github.com/whatwg/html/issues/3183">issue #3183</a> for details.</p>
+     </li>
+    </ol>
+
+   <li><p>Return ? <span>CrossOriginPropertyFallback</span>(<var>P</var>).</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <h5 id="windowproxy-defineownproperty">[[DefineOwnProperty]] ( <var>P</var>, <var>Desc</var>
+  )</h5>
+
+  <ol>
+   <li><p>Let <var>W</var> be the value of the
+   <span data-x="concept-windowproxy-window">[[Window]]</span> internal slot of
+   <b>this</b>.</p></li>
+
+   <li>
+    <p>If <span>IsPlatformObjectSameOrigin</span>(<var>W</var>) is true:
+
+    <ol>
+     <li><p>If <var>P</var> is an <span>array index property name</span>, return false.</p></li>
+
+     <li>
+      <p>Return ? <span>OrdinaryDefineOwnProperty</span>(<var>W</var>, <var>P</var>,
+      <var>Desc</var>).</p>
+
+      <p class="note">This is a <span>willful violation</span> of the JavaScript specification's
+      <span>invariants of the essential internal methods</span> to maintain compatibility with
+      existing web content. See <a href="https://github.com/tc39/ecma262/issues/672">tc39/ecma262
+      issue #672</a> for more information. <ref>JAVASCRIPT</ref></p>
+     </li>
+    </ol>
+
+   <li><p>Throw a <span>"<code>SecurityError</code>"</span> <code>DOMException</code>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <h5 id="windowproxy-get">[[Get]] ( <var>P</var>, <var>Receiver</var> )</h5>
+
+  <ol>
+   <li><p>Let <var>W</var> be the value of the
+   <span data-x="concept-windowproxy-window">[[Window]]</span> internal slot of
+   <b>this</b>.</p></li>
+
+   <li><p><span data-x="coop-check-access-report">Check if an access between two browsing contexts
+   should be reported</span>, given the <span>current global object</span>'s
+   <span data-x="window bc">browsing context</span>, <var>W</var>'s <span
+   data-x="window bc">browsing context</span>, <var>P</var>, and the <span>current settings
+   object</span>.</p></li>
+
+   <li><p>If <span>IsPlatformObjectSameOrigin</span>(<var>W</var>) is true, then return ?
+   <span>OrdinaryGet</span>(<b>this</b>, <var>P</var>, <var>Receiver</var>).</p></li>
+
+   <li><p>Return ? <span>CrossOriginGet</span>(<b>this</b>, <var>P</var>,
+   <var>Receiver</var>).</p></li>
+  </ol>
+
+  <p class="note"><b>this</b> is passed rather than <var>W</var> as <span>OrdinaryGet</span> and
+  <span>CrossOriginGet</span> will invoke the <a
+  href="#windowproxy-getownproperty">[[GetOwnProperty]]</a> internal method.</p>
+  </div>
+
+  <div algorithm>
+  <h5 id="windowproxy-set">[[Set]] ( <var>P</var>, <var>V</var>, <var>Receiver</var> )</h5>
+
+  <ol>
+   <li><p>Let <var>W</var> be the value of the
+   <span data-x="concept-windowproxy-window">[[Window]]</span> internal slot of
+   <b>this</b>.</p></li>
+
+   <li><p><span data-x="coop-check-access-report">Check if an access between two browsing contexts
+   should be reported</span>, given the <span>current global object</span>'s <span>browsing
+   context</span>, <var>W</var>'s <span>browsing context</span>, <var>P</var>,
+   and the <span>current settings object</span>.</p></li>
+
+   <li>
+    <p>If <span>IsPlatformObjectSameOrigin</span>(<var>W</var>) is true:</p>
+
+    <ol>
+     <li><p>If <var>P</var> is an <span>array index property name</span>,
+     then return false.</p></li>
+
+     <li><p>Return ? <span>OrdinarySet</span>(<var>W</var>, <var>P</var>, <var>V</var>,
+     <var>Receiver</var>).</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p>Return ? <span>CrossOriginSet</span>(<b>this</b>, <var>P</var>, <var>V</var>,
+    <var>Receiver</var>).</p>
+
+    <p class="note"><b>this</b> is passed rather than <var>W</var> as <span>CrossOriginSet</span>
+    will invoke the <a href="#windowproxy-getownproperty">[[GetOwnProperty]]</a>
+    internal method.</p>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <h5 id="windowproxy-delete">[[Delete]] ( <var>P</var> )</h5>
+
+  <ol>
+   <li><p>Let <var>W</var> be the value of the
+   <span data-x="concept-windowproxy-window">[[Window]]</span> internal slot of
+   <b>this</b>.</p></li>
+
+   <li>
+    <p>If <span>IsPlatformObjectSameOrigin</span>(<var>W</var>) is true:
+
+    <ol>
+     <li>
+      <p>If <var>P</var> is an <span>array index property name</span>:</p>
+
+      <ol>
+       <li><p>Let <var>desc</var> be ! <b>this</b>.[[GetOwnProperty]](<var>P</var>).</p></li>
+
+       <li><p>If <var>desc</var> is undefined, then return true.</p></li>
+
+       <li><p>Return false.</p></li>
+      </ol>
+     </li>
+
+     <li><p>Return ? <span>OrdinaryDelete</span>(<var>W</var>, <var>P</var>).</p></li>
+    </ol>
+
+   <li><p>Throw a <span>"<code>SecurityError</code>"</span> <code>DOMException</code>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <h5 id="windowproxy-ownpropertykeys">[[OwnPropertyKeys]] ( )</h5>
+
+  <ol>
+   <li><p>Let <var>W</var> be the value of the <span
+   data-x="concept-windowproxy-window">[[Window]]</span> internal slot of <b>this</b>.</p></li>
+
+   <li><p>Let <var>maxProperties</var> be <var>W</var>'s <span
+   data-x="concept-document-window">associated <code>Document</code></span>'s <span>document-tree
+   child navigables</span>'s <span data-x="list size">size</span>.</p></li>
+
+   <li><p>Let <var>keys</var> be <span data-x="exclusive range">the range</span> 0 to
+   <var>maxProperties</var>, exclusive.</p></li>
+
+   <li><p>If <span>IsPlatformObjectSameOrigin</span>(<var>W</var>) is true, then return the
+   concatenation of <var>keys</var> and
+   <span>OrdinaryOwnPropertyKeys</span>(<var>W</var>).</p></li>
+
+   <li><p>Return the concatenation of <var>keys</var> and !
+   <span>CrossOriginOwnPropertyKeys</span>(<var>W</var>).</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+

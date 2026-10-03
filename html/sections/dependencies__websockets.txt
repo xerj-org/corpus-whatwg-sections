@@ -1,0 +1,13 @@
+WHATWG HTML — section dependencies/websockets — WebSockets
+
+   <dt>WebSockets</dt>
+
+   <dd>
+    <p>The following terms are defined in <cite>WebSockets</cite>: <ref>WEBSOCKETS</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://websockets.spec.whatwg.org/#websocket"><code>WebSocket</code></dfn></li>
+     <li><dfn data-x-href="https://websockets.spec.whatwg.org/#make-disappear" for="WebSocket">make disappear</dfn></li>
+    </ul>
+   </dd>
+

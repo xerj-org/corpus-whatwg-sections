@@ -1,0 +1,25 @@
+WHATWG HTML — section modal-dialogs-and-inert-subtrees — Modal dialogs and inert subtrees
+
+  <h4>Modal dialogs and inert subtrees</h4>
+
+  <div algorithm>
+  <p>A <code>Document</code> <var>document</var> is <dfn>blocked by a modal dialog</dfn>
+  <var>subject</var> if <var>subject</var> is the topmost <code>dialog</code> element in
+  <var>document</var>'s <span>top layer</span>. While <var>document</var> is so blocked, every node
+  that is <span>connected</span> to <var>document</var>, with the exception of the
+  <var>subject</var> element and its <span>flat tree</span> descendants, must become
+  <span>inert</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p><var>subject</var> can additionally become <span>inert</span> via the <code
+  data-x="attr-inert">inert</code> attribute, but only if specified on <var>subject</var> itself
+  (i.e., <var>subject</var> escapes inertness of ancestors); <var>subject</var>'s <span>flat
+  tree</span> descendants can become <span>inert</span> in a similar fashion.</p>
+  </div>
+
+  <p class="note">The <code>dialog</code> element's <code
+  data-x="dom-dialog-showModal">showModal()</code> method causes this mechanism to trigger, by <span
+  data-x="add an element to the top layer">adding</span> the <code>dialog</code> element to its
+  <span>node document</span>'s <span>top layer</span>.</p>
+

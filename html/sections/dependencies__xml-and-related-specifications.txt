@@ -1,0 +1,42 @@
+WHATWG HTML — section dependencies/xml-and-related-specifications — XML and related specifications
+
+   <dt>XML and related specifications</dt>
+
+   <dd>
+    <p>Implementations that support <span>the XML syntax</span> for HTML must support some version
+    of XML, as well as its corresponding namespaces specification, because that syntax uses an XML
+    serialization with namespaces. <ref>XML</ref> <ref>XMLNS</ref></p>
+
+    <p>Data mining tools and other user agents that perform operations on content without running
+    scripts, evaluating CSS or XPath expressions, or otherwise exposing the resulting DOM to
+    arbitrary content, may "support namespaces" by just asserting that their DOM node analogues are
+    in certain namespaces, without actually exposing the namespace strings.</p>
+
+    <p class="note">In <span>the HTML syntax</span>, namespace prefixes and namespace declarations
+    do not have the same effect as in XML. For instance, the colon has no special meaning in HTML
+    element names.</p>
+
+    <hr>
+
+    <p>The attribute with the name <dfn
+    data-x-href="https://www.w3.org/TR/xml/#sec-white-space"><code
+    data-x="attr-xml-space">space</code></dfn> in the <span>XML namespace</span> is defined by
+    <cite>Extensible Markup Language</cite> (<cite>XML</cite>). <ref>XML</ref></p>
+
+    <p>The <dfn data-x-href="https://www.w3.org/TR/xml/#NT-Name"><code
+    data-x="xml-Name">Name</code></dfn> production is defined in <cite>XML</cite>.
+    <ref>XML</ref></p>
+
+    <p>This specification also references the <dfn
+    data-x-href="https://www.w3.org/TR/xml-stylesheet/#the-xml-stylesheet-processing-instruction"><code>&lt;?xml-stylesheet?></code></dfn>
+    processing instruction, defined in <cite>Associating Style Sheets with XML documents</cite>.
+    <ref>XMLSSPI</ref></p>
+
+    <p>This specification also non-normatively mentions the <dfn><code>XSLTProcessor</code></dfn>
+    interface and its <dfn><code
+    data-x="dom-XSLTProcessor-transformToFragment">transformToFragment()</code></dfn> and <dfn><code
+    data-x="dom-XSLTProcessor-transformToDocument">transformToDocument()</code></dfn> methods.
+    <ref>XSLTP</ref></p>
+   </dd>
+
+

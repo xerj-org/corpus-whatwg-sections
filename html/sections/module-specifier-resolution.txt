@@ -1,0 +1,1289 @@
+WHATWG HTML — section module-specifier-resolution — Module specifier resolution
+
+  <h4>Module specifier resolution</h4>
+
+  <h5>The resolution algorithm</h5>
+
+  <p>The <span>resolve a module specifier</span> algorithm is the primary entry point for
+  converting module specifier strings into <span data-x="URL">URLs</span>. When no <span
+  data-x="import map">import maps</span> are involved, it is relatively straightforward, and
+  reduces to <span>resolving a URL-like module specifier</span>.</p>
+
+  <p>When there is a non-empty <span>import map</span> present, the behavior is more complex. It
+  checks candidate entries from all applicable <span data-x="module specifier map">module specifier
+  maps</span>, from most-specific to least-specific <span
+  data-x="concept-import-map-scopes">scopes</span> (falling back to the top-level unscoped <span
+  data-x="concept-import-map-imports">imports</span>), and from most-specific to least-specific
+  prefixes. <span w-nodev>For each candidate, the <span data-x="resolving an imports match">resolve
+  an imports match</span> algorithm will give one of the following results:</span></p>
+
+  <ul w-nodev> <li><p>Successful resolution of the specifier to a <span>URL</span>. Then the
+  <span>resolve a module specifier</span> algorithm will return that URL.</p></li>
+
+   <li><p>Throwing an exception. Then the <span>resolve a module specifier</span> algorithm will
+   rethrow that exception, without any further fallbacks.</p></li>
+
+   <li><p>Failing to resolve, without an error. In this case the outer <span>resolve a module
+   specifier</span> algorithm will move on to the next candidate.</p></li>
+  </ul>
+
+  <p>In the end, if no successful resolution is found via any of the candidate <span data-x="module
+  specifier map">module specifier maps</span>, <span>resolve a module specifier</span> will throw
+  an exception. Thus the result is always either a <span>URL</span> or a thrown exception.</p>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>To <dfn>resolve a module specifier</dfn> given a <span>script</span>-or-null
+  <var>referringScript</var> and a <span>string</span> <var>specifier</var>:</p>
+
+  <ol>
+   <li><p>Let <var>settingsObject</var> and <var>baseURL</var> be null.</p></li>
+
+   <li>
+    <p>If <var>referringScript</var> is not null:</p>
+
+    <ol>
+     <li><p>Set <var>settingsObject</var> to <var>referringScript</var>'s
+     <span data-x="concept-script-settings-object">settings object</span>.</p></li>
+
+     <li><p>Set <var>baseURL</var> to <var>referringScript</var>'s <span
+     data-x="concept-script-base-url">base URL</span>.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p>Otherwise:</p>
+
+    <ol>
+     <li><p><span>Assert</span>: there is a <span>current settings object</span>.</p></li>
+
+     <li><p>Set <var>settingsObject</var> to the <span>current settings object</span>.</p></li>
+
+     <li><p>Set <var>baseURL</var> to <var>settingsObject</var>'s <span>API base
+     URL</span>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Let <var>importMap</var> be an <span>empty import map</span>.</p></li>
+
+   <li><p>If <var>settingsObject</var>'s <span data-x="concept-settings-object-global">global
+   object</span> implements <code>Window</code>, then set <var>importMap</var> to
+   <var>settingsObject</var>'s <span data-x="concept-settings-object-global">global object</span>'s
+   <span data-x="concept-global-import-map">import map</span>.</p></li>
+
+   <li><p>Let <var>serializedBaseURL</var> be <var>baseURL</var>, <span
+   data-x="concept-url-serializer">serialized</span>.</p></li>
+
+   <li><p>Let <var>asURL</var> be the result of <span>resolving a URL-like module specifier</span>
+   given <var>specifier</var> and <var>baseURL</var>.</p></li>
+
+   <li><p>Let <var>normalizedSpecifier</var> be the <span
+   data-x="concept-url-serializer">serialization</span> of <var>asURL</var>, if <var>asURL</var> is
+   non-null; otherwise, <var>specifier</var>.</p></li>
+
+   <li><p>Let <var>result</var> be a <span>URL</span>-or-null, initially null.</p></li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>scopePrefix</var> → <var>scopeImports</var>
+    of <var>importMap</var>'s <span data-x="concept-import-map-scopes">scopes</span>:</p>
+
+    <ol>
+     <li>
+      <p>If <var>scopePrefix</var> is <var>serializedBaseURL</var>, or if <var>scopePrefix</var> ends
+      with U+002F (/) and <var>scopePrefix</var> is a <span>code unit prefix</span> of
+      <var>serializedBaseURL</var>:</p>
+
+      <ol>
+       <li><p>Let <var>scopeImportsMatch</var> be the result of <span>resolving an imports
+       match</span> given <var>normalizedSpecifier</var>, <var>asURL</var>, and
+       <var>scopeImports</var>.</p></li>
+
+       <li><p>If <var>scopeImportsMatch</var> is not null, then set <var>result</var> to
+       <var>scopeImportsMatch</var>, and <span>break</span>.</p></li>
+      </ol>
+     </li>
+    </ol>
+   </li>
+
+   <li><p>If <var>result</var> is null, set <var>result</var> to the result of <span>resolving an
+   imports match</span> given <var>normalizedSpecifier</var>, <var>asURL</var>, and
+   <var>importMap</var>'s <span data-x="concept-import-map-imports">imports</span>.</p></li>
+
+   <li>
+    <p>If <var>result</var> is null, set it to <var>asURL</var>.</p>
+
+    <p class="note">By this point, if <var>result</var> was null, <var>specifier</var> wasn't
+    remapped to anything by <var>importMap</var>, but it might have been able to be turned into a
+    URL.</p>
+   </li>
+
+   <li>
+    <p>If <var>result</var> is not null:</p>
+
+    <ol>
+     <li><p><span>Add module to resolved module set</span> given <var>settingsObject</var>,
+     <var>serializedBaseURL</var>, <var>normalizedSpecifier</var>, and <var>asURL</var>.</p></li>
+
+     <li><p>Return <var>result</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Throw a <code>TypeError</code> indicating that <var>specifier</var> was a bare specifier,
+   but was not remapped to anything by <var>importMap</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="resolving an imports match">resolve an imports match</dfn>, given a
+  <span>string</span> <var>normalizedSpecifier</var>, a <span>URL</span>-or-null <var>asURL</var>,
+  and a <span>module specifier map</span> <var>specifierMap</var>:</p>
+
+  <ol>
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>specifierKey</var> →
+    <var>resolutionResult</var> of <var>specifierMap</var>:</p>
+
+    <ol>
+     <li>
+      <p>If <var>specifierKey</var> is <var>normalizedSpecifier</var>:</p>
+
+      <ol>
+       <li>
+        <p>If <var>resolutionResult</var> is null, then throw a <code>TypeError</code> indicating
+        that resolution of <var>specifierKey</var> was blocked by a null entry.</p>
+
+        <p class="note">This will terminate the entire <span>resolve a module specifier</span>
+        algorithm, without any further fallbacks.</p>
+       </li>
+
+       <li><p><span>Assert</span>: <var>resolutionResult</var> is a <span>URL</span>.</p></li>
+
+       <li><p>Return <var>resolutionResult</var>.</p></li>
+      </ol>
+     </li>
+
+     <li>
+      <p>If all of the following are true:</p>
+
+      <ul>
+       <li><p><var>specifierKey</var> ends with U+002F (/);</p></li>
+
+       <li><p><var>specifierKey</var> is a <span>code unit prefix</span> of
+       <var>normalizedSpecifier</var>; and</p></li>
+
+       <li><p>either <var>asURL</var> is null, or <var>asURL</var> <span>is special</span>,</p></li>
+      </ul>
+
+      <p>then:</p>
+
+      <ol>
+       <li>
+        <p>If <var>resolutionResult</var> is null, then throw a <code>TypeError</code> indicating
+        that the resolution of <var>specifierKey</var> was blocked by a null entry.</p>
+
+        <p class="note">This will terminate the entire <span>resolve a module specifier</span>
+        algorithm, without any further fallbacks.</p>
+       </li>
+
+       <li><p><span>Assert</span>: <var>resolutionResult</var> is a <span>URL</span>.</p></li>
+
+       <li><p>Let <var>afterPrefix</var> be the portion of <var>normalizedSpecifier</var> after the
+       initial <var>specifierKey</var> prefix.</p></li>
+
+       <li><p><span>Assert</span>: <var>resolutionResult</var>, <span
+       data-x="concept-url-serializer">serialized</span>, ends with U+002F (/), as enforced during
+       <span data-x="parse an import map string">parsing</span>.</p></li>
+
+       <li><p>Let <var>url</var> be the result of <span data-x="URL parser">URL parsing</span>
+       <var>afterPrefix</var> with <var>resolutionResult</var>.</p></li>
+
+       <li>
+        <p>If <var>url</var> is failure, then throw a <code>TypeError</code> indicating that
+        resolution of <var>normalizedSpecifier</var> was blocked since the <var>afterPrefix</var>
+        portion could not be URL-parsed relative to the <var>resolutionResult</var> mapped to by
+        the <var>specifierKey</var> prefix.</p>
+
+        <p class="note">This will terminate the entire <span>resolve a module specifier</span>
+        algorithm, without any further fallbacks.</p>
+       </li>
+
+       <li><p><span>Assert</span>: <var>url</var> is a <span>URL</span>.</p></li>
+
+       <li>
+        <p>If the <span data-x="concept-url-serializer">serialization</span> of
+        <var>resolutionResult</var> is not a <span>code unit prefix</span> of the <span
+        data-x="concept-url-serializer">serialization</span> of <var>url</var>, then throw a
+        <code>TypeError</code> indicating that the resolution of <var>normalizedSpecifier</var> was
+        blocked due to it backtracking above its prefix <var>specifierKey</var>.</p>
+
+        <p class="note">This will terminate the entire <span>resolve a module specifier</span>
+        algorithm, without any further fallbacks.</p>
+       </li>
+
+       <li><p>Return <var>url</var>.</p></li>
+      </ol>
+     </li>
+    </ol>
+   </li>
+
+   <li>
+    <p>Return null.</p>
+
+    <p class="note">The <span>resolve a module specifier</span> algorithm will fall back to a
+    less-specific scope, or to "<code data-x="">imports</code>", if possible.</p>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="resolving a URL-like module specifier">resolve a URL-like module
+  specifier</dfn>, given a <span>string</span> <var>specifier</var> and a <span>URL</span>
+  <var>baseURL</var>:</p>
+
+  <ol>
+   <li>
+    <p>If <var>specifier</var> <span>starts with</span> "<code data-x="">/</code>", "<code
+    data-x="">./</code>", or "<code data-x="">../</code>":</p>
+
+    <ol>
+     <li><p>Let <var>url</var> be the result of <span data-x="URL parser">URL parsing</span>
+     <var>specifier</var> with <var>baseURL</var>.</p></li>
+
+     <li>
+      <p>If <var>url</var> is failure, then return null.</p>
+
+      <p class="example">One way this could happen is if <var>specifier</var> is "<code
+      data-x="">../foo</code>" and <var>baseURL</var> is a <code data-x="data
+      protocol">data:</code> URL.</p>
+     </li>
+
+     <li><p>Return <var>url</var>.</p></li>
+    </ol>
+
+    <p class="note">This includes cases where <var>specifier</var> <span>starts with</span> "<code
+    data-x="">//</code>", i.e., scheme-relative URLs. Thus, <var>url</var> might end up with a
+    different <span data-x="concept-url-host">host</span> than <var>baseURL</var>.</p>
+   </li>
+
+   <li><p>Let <var>url</var> be the result of <span data-x="URL parser">URL parsing</span>
+   <var>specifier</var> (with no base URL).</p></li>
+
+   <li><p>If <var>url</var> is failure, then return null.</p></li>
+
+   <li><p>Return <var>url</var>.</p>
+  </ol>
+  </div>
+
+  </div>
+
+
+  <h5>Import maps</h5>
+
+  <p>An <span subdfn>import map</span> allows control over module specifier resolution. Import maps
+  are delivered via inline <code>script</code> elements with their <code
+  data-x="attr-script-type">type</code> attribute set to "<code data-x="">importmap</code>", and
+  with their <span>child text content</span> containing a JSON representation of the import
+  map.</p>
+
+  <p>A <code>Document</code> can have multiple import maps processed, which can happen either
+  before or after any modules have been imported, e.g., via <code>import()</code> expressions or
+  <code>script</code> elements with their <code data-x="attr-script-type">type</code> attribute set
+  to "<code data-x="">module</code>". The <span>merge existing and new import maps</span> algorithm
+  ensures that new import maps cannot define the module resolution for modules that were already
+  defined by past import maps, or for ones that were already resolved.</p>
+
+  <div class="example" id="example-import-map-bare-specifier">
+   <p>The simplest use of import maps is to globally remap a bare module specifier:</p>
+
+   <pre><code class="json" data-x="">{
+  "imports": {
+    "moment": "/node_modules/moment/src/moment.js"
+  }
+}</code></pre>
+
+   <p>This enables statements like <code class="js" data-x="">import moment from "moment";</code>
+   to work, fetching and evaluating the JavaScript module at the <code
+   data-x="">/node_modules/moment/src/moment.js</code> URL.</p>
+  </div>
+
+  <div class="example" id="example-import-map-trailing-slashes">
+   <p>An import map can remap a class of module specifiers into a class of URLs by using trailing
+   slashes, like so:</p>
+
+   <pre><code class="json" data-x="">{
+  "imports": {
+    "moment/": "/node_modules/moment/src/"
+  }
+}</code></pre>
+
+   <p>This enables statements like <code class="js" data-x="">import localeData from
+   "moment/locale/zh-cn.js";</code> to work, fetching and evaluating the JavaScript module at the
+   <code data-x="">/node_modules/moment/src/locale/zh-cn.js</code> URL. Such trailing-slash
+   mappings are often combined with bare-specifier mappings, e.g.</p>
+
+   <pre><code class="json" data-x="">{
+  "imports": {
+    "moment": "/node_modules/moment/src/moment.js",
+    "moment/": "/node_modules/moment/src/"
+  }
+}</code></pre>
+
+   <p>so that both the "main module" specified by "<code data-x="">moment</code>" and the
+   "submodules" specified by paths such as "<code data-x="">moment/locale/zh-cn.js</code>" are
+   available.</p>
+  </div>
+
+  <div class="example" id="example-import-map-url-like-specifier">
+   <p>Bare specifiers are not the only type of module specifiers which import maps can remap.
+   "URL-like" specifiers, i.e., those that are either parseable as absolute URLs or start with
+   "<code data-x="">/</code>", "<code data-x="">./</code>", or "<code data-x="">../</code>", can be
+   remapped as well:</p>
+
+   <pre><code class="json" data-x="">{
+  "imports": {
+    "https://cdn.example.com/vue/dist/vue.runtime.esm.js": "/node_modules/vue/dist/vue.runtime.esm.js",
+    "/js/app.mjs": "/js/app-8e0d62a03.mjs",
+    "../helpers/": "https://cdn.example/helpers/"
+  }
+}</code></pre>
+
+   <p>Note how the URL to be remapped, as well as the URL being mapped to, can be specified either
+   as absolute URLs, or as relative URLs starting with "<code data-x="">/</code>", "<code
+   data-x="">./</code>", or "<code data-x="">../</code>". (They cannot be specified as relative
+   URLs without those starting sigils, as those help distinguish from bare module specifiers.) Also
+   note how the <a href="#example-import-map-trailing-slashes">trailing slash mapping</a> works in
+   this context as well.</p>
+
+   <p>Such remappings operate on the post-canonicalization URL, and do not require a match between
+   the literal strings supplied in the import map key and the imported module specifier. So for
+   example, if this import map was included on <code data-x="">https://example.com/app.html</code>,
+   then not only would <code class="js" data-x="">import "/js/app.mjs"</code> be remapped, but so
+   would <code class="js" data-x="">import "./js/app.mjs"</code> and <code class="js"
+   data-x="">import "./foo/../js/app.mjs"</code>.</p>
+  </div>
+
+  <div class="example" id="example-import-map-scopes">
+   <p>All previous examples have globally remapped module specifiers, by using the top-level "<code
+   data-x="">imports</code>" key in the import map. The top-level "<code data-x="">scopes</code>"
+   key can be used to provide localized remappings, which only apply when the referring module
+   matches a specific URL prefix. For example:</p>
+
+   <pre><code class="json" data-x="">{
+  "scopes": {
+    "/a/" : {
+      "moment": "/node_modules/moment/src/moment.js"
+    },
+    "/b/" : {
+      "moment": "https://cdn.example.com/moment/src/moment.js"
+    }
+  }
+}</code></pre>
+
+   <p>With this import map, the statement <code data-x="">import "moment"</code> will have
+   different meanings depending on which referrer script contains the statement:</p>
+
+   <ul>
+    <li><p>Inside scripts located under <code data-x="">/a/</code>, this will import <code
+    data-x="">/node_modules/moment/src/moment.js</code>.</p></li>
+
+    <li><p>Inside scripts located under <code data-x="">/b/</code>, this will import <code
+    data-x="">https://cdn.example.com/moment/src/moment.js</code>.</p></li>
+
+    <li><p>Inside scripts located under <code data-x="">/c/</code>, this will fail to resolve and
+    thus throw an exception.</p></li>
+   </ul>
+
+   <p>A typical usage of scopes is to allow multiple versions of the "same" module to exist in a
+   web application, with some parts of the module graph importing one version, and other parts
+   importing another version.
+  </div>
+
+  <div class="example" id="example-import-map-scopes-overlapping">
+   <p>Scopes can overlap each other, and overlap the global "<code data-x="">imports</code>"
+   specifier map. At resolution time, scopes are consulted in order of most- to least-specific,
+   where specificity is measured by sorting the scopes using the <span>code unit less than</span>
+   operation. So, for example, "<code data-x="">/scope2/scope3/</code>" is treated as more specific
+   than "<code data-x="">/scope2/</code>", which is treated as more specific than the top-level
+   (unscoped) mappings.</p>
+
+   <p>The following import map illustrates this:</p>
+
+   <pre><code class="json" data-x="">{
+  "imports": {
+    "a": "/a-1.mjs",
+    "b": "/b-1.mjs",
+    "c": "/c-1.mjs"
+  },
+  "scopes": {
+    "/scope2/": {
+      "a": "/a-2.mjs"
+    },
+    "/scope2/scope3/": {
+      "b": "/b-3.mjs"
+    }
+  }
+}</code></pre>
+
+   <p>This results in the following resolutions (using relative URLs for brevity):</p>
+
+   <table id="table-import-map-scopes-example">
+    <thead>
+     <tr>
+      <td colspan="2" rowspan="2">
+      <th colspan="3">Specifier
+     <tr>
+      <th>"<code data-x="">a</code>"
+      <th>"<code data-x="">b</code>"
+      <th>"<code data-x="">c</code>"
+    <tbody>
+     <tr>
+      <th rowspan="3">Referrer
+      <th><code data-x="">/scope1/r.mjs</code>
+      <td><code data-x="">/a-1.mjs</code>
+      <td><code data-x="">/b-1.mjs</code>
+      <td><code data-x="">/c-1.mjs</code>
+     <tr>
+      <th><code data-x="">/scope2/r.mjs</code>
+      <td><code data-x="">/a-2.mjs</code>
+      <td><code data-x="">/b-1.mjs</code>
+      <td><code data-x="">/c-1.mjs</code>
+     <tr>
+      <th><code data-x="">/scope2/scope3/r.mjs</code>
+      <td><code data-x="">/a-2.mjs</code>
+      <td><code data-x="">/b-3.mjs</code>
+      <td><code data-x="">/c-1.mjs</code>
+   </table>
+  </div>
+
+  <div class="example" id="example-import-map-integrity">
+   <p>Import maps can also be used to provide modules with integrity metadata to be used in
+   <cite>Subresource Integrity</cite> checks. <ref>SRI</ref>
+   </p>
+
+   <p>The following import map illustrates this:</p>
+
+   <pre><code class="json" data-x="">{
+  "imports": {
+    "a": "/a-1.mjs",
+    "b": "/b-1.mjs",
+    "c": "/c-1.mjs"
+  },
+  "integrity": {
+    "/a-1.mjs": "sha384-Li9vy3DqF8tnTXuiaAJuML3ky+er10rcgNR/VqsVpcw+ThHmYcwiB1pbOxEbzJr7",
+    "/d-1.mjs": "sha384-MBO5IDfYaE6c6Aao94oZrIOiC6CGiSN2n4QUbHNPhzk5Xhm0djZLQqTpL0HzTUxk"
+  }
+}</code></pre>
+
+   <p>The above example provides integrity metadata to be enforced on the modules <code
+   data-x="">/a-1.mjs</code> and <code data-x="">/d-1.mjs</code>, even if the latter is not defined
+   as an import in the map.</p>
+  </div>
+
+  <hr>
+
+  <div algorithm>
+  <p>The <span>child text content</span> of a <code>script</code> element representing an
+  <span>import map</span> must match the following <dfn>import map authoring
+  requirements</dfn>:</p>
+
+  <ul>
+   <li><p>It must be valid JSON. <ref>JSON</ref></p></li>
+
+   <li><p>The JSON must represent a JSON object, with at most the three keys "<code
+   data-x="">imports</code>", "<code data-x="">scopes</code>", and "<code
+   data-x="">integrity</code>".</p></li>
+
+   <li><p>The values corresponding to the "<code data-x="">imports</code>", "<code
+   data-x="">scopes</code>", and "<code data-x="">integrity</code>" keys, if present,
+   must themselves be JSON objects.</p></li>
+
+   <li><p>The value corresponding to the "<code data-x="">imports</code>" key, if present, must be
+   a <span>valid module specifier map</span>.</p></li>
+
+   <li><p>The value corresponding to the "<code data-x="">scopes</code>" key, if present, must be a
+   JSON object, whose keys are <span data-x="valid URL string">valid URL strings</span> and whose
+   values are <span data-x="valid module specifier map">valid module specifier
+   maps</span>.</p></li>
+
+   <li><p>The value corresponding to the "<code data-x="">integrity</code>" key, if present, must
+   be a JSON object, whose keys are <span data-x="valid URL string">valid URL strings</span> and
+   whose values fit <span>the requirements of the integrity attribute</span>.</p></li>
+  </ul>
+  </div>
+
+  <div algorithm>
+  <p>A <dfn>valid module specifier map</dfn> is a JSON object that meets the following
+  requirements:</p>
+
+  <ul>
+   <li><p>All of its keys must be nonempty.</p></li>
+
+   <li><p>All of its values must be strings.</p></li>
+
+   <li><p>Each value must be either a <span data-x="absolute URL">valid absolute URL</span> or a
+   <span>valid URL string</span> that <span>starts with</span> "<code data-x="">/</code>", "<code
+   data-x="">./</code>", or "<code data-x="">../</code>".</p></li>
+
+   <li><p>If a given key <span>ends with</span> "<code data-x="">/</code>", then the corresponding
+   value must also.</p></li>
+  </ul>
+  </div>
+
+
+  <div w-nodev>
+
+  <h5>Import map processing model</h5>
+
+  <p>Formally, an <dfn>import map</dfn> is a <span>struct</span> with three <span data-x="struct
+  item">items</span>:</p>
+
+  <ul>
+   <li><p><dfn data-x="concept-import-map-imports">imports</dfn>, a <span>module specifier
+   map</span>;</p></li>
+
+   <li><p><dfn data-x="concept-import-map-scopes">scopes</dfn>, an <span>ordered map</span> of
+   <span data-x="URL">URLs</span> to <span data-x="module specifier map">module specifier
+   maps</span>; and</p></li>
+
+   <li><p><dfn data-x="concept-import-map-integrity">integrity</dfn>, a <span>module integrity
+   map</span>.</p></li>
+  </ul>
+
+  <p>A <dfn>module specifier map</dfn> is an <span>ordered map</span> whose <span data-x="map
+  key">keys</span> are <span data-x="string">strings</span> and whose <span data-x="map
+  value">values</span> are either <span data-x="URL">URLs</span> or nulls.</p>
+
+  <p>A <dfn>module integrity map</dfn> is an <span>ordered map</span> whose <span data-x="map
+  key">keys</span> are <span data-x="URL">URLs</span> and whose <span data-x="map
+  value">values</span> are <span data-x="string">strings</span> that will be used as <span
+  data-x="concept-request-integrity-metadata">integrity metadata</span>.</p>
+
+  <p>An <dfn>empty import map</dfn> is an <span>import map</span> with its <span
+  data-x="concept-import-map-imports">imports</span> and <span
+  data-x="concept-import-map-scopes">scopes</span> both being empty maps.</p>
+
+  <hr>
+
+  <p>A <dfn>specifier resolution record</dfn> is a <span>struct</span>. It has the following <span
+  data-x="struct item">items</span>:</p>
+  <dl>
+   <dt>A <dfn data-x="specifier-resolution-record-serialized-base-url">serialized base
+   URL</dfn></dt>
+   <dd>A <span>string</span>-or-null that represents the base URL of the specifier, when one
+   exists.</dd>
+
+   <dt>A <dfn data-x="specifier-resolution-record-specifier">specifier</dfn></dt>
+   <dd>A <span>string</span> representing the specifier.</dd>
+
+   <dt>A <dfn data-x="specifier-resolution-record-as-url">specifier as a URL</dfn></dt>
+   <dd>A <span>URL</span>-or-null that represents the URL in case of a URL-like module
+   specifier.</dd>
+  </dl>
+
+  <p class="note">Implementations can replace
+  <span data-x="specifier-resolution-record-as-url">specifier as a URL</span> with a boolean that
+  indicates that the specifier is either bare or URL-like that <span>is special</span>.</p>
+
+  <div algorithm>
+  <p>To <dfn>add module to resolved module set</dfn> given an <span>environment settings
+  object</span> <var>settingsObject</var>, a <span>string</span> <var>serializedBaseURL</var>, a
+  <span>string</span> <var>normalizedSpecifier</var>, and a <span>URL</span>-or-null
+  <var>asURL</var>:</p>
+
+  <ol>
+   <li><p>Let <var>global</var> be <var>settingsObject</var>'s <span
+   data-x="concept-settings-object-global">global object</span>.</p></li>
+
+   <li><p>If <var>global</var> does not implement <code>Window</code>, then return.</p></li>
+
+   <li><p>Let <var>record</var> be a new <span>specifier resolution record</span>, with <span
+   data-x="specifier-resolution-record-serialized-base-url">serialized base URL</span> set to
+   <var>serializedBaseURL</var>, <span
+   data-x="specifier-resolution-record-specifier">specifier</span> set to
+   <var>normalizedSpecifier</var>, and <span
+   data-x="specifier-resolution-record-as-url">specifier as a URL</span> set to
+   <var>asURL</var>.</p></li>
+
+   <li><p><span data-x="set append">Append</span> <var>record</var> to <var>global</var>'s
+   <span>resolved module set</span>.</p></li>
+  </ol>
+  </div>
+  <hr>
+
+  <div algorithm>
+  <p>To <dfn>parse an import map string</dfn>, given a <span>string</span> <var>input</var> and a
+  <span>URL</span> <var>baseURL</var>:</p>
+
+  <ol>
+   <li><p>Let <var>parsed</var> be the result of <span data-x="parse a JSON string to an Infra
+   value">parsing a JSON string to an Infra value</span> given <var>input</var>.</p></li>
+
+   <li><p>If <var>parsed</var> is not an <span>ordered map</span>, then throw a
+   <code>TypeError</code> indicating that the top-level value needs to be a JSON object.</p></li>
+
+   <li><p>Let <var>sortedAndNormalizedImports</var> be an empty <span>ordered map</span>.</p></li>
+
+   <li>
+    <p>If <var>parsed</var>["<code data-x="">imports</code>"] <span data-x="map
+    exists">exists</span>:</p>
+
+    <ol>
+     <li><p>If <var>parsed</var>["<code data-x="">imports</code>"] is not an <span>ordered
+     map</span>, then throw a <code>TypeError</code> indicating that the value for the "<code
+     data-x="">imports</code>" top-level key needs to be a JSON object.</p></li>
+
+     <li><p>Set <var>sortedAndNormalizedImports</var> to the result of <span>sorting and
+     normalizing a module specifier map</span> given <var>parsed</var>["<code
+     data-x="">imports</code>"] and <var>baseURL</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Let <var>sortedAndNormalizedScopes</var> be an empty <span>ordered map</span>.</p></li>
+
+   <li>
+    <p>If <var>parsed</var>["<code data-x="">scopes</code>"] <span data-x="map
+    exists">exists</span>:</p>
+
+    <ol>
+     <li><p>If <var>parsed</var>["<code data-x="">scopes</code>"] is not an <span>ordered
+     map</span>, then throw a <code>TypeError</code> indicating that the value for the "<code
+     data-x="">scopes</code>" top-level key needs to be a JSON object.</p></li>
+
+     <li><p>Set <var>sortedAndNormalizedScopes</var> to the result of <span>sorting and normalizing
+     scopes</span> given <var>parsed</var>["<code data-x="">scopes</code>"] and
+     <var>baseURL</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Let <var>normalizedIntegrity</var> be an empty <span>ordered map</span>.</p></li>
+
+   <li>
+    <p>If <var>parsed</var>["<code data-x="">integrity</code>"] <span data-x="map
+    exists">exists</span>:</p>
+
+    <ol>
+     <li><p>If <var>parsed</var>["<code data-x="">integrity</code>"] is not an <span>ordered
+     map</span>, then throw a <code>TypeError</code> indicating that the value for the "<code
+     data-x="">integrity</code>" top-level key needs to be a JSON object.</p></li>
+
+     <li><p>Set <var>normalizedIntegrity</var> to the result of <span>normalizing a module
+     integrity map</span> given <var>parsed</var>["<code data-x="">integrity</code>"] and
+     <var>baseURL</var>.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p>If <var>parsed</var>'s <span data-x="map key">keys</span> <span data-x="list
+    contains">contains</span> any items besides "<code data-x="">imports</code>", "<code
+    data-x="">scopes</code>", or "<code data-x="">integrity</code>", then the user agent should
+    <span>report a warning to the console</span> indicating that an invalid top-level key was
+    present in the import map.</p>
+
+    <p class="note">This can help detect typos. It is not an error, because that would prevent any
+    future extensions from being added backward-compatibly.</p>
+   </li>
+
+   <li><p>Return an <span>import map</span> whose <span
+   data-x="concept-import-map-imports">imports</span> are <var>sortedAndNormalizedImports</var>,
+   whose <span data-x="concept-import-map-scopes">scopes</span> are
+   <var>sortedAndNormalizedScopes</var>, and whose <span
+   data-x="concept-import-map-integrity">integrity</span> are
+   <var>normalizedIntegrity</var>.</p></li>
+  </ol>
+  </div>
+
+  <div class="example" id="example-import-map-normalization">
+   <p>The <span>import map</span> that results from this parsing algorithm is highly normalized.
+   For example, given a base URL of <code data-x="">https://example.com/base/page.html</code>, the
+   input</p>
+
+   <pre><code class="json" data-x="">{
+  "imports": {
+    "/app/helper": "node_modules/helper/index.mjs",
+    "lodash": "/node_modules/lodash-es/lodash.js"
+  }
+}</code></pre>
+
+   <p>will generate an <span>import map</span> with <span
+   data-x="concept-import-map-imports">imports</span> of</p>
+
+   <pre><code data-x="">«[
+  "https://example.com/app/helper" → https://example.com/base/node_modules/helper/index.mjs
+  "lodash" → https://example.com/node_modules/lodash-es/lodash.js
+]»</code></pre>
+
+   <p>and (despite nothing being present in the input string) an empty <span>ordered map</span> for
+   its <span data-x="concept-import-map-scopes">scopes</span>.</p>
+  </div>
+
+  <hr>
+
+  <div algorithm>
+  <p>To <dfn>merge module specifier maps</dfn>, given a <span>module specifier map</span>
+  <var>newMap</var> and a <span>module specifier map</span> <var>oldMap</var>:</p>
+
+  <ol>
+   <li><p>Let <var>mergedMap</var> be a deep copy of <var>oldMap</var>.</p></li>
+   <!-- XXX "deep copy" ought to be defined. -->
+
+   <li>
+    <p><span data-x="map iterate">For each</span> <var>specifier</var> →
+    <var>url</var> of <var>newMap</var>:</p>
+
+    <ol>
+     <li>
+      <p>If <var>specifier</var> <span data-x="map exists">exists</span> in
+      <var>oldMap</var>:</p>
+
+      <ol>
+       <li><p>The user agent may <span>report a warning to the console</span> indicating the
+       ignored rule. They may choose to avoid reporting if the rule is identical to an existing
+       one.</p></li>
+
+       <li><p><span>Continue</span>.</p></li>
+      </ol>
+     </li>
+
+     <li><p>Set <var>mergedMap</var>[<var>specifier</var>] to <var>url</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Return <var>mergedMap</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="merge existing and new import maps">merge existing and new import maps</dfn>,
+  given a <span data-x="concept-settings-object-global">global object</span> <var>global</var> and
+  an <span>import map</span> <var>newImportMap</var>:</p>
+
+  <ol>
+   <li>
+    <p>Let <var>newImportMapScopes</var> be a deep copy of <var>newImportMap</var>'s <span
+    data-x="concept-import-map-scopes">scopes</span>.</p>
+
+    <p class="note">We're mutating these copies and removing items from them when they are used to
+    ignore scope-specific rules. This is true for <var>newImportMapScopes</var>, as well as to
+    <var>newImportMapImports</var> below.</p>
+   </li>
+
+  <li><p>Let <var>oldImportMap</var> be <var>global</var>'s <span
+  data-x="concept-global-import-map">import map</span>.</p></li>
+
+   <li><p>Let <var>newImportMapImports</var> be a deep copy of <var>newImportMap</var>'s <span
+   data-x="concept-import-map-imports">imports</span>.</p></li>
+    <!-- XXX "deep copy" ought to be defined. -->
+
+   <li>
+    <p><span data-x="map iterate">For each</span> <var>scopePrefix</var> →
+    <var>scopeImports</var> of <var>newImportMapScopes</var>:</p>
+
+    <ol>
+     <li>
+      <p><span data-x="list iterate">For each</span> <var>record</var> of <var>global</var>'s
+      <span>resolved module set</span>:</p>
+
+      <ol>
+       <li>
+        <p>If <var>scopePrefix</var> is <var>record</var>'s <span
+        data-x="specifier-resolution-record-serialized-base-url">serialized base URL</span>, or if
+        <var>scopePrefix</var> ends with U+002F (/) and <var>scopePrefix</var> is a <span>code unit
+        prefix</span> of <var>record</var>'s <span
+        data-x="specifier-resolution-record-serialized-base-url">serialized base URL</span>:</p>
+
+        <ol>
+         <li>
+          <p><span data-x="list iterate">For each</span> <var>specifierKey</var> →
+          <var>resolutionResult</var> of <var>scopeImports</var>:</p>
+
+          <ol>
+           <li>
+            <p>If <var>specifierKey</var> is <var>record</var>'s <span
+            data-x="specifier-resolution-record-specifier">specifier</span>, or if all of the
+            following conditions are true:</p>
+
+            <ul>
+             <li><p><var>specifierKey</var> ends with U+002F (/);</p></li>
+
+             <li><p><var>specifierKey</var> is a <span>code unit prefix</span> of
+             <var>record</var>'s <span
+             data-x="specifier-resolution-record-specifier">specifier</span>;</p></li>
+
+             <li><p>either <var>record</var>'s <span
+             data-x="specifier-resolution-record-as-url">specifier as a URL</span> is null or
+             <span>is special</span>,</p></li>
+            </ul>
+
+            <p>then:</p>
+
+            <ol>
+             <li><p>The user agent may <span>report a warning to the console</span> indicating the
+             ignored rule. They may choose to avoid reporting if the rule is identical to an existing
+             one.</p></li>
+
+             <li><p>Remove <var>scopeImports</var>[<var>specifierKey</var>].</p></li>
+            </ol>
+           </li>
+          </ol>
+         </li>
+        </ol>
+       </li>
+      </ol>
+
+      <p class="note">Implementers are encouraged to implement a more efficient matching
+      algorithm when working with the <span>resolved module set</span>. As guidance, the number of
+      resolved/mapped modules in a large application can be on the order of thousands.</p>
+     </li>
+
+     <li><p>If <var>scopePrefix</var> <span data-x="map exists">exists</span> in
+     <var>oldImportMap</var>'s <span data-x="concept-import-map-scopes">scopes</span>, then
+     set <var>oldImportMap</var>'s <span
+     data-x="concept-import-map-scopes">scopes</span>[<var>scopePrefix</var>] to the result of
+     <span data-x="merge module specifier maps">merging module specifier maps</span>, given
+     <var>scopeImports</var> and <var>oldImportMap</var>'s <span
+     data-x="concept-import-map-scopes">scopes</span>[<var>scopePrefix</var>].</p></li>
+
+     <li><p>Otherwise, set <var>oldImportMap</var>'s <span
+     data-x="concept-import-map-scopes">scopes</span>[<var>scopePrefix</var>] to
+     <var>scopeImports</var>.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p><span data-x="map iterate">For each</span> <var>url</var> →
+    <var>integrity</var> of <var>newImportMap</var>'s <span
+    data-x="concept-import-map-integrity">integrity</span>:</p>
+
+    <ol>
+     <li>
+      <p>If <var>url</var> <span data-x="map exists">exists</span> in <var>oldImportMap</var>'s
+      <span data-x="concept-import-map-integrity">integrity</span>:</p>
+
+      <ol>
+       <li><p>The user agent may <span>report a warning to the console</span> indicating the
+       ignored rule. They may choose to avoid reporting if the rule is identical to an existing
+       one.</p></li>
+
+       <li><p><span>Continue</span>.</p></li>
+      </ol>
+     </li>
+
+     <li><p>Set <var>oldImportMap</var>'s <span
+     data-x="concept-import-map-integrity">integrity</span>[<var>url</var>] to
+     <var>integrity</var>.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>record</var> of <var>global</var>'s
+    <span>resolved module set</span>:</p>
+
+    <ol>
+     <li>
+      <p><span data-x="list iterate">For each</span> <var>specifier</var> → <var>url</var> of
+      <var>newImportMapImports</var>:</p>
+
+      <ol>
+       <li>
+        <p>If <var>specifier</var> <span>starts with</span> <var>record</var>'s <span
+        data-x="specifier-resolution-record-specifier">specifier</span>:</p>
+
+        <ol>
+         <li><p>The user agent may <span>report a warning to the console</span> indicating the
+         ignored rule. They may choose to avoid reporting if the rule is identical to an existing
+         one.</p></li>
+
+         <li><p>Remove <var>newImportMapImports</var>[<var>specifier</var>].</p></li>
+        </ol>
+       </li>
+      </ol>
+     </li>
+    </ol>
+   </li>
+
+   <li><p>Set <var>oldImportMap</var>'s <span data-x="concept-import-map-imports">imports</span> to
+   the result of <span data-x="merge module specifier maps">merge module specifier maps</span>,
+   given <var>newImportMapImports</var> and <var>oldImportMap</var>'s <span
+   data-x="concept-import-map-imports">imports</span>.</p></li>
+  </ol>
+  </div>
+
+  <p>The above algorithm merges a new import map into the given <span>environment settings
+  object</span>'s <span>global object</span>'s <span>import map</span>. Let's examine a few
+  examples:</p>
+
+  <div class="example" id="example-import-map-merge-unrelated">
+   <p>There are two cases when rules of the new import map don't get merged into the existing
+   one.</p>
+
+   <ol>
+    <li><p>The new import map rule has the exact same scope and specifier as a rule in the existing
+    import map. We'll call that "conflicting rule".</p></li>
+
+    <li><p>The new import map rule may impact the resolution of an already resolved module. We'll
+    call that "impacted already resolved module".</p></li>
+   </ol>
+
+   <p>When the new import map has no conflicting rules, and there are no impacted resolved modules,
+   the resulting map would be a combination of the new and existing maps. Rules that would have
+   individually impacted similar modules (e.g. "/app/" and "/app/helper") but are not an exact
+   match are not conflicting, and all make it to the merged map.</p>
+
+   <p>So, the following existing and new import maps:</p>
+
+   <pre><code class="json" data-x="">{
+   "imports": {
+    "/app/": "./original-app/",
+  }
+}</code></pre>
+
+   <pre><code class="json" data-x="">{
+  "imports": {
+    "/app/helper": "./helper/index.mjs"
+  },
+  "scopes": {
+    "/js": {
+      "/app/": "./js-app/"
+    }
+  }
+}</code></pre>
+
+   <p>Would be equivalent to the following single import map:</p>
+
+   <pre><code class="json" data-x="">{
+  "imports": {
+    "/app/": "./original-app/",
+    "/app/helper": "./helper/index.mjs"
+  },
+  "scopes": {
+    "/js": {
+      "/app/": "./js-app/"
+    }
+  }
+}</code></pre>
+  </div>
+
+  <div class="example" id="example-import-map-merge-conflict-imports">
+   <p>When the new import map impacts an already resolved module, that rule gets dropped from the
+   import map.</p>
+
+   <p>So, if the <span>resolved module set</span> already contains the "<code
+   data-x="">/app/helper</code>", the following new import map:</p>
+
+   <pre><code class="json" data-x="">{
+   "imports": {
+    "/app/helper": "./helper/index.mjs",
+    "lodash": "/node_modules/lodash-es/lodash.js"
+  }
+}</code></pre>
+
+   <p>Would be equivalent to the following one:</p>
+
+   <pre><code class="json" data-x="">{
+  "imports": {
+    "lodash": "/node_modules/lodash-es/lodash.js"
+  }
+}</code></pre>
+  </div>
+
+  <div class="example" id="example-import-map-merge-conflict-scopes">
+   <p>The same is true for rules that impact already resolved modules defined in specific scopes.
+   If we already resolved "<code data-x="">/app/helper</code>" from "<code
+   data-x="">/app/main.mjs</code>" the following new import map:</p>
+
+   <pre><code class="json" data-x="">{
+  "scopes": {
+    "/app/": {
+      "/app/helper": "./helper/index.mjs"
+    }
+  },
+   "imports": {
+    "lodash": "/node_modules/lodash-es/lodash.js"
+  }
+}</code></pre>
+
+   <p>Would similarly be equivalent to:</p>
+
+   <pre><code class="json" data-x="">{
+  "imports": {
+    "lodash": "/node_modules/lodash-es/lodash.js"
+  }
+}</code></pre>
+  </div>
+
+  <div class="example" id="example-import-map-merge-conflict-imports-and-scopes">
+   <p>We could also have cases where a single already-resolved module specifier has multiple rules
+   for its resolution, depending on the referring script. In such cases, only the relevant rules
+   would not be added to the map.</p>
+   <p>For example, if we already resolved "<code data-x="">/app/helper</code>" from "<code
+   data-x="">/app/vendor/main.mjs</code>", the following new import map:</p>
+
+   <pre><code class="json" data-x="">{
+  "scopes": {
+    "/app/": {
+      "/app/helper": "./helper/index.mjs"
+    },
+    "/app/vendor/": {
+      "/app/": "./vendor_helper/"
+    },
+    "/vendor/": {
+      "/app/helper": "./helper/vendor_index.mjs"
+    }
+  },
+   "imports": {
+    "lodash": "/node_modules/lodash-es/lodash.js"
+    "/app/": "./general_app_path/"
+    "/app/helper": "./other_path/helper/index.mjs"
+  }
+}</code></pre>
+
+   <p>Would be equivalent to:</p>
+
+   <pre><code class="json" data-x="">{
+  "scopes": {
+    "/vendor/": {
+      "/app/helper": "./helper/vendor_index.mjs"
+    }
+  },
+  "imports": {
+    "lodash": "/node_modules/lodash-es/lodash.js"
+  }
+}</code></pre>
+
+  <p>This is achieved by the fact that the merge algorithm tracks already resolved modules
+  and removes rules affecting them from new import maps before they are merged into the existing
+  one.</p>
+  </div>
+
+  <div class="example" id="example-import-map-merge-two-map-conflict">
+   <p>When the new import map has conflicting rules to the existing import map, with no impacted
+   already resolved modules, the existing import map rules persist.</p>
+
+   <p>For example, the following existing and new import maps:</p>
+
+   <pre><code class="json" data-x="">{
+   "imports": {
+    "/app/helper": "./helper/index.mjs",
+    "lodash": "/node_modules/lodash-es/lodash.js"
+  }
+}</code></pre>
+
+   <pre><code class="json" data-x="">{
+  "imports": {
+    "/app/helper": "./main/helper/index.mjs"
+  }
+}</code></pre>
+
+   <p>Would be equivalent to the following single import map:</p>
+
+   <pre><code class="json" data-x="">{
+  "imports": {
+    "/app/helper": "./helper/index.mjs",
+    "lodash": "/node_modules/lodash-es/lodash.js",
+  }
+}</code></pre>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="sorting and normalizing a module specifier map">sort and normalize a module
+  specifier map</dfn>, given an <span>ordered map</span> <var>originalMap</var> and a
+  <span>URL</span> <var>baseURL</var>:</p>
+
+  <ol>
+   <li><p>Let <var>normalized</var> be an empty <span>ordered map</span>.</p></li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>specifierKey</var> → <var>value</var> of
+    <var>originalMap</var>:</p>
+
+    <ol>
+     <li><p>Let <var>normalizedSpecifierKey</var> be the result of <span>normalizing a specifier
+     key</span> given <var>specifierKey</var> and <var>baseURL</var>.</p></li>
+
+     <li><p>If <var>normalizedSpecifierKey</var> is null, then <span>continue</span>.</p></li>
+
+     <li>
+      <p>If <var>value</var> is not a <span>string</span>:</p>
+
+      <ol>
+       <li><p>The user agent may <span>report a warning to the console</span> indicating that
+       addresses need to be strings.</p></li>
+
+       <li><p>Set <var>normalized</var>[<var>normalizedSpecifierKey</var>] to null.</p></li>
+
+       <li><p><span>Continue</span>.</p></li>
+      </ol>
+     </li>
+
+     <li><p>Let <var>addressURL</var> be the result of <span>resolving a URL-like module
+     specifier</span> given <var>value</var> and <var>baseURL</var>.</p></li>
+
+     <li>
+      <p>If <var>addressURL</var> is null:</p>
+
+      <ol>
+       <li><p>The user agent may <span>report a warning to the console</span> indicating that the
+       address was invalid.</p></li>
+
+       <li><p>Set <var>normalized</var>[<var>normalizedSpecifierKey</var>] to null.</p></li>
+
+       <li><p><span>Continue</span>.</p></li>
+      </ol>
+     </li>
+
+     <li>
+      <p>If <var>specifierKey</var> ends with U+002F (/), and the <span
+      data-x="concept-url-serializer">serialization</span> of <var>addressURL</var> does not end
+      with U+002F (/):</p>
+
+      <ol>
+       <li><p>The user agent may <span>report a warning to the console</span> indicating that an
+       invalid address was given for the specifier key <var>specifierKey</var>; since
+       <var>specifierKey</var> ends with a slash, the address needs to as well.</p></li>
+
+       <li><p>Set <var>normalized</var>[<var>normalizedSpecifierKey</var>] to null.</p></li>
+
+       <li><p><span>Continue</span>.</p></li>
+      </ol>
+     </li>
+
+     <li><p>Set <var>normalized</var>[<var>normalizedSpecifierKey</var>] to
+     <var>addressURL</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Return the result of <span data-x="map sort descending">sorting in descending order</span>
+   <var>normalized</var>, with an entry <var>a</var> being less than an entry <var>b</var> if
+   <var>a</var>'s <span data-x="map key">key</span> is <span>code unit less than</span>
+   <var>b</var>'s <span data-x="map key">key</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="sorting and normalizing scopes">sort and normalize scopes</dfn>, given an
+  <span>ordered map</span> <var>originalMap</var> and a <span>URL</span> <var>baseURL</var>:</p>
+
+  <ol>
+   <li><p>Let <var>normalized</var> be an empty <span>ordered map</span>.</p></li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>scopePrefix</var> →
+    <var>potentialSpecifierMap</var> of <var>originalMap</var>:</p>
+
+    <ol>
+     <li><p>If <var>potentialSpecifierMap</var> is not an <span>ordered map</span>, then throw a
+     <code>TypeError</code> indicating that the value of the scope with prefix
+     <var>scopePrefix</var> needs to be a JSON object.</p></li>
+
+     <li><p>Let <var>scopePrefixURL</var> be the result of <span data-x="URL parser">URL
+     parsing</span> <var>scopePrefix</var> with <var>baseURL</var>.</p></li>
+
+     <li>
+      <p>If <var>scopePrefixURL</var> is failure:</p>
+
+      <ol>
+       <li><p>The user agent may <span>report a warning to the console</span> that the scope prefix
+       URL was not parseable.</p></li>
+
+       <li><p><span>Continue</span>.</p></li>
+      </ol>
+     </li>
+
+     <li><p>Let <var>normalizedScopePrefix</var> be the <span
+     data-x="concept-url-serializer">serialization</span> of <var>scopePrefixURL</var>.</p></li>
+
+     <li><p>Set <var>normalized</var>[<var>normalizedScopePrefix</var>] to the result of
+     <span>sorting and normalizing a module specifier map</span> given
+     <var>potentialSpecifierMap</var> and <var>baseURL</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Return the result of <span data-x="map sort descending">sorting in descending
+   order</span> <var>normalized</var>, with an entry <var>a</var> being less than an entry
+   <var>b</var> if <var>a</var>'s <span data-x="map key">key</span> is <span>code unit less
+   than</span> <var>b</var>'s <span data-x="map key">key</span>.</p></li>
+  </ol>
+  </div>
+
+  <p class="note">In the above two algorithms, sorting keys and scopes in descending order has the
+  effect of putting "<code data-x="">foo/bar/</code>" before "<code data-x="">foo/</code>". This in
+  turn gives "<code data-x="">foo/bar/</code>" a higher priority than "<code data-x="">foo/</code>"
+  during <span data-x="resolve a module specifier">module specifier resolution</span>.</p>
+
+  <div algorithm>
+  <p>To <dfn data-x="normalizing a module integrity map">normalize a module integrity map</dfn>,
+  given an <span>ordered map</span> <var>originalMap</var>:</p>
+
+  <ol>
+   <li><p>Let <var>normalized</var> be an empty <span>ordered map</span>.</p></li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>key</var> → <var>value</var> of
+    <var>originalMap</var>:</p>
+
+    <ol>
+     <li>
+      <p>Let <var>resolvedURL</var> be the result of <span>resolving a URL-like module
+      specifier</span> given <var>key</var> and <var>baseURL</var>.</p>
+
+      <p class="note">Unlike "<code data-x="">imports</code>", keys of the integrity map are treated
+      as URLs, not module specifiers. However, we use the <span data-x="resolving a URL-like module
+      specifier">resolve a URL-like module specifier</span> algorithm to prohibit "bare" relative
+      URLs like <code data-x="">foo</code>, which could be mistaken for module specifiers.</p>
+     </li>
+
+     <li>
+      <p>If <var>resolvedURL</var> is null:</p>
+
+      <ol>
+       <li><p>The user agent may <span>report a warning to the console</span> indicating that
+       the key failed to resolve.</p></li>
+
+       <li><p><span>Continue</span>.</p></li>
+      </ol>
+     </li>
+
+     <li>
+      <p>If <var>value</var> is not a <span>string</span>:</p>
+
+      <ol>
+       <li><p>The user agent may <span>report a warning to the console</span> indicating that
+       <span data-x="concept-request-integrity-metadata">integrity metadata</span> values need to
+       be <span data-x="string">strings</span>.</p></li>
+
+       <li><p><span>Continue</span>.</p></li>
+      </ol>
+     </li>
+
+     <li><p>Set <var>normalized</var>[<var>resolvedURL</var>] to <var>value</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Return <var>normalized</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="normalizing a specifier key">normalize a specifier key</dfn>, given a <span>string</span> <var>specifierKey</var> and a <span>URL</span> <var>baseURL</var>:</p>
+
+  <ol>
+   <li>
+    <p>If <var>specifierKey</var> is the empty string:</p>
+
+    <ol>
+     <li><p>The user agent may <span>report a warning to the console</span> indicating that specifier keys may not be the empty string.</p></li>
+
+     <li><p>Return null.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Let <var>url</var> be the result of <span>resolving a URL-like module specifier</span>, given <var>specifierKey</var> and <var>baseURL</var>.</p></li>
+
+   <li><p>If <var>url</var> is not null, then return the <span data-x="concept-url-serializer">serialization</span> of <var>url</var>.</p></li>
+
+   <li><p>Return <var>specifierKey</var>.</p></li>
+  </ol>
+  </div>
+
+

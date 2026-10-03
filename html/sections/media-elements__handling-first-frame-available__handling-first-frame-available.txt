@@ -1,0 +1,153 @@
+WHATWG HTML — section media-elements/handling-first-frame-available/handling-first-frame-available — If the previous ready state was <code data-x="dom-media-HAVE_METADATA">HAVE_METADATA</code> and the new ready state is <code data-x="dom-media-HAVE_CURRENT_DATA">HAVE_CURRENT_DATA</code> or greater
+
+     <dt id="handling-first-frame-available">If the previous ready state was <code
+     data-x="dom-media-HAVE_METADATA">HAVE_METADATA</code> and the new ready state is <code
+     data-x="dom-media-HAVE_CURRENT_DATA">HAVE_CURRENT_DATA</code> or greater</dt>
+
+     <dd>
+      <p id="fire-loadeddata">If this is the first time this occurs for this <span>media
+      element</span> since the <code data-x="dom-media-load">load()</code> algorithm was last
+      invoked, the user agent must <span>queue a media element task</span> given the <span>media
+      element</span> to <span data-x="concept-event-fire">fire an event</span> named <code
+      data-x="event-media-loadeddata">loadeddata</code> at the element.</p>
+
+      <p>If the new ready state is <code data-x="dom-media-HAVE_FUTURE_DATA">HAVE_FUTURE_DATA</code>
+      or <code data-x="dom-media-HAVE_ENOUGH_DATA">HAVE_ENOUGH_DATA</code>, then the relevant steps
+      below must then be run also.</p>
+     </dd>
+
+     <!-- going down -->
+     <dt>If the previous ready state was <code
+     data-x="dom-media-HAVE_FUTURE_DATA">HAVE_FUTURE_DATA</code> or more, and the new ready state is
+     <code data-x="dom-media-HAVE_CURRENT_DATA">HAVE_CURRENT_DATA</code> or less</dt>
+
+     <dd>
+      <p id="fire-waiting-when-waiting">If the <span>media element</span> was <span>potentially
+      playing</span> before its <code data-x="dom-media-readyState">readyState</code> attribute
+      changed to a value lower than <code
+      data-x="dom-media-HAVE_FUTURE_DATA">HAVE_FUTURE_DATA</code>, and the element has not
+      <span>ended playback</span>, and playback has not <span>stopped due to errors</span>,
+      <span>paused for user interaction</span>, or <span>paused for in-band content</span>, the user
+      agent must <span>queue a media element task</span> given the <span>media element</span> to
+      <span data-x="concept-event-fire">fire an event</span> named <code
+      data-x="event-media-timeupdate">timeupdate</code> at the element, and <span>queue a media
+      element task</span> given the <span>media element</span> to <span
+      data-x="concept-event-fire">fire an event</span> named <code
+      data-x="event-media-waiting">waiting</code> at the element.</p>
+     </dd>
+
+     <!-- going up to future -->
+     <dt>If the previous ready state was <code
+     data-x="dom-media-HAVE_CURRENT_DATA">HAVE_CURRENT_DATA</code> or less, and the new ready state
+     is <code data-x="dom-media-HAVE_FUTURE_DATA">HAVE_FUTURE_DATA</code></dt>
+
+     <dd>
+      <p>The user agent must <span>queue a media element task</span> given the <span>media
+      element</span> to <span data-x="concept-event-fire">fire an event</span> named <code
+      data-x="event-media-canplay">canplay</code> at the element.</p>
+
+      <p>If the element's <code data-x="dom-media-paused">paused</code> attribute is false, the user
+      agent must <span>notify about playing</span> for the element.</p>
+     </dd>
+
+     <!-- going up to enough -->
+     <dt>If the new ready state is <code
+     data-x="dom-media-HAVE_ENOUGH_DATA">HAVE_ENOUGH_DATA</code></dt>
+
+     <dd>
+      <p>If the previous ready state was <code
+      data-x="dom-media-HAVE_CURRENT_DATA">HAVE_CURRENT_DATA</code> or less, the user agent must
+      <span>queue a media element task</span> given the <span>media element</span> to <span
+      data-x="concept-event-fire">fire an event</span> named <code
+      data-x="event-media-canplay">canplay</code> at the element, and, if the element's <code
+      data-x="dom-media-paused">paused</code> attribute is false, <span>notify about playing</span>
+      for the element.</p>
+
+      <p>The user agent must <span>queue a media element task</span> given the <span>media
+      element</span> to <span data-x="concept-event-fire">fire an event</span> named <code
+      data-x="event-media-canplaythrough">canplaythrough</code> at the element.</p>
+
+      <p>If the element is not <span>eligible for autoplay</span>, then the user agent must abort
+      these substeps.</p>
+
+      <p>The user agent may run the following substeps:</p>
+
+      <ol>
+       <li>Set the <code data-x="dom-media-paused">paused</code> attribute to false.</li>
+
+       <li>If the element's <span>show poster flag</span> is true, set it to false and run the
+       <i data-x="time marches on">time marches on</i> steps.</li>
+
+       <li><span>Queue a media element task</span> given the element to <span
+       data-x="concept-event-fire">fire an event</span> named <code
+       data-x="event-media-play">play</code> at the element.</li>
+
+       <li><span>Notify about playing</span> for the element.</li>
+      </ol>
+
+      <p>Alternatively, if the element is a <code>video</code> element, the user agent may start
+      observing whether the element <span data-x="intersect the viewport">intersects the
+      viewport</span>. When the element starts <span data-x="intersect the viewport">intersecting
+      the viewport</span>, if the element is still <span>eligible for autoplay</span>, run the
+      substeps above. Optionally, when the element stops <span data-x="intersect the
+      viewport">intersecting the viewport</span>, if the <span>can autoplay flag</span> is still
+      true and the <code data-x="attr-media-autoplay">autoplay</code> attribute is still specified,
+      run the following substeps:</p>
+
+      <ol>
+       <li>Run the <span>internal pause steps</span> and set the <span>can autoplay flag</span> to
+       true.</li>
+
+       <li><span>Queue a media element task</span> given the element to <span
+       data-x="concept-event-fire">fire an event</span> named <code
+       data-x="event-media-pause">pause</code> at the element.</li>
+      </ol>
+
+      <p class="note">The substeps for playing and pausing can run multiple times as the element
+      starts or stops <span data-x="intersect the viewport">intersecting the viewport</span>, as
+      long as the <span>can autoplay flag</span> is true.</p>
+
+      <p class="note">User agents do not need to support autoplay, and it is suggested that user
+      agents honor user preferences on the matter. Authors are urged to use the <code
+      data-x="attr-media-autoplay">autoplay</code> attribute rather than using script to force the
+      video to play, so as to allow the user to override the behavior if so desired.</p>
+     </dd>
+    </dl>
+   </li>
+  </ol>
+  </div>
+
+  </div>
+
+  <p class="note">It is possible for the ready state of a media element to jump between these states
+  discontinuously. For example, the state of a media element can jump straight from <code
+  data-x="dom-media-HAVE_METADATA">HAVE_METADATA</code> to <code
+  data-x="dom-media-HAVE_ENOUGH_DATA">HAVE_ENOUGH_DATA</code> without passing through the <code
+  data-x="dom-media-HAVE_CURRENT_DATA">HAVE_CURRENT_DATA</code> and <code
+  data-x="dom-media-HAVE_FUTURE_DATA">HAVE_FUTURE_DATA</code> states.</p>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLMediaElement"><code
+  data-x="dom-media-readyState">readyState</code></dfn> IDL attribute must, on getting, return the
+  value described above that describes the current ready state of the <span>media
+  element</span>.</p>
+  </div>
+
+  </div>
+
+  <p>The <dfn element-attr for="audio,video"><code
+  data-x="attr-media-autoplay">autoplay</code></dfn> attribute is a <span>boolean attribute</span>.
+  When present, the user agent <span w-nodev>(as described in the algorithm described herein)</span>
+  will automatically begin playback of the <span>media resource</span> as soon as it can do so
+  without stopping.</p>
+
+  <p class="note">Authors are urged to use the <code data-x="attr-media-autoplay">autoplay</code>
+  attribute rather than using script to trigger automatic playback, as this allows the user to
+  override the automatic playback when it is not desired, e.g. when using a screen reader. Authors
+  are also encouraged to consider not using the automatic playback behavior at all, and instead to
+  let the user agent wait for the user to start playback explicitly.</p>
+
+
+

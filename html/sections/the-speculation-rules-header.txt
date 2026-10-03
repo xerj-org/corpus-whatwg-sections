@@ -1,0 +1,100 @@
+WHATWG HTML — section the-speculation-rules-header — The `<code>Speculation-Rules</code>` header
+
+  <h4>The `<code>Speculation-Rules</code>` header</h4>
+
+  <p>The `<dfn http-header><code>Speculation-Rules</code></dfn>` HTTP response header allows the
+  developer to request that the user agent fetch and apply a given <span>speculation rule set</span>
+  to the current <code>Document</code>. It is a <span data-x="http-structured-header">structured
+  header</span> whose value must be a <span data-x="http-structured-header-list">list</span> of
+  <span data-x="http-structured-header-string">strings</span> that are all <span data-x="valid URL
+  string">valid URL strings</span>.</p>
+
+  <div algorithm>
+  <p>To <dfn>process the `<code>Speculation-Rules</code>` header</dfn> given a <code>Document</code>
+  <var>document</var> and a <span data-x="concept-response">response</span> <var>response</var>:</p>
+
+  <ol>
+   <li><p>Let <var>parsedList</var> be the result of <span>getting a structured field value</span>
+   given `<code>Speculation-Rules</code>` and "<code data-x="">list</code>" from
+   <var>response</var>'s <span data-x="concept-response-header-list">header list</span>.</p></li>
+
+   <li><p>If <var>parsedList</var> is null, then return.</p></li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>item</var> of <var>parsedList</var>:</p>
+
+    <ol>
+     <li><p>If <var>item</var> is not a <span>string</span>, then <span>continue</span>.</p></li>
+
+     <li><p>Let <var>url</var> be the result of <span data-x="URL parser">URL parsing</span>
+     <var>item</var> with <var>document</var>'s <span>document base URL</span>.</p></li>
+
+     <li><p>If <var>url</var> is failure, then <span>continue</span>.</p></li>
+
+     <li>
+      <p><span>In parallel</span>:</p>
+
+      <ol>
+       <li>
+        <p>Optionally, wait for an <span>implementation-defined</span> amount of time.</p>
+
+        <p class="note">This allows the implementation to prioritize other work ahead of loading
+        speculation rules, as especially during <code>Document</code> creation and header
+        processing, there are often many more important things going on.</p>
+       </li>
+
+       <li>
+        <p><span>Queue a global task</span> on the <span>speculation rules task source</span> given
+        <var>document</var>'s <span>relevant global object</span> to perform the following
+        steps:</p>
+
+        <ol>
+         <li><p>Let <var>request</var> be a new <span data-x="concept-request">request</span> whose
+         <span data-x="concept-request-url">URL</span> is <var>url</var>, <span
+         data-x="concept-request-destination">destination</span> is "<code
+         data-x="">speculationrules</code>", and <span data-x="concept-request-mode">mode</span> is
+         "<code data-x="">cors</code>".</p></li>
+
+         <li>
+          <p><span data-x="concept-fetch">Fetch</span> <var>request</var> with the following <i
+          data-x="processResponseConsumeBody">processResponseConsumeBody</i> steps given <span
+          data-x="concept-response">response</span> <var>response</var> and null, failure, or a
+          <span>byte sequence</span> <var>bodyBytes</var>:</p>
+
+          <ol>
+           <li><p>If <var>bodyBytes</var> is null or failure, then abort these steps.</p></li>
+
+           <li><p>If <var>response</var>'s <span data-x="concept-response-status">status</span> is
+           not an <span>ok status</span>, then abort these steps.</p></li>
+
+           <li><p>If the result of <span data-x="extract a MIME type">extracting a MIME type</span>
+           from <var>response</var>'s <span data-x="concept-response-header-list">header list</span>
+           does not have an <span data-x="MIME type essence">essence</span> of
+           "<code>application/speculationrules+json</code>", then abort these steps.</p></li>
+
+           <li><p>Let <var>bodyText</var> be the result of <span data-x="UTF-8 decode">UTF-8
+           decoding</span> <var>bodyBytes</var>.</p></li>
+
+           <li><p>Let <var>ruleSet</var> be the result of <span data-x="parse a speculation rule set
+           string">parsing a speculation rule set string</span> given <var>bodyText</var>,
+           <var>document</var>, and <var>response</var>'s <span
+           data-x="concept-response-url">URL</span>. If this throws an exception, then abort these
+           steps.</p></li>
+
+           <li><p><span data-x="list append">Append</span> <var>ruleSet</var> to
+           <var>document</var>'s <span data-x="document-sr-sets">speculation rule
+           sets</span>.</p></li>
+
+           <li><p><span>Consider speculative loads</span> for <var>document</var>.</p></li>
+          </ol>
+         </li>
+        </ol>
+       </li>
+      </ol>
+     </li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+

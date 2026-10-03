@@ -1,0 +1,917 @@
+WHATWG URL — section url-parsing — URL parsing
+
+<h3 id=url-parsing>URL parsing</h3>
+
+<div algorithm>
+<p>The <dfn export id=concept-url-parser lt="URL parser">URL parser</dfn> takes a
+<a>scalar value string</a> <var>input</var>, with an optional null or <a>base URL</a>
+<var>base</var> (default null) and an optional <a for=/>encoding</a> <var>encoding</var> (default
+<a>UTF-8</a>), and then runs these steps:
+
+<p class=note>Non-web-browser implementations only need to implement the <a>basic URL parser</a>.
+
+<p class=note>How user input in the web browser's address bar is converted to a
+<a for=/>URL record</a> is out-of-scope of this standard. This standard does include
+<a href="#url-rendering">URL rendering requirements</a> as they pertain to trust decisions.
+
+<ol>
+ <li><p>Let <var>url</var> be the result of running the <a>basic URL parser</a> on <var>input</var>
+ with <var>base</var> and <var>encoding</var>.
+
+ <li><p>If <var>url</var> is failure, return failure.
+
+ <li><p>If <var>url</var>'s <a for=url>scheme</a> is not
+ "<code>blob</code>", return <var>url</var>.
+
+ <li><p>Set <var>url</var>'s <a for=url>blob URL entry</a> to the result of
+ <a lt="resolve a blob URL">resolving the blob URL</a> <var>url</var>, if that did not return
+ failure, and null otherwise.
+
+ <li><p>Return <var>url</var>.
+</ol>
+</div>
+
+<hr>
+
+<div algorithm="basic URL parser">
+<p>The <dfn export id=concept-basic-url-parser lt="basic URL parser">basic URL parser</dfn> takes a
+<a>scalar value string</a> <var>input</var>, with an optional null or <a>base URL</a>
+<var>base</var> (default null), an optional <a for=/>encoding</a> <var>encoding</var> (default
+<a>UTF-8</a>), an optional <a for=/>URL</a> <dfn export for="basic URL parser"><var>url</var></dfn>,
+and an optional state override <dfn export for="basic URL parser"><var>state override</var></dfn>,
+and then runs these steps:
+
+<div class=note>
+ <p>The <var>encoding</var> argument is a legacy concept only relevant for <cite>HTML</cite>. The
+ <var>url</var> and <var>state override</var> arguments are only for use by various APIs. [[HTML]]
+ <!-- HTMLHyperlinkElementUtils, Location, and URL -->
+
+ <p>When the <var>url</var> and <var>state override</var> arguments are not passed, the
+ <a>basic URL parser</a> returns either a new <a for=/>URL</a> or failure. If they are passed, the
+ algorithm modifies the passed <var>url</var> and can terminate without returning anything.
+</div>
+
+<ol>
+ <li>
+  <p>If <var>url</var> is not given:
+
+  <ol>
+   <li><p>Set <var>url</var> to a new <a for=/>URL</a>.
+
+   <li><p>If <var>input</var> contains any leading or trailing <a>C0 control or space</a>,
+   <a>invalid-URL-unit</a> <a>validation error</a>.
+
+   <li><p>Remove any leading and trailing <a>C0 control or space</a> from <var>input</var>.
+  </ol>
+
+ <li><p>If <var>input</var> contains any <a>ASCII tab or newline</a>, <a>invalid-URL-unit</a>
+ <a>validation error</a>.
+
+ <li><p>Remove all <a>ASCII tab or newline</a> from <var>input</var>.
+
+ <li><p>Let <var>state</var> be <var>state override</var>
+ if given, or <a>scheme start state</a> otherwise.
+
+ <li><p>Set <var>encoding</var> to the result of <a>getting an output encoding</a> from
+ <var>encoding</var>.
+
+ <li><p>Let <var>buffer</var> be the empty string.
+
+ <li><p>Let <var>atSignSeen</var>, <var>insideBrackets</var>, and <var>passwordTokenSeen</var> be
+ false.
+
+ <li><p>Let <var>pointer</var> be a <a>pointer</a> for <var>input</var>.
+
+ <li>
+  <p>Keep running the following state machine by switching on <var>state</var>. If after a run
+  <var>pointer</var> points to the <a>EOF code point</a>, go to the next step. Otherwise, increase
+  <var>pointer</var> by 1 and continue with the state machine.
+
+  <dl class=switch>
+   <dt><dfn export for="basic URL parser" id=scheme-start-state>scheme start state</dfn>
+   <dd>
+    <ol>
+     <li><p>If <a>c</a> is an <a>ASCII alpha</a>,
+     append <a>c</a>, <a lt="ASCII lowercase">lowercased</a>, to <var>buffer</var>, and
+     set <var>state</var> to <a>scheme state</a>.
+
+     <li><p>Otherwise, if <var>state override</var> is not given, set <var>state</var> to
+     <a>no scheme state</a> and decrease <var>pointer</var> by 1.
+
+     <li>
+      <p>Otherwise, return failure.
+      <!-- API validation error -->
+
+      <p class=note>This indication of failure is used exclusively by the {{Location}} object's
+      {{Location/protocol}} setter.
+    </ol>
+
+   <dt><dfn export for="basic URL parser" id=scheme-state>scheme state</dfn>
+   <dd>
+    <ol>
+     <li><p>If <a>c</a> is an <a>ASCII alphanumeric</a>, U+002B (+), U+002D (-), or U+002E (.),
+     append <a>c</a>, <a lt="ASCII lowercase">lowercased</a>, to <var>buffer</var>.
+
+     <li>
+      <p>Otherwise, if <a>c</a> is U+003A (:), then:
+
+      <ol>
+       <li>
+        <p>If <var>state override</var> is given, then:
+
+        <ol>
+         <li><p>If <var>url</var>'s <a for=url>scheme</a> is a <a>special scheme</a> and
+         <var>buffer</var> is not a <a>special scheme</a>, then return.
+
+         <li><p>If <var>url</var>'s <a for=url>scheme</a> is not a <a>special scheme</a> and
+         <var>buffer</var> is a <a>special scheme</a>, then return.
+
+         <li><p>If <var>url</var> <a>includes credentials</a> or has a non-null <a for=url>port</a>,
+         and <var>buffer</var> is "<code>file</code>", then return.
+
+         <li><p>If <var>url</var>'s <a for=url>scheme</a> is "<code>file</code>" and its
+         <a for=url>host</a> is an <a>empty host</a>, then return.
+        </ol>
+
+       <li><p>Set <var>url</var>'s <a for=url>scheme</a> to <var>buffer</var>.
+
+       <li>
+         <p>If <var>state override</var> is given, then:
+
+         <ol>
+          <li><p>If <var>url</var>'s <a for=url>port</a> is <var>url</var>'s <a for=url>scheme</a>'s
+          <a>default port</a>, then set <var>url</var>'s <a for=url>port</a> to null.
+
+          <li><p>Return.
+         </ol>
+
+       <li><p>Set <var>buffer</var> to the empty string.
+
+       <li>
+        <p>If <var>url</var>'s <a for=url>scheme</a> is "<code>file</code>", then:
+
+        <ol>
+         <li><p>If <a>remaining</a> does not start with "<code>//</code>",
+         <a>special-scheme-missing-following-solidus</a> <a>validation error</a>.
+
+         <li><p>Set <var>state</var> to <a>file state</a>.
+        </ol>
+
+       <li>
+        <p>Otherwise, if <var>url</var> <a>is special</a>, <var>base</var> is non-null, and
+        <var>base</var>'s <a for=url>scheme</a> is <var>url</var>'s <a for=url>scheme</a>:
+
+        <ol>
+         <li><p><a for=/>Assert</a>: <var>base</var> <a>is special</a> (and therefore does not have
+         an <a for=url>opaque path</a>).
+
+         <li><p>Set <var>state</var> to <a>special relative or authority state</a>.
+        </ol>
+
+       <li><p>Otherwise, if <var>url</var> <a>is special</a>, set <var>state</var> to
+       <a>special authority slashes state</a>.
+
+       <li><p>Otherwise, if <a>remaining</a> starts with an U+002F (/), set <var>state</var> to
+       <a>path or authority state</a> and increase <var>pointer</var> by 1.
+
+       <li><p>Otherwise, set <var>url</var>'s <a for=url>path</a> to the empty string and set
+       <var>state</var> to <a>opaque path state</a>.
+      </ol>
+
+     <li><p>Otherwise, if <var>state override</var> is not given, set
+     <var>buffer</var> to the empty string, <var>state</var> to
+     <a>no scheme state</a>, and start over (from the first code point
+     in <var>input</var>).
+
+     <li>
+      <p>Otherwise, return failure.
+      <!-- API validation error -->
+
+      <p class=note>This indication of failure is used exclusively by the {{Location}} object's
+      {{Location/protocol}} setter. Furthermore, the non-failure termination earlier in this state
+      is an intentional difference for defining that setter.
+    </ol>
+
+   <dt><dfn export for="basic URL parser" id=no-scheme-state>no scheme state</dfn>
+   <dd>
+    <ol>
+     <li><p>If <var>base</var> is null, or <var>base</var> has an <a for=url>opaque path</a> and
+     <a>c</a> is not U+0023 (#), <a>missing-scheme-non-relative-URL</a> <a>validation error</a>,
+     return failure.
+
+     <li><p>Otherwise, if <var>base</var> has an <a for=url>opaque path</a> and <a>c</a> is
+     U+0023 (#), set <var>url</var>'s <a for=url>scheme</a> to
+     <var>base</var>'s <a for=url>scheme</a>,
+     <var>url</var>'s <a for=url>path</a> to
+     <var>base</var>'s <a for=url>path</a>,
+     <var>url</var>'s <a for=url>query</a> to
+     <var>base</var>'s <a for=url>query</a>,
+     <var>url</var>'s <a for=url>fragment</a> to the empty string, and set <var>state</var> to
+     <a>fragment state</a>.
+
+     <li><p>Otherwise, if <var>base</var>'s <a for=url>scheme</a> is not "<code>file</code>", set
+     <var>state</var> to <a>relative state</a> and decrease <var>pointer</var> by 1.
+
+     <li><p>Otherwise, set <var>state</var> to <a>file state</a> and decrease <var>pointer</var>
+     by 1.
+    </ol>
+
+   <dt><dfn export for="basic URL parser" id=special-relative-or-authority-state>special relative or authority state</dfn>
+   <dd>
+    <ol>
+     <li><p>If <a>c</a> is U+002F (/) and <a>remaining</a> starts with U+002F (/), then set
+     <var>state</var> to <a>special authority ignore slashes state</a> and increase
+     <var>pointer</var> by 1.
+
+     <li><p>Otherwise, <a>special-scheme-missing-following-solidus</a> <a>validation error</a>, set
+     <var>state</var> to <a>relative state</a> and decrease <var>pointer</var> by 1.
+    </ol>
+
+   <dt><dfn export for="basic URL parser" id=path-or-authority-state>path or authority state</dfn>
+   <dd>
+    <ol>
+     <li><p>If <a>c</a> is U+002F (/), then set <var>state</var> to <a>authority state</a>.
+
+     <li><p>Otherwise, set <var>state</var> to <a>path state</a>, and decrease <var>pointer</var>
+     by 1.
+    </ol>
+
+   <dt><dfn export for="basic URL parser" id=relative-state>relative state</dfn>
+   <dd>
+    <ol>
+     <li><p>Assert: <var>base</var>'s <a for=url>scheme</a> is not "<code>file</code>".
+
+     <li><p>Set <var>url</var>'s <a for=url>scheme</a> to <var>base</var>'s <a for=url>scheme</a>.
+
+     <li><p>If <a>c</a> is U+002F (/), then set <var>state</var> to <a>relative slash state</a>.
+
+     <li><p>Otherwise, if <var>url</var> <a>is special</a> and <a>c</a> is U+005C (\),
+     <a>invalid-reverse-solidus</a> <a>validation error</a>, set <var>state</var> to
+     <a>relative slash state</a>.
+
+     <li>
+      <p>Otherwise:
+
+      <ol>
+       <li><p>Set <var>url</var>'s <a for=url>username</a> to
+       <var>base</var>'s <a for=url>username</a>,
+       <var>url</var>'s <a for=url>password</a> to
+       <var>base</var>'s <a for=url>password</a>,
+       <var>url</var>'s <a for=url>host</a> to
+       <var>base</var>'s <a for=url>host</a>,
+       <var>url</var>'s <a for=url>port</a> to
+       <var>base</var>'s <a for=url>port</a>,
+       <var>url</var>'s <a for=url>path</a> to a <a for=list>clone</a> of
+       <var>base</var>'s <a for=url>path</a>, and
+       <var>url</var>'s <a for=url>query</a> to
+       <var>base</var>'s <a for=url>query</a>.
+
+       <li><p>If <a>c</a> is U+003F (?), then set <var>url</var>'s <a for=url>query</a> to the empty
+       string, and <var>state</var> to <a>query state</a>.
+
+       <li><p>Otherwise, if <a>c</a> is U+0023 (#), set <var>url</var>'s <a for=url>fragment</a> to
+       the empty string and <var>state</var> to <a>fragment state</a>.
+
+       <li>
+        <p>Otherwise, if <a>c</a> is not the <a>EOF code point</a>:
+
+        <ol>
+         <li><p>Set <var>url</var>'s <a for=url>query</a> to null.
+
+         <li><p><a>Shorten</a> <var>url</var>'s <a for=url>path</a>.
+
+         <li><p>Set <var>state</var> to <a>path state</a> and decrease <var>pointer</var> by 1.
+        </ol>
+      </ol>
+    </ol>
+
+   <dt><dfn export for="basic URL parser" id=relative-slash-state>relative slash state</dfn>
+   <dd>
+    <ol>
+     <li>
+      <p>If <var>url</var> <a>is special</a> and <a>c</a> is U+002F (/) or U+005C (\), then:
+
+      <ol>
+       <li><p>If <a>c</a> is U+005C (\), <a>invalid-reverse-solidus</a>
+       <a>validation error</a>.
+
+       <li><p>Set <var>state</var> to <a>special authority ignore slashes state</a>.
+      </ol>
+
+     <li><p>Otherwise, if <a>c</a> is U+002F (/), then set <var>state</var> to
+     <a>authority state</a>.
+
+     <li><p>Otherwise, set
+     <var>url</var>'s <a for=url>username</a> to
+     <var>base</var>'s <a for=url>username</a>,
+     <var>url</var>'s <a for=url>password</a> to
+     <var>base</var>'s <a for=url>password</a>,
+     <var>url</var>'s <a for=url>host</a> to
+     <var>base</var>'s <a for=url>host</a>,
+     <var>url</var>'s <a for=url>port</a> to
+     <var>base</var>'s <a for=url>port</a>,
+     <var>state</var> to <a>path state</a>, and then, decrease <var>pointer</var> by 1.
+    </ol>
+
+   <dt><dfn export for="basic URL parser" id=special-authority-slashes-state>special authority slashes state</dfn>
+   <dd>
+    <ol>
+     <li><p>If <a>c</a> is U+002F (/) and <a>remaining</a> starts with U+002F (/), then set
+     <var>state</var> to <a>special authority ignore slashes state</a> and increase
+     <var>pointer</var> by 1.
+
+     <li><p>Otherwise, <a>special-scheme-missing-following-solidus</a> <a>validation error</a>, set
+     <var>state</var> to <a>special authority ignore slashes state</a> and decrease
+     <var>pointer</var> by 1.
+    </ol>
+
+   <dt><dfn export for="basic URL parser" id=special-authority-ignore-slashes-state>special authority ignore slashes state</dfn>
+   <dd>
+    <ol>
+     <li><p>If <a>c</a> is neither U+002F (/) nor U+005C (\), then set <var>state</var> to
+     <a>authority state</a> and decrease <var>pointer</var> by 1.
+
+     <li><p>Otherwise, <a>special-scheme-missing-following-solidus</a> <a>validation error</a>.
+    </ol>
+
+   <dt><dfn export for="basic URL parser" id=authority-state>authority state</dfn>
+   <dd>
+    <ol>
+     <li>
+      <p>If <a>c</a> is U+0040 (@), then:
+
+      <ol>
+       <li><p><a>Invalid-credentials</a> <a>validation error</a>.
+
+       <li><p>If <var>atSignSeen</var> is true, then prepend "<code>%40</code>" to
+       <var>buffer</var>.
+
+       <li><p>Set <var>atSignSeen</var> to true.
+
+       <li>
+        <p>For each <var>codePoint</var> in <var>buffer</var>:
+
+        <ol>
+         <li><p>If <var>codePoint</var> is U+003A (:) and <var>passwordTokenSeen</var> is false,
+         then set <var>passwordTokenSeen</var> to true and <a for=iteration>continue</a>.
+
+         <li><p>Let <var>encodedCodePoints</var> be the result of running
+         <a for="code point">UTF-8 percent-encode</a> <var>codePoint</var> using the
+         <a>userinfo percent-encode set</a>.
+
+         <li><p>If <var>passwordTokenSeen</var> is true, then append <var>encodedCodePoints</var> to
+         <var>url</var>'s <a for=url>password</a>.
+
+         <li><p>Otherwise, append <var>encodedCodePoints</var> to <var>url</var>'s
+         <a for=url>username</a>.
+        </ol>
+
+       <li><p>Set <var>buffer</var> to the empty string.
+      </ol>
+
+     <li>
+      <p>Otherwise, if one of the following is true:
+
+      <ul class=brief>
+       <li><p><a>c</a> is the <a>EOF code point</a>, U+002F (/), U+003F (?), or U+0023 (#)
+       <li><p><var>url</var> <a>is special</a> and <a>c</a> is U+005C (\)
+      </ul>
+
+      <p>then:
+
+      <ol>
+       <li><p>If <var>atSignSeen</var> is true and <var>buffer</var> is the empty string,
+       <a>host-missing</a> <a>validation error</a>, return failure.
+       <!-- No URLs with userinfo, but without host. For special URLs it would also not be
+            idempotent:
+            https://@/example.org/ -> https:///example.org/ -> https://example.org/ -->
+
+       <li><p>Decrease <var>pointer</var> by <var>buffer</var>'s
+       <a for=string>code point length</a> + 1, set <var>buffer</var> to the empty string, and set
+       <var>state</var> to <a>host state</a>.
+      </ol>
+
+     <li><p>Otherwise, append <a>c</a> to <var>buffer</var>.
+    </ol>
+
+   <dt><dfn export for="basic URL parser" id=host-state>host state</dfn>
+   <dt><dfn export for="basic URL parser" id=hostname-state>hostname state</dfn>
+   <dd>
+    <ol>
+     <li><p>If <var>state override</var> is given and <var>url</var>'s <a for=url>scheme</a> is
+     "<code>file</code>", then decrease <var>pointer</var> by 1 and set <var>state</var> to
+     <a>file host state</a>.
+
+     <li>
+      <p>Otherwise, if <a>c</a> is U+003A (:) and <var>insideBrackets</var> is false:
+
+      <ol>
+       <li><p>If <var>buffer</var> is the empty string, <a>host-missing</a> <a>validation error</a>,
+       return failure.
+       <!-- No URLs with port, but without host. -->
+
+       <li><p>If <var>state override</var> is given and <var>state override</var> is
+       <a>hostname state</a>, then return failure.
+       <!-- API validation error -->
+
+       <li><p>Let <var>host</var> be the result of <a>host parsing</a> <var>buffer</var> with
+       <var>url</var> <a>is not special</a>.
+
+       <li><p>If <var>host</var> is failure, then return failure.
+
+       <li><p>Set <var>url</var>'s <a for=url>host</a> to
+       <var>host</var>, <var>buffer</var> to the empty string,
+       and <var>state</var> to <a>port state</a>.
+      </ol>
+
+     <li>
+      <p>Otherwise, if one of the following is true:
+
+      <ul class=brief>
+       <li><p><a>c</a> is the <a>EOF code point</a>, U+002F (/), U+003F (?), or U+0023 (#)
+       <li><p><var>url</var> <a>is special</a> and <a>c</a> is U+005C (\)
+      </ul>
+
+      <p>then decrease <var>pointer</var> by 1, and:
+
+      <ol>
+       <li><p>If <var>url</var> <a>is special</a> and <var>buffer</var> is the empty string,
+       <a>host-missing</a> <a>validation error</a>, return failure.
+       <!-- http://? -> failure
+            test://? -> test://? -->
+
+       <li><p>Otherwise, if <var>state override</var> is given, <var>buffer</var> is the empty
+       string, and either <var>url</var> <a>includes credentials</a> or <var>url</var>'s
+       <a for=url>port</a> is non-null, then return failure.
+       <!-- API validation error -->
+
+       <li><p>Let <var>host</var> be the result of <a>host parsing</a> <var>buffer</var> with
+       <var>url</var> <a>is not special</a>.
+
+       <li><p>If <var>host</var> is failure, then return failure.
+
+       <li><p>Set <var>url</var>'s <a for=url>host</a> to
+       <var>host</var>, <var>buffer</var> to the empty string,
+       and <var>state</var> to <a>path start state</a>.
+
+       <li><p>If <var>state override</var> is given, then return.
+      </ol>
+
+     <li>
+      <p>Otherwise:
+
+      <ol>
+       <li><p>If <a>c</a> is U+005B ([), then set <var>insideBrackets</var> to true.
+
+       <li><p>If <a>c</a> is U+005D (]), then set <var>insideBrackets</var> to false.
+
+       <li><p>Append <a>c</a> to <var>buffer</var>.
+      </ol>
+    </ol>
+
+   <dt><dfn export for="basic URL parser" id=port-state>port state</dfn>
+   <dd>
+    <ol>
+     <li><p>If <a>c</a> is an <a>ASCII digit</a>, append <a>c</a> to <var>buffer</var>.
+
+     <li>
+      <p>Otherwise, if one of the following is true:
+
+      <ul class=brief>
+       <li><p><a>c</a> is the <a>EOF code point</a>, U+002F (/), U+003F (?), or U+0023 (#);
+       <li><p><var>url</var> <a>is special</a> and <a>c</a> is U+005C (\); or
+       <li><p><var>state override</var> is given,
+      </ul>
+
+      <p>then:
+
+      <ol>
+       <li>
+        <p>If <var>buffer</var> is not the empty string:
+
+        <ol>
+         <li><p>Let <var>port</var> be the mathematical integer value that is represented
+         by <var>buffer</var> in radix-10 using <a>ASCII digits</a> for digits with values
+         0 through 9.
+
+         <li><p>If <var>port</var> is not a <a for=/>16-bit unsigned integer</a>,
+         <a>port-out-of-range</a> <a>validation error</a>, return failure.
+
+         <li><p>Set <var>url</var>'s <a for=url>port</a> to null, if <var>port</var> is
+         <var>url</var>'s <a for=url>scheme</a>'s <a>default port</a>; otherwise to <var>port</var>.
+
+         <li><p>Set <var>buffer</var> to the empty string.
+
+         <li><p>If <var>state override</var> is given, then return.
+         <!-- API validation error: we'd have to check what c is at this point if we cared about
+              this. In particular when it's not EOF it's a bit dodgy. -->
+        </ol>
+
+       <li><p>If <var>state override</var> is given, then return failure.
+       <!-- API validation error -->
+
+       <li><p>Set <var>state</var> to <a>path start state</a> and decrease <var>pointer</var> by 1.
+      </ol>
+
+     <li><p>Otherwise, <a>port-invalid</a> <a>validation error</a>, return failure.
+    </ol>
+
+   <dt><dfn export for="basic URL parser" id=file-state>file state</dfn>
+   <dd>
+    <ol>
+     <li><p>Set <var>url</var>'s <a for=url>scheme</a> to "<code>file</code>".
+
+     <li><p>Set <var>url</var>'s <a for=url>host</a> to the empty string.
+
+     <li>
+      <p>If <a>c</a> is U+002F (/) or U+005C (\), then:
+
+      <ol>
+       <li><p>If <a>c</a> is U+005C (\), <a>invalid-reverse-solidus</a> <a>validation error</a>.
+
+       <li><p>Set <var>state</var> to <a>file slash state</a>.
+      </ol>
+
+     <li>
+      <p>Otherwise, if <var>base</var> is non-null and <var>base</var>'s <a for=url>scheme</a> is
+      "<code>file</code>":
+
+      <ol>
+       <li><p>Set <var>url</var>'s <a for=url>host</a> to <var>base</var>'s <a for=url>host</a>,
+       <var>url</var>'s <a for=url>path</a> to a <a for=list>clone</a> of <var>base</var>'s
+       <a for=url>path</a>, and <var>url</var>'s <a for=url>query</a> to <var>base</var>'s
+       <a for=url>query</a>.
+
+       <li><p>If <a>c</a> is U+003F (?), then set <var>url</var>'s <a for=url>query</a> to the empty
+       string and <var>state</var> to <a>query state</a>.
+
+       <li><p>Otherwise, if <a>c</a> is U+0023 (#), set <var>url</var>'s <a for=url>fragment</a> to
+       the empty string and <var>state</var> to <a>fragment state</a>.
+
+       <li>
+        <p>Otherwise, if <a>c</a> is not the <a>EOF code point</a>:
+
+        <ol>
+         <li><p>Set <var>url</var>'s <a for=url>query</a> to null.
+
+         <li><p>If the
+         <a lt="code point substring to the end of the string">code point substring</a> from
+         <var>pointer</var> to the end of <var>input</var> does not
+         <a>start with a Windows drive letter</a>, then <a>shorten</a> <var>url</var>'s
+         <a for=url>path</a>.
+
+         <li>
+          <p>Otherwise:
+
+          <ol>
+           <li><p><a>File-invalid-Windows-drive-letter</a> <a>validation error</a>.
+
+           <li><p>Set <var>url</var>'s <a for=url>path</a> to « ».
+          </ol>
+
+          <p class=note>This is a (platform-independent) Windows drive letter quirk.
+
+         <li><p>Set <var>state</var> to <a>path state</a> and decrease <var>pointer</var> by 1.
+        </ol>
+      </ol>
+
+     <li><p>Otherwise, set <var>state</var> to <a>path state</a>, and decrease <var>pointer</var>
+     by 1.
+    </ol>
+
+   <dt><dfn export for="basic URL parser" id=file-slash-state>file slash state</dfn>
+   <dd>
+    <ol>
+     <li>
+      <p>If <a>c</a> is U+002F (/) or U+005C (\), then:
+
+      <ol>
+       <li><p>If <a>c</a> is U+005C (\), <a>invalid-reverse-solidus</a> <a>validation error</a>.
+
+       <li><p>Set <var>state</var> to <a>file host state</a>.
+      </ol>
+
+     <li>
+      <p>Otherwise:
+
+      <ol>
+       <li>
+        <p>If <var>base</var> is non-null and <var>base</var>'s <a for=url>scheme</a> is
+        "<code>file</code>", then:
+
+        <ol>
+         <li><p>Set <var>url</var>'s <a for=url>host</a> to <var>base</var>'s <a for=url>host</a>.
+
+         <li>
+          <p>If the <a lt="code point substring to the end of the string">code point substring</a>
+          from <var>pointer</var> to the end of <var>input</var> does not
+          <a>start with a Windows drive letter</a> and <var>base</var>'s <a for=url>path</a>[0] is a
+          <a>normalized Windows drive letter</a>, then <a for=list>append</a> <var>base</var>'s
+          <a for=url>path</a>[0] to <var>url</var>'s <a for=url>path</a>.
+
+          <p class=note>This is a (platform-independent) Windows drive letter quirk.
+
+        </ol>
+
+       <li><p>Set <var>state</var> to <a>path state</a>, and decrease <var>pointer</var> by 1.
+      </ol>
+    </ol>
+
+   <dt><dfn export for="basic URL parser" id=file-host-state>file host state</dfn>
+   <dd>
+    <ol>
+     <li>
+      <p>If <a>c</a> is the <a>EOF code point</a>, U+002F (/), U+005C (\), U+003F (?), or
+      U+0023 (#), then decrease <var>pointer</var> by 1 and then:
+
+      <ol>
+       <li>
+        <p>If <var>state override</var> is not given and <var>buffer</var> is a
+        <a>Windows drive letter</a>, <a>file-invalid-Windows-drive-letter-host</a>
+        <a>validation error</a>, set <var>state</var> to <a>path state</a>.
+
+        <p class=note>This is a (platform-independent) Windows drive letter quirk. <var>buffer</var>
+        is not reset here and instead used in the <a>path state</a>.
+
+       <li>
+        <p>Otherwise, if <var>buffer</var> is the empty string, then:
+
+        <ol>
+         <li><p>Set <var>url</var>'s <a for=url>host</a> to the empty string.
+
+         <li><p>If <var>state override</var> is given, then return.
+
+         <li><p>Set <var>state</var> to <a>path start state</a>.
+        </ol>
+
+       <li>
+        <p>Otherwise, run these steps:
+
+        <ol>
+         <li><p>Let <var>host</var> be the result of <a>host parsing</a> <var>buffer</var> with
+         <var>url</var> <a>is not special</a>.
+
+         <li><p>If <var>host</var> is failure, then return failure.
+
+         <li><p>If <var>host</var> is "<code title>localhost</code>", then set <var>host</var> to
+         the empty string.
+
+         <li><p>Set <var>url</var>'s <a for=url>host</a> to <var>host</var>.
+
+         <li><p>If <var>state override</var> is given, then return.
+
+         <li><p>Set <var>buffer</var> to the empty string and <var>state</var> to
+         <a>path start state</a>.
+        </ol>
+      </ol>
+
+     <li><p>Otherwise, append <a>c</a> to <var>buffer</var>.
+    </ol>
+
+   <dt><dfn export for="basic URL parser" id=path-start-state>path start state</dfn>
+   <dd>
+    <ol>
+     <li>
+      <p>If <var>url</var> <a>is special</a>, then:
+
+      <ol>
+       <li><p>If <a>c</a> is U+005C (\), <a>invalid-reverse-solidus</a> <a>validation error</a>.
+
+       <li><p>Set <var>state</var> to <a>path state</a>.
+
+       <li><p>If <a>c</a> is neither U+002F (/) nor U+005C (\), then decrease <var>pointer</var>
+       by 1.
+      </ol>
+
+     <li><p>Otherwise, if <var>state override</var> is not given and <a>c</a> is U+003F (?), set
+     <var>url</var>'s <a for=url>query</a> to the empty string and <var>state</var> to
+     <a>query state</a>.
+
+     <li><p>Otherwise, if <var>state override</var> is not given and <a>c</a> is U+0023 (#), set
+     <var>url</var>'s <a for=url>fragment</a> to the empty string and <var>state</var> to
+     <a>fragment state</a>.
+
+     <li>
+      <p>Otherwise, if <a>c</a> is not the <a>EOF code point</a>:
+
+      <ol>
+       <li><p>Set <var>state</var> to <a>path state</a>.
+
+       <li><p>If <a>c</a> is not U+002F (/), then decrease <var>pointer</var> by 1.
+      </ol>
+
+     <li><p>Otherwise, if <var>state override</var> is given and <var>url</var>'s
+     <a for=url>host</a> is null, <a for=list>append</a> the empty string to <var>url</var>'s
+     <a for=url>path</a>.
+    </ol>
+
+   <dt><dfn export for="basic URL parser" id=path-state>path state</dfn>
+   <dd>
+    <ol>
+     <li>
+      <p>If one of the following is true:
+
+      <ul class=brief>
+       <li><p><a>c</a> is the <a>EOF code point</a> or U+002F (/)
+       <li><p><var>url</var> <a>is special</a> and <a>c</a> is U+005C (\)
+       <li><p><var>state override</var> is not given and <a>c</a> is U+003F (?) or U+0023 (#)
+      </ul>
+
+      <p>then:
+
+      <ol>
+       <li><p>If <var>url</var> <a>is special</a> and <a>c</a> is U+005C (\),
+       <a>invalid-reverse-solidus</a> <a>validation error</a>.
+
+       <li>
+        <p>If <var>buffer</var> is a <a>double-dot URL path segment</a>, then:
+
+        <ol>
+         <li><p><a>Shorten</a> <var>url</var>'s <a for=url>path</a>.
+
+         <li>
+          <p>If neither <a>c</a> is U+002F (/), nor <var>url</var> <a>is special</a> and <a>c</a> is
+          U+005C (\), <a for=list>append</a> the empty string to <var>url</var>'s
+          <a for=url>path</a>.
+
+          <p class=note>This means that for input <code>/usr/..</code> the result is <code>/</code>
+          and not a lack of a path.
+        </ol>
+
+       <li><p>Otherwise, if <var>buffer</var> is a <a>single-dot URL path segment</a> and if neither
+       <a>c</a> is U+002F (/), nor <var>url</var> <a>is special</a> and <a>c</a> is U+005C (\),
+       <a for=list>append</a> the empty string to <var>url</var>'s <a for=url>path</a>.
+
+       <li>
+        <p>Otherwise, if <var>buffer</var> is not a <a>single-dot URL path segment</a>, then:
+
+        <ol>
+         <li>
+          <p>If <var>url</var>'s <a for=url>scheme</a> is "<code>file</code>", <var>url</var>'s
+          <a for=url>path</a> <a for=list>is empty</a>, and <var>buffer</var> is a
+          <a>Windows drive letter</a>, then replace the second code point in <var>buffer</var> with
+          U+003A (:).
+
+          <p class=note>This is a (platform-independent) Windows drive letter quirk.
+
+         <li><p><a for=list>Append</a> <var>buffer</var> to <var>url</var>'s <a for=url>path</a>.
+        </ol>
+
+       <li><p>Set <var>buffer</var> to the empty string.
+
+       <li><p>If <a>c</a> is U+003F (?), then set <var>url</var>'s <a for=url>query</a> to the empty
+       string and <var>state</var> to <a>query state</a>.
+
+       <li><p>If <a>c</a> is U+0023 (#), then set <var>url</var>'s <a for=url>fragment</a> to the
+       empty string and <var>state</var> to <a>fragment state</a>.
+      </ol>
+
+     <li>
+      <p>Otherwise, run these steps:
+
+      <ol>
+       <li><p>If <a>c</a> is not a <a>URL code point</a> and not U+0025 (%),
+       <a>invalid-URL-unit</a> <a>validation error</a>.
+
+       <li><p>If <a>c</a> is U+0025 (%) and <a>remaining</a> does not start with two
+       <a>ASCII hex digits</a>, <a>invalid-URL-unit</a> <a>validation error</a>.
+
+       <li><p><a for="code point">UTF-8 percent-encode</a> <a>c</a> using the
+       <a>path percent-encode set</a> and append the result to <var>buffer</var>.
+      </ol>
+    </ol>
+
+   <dt><dfn export for="basic URL parser" id=cannot-be-a-base-url-path-state>opaque path state</dfn>
+   <dd>
+    <ol>
+     <li><p>If <a>c</a> is U+003F (?), then set <var>url</var>'s <a for=url>query</a> to the empty
+     string and <var>state</var> to <a>query state</a>.
+
+     <li><p>Otherwise, if <a>c</a> is U+0023 (#), then set <var>url</var>'s <a for=url>fragment</a>
+     to the empty string and <var>state</var> to <a>fragment state</a>.
+
+     <li>
+      <p>Otherwise, if <a>c</a> is U+0020 SPACE:
+
+      <ol>
+       <li><p><a>Invalid-URL-unit</a> <a>validation error</a>.
+
+       <li><p>If <a>remaining</a> starts with U+003F (?) or U+0023 (#), then append
+       "<code>%20</code>" to <var>url</var>'s <a for=url>path</a>.
+
+       <li><p>Otherwise, append U+0020 SPACE to <var>url</var>'s <a for=url>path</a>.
+      </ol>
+
+     <li>
+      <p>Otherwise, if <a>c</a> is not the <a>EOF code point</a>:
+
+      <ol>
+       <li><p>If <a>c</a> is not a <a>URL code point</a> and not U+0025 (%), <a>invalid-URL-unit</a>
+       <a>validation error</a>.
+
+       <li><p>If <a>c</a> is U+0025 (%) and <a>remaining</a> does not start with two
+       <a>ASCII hex digits</a>, <a>invalid-URL-unit</a> <a>validation error</a>.
+
+       <li><p><a for="code point">UTF-8 percent-encode</a> <a>c</a> using the
+       <a>C0 control percent-encode set</a> and append the result to <var>url</var>'s
+       <a for=url>path</a>.
+      </ol>
+    </ol>
+
+   <dt><dfn export for="basic URL parser" id=query-state>query state</dfn>
+   <dd>
+    <ol>
+     <li>
+      <p>If <var>encoding</var> is not <a>UTF-8</a> and one of the following is true:
+
+      <ul class=brief>
+       <li><p><var>url</var> <a>is not special</a>
+       <li><p><var>url</var>'s <a for=url>scheme</a> is "<code>ws</code>" or "<code>wss</code>"
+      </ul>
+
+      <p>then set <var>encoding</var> to <a>UTF-8</a>.
+      <!-- https://simon.html5.org/test/url/url-encoding.html -->
+
+     <li>
+      <p>If one of the following is true:
+
+      <ul class=brief>
+       <li><p><var>state override</var> is not given and <a>c</a> is U+0023 (#)
+       <li><p><a>c</a> is the <a>EOF code point</a>
+      </ul>
+
+      <p>then:
+
+      <ol>
+       <li><p>Let <var>queryPercentEncodeSet</var> be the <a>special-query percent-encode set</a> if
+       <var>url</var> <a>is special</a>; otherwise the <a>query percent-encode set</a>.
+
+       <li>
+        <p><a for=string>Percent-encode after encoding</a>, with <var>encoding</var>,
+        <var>buffer</var>, and <var>queryPercentEncodeSet</var>, and append the result to
+        <var>url</var>'s <a for=url>query</a>.
+
+        <p class=note>This operation cannot be invoked code-point-for-code-point due to the stateful
+        <a>ISO-2022-JP encoder</a>.
+
+       <li><p>Set <var>buffer</var> to the empty string.
+
+       <li><p>If <a>c</a> is U+0023 (#), then set <var>url</var>'s <a for=url>fragment</a> to
+       the empty string and <var>state</var> to <a>fragment state</a>.
+      </ol>
+
+     <li>
+      <p>Otherwise, if <a>c</a> is not the <a>EOF code point</a>:
+
+      <ol>
+       <li><p>If <a>c</a> is not a <a>URL code point</a> and not U+0025 (%),
+       <a>invalid-URL-unit</a> <a>validation error</a>.
+
+       <li><p>If <a>c</a> is U+0025 (%) and <a>remaining</a> does not start with two
+       <a>ASCII hex digits</a>, <a>invalid-URL-unit</a> <a>validation error</a>.
+
+       <li><p>Append <a>c</a> to <var>buffer</var>.
+      </ol>
+    </ol>
+
+   <dt><dfn export for="basic URL parser" id=fragment-state>fragment state</dfn>
+   <dd>
+    <ol>
+     <li>
+      <p>If <a>c</a> is not the <a>EOF code point</a>, then:
+
+      <ol>
+       <li><p>If <a>c</a> is not a <a>URL code point</a> and not U+0025 (%),
+       <a>invalid-URL-unit</a> <a>validation error</a>.
+
+       <li><p>If <a>c</a> is U+0025 (%) and <a>remaining</a> does not start with two
+       <a>ASCII hex digits</a>, <a>invalid-URL-unit</a> <a>validation error</a>.
+
+       <li><p><a for="code point">UTF-8 percent-encode</a> <a>c</a> using the
+       <a>fragment percent-encode set</a> and append the result to <var>url</var>'s
+       <a for=url>fragment</a>.
+      </ol>
+    </ol>
+  </dl>
+
+ <li><p>Return <var>url</var>.
+</ol>
+</div>
+
+<hr>
+
+<div algorithm>
+<p>To <dfn export id=set-the-username for=url>set the username</dfn> given a <var>url</var> and
+<var>username</var>, set <var>url</var>'s <a for=url>username</a> to the result of running
+<a for=string>UTF-8 percent-encode</a> on <var>username</var> using the
+<a>userinfo percent-encode set</a>.
+</div>
+
+<div algorithm>
+<p>To <dfn export id=set-the-password for=url>set the password</dfn> given a <var>url</var> and
+<var>password</var>, set <var>url</var>'s <a for=url>password</a> to the result of running
+<a for=string>UTF-8 percent-encode</a> on <var>password</var> using the
+<a>userinfo percent-encode set</a>.
+</div>
+
+

@@ -1,0 +1,278 @@
+WHATWG HTML — section the-track-element — The <dfn element><code>track</code></dfn> element
+
+  <h4>The <dfn element><code>track</code></dfn> element</h4>
+
+  <dl class="element">
+   <dt><span data-x="concept-element-categories">Categories</span>:</dt>
+   <dd>None.</dd>
+   <dt><span data-x="concept-element-contexts">Contexts in which this element can be used</span>:</dt>
+   <dd>As a child of a <span>media element</span>, before any <span>flow content</span>.</dd>
+   <dt><span data-x="concept-element-content-model">Content model</span>:</dt>
+   <dd><span data-x="concept-content-nothing">Nothing</span>.</dd>
+   <dt><span data-x="concept-element-attributes">Content attributes</span>:</dt>
+   <dd><span>Global attributes</span></dd>
+   <dd><code data-x="attr-track-kind">kind</code></dd>
+   <dd><code data-x="attr-track-src">src</code></dd>
+   <dd><code data-x="attr-track-srclang">srclang</code></dd>
+   <dd><code data-x="attr-track-label">label</code></dd>
+   <dd><code data-x="attr-track-default">default</code></dd>
+   <dt><span
+   data-x="concept-element-accessibility-considerations">Accessibility considerations</span>:</dt>
+   <dd><a href="https://w3c.github.io/html-aria/#el-track">For authors</a>.</dd>
+   <dd><a href="https://w3c.github.io/html-aam/#el-track">For implementers</a>.</dd>
+   <dt><span data-x="concept-element-sanitization">Sanitization</span>:</dt>
+   <dd><span data-x="sanitizer-uncategorized">Uncategorized</span>.</dd>
+   <dt><span data-x="concept-element-dom">DOM interface</span>:</dt>
+   <dd w-nodev>
+    <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>HTMLTrackElement</dfn> : <span>HTMLElement</span> {
+  [<span>HTMLConstructor</span>] constructor();
+
+  [<span>CEReactions</span>] attribute DOMString <span data-x="dom-track-kind">kind</span>;
+  [<span>CEReactions</span>, <span data-x="xattr-ReflectURL">ReflectURL</span>] attribute USVString <dfn attribute for="HTMLTrackElement" data-x="dom-track-src">src</dfn>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute DOMString <dfn attribute for="HTMLTrackElement" data-x="dom-track-srclang">srclang</dfn>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute DOMString <dfn attribute for="HTMLTrackElement" data-x="dom-track-label">label</dfn>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute boolean <dfn attribute for="HTMLTrackElement" data-x="dom-track-default">default</dfn>;
+
+  const unsigned short <span data-x="dom-track-NONE">NONE</span> = 0;
+  const unsigned short <span data-x="dom-track-LOADING">LOADING</span> = 1;
+  const unsigned short <span data-x="dom-track-LOADED">LOADED</span> = 2;
+  const unsigned short <span data-x="dom-track-ERROR">ERROR</span> = 3;
+  readonly attribute unsigned short <span data-x="dom-track-readyState">readyState</span>;
+
+  readonly attribute <span>TextTrack</span> <span data-x="dom-track-track">track</span>;
+};</code></pre>
+   </dd>
+   <dd w-dev>Uses <code>HTMLTrackElement</code>.</dd>
+  </dl>
+
+  <p>The <code>track</code> element allows authors to specify explicit external timed <span
+  data-x="text track">text tracks</span> for <span data-x="media element">media elements</span>. It
+  does not <span data-x="represents">represent</span> anything on its own.</p>
+
+  <p>The <dfn element-attr for="track"><code data-x="attr-track-kind">kind</code></dfn> attribute is
+  an <span>enumerated attribute</span> with the following keywords and states:</p>
+
+  <table>
+   <thead>
+    <tr>
+     <th>Keyword
+     <th>State
+     <th>Brief description
+   <tbody>
+    <tr>
+     <td><dfn attr-value for="track/kind"><code
+     data-x="attr-track-kind-keyword-subtitles">subtitles</code></dfn>
+     <td><dfn data-x="attr-track-kind-subtitles">Subtitles</dfn>
+     <td>
+      Transcription or translation of the dialogue, suitable for when the sound is available but not understood (e.g. because the user does not understand the language of the <span>media resource</span>'s audio track).
+      Overlaid on the video.
+    <tr>
+     <td><dfn attr-value for="track/kind"><code
+     data-x="attr-track-kind-keyword-captions">captions</code></dfn>
+     <td><dfn data-x="attr-track-kind-captions">Captions</dfn>
+     <td>
+      Transcription or translation of the dialogue, sound effects, relevant musical cues, and other relevant audio information, suitable for when sound is unavailable or not clearly audible (e.g. because it is muted, drowned-out by ambient noise, or because the user is deaf).
+      Overlaid on the video; labeled as appropriate for the hard-of-hearing.
+    <tr>
+     <td><dfn attr-value for="track/kind"><code
+     data-x="attr-track-kind-keyword-descriptions">descriptions</code></dfn>
+     <td><dfn data-x="attr-track-kind-descriptions">Descriptions</dfn>
+     <td>
+      Textual descriptions of the video component of the <span>media resource</span>, intended for audio synthesis when the visual component is obscured, unavailable, or not usable (e.g. because the user is interacting with the application without a screen while driving, or because the user is blind).
+      Synthesized as audio.
+    <tr>
+     <td><dfn attr-value for="track/kind"><code
+     data-x="attr-track-kind-keyword-chapters">chapters</code></dfn>
+     <td><dfn data-x="attr-track-kind-chapters">Chapters metadata</dfn>
+     <td rowspan="2">
+      Tracks intended for use from script.
+      Not displayed by the user agent.
+    <tr>
+     <td><dfn attr-value for="track/kind"><code
+     data-x="attr-track-kind-keyword-metadata">metadata</code></dfn>
+     <td><dfn data-x="attr-track-kind-metadata">Metadata</dfn>
+  </table>
+
+  <div algorithm>
+  <p>The attribute's <i data-x="missing value default">missing value default</i> is the <span
+  data-x="attr-track-kind-subtitles">subtitles</span> state, and its <i data-x="invalid value
+  default">invalid value default</i> is the <span data-x="attr-track-kind-metadata">metadata</span>
+  state.</p>
+  </div>
+
+  <p>The <dfn element-attr for="track"><code data-x="attr-track-src">src</code></dfn> attribute
+  gives the <span>URL</span> of the text track data. The value must be a <span>valid non-empty URL
+  potentially surrounded by spaces</span>. This attribute must be present.</p>
+
+  <div w-nodev>
+
+  <p>The element has an associated <dfn>track URL</dfn> (a string), initially the empty string.</p>
+
+  <div algorithm>
+  <p>When the element's <code data-x="attr-track-src">src</code> attribute is set, run these steps:
+
+  <ol>
+   <li><p>Let <var>trackURL</var> be failure.</p></li>
+
+   <li><p>Let <var>value</var> be the element's <code data-x="attr-track-src">src</code> attribute
+   value.</p></li>
+
+   <li><p>If <var>value</var> is not the empty string, then set <var>trackURL</var> to the result of
+   <span>encoding-parsing-and-serializing a URL</span> given <var>value</var>, relative to the
+   element's <span>node document</span>.</p></li>
+
+   <li><p>Set the element's <span>track URL</span> to <var>trackURL</var> if it is not failure;
+   otherwise to the empty string.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+  <p>If the element's <span>track URL</span> identifies a WebVTT resource, and the element's <code
+  data-x="attr-track-kind">kind</code> attribute is not in the <span
+  data-x="attr-track-kind-chapters">chapters metadata</span> or <span
+  data-x="attr-track-kind-metadata">metadata</span> state, then the WebVTT file must be a
+  <span>WebVTT file using caption or subtitle cue text</span>. <ref>WEBVTT</ref></p>
+
+  <p>The <dfn element-attr for="track"><code data-x="attr-track-srclang">srclang</code></dfn>
+  attribute gives the language of the text track data. The value must be a valid BCP 47 language
+  tag. This attribute must be present if the element's <code data-x="attr-track-kind">kind</code>
+  attribute is in the <span data-x="attr-track-kind-subtitles">subtitles</span> state.
+  <ref>BCP47</ref></p>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>If the element has a <code data-x="attr-track-srclang">srclang</code> attribute whose value is
+  not the empty string, then the element's <dfn>track language</dfn> is the value of the attribute.
+  Otherwise, the element has no <span>track language</span>.</p>
+  </div>
+
+  </div>
+
+  <p>The <dfn element-attr for="track"><code data-x="attr-track-label">label</code></dfn> attribute
+  gives a user-readable title for the track. This title is used by user agents when listing <span
+  data-x="attr-track-kind-subtitles">subtitle</span>, <span
+  data-x="attr-track-kind-captions">caption</span>, and <span
+  data-x="attr-track-kind-descriptions">audio description</span> tracks in their user interface.</p>
+
+  <p>The value of the <code data-x="attr-track-label">label</code> attribute, if the attribute is
+  present, must not be the empty string. Furthermore, there must not be two <code>track</code>
+  element children of the same <span>media element</span> whose <code
+  data-x="attr-track-kind">kind</code> attributes are in the same state, whose <code
+  data-x="attr-track-srclang">srclang</code> attributes are both missing or have values that
+  represent the same language, and whose <code data-x="attr-track-label">label</code> attributes are
+  again both missing or both have the same value.</p>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>If the element has a <code data-x="attr-track-label">label</code> attribute whose value is not
+  the empty string, then the element's <dfn>track label</dfn> is the value of the attribute.
+  Otherwise, the element's <span>track label</span> is an empty string.</p>
+  </div>
+
+  </div>
+
+  <p>The <dfn element-attr for="track"><code data-x="attr-track-default">default</code></dfn>
+  attribute is a <span>boolean attribute</span>, which, if specified, indicates that the track is to
+  be enabled if the user's preferences do not indicate that another track would be more
+  appropriate.</p>
+
+  <p>Each <span>media element</span> must have no more than one <code>track</code> element child
+  whose <code data-x="attr-track-kind">kind</code> attribute is in the <span
+  data-x="attr-track-kind-subtitles">subtitles</span> or <span
+  data-x="attr-track-kind-captions">captions</span> state and whose <code
+  data-x="attr-track-default">default</code> attribute is specified.</p>
+
+  <p>Each <span>media element</span> must have no more than one <code>track</code> element child
+  whose <code data-x="attr-track-kind">kind</code> attribute is in the <span
+  data-x="attr-track-kind-descriptions">description</span> state and whose <code
+  data-x="attr-track-default">default</code> attribute is specified.</p>
+
+  <p>Each <span>media element</span> must have no more than one <code>track</code> element child
+  whose <code data-x="attr-track-kind">kind</code> attribute is in the <span
+  data-x="attr-track-kind-chapters">chapters metadata</span> state and whose <code
+  data-x="attr-track-default">default</code> attribute is specified.</p>
+
+  <p class="note">There is no limit on the number of <code>track</code> elements whose <code
+  data-x="attr-track-kind">kind</code> attribute is in the <span
+  data-x="attr-track-kind-metadata">metadata</span> state and whose <code
+  data-x="attr-track-default">default</code> attribute is specified.</p>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>track</var>.<span subdfn data-x="dom-track-readyState">readyState</span></code></dt>
+   <dd>
+    <p>Returns the <span>text track readiness state</span>, represented by a number from the
+    following list:</p>
+    <dl>
+     <dt><code data-x=""><var>track</var>.<span subdfn data-x="dom-track-NONE">NONE</span> (0)</code></dt>
+     <dd><p>The <span>text track not loaded</span> state.</p></dd>
+     <dt><code data-x=""><var>track</var>.<span subdfn data-x="dom-track-LOADING">LOADING</span> (1)</code></dt>
+     <dd><p>The <span>text track loading</span> state.</p></dd>
+     <dt><code data-x=""><var>track</var>.<span subdfn data-x="dom-track-LOADED">LOADED</span> (2)</code></dt>
+     <dd><p>The <span>text track loaded</span> state.</p></dd>
+     <dt><code data-x=""><var>track</var>.<span subdfn data-x="dom-track-ERROR">ERROR</span> (3)</code></dt>
+     <dd><p>The <span>text track failed to load</span> state.</p></dd>
+    </dl>
+   </dd>
+
+   <dt><code data-x=""><var>track</var>.<span subdfn data-x="dom-track-track">track</span></code></dt>
+
+   <dd>
+    <p>Returns the <code>track</code> element's <span>text track</span>.</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLTrackElement"><code
+  data-x="dom-track-readyState">readyState</code></dfn> attribute must return the numeric value
+  corresponding to the <span>text track readiness state</span> of the <code>track</code> element's
+  <span>text track</span>, as defined by the following list:</p>
+
+  <dl>
+   <dt><dfn const for="HTMLTrackElement"><code data-x="dom-track-NONE">NONE</code></dfn> (numeric value 0)</dt>
+   <dd>The <span>text track not loaded</span> state.</dd>
+   <dt><dfn const for="HTMLTrackElement"><code data-x="dom-track-LOADING">LOADING</code></dfn> (numeric value 1)</dt>
+   <dd>The <span>text track loading</span> state.</dd>
+   <dt><dfn const for="HTMLTrackElement"><code data-x="dom-track-LOADED">LOADED</code></dfn> (numeric value 2)</dt>
+   <dd>The <span>text track loaded</span> state.</dd>
+   <dt><dfn const for="HTMLTrackElement"><code data-x="dom-track-ERROR">ERROR</code></dfn> (numeric value 3)</dt>
+   <dd>The <span>text track failed to load</span> state.</dd>
+  </dl>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLTrackElement"><code data-x="dom-track-track">track</code></dfn>
+  getter steps are to return <span>this</span>'s <span>text track</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLTrackElement"><code data-x="dom-track-kind">kind</code></dfn> IDL
+  attribute must <span>reflect</span> the content attribute of the same name, <span>limited to only
+  known values</span>.</p>
+  </div>
+
+  </div>
+
+  <div class="example">
+
+   <p>This video has subtitles in several languages:</p>
+
+   <pre><code class="html">&lt;video src="brave.webm">
+ &lt;track kind=subtitles src=brave.en.vtt srclang=en label="English">
+ &lt;track kind=captions src=brave.en.hoh.vtt srclang=en label="English for the Hard of Hearing">
+ &lt;track kind=subtitles src=brave.fr.vtt srclang=fr lang=fr label="Fran&ccedil;ais">
+ &lt;track kind=subtitles src=brave.de.vtt srclang=de lang=de label="Deutsch">
+&lt;/video></code></pre>
+
+   <p>(The <code data-x="attr-lang">lang</code> attributes on the last two describe the language of
+   the <code data-x="attr-track-label">label</code> attribute, not the language of the subtitles
+   themselves. The language of the subtitles is given by the <code
+   data-x="attr-track-srclang">srclang</code> attribute.)</p>
+
+  </div>
+

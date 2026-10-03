@@ -1,0 +1,24 @@
+WHATWG HTML — section properties-present-on-messageport-worker-and-dedicatedworkerglobalscope — Properties present on <code>MessagePort</code>, <code>Worker</code>, and <code>DedicatedWorkerGlobalScope</code>
+
+  <h4 w-dev>Properties present on <code>MessagePort</code>, <code>Worker</code>, and
+  <code>DedicatedWorkerGlobalScope</code></h4>
+
+  <pre><code class="idl">interface mixin <dfn interface>MessageEventTarget</dfn> {
+  attribute <span>EventHandler</span> <span data-x="handler-MessageEventTarget-onmessage">onmessage</span>;
+  attribute <span>EventHandler</span> <span data-x="handler-MessageEventTarget-onmessageerror">onmessageerror</span>;
+};</code></pre>
+
+   <p>The following are the <span>event handlers</span> (and their corresponding <span data-x="event
+   handler event type">event handler event types</span>) <span w-nodev>that must be</span> supported,
+   as <span>event handler IDL attributes</span>, by <span w-nodev>objects implementing the
+   <code>MessageEventTarget</code> interface</span><span w-dev><code>MessagePort</code>,
+   <code>Worker</code>, and <code>DedicatedWorkerGlobalScope</code> objects</span>:</p>
+
+   <table>
+    <thead>
+     <tr><th><span data-x="event handlers">Event handler</span> <th><span>Event handler event type</span>
+    <tbody>
+     <tr><td><span id="handler-messageport-onmessage"></span><span id="handler-worker-onmessage"></span><span id="handler-dedicatedworkerglobalscope-onmessage"></span><dfn attribute for="MessageEventTarget"><code data-x="handler-MessageEventTarget-onmessage">onmessage</code></dfn> <td> <code data-x="event-message">message</code>
+     <tr><td><span id="handler-messageport-onmessageerror"></span><span id="handler-worker-onmessageerror"></span><span id="handler-dedicatedworkerglobalscope-onmessageerror"></span><dfn attribute for="MessageEventTarget"><code data-x="handler-MessageEventTarget-onmessageerror">onmessageerror</code></dfn> <td> <code data-x="event-messageerror">messageerror</code>
+   </table>
+

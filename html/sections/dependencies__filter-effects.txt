@@ -1,0 +1,12 @@
+WHATWG HTML — section dependencies/filter-effects — Filter Effects
+
+   <dt>Filter Effects</dt>
+
+   <dd>
+    <p>The following features are defined in <cite>Filter Effects</cite>: <ref>FILTERS</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://drafts.csswg.org/filter-effects/#typedef-filter-value-list">&lt;filter-value-list&gt;</dfn></li>
+    </ul>
+   </dd>
+

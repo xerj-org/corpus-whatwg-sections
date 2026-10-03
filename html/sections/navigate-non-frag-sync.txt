@@ -1,0 +1,136 @@
+WHATWG HTML — section navigate-non-frag-sync — Non-fragment synchronous "navigations"
+
+  <h4 id="navigate-non-frag-sync">Non-fragment synchronous "navigations"</h4>
+
+  <p>Apart from the <span>navigate</span> algorithm, <span data-x="session history entry">session
+  history entries</span> can be pushed or replaced via one more mechanism, the <span>URL and
+  history update steps</span>. The most well-known callers of these steps are the <code
+  data-x="dom-history-replaceState">history.replaceState()</code> and <code
+  data-x="dom-history-pushState">history.pushState()</code> APIs, but various other parts of the
+  standard also need to perform updates to the <span data-x="nav-active-history-entry">active
+  history entry</span>, and they use these steps to do so.</p>
+
+  <div algorithm>
+  <p id="history-1">The <dfn>URL and history update steps</dfn>, given a <code>Document</code>
+  <var>document</var>, a <span>URL</span> <var>newURL</var>, an optional <span>serialized
+  state</span>-or-null <dfn data-x="uhus-serializedData"><var>serializedData</var></dfn> (default
+  null), and an optional <span>history handling behavior</span> <dfn
+  data-x="uhus-historyHandling"><var id="uhus-ispush">historyHandling</var></dfn> (default "<code
+  data-x="NavigationHistoryBehavior-replace">replace</code>"), are:</p>
+
+  <ol>
+   <li><p>Let <var>navigable</var> be <var>document</var>'s <span>node navigable</span>.</p></li>
+
+   <li><p>Let <var>activeEntry</var> be <var>navigable</var>'s <span
+   data-x="nav-active-history-entry">active session history entry</span>.</p></li>
+
+   <li>
+    <p>Let <var>newEntry</var> be a new <span>session history entry</span>, with</p>
+
+    <dl class="props">
+     <dt><span data-x="she-url">URL</span></dt>
+     <dd><var>newURL</var></dd>
+
+     <dt><span data-x="she-classic-history-api-state">serialized state</span></dt>
+     <dd>if <var>serializedData</var> is not null, <var>serializedData</var>; otherwise
+     <var>activeEntry</var>'s <span data-x="she-classic-history-api-state">classic history API
+     state</span></dd>
+
+     <dt><span data-x="she-document-state">document state</span></dt>
+     <dd><var>activeEntry</var>'s <span data-x="she-document-state">document state</span></dd>
+
+     <dt><span data-x="she-scroll-restoration-mode">scroll restoration mode</span></dt>
+     <dd><var>activeEntry</var>'s <span data-x="she-scroll-restoration-mode">scroll restoration
+     mode</span></dd>
+
+     <dt><span data-x="she-other">persisted user state</span></dt>
+     <dd><var>activeEntry</var>'s <span data-x="she-other">persisted user state</span></dd>
+    </dl>
+   </li>
+
+   <li>
+    <p>If <var>document</var>'s <span>is initial <code>about:blank</code></span> is true, then set
+    <var>historyHandling</var> to "<code
+    data-x="NavigationHistoryBehavior-replace">replace</code>".</p>
+
+    <p class="note">This means that <code data-x="dom-history-pushState">pushState()</code> on an
+    <span data-x="is initial about:blank">initial <code>about:blank</code></span>
+    <code>Document</code> behaves as a <code
+    data-x="dom-history-replaceState">replaceState()</code> call.</p>
+   </li>
+
+   <li><p>Let <var>entryToReplace</var> be <var>activeEntry</var> if <var>historyHandling</var> is
+   "<code data-x="NavigationHistoryBehavior-replace">replace</code>", otherwise null.</p></li>
+
+   <li><p>If <var>entryToReplace</var> is non-null, then set <var>newEntry</var>'s <span
+   data-x="she-navigation-api-key">navigation API key</span> to <var>entryToReplace</var>'s <span
+   data-x="she-navigation-api-key">navigation API key</span>.</p></li>
+
+   <li>
+    <p>If <var>historyHandling</var> is "<code
+    data-x="NavigationHistoryBehavior-push">push</code>":</p>
+
+    <ol>
+     <li><p>Increment <var>document</var>'s <span data-x="doc-history">history object</span>'s
+     <span data-x="concept-history-index">index</span>.</p></li>
+
+     <li><p>Set <var>document</var>'s <span data-x="doc-history">history object</span>'s <span
+     data-x="concept-history-length">length</span> to its <span
+     data-x="concept-history-index">index</span> + 1.</p></li>
+    </ol>
+
+    <p class="note">These are temporary best-guess values for immediate synchronous access.</p>
+   </li>
+
+   <li><p>If <var>serializedData</var> is not null, then <span>restore the history object
+   state</span> given <var>document</var> and <var>newEntry</var>.</p></li>
+
+   <li>
+    <p><span>Set the URL</span> given <var>document</var> to <var>newURL</var>.</p>
+
+    <p class="note">Since this is neither a <span data-x="navigate">navigation</span> nor a <span
+    data-x="traverse the history by a delta">history traversal</span>, it does not cause a <code
+    data-x="event-hashchange">hashchange</code> event to be fired.</p>
+   </li>
+
+   <li><p>Set <var>document</var>'s <span>latest entry</span> to <var>newEntry</var>.</p></li>
+
+   <li><p>Set <var>navigable</var>'s <span data-x="nav-active-history-entry">active session history
+   entry</span> to <var>newEntry</var>.</p></li>
+
+   <li><p><span>Update the navigation API entries for a same-document navigation</span> given
+   <var>document</var>'s <span>relevant global object</span>'s <span
+   data-x="window-navigation-api">navigation API</span>, <var>newEntry</var>, and
+   <var>historyHandling</var>.</p></li>
+
+   <li><p>Let <var>traversable</var> be <var>navigable</var>'s <span
+   data-x="nav-traversable">traversable navigable</span>.</p></li>
+
+   <li>
+    <p><span data-x="tn-append-session-history-sync-nav-steps">Append the following session history
+    synchronous navigation steps</span> involving <var>navigable</var> to
+    <var>traversable</var>:</p>
+
+    <ol>
+     <li><p><span>Finalize a same-document navigation</span> given <var>traversable</var>,
+     <var>navigable</var>, <var>newEntry</var>, <var>entryToReplace</var>,
+     <var>historyHandling</var>, and "<code data-x="uni-none">none</code>".</p></li>
+
+     <li><p>Invoke <span>WebDriver BiDi history updated</span> with <var>navigable</var>.</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <p class="note">Although both <span data-x="navigate-fragid">fragment navigation</span> and the
+  <span>URL and history update steps</span> perform synchronous history updates, only fragment
+  navigation contains a synchronous call to <span>update document for history step
+  application</span>. The <span>URL and history update steps</span> instead perform a few select
+  updates inside the above algorithm, omitting others. This is somewhat of an unfortunate
+  historical accident, and generally leads to <a
+  href="https://github.com/whatwg/html/issues/5562">web-developer sadness</a> about the
+  inconsistency. For example, this means that <code data-x="event-popstate">popstate</code> events
+  fire for fragment navigations, but not for <code
+  data-x="dom-history-pushState">history.pushState()</code> calls.</p>
+
+

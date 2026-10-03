@@ -1,0 +1,142 @@
+WHATWG HTML — section the-innerhtml-property — The <code data-x="dom-element-innerHTML">innerHTML</code> property
+
+  <h4>The <code data-x="dom-element-innerHTML">innerHTML</code> property</h4>
+
+  <p class="XXX">The <code data-x="dom-element-innerHTML">innerHTML</code> property has a number of outstanding issues
+  in the <cite>DOM Parsing and Serialization</cite> <a href="https://github.com/w3c/DOM-Parsing/issues">issue
+  tracker</a>, documenting various problems with its specification.</p>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>element</var>.<span subdfn data-x="dom-Element-innerHTML">innerHTML</span></code></dt>
+   <dd>
+    <p>Returns a fragment of HTML or XML that represents the element's contents.</p>
+
+    <p>In the case of an XML document, throws an <span>"<code>InvalidStateError</code>"</span>
+    <code>DOMException</code> if the element cannot be serialized to XML.</p>
+   </dd>
+   <dt><code data-x=""><var>element</var>.<span data-x="dom-Element-innerHTML">innerHTML</span> = <var>value</var></code></dt>
+   <dd>
+    <p>Replaces the contents of the element with nodes parsed from the given string.</p>
+
+    <p>In the case of an XML document, throws a <span>"<code>SyntaxError</code>"</span>
+    <code>DOMException</code> if the given string is not well-formed.</p>
+   </dd>
+
+   <dt><code data-x=""><var>shadowRoot</var>.<span subdfn data-x="dom-ShadowRoot-innerHTML">innerHTML</span></code></dt>
+   <dd>
+    <p>Returns a fragment of HTML that represents the shadow roots's contents.</p>
+   </dd>
+
+   <dt><code data-x=""><var>shadowRoot</var>.<span data-x="dom-ShadowRoot-innerHTML">innerHTML</span> = <var>value</var></code></dt>
+   <dd>
+    <p>Replaces the contents of the shadow root with nodes parsed from the given string.</p>
+   </dd>
+  </dl>
+
+  <p class="warning">These properties' setters perform no sanitization to remove
+  potentially-dangerous elements and attributes like <code>script</code> or <span>event handler
+  content attributes</span>.</p>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn export>fragment serializing algorithm steps</dfn>, given an <code>Element</code>,
+  <code>Document</code>, or <code>DocumentFragment</code> <var>node</var> and a boolean <var>require
+  well-formed</var>, are:</p>
+
+  <ol>
+    <li><p>Let <var>context document</var> be <var>node</var>'s <span>node document</span>.</p></li>
+
+    <li><p>If <var>context document</var> is an <span data-x="HTML documents">HTML document</span>,
+    return the result of <span>HTML fragment serialization algorithm</span> with <var>node</var>,
+    false, and « ».</p></li>
+
+    <li><p>Return the <span data-x="xml-serialization">XML serialization</span> of <var>node</var>
+    given <var>require well-formed</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn export>fragment parsing algorithm steps</dfn>, given an <code>Element</code> or
+  <code>DocumentFragment</code> <var>target</var>, a string <var>markup</var>, and an optional
+  <span>parser scripting mode</span> <var>scriptingMode</var> (default <span
+  data-x="scripting-mode-inert">Inert</span>), are:</p>
+
+  <ol>
+   <li><p><span>Assert</span>: <var>scriptingMode</var> is either <span
+   data-x="scripting-mode-inert">Inert</span> or <span
+   data-x="scripting-mode-fragment">Fragment</span>.
+
+   <li><p>If <var>target</var>'s <span>node document</span> is an <span data-x="XML documents">XML
+   document</span>, then return the result of invoking the <span>XML fragment parsing
+   algorithm</span> given <var>target</var> and <var>markup</var>.</p></li>
+
+   <li><p>Return the result of the <span>HTML fragment parsing algorithm</span> given
+   <var>target</var>, <var>markup</var>, false, and <var>scriptingMode</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p><code>Element</code>'s <dfn attribute for="Element"><code
+  data-x="dom-Element-innerHTML">innerHTML</code></dfn> getter steps are to return the result of
+  running <span>fragment serializing algorithm steps</span> with <span>this</span> and true.</p>
+  </div>
+
+  <div algorithm>
+  <p><code>ShadowRoot</code>'s <dfn attribute for="ShadowRoot"><code
+  data-x="dom-ShadowRoot-innerHTML">innerHTML</code></dfn> getter steps are to return the result of
+  running <span>fragment serializing algorithm steps</span> with <span>this</span> and true.</p>
+  </div>
+
+  <div algorithm>
+  <p><code>Element</code>'s <code data-x="dom-Element-innerHTML">innerHTML</code> setter steps
+  are:</p>
+
+  <ol>
+    <li><p>Let <var>compliantString</var> be the result of invoking the <span
+    data-x="tt-getcompliantstring">get trusted type compliant string</span> algorithm with <code
+    data-x="tt-trustedhtml">TrustedHTML</code>, <span>this</span>'s <span>relevant global
+    object</span>, the given value, "<code data-x="">Element innerHTML</code>", and "<code
+    data-x="">script</code>".</p></li>
+
+    <li><p>Let <var>target</var> be <span>this</span>.</p></li>
+
+    <li>
+     <p>If <var>target</var> is a <code>template</code> element, then set <var>target</var> to the
+     <code>template</code> element's <span>template contents</span> (a
+     <code>DocumentFragment</code>).</p>
+
+     <p class=note>Setting <code data-x="dom-Element-innerHTML">innerHTML</code> on a
+     <code>template</code> element will replace all the nodes in its <span>template contents</span>
+     rather than its <span data-x="concept-tree-child">children</span>.</p>
+    </li>
+
+    <li><p>Let <var>fragment</var> be the result of invoking the <span>fragment parsing algorithm
+    steps</span> with <var>target</var> and <var>compliantString</var>.</p></li>
+
+    <li><p><span data-x="concept-node-replace-all">Replace all</span> with <var>fragment</var>
+    within <var>target</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p><code>ShadowRoot</code>'s <code data-x="dom-ShadowRoot-innerHTML">innerHTML</code> setter
+  steps are:</p>
+
+  <ol>
+    <li><p>Let <var>compliantString</var> be the result of invoking the <span
+    data-x="tt-getcompliantstring">get trusted type compliant string</span> algorithm with <code
+    data-x="tt-trustedhtml">TrustedHTML</code>, <span>this</span>'s <span>relevant global
+    object</span>, the given value, "<code data-x="">ShadowRoot innerHTML</code>", and "<code
+    data-x="">script</code>".</p></li>
+
+    <li><p>Let <var>fragment</var> be the result of invoking the <span>fragment parsing algorithm
+    steps</span> with <span>this</span> and <var>compliantString</var>.</p></li>
+
+    <li><p><span data-x="concept-node-replace-all">Replace all</span> with <var>fragment</var>
+    within <span>this</span>.</p></li>
+  </ol>
+  </div>
+
+  </div>
+

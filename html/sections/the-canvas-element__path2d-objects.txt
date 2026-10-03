@@ -1,0 +1,97 @@
+WHATWG HTML — section the-canvas-element/path2d-objects — <code>Path2D</code> objects
+
+  <h6><code>Path2D</code> objects</h6>
+
+  <p><code>Path2D</code> objects can be used to declare paths that are then later used on
+  objects implementing the <code>CanvasDrawPath</code> interface. In addition to many of the APIs
+  described in earlier sections, <code>Path2D</code> objects have methods to combine paths, and to
+  add text to paths.</p>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>path</var> = new <span subdfn data-x="dom-Path2D">Path2D</span>()</code></dt>
+   <dd><p>Creates a new empty <code>Path2D</code> object.</p></dd>
+
+   <dt><code data-x=""><var>path</var> = new <span data-x="dom-Path2D">Path2D</span>(<var>path</var>)</code></dt>
+   <dd>
+    <p>When <var>path</var> is a <code>Path2D</code> object, returns a copy.</p>
+
+    <p>When <var>path</var> is a string, creates the path described by the argument, interpreted as
+    SVG path data. <ref>SVG</ref>
+   </p></dd>
+
+   <dt><code data-x=""><var>path</var>.<span subdfn data-x="dom-Path2D-addPath">addPath</span>(<var>path</var> [, <var>transform</var> ])</code></dt>
+   <dd><p>Adds to the path the path given by the argument.</p></dd>
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn constructor for="Path2D"><code
+  data-x="dom-Path2D">Path2D(<var>path</var>)</code></dfn> constructor, when invoked, must run these
+  steps:</p>
+
+  <ol>
+   <li><p>Let <var>output</var> be a new <code>Path2D</code> object.</p></li>
+
+   <li><p>If <var>path</var> is not given, then return <var>output</var>.</p></li>
+
+   <li><p>If <var>path</var> is a <code>Path2D</code> object, then add all subpaths of
+   <var>path</var> to <var>output</var> and return <var>output</var>. (In other words, it returns a
+   copy of the argument.)</p></li>
+
+   <li>
+    <p>Let <var>svgPath</var> be the result of parsing and interpreting <var>path</var> according to
+    <cite>SVG 2</cite>'s rules for path data. <ref>SVG</ref></p>
+
+    <p class="note">The resulting path could be empty. SVG defines error handling rules for parsing
+    and applying path data.</p>
+   </li>
+
+   <li><p>Let (<var>x</var>, <var>y</var>) be the last point in <var>svgPath</var>.</p></li>
+
+   <li><p>Add all the subpaths, if any, from <var>svgPath</var> to <var>output</var>.</p></li>
+
+   <li><p>Create a new subpath in <var>output</var> with (<var>x</var>, <var>y</var>) as the only
+   point in the subpath.</p></li>
+
+   <li><p>Return <var>output</var>.</p></li>
+  </ol>
+  </div>
+
+  <hr>
+
+  <div algorithm>
+  <p>The <dfn method for="Path2D"><code data-x="dom-Path2D-addPath">addPath(<var>path</var>,
+  <var>transform</var>)</code></dfn> method, when invoked on a <code>Path2D</code> object
+  <var>a</var>, must run these steps:</p>
+
+  <ol>
+   <li><p>If the <code>Path2D</code> object <var>path</var> has no subpaths, then return.</p></li>
+
+   <li><p>Let <var>matrix</var> be the result of <span data-x="create a DOMMatrix from a 2D
+   dictionary">creating a <code>DOMMatrix</code> from the 2D dictionary</span>
+   <var>transform</var>.</p></li>
+
+   <li><p>If one or more of <var>matrix</var>'s <span>m11 element</span>, <span>m12 element</span>,
+   <span>m21 element</span>, <span>m22 element</span>, <span>m41 element</span>, or <span>m42
+   element</span> are infinite or NaN, then return.</p></li>
+
+   <li><p>Create a copy of all the subpaths in <var>path</var>. Let <var>c</var> be this
+   copy.</p></li>
+
+   <li><p>Transform all the coordinates and lines in <var>c</var> by the transform matrix
+   <var>matrix</var>.</p></li>
+
+   <li><p>Let (<var>x</var>, <var>y</var>) be the last point in the last subpath
+   of <var>c</var>.</p></li>
+
+   <li><p>Add all the subpaths in <var>c</var> to <var>a</var>.</p></li>
+
+   <li><p>Create a new subpath in <var>a</var> with (<var>x</var>, <var>y</var>) as the only point
+   in the subpath.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+

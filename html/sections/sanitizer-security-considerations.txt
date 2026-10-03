@@ -1,0 +1,75 @@
+WHATWG HTML — section sanitizer-security-considerations — Security considerations
+
+  <h4 id="sanitizer-security-considerations">Security considerations</h4>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>The Sanitizer API is intended to prevent DOM-based cross-site scripting by traversing supplied
+  HTML content and removing elements and attributes according to a configuration. By design, the
+  <code data-x="dom-Element-setHTML">setHTML()</code> and <code
+  data-x="dom-parseHTML">parseHTML()</code> methods remove script-capable markup regardless of the
+  configuration supplied; if any configuration could preserve such markup through these methods,
+  that would be a bug.</p>
+
+  <p>However, there are security issues that the Sanitizer API cannot prevent. The following
+  sections describe them.</p>
+
+  <h5 id="sanitizer-security-server-reflected">Server-side reflected and stored XSS</h5>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>The Sanitizer API operates solely in the DOM and adds a capability to traverse and filter an
+  existing <code>DocumentFragment</code>. The Sanitizer API does not address server-side reflected
+  or stored XSS.</p>
+
+  <h5 id="sanitizer-security-dom-clobbering">DOM clobbering</h5>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>DOM clobbering describes an attack in which malicious HTML confuses an application by using
+  <code data-x="attr-id">id</code> or <code data-x="">name</code> attributes such that DOM
+  properties, such as the <code data-x="dom-ParentNode-children">children</code> property of an HTML
+  element, are shadowed by malicious content.</p>
+
+  <p>The Sanitizer API does not protect against DOM clobbering attacks by default, but can be
+  configured to remove <code data-x="attr-id">id</code> and <code data-x="">name</code>
+  attributes.</p>
+
+  <h5 id="sanitizer-security-script-gadgets">XSS with script gadgets</h5>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>Script gadgets are a technique in which an attacker uses existing application code from popular
+  JavaScript libraries to cause their own code to execute. This is often done by injecting
+  innocent-looking code or seemingly inert DOM nodes that are only parsed and interpreted by a
+  framework which then performs the execution of JavaScript based on that input.</p>
+
+  <p>The Sanitizer API cannot prevent these attacks. Instead, it relies on authors to explicitly
+  allow unknown elements in general, and additionally to explicitly allow attributes, elements, and
+  markup commonly used for templating and framework-specific code, such as <code
+  data-x="attr-data-*">data-*</code> and <code data-x="attr-slot-name">slot</code> attributes and
+  elements like <code>slot</code> and <code>template</code>. These restrictions are not exhaustive
+  and authors are encouraged to examine their third party libraries for this behavior.</p>
+
+  <h5 id="sanitizer-security-mxss">Mutation XSS</h5>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>Mutation XSS or mXSS describes an attack that exploits cases where the parsed DOM structure is
+  not the same after serializing and parsing again, to bypass sanitization that happens before
+  serialization. An example for carrying out such an attack is by relying on the change of parsing
+  behavior for foreign content or mis-nested tags.</p>
+
+  <p>The Sanitizer API offers only functions that turn a string into a node tree. The context is
+  supplied implicitly by all sanitizer functions: <span
+  data-x="dom-Element-setHTML">setHTML()</span> uses the current element; <span
+  data-x="dom-parseHTML">Document.parseHTML()</span> creates a new document. Therefore Sanitizer API
+  is not directly affected by mutation XSS.</p>
+
+  <p>If a developer were to retrieve a sanitized node tree as a string, e.g. via <code
+  data-x="dom-Element-innerHTML">innerHTML</code>, and to then parse it again then mutation XSS can
+  occur. This practice is strongly discouraged. If processing or passing of HTML as a string is
+  necessary after all, then any string is to be considered untrusted and re-sanitized when inserted
+  into the DOM. In other words, a sanitized and then serialized HTML tree can no longer be
+  considered sanitized. A more complete treatment of mXSS can be found in <ref>MXSS</ref>.</p>
+

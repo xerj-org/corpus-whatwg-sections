@@ -1,0 +1,12 @@
+WHATWG HTML — section dependencies/console — Console
+
+   <dt>Console</dt>
+
+   <dd>
+    <p>The following terms are defined in <cite>Console</cite>: <ref>CONSOLE</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://console.spec.whatwg.org/#report-a-warning-to-the-console">report a warning to the console</dfn></li>
+    </ul>
+   </dd>
+

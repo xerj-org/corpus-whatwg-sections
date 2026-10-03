@@ -1,0 +1,80 @@
+WHATWG URL — section url-equivalence — URL equivalence
+
+<h3 id=url-equivalence>URL equivalence</h3>
+
+<div algorithm="equal">
+<p>To determine whether a <a for=/>URL</a> <var>A</var>
+<dfn export for=url id=concept-url-equals lt=equal>equals</dfn> <a for=/>URL</a> <var>B</var>, with
+an optional boolean <dfn export for="url/equals"><var>exclude fragments</var></dfn> (default false),
+run these steps:
+
+<ol>
+ <li><p>Let <var>serializedA</var> be the result of <a lt="URL serializer">serializing</a>
+ <var>A</var>, with <a for="URL serializer"><i>exclude fragment</i></a> set to
+ <var>exclude fragments</var>.
+
+ <li><p>Let <var>serializedB</var> be the result of <a lt="URL serializer">serializing</a>
+ <var>B</var>, with <a for="URL serializer"><i>exclude fragment</i></a> set to
+ <var>exclude fragments</var>.
+
+ <li><p>Return true if <var>serializedA</var> is <var>serializedB</var>; otherwise false.
+</ol>
+</div>
+
+<div algorithm="path equal">
+<p>To determine whether a <a for=/>URL path</a> <var>A</var>
+<dfn export for="URL path" lt=equal>equals</dfn> <a for=/>URL path</a> <var>B</var>, run these
+steps. They return a boolean.
+
+<ol>
+ <li><p>If <var>A</var> is a <a for=/>URL path segment</a> or <var>B</var> is a
+ <a for=/>URL path segment</a>, then return whether <var>A</var> <a for=string>is</a> <var>B</var>.
+
+ <li><p>If <var>A</var>'s <a for=list>size</a> is not <var>B</var>'s <a for=list>size</a>, then
+ return false.
+
+ <li><p><a for=list>For each</a> <var>index</var> of <var>A</var>'s <a for=list>indices</a>: if
+ <var>A</var>[<var>index</var>] is not <var>B</var>[<var>index</var>], then return false.
+
+ <li><p>Return true.
+</ol>
+
+<p class=note>Comparing <a for=/>URL path segments</a> rather than serializations can matter as
+distinct <a for=/>URL paths</a> can <a lt="URL path serializer">serialize</a> identically. E.g.,
+<code>web+demo:</code>'s <a for=url>path</a> is the empty string, whereas
+<code>web+demo://host</code>'s <a for=url>path</a> is « », and both serialize to the empty string.
+</div>
+
+<div algorithm="path starts with">
+<p>To determine whether a <a for=/>URL path</a> <var>A</var>
+<dfn export for="URL path" lt="start with|starts with">starts with</dfn> <a for=/>URL path</a>
+<var>B</var>, run these steps. They return a boolean.
+
+<ol>
+ <li><p>If <var>A</var> is a <a for=/>URL path segment</a> or <var>B</var> is a
+ <a for=/>URL path segment</a>, then return false.
+
+ <li><p>If <var>B</var>'s <a for=list>size</a> is greater than <var>A</var>'s
+ <a for=list>size</a>, then return false.
+
+ <li><p><a for=list>For each</a> <var>index</var> of <var>B</var>'s <a for=list>indices</a>: if
+ <var>A</var>[<var>index</var>] is not <var>B</var>[<var>index</var>], then return false.
+
+ <li><p>Return true.
+</ol>
+
+<p class=note>As <a for=/>URL path segments</a> in a <a for=/>list</a> never contain U+002F (/),
+<var>A</var> starts with <var>B</var> only when <var>B</var> covers whole segments of <var>A</var>.
+This makes it suitable for deciding whether one <a for=/>URL path</a> is "contained" by another.
+Comparing <a lt="URL path serializer">serializations</a> cannot be done naïvely: the serialization
+of « "<code>foobar</code>" » <a for=string>starts with</a> the serialization of
+« "<code>foo</code>" », but a <a for=/>URL</a> with the latter <a for=url>path</a> does not
+contain a <a for=/>URL</a> with the former.
+
+<p class=warning>Specifications should prefer the <a for=/>origin</a> concept for security
+decisions. Treating a <a for=/>URL path</a> as covering the <a for=/>URL paths</a> it contains is a
+form of path-based authority that is discordant with the rest of the web platform. It is needed for
+legacy features, such as cookies, and is best avoided elsewhere.
+</div>
+
+

@@ -1,0 +1,87 @@
+WHATWG HTML — section input-modalities-the-enterkeyhint-attribute — Input modalities: the <code data-x="attr-enterkeyhint">enterkeyhint</code> attribute (+find-in-page)
+
+  <h4>Input modalities: the <code data-x="attr-enterkeyhint">enterkeyhint</code>
+  attribute</h4>
+
+  <p>User agents can support the <code data-x="attr-enterkeyhint">enterkeyhint</code>
+  attribute on form controls (such as the value of <code>textarea</code> elements), or in elements
+  in an <span>editing host</span> (e.g., using <code
+  data-x="attr-contenteditable">contenteditable</code>).</p>
+
+  <p>The <dfn element-attr for="html-global"><code
+  data-x="attr-enterkeyhint">enterkeyhint</code></dfn> content attribute is an <span>enumerated
+  attribute</span> that specifies what action label (or icon) to present for the enter key on
+  virtual keyboards. This allows authors to customize the presentation of the enter key in order to
+  make it more helpful for users.</p>
+
+  <table>
+   <thead>
+    <tr>
+     <th> Keyword
+     <th> Description
+   <tbody>
+    <tr>
+     <td><dfn attr-value for="html-global/enterkeyhint"><code
+     data-x="attr-enterkeyhint-keyword-enter">enter</code></dfn>
+
+     <td>The user agent should present a cue for the operation 'enter', typically
+     inserting a new line.
+    <tr>
+     <td><dfn attr-value for="html-global/enterkeyhint"><code
+     data-x="attr-enterkeyhint-keyword-done">done</code></dfn>
+
+     <td>The user agent should present a cue for the operation 'done', typically
+     meaning there is nothing more to input and the input method editor (IME)
+     will be closed.
+    <tr>
+     <td><dfn attr-value for="html-global/enterkeyhint"><code
+     data-x="attr-enterkeyhint-keyword-go">go</code></dfn>
+
+     <td> The user agent should present a cue for the operation 'go', typically
+     meaning to take the user to the target of the text they typed.
+    <tr>
+     <td><dfn attr-value for="html-global/enterkeyhint"><code
+     data-x="attr-enterkeyhint-keyword-next">next</code></dfn>
+
+     <td>The user agent should present a cue for the operation 'next', typically
+     taking the user to the next field that will accept text.
+    <tr>
+     <td><dfn attr-value for="html-global/enterkeyhint"><code
+     data-x="attr-enterkeyhint-keyword-previous">previous</code></dfn>
+
+     <td>The user agent should present a cue for the operation 'previous', typically
+     taking the user to the previous field that will accept text.
+    <tr>
+     <td><dfn attr-value for="html-global/enterkeyhint"><code
+     data-x="attr-enterkeyhint-keyword-search">search</code></dfn>
+
+     <td>The user agent should present a cue for the operation 'search', typically
+     taking the user to the results of searching for the text they have typed.
+    <tr>
+     <td><dfn attr-value for="html-global/enterkeyhint"><code
+     data-x="attr-enterkeyhint-keyword-send">send</code></dfn>
+
+     <td> The user agent should present a cue for the operation 'send', typically
+     delivering the text to its target.
+  </table>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn attribute for="ElementContentEditable"><code
+  data-x="dom-enterKeyHint">enterKeyHint</code></dfn> IDL attribute must <span>reflect</span> the
+  <code data-x="attr-enterkeyhint">enterkeyhint</code> content attribute, <span>limited to only
+  known values</span>.</p>
+  </div>
+
+  <p>When <code data-x="attr-enterkeyhint">enterkeyhint</code> is unspecified (or is in a state not
+  supported by the user agent), the user agent should determine the default action label (or icon)
+  to present. Contextual information such as the <code data-x="attr-inputmode">inputmode</code>,
+  <code data-x="attr-input-type">type</code>, or <code data-x="attr-input-pattern">pattern</code>
+  attributes should be used to determine which action label (or icon) to present on the virtual
+  keyboard.</p>
+
+  </div>
+
+  <h3>Find-in-page</h3>
+

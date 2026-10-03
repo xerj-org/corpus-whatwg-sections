@@ -1,0 +1,33 @@
+WHATWG HTML — section editing-apis — Editing APIs
+
+  <h4>Editing APIs</h4>
+
+  <div algorithm>
+  <p>An <dfn export>editing host</dfn> is either an <span data-x="HTML elements">HTML element</span>
+  with its <code data-x="attr-contenteditable">contenteditable</code> attribute in the <i>true</i>
+  state or <i>plaintext-only</i> state, or a <span data-x="concept-tree-child">child</span> <span
+  data-x="HTML elements">HTML element</span> of a <code>Document</code> whose <span>design mode
+  enabled</span> is true.</p>
+  </div>
+
+  <p>The definition of the terms <dfn
+  data-x-href="https://w3c.github.io/editing/docs/execCommand/#active-range">active range</dfn>, <dfn
+  data-x-href="https://w3c.github.io/editing/docs/execCommand/#editing-host-of">editing host
+  of</dfn>, and <dfn
+  data-x-href="https://w3c.github.io/editing/docs/execCommand/#editable">editable</dfn>, the user
+  interface requirements of elements that are <span data-x="editing host">editing hosts</span> or
+  <span>editable</span>, the
+
+  <dfn data-x="dom-document-execCommand" id="execCommand" data-x-href="https://w3c.github.io/editing/docs/execCommand/#execcommand%28%29"><code>execCommand()</code></dfn>,
+  <dfn data-x-href="https://w3c.github.io/editing/docs/execCommand/#querycommandenabled%28%29"><code data-x="dom-document-queryCommandEnabled">queryCommandEnabled()</code></dfn>,
+  <dfn data-x-href="https://w3c.github.io/editing/docs/execCommand/#querycommandindeterm%28%29"><code data-x="dom-document-queryCommandIndeterm">queryCommandIndeterm()</code></dfn>,
+  <dfn data-x-href="https://w3c.github.io/editing/docs/execCommand/#querycommandstate%28%29"><code data-x="dom-document-queryCommandState">queryCommandState()</code></dfn>,
+  <dfn data-x-href="https://w3c.github.io/editing/docs/execCommand/#querycommandsupported%28%29"><code data-x="dom-document-queryCommandSupported">queryCommandSupported()</code></dfn>, and
+  <dfn data-x-href="https://w3c.github.io/editing/docs/execCommand/#querycommandvalue%28%29"><code data-x="dom-document-queryCommandValue">queryCommandValue()</code></dfn>
+
+  methods, text selections, and the <dfn
+  data-x-href="https://w3c.github.io/editing/docs/execCommand/#delete-the-selection">delete the
+  selection</dfn> algorithm are defined in <cite>execCommand</cite>. <ref>EXECCOMMAND</ref></p>
+
+  </div>
+

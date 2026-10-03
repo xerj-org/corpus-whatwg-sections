@@ -1,0 +1,100 @@
+WHATWG HTML — section using-reflect-via-idl-extended-attributes — Using reflect via IDL extended attributes
+
+  <h4>Using reflect via IDL extended attributes</h4>
+
+  <p><span data-x="reflect">Reflection</span> can be used from IDL through <span data-x="extended
+  attribute">extended attributes</span>. <dfn extended-attribute data-lt="Reflect"
+  data-x="xattr-Reflect"><code>[Reflect]</code></dfn>, <dfn extended-attribute
+  data-lt="ReflectSetter" data-x="xattr-ReflectSetter"><code>[ReflectSetter]</code></dfn>, <dfn
+  extended-attribute data-lt="ReflectURL" data-x="xattr-ReflectURL"><code>[ReflectURL]</code></dfn>,
+  <dfn extended-attribute data-lt="ReflectNonNegative"
+  data-x="xattr-ReflectNonNegative"><code>[ReflectNonNegative]</code></dfn>, <dfn extended-attribute
+  data-lt="ReflectPositive" data-x="xattr-ReflectPositive"><code>[ReflectPositive]</code></dfn>, and
+  <dfn extended-attribute data-lt="ReflectPositiveWithFallback"
+  data-x="xattr-ReflectPositiveWithFallback"><code>[ReflectPositiveWithFallback]</code></dfn> all
+  trigger <span data-x="reflect">reflection</span>. These must either take no arguments, or take a
+  string; they must not appear on anything other than an interface member attribute; and only one of
+  these can be used at a time.</p>
+
+  <p>For one of these primary reflection <span data-x="extended attribute">extended
+  attributes</span>, its <span>reflected content attribute name</span> is the string value it takes,
+  if one is provided; otherwise it is the IDL attribute name <span>converted to ASCII
+  lowercase</span>.</p>
+
+  <p>IDL attributes with the <code data-x="xattr-Reflect">[Reflect]</code> <span>extended
+  attribute</span> must <span>reflect</span> <code data-x="xattr-Reflect">[Reflect]</code>'s
+  <span>reflected content attribute name</span>.</p>
+
+  <p>IDL attributes with the <code data-x="xattr-ReflectSetter">[ReflectSetter]</code>
+  <span>extended attribute</span> on setting must <span>reflect</span> <code
+  data-x="xattr-ReflectSetter">[ReflectSetter]</code>'s <span>reflected content attribute
+  name</span>.</p>
+
+  <p>The <code data-x="xattr-ReflectURL">[ReflectURL]</code> <span>extended attribute</span> must
+  only appear on attributes with a type of <code data-x="idl-USVString">USVString</code>.</p>
+
+  <p>IDL attributes with the <code data-x="xattr-ReflectURL">[ReflectURL]</code> <span>extended
+  attribute</span> must <span>reflect</span>, <span data-x="treated as a URL">as a URL</span>, <code
+  data-x="xattr-ReflectURL">[ReflectURL]</code>'s <span>reflected content attribute name</span>.</p>
+
+  <p>The <code data-x="xattr-ReflectNonNegative">[ReflectNonNegative]</code> <span>extended
+  attribute</span> must only appear on attributes with a type of <code
+  data-x="idl-long">long</code>.</p>
+
+  <p>IDL attributes with the <code data-x="xattr-ReflectNonNegative">[ReflectNonNegative]</code>
+  <span>extended attribute</span> must <span>reflect</span>, <span>limited to only non-negative
+  numbers</span>, <code data-x="xattr-ReflectNonNegative">[ReflectNonNegative]</code>'s
+  <span>reflected content attribute name</span>.</p>
+
+  <p>The <code data-x="xattr-ReflectPositive">[ReflectPositive]</code> and <code
+  data-x="xattr-ReflectPositiveWithFallback">[ReflectPositiveWithFallback]</code> <span
+  data-x="extended attribute">extended attributes</span> must only appear on attributes with a type
+  of <code data-x="idl-double">double</code> or <code data-x="idl-unsigned-long">unsigned
+  long</code>.</p>
+
+  <p>IDL attributes with the <code data-x="xattr-ReflectPositive">[ReflectPositive]</code>
+  <span>extended attribute</span> must <span>reflect</span>, <span>limited to only positive
+  numbers</span>, <code data-x="xattr-ReflectPositive">[ReflectPositive]</code>'s <span>reflected
+  content attribute name</span>.</p>
+
+  <p>IDL attributes with the <code
+  data-x="xattr-ReflectPositiveWithFallback">[ReflectPositiveWithFallback]</code> <span>extended
+  attribute</span> must <span>reflect</span>, <span>limited to only positive numbers with
+  fallback</span>, <code
+  data-x="xattr-ReflectPositiveWithFallback">[ReflectPositiveWithFallback]</code>'s <span>reflected
+  content attribute name</span>.</p>
+
+  <hr>
+
+  <p>To supplement the above <span data-x="extended attribute">extended attributes</span> we also
+  introduce <dfn extended-attribute data-lt="ReflectRange"
+  data-x="xattr-ReflectRange"><code>[ReflectRange]</code></dfn>, and <dfn extended-attribute
+  data-lt="ReflectDefault" data-x="xattr-ReflectDefault"><code>[ReflectDefault]</code></dfn>. These
+  augment how <span data-x="reflect">reflection</span> works and also must only appear on interface
+  member attributes.</p>
+
+  <p>The <code data-x="xattr-ReflectRange">[ReflectRange]</code> <span>extended attribute</span>
+  must take an integer list limited to two values. It must only be used on attributes with a type of
+  <code data-x="idl-unsigned-long">unsigned long</code>. Additionally, it must also only appear
+  alongside <code data-x="xattr-Reflect">[Reflect]</code>.</p>
+
+  <p var-scope>IDL attributes with the <code data-x="xattr-ReflectRange">[ReflectRange]</code> <span>extended
+  attribute</span> are <span>clamped to the range</span> [<var>clampedMin</var>,
+  <var>clampedMax</var>] where <var>clampedMin</var> is the first, and <var>clampedMax</var> is the
+  second argument to the list provided to <code
+  data-x="xattr-ReflectRange">[ReflectRange]</code>.</p>
+
+  <p>The <code data-x="xattr-ReflectDefault">[ReflectDefault]</code> <span>extended attribute</span>
+  must only be used on attributes with a type of <code data-x="idl-double">double</code>, <code
+  data-x="idl-long">long</code>, or <code data-x="idl-unsigned-long">unsigned long</code>. When used
+  on an attribute of type <code data-x="idl-double">double</code>, it must take a decimal; otherwise
+  it must take an integer. Additionally, it must also only appear alongside <code
+  data-x="xattr-Reflect">[Reflect]</code>, <code
+  data-x="xattr-ReflectNonNegative">[ReflectNonNegative]</code>, <code
+  data-x="xattr-ReflectPositive">[ReflectPositive]</code>, or <code
+  data-x="xattr-ReflectPositiveWithFallback">[ReflectPositiveWithFallback]</code>.</p>
+
+  <p>IDL attributes with the <code data-x="xattr-ReflectDefault">[ReflectDefault]</code>
+  <span>extended attribute</span> have a <span>default value</span> provided by the argument
+  provided to <code data-x="xattr-ReflectDefault">[ReflectDefault]</code>.</p>
+

@@ -1,0 +1,294 @@
+WHATWG HTML — section an-introduction-to-error-handling-and-strange-cases-in-the-parser — An introduction to error handling and strange cases in the parser
+
+  <h4>An introduction to error handling and strange cases in the parser</h4>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>This section examines some erroneous markup and discusses how the <span>HTML parser</span>
+  handles these cases.</p>
+
+
+  <h5>Misnested tags: &lt;b>&lt;i>&lt;/b>&lt;/i></h5>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>The most-often discussed example of erroneous markup is as follows:</p>
+
+  <pre><code class="html">&lt;p>1&lt;b>2&lt;i>3&lt;/b>4&lt;/i>5&lt;/p></code></pre>
+
+  <p>The parsing of this markup is straightforward up to the "3". At this point, the DOM looks like
+  this:</p>
+
+  <ul class="domTree"><li class="t1"><code>html</code><ul><li class="t1"><code>head</code></li><li class="t1"><code>body</code><ul><li class="t1"><code>p</code><ul><li class="t3"><code>#text</code>: <span data-x="">1</span></li><li class="t1"><code>b</code><ul><li class="t3"><code>#text</code>: <span data-x="">2</span></li><li class="t1"><code>i</code><ul><li class="t3"><code>#text</code>: <span data-x="">3</span></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul>
+
+  <p>Here, the <span>stack of open elements</span> has five elements on it: <code>html</code>,
+  <code>body</code>, <code>p</code>, <code>b</code>, and <code>i</code>. The <span>list of active
+  formatting elements</span> just has two: <code>b</code> and <code>i</code>. The <span>insertion
+  mode</span> is "<span data-x="insertion mode: in body">in body</span>".</p>
+
+  <p var-scope>Upon receiving the end tag token with the tag name "b", the "<a href="#adoptionAgency">adoption
+  agency algorithm</a>" is invoked. This is a simple case, in that the <var>formattingElement</var>
+  is the <code>b</code> element, and there is no <var>furthest block</var>.
+  Thus, the <span>stack of open elements</span> ends up with just three elements: <code>html</code>,
+  <code>body</code>, and <code>p</code>, while the <span>list of active formatting elements</span>
+  has just one: <code>i</code>. The DOM tree is unmodified at this point.</p>
+
+  <p>The next token is a character ("4"), triggers the <span data-x="reconstruct the active
+  formatting elements">reconstruction of the active formatting elements</span>, in this case just
+  the <code>i</code> element. A new <code>i</code> element is thus created for the "4"
+  <code>Text</code> node. After the end tag token for the "i" is also received, and the "5"
+  <code>Text</code> node is inserted, the DOM looks as follows:</p>
+
+  <ul class="domTree"><li class="t1"><code>html</code><ul><li class="t1"><code>head</code></li><li class="t1"><code>body</code><ul><li class="t1"><code>p</code><ul><li class="t3"><code>#text</code>: <span data-x="">1</span></li><li class="t1"><code>b</code><ul><li class="t3"><code>#text</code>: <span data-x="">2</span></li><li class="t1"><code>i</code><ul><li class="t3"><code>#text</code>: <span data-x="">3</span></li></ul></li></ul></li><li class="t1"><code>i</code><ul><li class="t3"><code>#text</code>: <span data-x="">4</span></li></ul></li><li class="t3"><code>#text</code>: <span data-x="">5</span></li></ul></li></ul></li></ul></li></ul>
+
+
+  <h5>Misnested tags: &lt;b>&lt;p>&lt;/b>&lt;/p></h5>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>A case similar to the previous one is the following:</p>
+
+  <pre><code class="html">&lt;b>1&lt;p>2&lt;/b>3&lt;/p></code></pre>
+
+  <p>Up to the "2" the parsing here is straightforward:</p>
+
+  <ul class="domTree"><li class="t1"><code>html</code><ul><li class="t1"><code>head</code></li><li class="t1"><code>body</code><ul><li class="t1"><code>b</code><ul><li class="t3"><code>#text</code>: <span data-x="">1</span></li><li class="t1"><code>p</code><ul><li class="t3"><code>#text</code>: <span data-x="">2</span></li></ul></li></ul></li></ul></li></ul></li></ul>
+
+  <p>The interesting part is when the end tag token with the tag name "b" is parsed.</p>
+
+  <p>Before that token is seen, the <span>stack of open elements</span> has four elements on it:
+  <code>html</code>, <code>body</code>, <code>b</code>, and <code>p</code>. The <span>list of active
+  formatting elements</span> just has the one: <code>b</code>. The <span>insertion mode</span> is
+  "<span data-x="insertion mode: in body">in body</span>".</p>
+
+  <p var-scope>Upon receiving the end tag token with the tag name "b", the "<a href="#adoptionAgency">adoption
+  agency algorithm</a>" is invoked, as in the previous example. However, in this case, there
+  <em>is</em> a <var>furthest block</var>, namely the <code>p</code> element. Thus, this
+  time the adoption agency algorithm isn't skipped over.</p>
+
+  <p var-scope>The <var>common ancestor</var> is the <code>body</code> element. A conceptual
+  "bookmark" marks the position of the <code>b</code> in the <span>list of active formatting
+  elements</span>, but since that list has only one element in it, the bookmark won't have much
+  effect.</p>
+
+  <p var-scope>As the algorithm progresses, <var>node</var> ends up set to the formatting element
+  (<code>b</code>), and <var>last node</var> ends up set to the <var>furthest
+  block</var> (<code>p</code>).</p>
+
+  <p var-scope>The <var>last node</var> gets appended (moved) to the <var>common
+  ancestor</var>, so that the DOM looks like:</p>
+
+  <ul class="domTree"><li class="t1"><code>html</code><ul><li class="t1"><code>head</code></li><li class="t1"><code>body</code><ul><li class="t1"><code>b</code><ul><li class="t3"><code>#text</code>: <span data-x="">1</span></li></ul></li><li class="t1"><code>p</code><ul><li class="t3"><code>#text</code>: <span data-x="">2</span></li></ul></li></ul></li></ul></li></ul>
+
+  <p>A new <code>b</code> element is created, and the children of the <code>p</code> element are
+  moved to it:</p>
+
+  <ul class="domTree"><li class="t1"><code>html</code><ul><li class="t1"><code>head</code></li><li class="t1"><code>body</code><ul><li class="t1"><code>b</code><ul><li class="t3"><code>#text</code>: <span data-x="">1</span></li></ul></li><li class="t1"><code>p</code></li></ul></li></ul></li></ul>
+  <ul class="domTree"><li class="t1"><code>b</code><ul><li class="t3"><code>#text</code>: <span data-x="">2</span></li></ul></li></ul>
+
+  <p>Finally, the new <code>b</code> element is appended to the <code>p</code> element, so that the
+  DOM looks like:</p>
+
+  <ul class="domTree"><li class="t1"><code>html</code><ul><li class="t1"><code>head</code></li><li class="t1"><code>body</code><ul><li class="t1"><code>b</code><ul><li class="t3"><code>#text</code>: <span data-x="">1</span></li></ul></li><li class="t1"><code>p</code><ul><li class="t1"><code>b</code><ul><li class="t3"><code>#text</code>: <span data-x="">2</span></li></ul></li></ul></li></ul></li></ul></li></ul>
+
+  <p>The <code>b</code> element is removed from the <span>list of active formatting elements</span>
+  and the <span>stack of open elements</span>, so that when the "3" is parsed, it is appended to the
+  <code>p</code> element:</p>
+
+  <ul class="domTree"><li class="t1"><code>html</code><ul><li class="t1"><code>head</code></li><li class="t1"><code>body</code><ul><li class="t1"><code>b</code><ul><li class="t3"><code>#text</code>: <span data-x="">1</span></li></ul></li><li class="t1"><code>p</code><ul><li class="t1"><code>b</code><ul><li class="t3"><code>#text</code>: <span data-x="">2</span></li></ul></li><li class="t3"><code>#text</code>: <span data-x="">3</span></li></ul></li></ul></li></ul></li></ul>
+
+
+  <h5>Unexpected markup in tables</h5>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>Error handling in tables is, for historical reasons, especially strange. For example, consider
+  the following markup:</p>
+
+  <pre><code class="html">&lt;table><strong>&lt;b></strong>&lt;tr>&lt;td>aaa&lt;/td>&lt;/tr><strong>bbb</strong>&lt;/table>ccc</code></pre>
+
+  <p>The highlighted <code>b</code> element start tag is not allowed directly inside a table like
+  that, and the parser handles this case by placing the element <em>before</em> the table. (This is
+  called <i data-x="foster parent">foster parenting</i>.) This can be seen by examining the DOM tree
+  as it stands just after the <code>table</code> element's start tag has been seen:</p>
+
+  <ul class="domTree"><li class="t1"><code>html</code><ul><li class="t1"><code>head</code></li><li class="t1"><code>body</code><ul><li class="t1"><code>table</code></li></ul></li></ul></li></ul>
+
+  <p>...and then immediately after the <code>b</code> element start tag has been seen:</p>
+
+  <ul class="domTree"><li class="t1"><code>html</code><ul><li class="t1"><code>head</code></li><li class="t1"><code>body</code><ul><li class="t1"><code>b</code></li><li class="t1"><code>table</code></li></ul></li></ul></li></ul>
+
+  <p>At this point, the <span>stack of open elements</span> has on it the elements
+  <code>html</code>, <code>body</code>, <code>table</code>, and <code>b</code> (in that order,
+  despite the resulting DOM tree); the <span>list of active formatting elements</span> just has the
+  <code>b</code> element in it; and the <span>insertion mode</span> is "<span data-x="insertion mode:
+  in table">in table</span>".</p>
+
+  <p>The <code>tr</code> start tag causes the <code>b</code> element to be popped off the stack and
+  a <code>tbody</code> start tag to be implied; the <code>tbody</code> and <code>tr</code> elements
+  are then handled in a rather straight-forward manner, taking the parser through the "<span
+  data-x="insertion mode: in table body">in table body</span>" and "<span data-x="insertion mode: in
+  row">in row</span>" insertion modes, after which the DOM looks as follows:</p>
+
+  <ul class="domTree"><li class="t1"><code>html</code><ul><li class="t1"><code>head</code></li><li class="t1"><code>body</code><ul><li class="t1"><code>b</code></li><li class="t1"><code>table</code><ul><li class="t1"><code>tbody</code><ul><li class="t1"><code>tr</code></li></ul></li></ul></li></ul></li></ul></li></ul>
+
+  <p>Here, the <span>stack of open elements</span> has on it the elements <code>html</code>,
+  <code>body</code>, <code>table</code>, <code>tbody</code>, and <code>tr</code>; the <span>list of
+  active formatting elements</span> still has the <code>b</code> element in it; and the
+  <span>insertion mode</span> is "<span data-x="insertion mode: in row">in row</span>".</p>
+
+  <p>The <code>td</code> element start tag token, after putting a <code>td</code> element on the
+  tree, puts a <span data-x="concept-parser-marker">marker</span> on the <span>list of active
+  formatting elements</span> (it also switches to the "<span data-x="insertion mode: in cell">in
+  cell</span>" <span>insertion mode</span>).</p>
+
+  <ul class="domTree"><li class="t1"><code>html</code><ul><li class="t1"><code>head</code></li><li class="t1"><code>body</code><ul><li class="t1"><code>b</code></li><li class="t1"><code>table</code><ul><li class="t1"><code>tbody</code><ul><li class="t1"><code>tr</code><ul><li class="t1"><code>td</code></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul>
+
+  <p>The <span data-x="concept-parser-marker">marker</span> means that when the "aaa" character
+  tokens are seen, no <code>b</code> element is created to hold the resulting <code>Text</code>
+  node:</p>
+
+  <ul class="domTree"><li class="t1"><code>html</code><ul><li class="t1"><code>head</code></li><li class="t1"><code>body</code><ul><li class="t1"><code>b</code></li><li class="t1"><code>table</code><ul><li class="t1"><code>tbody</code><ul><li class="t1"><code>tr</code><ul><li class="t1"><code>td</code><ul><li class="t3"><code>#text</code>: <span data-x="">aaa</span></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul>
+
+  <p>The end tags are handled in a straight-forward manner; after handling them, the <span>stack of
+  open elements</span> has on it the elements <code>html</code>, <code>body</code>,
+  <code>table</code>, and <code>tbody</code>; the <span>list of active formatting elements</span>
+  still has the <code>b</code> element in it (the <span data-x="concept-parser-marker">marker</span>
+  having been removed by the "td" end tag token); and the <span>insertion mode</span> is "<span
+  data-x="insertion mode: in table body">in table body</span>".</p>
+
+  <p>Thus it is that the "bbb" character tokens are found. These trigger the "<span data-x="insertion
+  mode: in table text">in table text</span>" insertion mode to be used (with the <span>original
+  insertion mode</span> set to "<span data-x="insertion mode: in table body">in table body</span>").
+  The character tokens are collected, and when the next token (the <code>table</code> element end
+  tag) is seen, they are processed as a group. Since they are not all spaces, they are handled as
+  per the "anything else" rules in the "<span data-x="insertion mode: in table">in table</span>"
+  insertion mode, which defer to the "<span data-x="insertion mode: in body">in body</span>"
+  insertion mode but with <span data-x="foster parent">foster parenting</span>.</p>
+
+  <p>When <span data-x="reconstruct the active formatting elements">the active formatting elements
+  are reconstructed</span>, a <code>b</code> element is created and <span data-x="foster
+  parent">foster parented</span>, and then the "bbb" <code>Text</code> node is appended to it:</p>
+
+  <ul class="domTree"><li class="t1"><code>html</code><ul><li class="t1"><code>head</code></li><li class="t1"><code>body</code><ul><li class="t1"><code>b</code></li><li class="t1"><code>b</code><ul><li class="t3"><code>#text</code>: <span data-x="">bbb</span></li></ul></li><li class="t1"><code>table</code><ul><li class="t1"><code>tbody</code><ul><li class="t1"><code>tr</code><ul><li class="t1"><code>td</code><ul><li class="t3"><code>#text</code>: <span data-x="">aaa</span></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul>
+
+  <p>The <span>stack of open elements</span> has on it the elements <code>html</code>,
+  <code>body</code>, <code>table</code>, <code>tbody</code>, and the new <code>b</code> (again, note
+  that this doesn't match the resulting tree!); the <span>list of active formatting elements</span>
+  has the new <code>b</code> element in it; and the <span>insertion mode</span> is still "<span
+  data-x="insertion mode: in table body">in table body</span>".</p>
+
+  <p>Had the character tokens been only <span>ASCII whitespace</span> instead of "bbb", then that
+  <span>ASCII whitespace</span> would just be appended to the <code>tbody</code> element.</p>
+
+  <p>Finally, the <code>table</code> is closed by a "table" end tag. This pops all the nodes from
+  the <span>stack of open elements</span> up to and including the <code>table</code> element, but it
+  doesn't affect the <span>list of active formatting elements</span>, so the "ccc" character tokens
+  after the table result in yet another <code>b</code> element being created, this time after the
+  table:</p>
+
+  <ul class="domTree"><li class="t1"><code>html</code><ul><li class="t1"><code>head</code></li><li class="t1"><code>body</code><ul><li class="t1"><code>b</code></li><li class="t1"><code>b</code><ul><li class="t3"><code>#text</code>: <span data-x="">bbb</span></li></ul></li><li class="t1"><code>table</code><ul><li class="t1"><code>tbody</code><ul><li class="t1"><code>tr</code><ul><li class="t1"><code>td</code><ul><li class="t3"><code>#text</code>: <span data-x="">aaa</span></li></ul></li></ul></li></ul></li></ul></li><li class="t1"><code>b</code><ul><li class="t3"><code>#text</code>: <span data-x="">ccc</span></li></ul></li></ul></li></ul></li></ul>
+
+
+  <h5>Scripts that modify the page as it is being parsed</h5>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>Consider the following markup, which for this example we will assume is the document with
+  <span>URL</span> <code data-x="">https://example.com/inner</code>, being rendered as the content of
+  an <code>iframe</code> in another document with the <span>URL</span> <code
+  data-x="">https://example.com/outer</code>:</p>
+
+  <pre><code class="html">&lt;div id=a>
+ &lt;script>
+  var div = document.getElementById('a');
+  parent.document.body.appendChild(div);
+ &lt;/script>
+ &lt;script>
+  alert(document.URL);
+ &lt;/script>
+&lt;/div>
+&lt;script>
+ alert(document.URL);
+&lt;/script></code></pre>
+
+  <p>Up to the first "script" end tag, before the script is parsed, the result is relatively
+  straightforward:</p>
+
+  <ul class="domTree"><li class="t1"><code>html</code><ul><li class="t1"><code>head</code></li><li class="t1"><code>body</code><ul><li class="t1"><code>div</code> <span data-x="" class="t2"><code class="attribute name" data-x="attr-id">id</code>="<code class="attribute value" data-x="">a</code>"</span><ul><li class="t3"><code>#text</code>: <span data-x="">
+ </span></li><li class="t1"><code>script</code><ul><li class="t3"><code>#text</code>: <span data-x="">var div = document.getElementById('a'); &#x23CE; parent.document.body.appendChild(div);</span></li></ul></li></ul></li></ul></li></ul></li></ul>
+
+  <p>After the script is parsed, though, the <code>div</code> element and its child
+  <code>script</code> element are gone:</p>
+
+  <ul class="domTree"><li class="t1"><code>html</code><ul><li class="t1"><code>head</code></li><li class="t1"><code>body</code></li></ul></li></ul>
+
+  <p>They are, at this point, in the <code>Document</code> of the aforementioned outer
+  <span>browsing context</span>. However, the <span>stack of open elements</span> <em>still contains
+  the <code>div</code> element</em>.</p>
+
+  <p>Thus, when the second <code>script</code> element is parsed, it is inserted <em>into the outer
+  <code>Document</code> object</em>.</p>
+
+  <p>Those parsed into different <code>Document</code>s than the one the parser was created for do
+  not execute, so the first alert does not show.</p>
+
+  <p>Once the <code>div</code> element's end tag is parsed, the <code>div</code> element is popped
+  off the stack, and so the next <code>script</code> element is in the inner
+  <code>Document</code>:</p>
+
+  <ul class="domTree"><li class="t1"><code>html</code><ul><li class="t1"><code>head</code></li><li class="t1"><code>body</code><ul><li class="t1"><code>script</code><ul><li class="t3"><code>#text</code>: <span data-x="">alert(document.URL);</span></li></ul></li></ul></li></ul></li></ul>
+
+  <p>This script does execute, resulting in an alert that says "https://example.com/inner".</p>
+
+
+  <h5>The execution of scripts that are moving across multiple documents</h5>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>Elaborating on the example in the previous section, consider the case where the second
+  <code>script</code> element is an external script (i.e. one with a <code
+  data-x="attr-script-src">src</code> attribute). Since the element was not in the parser's
+  <code>Document</code> when it was created, that external script is not even downloaded.</p>
+
+  <p>In a case where a <code>script</code> element with a <code data-x="attr-script-src">src</code>
+  attribute is parsed normally into its parser's <code>Document</code>, but while the external
+  script is being downloaded, the element is moved to another document, the script continues to
+  download, but does not execute.</p>
+
+  <p class="note">In general, moving <code>script</code> elements between <code>Document</code>s is
+  considered a bad practice.</p>
+
+
+
+  <h5>Unclosed formatting elements</h5>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>The following markup shows how nested formatting elements (such as <code>b</code>) get
+  collected and continue to be applied even as the elements they are contained in are closed, but
+  that excessive duplicates are thrown away.</p>
+
+  <pre><code class="html">&lt;!DOCTYPE html>
+&lt;p>&lt;b class=x>&lt;b class=x>&lt;b>&lt;b class=x>&lt;b class=x>&lt;b>X
+&lt;p>X
+&lt;p>&lt;b>&lt;b class=x>&lt;b>X
+&lt;p>&lt;/b>&lt;/b>&lt;/b>&lt;/b>&lt;/b>&lt;/b>X</code></pre>
+
+  <p>The resulting DOM tree is as follows:</p>
+
+  <ul class="domTree"><li class="t10">DOCTYPE: <code data-x="">html</code></li><li class="t1"><code>html</code><ul><li class="t1"><code>head</code></li><li class="t1"><code>body</code><ul><li class="t1"><code>p</code><ul><li class="t1"><code>b</code> <span class="t2" data-x=""><code class="attribute name" data-x="attr-class">class</code>="<code class="attribute value" data-x="">x</code>"</span><ul><li class="t1"><code>b</code> <span class="t2" data-x=""><code class="attribute name" data-x="attr-class">class</code>="<code class="attribute value" data-x="">x</code>"</span><ul><li class="t1"><code>b</code><ul><li class="t1"><code>b</code> <span class="t2" data-x=""><code class="attribute name" data-x="attr-class">class</code>="<code class="attribute value" data-x="">x</code>"</span><ul><li class="t1"><code>b</code> <span class="t2" data-x=""><code class="attribute name" data-x="attr-class">class</code>="<code class="attribute value" data-x="">x</code>"</span><ul><li class="t1"><code>b</code><ul><li class="t3"><code>#text</code>: <span data-x="">X&#X23CE;</span></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li><li class="t1"><code>p</code><ul><li class="t1"><code>b</code> <span class="t2" data-x=""><code class="attribute name" data-x="attr-class">class</code>="<code class="attribute value" data-x="">x</code>"</span><ul><li class="t1"><code>b</code><ul><li class="t1"><code>b</code> <span class="t2" data-x=""><code class="attribute name" data-x="attr-class">class</code>="<code class="attribute value" data-x="">x</code>"</span><ul><li class="t1"><code>b</code> <span class="t2" data-x=""><code class="attribute name" data-x="attr-class">class</code>="<code class="attribute value" data-x="">x</code>"</span><ul><li class="t1"><code>b</code><ul><li class="t3"><code>#text</code>: <span data-x="">X&#X23CE;</span></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li><li class="t1"><code>p</code><ul><li class="t1"><code>b</code> <span class="t2" data-x=""><code class="attribute name" data-x="attr-class">class</code>="<code class="attribute value" data-x="">x</code>"</span><ul><li class="t1"><code>b</code><ul><li class="t1"><code>b</code> <span class="t2" data-x=""><code class="attribute name" data-x="attr-class">class</code>="<code class="attribute value" data-x="">x</code>"</span><ul><li class="t1"><code>b</code> <span class="t2" data-x=""><code class="attribute name" data-x="attr-class">class</code>="<code class="attribute value" data-x="">x</code>"</span><ul><li class="t1"><code>b</code><ul><li class="t1"><code>b</code><ul><li class="t1"><code>b</code> <span class="t2" data-x=""><code class="attribute name" data-x="attr-class">class</code>="<code class="attribute value" data-x="">x</code>"</span><ul><li class="t1"><code>b</code><ul><li class="t3"><code>#text</code>: <span data-x="">X&#X23CE;</span></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li></ul></li><li class="t1"><code>p</code><ul><li class="t3"><code>#text</code>: <span data-x="">X&#X23CE;</span></li></ul></li></ul></li></ul></li></ul>
+
+  <p>Note how the second <code>p</code> element in the markup has no explicit <code>b</code>
+  elements, but in the resulting DOM, up to three of each kind of formatting element (in this case
+  three <code>b</code> elements with the class attribute, and two unadorned <code>b</code> elements)
+  get reconstructed before the element's "X".</p>
+
+  <p>Also note how this means that in the final paragraph only six <code>b</code> end tags are
+  needed to completely clear the <span>list of active formatting elements</span>, even though nine
+  <code>b</code> start tags have been seen up to this point.</p>
+
+
+<!--/HTMLPARSER-->
+
+

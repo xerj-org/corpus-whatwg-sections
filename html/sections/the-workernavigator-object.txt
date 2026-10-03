@@ -1,0 +1,37 @@
+WHATWG HTML — section the-workernavigator-object — The <code subdfn>WorkerNavigator</code> interface
+
+  <h4 id="the-workernavigator-object">The <code subdfn>WorkerNavigator</code> interface</h4>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn attribute for="WorkerGlobalScope"><code
+  data-x="dom-worker-navigator">navigator</code></dfn> attribute of the
+  <code>WorkerGlobalScope</code> interface must return an instance of the
+  <code>WorkerNavigator</code> interface, which represents the identity and state of the user agent
+  (the client):</p>
+  </div>
+
+  </div>
+
+  <pre><code class="idl">[Exposed=Worker]
+interface <dfn interface>WorkerNavigator</dfn> {};
+<span>WorkerNavigator</span> includes <span>NavigatorID</span>;
+<span>WorkerNavigator</span> includes <span>NavigatorLanguage</span>;
+<span>WorkerNavigator</span> includes <span>NavigatorOnLine</span>;
+<span>WorkerNavigator</span> includes <span>NavigatorConcurrentHardware</span>;</code></pre>
+
+  <div w-dev>
+
+  <p>The <code>WorkerNavigator</code> interface implements a subset of the <code>Navigator</code>
+  interface, consisting of the following APIs:</p>
+
+  <ul class="brief">
+   <li><a href="#client-identification">Client identification</a></li>
+   <li><a href="#language-preferences">Language preferences</a></li>
+   <li><a href="#navigator.online">Browser state</a></li>
+   <li><a href="#navigator.hardwareconcurrency">Concurrent hardware capabilities</a></li>
+  </ul>
+
+  </div>
+

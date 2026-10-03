@@ -1,0 +1,19 @@
+WHATWG HTML — section the-input-element-as-a-button — The <code>input</code> element as a button
+
+  <h4>The <code>input</code> element as a button</h4>
+
+  <p>An <code>input</code> element whose <code data-x="attr-input-type">type</code> attribute is in
+  the <span data-x="attr-input-type-submit">Submit Button</span>, <span
+  data-x="attr-input-type-reset">Reset Button</span>, or <span
+  data-x="attr-input-type-button">Button</span> state, when it generates a <span>CSS box</span>, is
+  <span>expected</span> to depict a button and use <span>button layout</span> and its contents
+  are <span>expected</span> to be the text of the element's <code
+  data-x="attr-input-value">value</code> attribute, if any, or text derived from
+  the element's <code data-x="attr-input-type">type</code> attribute in an
+  <span>implementation-defined</span> (and probably locale-specific) fashion, if not.</p>
+
+  </div>
+
+
+  <div w-nodev>
+

@@ -1,0 +1,718 @@
+WHATWG HTML — section vevent — vEvent
+
+  <h4>vEvent</h4>
+
+  <p>An item with the <span data-x="item types">item type</span> <dfn><code data-x="md-vevent">http://microformats.org/profile/hcalendar#vevent</code></dfn> represents
+  an event.</p>
+
+  <p>This vocabulary does not <span>support global identifiers for items</span>.</p>
+
+  <p>The following are the type's <span data-x="defined property name">defined property
+  names</span>. They are based on the vocabulary defined in <cite>Internet Calendaring and
+  Scheduling Core Object Specification</cite> (<cite>iCalendar</cite>), where more information on
+  how to interpret the values can be found. <ref>RFC5545</ref></p>
+
+  <p class="note">Only the parts of the iCalendar vocabulary relating to events are used here; this
+  vocabulary cannot express a complete iCalendar instance.</p>
+
+  <dl>
+
+   <dt><dfn><code data-x="md-vevent-attach">attach</code></dfn></dt>
+
+   <dd>
+    <p>Gives the address of an associated document for the event.</p>
+
+    <p>The <span data-x="concept-property-value">value</span> must be an <span>absolute
+    URL</span>.</p>
+
+    <p>Any number of properties with the name <code data-x="md-vevent-attach">attach</code> may be
+    present within each <span data-x="concept-item">item</span> with the type <code
+    data-x="md-vevent">http://microformats.org/profile/hcalendar#vevent</code>.</p>
+   </dd>
+
+
+   <dt><dfn><code data-x="md-vevent-categories">categories</code></dfn></dt>
+
+   <dd>
+    <p>Gives the name of a category or tag that the event could be classified as.</p>
+
+    <p>The <span data-x="concept-property-value">value</span> must be text.</p>
+
+    <p>Any number of properties with the name <code data-x="md-vevent-categories">categories</code>
+    may be present within each <span data-x="concept-item">item</span> with the type <code
+    data-x="md-vevent">http://microformats.org/profile/hcalendar#vevent</code>.</p>
+   </dd>
+
+
+   <dt><dfn><code data-x="md-vevent-class">class</code></dfn></dt>
+
+   <dd>
+    <p>Gives the access classification of the information regarding the event.</p>
+
+    <p>The <span data-x="concept-property-value">value</span> must be text with one of the following
+    values:</p>
+
+    <ul class="brief">
+     <li><code data-x="">public</code></li>
+     <li><code data-x="">private</code></li>
+     <li><code data-x="">confidential</code></li>
+    </ul>
+
+    <p class="warning">This is merely advisory and cannot be considered a confidentiality
+    measure.</p>
+
+    <p>A single property with the name <code data-x="md-vevent-class">class</code> may be present
+    within each <span data-x="concept-item">item</span> with the type <code
+    data-x="md-vevent">http://microformats.org/profile/hcalendar#vevent</code>.</p>
+   </dd>
+
+
+   <dt><dfn><code data-x="md-vevent-comment">comment</code></dfn></dt>
+
+   <dd>
+    <p>Gives a comment regarding the event.</p>
+
+    <p>The <span data-x="concept-property-value">value</span> must be text.</p>
+
+    <p>Any number of properties with the name <code data-x="md-vevent-comment">comment</code> may be
+    present within each <span data-x="concept-item">item</span> with the type <code
+    data-x="md-vevent">http://microformats.org/profile/hcalendar#vevent</code>.</p>
+   </dd>
+
+
+   <dt><dfn><code data-x="md-vevent-description">description</code></dfn></dt>
+
+   <dd>
+    <p>Gives a detailed description of the event.</p>
+
+    <p>The <span data-x="concept-property-value">value</span> must be text.</p>
+
+    <p>A single property with the name <code data-x="md-vevent-description">description</code> may be
+    present within each <span data-x="concept-item">item</span> with the type <code
+    data-x="md-vevent">http://microformats.org/profile/hcalendar#vevent</code>.</p>
+   </dd>
+
+
+   <dt><dfn><code data-x="md-vevent-geo">geo</code></dfn></dt>
+
+   <dd>
+    <p>Gives the geographical position of the event.</p>
+
+    <div algorithm>
+    <p>The <span data-x="concept-property-value">value</span> must be text and must match the
+    following syntax:</p>
+
+    <ol>
+     <li>Optionally, either a U+002B PLUS SIGN character (+) or a U+002D HYPHEN-MINUS character
+     (-).</li>
+
+     <li>One or more <span>ASCII digits</span>.</li>
+
+     <li>Optionally*, a U+002E FULL STOP character (.) followed by one or more <span>ASCII
+     digits</span>.</li>
+
+     <li>A U+003B SEMICOLON character (;).</li>
+
+     <li>Optionally, either a U+002B PLUS SIGN character (+) or a U+002D HYPHEN-MINUS character
+     (-).</li>
+
+     <li>One or more <span>ASCII digits</span>.</li>
+
+     <li>Optionally*, a U+002E FULL STOP character (.) followed by one or more <span>ASCII
+     digits</span>.</li>
+    </ol>
+    </div>
+
+    <p>The optional components marked with an asterisk (*) should be included, and should have six
+    digits each.</p> <!-- iCalendar actually limits the range to -91.0 < lat < 91.0; -181.0 < long <
+    181.0, which seems weird. It also gives special meanings to +90/-90 lat, and +180 long. -->
+
+    <!-- copied from vcard (not icalendar!) -->
+    <p class="note">The value specifies latitude and longitude, in that order (i.e., "LAT LON"
+    ordering), in decimal degrees. The longitude represents the location east and west of the prime
+    meridian as a positive or negative real number, respectively. The latitude represents the
+    location north and south of the equator as a positive or negative real number, respectively.</p>
+
+    <p>A single property with the name <code data-x="md-vevent-geo">geo</code> may be present within
+    each <span data-x="concept-item">item</span> with the type <code
+    data-x="md-vevent">http://microformats.org/profile/hcalendar#vevent</code>.</p>
+   </dd>
+
+
+   <dt><dfn><code data-x="md-vevent-location">location</code></dfn></dt>
+
+   <dd>
+    <p>Gives the location of the event.</p>
+
+    <p>The <span data-x="concept-property-value">value</span> must be text.</p> <!-- v2: support
+    vcard here -->
+
+    <p>A single property with the name <code data-x="md-vevent-location">location</code> may be
+    present within each <span data-x="concept-item">item</span> with the type <code
+    data-x="md-vevent">http://microformats.org/profile/hcalendar#vevent</code>.</p>
+   </dd>
+
+
+   <!-- PRIORITY not included - always 0 - doesn't make sense for single events -->
+
+
+   <dt><dfn><code data-x="md-vevent-resources">resources</code></dfn></dt>
+
+   <dd>
+    <p>Gives a resource that will be needed for the event.</p>
+
+    <p>The <span data-x="concept-property-value">value</span> must be text.</p> <!-- v2: support
+    vcard here -->
+
+    <p>Any number of properties with the name <code data-x="md-vevent-resources">resources</code> may
+    be present within each <span data-x="concept-item">item</span> with the type <code
+    data-x="md-vevent">http://microformats.org/profile/hcalendar#vevent</code>.</p>
+   </dd>
+
+
+   <dt><dfn><code data-x="md-vevent-status">status</code></dfn></dt>
+
+   <dd>
+    <p>Gives the confirmation status of the event.</p>
+
+    <p>The <span data-x="concept-property-value">value</span> must be text with one of the following
+    values:</p>
+
+    <ul class="brief">
+     <li><code data-x="">tentative</code></li>
+     <li><code data-x="">confirmed</code></li>
+     <li><code data-x="">canceled</code></li> <!-- two Ls as per iCalendar spec -->
+    </ul>
+
+    <p>A single property with the name <code data-x="md-vevent-status">status</code> may be present
+    within each <span data-x="concept-item">item</span> with the type <code
+    data-x="md-vevent">http://microformats.org/profile/hcalendar#vevent</code>.</p>
+   </dd>
+
+
+   <dt><dfn><code data-x="md-vevent-summary">summary</code></dfn></dt>
+
+   <dd>
+    <p>Gives a short summary of the event.</p>
+
+    <p>The <span data-x="concept-property-value">value</span> must be text.</p>
+
+    <p>User agents should replace U+000A LINE FEED (LF) characters in the <span
+    data-x="concept-property-value">value</span> by U+0020 SPACE characters when using the value.</p>
+
+    <p>A single property with the name <code data-x="md-vevent-summary">summary</code> may be present
+    within each <span data-x="concept-item">item</span> with the type <code
+    data-x="md-vevent">http://microformats.org/profile/hcalendar#vevent</code>.</p>
+   </dd>
+
+
+   <dt><dfn><code data-x="md-vevent-dtend">dtend</code></dfn></dt>
+
+   <dd>
+    <p>Gives the date and time by which the event ends.</p>
+
+    <p>If the property with the name <code data-x="md-vevent-dtend">dtend</code> is present within an
+    <span data-x="concept-item">item</span> with the type <code
+    data-x="md-vevent">http://microformats.org/profile/hcalendar#vevent</code> that has a property
+    with the name <code data-x="md-vevent-dtstart">dtstart</code> whose value is a <span>valid date
+    string</span>, then the <span data-x="concept-property-value">value</span> of the property with
+    the name <code data-x="md-vevent-dtend">dtend</code> must be text that is a <span>valid date
+    string</span> also. Otherwise, the <span data-x="concept-property-value">value</span> of the
+    property must be text that is a <span>valid global date and time string</span>.</p>
+
+    <p>In either case, the <span data-x="concept-property-value">value</span> be later in time than
+    the value of the <code data-x="md-vevent-dtstart">dtstart</code> property of the same <span
+    data-x="concept-item">item</span>.</p>
+
+    <p class="note">The time given by the <code data-x="md-vevent-dtend">dtend</code> property is not
+    inclusive. For day-long events, therefore, the <code data-x="md-vevent-dtend">dtend</code>
+    property's <span data-x="concept-property-value">value</span> will be the day <em>after</em> the
+    end of the event.</p>
+
+    <p>A single property with the name <code data-x="md-vevent-dtend">dtend</code> may be present
+    within each <span data-x="concept-item">item</span> with the type <code
+    data-x="md-vevent">http://microformats.org/profile/hcalendar#vevent</code>, so long as that <code
+    data-x="md-vevent">http://microformats.org/profile/hcalendar#vevent</code> does not have a
+    property with the name <code data-x="md-vevent-duration">duration</code>.</p>
+   </dd>
+
+
+   <dt><dfn><code data-x="md-vevent-dtstart">dtstart</code></dfn></dt>
+
+   <dd>
+    <p>Gives the date and time at which the event starts.</p>
+
+    <p>The <span data-x="concept-property-value">value</span> must be text that is either a
+    <span>valid date string</span> or a <span>valid global date and time string</span>.</p>
+
+    <p>Exactly one property with the name <code data-x="md-vevent-dtstart">dtstart</code> must be
+    present within each <span data-x="concept-item">item</span> with the type <code
+    data-x="md-vevent">http://microformats.org/profile/hcalendar#vevent</code>.</p>
+   </dd>
+
+
+   <dt><dfn><code data-x="md-vevent-duration">duration</code></dfn></dt>
+
+   <dd>
+    <p>Gives the duration of the event.</p>
+
+    <p>The <span data-x="concept-property-value">value</span> must be text that is a <span>valid
+    vevent duration string</span>.</p>
+
+    <p>The duration represented is the sum of all the durations represented by integers in the
+    value.</p>
+
+    <p>A single property with the name <code data-x="md-vevent-duration">duration</code> may be
+    present within each <span data-x="concept-item">item</span> with the type <code
+    data-x="md-vevent">http://microformats.org/profile/hcalendar#vevent</code>, so long as that <code
+    data-x="md-vevent">http://microformats.org/profile/hcalendar#vevent</code> does not have a
+    property with the name <code data-x="md-vevent-dtend">dtend</code>.</p>
+   </dd>
+
+
+   <dt><dfn><code data-x="md-vevent-transp">transp</code></dfn></dt>
+
+   <dd>
+    <p>Gives whether the event is to be considered as consuming time on a calendar, for the purpose
+    of free-busy time searches.</p>
+
+    <p>The <span data-x="concept-property-value">value</span> must be text with one of the following
+    values:</p>
+
+    <ul class="brief">
+     <li><code data-x="">opaque</code></li>
+     <li><code data-x="">transparent</code></li>
+    </ul>
+
+    <p>A single property with the name <code data-x="md-vevent-transp">transp</code> may be present
+    within each <span data-x="concept-item">item</span> with the type <code
+    data-x="md-vevent">http://microformats.org/profile/hcalendar#vevent</code>.</p>
+   </dd>
+
+
+   <!-- ATTENDEE not included; iCalendar says MUST NOT be included in
+   published events -->
+
+
+   <dt><dfn><code data-x="md-vevent-contact">contact</code></dfn></dt>
+
+   <dd>
+    <p>Gives the contact information for the event.</p>
+
+    <p>The <span data-x="concept-property-value">value</span> must be text.</p> <!-- v2: support
+    vcard here -->
+
+    <p>Any number of properties with the name <code data-x="md-vevent-contact">contact</code> may be
+    present within each <span data-x="concept-item">item</span> with the type <code
+    data-x="md-vevent">http://microformats.org/profile/hcalendar#vevent</code>.</p>
+   </dd>
+
+
+   <!-- ORGANIZER not included, as it is calendar-system-specific (gives a CAL-ADDRESS value); use
+   CONTACT instead -->
+
+
+   <!-- RECURRENCE-ID not included... unclear how to make it usefully work here -->
+
+
+   <!-- RELATED-TO not included, as it only makes sense for complete calendars -->
+
+
+   <dt><dfn><code data-x="md-vevent-url">url</code></dfn></dt>
+
+   <dd>
+    <p>Gives a <span>URL</span> for the event.</p>
+
+    <p>The <span data-x="concept-property-value">value</span> must be an <span>absolute
+    URL</span>.</p>
+
+    <p>A single property with the name <code data-x="md-vevent-url">url</code> may be present within
+    each <span data-x="concept-item">item</span> with the type <code
+    data-x="md-vevent">http://microformats.org/profile/hcalendar#vevent</code>.</p>
+   </dd>
+
+
+   <dt><dfn><code data-x="md-vevent-uid">uid</code></dfn></dt>
+
+   <dd>
+    <p>Gives a globally unique identifier corresponding to the event.</p>
+
+    <p>The <span data-x="concept-property-value">value</span> must be text.</p>
+
+    <p>A single property with the name <code data-x="md-vevent-uid">uid</code> may be present within
+    each <span data-x="concept-item">item</span> with the type <code
+    data-x="md-vevent">http://microformats.org/profile/hcalendar#vevent</code>.</p>
+   </dd>
+
+
+   <dt><dfn><code data-x="md-vevent-exdate">exdate</code></dfn></dt>
+
+   <dd>
+    <p>Gives a date and time at which the event does not occur despite the recurrence rules.</p>
+
+    <p>The <span data-x="concept-property-value">value</span> must be text that is either a
+    <span>valid date string</span> or a <span>valid global date and time string</span>.</p>
+
+    <p>Any number of properties with the name <code data-x="md-vevent-exdate">exdate</code> may be
+    present within each <span data-x="concept-item">item</span> with the type <code
+    data-x="md-vevent">http://microformats.org/profile/hcalendar#vevent</code>.</p>
+   </dd>
+
+
+   <dt><dfn><code data-x="md-vevent-rdate">rdate</code></dfn></dt>
+
+   <dd>
+    <p>Gives a date and time at which the event recurs.</p>
+
+    <p>The <span data-x="concept-property-value">value</span> must be text that is one of the
+    following:
+
+    <ul>
+     <li>A <span>valid date string</span>.</li>
+
+     <li>A <span>valid global date and time string</span>.</li>
+
+     <li>A <span>valid global date and time string</span> followed by a U+002F SOLIDUS character (/)
+     followed by a second <span>valid global date and time string</span> representing a later
+     time.</li>
+
+     <li>A <span>valid global date and time string</span> followed by a U+002F SOLIDUS character (/)
+     followed by a <span>valid vevent duration string</span>.</li>
+    </ul>
+
+    <p>Any number of properties with the name <code data-x="md-vevent-rdate">rdate</code> may be
+    present within each <span data-x="concept-item">item</span> with the type <code
+    data-x="md-vevent">http://microformats.org/profile/hcalendar#vevent</code>.</p>
+   </dd>
+
+
+   <dt><dfn><code data-x="md-vevent-rrule">rrule</code></dfn></dt>
+
+   <dd>
+    <p>Gives a rule for finding dates and times at which the event occurs.</p>
+
+    <p>The <span data-x="concept-property-value">value</span> must be text that matches the RECUR
+    value type defined in <cite>iCalendar</cite>. <ref>RFC5545</ref></p>
+
+    <p>A single property with the name <code data-x="md-vevent-rrule">rrule</code> may be
+    present within each <span data-x="concept-item">item</span> with the type <code
+    data-x="md-vevent">http://microformats.org/profile/hcalendar#vevent</code>.</p>
+   </dd>
+
+
+   <dt><dfn><code data-x="md-vevent-created">created</code></dfn></dt>
+
+   <dd>
+    <p>Gives the date and time at which the event information was first created in a calendaring
+    system.</p>
+
+    <p>The <span data-x="concept-property-value">value</span> must be text that is a <span>valid
+    global date and time string</span>.</p>
+
+    <p>A single property with the name <code data-x="md-vevent-created">created</code> may be present
+    within each <span data-x="concept-item">item</span> with the type <code
+    data-x="md-vevent">http://microformats.org/profile/hcalendar#vevent</code>.</p>
+   </dd>
+
+
+   <!-- DTSTAMP not included, it gets added when serializing -->
+
+
+   <dt><dfn><code data-x="md-vevent-last-modified">last-modified</code></dfn></dt>
+
+   <dd>
+    <p>Gives the date and time at which the event information was last modified in a calendaring
+    system.</p>
+
+    <p>The <span data-x="concept-property-value">value</span> must be text that is a <span>valid
+    global date and time string</span>.</p>
+
+    <p>A single property with the name <code data-x="md-vevent-last-modified">last-modified</code>
+    may be present within each <span data-x="concept-item">item</span> with the type <code
+    data-x="md-vevent">http://microformats.org/profile/hcalendar#vevent</code>.</p>
+   </dd>
+
+
+   <dt><dfn><code data-x="md-vevent-sequence">sequence</code></dfn></dt>
+
+   <dd>
+    <p>Gives a revision number for the event information.</p>
+
+    <p>The <span data-x="concept-property-value">value</span> must be text that is a <span>valid
+    non-negative integer</span>.</p>
+
+    <p>A single property with the name <code data-x="md-vevent-sequence">sequence</code> may be
+    present within each <span data-x="concept-item">item</span> with the type <code
+    data-x="md-vevent">http://microformats.org/profile/hcalendar#vevent</code>.</p>
+   </dd>
+
+
+   <!-- REQUEST-STATUS not included, calendaring system interop
+   feature -->
+  </dl>
+
+  <div algorithm>
+  <p>A string is a <dfn>valid vevent duration string</dfn> if it matches the following pattern:</p>
+
+  <ol>
+   <li><p>A U+0050 LATIN CAPITAL LETTER P character (P).</p></li>
+
+   <li>
+    <p>One of the following:</p>
+
+    <ul>
+     <li><p>A <span>valid non-negative integer</span> followed by a U+0057 LATIN CAPITAL LETTER W
+     character (W). The integer represents a duration of that number of weeks.</p></li>
+
+     <li>
+      <p>At least one, and possible both in this order, of the following:</p>
+
+      <ol>
+       <li><p>A <span>valid non-negative integer</span> followed by a U+0044 LATIN CAPITAL LETTER D
+       character (D). The integer represents a duration of that number of days.</p></li>
+
+       <li>
+        <p>A U+0054 LATIN CAPITAL LETTER T character (T) followed by any one of the following, or
+        the first and second of the following in that order, or the second and third of the
+        following in that order, or all three of the following in this order:</p>
+
+        <ol>
+         <li><p>A <span>valid non-negative integer</span> followed by a U+0048 LATIN CAPITAL LETTER
+         H character (H). The integer represents a duration of that number of hours.</p></li>
+
+         <li><p>A <span>valid non-negative integer</span> followed by a U+004D LATIN CAPITAL LETTER
+         M character (M). The integer represents a duration of that number of minutes.</p></li>
+
+         <li><p>A <span>valid non-negative integer</span> followed by a U+0053 LATIN CAPITAL LETTER
+         S character (S). The integer represents a duration of that number of seconds.</p></li>
+        </ol>
+      </ol>
+     </li>
+    </ul>
+   </li>
+  </ol>
+  </div>
+
+
+  <h5>Conversion to iCalendar</h5>
+
+  <div algorithm>
+  <p>Given a list of nodes <var>nodes</var> in a <code>Document</code>, a user agent must
+  run the following algorithm to <dfn data-x="extracting vEvent data">extract any vEvent data
+  represented by those nodes</dfn>:</p>
+
+  <ol>
+   <li><p>If none of the nodes in <var>nodes</var> are <span
+   data-x="concept-item">items</span> with the type <code
+   data-x="md-vevent">http://microformats.org/profile/hcalendar#vevent</code>, then there is no
+   vEvent data. Abort the algorithm, returning nothing.</p></li>
+
+   <li><p>Let <var>output</var> be an empty string.</p></li>
+
+   <li><p><span>Add an iCalendar line</span> with the type "<code data-x="">BEGIN</code>" and the
+   value "<code data-x="">VCALENDAR</code>" to <var>output</var>.</p></li>
+
+   <li><p><span>Add an iCalendar line</span> with the type "<code data-x="">PRODID</code>" and the
+   value equal to a user-agent-specific string representing the user agent to <var>output</var>.</p></li>
+
+   <li><p><span>Add an iCalendar line</span> with the type "<code data-x="">VERSION</code>" and the
+   value "<code data-x="">2.0</code>" to <var>output</var>.</p></li>
+
+   <li>
+    <p>For each node <var>node</var> in <var>nodes</var> that is an <span
+    data-x="concept-item">item</span> with the type <code
+    data-x="md-vevent">http://microformats.org/profile/hcalendar#vevent</code>, run the following
+    steps:</p>
+
+    <ol>
+     <li><p><span>Add an iCalendar line</span> with the type "<code data-x="">BEGIN</code>" and the
+     value "<code data-x="">VEVENT</code>" to <var>output</var>.</p></li>
+
+     <li><p><span>Add an iCalendar line</span> with the type "<code data-x="">DTSTAMP</code>" and a
+     value consisting of an iCalendar DATE-TIME string representing the current date and time, with
+     the annotation "<code data-x="">VALUE=DATE-TIME</code>", to <var>output</var>.
+     <ref>RFC5545</ref></p></li>
+
+     <li>
+      <p>For each element <var>element</var> that is <span data-x="the properties of an
+      item">a property of the item</span> <var>node</var>: for each name <var>name</var> in <var>element</var>'s <span>property names</span>, run the
+      appropriate set of substeps from the following list:</p>
+
+      <dl>
+       <dt>If the property's <span data-x="concept-property-value">value</span> is an <span
+       data-x="concept-item">item</span></dt>
+
+       <dd>
+        <p>Skip the property.</p>
+       </dd>
+
+
+       <dt>If the property is <code data-x="md-vevent-dtend">dtend</code></dt>
+       <dt>If the property is <code data-x="md-vevent-dtstart">dtstart</code></dt>
+       <dt>If the property is <code data-x="md-vevent-exdate">exdate</code></dt>
+       <dt>If the property is <code data-x="md-vevent-rdate">rdate</code></dt>
+       <dt>If the property is <code data-x="md-vevent-created">created</code></dt>
+       <dt>If the property is <code data-x="md-vevent-last-modified">last-modified</code></dt>
+
+       <dd>
+        <p>Let <var>value</var> be the result of stripping all U+002D HYPHEN-MINUS (-) and
+        U+003A COLON (:) characters from the property's <span
+        data-x="concept-property-value">value</span>.</p>
+
+        <p>If the property's <span data-x="concept-property-value">value</span> is a <span>valid date
+        string</span>, then <span>add an iCalendar line</span> with the type <var>name</var>
+        and the value <var>value</var> to <var>output</var>, with the annotation
+        "<code data-x="">VALUE=DATE</code>".</p>
+
+        <p>Otherwise, if the property's <span data-x="concept-property-value">value</span> is a
+        <span>valid global date and time string</span>, then <span>add an iCalendar line</span> with
+        the type <var>name</var> and the value <var>value</var> to <var>output</var>, with the annotation "<code data-x="">VALUE=DATE-TIME</code>".</p>
+
+        <p>Otherwise, skip the property.</p>
+       </dd>
+
+
+       <dt>Otherwise</dt>
+
+       <dd>
+        <p><span>Add an iCalendar line</span> with the type <var>name</var> and the
+        property's <span data-x="concept-property-value">value</span> to <var>output</var>.</p>
+       </dd>
+      </dl>
+     </li>
+
+     <li><p><span>Add an iCalendar line</span> with the type "<code data-x="">END</code>" and the
+     value "<code data-x="">VEVENT</code>" to <var>output</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p><span>Add an iCalendar line</span> with the type "<code data-x="">END</code>" and the value
+   "<code data-x="">VCALENDAR</code>" to <var>output</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>When the above algorithm says that the user agent is to <dfn>add an iCalendar line</dfn>
+  consisting of a type <var>type</var>, a value <var>value</var>, and optionally
+  an annotation, to a string <var>output</var>, it must run the following steps:</p>
+
+  <ol>
+   <li><p>Let <var>line</var> be an empty string.</p></li>
+
+   <li><p>Append <var>type</var>, <span>converted to ASCII uppercase</span>, to <var>line</var>.</p></li>
+
+   <li>
+    <p>If there is an annotation:</p>
+
+    <ol>
+     <li><p>Append a U+003B SEMICOLON character (;) to <var>line</var>.</p></li>
+
+     <li><p>Append the annotation to <var>line</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Append a U+003A COLON character (:) to <var>line</var>.</p></li>
+
+   <li><p>Prefix every U+005C REVERSE SOLIDUS character (\) in <var>value</var> with
+   another U+005C REVERSE SOLIDUS character (\).</p></li>
+
+   <li><p>Prefix every U+002C COMMA character (,) in <var>value</var> with a U+005C REVERSE
+   SOLIDUS character (\).</p></li>
+
+   <li><p>Prefix every U+003B SEMICOLON character (;) in <var>value</var> with a U+005C
+   REVERSE SOLIDUS character (\).</p></li>
+
+   <li><p>Replace every U+000D CARRIAGE RETURN U+000A LINE FEED character pair (CRLF) in <var>value</var> with a U+005C REVERSE SOLIDUS character (\) followed by a U+006E LATIN SMALL
+   LETTER N character (n).</p></li>
+
+   <li><p>Replace every remaining U+000D CARRIAGE RETURN (CR) or U+000A LINE FEED (LF) character in
+   <var>value</var> with a U+005C REVERSE SOLIDUS character (\) followed by a U+006E LATIN
+   SMALL LETTER N character (n).</p></li>
+
+   <li><p>Append <var>value</var> to <var>line</var>.</p></li>
+
+   <li><p>Let <var>maximum length</var> be 75.</p></li>
+
+   <li>
+    <p>While <var>line</var>'s <span>code point length</span> is greater than <var>maximum
+    length</var>:</p>
+
+    <ol>
+     <li><p>Append the first <var>maximum length</var> code points of <var>line</var> to
+     <var>output</var>.</p></li>
+
+     <li><p>Remove the first <var>maximum length</var> code points from <var>line</var>.</p></li>
+
+     <li><p>Append a U+000D CARRIAGE RETURN character (CR) to <var>output</var>.</p></li>
+
+     <li><p>Append a U+000A LINE FEED character (LF) to <var>output</var>.</p></li>
+
+     <li><p>Append a U+0020 SPACE character to <var>output</var>.</p></li>
+
+     <li><p>Let <var>maximum length</var> be 74.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Append (what remains of) <var>line</var> to <var>output</var>.</p></li>
+
+   <li><p>Append a U+000D CARRIAGE RETURN character (CR) to <var>output</var>.</p></li>
+
+   <li><p>Append a U+000A LINE FEED character (LF) to <var>output</var>.</p></li>
+  </ol>
+  </div>
+
+  <p class="note">This algorithm can generate invalid iCalendar output, if the input does not
+  conform to the rules described for the <code
+  data-x="md-vevent">http://microformats.org/profile/hcalendar#vevent</code> <span data-x="item
+  types">item type</span> and <span data-x="defined property name">defined property names</span>.</p>
+  <!-- of course since iCalendar doesn't define error handling, this is somewhat problematic. -->
+
+
+
+  <h5>Examples</h5>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+<!-- get more from https://www.rfc-editor.org/rfc/rfc5545 -->
+
+  <div class="example">
+
+   <p>Here is an example of a page that uses the vEvent vocabulary to mark up an event:</p>
+
+   <pre><code class="html">&lt;body itemscope itemtype="http://microformats.org/profile/hcalendar#vevent">
+ ...
+ &lt;h1 itemprop="summary">Bluesday Tuesday: Money Road&lt;/h1>
+ ...
+ &lt;time itemprop="dtstart" datetime="2009-05-05T19:00:00Z">May 5th @ 7pm&lt;/time>
+ (until &lt;time itemprop="dtend" datetime="2009-05-05T21:00:00Z">9pm&lt;/time>)
+ ...
+ &lt;a href="http://livebrum.co.uk/2009/05/05/bluesday-tuesday-money-road"
+    rel="bookmark" itemprop="url">Link to this page&lt;/a>
+ ...
+ &lt;p>Location: &lt;span itemprop="location">The RoadHouse&lt;/span>&lt;/p>
+ ...
+ &lt;p>&lt;input type=button value="Add to Calendar"
+           onclick="location = getCalendar(this)">&lt;/p>
+ ...
+ &lt;meta itemprop="description" content="via livebrum.co.uk">
+&lt;/body></code></pre>
+
+   <p>The <code data-x="">getCalendar()</code> function is left as an exercise for the reader.</p>
+
+   <p>The same page could offer some markup, such as the following,
+   for copy-and-pasting into blogs:</p>
+
+   <pre><code class="html">&lt;div itemscope itemtype="http://microformats.org/profile/hcalendar#vevent">
+ &lt;p>I'm going to
+ &lt;strong itemprop="summary">Bluesday Tuesday: Money Road&lt;/strong>,
+ &lt;time itemprop="dtstart" datetime="2009-05-05T19:00:00Z">May 5th at 7pm&lt;/time>
+ to &lt;time itemprop="dtend" datetime="2009-05-05T21:00:00Z">9pm&lt;/time>,
+ at &lt;span itemprop="location">The RoadHouse&lt;/span>!&lt;/p>
+ &lt;p>&lt;a href="http://livebrum.co.uk/2009/05/05/bluesday-tuesday-money-road"
+       itemprop="url">See this event on livebrum.co.uk&lt;/a>.&lt;/p>
+ &lt;meta itemprop="description" content="via livebrum.co.uk">
+&lt;/div></code></pre>
+
+  </div>
+
+

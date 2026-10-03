@@ -1,0 +1,2588 @@
+WHATWG HTML — section linkTypes — Link types (+edits)
+
+  <h4 id="linkTypes">Link types</h4>
+
+  <p>The following table summarizes the link types that are defined by this specification, by their
+  corresponding keywords. This table is non-normative; the actual definitions for the link types are
+  given in the next few sections.</p>
+
+  <p>In this section, the term <i>referenced document</i> refers to the resource identified by the
+  element representing the link, and the term <i>current document</i> refers to the resource within
+  which the element representing the link finds itself.</p>
+
+  <div w-nodev>
+
+  <p>To determine which link types apply to a <code>link</code>, <code>a</code>, <code>area</code>,
+  or <code>form</code> element, the element's <code data-x="">rel</code> attribute must be <span
+  data-x="split a string on ASCII whitespace">split on ASCII whitespace</span>. The resulting tokens
+  are the keywords for the link types that apply to that element.</p>
+
+  </div>
+
+  <p>Except where otherwise specified, a keyword must not be specified more than once per <code
+  data-x="attr-hyperlink-rel">rel</code> attribute.</p>
+
+  <p>Some of the sections that follow the table below list synonyms for certain keywords. The
+  indicated synonyms <span w-nodev>are to be handled as specified by user agents, but</span> must
+  not be used in documents (for example, the keyword "<code data-x="">copyright</code>").</p>
+
+  <p>Keywords are always <span>ASCII case-insensitive</span><span w-nodev>, and must be
+  compared as such</span>.</p>
+
+  <p class="example">Thus, <code data-x="">rel="next"</code> is the same as <code
+  data-x="">rel="NEXT"</code>.</p>
+
+  <p>Keywords that are <dfn>body-ok</dfn> affect whether <code>link</code> elements are
+  <span>allowed in the body</span>. The <span>body-ok</span> keywords are
+  <code data-x="rel-dns-prefetch">dns-prefetch</code>,
+  <code data-x="rel-modulepreload">modulepreload</code>,
+  <code data-x="rel-pingback">pingback</code>,
+  <code data-x="rel-preconnect">preconnect</code>,
+  <code data-x="rel-prefetch">prefetch</code>,
+  <code data-x="rel-preload">preload</code>, and
+  <code data-x="rel-stylesheet">stylesheet</code>.</p>
+
+  <p>New link types that are to be implemented by web browsers are to be added to this standard. The
+  remainder can be <span data-x="concept-rel-extensions">registered as extensions</span>.</p>
+
+  <table class="yesno" id="table-link-relations">
+   <thead>
+    <tr>
+     <th rowspan="2">Link type</th>
+     <th colspan="3">Effect on...</th>
+     <th rowspan="2"><span>body-ok</span></th>
+     <th rowspan="2">Has `<code data-x="http-link">Link</code>` processing</th>
+     <th rowspan="2">Brief description</th>
+    </tr>
+    <tr>
+     <th><code>link</code></th>
+     <th><code>a</code> and <code>area</code></th>
+     <th><code>form</code></th>
+    </tr>
+   </thead>
+   <tbody>
+
+    <tr>
+     <td><code data-x="rel-alternate">alternate</code></td>
+     <td colspan="2"><span>Hyperlink</span></td>
+     <td><em>not allowed</em></td>
+     <td class="no"> &middot; </td>
+     <td class="no"> &middot; </td>
+     <td>Gives alternate representations of the current document.</td>
+    </tr>
+
+    <tr>
+     <td><code data-x="rel-canonical">canonical</code></td>
+     <td><span>Hyperlink</span></td>
+     <td colspan="2"><em>not allowed</em></td>
+     <td class="no"> &middot; </td>
+     <td class="no"> &middot; </td>
+     <td>Gives the preferred URL for the current document.</td>
+    </tr>
+
+    <tr>
+     <td><code data-x="rel-author">author</code></td>
+     <td colspan="2"><span>Hyperlink</span></td>
+     <td><em>not allowed</em></td>
+     <td class="no"> &middot; </td>
+     <td class="no"> &middot; </td>
+     <td>Gives a link to the author of the current document or article.</td>
+    </tr>
+
+    <tr>
+     <td><code data-x="rel-bookmark">bookmark</code></td>
+     <td><em>not allowed</em></td>
+     <td><span>Hyperlink</span></td>
+     <td><em>not allowed</em></td>
+     <td class="no"> &middot; </td>
+     <td class="no"> &middot; </td>
+     <td>Gives the permalink for the nearest ancestor section.</td>
+    </tr>
+
+    <tr>
+     <td><code data-x="rel-dns-prefetch">dns-prefetch</code></td>
+     <td><span data-x="external resource link">External Resource</span></td>
+     <td colspan="2"><em>not allowed</em></td>
+     <td class="yes"> Yes </td>
+     <td class="no"> &middot; </td>
+     <td>Specifies that the user agent should preemptively perform DNS resolution for the target resource's <span>origin</span>.</td>
+    </tr>
+
+    <tr>
+     <td><code data-x="rel-expect">expect</code></td>
+     <td><span data-x="internal resource link">Internal Resource</span></td>
+     <td colspan="2"><em>not allowed</em></td>
+     <td class="no"> &middot; </td>
+     <td class="no"> &middot; </td>
+     <td>Expect an element with the target ID to appear in the current document.</td>
+    </tr>
+
+    <tr>
+     <td><code data-x="rel-external">external</code></td>
+     <td><em>not allowed</em></td>
+     <td colspan="2"><span data-x="hyperlink annotation">Annotation</span></td>
+     <td class="no"> &middot; </td>
+     <td class="no"> &middot; </td>
+     <td>Indicates that the referenced document is not part of the same site as the current document.</td>
+    </tr>
+
+    <tr>
+     <td><code data-x="rel-help">help</code></td>
+     <td colspan="3"><span>Hyperlink</span></td>
+     <td class="no"> &middot; </td>
+     <td class="no"> &middot; </td>
+     <td>Provides a link to context-sensitive help.</td>
+    </tr>
+
+    <tr>
+     <td><code data-x="rel-icon">icon</code></td>
+     <td><span data-x="external resource link">External Resource</span></td>
+     <td colspan="2"><em>not allowed</em></td>
+     <td class="no"> &middot; </td>
+     <td class="no"> &middot; </td>
+     <td>Imports an icon to represent the current document.</td>
+    </tr>
+
+    <tr>
+     <td><code data-x="rel-manifest">manifest</code></td>
+     <td><span data-x="external resource link">External Resource</span></td>
+     <td colspan="2"><em>not allowed</em></td>
+     <td class="no"> &middot; </td>
+     <td class="no"> &middot; </td>
+     <td>Imports or links to an <span>application manifest</span>. <ref>MANIFEST</ref></td>
+    </tr>
+
+    <tr>
+     <td><code data-x="rel-modulepreload">modulepreload</code></td>
+     <td><span data-x="external resource link">External Resource</span></td>
+     <td colspan="2"><em>not allowed</em></td>
+     <td class="yes"> Yes </td>
+     <td class="no"> &middot; </td>
+     <td>Specifies that the user agent must preemptively <span data-x="fetch a single module script">fetch the module
+     script</span> and store it in the document's <span data-x="concept-document-module-map">module map</span> for later
+     evaluation. Optionally, the module's dependencies can be fetched as well.</td>
+    </tr>
+
+    <tr>
+     <td><code data-x="rel-license">license</code></td>
+     <td colspan="3"><span>Hyperlink</span></td>
+     <td class="no"> &middot; </td>
+     <td class="no"> &middot; </td>
+     <td>Indicates that the main content of the current document is covered by the copyright license described by the referenced document.</td>
+    </tr>
+
+    <tr>
+     <td><code data-x="rel-next">next</code></td>
+     <td colspan="3"><span>Hyperlink</span></td>
+     <td class="no"> &middot; </td>
+     <td class="no"> &middot; </td>
+     <td>Indicates that the current document is a part of a series, and that the next document in the series is the referenced document.</td>
+    </tr>
+
+    <tr>
+     <td><code data-x="rel-nofollow">nofollow</code></td>
+     <td><em>not allowed</em></td>
+     <td colspan="2"><span data-x="hyperlink annotation">Annotation</span></td>
+     <td class="no"> &middot; </td>
+     <td class="no"> &middot; </td>
+     <td>Indicates that the current document's original author or publisher does not endorse the referenced document.</td>
+    </tr>
+
+    <tr>
+     <td><code data-x="rel-noopener">noopener</code></td>
+     <td><em>not allowed</em></td>
+     <td colspan="2"><span data-x="hyperlink annotation">Annotation</span></td>
+     <td class="no"> &middot; </td>
+     <td class="no"> &middot; </td>
+     <td>Creates a <span>top-level traversable</span> with a non-<span>auxiliary browsing
+     context</span> if the hyperlink would otherwise create one that was auxiliary (i.e., has an
+     appropriate <code data-x="attr-hyperlink-target">target</code> attribute value).</td>
+    </tr>
+
+    <tr>
+     <td><code data-x="rel-noreferrer">noreferrer</code></td>
+     <td><em>not allowed</em></td>
+     <td colspan="2"><span data-x="hyperlink annotation">Annotation</span></td>
+     <td class="no"> &middot; </td>
+     <td class="no"> &middot; </td>
+     <td>No `<code data-x="http-referer">Referer</code>` (sic) header will be included.
+     Additionally, has the same effect as <code data-x="rel-noopener">noopener</code>.</td>
+    </tr>
+
+    <tr>
+     <td><code data-x="rel-opener">opener</code></td>
+     <td><em>not allowed</em></td>
+     <td colspan="2"><span data-x="hyperlink annotation">Annotation</span></td>
+     <td class="no"> &middot; </td>
+     <td class="no"> &middot; </td>
+     <td>Creates an <span>auxiliary browsing context</span> if the hyperlink would otherwise create
+     a <span>top-level traversable</span> with a non-<span>auxiliary browsing context</span> (i.e.,
+     has "<code data-x="">_blank</code>" as <code data-x="attr-hyperlink-target">target</code>
+     attribute value).</td>
+    </tr>
+
+    <tr>
+     <td><code data-x="rel-pingback">pingback</code></td>
+     <td><span data-x="external resource link">External Resource</span></td>
+     <td colspan="2"><em>not allowed</em></td>
+     <td class="yes"> Yes </td>
+     <td class="no"> &middot; </td>
+     <td>Gives the address of the pingback server that handles pingbacks to the current document.</td>
+    </tr>
+
+    <tr>
+     <td><code data-x="rel-preconnect">preconnect</code></td>
+     <td><span data-x="external resource link">External Resource</span></td>
+     <td colspan="2"><em>not allowed</em></td>
+     <td class="yes"> Yes </td>
+     <td class="yes"> Yes </td>
+     <td>Specifies that the user agent should preemptively connect to the target resource's <span>origin</span>.</td>
+    </tr>
+
+    <tr>
+     <td><code data-x="rel-prefetch">prefetch</code></td>
+     <td><span data-x="external resource link">External Resource</span></td>
+     <td colspan="2"><em>not allowed</em></td>
+     <td class="yes"> Yes </td>
+     <td class="no"> &middot; </td>
+     <td>Specifies that the user agent should preemptively <span data-x="concept-fetch">fetch</span> and cache the target resource as it is likely to be required for a followup <span data-x="navigate">navigation</span>.</td>
+    </tr>
+
+    <tr>
+     <td><code data-x="rel-preload">preload</code></td>
+     <td><span data-x="external resource link">External Resource</span></td>
+     <td colspan="2"><em>not allowed</em></td>
+     <td class="yes"> Yes </td>
+     <td class="yes"> Yes </td>
+     <td>Specifies that the user agent must preemptively <span data-x="concept-fetch">fetch</span> and cache the target resource for current <span data-x="navigate">navigation</span> according to the <span>preload destination</span> given by the <code data-x="attr-link-as">as</code> attribute (and the <span data-x="concept-request-priority">priority</span> associated with the <span data-x="concept-potential-destination-translate">corresponding</span> <span data-x="concept-request-destination">destination</span>).</td>
+    </tr>
+
+    <tr>
+     <td><code data-x="rel-prev">prev</code></td>
+     <td colspan="3"><span>Hyperlink</span></td>
+     <td class="no"> &middot; </td>
+     <td class="no"> &middot; </td>
+     <td>Indicates that the current document is a part of a series, and that the previous document in the series is the referenced document.</td>
+    </tr>
+
+    <tr>
+     <td><code data-x="rel-privacy-policy">privacy-policy</code></td>
+     <td colspan="2"><span>Hyperlink</span></td>
+     <td><em>not allowed</em></td>
+     <td class="no"> &middot; </td>
+     <td class="no"> &middot; </td>
+     <td>Gives a link to information about the data collection and usage practices that apply to the current document.</td>
+    </tr>
+
+    <tr>
+     <td><code data-x="rel-search">search</code></td>
+     <td colspan="3"><span>Hyperlink</span></td>
+     <td class="no"> &middot; </td>
+     <td class="no"> &middot; </td>
+     <td>Gives a link to a resource that can be used to search through the current document and its related pages.</td>
+    </tr>
+
+    <tr>
+     <td><code data-x="rel-stylesheet">stylesheet</code></td>
+     <td><span data-x="external resource link">External Resource</span></td>
+     <td colspan="2"><em>not allowed</em></td>
+     <td class="yes"> Yes </td>
+     <td class="no"> &middot; </td>
+     <td>Imports a style sheet.</td>
+    </tr>
+
+    <tr>
+     <td><code data-x="rel-tag">tag</code></td>
+     <td><em>not allowed</em></td>
+     <td><span>Hyperlink</span></td>
+     <td><em>not allowed</em></td>
+     <td class="no"> &middot; </td>
+     <td class="no"> &middot; </td>
+     <td>Gives a tag (identified by the given address) that applies to the current document.</td>
+    </tr>
+
+    <tr>
+     <td><code data-x="rel-terms-of-service">terms-of-service</code></td>
+     <td colspan="2"><span>Hyperlink</span></td>
+     <td><em>not allowed</em></td>
+     <td class="no"> &middot; </td>
+     <td class="no"> &middot; </td>
+     <td>Gives a link to information about the agreements between the current document's provider and users who wish to use the current document.</td>
+    </tr>
+   </tbody>
+  </table>
+
+
+  <h5 id="rel-alternate"><span id="link-type-alternate"></span>Link type "<dfn
+  for="link/rel,a/rel,area/rel" attr-value><code data-x="rel-alternate">alternate</code></dfn>"</h5>
+
+  <p>The <code data-x="rel-alternate">alternate</code> keyword may be used with <code>link</code>,
+  <code>a</code>, and <code>area</code> elements.</p>
+
+  <p>The meaning of this keyword depends on the values of the other attributes.</p>
+
+  <dl class="switch">
+
+   <dt>If the element is a <code>link</code> element and the <code data-x="attr-link-rel">rel</code>
+   attribute also contains the keyword <code data-x="rel-stylesheet">stylesheet</code></dt>
+
+   <dd>
+    <p>The <code data-x="rel-alternate">alternate</code> keyword modifies the meaning of the <code
+    data-x="rel-stylesheet">stylesheet</code> keyword in the way described for that keyword. The
+    <code data-x="rel-alternate">alternate</code> keyword does not create a link of its own.</p>
+
+    <div class="example">
+
+     <p>Here, a set of <code>link</code> elements provide some style sheets:</p>
+
+     <pre><code class="html">&lt;!-- a persistent style sheet -->
+&lt;link rel="stylesheet" href="default.css">
+
+&lt;!-- the preferred alternate style sheet -->
+&lt;link rel="stylesheet" href="green.css" title="Green styles">
+
+&lt;!-- some alternate style sheets -->
+&lt;link rel="alternate stylesheet" href="contrast.css" title="High contrast">
+&lt;link rel="alternate stylesheet" href="big.css" title="Big fonts">
+&lt;link rel="alternate stylesheet" href="wide.css" title="Wide screen"></code></pre>
+
+    </div>
+   </dd>
+
+
+   <dt>If the <code data-x="rel-alternate">alternate</code> keyword is used with the <code
+   data-x="attr-hyperlink-type">type</code> attribute set to the value <code
+   data-x="">application/rss+xml</code> or the value <code data-x="">application/atom+xml</code></dt>
+
+   <dd>
+    <p>The keyword creates a <span>hyperlink</span> referencing a syndication feed (though not
+    necessarily syndicating exactly the same content as the current page).</p>
+
+    <div w-nodev>
+
+    <p>For the purposes of feed autodiscovery, user agents should consider all <code>link</code>
+    elements in the document with the <code data-x="rel-alternate">alternate</code> keyword used and
+    with their <code data-x="attr-hyperlink-type">type</code> attribute set to the value <code
+    data-x="">application/rss+xml</code> or the value <code
+    data-x="">application/atom+xml</code>. If the user agent has the concept of a default
+    syndication feed, the first such element (in <span>tree order</span>) should be used as the
+    default.</p>
+
+    </div>
+
+    <div class="example">
+     <p>The following <code>link</code> elements give syndication feeds for a blog:</p>
+
+     <pre><code class="html">&lt;link rel="alternate" type="application/atom+xml" href="posts.xml" title="Cool Stuff Blog">
+&lt;link rel="alternate" type="application/atom+xml" href="posts.xml?category=robots" title="Cool Stuff Blog: robots category">
+&lt;link rel="alternate" type="application/atom+xml" href="comments.xml" title="Cool Stuff Blog: Comments"></code></pre>
+
+     <p>Such <code>link</code> elements would be used by user agents engaged in feed autodiscovery,
+     with the first being the default (where applicable).</p>
+
+     <p>The following example offers various different syndication feeds to the user, using
+     <code>a</code> elements:</p>
+
+     <pre><code class="html">&lt;p>You can access the planets database using Atom feeds:&lt;/p>
+&lt;ul>
+ &lt;li>&lt;a href="recently-visited-planets.xml" rel="alternate" type="application/atom+xml">Recently Visited Planets&lt;/a>&lt;/li>
+ &lt;li>&lt;a href="known-bad-planets.xml" rel="alternate" type="application/atom+xml">Known Bad Planets&lt;/a>&lt;/li>
+ &lt;li>&lt;a href="unexplored-planets.xml" rel="alternate" type="application/atom+xml">Unexplored Planets&lt;/a>&lt;/li>
+&lt;/ul></code></pre>
+
+     <p>These links would not be used in feed autodiscovery.</p>
+    </div>
+   </dd>
+
+
+   <dt>Otherwise</dt>
+
+   <dd>
+    <p>The keyword creates a <span>hyperlink</span> referencing an alternate representation of the
+    current document.</p>
+
+    <p>The nature of the referenced document is given by the <code
+    data-x="attr-hyperlink-hreflang">hreflang</code>, and <code
+    data-x="attr-hyperlink-type">type</code> attributes.</p>
+
+    <p>If the <code data-x="rel-alternate">alternate</code> keyword is used with the <code
+    data-x="attr-hyperlink-hreflang">hreflang</code> attribute, and that attribute's value differs
+    from the <span>document element</span>'s <span>language</span>, it indicates that the referenced
+    document is a translation.</p>
+
+    <p>If the <code data-x="rel-alternate">alternate</code> keyword is used with the <code
+    data-x="attr-hyperlink-type">type</code> attribute, it indicates that the referenced document is
+    a reformulation of the current document in the specified format.</p>
+
+    <p>The <code data-x="attr-hyperlink-hreflang">hreflang</code> and <code
+    data-x="attr-hyperlink-type">type</code> attributes can be combined when specified with the <code
+    data-x="rel-alternate">alternate</code> keyword.</p>
+
+    <div class="example">
+
+     <p>The following example shows how you can specify versions of the page that use alternative
+     formats, are aimed at other languages, and that are intended for other media:</p>
+
+     <pre><code class="html">&lt;link rel=alternate href="/en/html" hreflang=en type=text/html title="English HTML">
+&lt;link rel=alternate href="/fr/html" hreflang=fr type=text/html title="French HTML">
+&lt;link rel=alternate href="/en/html/print" hreflang=en type=text/html media=print title="English HTML (for printing)">
+&lt;link rel=alternate href="/fr/html/print" hreflang=fr type=text/html media=print title="French HTML (for printing)">
+&lt;link rel=alternate href="/en/pdf" hreflang=en type=application/pdf title="English PDF">
+&lt;link rel=alternate href="/fr/pdf" hreflang=fr type=application/pdf title="French PDF"></code></pre>
+
+    </div>
+
+    <p>This relationship is transitive &mdash; that is, if a document links to two other documents
+    with the link type "<code data-x="rel-alternate">alternate</code>", then, in addition to implying
+    that those documents are alternative representations of the first document, it is also implying
+    that those two documents are alternative representations of each other.</p>
+   </dd>
+  </dl>
+
+
+  <h5>Link type "<dfn attr-value for="link/rel,a/rel,area/rel"><code
+  data-x="rel-author">author</code></dfn>"</h5>
+
+  <p>The <code data-x="rel-author">author</code> keyword may be used with <code>link</code>,
+  <code>a</code>, and <code>area</code> elements. This keyword creates a <span>hyperlink</span>.</p>
+
+  <p>For <code>a</code> and <code>area</code> elements, the <code data-x="rel-author">author</code>
+  keyword indicates that the referenced document provides further information about the author of
+  the nearest <code>article</code> element ancestor of the element defining the hyperlink, if there
+  is one, or of the page as a whole, otherwise.</p>
+
+  <p>For <code>link</code> elements, the <code data-x="rel-author">author</code> keyword indicates
+  that the referenced document provides further information about the author for the page as a
+  whole.</p>
+
+  <p class="note">The "referenced document" can be, and often is, a <code data-x="mailto
+  protocol">mailto:</code> URL giving the email address of the author. <ref>MAILTO</ref></p>
+
+  <div w-nodev>
+
+  <p><strong>Synonyms</strong>: For historical reasons, user agents must also treat
+  <code>link</code>, <code>a</code>, and <code>area</code> elements that have a <code
+  data-x="">rev</code> attribute with the value "<code data-x="">made</code>" as having the <code
+  data-x="rel-author">author</code> keyword specified as a link relationship.</p>
+
+  </div>
+
+
+  <h5>Link type "<dfn attr-value for="a/rel,area/rel"><code
+  data-x="rel-bookmark">bookmark</code></dfn>"</h5>
+
+  <p>The <code data-x="rel-bookmark">bookmark</code> keyword may be used with <code>a</code> and
+  <code>area</code> elements. This keyword creates a <span>hyperlink</span>.</p>
+
+  <p>The <code data-x="rel-bookmark">bookmark</code> keyword gives a permalink for the nearest
+  ancestor <code>article</code> element of the linking element in question, or of
+  the section the linking element is most closely associated with, if
+  there are no ancestor <code>article</code> elements.</p>
+
+  <div class="example">
+
+   <p>The following snippet has three permalinks. A user agent could determine which permalink
+   applies to which part of the spec by looking at where the permalinks are given.</p>
+
+   <pre><code class="html"> ...
+ &lt;body>
+  &lt;h1>Example of permalinks&lt;/h1>
+  &lt;div id="a">
+   &lt;h2>First example&lt;/h2>
+   &lt;p>&lt;a href="a.html" rel="bookmark">This permalink applies to
+   only the content from the first H2 to the second H2&lt;/a>. The DIV isn't
+   exactly that section, but it roughly corresponds to it.&lt;/p>
+  &lt;/div>
+  &lt;h2>Second example&lt;/h2>
+  &lt;article id="b">
+   &lt;p>&lt;a href="b.html" rel="bookmark">This permalink applies to
+   the outer ARTICLE element&lt;/a> (which could be, e.g., a blog post).&lt;/p>
+   &lt;article id="c">
+    &lt;p>&lt;a href="c.html" rel="bookmark">This permalink applies to
+    the inner ARTICLE element&lt;/a> (which could be, e.g., a blog comment).&lt;/p>
+   &lt;/article>
+  &lt;/article>
+ &lt;/body>
+ ...</code></pre>
+
+  </div>
+
+
+  <h5>Link type "<dfn attr-value for="link/rel"><code
+  data-x="rel-canonical">canonical</code></dfn>"</h5>
+
+  <p>The <code data-x="rel-canonical">canonical</code> keyword may be used with <code>link</code>
+  element. This keyword creates a <span>hyperlink</span>.</p>
+
+  <p>The <code data-x="rel-canonical">canonical</code> keyword indicates that URL given by the <code
+  data-x="attr-link-href">href</code> attribute is the preferred URL for the current document. That
+  helps search engines reduce duplicate content, as described in more detail in <cite>The Canonical
+  Link Relation</cite>. <ref>RFC6596</ref></p>
+
+
+  <h5>Link type "<dfn attr-value for="link/rel"><code
+  data-x="rel-dns-prefetch">dns-prefetch</code></dfn>"</h5>
+
+  <p>The <code data-x="rel-dns-prefetch">dns-prefetch</code> keyword may be used with
+  <code>link</code> elements. This keyword creates an <span data-x="external resource link">external
+  resource link</span>. This keyword is <span>body-ok</span>.</p>
+
+  <p>The <code data-x="rel-dns-prefetch">dns-prefetch</code> keyword indicates that preemptively
+  performing DNS resolution for the <span>origin</span> of the specified resource is likely to be
+  beneficial, as it is highly likely that the user will require resources located at that
+  <span>origin</span>, and the user experience would be improved by preempting the latency costs
+  associated with DNS resolution.</p>
+
+  <p>There is no default type for resources given by the <code
+  data-x="rel-dns-prefetch">dns-prefetch</code> keyword.</p>
+
+  <div algorithm>
+  <p>The appropriate times to <span data-x="fetch and process the linked resource">fetch and
+  process</span> this type of link are:</p>
+
+  <ul>
+   <li><p>When the <span>external resource link</span> is created on a <code>link</code> element
+   that is already <span>browsing-context connected</span>.</p></li>
+   <!-- e.g. rel="" changed, href="" set... -->
+
+   <li><p>When the <span>external resource link</span>'s <code>link</code> element <span>becomes
+   browsing-context connected</span>.</p></li>
+
+   <li><p>When the <code data-x="attr-link-href">href</code> attribute of the <code>link</code>
+   element of an <span>external resource link</span> that is already <span>browsing-context
+   connected</span> is changed.</p></li>
+  </ul>
+  </div>
+
+  <div algorithm>
+  <p>The <span>fetch and process the linked resource</span> steps for this type of linked resource,
+  given a <code>link</code> element <var>el</var>, are:
+
+  <ol>
+   <li><p>Let <var>url</var> be the result of <span>encoding-parsing a URL</span> given
+   <var>el</var>'s <code data-x="attr-link-href">href</code> attribute's value, relative to
+   <var>el</var>'s <span>node document</span>.</p></li>
+
+   <li><p>If <var>url</var> is failure, then return.</p></li>
+
+   <li><p>Let <var>partitionKey</var> be the result of <span data-x="determine the network
+   partition key">determining the network partition key</span> given <var>el</var>'s
+   <span>node document</span>'s <span>relevant settings object</span>.</p></li>
+
+   <li>
+    <p>The user agent should <span>resolve an origin</span> given <var>partitionKey</var> and
+    <var>url</var>'s <span data-x="concept-url-origin">origin</span>.</p>
+
+    <p class="note">As the results of this algorithm can be cached, future fetches could be
+    faster.</p>
+   </li>
+  </ol>
+  </div>
+
+
+  <h5>Link type "<dfn attr-value for="link/rel"><code data-x="rel-expect">expect</code></dfn>"</h5>
+
+  <p>The <code data-x="rel-expect">expect</code> keyword may be used with <code>link</code>
+  elements. This keyword creates an <span data-x="internal resource link">internal resource
+  link</span>.</p>
+
+  <p>An <span>internal resource link</span> created by the <code data-x="rel-expect">expect</code>
+  keyword can be used to <span data-x="render-blocked">block rendering</span> until the element that
+  it <span data-x="indicated part">indicates</span> is connected to the document and fully
+  parsed.</p>
+
+  <p>There is no default type for resources given by the <code data-x="rel-expect">expect</code>
+  keyword.</p>
+
+  <div algorithm>
+  <p>Whenever any of the following conditions occur for a <code>link</code> element
+  <var>el</var>:</p>
+
+  <ul>
+   <li><p>the <code data-x="rel-expect">expect</code> <span>internal resource link</span> is created
+   on <var>el</var> that is already <span>browsing-context connected</span>;</p></li>
+
+   <li><p>an <code data-x="rel-expect">expect</code> <span>internal resource link</span> has been
+   created on <var>el</var> and <var>el</var> becomes
+   <span>browsing-context connected</span>;</p></li>
+
+   <li><p>an <code data-x="rel-expect">expect</code> <span>internal resource link</span> has been
+   created on <var>el</var>, <var>el</var> is already <span>browsing-context connected</span>, and
+   <var>el</var>'s <code data-x="attr-link-href">href</code> attribute is set, changed, or removed;
+   or</p></li>
+
+   <li><p>an <code data-x="rel-expect">expect</code> <span>internal resource link</span> has been
+   created on <var>el</var>, <var>el</var> is already <span>browsing-context connected</span>, and
+   <var>el</var>'s <code data-x="attr-link-media">media</code> attribute is set, changed, or
+   removed,</p></li>
+  </ul>
+
+  <p>then <span data-x="process internal resource link">process</span> <var>el</var>.</p>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>process internal resource link</dfn> given a <code>link</code> element <var>el</var>,
+  run these steps:</p>
+
+  <ol>
+   <li><p>Let <var>doc</var> be <var>el</var>'s <span>node document</span>.</p></li>
+
+   <li><p>Let <var>url</var> be the result of <span>encoding-parsing a URL</span> given
+   <var>el</var>'s <code data-x="attr-link-href">href</code> attribute's value, relative to
+   <var>doc</var>.</p></li>
+
+   <li><p>If this fails, or if <var>url</var> does not <span
+   data-x="concept-url-equals">equal</span> <var>doc</var>'s
+   <span data-x="concept-document-url">URL</span> with <i data-x="url equals exclude
+   fragments">exclude fragments</i> set to true, then <span>unblock rendering</span> on
+   <var>el</var> and return.</p></li>
+
+   <li><p>Let <var>indicatedElement</var> be the result of <span
+   data-x="select the indicated part">selecting the indicated part</span> given <var>doc</var>
+   and <var>url</var>.</p></li>
+
+   <li>
+    <p>If all of the following are true:</p>
+
+    <ul>
+     <li><p><var>doc</var>'s <span>current document readiness</span> is "<code
+     data-x="">loading</code>";</p></li>
+
+     <li><p><var>el</var> creates an <span>internal resource link</span>;</p></li>
+
+     <li><p><var>el</var> is <span>browsing-context connected</span>;</p></li>
+
+     <li><p><var>el</var>'s <code data-x="attr-link-rel">rel</code> attribute
+     contains <code data-x="rel-expect">expect</code>;</p></li>
+
+     <li><p><var>el</var> is <span>potentially render-blocking</span>;</p></li>
+
+     <li><p><var>el</var>'s <code data-x="attr-link-media">media</code> attribute
+     <span>matches the environment</span>; and</p></li>
+
+     <li><p><var>indicatedElement</var> is not an element, or is on a
+     <span>stack of open elements</span> of an <span>HTML parser</span> whose associated
+     <code>Document</code> is <var>doc</var>,</p></li>
+     </ul>
+
+     <p>then <span>block rendering</span> on <var>el</var>.</p>
+   </li>
+
+   <li><p>Otherwise, <span>unblock rendering</span> on <var>el</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>process internal resource links</dfn> given a <code>Document</code> <var>doc</var>:</p>
+
+  <ol>
+   <li><p><span data-x="list iterate">For each</span> <code
+   data-x="rel-expect">expect</code> <code>link</code> element <var>link</var> in
+   <var>doc</var>'s <span>render-blocking element set</span>, <span
+   data-x="process internal resource link">process</span> <var>link</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The following <span data-x="concept-element-attributes-change-ext">attribute change
+  steps</span>, given <var>element</var>, <var>localName</var>, <var>oldValue</var>,
+  <var>value</var>, and <var>namespace</var>, are used to ensure <code
+  data-x="rel-expect">expect</code> <code>link</code> elements respond to dynamic <code
+  data-x="attr-id">id</code> and <code data-x="attr-a-name">name</code> changes:</p>
+
+  <ol>
+   <li><p>If <var>namespace</var> is not null, then return.</p></li>
+
+   <li><p>If <var>element</var> is in a <span>stack of open elements</span> of an
+   <span>HTML parser</span>, then return.</p></li>
+
+   <li>
+    <p>If any of the following is true:</p>
+
+    <ul>
+     <li><p><var>localName</var> is <code data-x="attr-id">id</code>; or</p></li>
+
+     <li><p><var>localName</var> is <code
+     data-x="attr-a-name">name</code> and <var>element</var> is an <code>a</code> element,</p></li>
+    </ul>
+
+    <p>then <span>process internal resource links</span> given <var>element</var>'s
+    <span>node document</span>.</p>
+   </li>
+  </ol>
+  </div>
+
+  <h5>Link type "<dfn attr-value for="a/rel,area/rel,form/rel"><code
+  data-x="rel-external">external</code></dfn>"</h5>
+  <!-- fifth and sixth most used <a rel> value (sixth is "external nofollow") -->
+
+  <p>The <code data-x="rel-external">external</code> keyword may be used with <code>a</code>,
+  <code>area</code>, and <code>form</code> elements. This keyword does not create a
+  <span>hyperlink</span>, but <span data-x="hyperlink annotation">annotates</span> any other
+  hyperlinks created by the element (the implied hyperlink, if no other keywords create one).</p>
+
+  <p>The <code data-x="rel-external">external</code> keyword indicates that the link is leading to a
+  document that is not part of the site that the current document forms a part of.</p>
+
+
+  <h5>Link type "<dfn attr-value for="link/rel,a/rel,area/rel,form/rel"><code
+  data-x="rel-help">help</code></dfn>"</h5>
+
+  <p>The <code data-x="rel-help">help</code> keyword may be used with <code>link</code>,
+  <code>a</code>, <code>area</code>, and <code>form</code> elements. This keyword creates a
+  <span>hyperlink</span>.</p>
+
+  <p>For <code>a</code>, <code>area</code>, and <code>form</code> elements, the <code
+  data-x="rel-help">help</code> keyword indicates that the referenced document provides further help
+  information for the parent of the element defining the hyperlink, and its children.</p>
+
+  <div class="example">
+
+   <p>In the following example, the form control has associated context-sensitive help. The user
+   agent could use this information, for example, displaying the referenced document if the user
+   presses the "Help" or "F1" key.</p>
+
+   <pre><code class="html"> &lt;p>&lt;label> Topic: &lt;input name=topic> &lt;a href="help/topic.html" rel="help">(Help)&lt;/a>&lt;/label>&lt;/p></code></pre>
+
+  </div>
+
+  <p>For <code>link</code> elements, the <code data-x="rel-help">help</code> keyword indicates that
+  the referenced document provides help for the page as a whole.</p>
+
+  <p>For <code>a</code> and <code>area</code> elements, on some browsers, the <code
+  data-x="rel-help">help</code> keyword causes the link to use a different cursor.</p>
+
+
+  <h5 id=rel-icon>Link type "<dfn attr-value for="link/rel"><code
+  data-x="rel-icon">icon</code></dfn>"</h5>
+
+  <p>The <code data-x="rel-icon">icon</code> keyword may be used with <code>link</code> elements.
+  This keyword creates an <span>external resource link</span>.</p>
+
+  <div w-nodev>
+
+  <p>The specified resource is an icon representing the page or site, and should be used by the user
+  agent when representing the page in the user interface.</p>
+
+  </div>
+
+  <p>Icons could be auditory icons, visual icons, or other kinds of icons. <span w-nodev>If
+  multiple icons are provided, the user agent must select the most appropriate icon according to the
+  <code data-x="attr-link-type">type</code>, <code data-x="attr-link-media">media</code>, and <code
+  data-x="attr-link-sizes">sizes</code> attributes. If there are multiple equally appropriate icons,
+  user agents must use the last one declared in <span>tree order</span> at the time that the user
+  agent collected the list of icons. If the user agent tries to use an icon but that icon is
+  determined, upon closer examination, to in fact be inappropriate (e.g. because it uses an
+  unsupported format), then the user agent must try the next-most-appropriate icon as determined by
+  the attributes.</span></p>
+
+  <div w-nodev>
+
+  <p class="note">User agents are not required to update icons when the list of icons changes, but
+  are encouraged to do so.</p>
+
+  <p>There is no default type for resources given by the <code data-x="rel-icon">icon</code> keyword.
+  However, for the purposes of <a href="#concept-link-type-sniffing">determining the type of the
+  resource</a>, user agents must expect the resource to be an image.</p>
+
+  </div>
+
+  <p>The <code data-x="attr-link-sizes">sizes</code> keywords represent icon sizes in raw pixels (as
+  opposed to <span data-x="'px'">CSS pixels</span>).</p>
+
+  <p class="note">An icon that is 50 <span data-x="'px'">CSS pixels</span> wide intended for
+  displays with a device pixel density of two device pixels per <span data-x="'px'">CSS pixel</span>
+  (2x, 192dpi) would have a width of 100 raw pixels. This feature does not support indicating that a
+  different resource is to be used for small high-resolution icons vs large low-resolution icons
+  (e.g. 50&times;50 2x vs 100&times;100 1x).</p>
+
+  <div w-nodev>
+
+  <p>To parse and process the attribute's value, the user agent must first <span data-x="split a
+  string on ASCII whitespace">split the attribute's value on ASCII whitespace</span>, and must then
+  parse each resulting keyword to determine what it represents.</p>
+
+  </div>
+
+  <p>The <dfn><code data-x="attr-link-sizes-any">any</code></dfn> keyword represents that the
+  resource contains a scalable icon, e.g. as provided by an SVG image.</p>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>Other keywords must be further parsed as follows to determine what they represent:</p>
+
+  <ol>
+   <li><p>If the keyword doesn't contain exactly one U+0078 LATIN SMALL LETTER X or U+0058 LATIN
+   CAPITAL LETTER X character, then this keyword doesn't represent anything. Return for
+   that keyword.</p></li>
+
+   <li><p>Let <var>width string</var> be the string before the "<code data-x="">x</code>" or
+   "<code data-x="">X</code>".</p></li>
+
+   <li><p>Let <var>height string</var> be the string after the "<code data-x="">x</code>" or
+   "<code data-x="">X</code>".</p></li>
+
+   <li><p>If either <var>width string</var> or <var>height string</var> start with
+   a U+0030 DIGIT ZERO (0) character or contain any characters other than <span>ASCII digits</span>,
+   then this keyword doesn't represent anything. Return for that keyword.</p></li>
+
+   <li><p>Apply the <span>rules for parsing non-negative integers</span> to <var>width
+   string</var> to obtain <var>width</var>.</p></li>
+
+   <li><p>Apply the <span>rules for parsing non-negative integers</span> to <var>height
+   string</var> to obtain <var>height</var>.</p></li>
+
+   <li><p>The keyword represents that the resource contains a bitmap icon with a width of <var>width</var> device pixels and a height of <var>height</var> device
+   pixels.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+  <p>The keywords specified on the <code data-x="attr-link-sizes">sizes</code> attribute must not
+  represent icon sizes that are not actually available in the linked resource.</p>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <span>linked resource fetch setup steps</span> for this type of linked resource, given a
+  <code>link</code> element <var>el</var> and <span data-x="concept-request">request</span>
+  <var>request</var>, are:</p>
+
+  <ol>
+   <li><p>Set <var>request</var>'s <span data-x="concept-request-destination">destination</span> to
+   "<code data-x="">image</code>".</p></li>
+
+   <li><p>Return true.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <span>process a link header</span> steps for this type of linked resource are to do
+  nothing.</p>
+  </div>
+
+  <div algorithm>
+  <p>In the absence of a <code>link</code> with the <code data-x="rel-icon">icon</code> keyword, for
+  <code>Document</code> objects whose <span data-x="concept-document-url">URL</span>'s
+  <span data-x="concept-url-scheme">scheme</span> is an <span>HTTP(S) scheme</span>, user agents may
+  instead run these steps:</p>
+
+  <ol>
+   <li><p>Let <var>request</var> be a new <span data-x="concept-request">request</span> whose
+   <span data-x="concept-request-url">URL</span> is the <span>URL record</span> obtained by
+   resolving the <span>URL</span> "<code data-x="">/favicon.ico</code>" against the
+   <code>Document</code> object's <span data-x="concept-document-url">URL</span>, <span
+   data-x="concept-request-client">client</span> is the <code>Document</code> object's
+   <span>relevant settings object</span>, <span
+   data-x="concept-request-destination">destination</span> is "<code data-x="">image</code>", <span
+   data-x="concept-request-credentials-mode">credentials mode</span> is "<code
+   data-x="">include</code>", and whose <span>use-URL-credentials flag</span> is set.</p></li>
+
+   <!--FETCH--><li>
+    <p><span data-x="concept-fetch">Fetch</span> <var>request</var>, with <i
+    data-x="processResponse">processResponse</i> set to the following steps given <span
+    data-x="concept-response">response</span> <var>response</var>:</p>
+
+    <ol>
+     <li><p>Use <var>response</var>'s <span>unsafe response</span> as an icon as if it had been
+     declared using the <code data-x="rel-icon">icon</code> keyword.</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  </div>
+
+  <div class="example">
+
+   <p>The following snippet shows the top part of an application with several icons.</p>
+
+   <pre><code class="html">&lt;!DOCTYPE HTML>
+&lt;html lang="en">
+ &lt;head>
+  &lt;title>lsForums &mdash; Inbox&lt;/title>
+  &lt;link rel=icon href=favicon.png sizes="16x16" type="image/png">
+  &lt;link rel=icon href=windows.ico sizes="32x32 48x48" type="image/vnd.microsoft.icon">
+  &lt;link rel=icon href=mac.icns sizes="128x128 512x512 8192x8192 32768x32768">
+  &lt;link rel=icon href=iphone.png sizes="57x57" type="image/png">
+  &lt;link rel=icon href=gnome.svg sizes="any" type="image/svg+xml">
+  &lt;link rel=stylesheet href=lsforums.css>
+  &lt;script src=lsforums.js>&lt;/script>
+  &lt;meta name=application-name content="lsForums">
+ &lt;/head>
+ &lt;body>
+  ...</code></pre>
+
+  </div>
+
+  <p>For historical reasons, the <code data-x="rel-icon">icon</code> keyword may be preceded by the
+  keyword "<code data-x="">shortcut</code>". If the "<code data-x="">shortcut</code>" keyword is
+  present, the <code data-x="attr-hyperlink-rel">rel</code> attribute's entire value must be an
+  <span>ASCII case-insensitive</span> match for the string "<code
+  data-x="">shortcut&nbsp;icon</code>" (with a single U+0020 SPACE character between the tokens and
+  no other <span>ASCII whitespace</span>).</p>
+
+
+  <h5>Link type "<dfn attr-value for="link/rel,a/rel,area/rel,form/rel"><code
+  data-x="rel-license">license</code></dfn>"</h5>
+
+  <p>The <code data-x="rel-license">license</code> keyword may be used with <code>link</code>,
+  <code>a</code>, <code>area</code>, and <code>form</code> elements. This keyword creates a
+  <span>hyperlink</span>.</p>
+
+  <p>The <code data-x="rel-license">license</code> keyword indicates that the referenced document
+  provides the copyright license terms under which the main content of the current document is
+  provided.</p>
+
+  <p>This specification does not specify how to distinguish between the main content of a document
+  and content that is not deemed to be part of that main content. The distinction should be made
+  clear to the user.</p>
+
+  <div class="example">
+
+   <p>Consider a photo sharing site. A page on that site might describe and show a photograph, and
+   the page might be marked up as follows:</p>
+
+   <pre><code class="html">&lt;!DOCTYPE HTML>
+&lt;html lang="en">
+ &lt;head>
+  &lt;title>Exampl Pictures: Kissat&lt;/title>
+  &lt;link rel="stylesheet" href="/style/default">
+ &lt;/head>
+ &lt;body>
+  &lt;h1>Kissat&lt;/h1>
+  &lt;nav>
+   &lt;a href="../">Return to photo index&lt;/a>
+  &lt;/nav>
+  &lt;figure>
+   &lt;img src="/pix/39627052_fd8dcd98b5.jpg">
+   &lt;figcaption>Kissat&lt;/figcaption>
+  &lt;/figure>
+  &lt;p>One of them has six toes!&lt;/p>
+  &lt;p>&lt;small>&lt;a rel="license" href="http://www.opensource.org/licenses/mit-license.php">MIT Licensed&lt;/a>&lt;/small>&lt;/p>
+  &lt;footer>
+   &lt;a href="/">Home&lt;/a> | &lt;a href="../">Photo index&lt;/a>
+   &lt;p>&lt;small>&copy; copyright 2009 Exampl Pictures. All Rights Reserved.&lt;/small>&lt;/p>
+  &lt;/footer>
+ &lt;/body>
+&lt;/html></code></pre>
+
+   <p>In this case the <code data-x="rel-license">license</code> applies to just the photo (the main
+   content of the document), not the whole document. In particular not the design of the page
+   itself, which is covered by the copyright given at the bottom of the document. This could be made
+   clearer in the styling (e.g. making the license link prominently positioned near the photograph,
+   while having the page copyright in light small text at the foot of the page).</p>
+
+  </div>
+
+  <div w-nodev>
+
+  <p><strong>Synonyms</strong>: For historical reasons, user agents must also treat the keyword
+  "<code data-x="">copyright</code>" like the <code data-x="rel-license">license</code> keyword.</p>
+
+  </div>
+
+
+  <h5>Link type "<dfn attr-value for="link/rel"><code
+  data-x="rel-manifest">manifest</code></dfn>"</h5>
+
+  <p>The <code data-x="rel-manifest">manifest</code> keyword may be used with <code>link</code> elements.
+  This keyword creates an <span data-x="external resource link">external resource link</span>.</p>
+
+  <p>The <code data-x="rel-manifest">manifest</code> keyword indicates the manifest file that provides
+  metadata associated with the current document.</p>
+
+  <div w-nodev>
+
+  <p>There is no default type for resources given by the <code data-x="rel-manifest">manifest</code>
+  keyword.</p>
+
+  <p>When a web application is not <span data-x="installed web application">installed</span>, the
+  appropriate time to <span>fetch and process the linked resource</span> for this link type is when
+  the user agent deems it necessary. For example, when the user chooses to <span data-x="installed
+  web application">install the web application</span>.</p>
+
+  <div algorithm>
+  <p>For an <span data-x="installed web application">installed web application</span>, the
+  appropriate times to <span>fetch and process the linked resource</span> for this link type
+  are:</p>
+
+  <ul>
+   <li><p>When the <span>external resource link</span> is created on a <code>link</code> element
+   that is already <span>browsing-context connected</span>.</p></li>
+
+   <li><p>When the <span>external resource link</span>'s <code>link</code> element <span>becomes
+   browsing-context connected</span>.</p></li>
+
+   <li><p>When the <code data-x="attr-link-href">href</code> attribute of the <code>link</code>
+   element of an <span>external resource link</span> that is already <span>browsing-context
+   connected</span> is changed.</p></li>
+  </ul>
+  </div>
+
+  <p>In any case, only the first <code>link</code> element in <span>tree order</span> whose <code
+  data-x="attr-link-rel">rel</code> attribute contains the token <code
+  data-x="rel-manifest">manifest</code> may be used.</p>
+
+  <p>A user agent must not <span>delay the load event</span> for this link type.</p>
+
+  <div algorithm>
+  <p>The <span>linked resource fetch setup steps</span> for this type of linked resource, given a
+  <code>link</code> element <var>el</var> and <span data-x="concept-request">request</span>
+  <var>request</var>, are:</p>
+
+  <ol>
+   <li><p>Let <var>navigable</var> be <var>el</var>'s <span>node document</span>'s <span>node
+   navigable</span>.</p></li>
+
+   <li><p>If <var>navigable</var> is null, then return false.</p></li>
+
+   <li><p>If <var>navigable</var> is not a <span>top-level traversable</span>, then return
+   false.</p></li>
+
+   <li><p>Set <var>request</var>'s <span data-x="concept-request-initiator">initiator</span> to
+   "<code data-x="">manifest</code>".</p></li>
+
+   <li><p>Set <var>request</var>'s <span data-x="concept-request-destination">destination</span> to
+   "<code data-x="">manifest</code>".</p></li>
+
+   <li><p>Set <var>request</var>'s <span data-x="concept-request-mode">mode</span> to "<code
+   data-x="">cors</code>".</p></li>
+
+   <li><p>Set <var>request</var>'s <span data-x="concept-request-credentials-mode">credentials
+   mode</span> to the <span>CORS settings attribute credentials mode</span> for <var>el</var>'s
+   <code data-x="attr-link-crossorigin">crossorigin</code> content attribute.</p></li>
+
+   <li><p>Return true.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <span data-x="process the linked resource">process this type of linked resource</span> given
+  a <code>link</code> element <var>el</var>, boolean <var>success</var>, <span
+  data-x="concept-response">response</span> <var>response</var>, and <span>byte sequence</span>
+  <var>bodyBytes</var>:</p>
+
+  <ol>
+   <li><p>If <var>response</var>'s <span data-x="Content-Type">Content-Type metadata</span> is not a
+   <span>JSON MIME type</span>, then set <var>success</var> to false.</p></li>
+
+   <li>
+    <p>If <var>success</var> is true:</p>
+
+    <ol>
+     <li><p>Let <var>document URL</var> be <var>el</var>'s <span>node document</span>'s <span
+     data-x="concept-document-url">URL</span>.</p></li>
+
+     <li><p>Let <var>manifest URL</var> be <var>response</var>'s <span
+     data-x="concept-response-url">URL</span>.</p></li>
+
+     <li><p>Let <var>client</var> be <var>el</var>'s <span>node document</span>'s <span>relevant
+     settings object</span>.</p></li>
+
+     <li><p><span>Process the manifest</span> given <var>document URL</var>, <var>manifest
+     URL</var>, <var>bodyBytes</var>, and <var>client</var>. <ref>MANIFEST</ref></p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <span>process a link header</span> steps for this type of linked resource are to do
+  nothing.</p>
+  </div>
+
+  </div>
+
+
+  <h5>Link type "<dfn attr-value for="link/rel"><code
+  data-x="rel-modulepreload">modulepreload</code></dfn>"</h5>
+
+  <p>The <code data-x="rel-modulepreload">modulepreload</code> keyword may be used with
+  <code>link</code> elements. This keyword creates an <span>external resource link</span>. This
+  keyword is <span>body-ok</span>.</p>
+
+  <p>The <code data-x="rel-modulepreload">modulepreload</code> keyword is a specialized alternative
+  to the <code data-x="rel-preload">preload</code> keyword, with a processing model geared toward
+  preloading <span data-x="module script">module scripts</span>. In particular, it uses the specific
+  fetch behavior for module scripts (including, e.g., a different interpretation of the <code
+  data-x="attr-link-crossorigin">crossorigin</code> attribute), and places the result into the
+  appropriate <span data-x="concept-document-module-map">module map</span> for later evaluation. In
+  contrast, a similar <span>external resource link</span> using the <code
+  data-x="rel-preload">preload</code> keyword would place the result in the preload cache, without
+  affecting the document's <span data-x="concept-document-module-map">module map</span>.</p>
+
+  <p>Additionally, implementations can take advantage of the fact that <span data-x="module
+  script">module scripts</span> declare their dependencies in order to fetch the specified module's
+  dependency as well. This is intended as an optimization opportunity, since the user agent knows
+  that, in all likelihood, those dependencies will also be needed later. It will not generally be
+  observable without using technology such as service workers, or monitoring on the server side.
+  Notably, the appropriate <code data-x="event-load">load</code> or <code
+  data-x="event-error">error</code> events will occur after the specified module is fetched, and
+  will not wait for any dependencies.</p>
+
+  <div w-nodev>
+
+  <p>A user agent must not <span>delay the load event</span> for this link type.</p>
+
+  <p>A <dfn>module preload destination</dfn> is "<code data-x="">json</code>", "<code
+  data-x="">style</code>", "<code data-x="">text</code>", or a <span
+  data-x="concept-script-like-destination">script-like destination</span>.</p>
+
+  <div algorithm>
+  <p>The appropriate times to <span>fetch and process the linked resource</span> for such a link
+  are:</p>
+
+  <ul>
+   <li><p>When the <span>external resource link</span> is created on a <code>link</code> element
+   that is already <span>browsing-context connected</span>.</p></li>
+
+   <li><p>When the <span>external resource link</span>'s <code>link</code> element <span>becomes
+   browsing-context connected</span>.</p></li>
+
+   <li><p>When the <code data-x="attr-link-href">href</code> attribute of the <code>link</code>
+   element of an <span>external resource link</span> that is already <span>browsing-context
+   connected</span> is changed.</p></li>
+  </ul>
+  </div>
+
+  </div>
+
+  <p class="note">Unlike some other link relations, changing the relevant attributes (such as <code
+  data-x="attr-link-as">as</code>, <code data-x="attr-link-crossorigin">crossorigin</code>, and
+  <code data-x="attr-link-referrerpolicy">referrerpolicy</code>) of such a <code>link</code>
+  does not trigger a new fetch. This is because the document's <span
+  data-x="concept-document-module-map">module map</span> has already been populated by a previous
+  fetch, and so re-fetching would be pointless.</p>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <span>fetch and process the linked resource</span> algorithm for <code
+  data-x="rel-modulepreload">modulepreload</code> links, given a <code>link</code> element
+  <var>el</var>, is as follows:</p>
+
+  <ol>
+   <li><p>If <var>el</var>'s <code data-x="attr-link-href">href</code> attribute's value is the
+   empty string, then return.</p></li>
+
+   <li><p>Let <var>destination</var> be the current state of <var>el</var>'s <code
+   data-x="attr-link-as">as</code> attribute (a <span
+   data-x="concept-request-destination">destination</span>), or "<code data-x="">script</code>" if
+   it is in no state.</p></li>
+
+   <li><p>If <var>destination</var> is not a <span>module preload destination</span>, then
+   <span>queue an element task</span> on the <span>networking task source</span> given <var>el</var>
+   to <span data-x="concept-event-fire">fire an event</span> named <code
+   data-x="event-error">error</code> at <var>el</var>, and return.</p></li>
+
+   <li><p>Let <var>url</var> be the result of <span>encoding-parsing a URL</span> given
+   <var>el</var>'s <code data-x="attr-link-href">href</code> attribute's value, relative to
+   <var>el</var>'s <span>node document</span>.</p></li>
+
+   <li><p>If <var>url</var> is failure, then return.</p></li>
+
+   <li><p>Let <var>settings object</var> be <var>el</var>'s <span>node document</span>'s
+   <span>relevant settings object</span>.</p></li>
+
+   <li><p>Let <var>credentials mode</var> be the <span>CORS settings attribute credentials
+   mode</span> for <var>el</var>'s <code data-x="attr-link-crossorigin">crossorigin</code>
+   attribute.</p></li>
+
+   <li><p>Let <var>cryptographic nonce</var> be
+   <var>el</var>.<span>[[CryptographicNonce]]</span>.</p></li>
+
+   <li><p>Let <var>integrity metadata</var> be the value of <var>el</var>'s <code
+   data-x="attr-link-integrity">integrity</code> attribute, if it is specified, or the empty string
+   otherwise.</p></li>
+
+   <li><p>If <var>el</var> does not have an <code data-x="attr-link-integrity">integrity</code>
+   attribute, then set <var>integrity metadata</var> to the result of <span>resolving a module
+   integrity metadata</span> with <var>url</var> and <var>settings object</var>.</p></li>
+
+   <li><p>Let <var>referrer policy</var> be the current state of <var>el</var>'s <code
+   data-x="attr-link-referrerpolicy">referrerpolicy</code> attribute.</p></li>
+
+   <li><p>Let <var>fetch priority</var> be the current state of <var>el</var>'s <code
+   data-x="attr-link-fetchpriority">fetchpriority</code> attribute.</p></li>
+
+   <li><p>Let <var>options</var> be a <span>script fetch options</span> whose <span
+   data-x="concept-script-fetch-options-nonce">cryptographic nonce</span> is <var>cryptographic
+   nonce</var>, <span data-x="concept-script-fetch-options-integrity">integrity metadata</span> is
+   <var>integrity metadata</var>, <span data-x="concept-script-fetch-options-parser">parser
+   metadata</span> is "<code data-x="">not-parser-inserted</code>", <span
+   data-x="concept-script-fetch-options-credentials">credentials mode</span> is <var>credentials
+   mode</var>, <span data-x="concept-script-fetch-options-referrer-policy">referrer
+   policy</span> is <var>referrer policy</var>, and <span
+   data-x="concept-script-fetch-options-fetch-priority">fetch priority</span> is
+   <var>fetch priority</var>.</p></li>
+
+   <li>
+    <p><span>Fetch a modulepreload module script graph</span> given <var>url</var>,
+    <var>destination</var>, <var>settings object</var>, <var>options</var>, and with the following
+    steps given <var>result</var>:</p>
+
+    <ol>
+     <li><p>If <var>result</var> is null, then <span data-x="concept-event-fire">fire an
+     event</span> named <code data-x="event-error">error</code> at <var>el</var>,
+     and return.</p></li>
+
+     <li><p><span data-x="concept-event-fire">Fire an event</span> named <code
+     data-x="event-load">load</code> at <var>el</var>.</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+   <div algorithm>
+   <p>The <span>process a link header</span> steps for this type of linked resource are to do
+   nothing.</p>
+   </div>
+
+  </div>
+
+  <div class="example" id="example-modulepreload-manifest">
+   <p>The following snippet shows the top part of an application with several modules preloaded:</p>
+
+   <pre><code class="html">&lt;!DOCTYPE html>
+&lt;html lang="en">
+&lt;title>IRCFog&lt;/title>
+
+&lt;link rel="modulepreload" href="app.mjs">
+&lt;link rel="modulepreload" href="helpers.mjs">
+&lt;link rel="modulepreload" href="irc.mjs">
+&lt;link rel="modulepreload" href="fog-machine.mjs">
+
+&lt;script type="module" src="app.mjs">
+...</code></pre>
+
+   <p>Assume that the module graph for the application is as follows:</p>
+
+   <img loading="lazy" src="/images/ircfog-modules.svg" width="301" height="151" alt="The module graph is rooted at app.mjs, which depends on irc.mjs and fog-machine.mjs. In turn, irc.mjs depends on helpers.mjs." class="darkmode-aware">
+
+   <p>Here we see the application developer has used <code
+   data-x="rel-modulepreload">modulepreload</code> to declare all of the modules in their module graph,
+   ensuring that the user agent initiates fetches for them all. Without such preloading, the user
+   agent might need to go through multiple network roundtrips before discovering <code
+   data-x="">helpers.mjs</code>, if technologies such as HTTP/2 Server Push are not in play. In
+   this way, <code data-x="rel-modulepreload">modulepreload</code> <code>link</code> elements can be
+   used as a sort of "manifest" of the application's modules.</p>
+  </div>
+
+  <div class="example" id="example-modulepreload-dynamic-import">
+   <p>The following code shows how <code data-x="rel-modulepreload">modulepreload</code> links can
+   be used in conjunction with <code>import()</code> to ensure network fetching is done ahead of
+   time, so that when <code>import()</code> is called, the module is already ready (but not
+   evaluated) in the <span>module map</span>:</p>
+
+   <pre><code class="html">&lt;link rel="modulepreload" href="awesome-viewer.mjs">
+
+&lt;button onclick="import('./awesome-viewer.mjs').then(m => m.view())">
+  View awesome thing
+&lt;/button></code></pre>
+  </div>
+
+  <h5>Link type "<dfn attr-value for="a/rel,area/rel,form/rel"><code
+  data-x="rel-nofollow">nofollow</code></dfn>"</h5>
+
+  <p>The <code data-x="rel-nofollow">nofollow</code> keyword may be used with <code>a</code>,
+  <code>area</code>, and <code>form</code> elements. This keyword does not create a
+  <span>hyperlink</span>, but <span data-x="hyperlink annotation">annotates</span> any other
+  hyperlinks created by the element (the implied hyperlink, if no other keywords create one).</p>
+
+  <p>The <code data-x="rel-nofollow">nofollow</code> keyword indicates that the link is not endorsed
+  by the original author or publisher of the page, or that the link to the referenced document was
+  included primarily because of a commercial relationship between people affiliated with the two
+  pages.</p>
+
+
+  <h5>Link type "<dfn attr-value for="a/rel,area/rel,form/rel"><code
+  data-x="rel-noopener">noopener</code></dfn>"</h5>
+
+  <p>The <code data-x="rel-noopener">noopener</code> keyword may be used with <code>a</code>,
+  <code>area</code>, and <code>form</code> elements. This keyword does not create a
+  <span>hyperlink</span>, but <span data-x="hyperlink annotation">annotates</span> any other
+  hyperlinks created by the element (the implied hyperlink, if no other keywords create one).</p>
+
+  <p>The keyword indicates that any newly created <span>top-level traversable</span> which results
+  from following the <span>hyperlink</span> will not contain an <span>auxiliary browsing
+  context</span>. E.g., the resulting <code>Window</code>'s <code data-x="dom-opener">opener</code>
+  getter will return null.</p>
+
+  <p w-nodev class="note">See also the <a href="#noopener">processing model</a>.</p>
+
+  <div class="example">
+   <p>This typically creates a <span>top-level traversable</span> with an <span>auxiliary browsing
+   context</span> (assuming there is no existing <span>navigable</span> whose <span
+   data-x="nav-target">target name</span> is "<code data-x="">example</code>"):</p>
+
+   <pre><code class="html">&lt;a href=help.html target=example>Help!&lt;/a></code></pre>
+
+   <p>This creates a <span>top-level traversable</span> with a non-<span>auxiliary browsing
+   context</span> (assuming the same thing):</p>
+
+   <pre><code class="html">&lt;a href=help.html target=example rel=noopener>Help!&lt;/a></code></pre>
+
+   <p>These are equivalent and only navigate the <span data-x="nav-parent">parent
+   navigable</span>:</p>
+
+   <pre><code class="html">&lt;a href=index.html target=_parent>Home&lt;/a></code></pre>
+   <pre><code class="html">&lt;a href=index.html target=_parent rel=noopener>Home&lt;/a></code></pre>
+  </div>
+
+
+  <h5>Link type "<dfn attr-value for="a/rel,area/rel,form/rel"><code
+  data-x="rel-noreferrer">noreferrer</code></dfn>"</h5>
+
+  <p>The <code data-x="rel-noreferrer">noreferrer</code> keyword may be used with <code>a</code>,
+  <code>area</code>, and <code>form</code> elements. This keyword does not create a
+  <span>hyperlink</span>, but <span data-x="hyperlink annotation">annotates</span> any other
+  hyperlinks created by the element (the implied hyperlink, if no other keywords create one).</p>
+
+  <p>It indicates that no referrer information is to be leaked when following the link and also
+  implies the <code data-x="rel-noopener">noopener</code> keyword behavior under the same
+  conditions.</p>
+
+  <p w-nodev class="note">See also the <a href="#noreferrer-a-area-processing-model">processing
+  model</a> where referrer is directly manipulated.</p>
+
+  <p class="example"><code data-x="">&lt;a href="..." rel="noreferrer" target="_blank"&gt;</code>
+  has the same behavior as <code
+  data-x="">&lt;a href="..." rel="noreferrer noopener" target="_blank"&gt;</code>.</p>
+
+
+  <h5>Link type "<dfn attr-value for="a/rel,area/rel,form/rel"><code
+  data-x="rel-opener">opener</code></dfn>"</h5>
+
+  <p>The <code data-x="rel-opener">opener</code> keyword may be used with <code>a</code>,
+  <code>area</code>, and <code>form</code> elements. This keyword does not create a
+  <span>hyperlink</span>, but <span data-x="hyperlink annotation">annotates</span> any other
+  hyperlinks created by the element (the implied hyperlink, if no other keywords create one).</p>
+
+  <p>The keyword indicates that any newly created <span>top-level traversable</span> which results
+  from following the <span>hyperlink</span> will contain an <span>auxiliary browsing
+  context</span>.</p>
+
+  <p w-nodev class="note">See also the <a href="#opener-processing-model">processing model</a>.</p>
+
+  <div class="example">
+   <p>In the following example the <code data-x="rel-opener">opener</code> is used to allow the help
+   page popup to navigate its opener, e.g., in case what the user is looking for can be found
+   elsewhere. An alternative might be to use a named target, rather than <code
+   data-x="">_blank</code>, but this has the potential to clash with existing names.</p>
+
+   <pre><code class="html">&lt;a href="..." <mark>rel=opener</mark> target=_blank>Help!&lt;/a></code></pre>
+  </div>
+
+
+  <h5>Link type "<dfn attr-value for="link/rel"><code
+  data-x="rel-pingback">pingback</code></dfn>"</h5>
+
+  <p>The <code data-x="rel-pingback">pingback</code> keyword may be used with <code>link</code>
+  elements. This keyword creates an <span data-x="external resource link">external resource
+  link</span>. This keyword is <span>body-ok</span>.</p>
+
+  <p>For the semantics of the <code data-x="rel-pingback">pingback</code> keyword, see
+  <cite>Pingback 1.0</cite>. <ref>PINGBACK</ref></p>
+
+
+  <h5>Link type "<dfn attr-value for="link/rel"><code
+  data-x="rel-preconnect">preconnect</code></dfn>"</h5>
+
+  <p>The <code data-x="rel-preconnect">preconnect</code> keyword may be used with <code>link</code>
+  elements. This keyword creates an <span data-x="external resource link">external resource
+  link</span>. This keyword is <span>body-ok</span>.</p>
+
+  <p>The <code data-x="rel-preconnect">preconnect</code> keyword indicates that preemptively
+  initiating a connection to the <span>origin</span> of the specified resource is likely to be
+  beneficial, as it is highly likely that the user will require resources located at that
+  <span>origin</span>, and the user experience would be improved by preempting the latency costs
+  associated with establishing the connection.</p>
+
+  <p>There is no default type for resources given by the <code
+  data-x="rel-preconnect">preconnect</code> keyword.</p>
+
+  <p>A user agent must not <span>delay the load event</span> for this link type.</p>
+
+  <div algorithm>
+  <p>The appropriate times to <span data-x="fetch and process the linked resource">fetch and
+  process</span> this type of link are:</p>
+
+  <ul>
+   <li><p>When the <span>external resource link</span> is created on a <code>link</code> element
+   that is already <span>browsing-context connected</span>.</p></li>
+   <!-- e.g. rel="" changed, href="" set... -->
+
+   <li><p>When the <span>external resource link</span>'s <code>link</code> element <span>becomes
+   browsing-context connected</span>.</p></li>
+
+   <li><p>When the <code data-x="attr-link-href">href</code> attribute of the <code>link</code>
+   element of an <span>external resource link</span> that is already <span>browsing-context
+   connected</span> is changed.</p></li>
+
+   <li><p>When the <code data-x="attr-link-crossorigin">crossorigin</code> attribute of the
+   <code>link</code> element of an <span data-x="external resource link">external resource
+   link</span> that is already <span>browsing-context connected</span> is set, changed, or
+   removed.</p></li>
+  </ul>
+  </div>
+
+  <div algorithm>
+  <p>The <span>fetch and process the linked resource</span> steps for this type of linked resource,
+  given a <code>link</code> element <var>el</var>, are to <span
+  data-x="create link options from element">create link options</span> from <var>el</var> and
+  to <span>preconnect</span> given the result.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <span>process a link header</span> step for this type of linked resource given a <span
+  data-x="link processing options">link processing options</span> <var>options</var> are to
+  <span>preconnect</span> given <var>options</var>.</p>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>preconnect</dfn> given a <span>link processing options</span> <var>options</var>:</p>
+
+  <ol>
+   <li><p>If <var>options</var>'s
+   <span data-x="link options href">href</span> is an empty string, return.</p></li>
+
+   <li>
+    <p>Let <var>url</var> be the result of <span>encoding-parsing a URL</span> given
+    <var>options</var>'s <span data-x="link options href">href</span>, relative to
+    <var>options</var>'s <span data-x="link options base URL">base URL</span>.</p>
+
+    <p class="XXX">Passing the base URL instead of a document or environment is tracked by <a
+    href="https://github.com/whatwg/html/issues/9715">issue #9715</a>.</p>
+   </li>
+
+   <li><p>If <var>url</var> is failure, then return.</p></li>
+
+   <li><p>If <var>url</var>'s <span data-x="concept-url-scheme">scheme</span> is not an
+   <span>HTTP(S) scheme</span>, then return.</p></li>
+
+   <li><p>Let <var>partitionKey</var> be the result of <span data-x="determine the network
+   partition key">determining the network partition key</span> given <var>options</var>'s
+   <span data-x="link options environment">environment</span>.</p></li>
+
+   <li><p>Let <var>useCredentials</var> be true.</p></li>
+
+   <li><p>If <var>options</var>'s <span data-x="link options crossorigin">crossorigin</span> is
+   <span data-x="attr-crossorigin-anonymous">Anonymous</span> and <var>options</var>'s <span
+   data-x="link options origin">origin</span> does not
+   have the <span>same origin</span> as <var>url</var>'s
+   <span data-x="concept-url-origin">origin</span>, then set <var>useCredentials</var> to
+   false.</p></li>
+
+   <li>
+    <p>The user agent should <span>obtain a connection</span> given <var>partitionKey</var>,
+    <var>url</var>'s <span data-x="concept-url-origin">origin</span>, and
+    <var>useCredentials</var>.</p>
+
+    <p class="note">This connection is obtained but not used directly. It will remain in the
+    <span>connection pool</span> for subsequent use.</p>
+
+    <p>The user agent should attempt to initiate a preconnect and perform the full connection
+    handshake (DNS+TCP for HTTP, and DNS+TCP+TLS for HTTPS origins) whenever possible, but is
+    allowed to elect to perform a partial handshake (DNS only for HTTP, and DNS or DNS+TCP for
+    HTTPS origins), or skip it entirely, due to resource constraints or other reasons.</p>
+
+    <p>The optimal number of connections per origin is dependent on the negotiated protocol, users
+    current connectivity profile, available device resources, global connection limits, and other
+    context specific variables. As a result, the decision for how many connections should be opened
+    is deferred to the user agent.</p>
+   </li>
+  </ol>
+  </div>
+
+  <h5>Link type "<dfn attr-value for="link/rel"><code
+  data-x="rel-prefetch">prefetch</code></dfn>"</h5>
+
+  <p>The <code data-x="rel-prefetch">prefetch</code> keyword may be used with <code>link</code>
+  elements. This keyword creates an <span data-x="external resource link">external resource
+  link</span>. This keyword is <span>body-ok</span>.</p>
+
+  <p>The <code data-x="rel-prefetch">prefetch</code> keyword indicates that preemptively <span
+  data-x="concept-fetch">fetching</span> and caching the specified resource or same-site document is
+  likely to be beneficial, as it is highly likely that the user will require this resource for
+  future navigations.</p>
+
+  <p>There is no default type for resources given by the <code data-x="rel-prefetch">prefetch</code>
+  keyword.</p>
+
+  <div algorithm>
+  <p>The appropriate times to <span data-x="fetch and process the linked resource">fetch and
+  process</span> this type of link are:</p>
+
+  <ul>
+   <li><p>When the <span>external resource link</span> is created on a <code>link</code> element
+   that is already <span>browsing-context connected</span>.</p></li>
+
+   <li><p>When the <span>external resource link</span>'s <code>link</code> element <span>becomes
+   browsing-context connected</span>.</p></li>
+
+   <li><p>When the <code data-x="attr-link-href">href</code> attribute of the <code>link</code>
+   element of an <span>external resource link</span> that is already <span>browsing-context
+   connected</span> is changed.</p></li>
+
+   <li><p>When the <code data-x="attr-link-crossorigin">crossorigin</code> attribute of the
+   <code>link</code> element of an <span data-x="external resource link">external resource
+   link</span> that is already <span>browsing-context connected</span> is set, changed, or
+   removed.</p></li>
+  </ul>
+  </div>
+
+  <div algorithm>
+  <p>The <span>fetch and process the linked resource</span> algorithm for <code
+  data-x="rel-prefetch">prefetch</code> links, given a <code>link</code> element
+  <var>el</var>, is as follows:</p>
+
+  <ol>
+   <li><p>If <var>el</var>'s <code data-x="attr-link-href">href</code> attribute's value is the
+   empty string, then return.</p></li>
+
+   <li><p>Let <var>options</var> be the result of <span data-x="create link options from
+   element">creating link options</span> from <var>el</var>.</p></li>
+
+   <li><p>Let <var>request</var> be the result of <span data-x="create a link request">creating a
+   link request</span> given <var>options</var>.</p></li>
+
+   <li><p>If <var>request</var> is null, then return.</p></li>
+
+   <li><p>Set <var>request</var>'s <span data-x="concept-request-initiator">initiator</span> to
+   "<code data-x="">prefetch</code>".</p></li>
+
+   <li>
+    <p>Let <var>processPrefetchResponse</var> be the following steps given a <span
+    data-x="concept-response">response</span> <var>response</var> and null, failure, or a
+    <span>byte sequence</span> <var>bytesOrNull</var>:</p>
+
+    <ol>
+     <li><p>If <var>response</var> is a <span>network error</span>, <span
+     data-x="concept-event-fire">fire an event</span> named <code
+     data-x="event-error">error</code> at <var>el</var>.</p></li>
+
+     <li><p>Otherwise, <span data-x="concept-event-fire">fire an event</span> named <code
+     data-x="event-load">load</code> at <var>el</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>The user agent should <span data-x="concept-fetch">fetch</span> <var>request</var>, with
+   <i data-x="processResponseConsumeBody">processResponseConsumeBody</i> set to
+   <var>processPrefetchResponse</var>. User agents may delay the fetching of <var>request</var> to
+   prioritize other requests that are necessary for the current document.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <span>process a link header</span> steps for this type of linked resource are to do
+  nothing.</p>
+  </div>
+
+  <h5>Link type "<dfn for="link/rel" attr-value><code
+  data-x="rel-preload">preload</code></dfn>"</h5>
+
+  <p>The <code data-x="rel-preload">preload</code> keyword may be used with <code>link</code>
+  elements. This keyword creates an <span data-x="external resource link">external resource
+  link</span>. This keyword is <span>body-ok</span>.</p>
+
+  <p>The <code data-x="rel-preload">preload</code> keyword indicates that the user agent will
+  preemptively <span data-x="concept-fetch">fetch</span> and cache the specified resource according
+  to the <span>preload destination</span> given by the <code data-x="attr-link-as">as</code>
+  attribute, and the <span data-x="concept-request-priority">priority</span> given by the <code
+  data-x="attr-link-fetchpriority">fetchpriority</code> attribute, as it is highly likely that the
+  user will require this resource for the current navigation.
+
+  <p class="note">User-agents might perform additional operations when a resource is loaded, such as
+  preemptively <span data-x="dom-img-decode">decoding images</span> or <span
+  data-x="Create a CSS style sheet">creating style sheets</span>. However, these additional
+  operations cannot have observable effects.</p>
+
+  <p>There is no default type for resources given by the <code data-x="rel-preload">preload</code>
+  keyword.</p>
+
+  <p>A user agent must not <span>delay the load event</span> for this link type.</p>
+
+  <div algorithm>
+  <p>The appropriate times to <span>fetch and process the linked resource</span> for such a link
+   are:</p>
+
+  <ul>
+   <li><p>When the <span>external resource link</span> is created on a <code>link</code> element
+   that is already <span>browsing-context connected</span>.</p></li>
+
+   <li><p>When the <span>external resource link</span>'s <code>link</code> element <span>becomes
+   browsing-context connected</span>.</p></li>
+
+   <li><p>When the <code data-x="attr-link-href">href</code> attribute of the <code>link</code>
+   element of an <span>external resource link</span> that is already <span>browsing-context
+   connected</span> is changed.</p></li>
+
+   <li><p>When the <code data-x="attr-link-as">as</code> attribute of the <code>link</code>
+   element of an <span>external resource link</span> that is already <span>browsing-context
+   connected</span> is changed.</p></li>
+
+   <li><p>When the <code data-x="attr-link-type">type</code> attribute of the <code>link</code>
+   element of an <span>external resource link</span> that is already <span>browsing-context
+   connected</span>, but was previously not obtained due to the <code
+   data-x="attr-link-type">type</code> attribute specifying an unsupported type for the request
+   <span data-x="concept-request-destination">destination</span>, is set, removed, or
+   changed.</p></li>
+
+   <li><p>When the <code data-x="attr-link-media">media</code> attribute of the <code>link</code>
+   element of an <span>external resource link</span> that is already <span>browsing-context
+   connected</span>, but was previously not obtained due to the <code
+   data-x="attr-link-media">media</code> attribute not
+   <span data-x="matches the environment">matching the environment</span>, is changed or
+   removed.</p></li>
+  </ul>
+  </div>
+
+  <p>A <code>Document</code> has a <dfn>map of preloaded resources</dfn>, which is an
+  <span>ordered map</span>, initially empty.</p>
+
+  <p>A <dfn>preload key</dfn> is a <span>struct</span>. It has the following <span data-x="struct
+  item">items</span>:</p>
+
+  <dl>
+   <dt><dfn data-x="preload URL">URL</dfn>
+   <dd>A <span>URL</span>
+
+   <dt><dfn data-x="preload-key-destination">destination</dfn>
+   <dd>A <span>preload destination</span>
+
+   <dt><dfn data-x="preload mode">mode</dfn>
+   <dd>A <span data-x="concept-request-mode">request mode</span>, either
+   "<code data-x="">same-origin</code>", "<code data-x="">cors</code>", or
+   "<code data-x="">no-cors</code>"
+
+   <dt><dfn data-x="preload credentials mode">credentials mode</dfn>
+   <dd>A <span data-x="concept-request-credentials-mode">credentials mode</span>
+  </dl>
+
+  <p>A <dfn>preload entry</dfn> is a <span>struct</span>. It has the following <span data-x="struct
+  item">items</span>:</p>
+
+  <dl>
+   <dt><dfn data-x="preload integrity metadata">integrity metadata</dfn>
+   <dd>A string
+
+   <dt><dfn data-x="preload response">response</dfn>
+   <dd>Null or a <span data-x="concept-response">response</span>
+
+   <dt><dfn data-x="preload on response available">on response available</dfn>
+   <dd>Null, or an algorithm accepting a <span data-x="concept-response">response</span> or null
+  </dl>
+
+  <div algorithm>
+  <p>To <dfn export>consume a preloaded resource</dfn> for <code>Window</code> <var>window</var>,
+  given a <span>URL</span> <var>url</var>, a string <var>destination</var>, a string
+  <var>mode</var>, a string <var>credentialsMode</var>, a string <var>integrityMetadata</var>, and
+  <var>onResponseAvailable</var>, which is an algorithm accepting a <span
+  data-x="concept-response">response</span>:</p>
+
+  <ol>
+   <li><p>Let <var>key</var> be a <span>preload key</span> whose <span data-x="preload
+   URL">URL</span> is <var>url</var>, <span data-x="preload destination">destination</span> is
+   <var>destination</var>, <span data-x="preload mode">mode</span> is <var>mode</var>, and
+   <span data-x="preload credentials mode">credentials mode</span> is
+   <var>credentialsMode</var>.</p></li>
+
+   <li><p>Let <var>preloads</var> be <var>window</var>'s <span
+   data-x="concept-document-window">associated <code>Document</code></span>'s <span>map of
+   preloaded resources</span>.</p></li>
+
+   <li><p>If <var>key</var> does not <span data-x="map exists">exist</span> in <var>preloads</var>,
+   then return false.</p></li>
+
+   <li><p>Let <var>entry</var> be <var>preloads</var>[<var>key</var>].</p></li>
+
+   <li><p>Let <var>consumerIntegrityMetadata</var> be the result of
+   <span data-x="parse integrity metadata">parsing</span> <var>integrityMetadata</var>.</p></li>
+
+   <li><p>Let <var>preloadIntegrityMetadata</var> be the result of
+   <span data-x="parse integrity metadata">parsing</span> <var>entry</var>'s
+   <span data-x="preload integrity metadata">integrity metadata</span>.</p></li>
+
+   <li>
+    <p>If none of the following conditions apply:</p>
+
+    <ul>
+     <li><p><var>consumerIntegrityMetadata</var> is <code data-x="">no metadata</code>;</p></li>
+
+     <li>
+      <p><var>consumerIntegrityMetadata</var> is equal to <var>preloadIntegrityMetadata</var>;
+      or</p>
+
+      <p class="XXX">This comparison would ignore unknown integrity options. See <a
+      href="https://github.com/w3c/webappsec-subresource-integrity/issues/116">issue #116.</a></p>
+     </li>
+    </ul>
+
+    <p>then return false.</p>
+
+    <p class="note">A mismatch in integrity metadata between the preload and the consumer, even if
+    both match the data, would lead to an additional fetch from the network.</p>
+
+    <p class="note">It is important that <span data-x="network error">network errors</span> are
+    added to the preload cache so that if a preload request results in an error, the erroneous
+    response isn't re-requested from the network later. This also has security implications;
+    consider the case where a developer specifies subresource integrity metadata on a preload
+    request, but not the following resource request. If the preload request fails subresource
+    integrity verification and is discarded, the resource request will fetch and consume a
+    potentially-malicious response from the network without verifying its integrity.
+    <ref>SRI</ref></p>
+   </li>
+
+   <li><p><span data-x="map remove">Remove</span> <var>preloads</var>[<var>key</var>].</p></li>
+
+   <li><p>If <var>entry</var>'s <span data-x="preload response">response</span> is null, then set
+   <var>entry</var>'s <span data-x="preload on response available">on response available</span> to
+   <var>onResponseAvailable</var>.</p></li>
+
+   <li><p>Otherwise, call <var>onResponseAvailable</var> with <var>entry</var>'s <span
+   data-x="preload response">response</span>.</p></li>
+
+   <li><p>Return true.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>For the purposes of this section, a string <var>type</var>
+  <dfn data-x="match preload type">matches</dfn> a <span>preload destination</span>
+  <var>destination</var> if the following algorithm returns true:</p>
+  <ol>
+   <li><p>If <var>type</var> is an empty string, then return true.</p></li>
+
+   <li><p>If <var>destination</var> is "<code data-x="">fetch</code>", then return true.</p></li>
+
+   <li><p>Let <var>mimeTypeRecord</var> be the result of
+   <span data-x="Parse a mime type">parsing</span> <var>type</var>.</p></li>
+
+   <li><p>If <var>mimeTypeRecord</var> is failure, then return false.</p></li>
+
+   <li><p>If <var>mimeTypeRecord</var> is not <span
+   data-x="Is MIME type supported by the user agent?">supported by the user agent</span>, then
+   return false.</p>
+
+   <li>
+    <p>If any of the following are true:</p>
+
+    <ul>
+     <li><p><var>destination</var> is "<code data-x="">script</code>" and
+     <var>mimeTypeRecord</var> is a <span>JavaScript MIME type</span>;</p></li>
+
+     <li><p><var>destination</var> is "<code data-x="">image</code>" and
+     <var>mimeTypeRecord</var> is an <span>image MIME type</span>;</p></li>
+
+     <li><p><var>destination</var> is "<code data-x="">font</code>" and
+     <var>mimeTypeRecord</var> is a <span>font MIME type</span>;</p></li>
+
+     <li><p><var>destination</var> is "<code data-x="">style</code>" and
+     <var>mimeTypeRecord</var>'s <span data-x="MIME type essence">essence</span> is
+     <code>text/css</code>; or</p></li>
+
+     <li><p><var>destination</var> is "<code data-x="">track</code>" and
+     <var>mimeTypeRecord</var>'s <span data-x="MIME type essence">essence</span> is
+     <code>text/vtt</code>,</p></li>
+    </ul>
+
+    <p>then return true.</p>
+   </li>
+
+   <li><p>Return false.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>create a preload key</dfn> for a <span data-x="concept-request">request</span>
+  <var>request</var>, return a new <span>preload key</span> whose <span data-x="preload
+  URL">URL</span> is <var>request</var>'s <span data-x="concept-request-url">URL</span>, <span
+  data-x="preload destination">destination</span> is <var>request</var>'s <span
+  data-x="concept-request-destination">destination</span>, <span data-x="preload
+  mode">mode</span> is <var>request</var>'s <span data-x="concept-request-mode">mode</span>, and
+  <span data-x="preload credentials mode">credentials mode</span> is <var>request</var>'s <span
+  data-x="concept-request-credentials-mode">credentials mode</span>.</p>
+  </div>
+
+  <p>A <dfn>preload destination</dfn> is "<code data-x="">fetch</code>", "<code
+  data-x="">font</code>", "<code data-x="">image</code>", "<code data-x="">script</code>", "<code
+  data-x="">style</code>", or "<code data-x="">track</code>".</p>
+
+  <div algorithm>
+  <p>To <dfn>translate a preload destination</dfn> given a string <var>destination</var>:</p>
+
+  <ol>
+   <li><p>If <var>destination</var> is not a <span>preload destination</span>, then return
+   null.</p></li>
+
+   <li><p>Return the result of <span
+   data-x="concept-potential-destination-translate">translating</span>
+   <var>destination</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>preload</dfn> given a <span
+  data-x="link processing options">link processing options</span> <var>options</var> and
+  an optional <var>processResponse</var>, which is an algorithm accepting a <span
+  data-x="concept-response">response</span>:</p>
+
+  <ol>
+   <li><p>If <var>options</var>'s <span data-x="link options type">type</span> doesn't <span
+   data-x="match preload type">match</span> <var>options</var>'s <span
+   data-x="link options destination">destination</span>, then return.</p></li>
+
+   <li><p>If <var>options</var>'s <span data-x="link options destination">destination</span> is
+   "<code data-x="">image</code>" and <var>options</var>'s <span data-x="link options source
+   set">source set</span> is not null, then set <var>options</var>'s <span data-x="link options
+   href">href</span> to the result of <span data-x="select an image source from a source
+   set">selecting an image source</span> from <var>options</var>'s <span data-x="link options
+   source set">source set</span>.</p></li>
+
+   <li><p>Let <var>request</var> be the result of <span data-x="create a link request">creating a
+   link request</span> given <var>options</var>.</p></li>
+
+   <li><p>If <var>request</var> is null, then return.</p></li>
+
+   <li><p>Let <var>unsafeEndTime</var> be 0.</p></li>
+
+   <li><p>Let <var>entry</var> be a new <span>preload entry</span> whose
+   <span data-x="preload integrity metadata">integrity metadata</span> is <var>options</var>'s
+   <span data-x="link options integrity">integrity</span>.</p></li>
+
+   <li><p>Let <var>key</var> be the result of <span data-x="create a preload key">creating a
+   preload key</span> given <var>request</var>.</p></li>
+
+   <li><p>If <var>options</var>'s <span data-x="link options document">document</span> is null, then
+   set <var>request</var>'s <span data-x="concept-request-initiator-type">initiator type</span> to
+   "<code data-x="">early hint</code>".</p></li>
+
+   <li><p>Let <var>controller</var> be null.</p></li>
+
+   <li><p>Let <var>reportTiming</var> given a <code>Document</code> <var>document</var> be to
+   <span>report timing</span> for <var>controller</var> given <var>document</var>'s <span>relevant
+   global object</span>.</p></li>
+
+   <li>
+    <p><!--FETCH-->Set <var>controller</var> to the result of <span
+    data-x="concept-fetch">fetching</span> <var>request</var>, with <i
+    data-x="processResponseConsumeBody">processResponseConsumeBody</i> set to the following steps
+    given a <span data-x="concept-response">response</span> <var>response</var> and null, failure,
+    or a <span>byte sequence</span> <var>bodyBytes</var>:</p>
+
+    <ol>
+     <li>
+      <p>If <var>bodyBytes</var> is a <span>byte sequence</span>, then set <var>response</var>'s
+      <span data-x="concept-response-body">body</span> to <var>bodyBytes</var> <span>as a
+      body</span>.</p>
+
+      <p class=note>By using <i data-x="processResponseConsumeBody">processResponseConsumeBody</i>,
+      we have <span data-x="body safely extract">extracted</span> the entire <span
+      data-x="concept-response-body">body</span>. This is necessary to ensure the preloader loads the
+      entire body from the network, regardless of whether the preload will be consumed (which is
+      uncertain at this point). This step then resets the request's body to a new body containing the
+      same bytes, so that other specifications can read from it at the time of actual consumption,
+      despite us having already done so once.</p>
+     </li>
+
+     <li><p>Otherwise, set <var>response</var> to a <span>network error</span>.</p></li>
+
+     <li><p>Set <var>unsafeEndTime</var> to the <span>unsafe shared current time</span>.</p></li>
+
+     <li><p>If <var>options</var>'s <span data-x="link options document">document</span> is not
+     null, then call <var>reportTiming</var> given <var>options</var>'s <span
+     data-x="link options document">document</span>.</p></li>
+
+     <li><p>If <var>entry</var>'s <span data-x="preload on response available">on response
+     available</span> is null, then set <var>entry</var>'s <span data-x="preload
+     response">response</span> to <var>response</var>; otherwise call <var>entry</var>'s <span
+     data-x="preload on response available">on response available</span> given
+     <var>response</var>.</p></li>
+
+     <li><p>If <var>processResponse</var> is given, then call <var>processResponse</var> with
+     <var>response</var>.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p>Let <var>commit</var> be the following steps given a <code>Document</code>
+    <var>document</var>:</p>
+
+    <ol>
+     <li><p>If <var>entry</var>'s <span data-x="preload response">response</span> is not null, then
+     call <var>reportTiming</var> given <var>document</var>.</p></li>
+
+     <li><p>Set <var>document</var>'s <span>map of preloaded resources</span>[<var>key</var>] to
+     <var>entry</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>If <var>options</var>'s <span
+   data-x="link options document">document</span> is null, then set <var>options</var>'s <span
+   data-x="link options on document ready">on document ready</span> to <var>commit</var>.
+   Otherwise, call <var>commit</var> with <var>options</var>'s <span
+   data-x="link options document">document</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <span>fetch and process the linked resource</span> steps for this type of linked resource,
+  given a <code>link</code> element <var>el</var>, are:</p>
+
+  <ol>
+   <li><p><span>Update the source set</span> for <var>el</var>.</p></li>
+
+   <li><p>Let <var>options</var> be the result of <span
+   data-x="create link options from element">creating link options</span> from
+   <var>el</var>.</p></li>
+
+   <li><p>Let <var>destination</var> be the result of <span data-x="translate a preload
+   destination">translating</span> the keyword representing the state of <var>el</var>'s <code
+   data-x="attr-link-as">as</code> attribute.</p></li>
+
+   <li><p>If <var>destination</var> is null, then return.</p></li>
+
+   <li><p>Set <var>options</var>'s <span data-x="link options destination">destination</span> to
+   <var>destination</var>.</p></li>
+
+   <li>
+    <p><span>Preload</span> <var>options</var>, with the following steps given a <span
+    data-x="concept-response">response</span> <var>response</var>:
+
+    <ol>
+     <li>
+      <p>If <var>response</var> is a <span>network error</span>, <span
+      data-x="concept-event-fire">fire an event</span> named <code
+      data-x="event-error">error</code> at <var>el</var>. Otherwise, <span
+      data-x="concept-event-fire">fire an event</span> named
+      <code data-x="event-load">load</code> at <var>el</var>.</p>
+
+      <p class="XXX">The actual browsers' behavior is different from the spec here, and the
+      feasibility of changing the behavior has not yet been investigated. See <a
+      href="https://github.com/whatwg/html/issues/1142">issue #1142</a>.</p>
+     </li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <span>process a link header</span> step for this type of link
+  given a <span data-x="link processing options">link processing options</span> <var>options</var>
+  is to <span>preload</span> <var>options</var>.</p>
+  </div>
+
+
+  <h5>Link type "<dfn attr-value for="link/rel,a/rel,area/rel"><code
+  data-x="rel-privacy-policy">privacy-policy</code></dfn>"</h5>
+
+  <p>The <code data-x="rel-privacy-policy">privacy-policy</code> keyword may be used with
+  <code>link</code>, <code>a</code>, and <code>area</code> elements. This keyword creates a
+  <span>hyperlink</span>.</p>
+
+  <p>The <code data-x="rel-privacy-policy">privacy-policy</code> keyword indicates that the
+  referenced document contains information about the data collection and usage practices that apply
+  to the current document, as described in more detail in <cite>Additional Link Relation
+  Types</cite>. The referenced document may be a standalone privacy policy, or a specific section of
+  some more general document. <ref>RFC6903</ref></p>
+
+
+  <h5>Link type "<dfn attr-value for="link/rel,a/rel,area/rel,form/rel"><code
+  data-x="rel-search">search</code></dfn>"</h5>
+
+  <p>The <code data-x="rel-search">search</code> keyword may be used with <code>link</code>,
+  <code>a</code>, <code>area</code>, and <code>form</code> elements. This keyword creates a
+  <span>hyperlink</span>.</p>
+
+  <p>The <code data-x="rel-search">search</code> keyword indicates that the referenced document
+  provides an interface specifically for searching the document and its related resources.</p>
+
+  <p class="note">OpenSearch description documents can be used with <code>link</code> elements and
+  the <code data-x="rel-search">search</code> link type to enable user agents to autodiscover search
+  interfaces. <ref>OPENSEARCH</ref></p>
+
+
+  <h5>Link type "<dfn attr-value for="link/rel"><code
+  data-x="rel-stylesheet">stylesheet</code></dfn>"</h5>
+
+  <p>The <code data-x="rel-stylesheet">stylesheet</code> keyword may be used with <code>link</code>
+  elements. This keyword creates an <span data-x="external resource link">external resource
+  link</span> that contributes to the styling processing model. This keyword is
+  <span>body-ok</span>.</p>
+
+  <p>The specified resource is a <span>CSS style sheet</span> that describes how to present the
+  document.</p>
+
+  <p>If the <code data-x="rel-alternate">alternate</code> keyword is also specified on the
+  <code>link</code> element, then <dfn id="the-link-is-an-alternative-stylesheet">the link is an
+  alternative style sheet</dfn>; in this case, the <code data-x="attr-title">title</code> attribute
+  must be specified on the <code>link</code> element, with a non-empty value.</p>
+
+  <p>The default type for resources given by the <code data-x="rel-stylesheet">stylesheet</code>
+  keyword is <code>text/css</code>.</p>
+
+  <div algorithm>
+  <p>A <code>link</code> element of this type is <span>implicitly potentially render-blocking</span>
+  if the element was created by its <span>node document</span>'s parser.</p>
+  </div>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>When the <code data-x="attr-link-disabled">disabled</code> attribute of a <code>link</code>
+  element with a <code data-x="rel-stylesheet">stylesheet</code> keyword is set, <span
+  data-x="disable a CSS style sheet">disable</span> the <span>associated CSS style sheet</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The appropriate times to <span data-x="fetch and process the linked resource">fetch and
+  process</span> this type of link are:
+
+  <!-- has a browsing context: https://software.hixie.ch/utilities/js/live-dom-viewer/?saved=4299 -->
+  <ul>
+   <li><p>When the <span>external resource link</span> is created on a <code>link</code> element
+   that is already <span>browsing-context connected</span>.</p></li>
+   <!-- e.g. rel="" changed, href="" set... -->
+
+   <li><p>When the <span>external resource link</span>'s <code>link</code> element <span>becomes
+   browsing-context connected</span>.</p></li>
+
+   <li><p>When the <code data-x="attr-link-href">href</code> attribute of the <code>link</code>
+   element of an <span>external resource link</span> that is already <span>browsing-context
+   connected</span> is changed.</p></li>
+   <!-- https://software.hixie.ch/utilities/js/live-dom-viewer/?saved=2588 -->
+
+   <li><p>When the <code data-x="attr-link-disabled">disabled</code> attribute of the
+   <code>link</code> element of an <span>external resource link</span> that is already
+   <span>browsing-context connected</span> is set, changed, or removed.</p></li>
+
+   <li><p>When the <code data-x="attr-link-crossorigin">crossorigin</code> attribute of the
+   <code>link</code> element of an <span data-x="external resource link">external resource
+   link</span> that is already <span>browsing-context connected</span> is set, changed, or
+   removed.</p></li>
+
+   <li><p>When the <code data-x="attr-link-type">type</code> attribute of the <code>link</code>
+   element of an <span>external resource link</span> that is already <span>browsing-context
+   connected</span> is set or changed to a value that does not or no longer matches the <span
+   data-x="Content-Type">Content-Type metadata</span> of the previous obtained external resource, if
+   any.</p></li>
+
+   <li><p>When the <code data-x="attr-link-type">type</code> attribute of the <code>link</code>
+   element of an <span>external resource link</span> that is already <span>browsing-context
+   connected</span>, but was previously not obtained due to the <code
+   data-x="attr-link-type">type</code> attribute specifying an unsupported type, is removed or
+   changed.</p></li>
+
+   <li><p>When the <span>external resource link</span> that is already <span>browsing-context
+   connected</span> changes from being <span data-x="the link is an alternative style sheet">an
+   alternative style sheet</span> to not being one, or vice versa.</p></li>
+  </ul>
+  </div>
+
+  <p><strong>Quirk</strong>: If the document has been set to <span>quirks mode</span>, has the
+  <span>same origin</span> as the <span>URL</span> of the external resource<!-- CVE-2010-0654 -->,
+  and the <span data-x="Content-Type">Content-Type metadata</span> of the external resource is not a
+  supported style sheet type, the user agent must instead assume it to be <code>text/css</code>.</p>
+
+  <div algorithm>
+  <p>The <span>linked resource fetch setup steps</span> for this type of linked resource, given a
+  <code>link</code> element <var>el</var> and <span data-x="concept-request">request</span>
+  <var>request</var>, are:</p>
+
+  <ol>
+   <li><p>If <var>el</var>'s <code data-x="attr-link-disabled">disabled</code> attribute is set,
+   then return false.</p></li>
+
+   <li><p>If <var>el</var> <span>contributes a script-blocking style sheet</span>, <span data-x="set
+   append">append</span> <var>el</var> to its <span>node document</span>'s <span>script-blocking
+   style sheet set</span>.</p></li>
+
+   <li><p>If <var>el</var>'s <code data-x="attr-link-media">media</code> attribute's value
+   <span>matches the environment</span> and <var>el</var> is
+   <span>potentially render-blocking</span>, then <span>block rendering</span> on
+   <var>el</var>.</p></li>
+
+   <li><p>If <var>el</var> is currently <span>render-blocking</span>, then set <var>request</var>'s
+   <span data-x="concept-request-render-blocking">render-blocking</span> to true.</p></li>
+
+   <li><p>Return true.</p></li>
+  </ol>
+  </div>
+
+  <p class="XXX">See <a href="https://github.com/whatwg/html/issues/968">issue #968</a> for plans
+  to use the CSSOM <a href="https://drafts.csswg.org/cssom/#fetching-css-style-sheets">fetch a CSS
+  style sheet</a> algorithm instead of the <span>default fetch and process the linked
+  resource</span> algorithm. In the meantime, any <span data-x="critical subresources">critical
+  subresource</span> <span data-x="concept-request">request</span> should have its <span
+  data-x="concept-request-render-blocking">render-blocking</span> set to whether or not the
+  <code>link</code> element is currently <span>render-blocking</span>.</p>
+
+  <div algorithm>
+  <p>To <span data-x="process the linked resource">process this type of linked resource</span>
+  given a <code>link</code> element <var>el</var>, boolean <var>success</var>, <span
+  data-x="concept-response">response</span> <var>response</var>, and <span>byte sequence</span>
+  <var>bodyBytes</var>:</p>
+
+  <!-- note that we can only get this far if we have a browsing context, since if you don't have a
+  browsing context (and are active) you can't ever get a result back from "fetch", and thus you
+  never obtain the sheet -->
+  <!-- https://software.hixie.ch/utilities/js/live-dom-viewer/?saved=2741 -->
+
+  <ol>
+   <li><p>If the resource's <span data-x="Content-Type">Content-Type metadata</span> is not
+   <code>text/css</code>, then set <var>success</var> to false.</p></li>
+
+   <li>
+    <p>If <var>el</var> no longer creates an <span>external resource link</span> that contributes to
+    the styling processing model, or if, since the resource in question was <span data-x="fetch and
+    process the linked resource">fetched</span>, it has become appropriate to <span data-x="fetch
+    and process the linked resource">fetch</span> it again:</p>
+
+    <ol>
+     <li><p><span data-x="list remove">Remove</span> <var>el</var> from <var>el</var>'s <span>node
+     document</span>'s <span>script-blocking style sheet set</span>.</p></li>
+
+     <li><p>Return.</p></li>
+    </ol>
+   </li>
+
+   <li><p>If <var>el</var> has an <span>associated CSS style sheet</span>, <span data-x="remove a
+   CSS style sheet">remove the CSS style sheet</span>.</p></li>
+
+   <li>
+    <p>If <var>success</var> is true:</p>
+
+    <ol>
+     <li>
+      <p><span>Create a CSS style sheet</span> with the following properties:</p>
+
+      <dl>
+       <dt><span data-x="concept-css-style-sheet-type">type</span></dt>
+       <dd><p><code>text/css</code></p></dd>
+
+       <dt><span data-x="concept-css-style-sheet-location">location</span></dt>
+       <dd>
+        <p><var>response</var>'s <span data-x="concept-response-url-list">URL list</span>[0]</p>
+
+        <p class="XXX">We provide a URL here on the assumption that <a
+        href="https://github.com/w3c/csswg-drafts/issues/9316">w3c/csswg-drafts issue #9316</a> will
+        be fixed.</p>
+       </dd>
+
+       <dt><span data-x="concept-css-style-sheet-owner-node">owner node</span></dt>
+       <dd><p><var>el</var></p></dd>
+
+       <dt><span data-x="concept-css-style-sheet-media">media</span></dt>
+       <dd>
+        <p>The <code data-x="attr-link-media">media</code> attribute of <var>el</var>.</p>
+
+        <p class="note">This is a reference to the (possibly absent at this time) attribute, rather
+        than a copy of the attribute's current value. <cite>CSSOM</cite> defines what happens
+        when the attribute is dynamically set, changed, or removed.</p>
+       </dd>
+
+       <dt><span data-x="concept-css-style-sheet-title">title</span></dt>
+       <dd>
+        <p>The <code data-x="attr-link-title">title</code> attribute of <var>el</var>, if
+        <var>el</var> is <span>in a document tree</span>, or the empty string otherwise.</p>
+
+        <p class="note">This is similarly a reference to the attribute, rather than a copy of the
+        attribute's current value.</p>
+       </dd>
+
+       <dt><span data-x="concept-css-style-sheet-alternate-flag">alternate flag</span></dt>
+       <dd><p>Set if <span>the link is an alternative style sheet</span> and <var>el</var>'s
+       <span>explicitly enabled</span> is false; unset otherwise.</p></dd>
+
+       <dt><span data-x="concept-css-style-sheet-origin-clean-flag">origin-clean flag</span></dt>
+       <dd><p>Set if the resource is <span>CORS-same-origin</span>; unset otherwise.</p></dd>
+
+       <dt>
+        <span data-x="concept-css-style-sheet-parent-CSS-style-sheet">parent CSS style
+        sheet</span>
+       </dt>
+       <dt><span data-x="concept-css-style-sheet-owner-CSS-rule">owner CSS rule</span></dt>
+       <dd><p>null</p></dd>
+
+       <dt><span data-x="concept-css-style-sheet-disabled-flag">disabled flag</span></dt>
+       <dd><p>Left at its default value.</p></dd>
+
+       <dt><span data-x="concept-css-style-sheet-CSS-rules">CSS rules</span></dt>
+        <dd>
+         <p>Left uninitialized.</p>
+
+         <p class="XXX">This doesn't seem right. Presumably we should be using <var>bodyBytes</var>?
+         Tracked as <a href="https://github.com/whatwg/html/issues/2997">issue #2997</a>.</p>
+        </dd>
+      </dl>
+
+      <p>The CSS <span>environment encoding</span> is the result of running the following steps:
+      <ref>CSSSYNTAX</ref></p>
+
+      <ol>
+       <li><p>If <var>el</var> has a <code data-x="attr-link-charset">charset</code> attribute,
+       <span data-x="getting an encoding">get an encoding</span> from that attribute's value. If
+       that succeeds, return the resulting encoding. <ref>ENCODING</ref></p></li>
+
+       <li><p>Otherwise, return the <span>document's character encoding</span>.
+       <ref>DOM</ref></p></li>
+      </ol>
+     </li>
+
+     <li><p><span data-x="concept-event-fire">Fire an event</span> named <code
+     data-x="event-load">load</code> at <var>el</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Otherwise, <span data-x="concept-event-fire">fire an event</span> named <code
+   data-x="event-error">error</code> at <var>el</var>.</p></li>
+
+   <li>
+    <p>If <var>el</var> <span>contributes a script-blocking style sheet</span>:</p>
+
+    <ol>
+     <li><p><span>Assert</span>: <var>el</var>'s <span>node document</span>'s <span>script-blocking
+     style sheet set</span> <span data-x="list contains">contains</span> <var>el</var>.</p></li>
+
+     <li><p><span data-x="list remove">Remove</span> <var>el</var> from its <span>node
+     document</span>'s <span>script-blocking style sheet set</span>.</p></li>
+    </ol>
+   </li>
+
+   <li><p><span>Unblock rendering</span> on <var>el</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <span>process a link header</span> steps for this type of linked resource are to do
+  nothing.</p>
+  </div>
+
+  </div>
+
+
+  <h5>Link type "<dfn attr-value for="a/rel,area/rel"><code
+  data-x="rel-tag">tag</code></dfn>"</h5>
+
+  <p>The <code data-x="rel-tag">tag</code> keyword may be used with <code>a</code> and
+  <code>area</code> elements. This keyword creates a <span>hyperlink</span>.</p>
+
+  <p>The <code data-x="rel-tag">tag</code> keyword indicates that the <em>tag</em> that the
+  referenced document represents applies to the current document.</p>
+
+  <p class="note">Since it indicates that the tag <em>applies to the current document</em>, it would
+  be inappropriate to use this keyword in the markup of a <a href="#tag-cloud">tag cloud</a>, which
+  lists the popular tags across a set of pages.</p>
+
+  <div class="example">
+
+   <p>This document is about some gems, and so it is <i>tagged</i> with "<code
+   data-x="">https://en.wikipedia.org/wiki/Gemstone</code>" to unambiguously categorize it as applying
+   to the "jewel" kind of gems, and not to, say, the towns in the US, the Ruby package format, or
+   the Swiss locomotive class:</p>
+
+   <pre><code class="html">&lt;!DOCTYPE HTML>
+&lt;html lang="en">
+ &lt;head>
+  &lt;title>My Precious&lt;/title>
+ &lt;/head>
+ &lt;body>
+  &lt;header>&lt;h1>My precious&lt;/h1> &lt;p>Summer 2012&lt;/p>&lt;/header>
+  &lt;p>Recently I managed to dispose of a red gem that had been
+  bothering me. I now have a much nicer blue sapphire.&lt;/p>
+  &lt;p>The red gem had been found in a bauxite stone while I was digging
+  out the office level, but nobody was willing to haul it away. The
+  same red gem stayed there for literally years.&lt;/p>
+  &lt;footer>
+   Tags: &lt;a rel=tag href="https://en.wikipedia.org/wiki/Gemstone">Gemstone&lt;/a>
+  &lt;/footer>
+ &lt;/body>
+&lt;/html></code></pre>
+
+  </div>
+
+  <div class="example">
+
+   <p>In <em>this</em> document, there are two articles. The "<code data-x="rel-tag">tag</code>"
+   link, however, applies to the whole page (and would do so wherever it was placed, including if it
+   was within the <code>article</code> elements).</p>
+
+   <pre><code class="html">&lt;!DOCTYPE HTML>
+&lt;html lang="en">
+ &lt;head>
+  &lt;title>Gem 4/4&lt;/title>
+ &lt;/head>
+ &lt;body>
+  &lt;article>
+   &lt;h1>801: Steinbock&lt;/h1>
+   &lt;p>The number 801 Gem 4/4 electro-diesel has an ibex and was rebuilt in 2002.&lt;/p>
+  &lt;/article>
+  &lt;article>
+   &lt;h1>802: Murmeltier&lt;/h1>
+   &lt;figure>
+    &lt;img src="https://upload.wikimedia.org/wikipedia/commons/b/b0/Trains_de_la_Bernina_en_hiver_2.jpg"
+         alt="The 802 was red with pantographs and tall vents on the side.">
+    &lt;figcaption>The 802 in the 1980s, above Lago Bianco.&lt;/figcaption>
+   &lt;/figure>
+   &lt;p>The number 802 Gem 4/4 electro-diesel has a marmot and was rebuilt in 2003.&lt;/p>
+  &lt;/article>
+  &lt;p class="topic">&lt;a rel=tag href="https://en.wikipedia.org/wiki/Rhaetian_Railway_Gem_4/4">Gem 4/4&lt;/a>&lt;/p>
+ &lt;/body>
+&lt;/html></code></pre>
+
+  </div>
+
+
+  <h5>Link Type "<dfn attr-value for="link/rel,a/rel,area/rel"><code
+  data-x="rel-terms-of-service">terms-of-service</code></dfn>"</h5>
+
+  <p>The <code data-x="rel-terms-of-service">terms-of-service</code> keyword may be used with
+  <code>link</code>, <code>a</code>, and <code>area</code> elements. This keyword creates a
+  <span>hyperlink</span>.</p>
+
+  <p>The <code data-x="rel-terms-of-service">terms-of-service</code> keyword indicates that the
+  referenced document contains information about the agreements between the current document's
+  provider and users who wish to use the current document, as described in more detail in
+  <cite>Additional Link Relation Types</cite>. <ref>RFC6903</ref></p>
+
+
+  <h5>Sequential link types</h5>
+
+  <p>Some documents form part of a sequence of documents.</p>
+
+  <p>A sequence of documents is one where each document can have a <em>previous sibling</em> and a
+  <em>next sibling</em>. A document with no previous sibling is the start of its sequence, a
+  document with no next sibling is the end of its sequence.</p>
+
+  <p>A document may be part of multiple sequences.</p>
+
+
+  <h6>Link type "<dfn attr-value for="link/rel,a/rel,area/rel,form/rel"><code
+  data-x="rel-next">next</code></dfn>"</h6>
+
+  <p>The <code data-x="rel-next">next</code> keyword may be used with <code>link</code>,
+  <code>a</code>, <code>area</code>, and <code>form</code> elements. This keyword creates a
+  <span>hyperlink</span>.</p>
+
+  <p>The <code data-x="rel-next">next</code> keyword indicates that the document is part of a
+  sequence, and that the link is leading to the document that is the next logical document in the
+  sequence.</p>
+
+  <p w-nodev>When the <code data-x="rel-next">next</code> keyword is used with a <code>link</code>
+  element, user agents should process such links as if they were using one of the <code
+  data-x="rel-dns-prefetch">dns-prefetch</code>, <code data-x="rel-preconnect">preconnect</code>, or
+  <code data-x="rel-prefetch">prefetch</code> keywords. Which keyword the user agent wishes to use
+  is implementation-dependent; for example, a user agent may wish to use the less-costly <code
+  data-x="rel-preconnect">preconnect</code> processing model when trying to conserve data, battery
+  power, or processing power, or may wish to pick a keyword depending on heuristic analysis of past
+  user behavior in similar scenarios.</p>
+
+  <h6>Link type "<dfn attr-value for="link/rel,a/rel,area/rel,form/rel"><code
+  data-x="rel-prev">prev</code></dfn>"</h6>
+
+  <p>The <code data-x="rel-prev">prev</code> keyword may be used with <code>link</code>,
+  <code>a</code>, <code>area</code>, and <code>form</code> elements. This keyword creates a
+  <span>hyperlink</span>.</p>
+
+  <p>The <code data-x="rel-prev">prev</code> keyword indicates that the document is part of a
+  sequence, and that the link is leading to the document that is the previous logical document in
+  the sequence.</p>
+
+  <div w-nodev>
+
+  <p><strong>Synonyms</strong>: For historical reasons, user agents must also treat the keyword
+  "<code data-x="">previous</code>" like the <code data-x="rel-prev">prev</code> keyword.</p>
+
+  </div>
+
+
+  <h5>Other link types</h5>
+
+  <p><dfn data-x="concept-rel-extensions">Extensions to the predefined set of link types</dfn> may
+  be registered on the <a
+  href="https://microformats.org/wiki/existing-rel-values#HTML5_link_type_extensions">microformats
+  page for existing rel values</a>. <ref>MFREL</ref></p>
+
+  <p>Anyone is free to edit the <span data-x="">microformats page for existing rel values</span> at
+  any time to add a type. Extension types must be specified with the following information:</p>
+
+  <dl>
+   <dt>Keyword</dt>
+
+   <dd>
+    <p>The actual value being defined. The value should not be confusingly similar to any other
+    defined value (e.g. differing only in case).</p>
+
+    <p>If the value contains a U+003A COLON character (:), it must also be an <span>absolute
+    URL</span>.</p>
+   </dd>
+
+
+   <dt>Effect on... <code>link</code></dt>
+
+   <dd>
+    <p>One of the following:</p>
+
+    <dl>
+     <dt>Not allowed</dt>
+
+     <dd>The keyword must not be specified on <code>link</code> elements.</dd>
+
+     <dt>Hyperlink</dt>
+
+     <dd>The keyword may be specified on a <code>link</code> element; it creates a
+     <span>hyperlink</span>.</dd>
+
+     <dt>External Resource</dt>
+
+     <dd>The keyword may be specified on a <code>link</code> element; it creates an <span>external
+     resource link</span>.</dd>
+    </dl>
+   </dd>
+
+
+   <dt>Effect on... <code>a</code> and <code>area</code></dt>
+
+   <dd>
+    <p>One of the following:</p>
+
+    <dl>
+     <dt>Not allowed</dt>
+
+     <dd>The keyword must not be specified on <code>a</code> and <code>area</code> elements.</dd>
+
+     <dt>Hyperlink</dt>
+
+     <dd>The keyword may be specified on <code>a</code> and <code>area</code> elements; it creates a
+     <span>hyperlink</span>.</dd>
+
+     <dt>External Resource</dt>
+
+     <dd>The keyword may be specified on <code>a</code> and <code>area</code> elements; it creates
+     an <span>external resource link</span>.</dd>
+
+     <dt>Hyperlink Annotation</dt>
+
+     <dd>The keyword may be specified on <code>a</code> and <code>area</code> elements; it <span
+     data-x="hyperlink annotation">annotates</span> other <span data-x="hyperlink">hyperlinks</span>
+     created by the element.</dd>
+    </dl>
+   </dd>
+
+
+   <dt>Effect on... <code>form</code></dt>
+   <dd>
+    <p>One of the following:</p>
+
+    <dl>
+     <dt>Not allowed</dt>
+     <dd>The keyword must not be specified on <code>form</code> elements.</dd>
+
+     <dt>Hyperlink</dt>
+     <dd>The keyword may be specified on <code>form</code> elements; it creates a
+     <span>hyperlink</span>.</dd>
+
+     <dt>External Resource</dt>
+     <dd>The keyword may be specified on <code>form</code> elements; it creates an <span>external
+     resource link</span>.</dd>
+
+     <dt>Hyperlink Annotation</dt>
+     <dd>The keyword may be specified on <code>form</code> elements; it <span data-x="hyperlink
+     annotation">annotates</span> other <span data-x="hyperlink">hyperlinks</span> created by the
+     element.</dd>
+    </dl>
+   </dd>
+
+
+   <dt>Brief description</dt>
+
+   <dd><p>A short non-normative description of what the keyword's meaning is.</p></dd>
+
+
+   <dt>Specification</dt>
+
+   <dd><p>A link to a more detailed description of the keyword's semantics and requirements. It
+   could be another page on the wiki, or a link to an external page.</p></dd>
+
+
+   <dt>Synonyms</dt>
+
+   <dd><p>A list of other keyword values that have exactly the same processing requirements. Authors
+   should not use the values defined to be synonyms, they are only intended to allow user agents to
+   support legacy content. Anyone may remove synonyms that are not used in practice; only names that
+   need to be processed as synonyms for compatibility with legacy content are to be registered in
+   this way.</p></dd>
+
+
+   <dt>Status</dt>
+
+   <dd>
+    <p>One of the following:</p>
+
+    <dl>
+     <dt>Proposed</dt>
+
+     <dd>The keyword has not received wide peer review and approval. Someone has proposed it and is,
+     or soon will be, using it.</dd>
+
+     <dt>Ratified</dt>
+
+     <dd>The keyword has received wide peer review and approval. It has a specification that
+     unambiguously defines how to handle pages that use the keyword, including when they use it in
+     incorrect ways.</dd>
+
+     <dt>Discontinued</dt>
+
+     <dd>The keyword has received wide peer review and it has been found wanting. Existing pages are
+     using this keyword, but new pages should avoid it. The "brief description" and "specification"
+     entries will give details of what authors should use instead, if anything.</dd>
+    </dl>
+
+    <p>If a keyword is found to be redundant with existing values, it should be removed and listed
+    as a synonym for the existing value.</p>
+
+    <p>If a keyword is registered in the "proposed" state for a period of a month or more without
+    being used or specified, then it may be removed from the registry.</p>
+
+    <p>If a keyword is added with the "proposed" status and found to be redundant with existing
+    values, it should be removed and listed as a synonym for the existing value. If a keyword is
+    added with the "proposed" status and found to be harmful, then it should be changed to
+    "discontinued" status.</p>
+
+    <p>Anyone can change the status at any time, but should only do so in accordance with the
+    definitions above.</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <p>Conformance checkers must use the information given on the <span data-x="">microformats page
+  for existing rel values</span> to establish if a value is allowed or not: values defined in this
+  specification or marked as "proposed" or "ratified" must be accepted when used on the elements for
+  which they apply as described in the "Effect on..." field, whereas values marked as "discontinued"
+  or not listed in either this specification or on the aforementioned page must be rejected as
+  invalid. Conformance checkers may cache this information (e.g. for performance reasons or to avoid
+  the use of unreliable network connectivity).</p>
+
+  <p>When an author uses a new type not defined by either this specification or the wiki page,
+  conformance checkers should offer to add the value to the wiki, with the details described above,
+  with the "proposed" status.</p>
+
+  </div>
+
+  <p>Types defined as extensions in the <a
+  href="https://microformats.org/wiki/existing-rel-values#HTML5_link_type_extensions">microformats
+  page for existing rel values</a> with the status "proposed" or "ratified" may be used with the
+  <code data-x="">rel</code> attribute on <code>link</code>, <code>a</code>, and <code>area</code>
+  elements in accordance to the "Effect on..." field. <ref>MFREL</ref></p>
+
+
+
+  <h3 split-filename="edits">Edits</h3>
+
+  <p>The <code>ins</code> and <code>del</code> elements represent edits to the document.</p>
+
+

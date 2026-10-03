@@ -1,0 +1,79 @@
+WHATWG HTML — section the-createcontextualfragment-method — The <code data-x="dom-Range-createContextualFragment">createContextualFragment()</code> method
+
+  <h4>The <code data-x="dom-Range-createContextualFragment">createContextualFragment()</code>
+  method</h4>
+
+  <p class="XXX">The <code
+  data-x="dom-Range-createContextualFragment">createContextualFragment()</code> method has a number
+  of outstanding issues in the <cite>DOM Parsing and Serialization</cite> <a
+  href="https://github.com/w3c/DOM-Parsing/issues">issue tracker</a>, documenting various problems
+  with its specification.</p>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>docFragment</var> = <var>range</var>.<span subdfn data-x="dom-Range-createContextualFragment">createContextualFragment</span>(<var>string</var>)</code></dt>
+   <dd>
+    <p>Returns a <code>DocumentFragment</code> created from the markup string <var>string</var> using
+    <var>range</var>'s <span data-x="concept-range-start-node">start node</span> as the context in
+    which <var>fragment</var> is parsed.</p>
+   </dd>
+  </dl>
+
+  <p class="warning">This method performs no sanitization to remove potentially-dangerous elements
+  and attributes like <code>script</code> or <span>event handler content attributes</span>.</p>
+
+  <pre><code class="idl">partial interface <span id="Range-partial">Range</span> {
+  [<span>CEReactions</span>, NewObject] <code>DocumentFragment</code> <span data-x="dom-Range-createContextualFragment">createContextualFragment</span>((<code data-x="tt-trustedhtml">TrustedHTML</code> or DOMString) string);
+};</code></pre>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p><code>Range</code>'s <dfn method for="Range"><code
+  data-x="dom-Range-createContextualFragment">createContextualFragment(<var>string</var>)</code></dfn>
+  method steps are:</p>
+
+  <ol>
+   <li><p>Let <var>compliantString</var> be the result of invoking the <span data-x="tt-getcompliantstring">get
+   trusted type compliant string</span> algorithm with <code
+   data-x="tt-trustedhtml">TrustedHTML</code>, <span>this</span>'s <span>relevant global
+   object</span>, <var>string</var>, "<code data-x="">Range createContextualFragment</code>", and
+   "<code data-x="">script</code>".</p></li>
+
+   <li><p>Let <var>node</var> be <span>this</span>'s <span data-x="concept-range-start-node">start
+   node</span>.</p></li>
+
+   <li><p>Let <var>element</var> be null.</p></li>
+
+   <li><p>If <var>node</var> <span>implements</span> <code>Element</code>, set <var>element</var>
+   to <var>node</var>.</p></li>
+
+   <li><p>Otherwise, if <var>node</var> <span>implements</span> <code>Text</code> or
+   <code>Comment</code>, set <var>element</var> to <var>node</var>'s <span>parent
+   element</span>.</p></li>
+
+   <li>
+    <p>If <var>element</var> is null or all of the following are true:</p>
+
+    <ul>
+     <li><p><var>element</var>'s <span>node document</span> is an HTML document;</p></li>
+
+     <li><p><var>element</var>'s <span data-x="concept-element-local-name">local name</span> is
+     "<code>html</code>"; and</p></li>
+
+     <li><p><var>element</var>'s <span data-x="concept-element-namespace">namespace</span> is the
+     <span>HTML namespace</span>,</p></li>
+    </ul>
+
+    <p>then set <var>element</var> to the result of <span data-x="create an element">creating an
+    element</span> given <span>this</span>'s <span>node document</span>, "<code
+    data-x="">body</code>", and the <span>HTML namespace</span>.</p>
+   </li>
+
+   <li><p>Return the result of invoking the <span>fragment parsing algorithm steps</span> with
+   <var>element</var>, <var>compliantString</var>, and <span
+   data-x="scripting-mode-fragment">Fragment</span>.</p></li>
+  </ol>
+  </div>
+
+  </div>
+

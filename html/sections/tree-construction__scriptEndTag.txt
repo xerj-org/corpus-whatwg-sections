@@ -1,0 +1,1448 @@
+WHATWG HTML — section tree-construction/scriptEndTag — An end tag whose tag name is "script"
+
+   <dt id="scriptEndTag">An end tag whose tag name is "script"</dt>
+   <dd>
+    <p>If the <span>active speculative HTML parser</span> is null and the <span>JavaScript execution
+    context stack</span> is empty, then <span>perform a microtask checkpoint</span>.</p>
+
+    <p>Let <var>script</var> be the <span>current node</span> (which will be a
+    <code>script</code> element).</p>
+
+    <p>Pop the <span>current node</span> off the <span>stack of open elements</span>.</p>
+
+    <p>Switch the <span>insertion mode</span> to the <span>original insertion mode</span>.</p>
+
+    <p>Let the <var>old insertion point</var> have the same value as the current
+    <span>insertion point</span>. Let the <span>insertion point</span> be just before the <span>next
+    input character</span>.</p>
+
+    <p>Increment the parser's <span>script nesting level</span> by one.</p>
+
+    <p>If the <span>active speculative HTML parser</span> is null, then <span>prepare the script
+    element</span> <var>script</var>. This might cause some script to execute, which might cause
+    <span data-x="dom-document-write">new characters to be inserted into the tokenizer</span>, and
+    might cause the tokenizer to output more tokens, resulting in a <a
+    href="#nestedParsing">reentrant invocation of the parser</a>.</p>
+
+    <p>Decrement the parser's <span>script nesting level</span> by one. If the parser's <span>script
+    nesting level</span> is zero, then set the <span>parser pause flag</span> to false.</p>
+
+    <p>Let the <span>insertion point</span> have the value of the <var>old insertion
+    point</var>. (In other words, restore the <span>insertion point</span> to its previous value.
+    This value might be the "undefined" value.)</p>
+
+    <p id="scriptTagParserResumes">At this stage, if the <span>pending parsing-blocking
+    script</span> is not null:</p>
+
+    <dl class="switch">
+
+     <dt>If the <span>script nesting level</span> is not zero:</dt>
+
+     <dd>
+      <p>Set the <span>parser pause flag</span> to true, and abort the processing of any nested
+      invocations of the tokenizer, yielding control back to the caller. (Tokenization will resume
+      when the caller returns to the "outer" tree construction stage.)</p>
+
+      <p class="note">The tree construction stage of this particular parser is <a
+      href="#nestedParsing">being called reentrantly</a>, say from a call to <code
+      data-x="dom-document-write">document.write()</code>.</p>
+     </dd>
+
+
+     <dt>Otherwise:</dt>
+
+     <dd>
+      <p>While the <span>pending parsing-blocking script</span> is not null:</p>
+
+      <ol>
+       <li><p>Let <var>the script</var> be the <span>pending parsing-blocking
+       script</span>.</p></li>
+
+       <li><p>Set the <span>pending parsing-blocking script</span> to null.</p></li>
+
+       <li><p><span>Start the speculative HTML parser</span> for this instance of the HTML
+       parser.</p></li>
+
+       <li><p>Block the <span data-x="tokenization">tokenizer</span> for this instance of the
+       <span>HTML parser</span>, such that the <span>event loop</span> will not run <span
+       data-x="concept-task">tasks</span> that invoke the <span
+       data-x="tokenization">tokenizer</span>.</p></li>
+
+       <li><p>If the parser's <code>Document</code> <span>has a style sheet that is blocking
+       scripts</span> or <var>the script</var>'s <span>ready to be parser-executed</span> is false:
+       <span>spin the event loop</span> until the parser's <code>Document</code> <span>has no style
+       sheet that is blocking scripts</span> and <var>the script</var>'s <span>ready to be
+       parser-executed</span> becomes true.</p></li>
+
+       <li>
+        <p>If this <span data-x="abort a parser">parser has been aborted</span> in the meantime,
+        return.</p>
+
+        <p class="note">This could happen if, e.g., while the <span>spin the event loop</span>
+        algorithm is running, the <code>Document</code> gets <span data-x="destroy a
+        document">destroyed</span>, or the <code data-x="dom-document-open">document.open()</code>
+        method gets invoked on the <code>Document</code>.</p>
+       </li>
+
+       <li><p><span>Stop the speculative HTML parser</span> for this instance of the HTML
+       parser.</p></li>
+
+       <li><p>Unblock the <span data-x="tokenization">tokenizer</span> for this instance of the
+       <span>HTML parser</span>, such that <span data-x="concept-task">tasks</span> that invoke the
+       <span data-x="tokenization">tokenizer</span> can again be run.</p></li>
+
+       <li><p>Let the <span>insertion point</span> be just before the <span>next input
+       character</span>.</p></li>
+
+       <li><p>Increment the parser's <span>script nesting level</span> by one (it should be zero
+       before this step, so this sets it to one).</p></li>
+
+       <li><p><span>Execute the script element</span> <var>the script</var>.</p></li>
+
+       <li><p>Decrement the parser's <span>script nesting level</span> by one. If the parser's
+       <span>script nesting level</span> is zero (which it always should be at this point), then set
+       the <span>parser pause flag</span> to false.</p>
+
+       <li><p>Let the <span>insertion point</span> be undefined again.</p></li>
+      </ol>
+     </dd>
+    </dl>
+   </dd>
+
+   <dt>Any other end tag</dt>
+   <dd>
+    <p>Pop the <span>current node</span> off the <span>stack of open elements</span>.</p>
+
+    <p>Switch the <span>insertion mode</span> to the <span>original insertion mode</span>.</p>
+   </dd>
+  </dl>
+  </div>
+
+
+  <h6 id="parsing-main-intable">The "<dfn data-x="insertion mode: in table">in table</dfn>" insertion mode</h6>
+
+  <div algorithm>
+  <p>When the user agent is to apply the rules for the "<span data-x="insertion mode: in table">in
+  table</span>" <span>insertion mode</span>, the user agent must handle the token as follows:</p>
+
+  <dl class="switch">
+
+   <dt>A character token, if the <span>current node</span> is <code>table</code>, <code>tbody</code>, <code>template</code>, <code>tfoot</code>, <code>thead</code>, or <code>tr</code> element</dt> <!-- same list as foster parenting + template -->
+   <dd>
+     <p>Let the <dfn><var data-x="concept-pending-table-char-tokens">pending table character
+     tokens</var></dfn> be an empty list of tokens.</p>
+
+     <p>Set the <span>original insertion mode</span> to the current <span>insertion mode</span>.</p>
+
+     <p>Switch the <span>insertion mode</span> to "<span data-x="insertion mode: in table text">in
+     table text</span>" and reprocess the token.</p>
+   </dd>
+
+   <dt>A comment token</dt>
+   <dd>
+    <p><span>Insert a comment</span>.</p>
+   </dd>
+
+   <dt>A processing instruction token</dt>
+   <dd>
+    <p><span>Insert a processing instruction</span>.</p>
+   </dd>
+
+   <dt>A DOCTYPE token</dt>
+   <dd>
+    <p><span>Parse error</span>. Ignore the token.</p>
+   </dd>
+
+   <dt>A start tag whose tag name is "caption"</dt>
+   <dd>
+    <p><span>Clear the stack back to a table context</span>. (See below.)</p>
+
+    <p>Insert a <span data-x="concept-parser-marker">marker</span> at the end of the <span>list of
+    active formatting elements</span>.</p>
+
+    <p><span>Insert an HTML element</span> for the token, then switch the <span>insertion
+    mode</span> to "<span data-x="insertion mode: in caption">in caption</span>".</p>
+   </dd>
+
+   <dt>A start tag whose tag name is "colgroup"</dt>
+   <dd>
+    <p><span>Clear the stack back to a table context</span>. (See below.)</p>
+
+    <p><span>Insert an HTML element</span> for the token, then switch the <span>insertion
+    mode</span> to "<span data-x="insertion mode: in column group">in column group</span>".</p>
+   </dd>
+
+   <dt>A start tag whose tag name is "col"</dt>
+   <dd>
+    <!-- fake <colgroup> -->
+    <p><span>Clear the stack back to a table context</span>. (See below.)</p>
+
+    <p><span>Insert an HTML element</span> for a "colgroup" start tag token with no attributes, then
+    switch the <span>insertion mode</span> to "<span data-x="insertion mode: in column group">in
+    column group</span>".</p>
+    <!-- end of fake <colgroup> -->
+
+    <p>Reprocess the current token.</p>
+   </dd>
+
+   <dt>A start tag whose tag name is one of: "tbody", "tfoot", "thead"</dt>
+   <dd>
+    <p><span>Clear the stack back to a table context</span>. (See below.)</p>
+
+    <p><span>Insert an HTML element</span> for the token, then switch the <span>insertion
+    mode</span> to "<span data-x="insertion mode: in table body">in table body</span>".</p>
+   </dd>
+
+   <dt>A start tag whose tag name is one of: "td", "th", "tr"</dt>
+   <dd>
+    <!-- fake <colgroup> -->
+    <p><span>Clear the stack back to a table context</span>. (See below.)</p>
+
+    <p><span>Insert an HTML element</span> for a "tbody" start tag token with no attributes, then
+    switch the <span>insertion mode</span> to "<span data-x="insertion mode: in table body">in table
+    body</span>".</p>
+    <!-- end of fake <colgroup> -->
+
+    <p>Reprocess the current token.</p>
+   </dd>
+
+   <dt>A start tag whose tag name is "table"</dt>
+   <dd>
+    <p><span>Parse error</span>.</p>
+
+    <!-- fake </table> -->
+    <p>If the <span>stack of open elements</span> does not <span data-x="has an element in table
+    scope">have a <code>table</code> element in table scope</span>, ignore the token.</p>
+
+    <p>Otherwise:</p>
+
+    <ol>
+     <li><p>Pop elements from this stack until a <code>table</code> element has been popped from the
+     stack.</p></li>
+
+     <li><p><span>Reset the insertion mode appropriately</span>.</p></li>
+     <!-- end of fake </table> -->
+
+     <li><p>Reprocess the token.</p></li>
+    </ol>
+   </dd>
+
+   <dt>An end tag whose tag name is "table"</dt>
+   <dd>
+    <p>If the <span>stack of open elements</span> does not <span data-x="has an element in table
+    scope">have a <code>table</code> element in table scope</span>, this is a <span>parse
+    error</span>; ignore the token.</p>
+
+    <p>Otherwise:</p>
+
+    <ol>
+     <li><p>Pop elements from this stack until a <code>table</code> element has been popped from the
+     stack.</p></li>
+
+     <li><p><span>Reset the insertion mode appropriately</span>.</p></li>
+    </ol>
+   </dd>
+
+   <dt>An end tag whose tag name is one of: "body", "caption", "col", "colgroup", "html", "tbody",
+   "td", "tfoot", "th", "thead", "tr"</dt>
+   <dd>
+    <p><span>Parse error</span>. Ignore the token.</p>
+   </dd>
+
+   <dt>A start tag whose tag name is one of: "style", "script", "template"</dt>
+   <dt>An end tag whose tag name is "template"</dt>
+   <dd>
+    <p>Process the token <span>using the rules for</span> the "<span
+    data-x="insertion mode: in head">in head</span>" <span>insertion
+    mode</span>.</p>
+   </dd>
+
+   <dt>A start tag whose tag name is "input"</dt>
+   <dd>
+    <p>If the token does not have an attribute with the name "type", or if it does, but that
+    attribute's value is not an <span>ASCII case-insensitive</span> match for "<code
+    data-x="">hidden</code>", then act as described in the "anything else" entry below.</p>
+
+    <p>Otherwise:</p>
+
+    <ol>
+     <li><p><span>Parse error</span>.</p></li>
+
+     <li><p><span>Insert an HTML element</span> for the token.</p></li>
+
+     <li><p>Pop that <code>input</code> element off the <span>stack of open elements</span>.</p></li>
+
+     <li><p><span data-x="acknowledge self-closing flag">Acknowledge the token's <i data-x="self-closing flag">self-closing
+     flag</i></span>, if it is set.</p></li>
+    </ol>
+   </dd>
+
+   <dt>A start tag whose tag name is "form"</dt>
+   <dd>
+    <p><span>Parse error</span>.</p>
+
+    <p>If the <span><code data-x="form">form</code> element pointer</span> is not null, and the
+    parser is not <span>parsing template contents</span>, then ignore the token.</p>
+
+    <p>Otherwise:</p>
+
+    <ol>
+     <li><p><span>Insert an HTML element</span> for the token, and, if the parser is not
+     <span>parsing template contents</span>, set the <span><code data-x="form">form</code> element
+     pointer</span> to point to the element created.</p></li>
+
+     <li><p>Pop that <code>form</code> element off the <span>stack of open elements</span>.</p></li>
+    </ol>
+   </dd>
+
+   <!-- "form" end tag falls through to in-body, which does the right thing -->
+
+   <dt>An end-of-file token</dt>
+   <dd>
+    <p>Process the token <span>using the rules for</span> the "<span data-x="insertion mode: in
+    body">in body</span>" <span>insertion mode</span>.</p>
+   </dd>
+
+   <dt>Anything else</dt>
+   <dd>
+    <p><span>Parse error</span>. Enable <span data-x="foster parent">foster parenting</span>, process
+    the token <span>using the rules for</span> the "<span data-x="insertion mode: in body">in
+    body</span>" <span>insertion mode</span>, and then disable <span data-x="foster parent">foster
+    parenting</span>.</p>
+   </dd>
+  </dl>
+  </div>
+
+  <div algorithm>
+  <p>When the steps above require the UA to <dfn>clear the stack back to a table context</dfn>, it
+  means that the UA must, while the <span>current node</span> is not a <code>table</code>,
+  <code>template</code>, or <code>html</code> element, pop elements from the <span>stack of open
+  elements</span>.</p>
+  </div>
+
+  <p class="note">This is the same list of elements as used in the <i data-x="has an element in
+  table scope">has an element in table scope</i> steps.</p>
+
+  <p class="note">The <span>current node</span> being an <code>html</code> element after this
+  process is a <span>fragment case</span>.</p>
+
+
+
+  <h6 id="parsing-main-intabletext">The "<dfn data-x="insertion mode: in table text">in table text</dfn>" insertion mode</h6>
+
+  <div algorithm>
+  <p>When the user agent is to apply the rules for the "<span data-x="insertion mode: in table
+  text">in table text</span>" <span>insertion mode</span>, the user agent must handle the token as
+  follows:</p>
+
+  <dl class="switch">
+
+   <dt>A character token that is U+0000 NULL</dt>
+   <dd>
+    <p><span>Parse error</span>. Ignore the token.</p>
+   </dd>
+
+
+   <dt>Any other character token</dt>
+   <dd>
+    <p>Append the character token to the <var data-x="concept-pending-table-char-tokens">pending
+    table character tokens</var> list.</p>
+   </dd>
+
+
+   <dt>Anything else</dt>
+   <dd>
+    <!-- this can only be called if the current node is one of the table model elements -->
+
+    <p>If any of the tokens in the <var data-x="concept-pending-table-char-tokens">pending table
+    character tokens</var> list are character tokens that are not <span>ASCII whitespace</span>,
+    then this is a <span>parse error</span>: reprocess the character tokens in the <var
+    data-x="concept-pending-table-char-tokens">pending table character tokens</var> list using the
+    rules given in the "anything else" entry in the "<span data-x="insertion mode: in table">in
+    table</span>" insertion mode.</p>
+
+    <!-- if there's active formatting elements, it'll recreate those and foster parent the top one
+    and then put the text nodes in the formatting elements; otherwise, it'll foster parent the
+    character tokens. -->
+
+    <p>Otherwise, <span data-x="insert a character">insert the characters</span> given by the <var
+    data-x="concept-pending-table-char-tokens">pending table character tokens</var> list.</p> <!--
+    i.e. inter-element whitespace in the table model isn't foster parented -->
+
+    <!-- no need to empty the list, we're leaving the insertion mode and the list is always emptied
+    before we reenter the mode -->
+
+    <p>Switch the <span>insertion mode</span> to the <span>original insertion mode</span> and
+    reprocess the token.</p>
+   </dd>
+  </dl>
+  </div>
+
+
+  <h6 id="parsing-main-incaption">The "<dfn data-x="insertion mode: in caption">in caption</dfn>" insertion mode</h6>
+
+  <div algorithm>
+  <p>When the user agent is to apply the rules for the "<span data-x="insertion mode: in caption">in
+  caption</span>" <span>insertion mode</span>, the user agent must handle the token as follows:</p>
+
+  <dl class="switch">
+
+   <dt>An end tag whose tag name is "caption"</dt>
+   <dd>
+    <p>If the <span>stack of open elements</span> does not <span data-x="has an element in table
+    scope">have a <code>caption</code> element in table scope</span>, this is a <span>parse
+    error</span>; ignore the token. (<span>fragment case</span>)</p>
+
+    <p>Otherwise:</p>
+
+    <ol>
+     <li><p><span>Generate implied end tags</span>.</p></li>
+
+     <li><p>Now, if the <span>current node</span> is not a <code>caption</code> element, then this is a
+     <span>parse error</span>.</p></li>
+
+     <li><p>Pop elements from this stack until a <code>caption</code> element has been popped from the
+     stack.</p></li>
+
+     <li><p><span>Clear the list of active formatting elements up to the last marker</span>.</p></li>
+
+     <li><p>Switch the <span>insertion mode</span> to "<span data-x="insertion mode: in table">in
+     table</span>".</p></li>
+    </ol>
+   </dd>
+
+   <dt>A start tag whose tag name is one of: "caption", "col", "colgroup", "tbody", "td", "tfoot",
+   "th", "thead", "tr"</dt> <dt>An end tag whose tag name is "table"</dt>
+   <dd>
+    <p>If the <span>stack of open elements</span> does not <span data-x="has an element in table
+    scope">have a <code>caption</code> element in table scope</span>, this is a <span>parse
+    error</span>; ignore the token. (<span>fragment case</span>)</p>
+
+    <p>Otherwise:</p>
+
+    <ol>
+     <!-- fake </caption> -->
+     <li><p><span>Generate implied end tags</span>.</p></li>
+
+     <li><p>Now, if the <span>current node</span> is not a <code>caption</code> element, then this is a
+     <span>parse error</span>.</p></li>
+
+     <li><p>Pop elements from this stack until a <code>caption</code> element has been popped from the
+     stack.</p></li>
+
+     <li><p><span>Clear the list of active formatting elements up to the last marker</span>.</p></li>
+
+     <li><p>Switch the <span>insertion mode</span> to "<span data-x="insertion mode: in table">in
+     table</span>".</p></li>
+     <!-- end of fake </caption> -->
+
+     <li><p>Reprocess the token.</p></li>
+    </ol>
+   </dd>
+
+   <dt>An end tag whose tag name is one of: "body", "col", "colgroup", "html", "tbody", "td",
+   "tfoot", "th", "thead", "tr"</dt>
+   <dd>
+    <p><span>Parse error</span>. Ignore the token.</p>
+   </dd>
+
+   <dt>Anything else</dt>
+   <dd>
+    <p>Process the token <span>using the rules for</span> the "<span data-x="insertion mode: in
+    body">in body</span>" <span>insertion mode</span>.</p>
+   </dd>
+  </dl>
+  </div>
+
+
+  <h6 id="parsing-main-incolgroup">The "<dfn data-x="insertion mode: in column group">in column group</dfn>" insertion mode</h6>
+
+  <div algorithm>
+  <p>When the user agent is to apply the rules for the "<span data-x="insertion mode: in column
+  group">in column group</span>" <span>insertion mode</span>, the user agent must handle the token
+  as follows:</p>
+
+  <dl class="switch">
+
+   <dt>A character token that is one of U+0009 CHARACTER TABULATION, U+000A LINE FEED (LF), U+000C
+   FORM FEED (FF), U+000D CARRIAGE RETURN (CR), or U+0020 SPACE</dt>
+   <dd>
+    <p><span data-x="insert a character">Insert the character</span>.</p>
+   </dd>
+
+   <dt>A comment token</dt>
+   <dd>
+    <p><span>Insert a comment</span>.</p>
+   </dd>
+
+   <dt>A processing instruction token</dt>
+   <dd>
+    <p><span>Insert a processing instruction</span>.</p>
+   </dd>
+
+   <dt>A DOCTYPE token</dt>
+   <dd>
+    <p><span>Parse error</span>. Ignore the token.</p>
+   </dd>
+
+   <dt>A start tag whose tag name is "html"</dt>
+   <dd>
+    <p>Process the token <span>using the rules for</span> the "<span data-x="insertion mode: in
+    body">in body</span>" <span>insertion mode</span>.</p>
+   </dd>
+
+   <dt>A start tag whose tag name is "col"</dt>
+   <dd>
+    <p><span>Insert an HTML element</span> for the token. Immediately pop the <span>current
+    node</span> off the <span>stack of open elements</span>.</p>
+
+    <p><span data-x="acknowledge self-closing flag">Acknowledge the token's <i data-x="self-closing flag">self-closing
+    flag</i></span>, if it is set.</p>
+   </dd>
+
+   <dt>An end tag whose tag name is "colgroup"</dt>
+   <dd>
+    <p>If the <span>current node</span> is not a <code>colgroup</code> element, then this is a
+    <span>parse error</span>; ignore the token.</p> <!-- e.g. colgroup fragment case, or
+    <template><col></colgroup> -->
+
+    <p>Otherwise, pop the <span>current node</span> from the <span>stack of open elements</span>.
+    Switch the <span>insertion mode</span> to "<span data-x="insertion mode: in table">in
+    table</span>".</p>
+   </dd>
+
+   <dt>An end tag whose tag name is "col"</dt>
+   <dd>
+    <p><span>Parse error</span>. Ignore the token.</p>
+   </dd>
+
+   <dt>A start tag whose tag name is "template"</dt>
+   <dt>An end tag whose tag name is "template"</dt>
+   <dd>
+    <p>Process the token <span>using the rules for</span> the "<span data-x="insertion mode: in
+    head">in head</span>" <span>insertion mode</span>.</p>
+   </dd>
+
+   <dt>An end-of-file token</dt>
+   <dd>
+    <p>Process the token <span>using the rules for</span> the "<span data-x="insertion mode: in
+    body">in body</span>" <span>insertion mode</span>.</p>
+   </dd>
+
+   <dt>Anything else</dt>
+   <dd>
+    <!-- fake </colgroup> -->
+    <p>If the <span>current node</span> is not a <code>colgroup</code> element, then this is a
+    <span>parse error</span>; ignore the token.</p> <!-- e.g. colgroup fragment case, or
+    <template><col></colgroup> -->
+
+    <p>Otherwise, pop the <span>current node</span> from the <span>stack of open
+    elements</span>.</p>
+
+    <p>Switch the <span>insertion mode</span> to "<span data-x="insertion mode: in table">in
+    table</span>".</p>
+    <!-- end of fake </colgroup> -->
+
+    <p>Reprocess the token.</p>
+   </dd>
+  </dl>
+  </div>
+
+
+  <h6 id="parsing-main-intbody">The "<dfn data-x="insertion mode: in table body">in table body</dfn>" insertion mode</h6>
+
+  <div algorithm>
+  <p>When the user agent is to apply the rules for the "<span data-x="insertion mode: in table
+  body">in table body</span>" <span>insertion mode</span>, the user agent must handle the token as
+  follows:</p>
+
+  <dl class="switch">
+
+   <dt>A start tag whose tag name is "tr"</dt>
+   <dd>
+    <p><span>Clear the stack back to a table body context</span>. (See below.)</p>
+
+    <p><span>Insert an HTML element</span> for the token, then switch the <span>insertion
+    mode</span> to "<span data-x="insertion mode: in row">in row</span>".</p>
+   </dd>
+
+   <dt>A start tag whose tag name is one of: "th", "td"</dt>
+   <dd>
+    <p><span>Parse error</span>.</p>
+
+    <!-- fake </tr> -->
+    <p><span>Clear the stack back to a table body context</span>. (See below.)</p>
+
+    <p><span>Insert an HTML element</span> for a "tr" start tag token with no attributes, then
+    switch the <span>insertion mode</span> to "<span data-x="insertion mode: in row">in
+    row</span>".</p>
+    <!-- end of fake </tr> -->
+
+    <p>Reprocess the current token.</p>
+   </dd>
+
+   <dt>An end tag whose tag name is one of: "tbody", "tfoot",
+   "thead"</dt>
+   <dd>
+    <p>If the <span>stack of open elements</span> does not <span data-x="has an element in table
+    scope">have an element in table scope</span> that is an <span data-x="HTML elements">HTML
+    element</span> with the same tag name as the token, this is a <span>parse error</span>;
+    ignore the token.</p>
+
+    <p>Otherwise:</p>
+
+    <ol>
+     <li><p><span>Clear the stack back to a table body context</span>. (See below.)</p></li>
+
+     <li><p>Pop the <span>current node</span> from the <span>stack of open elements</span>. Switch the
+     <span>insertion mode</span> to "<span data-x="insertion mode: in table">in table</span>".</p></li>
+    </ol>
+   </dd>
+
+   <dt>A start tag whose tag name is one of: "caption", "col",
+   "colgroup", "tbody", "tfoot", "thead"</dt>
+   <dt>An end tag whose tag name is "table"</dt>
+   <dd>
+    <p>If the <span>stack of open elements</span> does not <span data-x="has an element in table
+    scope">have a <code>tbody</code>, <code>thead</code>, or <code>tfoot</code> element in table
+    scope</span>, this is a <span>parse error</span>; ignore the token.</p>
+
+    <p>Otherwise:</p>
+
+    <ol>
+     <li><p><span>Clear the stack back to a table body context</span>. (See below.)</p></li>
+
+     <!-- fake </tbody>, </tfoot>, or </thead>, whatever is the current node -->
+
+     <li><p>Pop the <span>current node</span> from the <span>stack of open elements</span>. Switch the
+     <span>insertion mode</span> to "<span data-x="insertion mode: in table">in table</span>".</p></li>
+
+     <!-- end of fake </tbody>, </tfoot>, or </thead>, whatever was the current node -->
+
+     <li><p>Reprocess the token.</p></li>
+    </ol>
+   </dd>
+
+   <dt>An end tag whose tag name is one of: "body", "caption", "col", "colgroup", "html", "td",
+   "th", "tr"</dt>
+   <dd>
+    <p><span>Parse error</span>. Ignore the token.</p>
+   </dd>
+
+   <dt>Anything else</dt>
+   <dd>
+    <p>Process the token <span>using the rules for</span> the "<span data-x="insertion mode: in
+    table">in table</span>" <span>insertion mode</span>.</p>
+   </dd>
+  </dl>
+  </div>
+
+  <div algorithm>
+  <p>When the steps above require the UA to <dfn>clear the stack back to a table body context</dfn>,
+  it means that the UA must, while the <span>current node</span> is not a <code>tbody</code>,
+  <code>tfoot</code>, <code>thead</code>, <code>template</code>, or <code>html</code> element, pop
+  elements from the <span>stack of open elements</span>.</p>
+  </div>
+
+  <p class="note">The <span>current node</span> being an <code>html</code> element after this
+  process is a <span>fragment case</span>.</p>
+
+
+  <h6 id="parsing-main-intr">The "<dfn data-x="insertion mode: in row">in row</dfn>" insertion mode</h6>
+
+  <div algorithm>
+  <p>When the user agent is to apply the rules for the "<span data-x="insertion mode: in row">in
+  row</span>" <span>insertion mode</span>, the user agent must handle the token as follows:</p>
+
+  <dl class="switch">
+
+   <dt>A start tag whose tag name is one of: "th", "td"</dt>
+   <dd>
+    <p><span>Clear the stack back to a table row context</span>. (See below.)</p>
+
+    <p><span>Insert an HTML element</span> for the token, then switch the <span>insertion
+    mode</span> to "<span data-x="insertion mode: in cell">in cell</span>".</p>
+
+    <p>Insert a <span data-x="concept-parser-marker">marker</span> at the end of the <span>list of
+    active formatting elements</span>.</p>
+   </dd>
+
+   <dt>An end tag whose tag name is "tr"</dt>
+   <dd>
+    <p>If the <span>stack of open elements</span> does not <span data-x="has an element in table
+    scope">have a <code>tr</code> element in table scope</span>, this is a <span>parse error</span>;
+    ignore the token.</p>
+
+    <p>Otherwise:</p>
+
+    <ol>
+     <li><p><span>Clear the stack back to a table row context</span>. (See below.)</p></li>
+
+     <li><p>Pop the <span>current node</span> (which will be a <code>tr</code> element) from the
+     <span>stack of open elements</span>. Switch the <span>insertion mode</span> to "<span
+     data-x="insertion mode: in table body">in table body</span>".</p></li>
+    </ol>
+   </dd>
+
+   <dt>A start tag whose tag name is one of: "caption", "col", "colgroup", "tbody", "tfoot",
+   "thead", "tr"</dt>
+   <dt>An end tag whose tag name is "table"</dt>
+   <dd>
+    <!-- fake <tr> -->
+    <p>If the <span>stack of open elements</span> does not <span data-x="has an element in table
+    scope">have a <code>tr</code> element in table scope</span>, this is a <span>parse error</span>;
+    ignore the token.</p>
+
+    <p>Otherwise:</p>
+
+    <ol>
+     <li><p><span>Clear the stack back to a table row context</span>. (See below.)</p></li>
+
+     <li><p>Pop the <span>current node</span> (which will be a <code>tr</code> element) from the
+     <span>stack of open elements</span>. Switch the <span>insertion mode</span> to "<span
+     data-x="insertion mode: in table body">in table body</span>".</p></li>
+     <!-- end of fake </tr> -->
+
+     <li><p>Reprocess the token.</p></li>
+    </ol>
+   </dd>
+
+   <dt>An end tag whose tag name is one of: "tbody", "tfoot", "thead"</dt>
+   <dd>
+    <p>If the <span>stack of open elements</span> does not <span data-x="has an element in table
+    scope">have an element in table scope</span> that is an <span data-x="HTML elements">HTML
+    element</span> with the same tag name as the token, this is a <span>parse error</span>;
+    ignore the token.</p>
+
+    <!-- fake <tr> -->
+    <p>If the <span>stack of open elements</span> does not <span data-x="has an element in table
+    scope">have a <code>tr</code> element in table scope</span>, ignore the token.</p>
+
+    <p>Otherwise:</p>
+
+    <ol>
+     <li><p><span>Clear the stack back to a table row context</span>. (See below.)</p></li>
+
+     <li><p>Pop the <span>current node</span> (which will be a <code>tr</code> element) from the
+     <span>stack of open elements</span>. Switch the <span>insertion mode</span> to "<span
+     data-x="insertion mode: in table body">in table body</span>".</p></li>
+     <!-- end of fake </tr> -->
+
+     <li><p>Reprocess the token.</p></li>
+    </ol>
+   </dd>
+
+   <dt>An end tag whose tag name is one of: "body", "caption", "col", "colgroup", "html", "td",
+   "th"</dt>
+   <dd>
+    <p><span>Parse error</span>. Ignore the token.</p>
+   </dd>
+
+   <dt>Anything else</dt>
+   <dd>
+    <p>Process the token <span>using the rules for</span> the "<span data-x="insertion mode: in
+    table">in table</span>" <span>insertion mode</span>.</p>
+   </dd>
+  </dl>
+  </div>
+
+  <div algorithm>
+  <p>When the steps above require the UA to <dfn>clear the stack back to a table row context</dfn>,
+  it means that the UA must, while the <span>current node</span> is not a <code>tr</code>,
+  <code>template</code>, or <code>html</code> element, pop elements from the <span>stack of open
+  elements</span>.</p>
+  </div>
+
+  <p class="note">The <span>current node</span> being an <code>html</code> element after this
+  process is a <span>fragment case</span>.</p>
+
+
+  <h6 id="parsing-main-intd">The "<dfn data-x="insertion mode: in cell">in cell</dfn>" insertion mode</h6>
+
+  <div algorithm>
+  <p>When the user agent is to apply the rules for the "<span data-x="insertion mode: in cell">in cell</span>" <span>insertion mode</span>, the user agent must handle the token as follows:</p>
+
+  <dl class="switch">
+
+   <dt>An end tag whose tag name is one of: "td", "th"</dt>
+   <dd>
+    <p>If the <span>stack of open elements</span> does not <span data-x="has an element in table
+    scope">have an element in table scope</span> that is an <span data-x="HTML elements">HTML
+    element</span> with the same tag name as that of the token, then this is a <span>parse
+    error</span>; ignore the token.</p>
+
+    <p>Otherwise:</p>
+
+    <ol>
+     <li><p><span>Generate implied end tags</span>.</p></li>
+
+     <li><p>Now, if the <span>current node</span> is not an <span data-x="HTML elements">HTML
+     element</span> with the same tag name as the token, then this is a <span>parse error</span>.</p></li>
+
+     <li><p>Pop elements from the <span>stack of open elements</span> until an <span data-x="HTML
+     elements">HTML element</span> with the same tag name as the token has been popped from the
+     stack.</p></li>
+
+     <li><p><span>Clear the list of active formatting elements up to the last marker</span>.</p></li>
+
+     <li><p>Switch the <span>insertion mode</span> to "<span data-x="insertion mode: in row">in
+     row</span>".</p></li> <!-- current node here will be a <tr> normally; but could be <html> in the
+     fragment case, or <template> in the template case -->
+    </ol>
+   </dd>
+
+   <dt>A start tag whose tag name is one of: "caption", "col",
+   "colgroup", "tbody", "td", "tfoot", "th", "thead", "tr"</dt>
+   <dd>
+    <p><span>Assert</span>: the <span>stack of open elements</span> <span data-x="has an element in
+    table scope">has a <code>td</code> or <code>th</code> element in table scope</span>.</p>
+    <!-- Because "in row" only switches to "in cell" if a td or th element is on the stack
+    and the rules for resetting the insertion mode only yield "in cell" if last is false
+    (i.e. not if node is the fragment context). -->
+
+    <p><span>Close the cell</span> (see below) and reprocess the token.</p>
+   </dd>
+
+   <dt>An end tag whose tag name is one of: "body", "caption",
+   "col", "colgroup", "html"</dt>
+   <dd>
+    <p><span>Parse error</span>. Ignore the token.</p>
+   </dd>
+
+   <dt>An end tag whose tag name is one of: "table", "tbody",
+   "tfoot", "thead", "tr"</dt>
+   <dd>
+    <p>If the <span>stack of open elements</span> does not <span data-x="has an element in table
+    scope">have an element in table scope</span> that is an <span data-x="HTML elements">HTML
+    element</span> with the same tag name as that of the token, then this is a <span>parse
+    error</span>; ignore the token.</p>
+
+    <p>Otherwise, <span>close the cell</span> (see below) and reprocess the token.</p>
+   </dd>
+
+   <dt>Anything else</dt>
+   <dd>
+    <p>Process the token <span>using the rules for</span> the "<span data-x="insertion mode: in
+    body">in body</span>" <span>insertion mode</span>.</p>
+   </dd>
+  </dl>
+  </div>
+
+  <div algorithm>
+  <p>Where the steps above say to <dfn>close the cell</dfn>, they mean to run the following
+  algorithm:</p>
+
+  <ol>
+   <!-- fake </td> or </th> -->
+   <li><p><span>Generate implied end tags</span>.</p></li>
+
+   <li><p>If the <span>current node</span> is not now a <code>td</code> element or a <code>th</code>
+   element, then this is a <span>parse error</span>.</p></li>
+
+   <li><p>Pop elements from the <span>stack of open elements</span> until a <code>td</code>
+   element or a <code>th</code> element has been popped from the stack.</p></li>
+
+   <li><p><span>Clear the list of active formatting elements up to the last marker</span>.</p></li>
+
+   <li><p>Switch the <span>insertion mode</span> to "<span data-x="insertion mode: in row">in
+   row</span>".</p></li> <!-- current node here will be a <tr> normally; but could be <html> in the
+   fragment case, or <template> in the template case -->
+   <!-- end of fake </td> or </th> -->
+  </ol>
+  </div>
+
+  <p class="note">The <span>stack of open elements</span> cannot have both a <code>td</code> and a
+  <code>th</code> element <span data-x="has an element in table scope">in table scope</span> at the
+  same time, nor can it have neither when the <span>close the cell</span> algorithm is invoked.</p>
+
+
+  <h6 id="parsing-main-intemplate">The "<dfn data-x="insertion mode: in template">in template</dfn>" insertion mode</h6>
+
+  <div algorithm>
+  <p>When the user agent is to apply the rules for the "<span data-x="insertion mode: in template">in
+  template</span>" <span>insertion mode</span>, the user agent must handle the token as follows:</p>
+
+  <dl class="switch">
+
+   <!-- first, tokens we always ignore: -->
+
+   <!-- html: ignored in "in body" mode if there's a <template> on the stack -->
+   <!-- head: ignored in "in body" mode always -->
+   <!-- body: ignored in "in body" mode if there's a <template> on the stack -->
+   <!-- frameset: ignored in "in body" mode if frameset-ok is set to not-ok, which <template> sets it to -->
+
+
+   <!-- second, tokens that are ambiguous (allowed in multiple modes), let's just handle them in a generic way and not pick a mode: -->
+
+   <dt>A character token</dt>
+   <dt>A comment token</dt>
+   <dt>A processing instruction token</dt>
+   <dt>A DOCTYPE token</dt>
+   <dd>
+    <p>Process the token <span>using the rules for</span> the "<span data-x="insertion mode: in
+    body">in body</span>" <span>insertion mode</span>.</p>
+   </dd>
+
+   <dt>A start tag whose tag name is one of: "base", "basefont", "bgsound", "link", "meta", "noframes", "script", "style", "template", "title"</dt>
+   <dt>An end tag whose tag name is "template"</dt>
+   <dd>
+    <p>Process the token <span>using the rules for</span> the "<span data-x="insertion mode: in
+    head">in head</span>" <span>insertion mode</span>.</p>
+   </dd>
+
+   <!-- now, tokens that imply certain modes -->
+
+   <dt>A start tag whose tag name is one of: "caption", "colgroup", "tbody", "tfoot", "thead"</dt>
+   <dd>
+    <p>Pop the <span>current template insertion mode</span> off the <span>stack of template
+    insertion modes</span>.</p>
+
+    <p>Push "<span data-x="insertion mode: in table">in table</span>" onto the <span>stack of
+    template insertion modes</span> so that it is the new <span>current template insertion
+    mode</span>.</p>
+
+    <p>Switch the <span>insertion mode</span> to "<span data-x="insertion mode: in table">in
+    table</span>", and reprocess the token.</p>
+   </dd>
+
+   <dt>A start tag whose tag name is "col"</dt>
+   <dd>
+    <p>Pop the <span>current template insertion mode</span> off the <span>stack of template
+    insertion modes</span>.</p>
+
+    <p>Push "<span data-x="insertion mode: in column group">in column group</span>" onto the
+    <span>stack of template insertion modes</span> so that it is the new <span>current template
+    insertion mode</span>.</p>
+
+    <p>Switch the <span>insertion mode</span> to "<span data-x="insertion mode: in column group">in
+    column group</span>", and reprocess the token.</p>
+   </dd>
+
+   <dt>A start tag whose tag name is "tr"</dt>
+   <dd>
+    <p>Pop the <span>current template insertion mode</span> off the <span>stack of template
+    insertion modes</span>.</p>
+
+    <p>Push "<span data-x="insertion mode: in table body">in table body</span>" onto the <span>stack
+    of template insertion modes</span> so that it is the new <span>current template insertion
+    mode</span>.</p>
+
+    <p>Switch the <span>insertion mode</span> to "<span data-x="insertion mode: in table body">in
+    table body</span>", and reprocess the token.</p>
+   </dd>
+
+   <dt>A start tag whose tag name is one of: "td", "th"</dt>
+   <dd>
+    <p>Pop the <span>current template insertion mode</span> off the <span>stack of template
+    insertion modes</span>.</p>
+
+    <p>Push "<span data-x="insertion mode: in row">in row</span>" onto the <span>stack of template
+    insertion modes</span> so that it is the new <span>current template insertion mode</span>.</p>
+
+    <p>Switch the <span>insertion mode</span> to "<span data-x="insertion mode: in row">in
+    row</span>", and reprocess the token.</p>
+   </dd>
+
+   <!-- default to in-body mode -->
+
+   <dt>Any other start tag</dt>
+   <dd>
+    <p>Pop the <span>current template insertion mode</span> off the <span>stack of template
+    insertion modes</span>.</p>
+
+    <p>Push "<span data-x="insertion mode: in body">in body</span>" onto the <span>stack of template
+    insertion modes</span> so that it is the new <span>current template insertion mode</span>.</p>
+
+    <p>Switch the <span>insertion mode</span> to "<span data-x="insertion mode: in body">in
+    body</span>", and reprocess the token.</p>
+   </dd>
+
+   <dt>Any other end tag</dt>
+   <dd>
+    <p><span>Parse error</span>. Ignore the token.</p>
+   </dd>
+
+   <!-- EOF -->
+
+
+   <dt>An end-of-file token</dt>
+   <dd>
+    <p>If there is no <code>template</code> element on the <span>stack of open elements</span>, then
+    <span>stop parsing</span>. (<span>fragment case</span>)</p>
+
+    <p>Otherwise, this is a <span>parse error</span>.</p>
+
+    <!-- fake </template> -->
+    <p>Pop elements from the <span>stack of open elements</span> until a <code>template</code>
+    element has been popped from the stack.</p>
+
+    <p><span>Clear the list of active formatting elements up to the last marker</span>.</p>
+
+    <p>Pop the <span>current template insertion mode</span> off the <span>stack of template
+    insertion modes</span>.</p>
+
+    <p><span>Reset the insertion mode appropriately</span>.</p>
+    <!-- end of fake </template> -->
+
+    <p>Reprocess the token.</p>
+   </dd>
+  </dl>
+  </div>
+
+
+  <h6 id="parsing-main-afterbody">The "<dfn data-x="insertion mode: after body">after body</dfn>" insertion mode</h6>
+
+  <div algorithm>
+  <p>When the user agent is to apply the rules for the "<span data-x="insertion mode: after body">after body</span>" <span>insertion mode</span>, the user agent must handle the token as follows:</p>
+
+  <dl class="switch">
+
+   <dt>A character token that is one of U+0009 CHARACTER TABULATION, U+000A LINE FEED (LF), U+000C
+   FORM FEED (FF), U+000D CARRIAGE RETURN (CR), or U+0020 SPACE</dt>
+   <dd>
+    <p>Process the token <span>using the rules for</span> the "<span data-x="insertion mode: in
+    body">in body</span>" <span>insertion mode</span>.</p>
+   </dd>
+
+   <dt>A comment token</dt>
+   <dd>
+    <p><span>Insert a comment</span> given (the first element in the <span>stack of open
+    elements</span> (the <code>html</code> element), null).</p>
+   </dd>
+
+   <dt>A processing instruction token</dt>
+   <dd>
+    <p><span>Insert a processing instruction</span> given (the first element in the <span>stack of
+    open elements</span> (the <code>html</code> element), null).</p>
+   </dd>
+
+   <dt>A DOCTYPE token</dt>
+   <dd>
+    <p><span>Parse error</span>. Ignore the token.</p>
+   </dd>
+
+   <dt>A start tag whose tag name is "html"</dt>
+   <dd>
+    <p>Process the token <span>using the rules for</span> the "<span data-x="insertion mode: in
+    body">in body</span>" <span>insertion mode</span>.</p>
+   </dd>
+
+   <dt>An end tag whose tag name is "html"</dt>
+   <dd>
+    <p>If the parser's <span>fragment context element</span> is non-null, this is a <span>parse
+    error</span>; ignore the token. (<span>fragment case</span>)</p>
+
+    <p>Otherwise, switch the <span>insertion mode</span> to "<span data-x="insertion mode: after
+    after body">after after body</span>".</p>
+   </dd>
+
+   <dt>An end-of-file token</dt>
+   <dd>
+    <p><span>Stop parsing</span>.</p>
+   </dd>
+
+   <dt>Anything else</dt>
+   <dd>
+    <p><span>Parse error</span>. Switch the <span>insertion mode</span> to "<span data-x="insertion
+    mode: in body">in body</span>" and reprocess the token.</p>
+   </dd>
+  </dl>
+  </div>
+
+
+  <h6 id="parsing-main-inframeset">The "<dfn data-x="insertion mode: in frameset">in frameset</dfn>" insertion mode</h6>
+
+  <div algorithm>
+  <p>When the user agent is to apply the rules for the "<span data-x="insertion mode: in frameset">in
+  frameset</span>" <span>insertion mode</span>, the user agent must handle the token as follows:</p>
+
+  <dl class="switch">
+
+   <dt>A character token that is one of U+0009 CHARACTER TABULATION, U+000A LINE FEED (LF), U+000C
+   FORM FEED (FF), U+000D CARRIAGE RETURN (CR), or U+0020 SPACE</dt>
+   <dd>
+    <p><span data-x="insert a character">Insert the character</span>.</p>
+   </dd>
+
+   <dt>A comment token</dt>
+   <dd>
+    <p><span>Insert a comment</span>.</p>
+   </dd>
+
+   <dt>A processing instruction token</dt>
+   <dd>
+    <p><span>Insert a processing instruction</span>.</p>
+   </dd>
+
+   <dt>A DOCTYPE token</dt>
+   <dd>
+    <p><span>Parse error</span>. Ignore the token.</p>
+   </dd>
+
+   <dt>A start tag whose tag name is "html"</dt>
+   <dd>
+    <p>Process the token <span>using the rules for</span> the "<span data-x="insertion mode: in
+    body">in body</span>" <span>insertion mode</span>.</p>
+   </dd>
+
+   <dt>A start tag whose tag name is "frameset"</dt>
+   <dd>
+    <p><span>Insert an HTML element</span> for the token.</p>
+   </dd>
+
+   <dt>An end tag whose tag name is "frameset"</dt>
+   <dd>
+    <p>If the <span>current node</span> is the root <code>html</code> element, then this is a
+    <span>parse error</span>; ignore the token. (<span>fragment case</span>)</p>
+
+    <p>Otherwise, pop the <span>current node</span> from the <span>stack of open
+    elements</span>.</p>
+
+    <p>If the parser's <span>fragment context element</span> is null and the <span>current
+    node</span> is no longer a <code>frameset</code> element, then switch the <span>insertion
+    mode</span> to "<span data-x="insertion mode: after frameset">after frameset</span>".</p>
+   </dd>
+
+   <dt>A start tag whose tag name is "frame"</dt>
+   <dd>
+    <p><span>Insert an HTML element</span> for the token. Immediately pop the <span>current
+    node</span> off the <span>stack of open elements</span>.</p>
+
+    <p><span data-x="acknowledge self-closing flag">Acknowledge the token's <i data-x="self-closing flag">self-closing
+    flag</i></span>, if it is set.</p>
+   </dd>
+
+   <dt>A start tag whose tag name is "noframes"</dt>
+   <dd>
+    <p>Process the token <span>using the rules for</span> the "<span data-x="insertion mode: in
+    head">in head</span>" <span>insertion mode</span>.</p>
+   </dd>
+
+   <dt>An end-of-file token</dt>
+   <dd>
+    <p>If the <span>current node</span> is not the root <code>html</code> element, then this is a
+    <span>parse error</span>.</p>
+
+    <p class="note">The <span>current node</span> can only be the root
+    <code>html</code> element in the <span>fragment case</span>.</p>
+
+    <p><span>Stop parsing</span>.</p>
+   </dd>
+
+   <dt>Anything else</dt>
+   <dd>
+    <p><span>Parse error</span>. Ignore the token.</p>
+   </dd>
+  </dl>
+  </div>
+
+
+  <h6 id="parsing-main-afterframeset">The "<dfn data-x="insertion mode: after frameset">after frameset</dfn>" insertion mode</h6>
+
+  <div algorithm>
+  <p>When the user agent is to apply the rules for the "<span data-x="insertion mode: after
+  frameset">after frameset</span>" <span>insertion mode</span>, the user agent must handle the token
+  as follows:</p>
+
+  <!-- due to rules in the "in frameset" mode, this can't be entered in the fragment case -->
+  <dl class="switch">
+
+   <dt>A character token that is one of U+0009 CHARACTER TABULATION, U+000A LINE FEED (LF), U+000C
+   FORM FEED (FF), U+000D CARRIAGE RETURN (CR), or U+0020 SPACE</dt>
+   <dd>
+    <p><span data-x="insert a character">Insert the character</span>.</p>
+   </dd>
+
+   <dt>A comment token</dt>
+   <dd>
+    <p><span>Insert a comment</span>.</p>
+   </dd>
+
+   <dt>A processing instruction token</dt>
+   <dd>
+    <p><span>Insert a processing instruction</span>.</p>
+   </dd>
+
+   <dt>A DOCTYPE token</dt>
+   <dd>
+    <p><span>Parse error</span>. Ignore the token.</p>
+   </dd>
+
+   <dt>A start tag whose tag name is "html"</dt>
+   <dd>
+    <p>Process the token <span>using the rules for</span> the "<span data-x="insertion mode: in
+    body">in body</span>" <span>insertion mode</span>.</p>
+   </dd>
+
+   <dt>An end tag whose tag name is "html"</dt>
+   <dd>
+    <p>Switch the <span>insertion mode</span> to "<span data-x="insertion mode: after after
+    frameset">after after frameset</span>".</p>
+   </dd>
+
+   <dt>A start tag whose tag name is "noframes"</dt>
+   <dd>
+    <p>Process the token <span>using the rules for</span> the "<span data-x="insertion mode: in
+    head">in head</span>" <span>insertion mode</span>.</p>
+   </dd>
+
+   <dt>An end-of-file token</dt>
+   <dd>
+    <p><span>Stop parsing</span>.</p>
+   </dd>
+
+   <dt>Anything else</dt>
+   <dd>
+    <p><span>Parse error</span>. Ignore the token.</p>
+   </dd>
+  </dl>
+  </div>
+
+
+  <h6>The "<dfn data-x="insertion mode: after after body">after after body</dfn>" insertion mode</h6>
+
+  <div algorithm>
+  <p>When the user agent is to apply the rules for the "<span data-x="insertion mode: after after
+  body">after after body</span>" <span>insertion mode</span>, the user agent must handle the token
+  as follows:</p>
+
+  <dl class="switch">
+
+   <dt>A comment token</dt>
+   <dd>
+    <p><span>Insert a comment</span> given (the <code>Document</code> object, null).</p>
+   </dd>
+
+   <dt>A processing instruction token</dt>
+   <dd>
+    <p><span>Insert a processing instruction</span> given (the <code>Document</code> object,
+    null).</p>
+   </dd>
+
+   <dt>A DOCTYPE token</dt>
+   <dt>A character token that is one of U+0009 CHARACTER TABULATION, U+000A LINE FEED (LF), U+000C
+   FORM FEED (FF), U+000D CARRIAGE RETURN (CR), or U+0020 SPACE</dt>
+   <dt>A start tag whose tag name is "html"</dt>
+   <dd>
+    <p>Process the token <span>using the rules for</span> the "<span data-x="insertion mode: in
+    body">in body</span>" <span>insertion mode</span>.</p>
+   </dd>
+
+   <dt>An end-of-file token</dt>
+   <dd>
+    <p><span>Stop parsing</span>.</p>
+   </dd>
+
+   <dt>Anything else</dt>
+   <dd>
+    <p><span>Parse error</span>. Switch the <span>insertion mode</span> to "<span data-x="insertion
+    mode: in body">in body</span>" and reprocess the token.</p>
+   </dd>
+  </dl>
+  </div>
+
+
+  <h6>The "<dfn data-x="insertion mode: after after frameset">after after frameset</dfn>" insertion mode</h6>
+
+  <div algorithm>
+  <p>When the user agent is to apply the rules for the "<span data-x="insertion mode: after after
+  frameset">after after frameset</span>" <span>insertion mode</span>, the user agent must handle the
+  token as follows:</p>
+
+  <dl class="switch">
+
+   <dt>A comment token</dt>
+   <dd>
+    <p><span>Insert a comment</span> given (the <code>Document</code> object, null).</p>
+   </dd>
+
+   <dt>A processing instruction token</dt>
+   <dd>
+    <p><span>Insert a processing instruction</span> given (the <code>Document</code> object,
+    null).</p>
+   </dd>
+
+   <dt>A DOCTYPE token</dt>
+   <dt>A character token that is one of U+0009 CHARACTER TABULATION, U+000A LINE FEED (LF), U+000C
+   FORM FEED (FF), U+000D CARRIAGE RETURN (CR), or U+0020 SPACE</dt>
+   <dt>A start tag whose tag name is "html"</dt>
+   <dd>
+    <p>Process the token <span>using the rules for</span> the "<span data-x="insertion mode: in
+    body">in body</span>" <span>insertion mode</span>.</p>
+   </dd>
+
+   <dt>An end-of-file token</dt>
+   <dd>
+    <p><span>Stop parsing</span>.</p>
+   </dd>
+
+   <dt>A start tag whose tag name is "noframes"</dt>
+   <dd>
+    <p>Process the token <span>using the rules for</span> the "<span data-x="insertion mode: in
+    head">in head</span>" <span>insertion mode</span>.</p>
+   </dd>
+
+   <dt>Anything else</dt>
+   <dd>
+    <p><span>Parse error</span>. Ignore the token.</p>
+   </dd>
+  </dl>
+  </div>
+
+
+
+  <h5 id="parsing-main-inforeign">The rules for parsing tokens <dfn data-x="insertion mode: in foreign content">in foreign content</dfn></h5>
+
+  <div algorithm>
+  <p>When the user agent is to apply the rules for parsing tokens in foreign content, the user agent
+  must handle the token as follows:</p>
+
+  <dl class="switch">
+
+   <dt>A character token that is U+0000 NULL</dt>
+   <dd>
+    <p><span>Parse error</span>. <span data-x="insert a character">Insert a U+FFFD REPLACEMENT
+    CHARACTER character</span>.</p>
+   </dd>
+
+   <dt>A character token that is one of U+0009 CHARACTER TABULATION, U+000A LINE FEED (LF), U+000C
+   FORM FEED (FF), U+000D CARRIAGE RETURN (CR), or U+0020 SPACE</dt>
+   <dd>
+    <p><span data-x="insert a character">Insert the token's character</span>.</p>
+   </dd>
+
+   <dt>Any other character token</dt>
+   <dd>
+    <p><span data-x="insert a character">Insert the token's character</span>.</p>
+
+    <p>Set the <span>frameset-ok flag</span> to "not ok".</p>
+   </dd>
+
+   <dt>A comment token</dt>
+   <dd>
+    <p><span>Insert a comment</span>.</p>
+   </dd>
+
+   <dt>A processing instruction token</dt>
+   <dd>
+    <p><span>Insert a processing instruction</span>.</p>
+   </dd>
+
+   <dt>A DOCTYPE token</dt>
+   <dd>
+    <p><span>Parse error</span>. Ignore the token.</p>
+   </dd>
+
+   <dt>A start tag whose tag name is one of: <!--"a",--> "b", "big", "blockquote", "body"<!--by
+   inspection-->, "br", "center", "code", "dd", "div", "dl", "dt"<!-- so that dd and dt can be
+   handled uniformly throughout the parser -->, "em", "embed", "h1", "h2", "h3", "h4"<!--for
+   completeness-->, "h5", "h6"<!--for completeness-->, "head"<!--by inspection-->, "hr", "i", "img",
+   "li", "listing"<!-- so that pre and listing can be handled uniformly throughout the parser -->,
+   "menu", "meta", "nobr", "ol"<!-- so that dl, ul, and ol can be handled uniformly throughout the
+   parser -->, "p", "pre", "ruby", "s", <!--"script",--> "small", "span", "strong", "strike"<!-- so
+   that s and strike can be handled uniformly throughout the parser -->, <!--"style",--> "sub",
+   "sup", "table"<!--by inspection-->, "tt", "u", "ul", "var"</dt> <!-- this list was determined
+   empirically by studying over 6,000,000,000 pages that were specifically not XML pages -->
+   <dt>A start tag whose tag name is "font", if the token has any attributes named "color", "face",
+   or "size"</dt> <!-- the attributes here are required so that SVG <font> will go through as SVG
+   but legacy <font>s won't -->
+   <dt>An end tag whose tag name is "br", "p"</dt>
+
+   <dd>
+    <p><span>Parse error</span>.</p>
+
+    <p>While the <span>current node</span> is not a <span>MathML text integration point</span>, an
+    <span>HTML integration point</span>, or an element in the <span>HTML namespace</span>, pop
+    elements from the <span>stack of open elements</span>.</p>
+
+    <p>Reprocess the token according to the rules given in the section corresponding to the current
+    <span>insertion mode</span> in HTML content.</p>
+   </dd>
+
+   <dt>Any other start tag</dt>
+   <dd>
+    <p>If the <span>adjusted current node</span> is an element in the <span>MathML namespace</span>,
+    <span>adjust MathML attributes</span> for the token. (This fixes the case of MathML attributes
+    that are not all lowercase.)</p>
+
+    <p>If the <span>adjusted current node</span> is an element in the <span>SVG namespace</span>, and the
+    token's tag name is one of the ones in the first column of the following table, change the tag
+    name to the name given in the corresponding cell in the second column. (This fixes the case of
+    SVG elements that are not all lowercase.)</p>
+
+    <table>
+     <thead>
+      <tr> <th> Tag name <th> Element name
+     <tbody>
+      <tr> <td> <code data-x="">altglyph</code> <td> <code data-x="">altGlyph</code>
+      <tr> <td> <code data-x="">altglyphdef</code> <td> <code data-x="">altGlyphDef</code>
+      <tr> <td> <code data-x="">altglyphitem</code> <td> <code data-x="">altGlyphItem</code>
+      <tr> <td> <code data-x="">animatecolor</code> <td> <code data-x="">animateColor</code>
+      <tr> <td> <code data-x="">animatemotion</code> <td> <code data-x="">animateMotion</code>
+      <tr> <td> <code data-x="">animatetransform</code> <td> <code data-x="">animateTransform</code>
+      <tr> <td> <code data-x="">clippath</code> <td> <code data-x="">clipPath</code>
+      <tr> <td> <code data-x="">feblend</code> <td> <code data-x="">feBlend</code>
+      <tr> <td> <code data-x="">fecolormatrix</code> <td> <code data-x="">feColorMatrix</code>
+      <tr> <td> <code data-x="">fecomponenttransfer</code> <td> <code data-x="">feComponentTransfer</code>
+      <tr> <td> <code data-x="">fecomposite</code> <td> <code data-x="">feComposite</code>
+      <tr> <td> <code data-x="">feconvolvematrix</code> <td> <code data-x="">feConvolveMatrix</code>
+      <tr> <td> <code data-x="">fediffuselighting</code> <td> <code data-x="">feDiffuseLighting</code>
+      <tr> <td> <code data-x="">fedisplacementmap</code> <td> <code data-x="">feDisplacementMap</code>
+      <tr> <td> <code data-x="">fedistantlight</code> <td> <code data-x="">feDistantLight</code>
+      <tr> <td> <code data-x="">fedropshadow</code> <td> <code data-x="">feDropShadow</code>
+      <tr> <td> <code data-x="">feflood</code> <td> <code data-x="">feFlood</code>
+      <tr> <td> <code data-x="">fefunca</code> <td> <code data-x="">feFuncA</code>
+      <tr> <td> <code data-x="">fefuncb</code> <td> <code data-x="">feFuncB</code>
+      <tr> <td> <code data-x="">fefuncg</code> <td> <code data-x="">feFuncG</code>
+      <tr> <td> <code data-x="">fefuncr</code> <td> <code data-x="">feFuncR</code>
+      <tr> <td> <code data-x="">fegaussianblur</code> <td> <code data-x="">feGaussianBlur</code>
+      <tr> <td> <code data-x="">feimage</code> <td> <code data-x="">feImage</code>
+      <tr> <td> <code data-x="">femerge</code> <td> <code data-x="">feMerge</code>
+      <tr> <td> <code data-x="">femergenode</code> <td> <code data-x="">feMergeNode</code>
+      <tr> <td> <code data-x="">femorphology</code> <td> <code data-x="">feMorphology</code>
+      <tr> <td> <code data-x="">feoffset</code> <td> <code data-x="">feOffset</code>
+      <tr> <td> <code data-x="">fepointlight</code> <td> <code data-x="">fePointLight</code>
+      <tr> <td> <code data-x="">fespecularlighting</code> <td> <code data-x="">feSpecularLighting</code>
+      <tr> <td> <code data-x="">fespotlight</code> <td> <code data-x="">feSpotLight</code>
+      <tr> <td> <code data-x="">fetile</code> <td> <code data-x="">feTile</code>
+      <tr> <td> <code data-x="">feturbulence</code> <td> <code data-x="">feTurbulence</code>
+      <tr> <td> <code data-x="">foreignobject</code> <td> <code data-x="">foreignObject</code>
+      <tr> <td> <code data-x="">glyphref</code> <td> <code data-x="">glyphRef</code>
+      <tr> <td> <code data-x="">lineargradient</code> <td> <code data-x="">linearGradient</code>
+      <tr> <td> <code data-x="">radialgradient</code> <td> <code data-x="">radialGradient</code>
+      <!--<tr> <td> <code data-x="">solidcolor</code> <td> <code data-x="">solidColor</code> (SVG 1.2)-->
+      <tr> <td> <code data-x="">textpath</code> <td> <code data-x="">textPath</code>
+    </table>
+
+    <p>If the <span>adjusted current node</span> is an element in the <span>SVG namespace</span>,
+    <span>adjust SVG attributes</span> for the token. (This fixes the case of SVG attributes that
+    are not all lowercase.)</p>
+
+    <p><span>Adjust foreign attributes</span> for the token. (This fixes the use of namespaced
+    attributes, in particular XLink in SVG.)</p>
+
+    <p><span>Insert a foreign element</span> for the token, with the <span>adjusted current
+    node</span>'s namespace and false.</p>
+
+    <p>If the token has its <i data-x="self-closing flag">self-closing flag</i> set, then run the appropriate steps from the
+    following list:</p>
+
+    <dl class="switch">
+
+     <dt>If the token's tag name is "script", and the new <span>current node</span> is in the <span>SVG namespace</span></dt>
+
+     <dd>
+      <p><span data-x="acknowledge self-closing flag">Acknowledge the token's <i data-x="self-closing flag">self-closing
+      flag</i></span>, and then act as described in the steps for a "script" end tag below.</p>
+     </dd>
+
+     <dt>Otherwise</dt>
+
+     <dd>
+      <p>Pop the <span>current node</span> off the <span>stack of open elements</span> and <span
+      data-x="acknowledge self-closing flag">acknowledge the token's <i data-x="self-closing flag">self-closing
+      flag</i></span>.</p>
+     </dd>
+    </dl>
+   </dd>
+

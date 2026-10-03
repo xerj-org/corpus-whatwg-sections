@@ -1,0 +1,154 @@
+WHATWG HTML — section _preamble — Front matter before the first section heading (+table-of-contents) (+contents)
+
+<!-- -*- mode: Text; fill-column: 100 -*- vim: set textwidth=100 :
+ !   EDITOR NOTES
+ !
+ !   Adding a new element involves editing the following sections:
+ !    - section for the element itself
+ !    - descriptions of the element's categories
+ !    - images/content-venn.svg
+ !    - sanitizer categories
+ !    - syntax, if it's void or otherwise special
+ !    - parser, if it's not phrasing-level
+ !    - rendering
+ !    - obsolete section
+ !    - element, attribute, content model, and interface indices
+ !
+ !   Adding a new attribute involves editing the following sections:
+ !    - The IDL and content attributes for the relevant elements
+ !    - element and attribute indices
+ !    - sanitizer categories
+ !-->
+
+<!--
+ ! https://lists.w3.org/Archives/Public/www-archive/2014Apr/0034.html
+ !-->
+
+<!DOCTYPE html> <!-- Note: This file is NOT HTML, it's a proprietary language that is then post-processed into HTML. -->
+<html lang="en-US-x-hixie">
+ <head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <title w-nodev>HTML Standard</title>
+  <title w-dev>HTML Standard, Edition for Web Developers</title>
+  <meta name="theme-color" content="#3c790a">
+  <meta name="color-scheme" content="light dark">
+  <link w-noreview rel="stylesheet" crossorigin href="https://resources.whatwg.org/standard-shared-with-dev.css">
+  <link w-nodev w-noreview crossorigin rel="stylesheet" href="https://resources.whatwg.org/standard.css">
+  <link w-nodev crossorigin rel="stylesheet" href="https://resources.whatwg.org/spec.css">
+  <link w-nohtml w-nodev w-nosnap rel="stylesheet" crossorigin href="https://resources.whatwg.org/review-draft.css">
+  <link w-nosnap w-noreview rel="icon" crossorigin href="https://resources.whatwg.org/logo.svg">
+  <link w-nohtml w-nodev rel="icon" crossorigin href="https://resources.whatwg.org/logo-snapshot.svg">
+  <link w-dev rel="stylesheet" crossorigin href="/dev/styles.css">
+  <link w-nodev rel="stylesheet" crossorigin href="https://html.spec.whatwg.org/styles.css">
+  <script>
+   function toggleStatus(div) {
+     div.parentNode.classList.toggle('wrapped');
+   }
+   function setLinkFragment(link) {
+     link.hash = location.hash;
+   }
+  </script>
+  <script w-nosplit w-nodev w-nosnap w-noreview type="text/required-ids">
+   dom-document-cookie
+   form-submission
+   origin
+   same-site
+   toc-workers
+   web-messaging
+   webstorage
+  </script>
+ </head>
+ <body>
+  <script w-dev src="/dev/search.js" async></script>
+  <!-- PR Preview special cases /html-dfn.js. -->
+  <script w-nodev w-noreview crossorigin src="/html-dfn.js" defer></script>
+  <script w-nodev w-noreview crossorigin src="https://html.spec.whatwg.org/var-click-highlighting.js" defer></script>
+  <script w-nodev w-noreview w-nosplit crossorigin src="https://resources.whatwg.org/commit-snapshot-shortcut-key.js" defer></script>
+  <header class="head with-buttons" id="head">
+   <a href="https://whatwg.org/" class="logo"><img crossorigin width="100" height="100" alt="WHATWG" src="https://resources.whatwg.org/logo.svg" class="darkmode-aware"></a>
+   <hgroup w-nodev>
+    <h1 class="allcaps">HTML</h1>
+    <p w-nosnap w-noreview id="living-standard">Living Standard &mdash; Last Updated <span class="pubdate">[DATE: 01 Jan 1901]</span></p>
+    <p w-nohtml w-noreview id="living-standard">Commit Snapshot &mdash; Last Updated <span class="pubdate">[DATE: 01 Jan 1901]</span></p>
+    <p w-nohtml w-nosnap id="living-standard">Review Draft &mdash; Published <span class="pubdate">[DATE: 01 Jan 1901]</span></p>
+   </hgroup>
+   <hgroup w-dev>
+    <h1><a href="/dev/" rel=home>HTML: The Living Standard</a></h1>
+    <p id="dev-edition-h2">Edition for Web Developers &mdash; Last Updated <span class="pubdate">[DATE: 01 Jan 1901]</span></p>
+   </hgroup>
+   <nav w-nosplit w-nodev w-noreview>
+    <!-- Note: be sure to keep an even number of <a>s, for small screens where they appear in two columns. -->
+    <div>
+     <a w-nohtml href="/" id="commit-snapshot-link" title="You can also press the 'y' key"><span data-x=""><strong>One-Page Version</strong> <code data-x="">html.spec.whatwg.org</code></span></a>
+     <a w-nosnap href="/"><span data-x=""><strong>One-Page Version</strong> <code data-x="">html.spec.whatwg.org</code></span></a>
+     <a href="/multipage/" id="multipage-link" onclick="setLinkFragment(this);"><span data-x=""><strong>Multipage Version</strong> <code data-x="">/multipage</code></span></a>
+     <a href="/dev/" onclick="setLinkFragment(this);"><span data-x=""><strong>Version for Web Devs</strong> <code data-x="">/dev</code></span></a>
+     <a href="/print.pdf"><span data-x=""><strong>PDF Version</strong> <code data-x="">/print.pdf</code></span></a>
+     <a href="https://github.com/whatwg/html/wiki/Translations"><span data-x=""><strong>Translations</strong> <code data-x="">日本語 • 简体中文</code></span></a>
+    </div>
+    <div>
+     <a class="misc" href="https://github.com/whatwg/html/blob/main/FAQ.md"><span data-x=""><strong>FAQ</strong> <code data-x="">on GitHub</code></span></a>
+     <a class="comms" href="https://whatwg.org/chat"><span data-x=""><strong>Chat</strong> <code data-x="">on Matrix</code></span></a>
+    </div>
+    <div>
+     <a class="changes" href="https://github.com/whatwg/html"><span data-x=""><strong>Contribute on GitHub</strong> <code data-x="">whatwg/html repository</code></span></a>
+     <a class="changes" href="https://github.com/whatwg/html/commits"><span data-x=""><strong>Commits</strong> <code data-x="">on GitHub</code></span></a>
+     <a w-nosnap class="changes" href="/commit-snapshots/[SHA]" id="commit-snapshot-link" title="You can also press the 'y' key"><span data-x=""><strong>Snapshot</strong> <code data-x="">as of this commit</code></span></a>
+    </div>
+    <div>
+     <a class="feedback" href="https://github.com/whatwg/html/issues"><span data-x=""><strong>Open Issues</strong> <code data-x="">filed on GitHub</code></span></a>
+     <a class="feedback" href="https://whatwg.org/newbug"><span data-x=""><strong>Open an Issue</strong> <code data-x="">whatwg.org/newbug</code></span></a>
+     <a class="feedback" href="https://github.com/web-platform-tests/wpt/tree/master/html"><span data-x=""><strong>Tests</strong> <code data-x="">web-platform-tests html/</code></span></a>
+     <a class="feedback" href="https://github.com/web-platform-tests/wpt/labels/html"><span data-x=""><strong>Issues for Tests</strong> <code data-x="">ongoing work</code></span></a>
+    </div>
+   </nav>
+
+   <div id="search" w-dev>
+    <input name="query" type="search" placeholder="Search. Press '/'" autocomplete="off" id="query">
+    <ol id="results"></ol>
+   </div>
+  </header>
+
+  <details w-nohtml w-nodev w-noreview class="annoying-warning" open>
+   <summary>This is a Commit Snapshot of the standard</summary>
+
+   <p>This document contains the contents of the standard as of the <a class="sha-link"></a>, and
+   should only be used as a historical reference. This commit may not even have been merged into the
+   main branch.</p>
+
+   <p>Do not attempt to implement this version of the standard. Do not reference this version as
+   authoritative in any way. Instead, see <a
+   href="https://html.spec.whatwg.org/">https://html.spec.whatwg.org/</a> for the living
+   standard.</p>
+  </details>
+
+  <details w-nohtml w-nodev w-nosnap class="annoying-warning" open>
+   <summary>This is a Review Draft of the standard</summary>
+
+   <p>This is a Review Draft. It is published primarily for purposes of patent review by Workstream
+   Participants; it mirrors the <a href="https://html.spec.whatwg.org/">Living Standard</a> closely,
+   redacting only text that is identified as "Objection Pending" or "Confirmation Pending".
+   Developers should refer to the <a href="https://html.spec.whatwg.org/">Living Standard</a> for
+   the most current error corrections and other developments.</p>
+
+   <p>For information regarding patent commitments, please see the <a
+   href="https://whatwg.org/ipr-policy">IPR Policy</a> and <a
+   href="https://github.com/whatwg/html/labels/exclusion%20notices">exclusion notices</a>.</p>
+
+   <p>Do not attempt to implement this version of the standard. Do not reference this version as
+   authoritative in any way. Instead, see <a
+   href="https://html.spec.whatwg.org/">https://html.spec.whatwg.org/</a> for the Living
+   Standard.</p>
+  </details>
+
+  <hr w-nodev w-nosplit>
+
+  <h2 class="no-num no-toc" w-nosplit>Table of contents</h2>
+  <!--smalltoc-->
+
+  <h2 class="no-num no-toc" id="contents" w-nosplit w-nodev>Full table of contents</h2>
+  <!--toc-->
+
+  <div w-dev w-nosplit>
+

@@ -1,0 +1,4 @@
+WHATWG HTML — section the-canvas-element/the-imagebitmap-rendering-context — The <code>ImageBitmap</code> rendering context
+
+  <h5>The <code>ImageBitmap</code> rendering context</h5>
+

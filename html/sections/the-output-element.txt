@@ -1,0 +1,209 @@
+WHATWG HTML — section the-output-element — The <dfn element><code>output</code></dfn> element
+
+  <h4>The <dfn element><code>output</code></dfn> element</h4>
+
+  <dl class="element">
+   <dt><span data-x="concept-element-categories">Categories</span>:</dt>
+   <dd><span>Flow content</span>.</dd>
+   <dd><span>Phrasing content</span>.</dd>
+   <dd><span data-x="category-listed">Listed</span>, <span data-x="category-label">labelable</span>, <span data-x="category-reset">resettable</span>, and <span data-x="category-autocapitalize-and-autocorrect">autocapitalize-and-autocorrect inheriting</span> <span>form-associated element</span>.</dd>
+   <dd><span>Palpable content</span>.</dd>
+   <dt><span data-x="concept-element-contexts">Contexts in which this element can be used</span>:</dt>
+   <dd>Where <span>phrasing content</span> is expected.</dd>
+   <dt><span data-x="concept-element-content-model">Content model</span>:</dt>
+   <dd><span>Phrasing content</span>.</dd>
+   <dt><span data-x="concept-element-attributes">Content attributes</span>:</dt>
+   <dd><span>Global attributes</span></dd>
+   <dd><code data-x="attr-output-for">for</code></dd>
+   <dd><code data-x="attr-fae-form">form</code></dd>
+   <dd><code data-x="attr-fe-name">name</code> <!-- variant --> </dd>
+   <dt><span
+   data-x="concept-element-accessibility-considerations">Accessibility considerations</span>:</dt>
+   <dd><a href="https://w3c.github.io/html-aria/#el-output">For authors</a>.</dd>
+   <dd><a href="https://w3c.github.io/html-aam/#el-output">For implementers</a>.</dd>
+   <dt><span data-x="concept-element-sanitization">Sanitization</span>:</dt>
+   <dd><span data-x="sanitizer-uncategorized">Uncategorized</span>.</dd>
+   <dt><span data-x="concept-element-dom">DOM interface</span>:</dt>
+   <dd w-nodev>
+    <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>HTMLOutputElement</dfn> : <span>HTMLElement</span> {
+  [<span>HTMLConstructor</span>] constructor();
+
+  [SameObject, PutForwards=<span data-x="dom-DOMTokenList-value">value</span>, <span data-x="xattr-Reflect">Reflect</span>="<span data-x="attr-output-for">for</span>"] readonly attribute <span>DOMTokenList</span> <dfn attribute for="HTMLOutputElement" data-x="dom-output-htmlFor">htmlFor</dfn>;
+  readonly attribute <span>HTMLFormElement</span>? <span data-x="dom-fae-form">form</span>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute DOMString <dfn attribute for="HTMLOutputElement" data-x="dom-output-name">name</dfn>;
+
+  readonly attribute DOMString <span data-x="dom-output-type">type</span>;
+  [<span>CEReactions</span>] attribute DOMString <span data-x="dom-output-defaultValue">defaultValue</span>;
+  [<span>CEReactions</span>] attribute DOMString <span data-x="dom-output-value">value</span>;
+
+  readonly attribute boolean <span data-x="dom-cva-willValidate">willValidate</span>;
+  readonly attribute <span>ValidityState</span> <span data-x="dom-cva-validity">validity</span>;
+  readonly attribute DOMString <span data-x="dom-cva-validationMessage">validationMessage</span>;
+  boolean <span data-x="dom-cva-checkValidity">checkValidity</span>();
+  boolean <span data-x="dom-cva-reportValidity">reportValidity</span>();
+  undefined <span data-x="dom-cva-setCustomValidity">setCustomValidity</span>(DOMString error);
+
+  readonly attribute <span>NodeList</span> <span data-x="dom-lfe-labels">labels</span>;
+};</code></pre>
+   </dd>
+   <dd w-dev>Uses <code>HTMLOutputElement</code>.</dd>
+  </dl>
+
+  <p>The <code>output</code> element <span>represents</span> the result of a calculation performed
+  by the application, or the result of a user action.</p>
+
+  <p class="note">This element can be contrasted with the <code>samp</code> element, which is the
+  appropriate element for quoting the output of other programs run previously.</p>
+
+  <p>The <dfn element-attr for="output"><code data-x="attr-output-for">for</code></dfn> content
+  attribute allows an explicit relationship to be made between the result of a calculation and the
+  elements that represent the values that went into the calculation or that otherwise influenced the
+  calculation. The <code data-x="attr-output-for">for</code> attribute, if specified, must contain a
+  string consisting of an <span>unordered set of unique space-separated tokens</span>, none of which
+  are <span>identical to</span> another token and each of which must have the value of an <span
+  data-x="concept-id">ID</span> of an element in the same <span>tree</span>.</p>
+
+  <p>The <code data-x="attr-fae-form">form</code> attribute is used to explicitly associate the
+  <code>output</code> element with its <span>form owner</span>. The <code
+  data-x="attr-fe-name">name</code> attribute represents the element's name. The <code>output</code>
+  element is associated with a form so that it can be easily <span>referenced</span> from the event
+  handlers of form controls; the element's value itself is not submitted when the form is
+  submitted.</p>
+
+  <div w-nodev>
+
+  <p>The element has a <dfn data-x="concept-output-default-value-override">default value
+  override</dfn> (null or a string). Initially it must be null.</p>
+
+  <div algorithm>
+  <p>The element's <dfn data-x="concept-output-default-value">default value</dfn> is determined by
+  the following steps:</p>
+
+  <ol>
+   <li><p>If this element's <span data-x="concept-output-default-value-override">default value
+   override</span> is non-null, then return it.</p></li>
+
+   <li><p>Return this element's <span>descendant text content</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <span data-x="concept-form-reset-control">reset algorithm</span> for <code>output</code>
+  elements is to run these steps:
+
+  <ol>
+   <li><p><span>String replace all</span> with this element's <span
+   data-x="concept-output-default-value">default value</span> within this element.</p></li>
+
+   <li><p>Set this element's <span data-x="concept-output-default-value-override">default value
+   override</span> to null.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>output</var>.<span subdfn data-x="dom-output-value">value</span> [ = <var>value</var> ]</code></dt>
+   <dd>
+    <p>Returns the element's current value.</p>
+
+    <p>Can be set, to change the value.</p>
+   </dd>
+
+   <dt><code data-x=""><var>output</var>.<span subdfn data-x="dom-output-defaultValue">defaultValue</span> [ = <var>value</var> ]</code></dt>
+   <dd>
+    <p>Returns the element's current default value.</p>
+
+    <p>Can be set, to change the default value.</p>
+   </dd>
+
+   <dt><code data-x=""><var>output</var>.<span subdfn data-x="dom-output-type">type</span></code></dt>
+   <dd><p>Returns the string "<code data-x="">output</code>".</p></dd>
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLOutputElement"><code data-x="dom-output-value">value</code></dfn>
+  getter steps are to return <span>this</span>'s <span>descendant text content</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <code data-x="dom-output-value">value</code> setter steps are:</p>
+
+  <ol>
+   <li><p>Set <span>this</span>'s <span data-x="concept-output-default-value-override">default value
+   override</span> to its <span data-x="concept-output-default-value">default value</span>.</p></li>
+
+   <li><p><span>String replace all</span> with the given value within <span>this</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLOutputElement"><code
+  data-x="dom-output-defaultValue">defaultValue</code></dfn> getter steps are to return the result
+  of running <span>this</span>'s <span data-x="concept-output-default-value">default
+  value</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <code data-x="dom-output-defaultValue">defaultValue</code> setter steps are:</p>
+
+  <ol>
+   <li><p>If <span>this</span>'s <span data-x="concept-output-default-value-override">default value
+   override</span> is null, then <span>string replace all</span> with the given value within
+   <span>this</span> and return.</p></li>
+
+   <li><p>Set <span>this</span>'s <span data-x="concept-output-default-value-override">default value
+   override</span> to the given value.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLOutputElement"><code data-x="dom-output-type">type</code></dfn>
+  getter steps are to return "<code data-x="">output</code>".</p>
+  </div>
+
+  <p>The <code data-x="dom-cva-willValidate">willValidate</code>, <code
+  data-x="dom-cva-validity">validity</code>, and <code
+  data-x="dom-cva-validationMessage">validationMessage</code> IDL attributes, and the <code
+  data-x="dom-cva-checkValidity">checkValidity()</code>, <code
+  data-x="dom-cva-reportValidity">reportValidity()</code>, and <code
+  data-x="dom-cva-setCustomValidity">setCustomValidity()</code> methods, are part of the
+  <span>constraint validation API</span>. The <code data-x="dom-lfe-labels">labels</code> IDL
+  attribute provides a list of the element's <code>label</code>s. The <code
+  data-x="dom-fae-form">form</code> and <code data-x="dom-output-name">name</code> IDL attributes
+  are part of the element's forms API.</p>
+
+  </div>
+
+  <div class="example">
+
+   <p>A simple calculator could use <code>output</code> for its display of calculated results:</p>
+
+   <pre><code class="html">&lt;form onsubmit="return false" oninput="o.value = a.valueAsNumber + b.valueAsNumber">
+ &lt;input id=a type=number step=any> +
+ &lt;input id=b type=number step=any> =
+ &lt;output id=o for="a b">&lt;/output>
+&lt;/form></code></pre>
+
+  </div>
+
+  <div class="example">
+
+   <p>In this example, an <code>output</code> element is used to report the results of a calculation performed by a remote
+   server, as they come in:</p>
+
+   <pre><code class="html">&lt;output id="result">&lt;/output>
+&lt;script>
+ var primeSource = new WebSocket('ws://primes.example.net/');
+ primeSource.onmessage = function (event) {
+   document.getElementById('result').value = event.data;
+ }
+&lt;/script></code></pre>
+
+  </div>
+
+
+

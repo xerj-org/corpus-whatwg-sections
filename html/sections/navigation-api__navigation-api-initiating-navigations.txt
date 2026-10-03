@@ -1,0 +1,543 @@
+WHATWG HTML — section navigation-api/navigation-api-initiating-navigations — Initiating navigations
+
+  <h5 id="navigation-api-initiating-navigations">Initiating navigations</h5>
+
+  <dl class="domintro">
+   <dt><code data-x="">{ <span data-x="dom-NavigationResult-committed">committed</span>, <span data-x="dom-NavigationResult-finished">finished</span> } = <span data-x="dom-navigation">navigation</span>.<span subdfn data-x="dom-Navigation-navigate">navigate</span>(<var>url</var>)</code></dt>
+   <dt><code data-x="">{ <span data-x="dom-NavigationResult-committed">committed</span>, <span data-x="dom-NavigationResult-finished">finished</span> } = <span data-x="dom-navigation">navigation</span>.<span data-x="dom-Navigation-navigate">navigate</span>(<var>url</var>, <var>options</var>)</code></dt>
+   <dd>
+    <p><span data-x="navigate">Navigates</span> the current page to the given <var>url</var>.
+    <var>options</var> can contain the following values:</p>
+
+    <ul>
+     <li><p><code subdfn data-x="dom-NavigationNavigateOptions-history">history</code> can be set to
+     "<code subdfn data-x="NavigationHistoryBehavior-replace">replace</code>" to replace the current
+     session history entry, instead of pushing a new one.</p></li>
+
+     <li><p><code subdfn data-x="dom-NavigationOptions-info">info</code> can be set to any value; it
+     will populate the <code data-x="dom-NavigateEvent-info">info</code> property of the
+     corresponding <code>NavigateEvent</code>.</p></li>
+
+     <li><p><code subdfn data-x="dom-NavigationNavigateOptions-state">state</code> can be set to any
+     <span data-x="serializable objects">serializable</span> value; it will populate the state
+     retrieved by <code
+     data-x="dom-NavigationHistoryEntry-getState">navigation.currentEntry.getState()</code> once the
+     navigation completes, for same-document navigations. (It will be ignored for navigations that
+     end up cross-document.)</p></li>
+    </ul>
+
+    <p>By default this will perform a full navigation (i.e., a cross-document navigation, unless the
+    given URL differs only in a <span data-x="concept-url-fragment">fragment</span> from the current
+    one). The <code data-x="dom-NavigateEvent-intercept">navigateEvent.intercept()</code> method can
+    be used to convert it into a same-document navigation.</p>
+
+    <p>The returned promises will behave as follows:</p>
+
+    <ul>
+     <li><p>For navigations that get aborted, both promises will reject with an
+     <span>"<code>AbortError</code>"</span> <code>DOMException</code>.</p></li>
+
+     <li><p>For same-document navigations created by using the <code
+     data-x="dom-NavigateEvent-intercept">navigateEvent.intercept()</code> method, <code
+     data-x="dom-NavigationResult-committed">committed</code> will fulfill after the navigation
+     commits, and <code data-x="dom-NavigationResult-finished">finished</code> will fulfill or
+     reject according to any promsies returned by handlers passed to <code
+     data-x="dom-NavigateEvent-intercept">intercept()</code>.</p></li>
+
+     <li><p>For other same-document navigations (e.g., non-intercepted <span
+     data-x="navigate-fragid">fragment navigations</span>), both promises will fulfill
+     immediately.</p></li>
+
+     <li><p>For cross-document navigations, or navigations that result in 204 or 205 <span
+     data-x="concept-response-status">statuses</span> or `<code
+     data-x="http-content-disposition">Content-Disposition: attachment</code>` header fields from
+     the server (and thus do not actually navigate), both promises will never settle.</p></li>
+    </ul>
+
+    <p>In all cases, when the returned promises fulfill, it will be with the
+    <code>NavigationHistoryEntry</code> that was navigated to.</p>
+   </dd>
+
+   <dt><code data-x="">{ <span data-x="dom-NavigationResult-committed">committed</span>, <span data-x="dom-NavigationResult-finished">finished</span> } = <span data-x="dom-navigation">navigation</span>.<span subdfn data-x="dom-Navigation-reload">reload</span>(<var>options</var>)</code></dt>
+   <dd>
+    <p><span data-x="reload">Reloads</span> the current page. <var>options</var> can contain <code
+    data-x="dom-NavigationOptions-info">info</code> and <code subdfn
+    data-x="dom-NavigationReloadOptions-state">state</code>, which behave as described above.</p>
+
+    <p>The default behavior of performing a from-network-or-cache reload of the current page can be
+    overriden by the using the <code
+    data-x="dom-NavigateEvent-intercept">navigateEvent.intercept()</code> method. Doing so will mean
+    this call only updates state or passes along the appropriate <code
+    data-x="dom-NavigationOptions-info">info</code>, plus performing whater actions the <code
+    data-x="event-navigate">navigate</code> event handlers see fit to carry out.</p>
+
+    <p>The returned promises will behave as follows:</p>
+
+    <ul>
+     <li><p>If the reload is intercepted by using the <code
+     data-x="dom-NavigateEvent-intercept">navigateEvent.intercept()</code> method, <code
+     data-x="dom-NavigationResult-committed">committed</code> will fulfill after the navigation
+     commits, and <code data-x="dom-NavigationResult-finished">finished</code> will fulfill or
+     reject according to any promsies returned by handlers passed to <code
+     data-x="dom-NavigateEvent-intercept">intercept()</code>.</p></li>
+
+     <li><p>Otherwise, both promises will never settle.</p></li>
+    </ul>
+   </dd>
+
+   <dt><code data-x="">{ <span data-x="dom-NavigationResult-committed">committed</span>, <span data-x="dom-NavigationResult-finished">finished</span> } = <span data-x="dom-navigation">navigation</span>.<span subdfn data-x="dom-Navigation-traverseTo">traverseTo</span>(<var>key</var>)</code></dt>
+   <dt><code data-x="">{ <span data-x="dom-NavigationResult-committed">committed</span>, <span data-x="dom-NavigationResult-finished">finished</span> } = <span data-x="dom-navigation">navigation</span>.<span data-x="dom-Navigation-traverseTo">traverseTo</span>(<var>key</var>, { <span data-x="dom-NavigationOptions-info">info</span> })</code></dt>
+   <dd>
+    <p><span data-x="apply the traverse history step">Traverses</span> to the closest <span>session
+    history entry</span> that matches the <code>NavigationHistoryEntry</code> with the given
+    <var>key</var>. <code data-x="dom-NavigationOptions-info">info</code> can be set to any value;
+    it will populate the <code data-x="dom-NavigateEvent-info">info</code> property of the
+    corresponding <code>NavigateEvent</code>.</p>
+
+    <p>If a traversal to that <span>session history entry</span> is already in progress, then this
+    will return the promises for that original traversal, and <code
+    data-x="dom-NavigateEvent-info">info</code> will be ignored.</p>
+
+    <p>The returned promises will behave as follows:</p>
+
+    <ul>
+     <li><p>If there is no <code>NavigationHistoryEntry</code> in <code
+     data-x="dom-Navigation-entries">navigation.entries()</code> whose <code
+     data-x="dom-NavigationHistoryEntry-key">key</code> matches <var>key</var>, both promises will
+     reject with an <span>"<code>InvalidStateError</code>"</span>
+     <code>DOMException</code>.</p></li>
+
+     <li><p>For same-document traversals intercepted by the <code
+     data-x="dom-NavigateEvent-intercept">navigateEvent.intercept()</code> method, <code
+     data-x="dom-NavigationResult-committed">committed</code> will fulfill as soon as the traversal
+     is processed and <code data-x="dom-Navigation-currentEntry">navigation.currentEntry</code> is
+     updated, and <code data-x="dom-NavigationResult-finished">finished</code> will fulfill or
+     reject according to any promsies returned by the handlers passed to <code
+     data-x="dom-NavigateEvent-intercept">intercept()</code>.</p></li>
+
+     <li><p>For non-intercepted same-document travesals, both promises will fulfill as soon as the
+     traversal is processed and <code
+     data-x="dom-Navigation-currentEntry">navigation.currentEntry</code> is updated.</p></li>
+
+     <li><p>For cross-document traversals, including attempted cross-document traversals that end up
+     resulting in a 204 or 205 <span data-x="concept-response-status">statuses</span> or `<code
+     data-x="http-content-disposition">Content-Disposition: attachment</code>` header fields from
+     the server (and thus do not actually traverse), both promises will never settle.</p></li>
+    </ul>
+   </dd>
+
+   <dt><code data-x="">{ <span data-x="dom-NavigationResult-committed">committed</span>, <span data-x="dom-NavigationResult-finished">finished</span> } = <span data-x="dom-navigation">navigation</span>.<span subdfn data-x="dom-Navigation-back">back</span>(<var>key</var>)</code></dt>
+   <dt><code data-x="">{ <span data-x="dom-NavigationResult-committed">committed</span>, <span data-x="dom-NavigationResult-finished">finished</span> } = <span data-x="dom-navigation">navigation</span>.<span data-x="dom-Navigation-back">back</span>(<var>key</var>, { <span data-x="dom-NavigationOptions-info">info</span> })</code></dt>
+   <dd>
+    <p>Traverses to the closest previous <span>session history entry</span> which results in this
+    <span>navigable</span> traversing, i.e., which corresponds to a different
+    <code>NavigationHistoryEntry</code> and thus will cause <code
+    data-x="dom-Navigation-currentEntry">navigation.currentEntry</code> to change. <code
+    data-x="dom-NavigationOptions-info">info</code> can be set to any value; it will populate the
+    <code data-x="dom-NavigateEvent-info">info</code> property of the corresponding
+    <code>NavigateEvent</code>.</p>
+
+    <p>If a traversal to that <span>session history entry</span> is already in progress, then this
+    will return the promises for that original traversal, and <code
+    data-x="dom-NavigateEvent-info">info</code> will be ignored.</p>
+
+    <p>The returned promises behave equivalently to those returned by <code
+    data-x="dom-Navigation-traverseTo">traverseTo()</code>.</p>
+   </dd>
+
+   <dt><code data-x="">{ <span data-x="dom-NavigationResult-committed">committed</span>, <span data-x="dom-NavigationResult-finished">finished</span> } = <span data-x="dom-navigation">navigation</span>.<span subdfn data-x="dom-Navigation-forward">forward</span>(<var>key</var>)</code></dt>
+   <dt><code data-x="">{ <span data-x="dom-NavigationResult-committed">committed</span>, <span data-x="dom-NavigationResult-finished">finished</span> } = <span data-x="dom-navigation">navigation</span>.<span data-x="dom-Navigation-forward">forward</span>(<var>key</var>, { <span data-x="dom-NavigationOptions-info">info</span> })</code></dt>
+   <dd>
+    <p>Traverses to the closest forward <span>session history entry</span> which results in this
+    <span>navigable</span> traversing, i.e., which corresponds to a different
+    <code>NavigationHistoryEntry</code> and thus will cause <code
+    data-x="dom-Navigation-currentEntry">navigation.currentEntry</code> to change. <code
+    data-x="dom-NavigationOptions-info">info</code> can be set to any value; it will populate the
+    <code data-x="dom-NavigateEvent-info">info</code> property of the corresponding
+    <code>NavigateEvent</code>.</p>
+
+    <p>If a traversal to that <span>session history entry</span> is already in progress, then this
+    will return the promises for that original traversal, and <code
+    data-x="dom-NavigateEvent-info">info</code> will be ignored.</p>
+
+    <p>The returned promises behave equivalently to those returned by <code
+    data-x="dom-Navigation-traverseTo">traverseTo()</code>.</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn method for="Navigation"><code
+  data-x="dom-Navigation-navigate">navigate(<var>url</var>, <var>options</var>)</code></dfn> method
+  steps are:</p>
+
+  <ol>
+   <li><p>Let <var>urlRecord</var> be the result of <span data-x="parse a URL">parsing a URL</span>
+   given <var>url</var>, relative to <span>this</span>'s <span>relevant settings
+   object</span>.</p></li>
+
+   <li><p>If <var>urlRecord</var> is failure, then return an <span
+   data-x="navigation-api-early-error-result">early error result</span> for a
+   <span>"<code>SyntaxError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>If <var>urlRecord</var>'s <span data-x="concept-url-scheme">scheme</span> is "<code
+   data-x="javascript protocol">javascript</code>", then return an <span
+   data-x="navigation-api-early-error-result">early error result</span> for a
+   <span>"<code>NotSupportedError</code>"</span> <code>DOMException</code>.</p>
+
+   <li><p>Let <var>document</var> be <span>this</span>'s <span>relevant global object</span>'s <span
+   data-x="concept-document-window">associated <code>Document</code></span>.</p></li>
+
+   <li><p>If <var>options</var>["<code
+   data-x="dom-NavigationNavigateOptions-history">history</code>"] is "<code
+   data-x="NavigationHistoryBehavior-push">push</code>", and <span>the navigation must be a
+   replace</span> given <var>urlRecord</var> and <var>document</var>, then return an <span
+   data-x="navigation-api-early-error-result">early error result</span> for a
+   <span>"<code>NotSupportedError</code>"</span> <code>DOMException</code>.</p>
+
+   <li><p>Let <var>state</var> be <var>options</var>["<code
+   data-x="dom-NavigationNavigateOptions-state">state</code>"], if it <span data-x="map
+   exists">exists</span>; otherwise, undefined.</p></li>
+
+   <li>
+    <p>Let <var>serializedState</var> be
+    <span>StructuredSerializeForStorage</span>(<var>state</var>). If this throws an exception, then
+    return an <span data-x="navigation-api-early-error-result">early error result</span> for that
+    exception.</p>
+
+    <p class="note">It is important to perform this step early, since serialization can invoke web
+    developer code, which in turn might change various things we check in later steps.</p>
+   </li>
+
+   <li><p>If <var>document</var> is not <span>fully active</span>, then return an <span
+   data-x="navigation-api-early-error-result">early error result</span> for an
+   <span>"<code>InvalidStateError</code>"</span> <code>DOMException</code>.</p>
+
+   <li><p>If <var>document</var>'s <span>unload counter</span> is greater than 0, then return an
+   <span data-x="navigation-api-early-error-result">early error result</span> for an
+   <span>"<code>InvalidStateError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>Let <var>info</var> be <var>options</var>["<code
+   data-x="dom-NavigationOptions-info">info</code>"], if it <span data-x="map exists">exists</span>;
+   otherwise, undefined.</p></li>
+
+   <li><p>Let <var>apiMethodTracker</var> be the result of <span data-x="set up a navigate/reload
+   API method tracker">setting up a navigate/reload API method tracker</span> for <span>this</span>
+   given <var>info</var> and <var>serializedState</var>.</p></li>
+
+   <li>
+    <p><!-- DONAV navigation API --><span>Navigate</span> <var>document</var>'s <span>node
+    navigable</span> to <var>urlRecord</var> using <var>document</var>, with <i
+    data-x="navigation-hh">historyHandling</i> set to <var>options</var>["<code
+    data-x="dom-NavigationNavigateOptions-history">history</code>"], <i
+    data-x="navigation-navigation-api-state">navigationAPIState</i> set to
+    <var>serializedState</var>, and <i data-x="navigation-api-method-tracker">apiMethodTracker</i>
+    set to <var>apiMethodTracker</var>.</p>
+
+    <p class="note">Unlike <code data-x="dom-location-assign">location.assign()</code> and friends,
+    which are exposed across <span data-x="same origin-domain">origin-domain</span> boundaries,
+    <code data-x="dom-Navigation-navigate">navigation.navigate()</code> can only be accessed by code
+    with direct synchronous access to the <code data-x="dom-navigation">window.navigation</code>
+    property. Thus, we avoid the complications about attributing the source document of the
+    navigation, and we don't need to deal with the <span>allowed by sandboxing to navigate</span>
+    check and its acccompanying <i data-x="exceptionsEnabled">exceptionsEnabled</i> flag. We just
+    treat all navigations as if they come from the <code>Document</code> corresponding to this
+    <code>Navigation</code> object itself (i.e., <var>document</var>).</p>
+   </li>
+
+   <li><p>Return a <span>navigation API method tracker-derived result</span> for
+   <var>apiMethodTracker</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="Navigation"><code
+  data-x="dom-Navigation-reload">reload(<var>options</var>)</code></dfn> method steps are:</p>
+
+  <ol>
+   <li><p>Let <var>document</var> be <span>this</span>'s <span>relevant global object</span>'s <span
+   data-x="concept-document-window">associated <code>Document</code></span>.</p></li>
+
+   <li><p>Let <var>serializedState</var> be
+   <span>StructuredSerializeForStorage</span>(undefined).</p></li>
+
+   <li>
+    <p>If <var>options</var>["<code data-x="dom-NavigationReloadOptions-state">state</code>"] <span
+    data-x="map exists">exists</span>, then set <var>serializedState</var> to
+    <span>StructuredSerializeForStorage</span>(<var>options</var>["<code
+    data-x="dom-NavigationReloadOptions-state">state</code>"]). If this throws an exception, then
+    return an <span data-x="navigation-api-early-error-result">early error result</span> for that
+    exception.</p>
+
+    <p class="note">It is important to perform this step early, since serialization can invoke web
+    developer code, which in turn might change various things we check in later steps.</p>
+   </li>
+
+   <li>
+    <p>Otherwise:</p>
+
+    <ol>
+     <li><p>Let <var>current</var> be the <span data-x="navigation-current-entry">current
+     entry</span> of <span>this</span>.</p></li>
+
+     <li><p>If <var>current</var> is not null, then set <var>serializedState</var> to
+     <var>current</var>'s <span data-x="nhe-she">session history entry</span>'s <span
+     data-x="she-navigation-api-state">navigation API state</span>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>If <var>document</var> is not <span>fully active</span>, then return an <span
+   data-x="navigation-api-early-error-result">early error result</span> for an
+   <span>"<code>InvalidStateError</code>"</span> <code>DOMException</code>.</p>
+
+   <li><p>If <var>document</var>'s <span>unload counter</span> is greater than 0, then return an
+   <span data-x="navigation-api-early-error-result">early error result</span> for an
+   <span>"<code>InvalidStateError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>Let <var>info</var> be <var>options</var>["<code
+   data-x="dom-NavigationOptions-info">info</code>"], if it <span data-x="map exists">exists</span>;
+   otherwise, undefined.</p></li>
+
+   <li><p>Let <var>apiMethodTracker</var> be the result of <span data-x="set up a navigate/reload
+   API method tracker">setting up a navigate/reload API method tracker</span> for <span>this</span>
+   given <var>info</var> and <var>serializedState</var>.</p></li>
+
+   <li><p><span>Reload</span> <var>document</var>'s <span>node navigable</span> with <i
+   data-x="reload-navigation-api-state">navigationAPIState</i> set to <var>serializedState</var> and
+   <i data-x="reload-api-method-tracker">apiMethodTracker</i> set to
+   <var>apiMethodTracker</var>.</p></li>
+
+   <li><p>Return a <span>navigation API method tracker-derived result</span> for
+   <var>apiMethodTracker</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="Navigation"><code
+  data-x="dom-Navigation-traverseTo">traverseTo(<var>key</var>, <var>options</var>)</code></dfn>
+  method steps are:</p>
+
+  <ol>
+   <li><p>If <span>this</span>'s <span data-x="navigation-current-entry-index">current entry
+   index</span> is &minus;1, then return an <span data-x="navigation-api-early-error-result">early
+   error result</span> for an <span>"<code>InvalidStateError</code>"</span>
+   <code>DOMException</code>.</p></li>
+
+   <li><p>If <span>this</span>'s <span data-x="navigation-entry-list">entry list</span> does not
+   <span data-x="list contains">contain</span> a <code>NavigationHistoryEntry</code> whose <span
+   data-x="nhe-she">session history entry</span>'s <span data-x="she-navigation-api-key">navigation
+   API key</span> equals <var>key</var>, then return an <span
+   data-x="navigation-api-early-error-result">early error result</span> for an
+   <span>"<code>InvalidStateError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>Return the result of <span>performing a navigation API traversal</span> given
+   <span>this</span>, <var>key</var>, and <var>options</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="Navigation"><code
+  data-x="dom-Navigation-back">back(<var>options</var>)</code></dfn> method steps are:</p>
+
+  <ol>
+   <li><p>If <span>this</span>'s <span data-x="navigation-current-entry-index">current entry
+   index</span> is &minus;1 or 0, then return an <span
+   data-x="navigation-api-early-error-result">early error result</span> for an
+   <span>"<code>InvalidStateError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>Let <var>key</var> be <span>this</span>'s <span data-x="navigation-entry-list">entry
+   list</span>[<span>this</span>'s <span data-x="navigation-current-entry-index">current entry
+   index</span> &minus; 1]'s <span data-x="nhe-she">session history entry</span>'s <span
+   data-x="she-navigation-api-key">navigation API key</span>.</p></li>
+
+   <li><p>Return the result of <span>performing a navigation API traversal</span> given
+   <span>this</span>, <var>key</var>, and <var>options</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="Navigation"><code
+  data-x="dom-Navigation-forward">forward(<var>options</var>)</code></dfn> method steps are:</p>
+
+  <ol>
+   <li><p>If <span>this</span>'s <span data-x="navigation-current-entry-index">current entry
+   index</span> is &minus;1 or is equal to <span>this</span>'s <span
+   data-x="navigation-entry-list">entry list</span>'s <span data-x="list size">size</span> &minus;
+   1, then return an <span data-x="navigation-api-early-error-result">early error result</span> for
+   an <span>"<code>InvalidStateError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>Let <var>key</var> be <span>this</span>'s <span data-x="navigation-entry-list">entry
+   list</span>[<span>this</span>'s <span data-x="navigation-current-entry-index">current entry
+   index</span> + 1]'s <span data-x="nhe-she">session history entry</span>'s <span
+   data-x="she-navigation-api-key">navigation API key</span>.</p></li>
+
+   <li><p>Return the result of <span>performing a navigation API traversal</span> given
+   <span>this</span>, <var>key</var>, and <var>options</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="performing a navigation API traversal">perform a navigation API traversal</dfn>
+  given a <code>Navigation</code> <var>navigation</var>, a string <var>key</var>, and a
+  <code>NavigationOptions</code> <var>options</var>:</p>
+
+  <ol>
+   <li><p>Let <var>document</var> be <var>navigation</var>'s <span>relevant global object</span>'s
+   <span data-x="concept-document-window">associated <code>Document</code></span>.</p></li>
+
+   <li><p>If <var>document</var> is not <span>fully active</span>, then return an <span
+   data-x="navigation-api-early-error-result">early error result</span> for an
+   <span>"<code>InvalidStateError</code>"</span> <code>DOMException</code>.</p>
+
+   <li><p>If <var>document</var>'s <span>unload counter</span> is greater than 0, then return an
+   <span data-x="navigation-api-early-error-result">early error result</span> for an
+   <span>"<code>InvalidStateError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>Let <var>current</var> be the <span data-x="navigation-current-entry">current entry</span>
+   of <var>navigation</var>.</p></li>
+
+   <li><p>If <var>key</var> equals <var>current</var>'s <span data-x="nhe-she">session history
+   entry</span>'s <span data-x="she-navigation-api-key">navigation API key</span>, then return «[
+   "<code data-x="dom-NavigationResult-committed">committed</code>" → <span>a promise resolved
+   with</span> <var>current</var>, "<code data-x="dom-NavigationResult-finished">finished</code>"
+   → <span>a promise resolved with</span> <var>current</var> ]».</p></li>
+
+   <li><p>If <var>navigation</var>'s <span>upcoming traverse API method
+   trackers</span>[<var>key</var>] <span data-x="map exists">exists</span>, then return a
+   <span>navigation API method tracker-derived result</span> for <var>navigation</var>'s
+   <span>upcoming traverse API method trackers</span>[<var>key</var>].</p></li>
+
+   <li><p>Let <var>info</var> be <var>options</var>["<code
+   data-x="dom-NavigationOptions-info">info</code>"], if it <span data-x="map exists">exists</span>;
+   otherwise, undefined.</p></li>
+
+   <li><p>Let <var>apiMethodTracker</var> be the result of <span data-x="add an upcoming traverse
+   API method tracker">adding an upcoming traverse API method tracker</span> for
+   <var>navigation</var> given <var>key</var> and <var>info</var>.</p></li>
+
+   <li><p>Let <var>navigable</var> be <var>document</var>'s <span>node navigable</span>.</p></li>
+
+   <li><p>Let <var>traversable</var> be <var>navigable</var>'s <span
+   data-x="nav-traversable">traversable navigable</span>.</p></li>
+
+   <li><p>Let <var>sourceSnapshotParams</var> be the result of <span>snapshotting source snapshot
+   params</span> given <var>document</var>.</p></li>
+
+   <li>
+    <p><span data-x="tn-append-session-history-traversal-steps">Append the following session history
+    traversal steps</span> to <var>traversable</var>:</p>
+
+    <ol>
+     <li><p>Let <var>navigableSHEs</var> be the result of <span>getting session history
+     entries</span> given <var>navigable</var>.</p></li>
+
+     <li>
+      <p>Let <var>targetSHE</var> be the <span>session history entry</span> in
+      <var>navigableSHEs</var> whose <span data-x="she-navigation-api-key">navigation API key</span>
+      is <var>key</var>. If no such entry exists:</p>
+
+      <ol>
+       <li><p><span>Queue a global task</span> on the <span>navigation and traversal task
+       source</span> given <var>navigation</var>'s <span>relevant global object</span> to
+       <span>reject the finished promise</span> for <var>apiMethodTracker</var> with an
+       <span>"<code>InvalidStateError</code>"</span> <code>DOMException</code>.</p></li>
+
+       <li><p>Abort these steps.</p></li>
+      </ol>
+
+      <p class="note">This path is taken if <var>navigation</var>'s <span
+      data-x="navigation-entry-list">entry list</span> was outdated compared to
+      <var>navigableSHEs</var>, which can occur for brief periods while all the relevant threads and
+      processes are being synchronized in reaction to a history change.</p>
+     </li>
+
+     <li>
+      <p>If <var>targetSHE</var> is <var>navigable</var>'s <span
+      data-x="nav-active-history-entry">active session history entry</span>:</p>
+
+      <ol>
+       <li><p><span>Queue a global task</span> on the <span>navigation and traversal task
+       source</span> given <var>navigation</var>'s <span>relevant global object</span> to
+       <span>reject the finished promise</span> for <var>apiMethodTracker</var> with an
+       <span>"<code>InvalidStateError</code>"</span> <code>DOMException</code>.</p></li>
+
+       <li><p>Abort these steps.</p></li>
+      </ol>
+
+      <p class="note">This can occur if a previously <span
+      data-x="tn-append-session-history-traversal-steps">queued</span> traversal already took us to
+      this <span>session history entry</span>.</p>
+     </li>
+
+     <li><p>Let <var>result</var> be the result of <span data-x="apply the traverse history
+     step">applying the traverse history step</span> given by <var>targetSHE</var>'s <span
+     data-x="she-step">step</span> to <var>traversable</var>, given <var>sourceSnapshotParams</var>,
+     <var>navigable</var>, and "<code data-x="uni-none">none</code>".</p></li>
+
+     <li><p>If <var>result</var> is "<code data-x="">canceled-by-beforeunload</code>", then
+     <span>queue a global task</span> on the <span>navigation and traversal task source</span> given
+     <var>navigation</var>'s <span>relevant global object</span> to <span>reject the finished
+     promise</span> for <var>apiMethodTracker</var> with a new
+     <span>"<code>AbortError</code>"</span> <code>DOMException</code> created in
+     <var>navigation</var>'s <span data-x="concept-relevant-realm">relevant realm</span>.</p></li>
+
+     <li>
+      <p>If <var>result</var> is "<code data-x="">initiator-disallowed</code>", then <span>queue a
+      global task</span> on the <span>navigation and traversal task source</span> given
+      <var>navigation</var>'s <span>relevant global object</span> to <span>reject the finished
+      promise</span> for <var>apiMethodTracker</var> with a new
+      <span>"<code>SecurityError</code>"</span> <code>DOMException</code> created in
+      <var>navigation</var>'s <span data-x="concept-relevant-realm">relevant realm</span>.</p>
+
+      <div class="note">
+       <p>When <var>result</var> is "<code data-x="">canceled-by-beforeunload</code>" or "<code
+       data-x="">initiator-disallowed</code>", the <code data-x="event-navigate">navigate</code>
+       event was never fired, <span data-x="abort the ongoing navigation">aborting the ongoing
+       navigation</span> would not be correct; it would result in a <code
+       data-x="event-navigateerror">navigateerror</code> event without a preceding <code
+       data-x="event-navigate">navigate</code> event.</p>
+
+       <p>In the "<code data-x="">canceled-by-navigate</code>" case, <code
+       data-x="event-navigate">navigate</code> <em>is</em> fired, but the <span>inner <code
+       data-x="event-navigate">navigate</code> event firing algorithm</span> will take care of
+       <span data-x="abort the ongoing navigation">aborting the ongoing navigation</span>.</p>
+      </div>
+     </li>
+    </ol>
+   </li>
+
+   <li><p>Return a <span>navigation API method tracker-derived result</span> for
+   <var>apiMethodTracker</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>An <dfn data-x="navigation-api-early-error-result">early error result</dfn> for an exception
+  <var>e</var> is a <code>NavigationResult</code> dictionary instance given by «[ "<code
+  data-x="dom-NavigationResult-committed">committed</code>" → <span>a promise rejected with</span>
+  <var>e</var>, "<code data-x="dom-NavigationResult-finished">finished</code>" → <span>a promise
+  rejected with</span> <var>e</var> ]».</p>
+  </div>
+
+  <div algorithm>
+  <p>To compute the <dfn>navigation API method tracker-derived result</dfn> for a <span>navigation
+  API method tracker</span>-or-null <var>apiMethodTracker</var>:</p>
+
+  <ol>
+   <li><p>If <var>apiMethodTracker</var> is <span
+   data-x="navigation-api-method-tracker-pending">pending</span>, then return an <span
+   data-x="navigation-api-early-error-result">early error result</span> for an
+   <span>"<code>AbortError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>Return a <code>NavigationResult</code> dictionary instance given by «[ "<code
+   data-x="dom-NavigationResult-committed">committed</code>" → <var>apiMethodTracker</var>'s <span
+   data-x="navigation-api-method-tracker-committed">committed promise</span>, "<code
+   data-x="dom-NavigationResult-finished">finished</code>" → <var>apiMethodTracker</var>'s <span
+   data-x="navigation-api-method-tracker-finished">finished promise</span> ]».</p></li>
+   </ol>
+  </div>
+
+  </div>
+
+

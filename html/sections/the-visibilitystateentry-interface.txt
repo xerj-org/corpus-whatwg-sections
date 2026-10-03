@@ -1,0 +1,65 @@
+WHATWG HTML — section the-visibilitystateentry-interface — The <code>VisibilityStateEntry</code> interface
+
+  <h4>The <code>VisibilityStateEntry</code> interface</h4>
+
+  <p>The <code>VisibilityStateEntry</code> interface exposes visibility changes to the document,
+  from the moment the document becomes active.</p>
+
+  <div class="example">For example, this allows JavaScript code in the page to examine correlation
+  between visibility changes and paint timing:
+
+  <pre><code class="js">function wasHiddenBeforeFirstContentfulPaint() {
+    const fcpEntry = performance.getEntriesByName("first-contentful-paint")[0];
+    const visibilityStateEntries = performance.getEntriesByType("visibility-state");
+    return visibilityStateEntries.some(e =>
+                                            e.startTime &lt; fcpEntry.startTime &&
+                                            e.name === "hidden");
+}</code></pre>
+  </div>
+
+  <p class="note">Since hiding a page can cause throttling of rendering and other user-agent
+  operations, it is common to use visibility changes as an indication that such throttling has
+  occurred. However, other things could also cause throttling in different browsers, such as
+  long periods of inactivity.</p>
+
+  <pre><code class="idl">[Exposed=(Window)]
+interface <dfn interface>VisibilityStateEntry</dfn> : <span>PerformanceEntry</span> {
+  readonly attribute DOMString <span data-x="VisibilityStateEntry-name">name</span>;                 // shadows inherited <span data-x="PerformanceEntry-name">name</span>
+  readonly attribute DOMString <span data-x="VisibilityStateEntry-entryType">entryType</span>;            // shadows inherited <span data-x="PerformanceEntry-entryType">entryType</span>
+  readonly attribute DOMHighResTimeStamp <span data-x="VisibilityStateEntry-startTime">startTime</span>;  // shadows inherited <span data-x="PerformanceEntry-startTime">startTime</span>
+  readonly attribute unsigned long <span data-x="VisibilityStateEntry-duration">duration</span>;         // shadows inherited <span data-x="PerformanceEntry-duration">duration</span>
+};</code></pre>
+
+  <p>The <code>VisibilityStateEntry</code> has an associated
+  <span><code>DOMHighResTimeStamp</code></span>
+  <dfn data-x="VisibilityStateEntry-timestamp">timestamp</dfn>.</p>
+
+  <p>The <code>VisibilityStateEntry</code> has an associated "<code data-x="">visible</code>" or
+  "<code data-x="">hidden</code>" <dfn data-x="VisibilityStateEntry-state">visibility
+  state</dfn>.</p>
+
+  <div algorithm>
+  <p>The <dfn attribute for="VisibilityStateEntry"
+  data-x="VisibilityStateEntry-name"><code>name</code></dfn> getter steps are to return
+  <span>this</span>'s <span data-x="VisibilityStateEntry-state">visibility state</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="VisibilityStateEntry"
+  data-x="VisibilityStateEntry-entryType"><code>entryType</code></dfn> getter steps are to return
+  "<code data-x="">visibility-state</code>".</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="VisibilityStateEntry"
+  data-x="VisibilityStateEntry-startTime"><code>startTime</code></dfn> getter steps are to return
+  <span>this</span>'s <span data-x="VisibilityStateEntry-timestamp">timestamp</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="VisibilityStateEntry"
+  data-x="VisibilityStateEntry-duration"><code>duration</code></dfn> getter steps are to return
+  zero.</p>
+  </div>
+
+

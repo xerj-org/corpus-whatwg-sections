@@ -1,0 +1,97 @@
+WHATWG HTML — section the-input-element-as-a-text-entry-widget — The <code>input</code> element as a text entry widget
+
+  <h4>The <code>input</code> element as a text entry widget</h4>
+
+  <div algorithm>
+  <p>An <code>input</code> element whose <code data-x="attr-input-type">type</code> attribute is in
+  the <span data-x="attr-input-type-text">Text</span>, <span
+  data-x="attr-input-type-tel">Telephone</span>, <span data-x="attr-input-type-url">URL</span>, or
+  <span data-x="attr-input-type-email">Email</span> state, is a <span>devolvable widget</span>. Its
+  <span>native appearance</span> is <span>expected</span> to render as an
+  <span>'inline-block'</span> box depicting a one-line text control.</p>
+  </div>
+
+  <div algorithm>
+  <p>An <code>input</code> element whose <code data-x="attr-input-type">type</code> attribute is in
+  the <span data-x="attr-input-type-search">Search</span> state is a <span>devolvable widget</span>.
+  Its <span>native appearance</span> is <span>expected</span> to render as an
+  <span>'inline-block'</span> box depicting a one-line text control. If the <span>computed
+  value</span> of the element's <span>'appearance'</span> property is not <code>'textfield'</code>,
+  it may have a distinct style indicating that it is a search field.</p>
+  </div>
+
+  <div algorithm>
+  <p>An <code>input</code> element whose <code data-x="attr-input-type">type</code> attribute is in
+  the <span data-x="attr-input-type-password">Password</span> state is a <span>devolvable
+  widget</span>. Its <span>native appearance</span> is <span>expected</span> to render as an
+  <span>'inline-block'</span> box depicting a one-line text control that obscures data entry.</p>
+  </div>
+
+  <p>For <code>input</code> elements whose <code data-x="attr-input-type">type</code> attribute is
+  in one of the above states, the <span>used value</span> of the <span>'line-height'</span> property
+  must be a length value that is no smaller than what the <span>used value</span> would be for
+  'line-height: normal'.</p>
+
+  <p class="note">The <span>used value</span> will not be the actual keyword 'normal'. Also, this
+  rule does not affect the <span>computed value</span>.</p>
+
+  <div algorithm>
+  <p>If these text controls provide a text selection, then, when the user changes the current
+  selection, the user agent is <span>expected</span> to <span>queue an element task</span> on the
+  <span>user interaction task source</span> given the <code>input</code> element to <span
+  data-x="concept-event-fire">fire an event</span> named <code data-x="event-select">select</code>
+  at the element, with the <code data-x="dom-Event-bubbles">bubbles</code> attribute initialized to
+  true.</p>
+  </div>
+
+  <div algorithm>
+  <p>An <code>input</code> element whose <code data-x="attr-input-type">type</code> attribute is
+  in one of the above states is an <span>element with default preferred size</span>, and user
+  agents are <span>expected</span> to apply the <span>'field-sizing'</span> CSS property to the
+  element. User agents are <span>expected</span> to determine the <span>inline size</span> of its
+  <span>intrinsic size</span> by the following steps:</p>
+
+  <ol>
+   <li>
+    <p>If the <span>'field-sizing'</span> property on the element has a <span>computed value</span>
+    of <span data-x="field-sizing-content">'content'</span>, the <span>inline size</span> is
+    determined by the text which the element shows. The text is either a
+    <span data-x="concept-fe-value">value</span> or a short hint specified by the
+    <code data-x="attr-input-placeholder">placeholder</code> attribute. User agents may take the
+    text caret size into account in the <span>inline size</span>.</p>
+   </li>
+
+   <li>
+    <p>If the element has a <code data-x="attr-input-size">size</code> attribute, and parsing that
+    attribute's value using the <span>rules for parsing non-negative integers</span> doesn't
+    generate an error, return the value obtained from applying the <span>converting a character
+    width to pixels</span> algorithm to the value of the attribute.</p>
+   </li>
+
+   <li>
+    <p>Otherwise, return the value obtained from applying the <span>converting a character width to
+    pixels</span> algorithm to the number 20.</p>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn>converting a character width to pixels</dfn> algorithm returns <span data-x="">(<var>size</var>-1)&times;<var>avg</var>&nbsp;+&nbsp;<var>max</var></span>,
+  where <var>size</var> is the character width to convert, <var>avg</var> is the
+  average character width of the primary font for the element for which the algorithm is being run,
+  in pixels, and <var>max</var> is the maximum character width of that same font, also in
+  pixels. (The element's <span>'letter-spacing'</span> property does not affect the result.)</p>
+  </div>
+
+  <p>These text controls are <span>expected</span> to be <span data-x="scroll container">scroll
+  containers</span> and support scrolling in the <span>inline axis</span>, but not the <span>block
+  axis</span>.</p>
+
+  <p class="XXX">Need to detail the <span>native appearance</span> and <span>primitive
+  appearance</span>.</p>
+
+  </div>
+
+
+  <div w-nodev>
+

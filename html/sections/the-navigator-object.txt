@@ -1,0 +1,1134 @@
+WHATWG HTML — section the-navigator-object — The <code>Navigator</code> object (+images)
+
+  <h4>The <code>Navigator</code> object</h4>
+
+  <p>Instances of <code>Navigator</code> represent the identity and state of the user agent (the
+  client). It has also been used as a generic global under which various APIs are located, but this
+  is not precedent to build upon. Instead use the <code>WindowOrWorkerGlobalScope</code> mixin or
+  equivalent.</p>
+
+  <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>Navigator</dfn> {
+  // objects implementing this interface also implement the interfaces given below
+};
+<span>Navigator</span> includes <span>NavigatorID</span>;
+<span>Navigator</span> includes <span>NavigatorLanguage</span>;
+<span>Navigator</span> includes <span>NavigatorOnLine</span>;
+<span>Navigator</span> includes <span>NavigatorContentUtils</span>;
+<span>Navigator</span> includes <span>NavigatorCookies</span>;
+<span>Navigator</span> includes <span>NavigatorPlugins</span>;
+<span>Navigator</span> includes <span>NavigatorConcurrentHardware</span>;</code></pre>
+
+  <div w-nodev>
+
+  <p class="note">These interface mixins are defined separately so that <code>WorkerNavigator</code> can reuse parts of
+  the <code>Navigator</code> interface.</p>
+
+  <div algorithm>
+  <p>Each <code>Window</code> has an <dfn>associated <code>Navigator</code></dfn>, which is a <code>Navigator</code>
+  object. Upon creation of the <code>Window</code> object, its <span>associated <code>Navigator</code></span> must be
+  set to a <span>new</span> <code>Navigator</code> object created in the <code>Window</code> object's <span
+  data-x="concept-relevant-realm">relevant realm</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="Window"><code data-x="dom-navigator">navigator</code></dfn> and <dfn attribute
+  for="Window"><code data-x="dom-clientInformation">clientInformation</code></dfn> getter steps are to return
+  <span>this</span>'s <span>associated <code>Navigator</code></span>.
+  </div>
+
+  </div>
+
+
+  <h5>Client identification</h5>
+
+  <pre><code class="idl">interface mixin <dfn interface>NavigatorID</dfn> {
+  readonly attribute DOMString <span data-x="dom-navigator-appCodeName">appCodeName</span>; // constant "Mozilla"
+  readonly attribute DOMString <span data-x="dom-navigator-appName">appName</span>; // constant "Netscape"
+  readonly attribute DOMString <span data-x="dom-navigator-appVersion">appVersion</span>;
+  readonly attribute DOMString <span data-x="dom-navigator-platform">platform</span>;
+  readonly attribute DOMString <span data-x="dom-navigator-product">product</span>; // constant "Gecko"
+  [Exposed=Window] readonly attribute DOMString <span data-x="dom-navigator-productSub">productSub</span>;
+  readonly attribute DOMString <span data-x="dom-navigator-userAgent">userAgent</span>;
+  [Exposed=Window] readonly attribute DOMString <span data-x="dom-navigator-vendor">vendor</span>;
+  [Exposed=Window] readonly attribute DOMString <span data-x="dom-navigator-vendorSub">vendorSub</span>; // constant ""
+};</code></pre>
+
+  <p>In certain cases, despite the best efforts of the entire industry, web browsers have bugs and
+  limitations that web authors are forced to work around.</p>
+
+  <p>This section defines a collection of attributes that can be used to determine, from script, the
+  kind of user agent in use, in order to work around these issues.</p>
+
+  <div w-nodev>
+
+  <p>The user agent has a <dfn data-x="concept-navigator-compatibility-mode">navigator compatibility
+  mode</dfn>, which is either <i>Chrome</i>, <i>Gecko</i>, or <i>WebKit</i>.</p>
+
+  <p class="note">The <span data-x="concept-navigator-compatibility-mode">navigator compatibility
+  mode</span> constrains the <code>NavigatorID</code> mixin to the combinations of attribute
+  values and presence of <code data-x="dom-navigator-taintEnabled">taintEnabled()</code> and <code
+  data-x="dom-navigator-oscpu">oscpu</code> that are known to be compatible with existing web
+  content.</p>
+
+  </div>
+
+  <p>Client detection should always be limited to detecting known current versions; future versions
+  and unknown versions should always be assumed to be fully compliant.</p>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>self</var>.<span data-x="dom-navigator">navigator</span>.<span subdfn data-x="dom-navigator-appCodeName">appCodeName</span></code></dt>
+   <dd><p>Returns the string "<code data-x="">Mozilla</code>".</p></dd>
+
+   <dt><code data-x=""><var>self</var>.<span data-x="dom-navigator">navigator</span>.<span subdfn data-x="dom-navigator-appName">appName</span></code></dt>
+   <dd><p>Returns the string "<code data-x="">Netscape</code>".</p></dd>
+
+   <dt><code data-x=""><var>self</var>.<span data-x="dom-navigator">navigator</span>.<span subdfn data-x="dom-navigator-appVersion">appVersion</span></code></dt>
+   <dd><p>Returns the version of the browser.</p></dd>
+
+   <dt><code data-x=""><var>self</var>.<span data-x="dom-navigator">navigator</span>.<span subdfn data-x="dom-navigator-platform">platform</span></code></dt>
+   <dd><p>Returns the name of the platform.</p></dd>
+
+   <dt><code data-x=""><var>self</var>.<span data-x="dom-navigator">navigator</span>.<span subdfn data-x="dom-navigator-product">product</span></code></dt>
+   <dd><p>Returns the string "<code data-x="">Gecko</code>".</p></dd>
+
+   <dt><code data-x=""><var>window</var>.<span data-x="dom-navigator">navigator</span>.<span subdfn data-x="dom-navigator-productSub">productSub</span></code></dt>
+   <dd><p>Returns either the string "<code data-x="">20030107</code>", or the string "<code
+   data-x="">20100101</code>".</p></dd>
+
+   <dt><code data-x=""><var>self</var>.<span data-x="dom-navigator">navigator</span>.<span subdfn data-x="dom-navigator-userAgent">userAgent</span></code></dt>
+   <dd><p>Returns the complete `<code data-x="">User-Agent</code>` header.</p></dd>
+
+   <dt><code data-x=""><var>window</var>.<span data-x="dom-navigator">navigator</span>.<span subdfn data-x="dom-navigator-vendor">vendor</span></code></dt>
+   <dd><p>Returns either the empty string, the string "<code data-x="">Apple Computer, Inc.</code>",
+   or the string "<code data-x="">Google Inc.</code>".</p></dd>
+
+   <dt><code data-x=""><var>window</var>.<span data-x="dom-navigator">navigator</span>.<span subdfn data-x="dom-navigator-vendorSub">vendorSub</span></code></dt>
+   <dd><p>Returns the empty string.</p></dd>
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn attribute for="NavigatorID"><code
+  data-x="dom-navigator-appCodeName">appCodeName</code></dfn> getter steps are to return
+  "<code data-x="">Mozilla</code>".</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="NavigatorID"><code data-x="dom-navigator-appName">appName</code></dfn>
+  getter steps are to return "<code data-x="">Netscape</code>".</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="NavigatorID"><code
+  data-x="dom-navigator-appVersion">appVersion</code></dfn> getter steps are:</p>
+
+  <ol>
+   <li><p>Let <var>userAgent</var> be <span>this</span>'s <span>relevant settings object</span>'s
+   <span data-x="environment-default-user-agent-value">environment default `<code>User-Agent</code>`
+   value</span>.</p></li>
+
+   <li><p>If <var>userAgent</var> does not start with `<code data-x="">Mozilla/5.0 (</code>`, then
+   return the empty string.</p></li>
+
+   <li><p>Let <var>trail</var> be the substring of <var>userAgent</var>, <span
+   data-x="isomorphic decode">isomorphic decoded</span>, that follows the "<code
+   data-x="">Mozilla/</code>" prefix.</p></li>
+
+   <li>
+    <dl class="switch">
+     <dt>If the <span data-x="concept-navigator-compatibility-mode">navigator compatibility
+     mode</span> is <i>Chrome</i> or <i>WebKit</i></dt>
+     <dd><p>Return <var>trail</var>.</p></dd>
+
+     <dt>If the <span data-x="concept-navigator-compatibility-mode">navigator compatibility
+     mode</span> is <i>Gecko</i></dt>
+     <dd>
+      <p>If <var>trail</var> starts with "<code data-x="">5.0 (Windows</code>", then return "<code
+      data-x="">5.0 (Windows)</code>".</p>
+
+      <p>Otherwise, return the prefix of <var>trail</var> up to but not including the first U+003B
+      (;), concatenated with the character U+0029 RIGHT PARENTHESIS. For example, "<code
+      data-x="">5.0 (Macintosh)</code>", "<code data-x="">5.0 (Android 10)</code>", or "<code
+      data-x="">5.0 (X11)</code>".</p> <!-- Unclear if Gecko mode returning a shorter string that
+      doesn't contain the whole trail is needed for Web compat. -->
+     </dd>
+    </dl>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="NavigatorID"><code data-x="dom-navigator-platform">platform</code></dfn>
+  getter steps are to return a string representing the platform on which the
+  browser is executing (e.g. "<code data-x="">MacIntel</code>", "<code data-x="">Win32</code>",
+  "<code data-x="">Linux x86_64</code>", "<code data-x="">Linux armv81</code>") or, for privacy and
+  compatibility, a string that is commonly returned on another platform.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="NavigatorID"><code data-x="dom-navigator-product">product</code></dfn>
+  getter steps are to return "<code data-x="">Gecko</code>".</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="NavigatorID"><code
+  data-x="dom-navigator-productSub">productSub</code></dfn>
+  getter steps are to return the appropriate string from the following list:</p>
+
+   <dl class="switch">
+     <dt>If the <span data-x="concept-navigator-compatibility-mode">navigator compatibility
+     mode</span> is <i>Chrome</i> or <i>WebKit</i></dt>
+     <dd><p>The string "<code data-x="">20030107</code>".</p></dd>
+
+     <dt>If the <span data-x="concept-navigator-compatibility-mode">navigator compatibility
+     mode</span> is <i>Gecko</i></dt>
+     <dd><p>The string "<code data-x="">20100101</code>".</p></dd>
+   </dl>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="NavigatorID"><code data-x="dom-navigator-userAgent">userAgent</code></dfn>
+  getter steps are to return <span>this</span>'s <span>relevant settings object</span>'s <span
+  data-x="environment-default-user-agent-value">environment default `<code>User-Agent</code>` value</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="NavigatorID"><code data-x="dom-navigator-vendor">vendor</code></dfn>
+  getter steps are to return the appropriate string from the following list:</p>
+
+   <dl class="switch">
+     <dt>If the <span data-x="concept-navigator-compatibility-mode">navigator compatibility
+     mode</span> is <i>Chrome</i></dt>
+     <dd><p>The string "<code data-x="">Google Inc.</code>".</p></dd>
+
+     <dt>If the <span data-x="concept-navigator-compatibility-mode">navigator compatibility
+     mode</span> is <i>Gecko</i></dt>
+     <dd><p>The empty string.</p></dd>
+
+     <dt>If the <span data-x="concept-navigator-compatibility-mode">navigator compatibility
+     mode</span> is <i>WebKit</i></dt>
+     <dd><p>The string "<code data-x="">Apple Computer, Inc.</code>".</p></dd>
+   </dl>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="NavigatorID"><code data-x="dom-navigator-vendorSub">vendorSub</code></dfn>
+  getter steps are to return the empty string.</p>
+  </div>
+
+  <p>If the <span data-x="concept-navigator-compatibility-mode">navigator compatibility mode</span>
+  is <i>Gecko</i>, then the user agent must also support the following partial interface:</p>
+
+  <pre><code class="idl">partial interface mixin <span id="NavigatorID-partial">NavigatorID</span> {
+  [Exposed=Window] boolean <span data-x="dom-navigator-taintEnabled">taintEnabled</span>(); // constant false
+  [Exposed=Window] readonly attribute DOMString <span data-x="dom-navigator-oscpu">oscpu</span>;
+};</code></pre>
+
+  <div algorithm>
+  <p>The <dfn method for="NavigatorID"><code
+  data-x="dom-navigator-taintEnabled">taintEnabled()</code></dfn> method must return false.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="NavigatorID"><code data-x="dom-navigator-oscpu">oscpu</code></dfn> attribute's getter must return
+  either the empty string or a string representing the platform on which the browser is executing,
+  e.g. "<code data-x="">Windows NT 10.0; Win64; x64</code>", "<code data-x="">Linux
+  x86_64</code>".</p>
+  </div>
+
+  <!-- similar paragraph in next section -->
+  <p class="warning">
+  <!--INSERT TRACKING-->
+  Any information in this API that varies from user to user can be used to profile the user. In
+  fact, if enough such information is available, a user can actually be uniquely identified. For
+  this reason, user agent implementers are strongly urged to include as little information in this
+  API as possible.</p>
+
+  </div>
+
+  <!-- next section refers to previous section as "previous section" -->
+
+  <h5>Language preferences</h5>
+
+  <pre><code class="idl">interface mixin <dfn interface>NavigatorLanguage</dfn> {
+  readonly attribute DOMString <span data-x="dom-navigator-language">language</span>;
+  readonly attribute FrozenArray&lt;DOMString&gt; <span data-x="dom-navigator-languages">languages</span>;
+};</code></pre>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>self</var>.<span data-x="dom-navigator">navigator</span>.<span subdfn data-x="dom-navigator-language">language</span></code></dt>
+   <dd><p>Returns a language tag representing the user's preferred language.</p></dd>
+
+   <dt><code data-x=""><var>self</var>.<span data-x="dom-navigator">navigator</span>.<span subdfn data-x="dom-navigator-languages">languages</span></code></dt>
+   <dd>
+    <p>Returns an array of language tags representing the user's preferred languages, with the most
+    preferred language first.</p>
+
+    <p>The most preferred language is the one returned by <code
+    data-x="dom-navigator-language">navigator.language</code>.</p>
+   </dd>
+  </dl>
+
+  <p class="note">A <code data-x="event-languagechange">languagechange</code> event is fired at the
+  <code>Window</code> or <code>WorkerGlobalScope</code> object when the user agent's understanding
+  of what the user's preferred languages are changes.</p>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn attribute for="NavigatorLanguage"><code
+  data-x="dom-navigator-language">language</code></dfn> getter steps are:</p>
+
+  <ol>
+   <li>Let <var>emulatedLanguage</var> be the <span>WebDriver BiDi emulated language</span> for
+   <span>this</span>'s <span>relevant settings object</span>.</li>
+
+   <li>If <var>emulatedLanguage</var> is not null, return <var>emulatedLanguage</var>.</li>
+
+   <li>Return a valid BCP 47 language tag representing either <span>a plausible language</span> or
+   the user's most preferred language. <ref>BCP47</ref></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="NavigatorLanguage"><code
+  data-x="dom-navigator-languages">languages</code></dfn> getter steps are:</p>
+
+  <ol>
+   <li>Let <var>emulatedLanguage</var> be the <span>WebDriver BiDi emulated language</span> for
+   <span>this</span>'s <span>relevant settings object</span>.</li>
+
+   <li>If <var>emulatedLanguage</var> is not null, return a <span>frozen array</span> containing
+   <var>emulatedLanguage</var>.</li>
+
+   <li>Return a <span>frozen array</span> of valid BCP 47 language tags representing either one or
+   more <span data-x="a plausible language">plausible languages</span>, or the user's preferred
+   languages, ordered by preference with the most preferred language first. <ref>BCP47</ref></li>
+  </ol>
+
+  <p>The same object must be returned until the user agent needs to return different values, or
+  values in a different order, or <var>emulatedLanguage</var> is updated.</p>
+  </div>
+
+  <div algorithm>
+  <p>Whenever the user agent needs to make the <code
+  data-x="dom-navigator-languages">navigator.languages</code> attribute of a <code>Window</code>
+  or <code>WorkerGlobalScope</code> object <var>global</var> return a new set of language tags,
+  the user agent must <span>queue a global task</span> on the <span>DOM manipulation task
+  source</span> given <var>global</var> to <span data-x="concept-event-fire">fire an event</span>
+  named <code data-x="event-languagechange">languagechange</code> at <var>global</var>, and wait
+  until that task begins to be executed before actually returning a new value.</p>
+  </div>
+
+  <p>To determine <dfn>a plausible language</dfn>, the user agent should bear in mind the following:</p>
+
+  <ul>
+   <li>
+   <!--INSERT TRACKING-->
+   Any information in this API that varies from user to user can be used to profile or identify the
+   user.</li>
+
+   <li>If the user is not using a service that obfuscates the user's point of origin (e.g. the Tor
+   anonymity network), then the value that is least likely to distinguish the user from other users
+   with similar origins (e.g. from the same IP address block) is the language used by the majority
+   of such users. <ref>TOR</ref></li>
+
+   <li>If the user is using an anonymizing service, then the value "<code data-x="">en-US</code>" is
+   suggested; if all users of the service use that same value, that reduces the possibility of
+   distinguishing the users from each other.</li>
+  </ul>
+
+  <p>
+  <!--INSERT TRACKING-->
+  To avoid introducing any more fingerprinting vectors, user agents should use the same list for the
+  APIs defined in this function as for the HTTP `<code
+  data-x="http-accept-language">Accept-Language</code>` header.</p>
+
+  </div>
+
+
+  <h5 id="navigator.online"><span id="browser-state"></span>Browser state</h5>
+
+  <pre><code class="idl">interface mixin <dfn interface>NavigatorOnLine</dfn> {
+  readonly attribute boolean <span data-x="dom-navigator-onLine">onLine</span>;
+};</code></pre>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>self</var>.<span data-x="dom-navigator">navigator</span>.<span subdfn data-x="dom-navigator-onLine">onLine</span></code></dt>
+
+   <dd>
+    <p>Returns false if the user agent is definitely offline (disconnected from the network).
+    Returns true if the user agent might be online.</p>
+
+    <p>The events <code data-x="event-online">online</code> and <code
+    data-x="event-offline">offline</code> are fired when the value of this attribute changes.</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn attribute for="NavigatorOnLine"><code
+  data-x="dom-navigator-onLine">onLine</code></dfn> getter steps are to return true if
+  <span>this</span>'s <span>relevant settings object</span> <span>is offline</span> is false;
+  otherwise false.</p>
+  </div>
+
+  <div algorithm>
+  <p>When the value that would be returned by the <code
+  data-x="dom-navigator-onLine">navigator.onLine</code> attribute of a <code>Window</code> or
+  <code>WorkerGlobalScope</code> <var>global</var> changes from true to false, the user agent must
+  <span>queue a global task</span> on the <span>networking task source</span> given
+  <var>global</var> to <span data-x="concept-event-fire">fire an event</span> named <code
+  data-x="event-offline">offline</code> at <var>global</var>.</p>
+  </div>
+
+  <div algorithm>
+  <p>On the other hand, when the value that would be returned by the <code
+  data-x="dom-navigator-onLine">navigator.onLine</code> attribute of a <code>Window</code> or
+  <code>WorkerGlobalScope</code> <var>global</var> changes from false to true, the user agent must
+  <span>queue a global task</span> on the <span>networking task source</span> given
+  <var>global</var> to <span data-x="concept-event-fire">fire an event</span> named <code
+  data-x="event-online">online</code> at the <code>Window</code> or <code>WorkerGlobalScope</code>
+  object.</p>
+  </div>
+
+  </div>
+
+  <p class="note">This attribute is inherently unreliable. A computer can be connected to a network
+  without having Internet access.</p>
+
+  <div class="example">
+   <p>In this example, an indicator is updated as the browser goes online and offline.</p>
+
+   <pre><code class="html">&lt;!DOCTYPE HTML>
+&lt;html lang="en">
+ &lt;head>
+  &lt;title>Online status&lt;/title>
+  &lt;script>
+   function updateIndicator() {
+     document.getElementById('indicator').textContent = navigator.onLine ? 'online' : 'offline';
+   }
+  &lt;/script>
+ &lt;/head>
+ &lt;body onload="updateIndicator()" ononline="updateIndicator()" onoffline="updateIndicator()">
+  &lt;p>The network is: &lt;span id="indicator">(state unknown)&lt;/span>
+ &lt;/body>
+&lt;/html></code></pre>
+  </div>
+
+
+  <h5 id="custom-handlers">Custom scheme handlers: the <code data-x="dom-navigator-registerProtocolHandler">registerProtocolHandler()</code> method</h5>
+
+  <pre><code class="idl">interface mixin <dfn interface>NavigatorContentUtils</dfn> {
+  [SecureContext] undefined <span data-x="dom-navigator-registerProtocolHandler">registerProtocolHandler</span>(DOMString scheme, USVString url);
+  [SecureContext] undefined <span data-x="dom-navigator-unregisterProtocolHandler">unregisterProtocolHandler</span>(DOMString scheme, USVString url);
+};</code></pre>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>window</var>.<span data-x="dom-navigator">navigator</span>.<span subdfn data-x="dom-navigator-registerProtocolHandler">registerProtocolHandler</span>(<var>scheme</var>, <var>url</var>)</code></dt>
+   <dd>
+    <p>Registers a handler for <var>scheme</var> at <var>url</var>. For example, an online telephone
+    messaging service could register itself as a handler of the <code data-x="sms
+    protocol">sms:</code> scheme, so that if the user clicks on such a link, they are given the
+    opportunity to use that web site. <ref>SMS</ref></p>
+
+    <p>The string "<code data-x="">%s</code>" in <var>url</var> is used as a placeholder for where
+    to put the URL of the content to be handled.</p>
+
+    <p>Throws a <span>"<code>SecurityError</code>"</span> <code>DOMException</code> if the user
+    agent blocks the registration (this might happen if trying to register as a handler for "<code
+    data-x="">http</code>", for instance).</p>
+
+    <p>Throws a <span>"<code>SyntaxError</code>"</span> <code>DOMException</code> if the "<code
+    data-x="">%s</code>" string is missing in <var>url</var>.</p>
+   </dd>
+
+   <dt><code data-x=""><var>window</var>.<span data-x="dom-navigator">navigator</span>.<span subdfn data-x="dom-navigator-unregisterProtocolHandler">unregisterProtocolHandler</span>(<var>scheme</var>, <var>url</var>)</code></dt>
+   <dd>
+    <p>Unregisters the handler given by the arguments.</p>
+
+    <p>Throws a <span>"<code>SecurityError</code>"</span> <code>DOMException</code> if the user
+    agent blocks the deregistration (this might happen if with invalid schemes, for instance).</p>
+
+    <p>Throws a <span>"<code>SyntaxError</code>"</span> <code>DOMException</code> if the "<code
+    data-x="">%s</code>" string is missing in <var>url</var>.</p>
+   </dd>
+  </dl>
+
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn method for="NavigatorContentUtils"><code
+  data-x="dom-navigator-registerProtocolHandler">registerProtocolHandler(<var>scheme</var>,
+  <var>url</var>)</code></dfn> method steps are:</p>
+
+  <ol>
+   <li><p>Let (<var>normalizedScheme</var>, <var>normalizedURLString</var>) be the result of running
+   <span>normalize protocol handler parameters</span> with <var>scheme</var>, <var>url</var>, and
+   <span>this</span>'s <span>relevant settings object</span>.</p></li>
+
+   <li>
+    <p><span>In parallel</span>: <dfn data-x="protocol-handler-registration" export>register a
+    protocol handler</dfn> for <var>normalizedScheme</var> and <var>normalizedURLString</var>. User
+    agents may, within the constraints described, do whatever they like. A user agent could, for
+    instance, prompt the user and offer the user the opportunity to add the site to a shortlist of
+    handlers, or make the handlers their default, or cancel the request. User agents could also
+    silently collect the information, providing it only when relevant to the user.</p>
+
+    <p>User agents should keep track of which sites have registered handlers (even if the user has
+    declined such registrations) so that the user is not repeatedly prompted with the same
+    request.</p>
+
+    <p>If the <span><code
+    data-x="dom-navigator-registerProtocolHandler">registerProtocolHandler()</code> automation
+    mode</span> of <span>this</span>'s <span>relevant global object</span>'s <span
+    data-x="concept-document-window">associated <code>Document</code></span> is not "<dfn><code
+    data-x="rph-automation-mode-none">none</code></dfn>", the user agent should first verify that it
+    is in an automation context (see <span>WebDriver's security considerations</span>). The user
+    agent should then bypass the above communication of information and gathering of user consent,
+    and instead do the following based on the value of the <span><code
+    data-x="dom-navigator-registerProtocolHandler">registerProtocolHandler()</code> automation
+    mode</span>:</p>
+
+    <dl>
+     <dt>"<dfn data-x="rph-automation-mode-auto-accept"><code>autoAccept</code></dfn>"</dt>
+     <dd><p>Act as if the user has seen the registration details and accepted the request.</p></dd>
+
+     <dt>"<dfn data-x="rph-automation-mode-auto-reject"><code>autoReject</code></dfn>"</dt>
+     <dd><p>Act as if the user has seen the registration details and rejected the request.</p></dd>
+    </dl>
+
+    <p>When the <dfn export data-x="protocol-handler-invocation" data-lt="invoke a protocol
+    handler">user agent uses this handler</dfn> for a <span>URL</span> <var>inputURL</var>:</p>
+
+    <ol>
+     <li><p><span>Assert</span>: <var>inputURL</var>'s <span
+     data-x="concept-url-scheme">scheme</span> is <var>normalizedScheme</var>.</p></li>
+
+     <li><p><span data-x="set the username">Set the username</span> given <var>inputURL</var> and
+     the empty string.</p></li>
+
+     <li><p><span data-x="set the password">Set the password</span> given <var>inputURL</var> and
+     the empty string.</p></li>
+
+     <li><p>Let <var>inputURLString</var> be the <span
+     data-x="concept-url-serializer">serialization</span> of <var>inputURL</var>.</p></li>
+
+     <li><p>Let <var>encodedURL</var> be the result of running <span>UTF-8 percent-encode</span> on
+     <var>inputURLString</var> using the <span>component percent-encode set</span>.</p></li>
+
+     <li><p>Let <var>handlerURLString</var> be <var>normalizedURLString</var>.</p></li>
+
+     <li><p>Replace the first instance of "<code data-x="">%s</code>" in <var>handlerURLString</var>
+     with <var>encodedURL</var>.</p></li>
+
+     <li><p>Let <var>resultURL</var> be the result of <span data-x="URL parser">parsing</span>
+     <var>handlerURLString</var>.</p></li>
+
+     <li><p><span>Navigate</span><!--DONAV user--> an appropriate <span>navigable</span> to
+     <var>resultURL</var>.</p></li>
+    </ol>
+
+    <div class="example">
+     <p>If the user had visited a site at <code data-x="">https://example.com/</code> that made the
+     following call:</p>
+
+     <pre><code class="js">navigator.registerProtocolHandler('web+soup', 'soup?url=%s')</code></pre>
+
+     <p>...and then, much later, while visiting <code data-x="">https://www.example.net/</code>,
+     clicked on a link such as:</p>
+
+     <pre><code class="html">&lt;a href="web+soup:chicken-k&#xEF;wi">Download our Chicken K&#xEF;wi soup!&lt;/a></code></pre>
+
+     <p>...then the UA might navigate to the following URL:</p>
+
+     <pre>https://example.com/soup?url=web+soup:chicken-k%C3%AFwi</pre>
+
+     <p>This site could then do whatever it is that it does with soup (synthesize it and ship it to
+     the user, or whatever).</p>
+    </div>
+
+    <p>This does not define when the handler is used. To some extent, the <span
+    data-x="navigate">processing model for navigating across documents</span> defines some cases
+    where it is relevant, but in general user agents may use this information wherever they would
+    otherwise consider handing schemes to native plugins or helper applications.</p>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="NavigatorContentUtils"><code
+  data-x="dom-navigator-unregisterProtocolHandler">unregisterProtocolHandler(<var>scheme</var>,
+  <var>url</var>)</code></dfn> method steps are:
+
+  <ol>
+   <li><p>Let (<var>normalizedScheme</var>, <var>normalizedURLString</var>) be the result of running
+   <span>normalize protocol handler parameters</span> with <var>scheme</var>, <var>url</var>, and
+   <span>this</span>'s <span>relevant settings object</span>.</p></li>
+
+   <li><p><span>In parallel</span>: unregister the handler described by <var>normalizedScheme</var>
+   and <var>normalizedURLString</var>.</p></li>
+  </ol>
+  </div>
+
+  <hr>
+
+  <div algorithm>
+  <p>To <dfn export>normalize protocol handler parameters</dfn>, given a string <var>scheme</var>, a
+  string <var>url</var>, and an <span>environment settings object</span> <var>environment</var>, run
+  these steps:</p>
+
+  <ol>
+   <li><p>Set <var>scheme</var> to <var>scheme</var>, <span>converted to ASCII
+   lowercase</span>.</p></li>
+
+   <li>
+    <p>If <var>scheme</var> is neither a <span>safelisted scheme</span> nor a string starting with
+    "<code data-x="">web+</code>" followed by one or more <span data-x="ASCII lower alpha">ASCII
+    lower alphas</span>, then throw a <span>"<code>SecurityError</code>"</span>
+    <code>DOMException</code>.</p>
+
+    <p class="note">This means that including a colon in <var>scheme</var> (as in "<code
+    data-x="">mailto:</code>") will throw.</p>
+
+    <p>The following schemes are the <dfn data-x="safelisted scheme" export>safelisted
+    schemes</dfn>:</p>
+
+    <ul class="brief">
+     <li><code data-x="">bitcoin</code></li> <!-- https://en.bitcoin.it/wiki/BIP_0021 -->
+     <li><code data-x="">ftp</code></li>
+     <li><code data-x="">ftps</code></li>
+     <li><code data-x="">geo</code></li>
+     <li><code data-x="">im</code></li>
+     <li><code data-x="">irc</code></li>
+     <li><code data-x="">ircs</code></li>
+     <li><code data-x="">magnet</code></li>
+     <li><code data-x="">mailto</code></li>
+     <li><code data-x="">matrix</code></li>
+     <li><code data-x="">mms</code></li>
+     <li><code data-x="">news</code></li>
+     <li><code data-x="">nntp</code></li>
+     <li><code data-x="">openpgp4fpr</code></li>
+     <li><code data-x="">sftp</code></li>
+     <li><code data-x="">sip</code></li>
+     <li><code data-x="">sms</code></li>
+     <li><code data-x="">smsto</code></li>
+     <li><code data-x="">ssh</code></li>
+     <li><code data-x="">tel</code></li>
+     <li><code data-x="">urn</code></li>
+     <li><code data-x="">webcal</code></li>
+     <li><code data-x="">wtai</code></li>
+     <li><code data-x="">xmpp</code></li>
+    </ul>
+
+    <p class="note">This list can be changed. If there are schemes that ought to be added, please
+    send feedback.</p>
+   </li>
+
+   <li><p>If <var>url</var> does not contain "<code data-x="">%s</code>", then throw a
+   <span>"<code>SyntaxError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li><p>Let <var>urlRecord</var> be the result of <span>encoding-parsing a URL</span> given
+   <var>url</var>, relative to <var>environment</var>.</p></li>
+
+   <li>
+    <p>If <var>urlRecord</var> is failure, then throw a <span>"<code>SyntaxError</code>"</span>
+    <code>DOMException</code>.</p>
+
+    <p class="note">This is forcibly the case if the <code data-x="">%s</code> placeholder is in the
+    host or port of the URL.</p>
+   </li>
+
+   <li><p>If <var>urlRecord</var>'s <span data-x="concept-url-scheme">scheme</span> is not an
+   <span>HTTP(S) scheme</span> or <var>urlRecord</var>'s <span
+   data-x="concept-url-origin">origin</span> is not <span>same origin</span> with
+   <var>environment</var>'s <span data-x="concept-settings-object-origin">origin</span>, then throw
+   a <span>"<code>SecurityError</code>"</span> <code>DOMException</code>.</p></li>
+
+   <li>
+    <p><span>Assert</span>: the result of <span>Is url potentially trustworthy?</span> given
+    <var>urlRecord</var> is "<code data-x="">Potentially Trustworthy</code>".</p>
+
+    <p class="note">Because <span>normalize protocol handler parameters</span> is run within a
+    <span>secure context</span>, this is implied by the <span>same origin</span> condition.</p>
+   </li>
+
+   <li>
+    <p>Return (<var>scheme</var>, <var>urlRecord</var>).</p>
+
+    <p class="note">The <span data-x="concept-url-serializer">serialization</span> of
+    <var>urlRecord</var> will by definition not be a <span>valid URL string</span> as it includes
+    the string "<code data-x="">%s</code>" which is not a valid component in a URL.</p>
+   </li>
+  </ol>
+  </div>
+
+
+
+  <h6>Security and privacy</h6>
+
+  <p>Custom scheme handlers can introduce a number of concerns, in particular privacy concerns.</p>
+
+  <p><strong>Hijacking all web usage.</strong> User agents should not allow schemes that are key to
+  its normal operation, such as an <span>HTTP(S) scheme</span>, to be rerouted through third-party
+  sites. This would allow a user's activities to be trivially tracked, and would allow user
+  information, even in secure connections, to be collected.</p>
+
+  <p><strong>Hijacking defaults.</strong> User agents are strongly urged to not automatically change
+  any defaults, as this could lead the user to send data to remote hosts that the user is not
+  expecting. New handlers registering themselves should never automatically cause those sites to be
+  used.</p>
+
+  <p><strong>Registration spamming.</strong> User agents should consider the possibility that a site
+  will attempt to register a large number of handlers, possibly from multiple domains (e.g., by
+  redirecting through a series of pages each on a different domain, and each registering a handler
+  for <code data-x="">web+spam:</code> &mdash; analogous practices abusing other web browser
+  features have been used by pornography web sites for many years). User agents should gracefully
+  handle such hostile attempts, protecting the user.</p>
+
+  <p><strong>Hostile handler metadata.</strong> User agents should protect against typical attacks
+  against strings embedded in their interface, for example ensuring that markup or escape characters
+  in such strings are not executed, that null bytes are properly handled, that over-long strings do
+  not cause crashes or buffer overruns, and so forth.</p>
+
+  <p><strong>Leaking private data.</strong> Web page authors may reference a custom scheme
+  handler using URL data considered private. They might do so with the expectation that the user's
+  choice of handler points to a page inside the organization, ensuring that sensitive data will not
+  be exposed to third parties. However, a user may have registered a handler pointing to an
+  external site, resulting in a data leak to that third party. Implementers might wish to consider
+  allowing administrators to disable custom handlers on certain subdomains, content types, or
+  schemes.</p>
+
+  <p><strong>Interface interference.</strong> User agents should be prepared to handle intentionally
+  long arguments to the methods. For example, if the user interface exposed consists of an "accept"
+  button and a "deny" button, with the "accept" binding containing the name of the handler, it's
+  important that a long name not cause the "deny" button to be pushed off the screen.</p>
+
+  <h6><dfn id="rph-user-agent-automation">User agent automation</dfn></h6>
+
+  <p>Each <code>Document</code> has a <dfn><code
+  data-x="dom-navigator-registerProtocolHandler">registerProtocolHandler()</code> automation
+  mode</dfn>. It defaults to "<code data-x="rph-automation-mode-none">none</code>", but it also can
+  be either "<code data-x="rph-automation-mode-auto-accept">autoAccept</code>" or "<code
+  data-x="rph-automation-mode-auto-reject">autoReject</code>".</p>
+
+  <p>For the purposes of user agent automation and website testing, this standard defines <dfn
+  data-x="set-rph-registration-mode">Set RPH Registration Mode</dfn> WebDriver <span>extension
+  command</span>. It instructs the user agent to place a <code>Document</code> into a mode where it
+  will automatically simulate a user either accepting or rejecting and registration confirmation
+  prompt dialog.</p>
+
+  <table class="data">
+   <thead>
+    <tr>
+     <th>HTTP Method
+     <th>URI Template
+   <tbody>
+    <tr>
+     <td>`<code data-x="">POST</code>`
+     <td><code data-x="">/session/{session id}/custom-handlers/set-mode</code>
+  </table>
+
+  <div algorithm>
+  <p>The <span>remote end steps</span> are:</p>
+
+  <ol>
+   <li><p>If <var>parameters</var> is not a JSON Object, return a <span>WebDriver error</span> with
+   <span>WebDriver error code</span> <span>invalid argument</span>.</p></li>
+
+   <li><p>Let <var>mode</var> be the result of <span>getting a property</span> named "<code
+   data-x="">mode</code>" from <var>parameters</var>.</p></li>
+
+   <li><p>If <var>mode</var> is not "<code
+   data-x="rph-automation-mode-auto-accept">autoAccept</code>", "<code
+   data-x="rph-automation-mode-auto-reject">autoReject</code>", or "<code
+   data-x="rph-automation-mode-none">none</code>", return a <span>WebDriver error</span> with
+   <span>WebDriver error code</span> <span>invalid argument</span>.</p></li>
+
+   <li><p>Let <var>document</var> be the <span data-x="webdriver-current-browsing-context">current
+   browsing context</span>'s <span>active document</span>.</p></li>
+
+   <li><p>Set <var>document</var>'s <span><code
+   data-x="dom-navigator-registerProtocolHandler">registerProtocolHandler()</code> automation
+   mode</span> to <var>mode</var>.</p></li>
+
+   <li><p>Return <span data-x="success-value">success</span> with data null.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+  <h5>Cookies</h5>
+
+  <pre><code class="idl">interface mixin <dfn interface>NavigatorCookies</dfn> {
+  readonly attribute boolean <span data-x="dom-navigator-cookieEnabled">cookieEnabled</span>;
+};</code></pre>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>window</var>.<span data-x="dom-navigator">navigator</span>.<span subdfn data-x="dom-navigator-cookieEnabled">cookieEnabled</span></code></dt>
+
+   <dd><p>Returns false if setting a cookie will be ignored, and true otherwise.</p></dd>
+  </dl>
+
+  <div w-nodev>
+
+   <div algorithm>
+   <p>The <dfn attribute for="NavigatorCookies"><code
+   data-x="dom-navigator-cookieEnabled">cookieEnabled</code></dfn> attribute must return true if the
+   user agent attempts to handle cookies according to <cite>HTTP State Management Mechanism</cite>,
+   and false if it ignores cookie change requests. <ref>COOKIES</ref></p>
+   </div>
+
+  </div>
+
+  <h5>PDF viewing support</h5>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>window</var>.<span data-x="dom-navigator">navigator</span>.<span subdfn data-x="dom-navigator-pdfViewerEnabled">pdfViewerEnabled</span></code></dt>
+
+   <dd><p>Returns true if the user agent supports inline viewing of PDF files when <span
+   data-x="navigate">navigating</span> to them, or false otherwise. In the latter case, PDF files
+   will be handled by <span data-x="hand-off to external software">external
+   software</span>.</p></dd>
+  </dl>
+
+  <pre><code class="idl">interface mixin <dfn interface>NavigatorPlugins</dfn> {
+  [SameObject] readonly attribute <span>PluginArray</span> <span data-x="dom-navigator-plugins">plugins</span>;
+  [SameObject] readonly attribute <span>MimeTypeArray</span> <span data-x="dom-navigator-mimeTypes">mimeTypes</span>;
+  boolean <span data-x="dom-navigator-javaEnabled">javaEnabled</span>();
+  readonly attribute boolean <span data-x="dom-navigator-pdfViewerEnabled">pdfViewerEnabled</span>;
+};
+
+[Exposed=Window,
+ <span>LegacyUnenumerableNamedProperties</span>]
+interface <dfn interface>PluginArray</dfn> {
+  undefined <span data-x="dom-PluginArray-refresh">refresh</span>();
+  readonly attribute unsigned long <span data-x="dom-PluginArray-length">length</span>;
+  getter <span>Plugin</span>? <span data-x="dom-PluginArray-item">item</span>(unsigned long index);
+  getter <span>Plugin</span>? <span data-x="dom-PluginArray-namedItem">namedItem</span>(DOMString name);
+};
+
+[Exposed=Window,
+ <span>LegacyUnenumerableNamedProperties</span>]
+interface <dfn interface>MimeTypeArray</dfn> {
+  readonly attribute unsigned long <span data-x="dom-MimeTypeArray-length">length</span>;
+  getter <span>MimeType</span>? <span data-x="dom-MimeTypeArray-item">item</span>(unsigned long index);
+  getter <span>MimeType</span>? <span data-x="dom-MimeTypeArray-namedItem">namedItem</span>(DOMString name);
+};
+
+[Exposed=Window,
+ <span>LegacyUnenumerableNamedProperties</span>]
+interface <dfn interface data-x="dom-Plugin">Plugin</dfn> {
+  readonly attribute DOMString <span data-x="dom-Plugin-name">name</span>;
+  readonly attribute DOMString <span data-x="dom-Plugin-description">description</span>;
+  readonly attribute DOMString <span data-x="dom-Plugin-filename">filename</span>;
+  readonly attribute unsigned long <span data-x="dom-Plugin-length">length</span>;
+  getter <span>MimeType</span>? <span data-x="dom-Plugin-item">item</span>(unsigned long index);
+  getter <span>MimeType</span>? <span data-x="dom-Plugin-namedItem">namedItem</span>(DOMString name);
+};
+
+[Exposed=Window]
+interface <dfn interface>MimeType</dfn> {
+  readonly attribute DOMString <span data-x="dom-MimeType-type">type</span>;
+  readonly attribute DOMString <span data-x="dom-MimeType-description">description</span>;
+  readonly attribute DOMString <span data-x="dom-MimeType-suffixes">suffixes</span>;
+  readonly attribute <span>Plugin</span> <span data-x="dom-MimeType-enabledPlugin">enabledPlugin</span>;
+};</code></pre>
+
+  <div w-nodev>
+
+  <p>Although these days detecting PDF viewer support can be done via <code
+  data-x="dom-navigator-pdfViewerEnabled">navigator.pdfViewerEnabled</code>, for historical reasons,
+  there are a number of complex and intertwined interfaces that provide the same capability, which
+  legacy code relies on. This section specifies both the simple modern variant and the complicated
+  historical one.</p>
+
+  <p id="fingerprint-pdfViewerEnabled">
+  <!--INSERT TRACKING-->
+  Each user agent has a <dfn>PDF viewer supported</dfn> boolean, whose value is
+  <span>implementation-defined</span> (and might vary according to user preferences).</p>
+
+  <p class="note">This value also impacts the <span data-x="navigate">navigation</span> processing
+  model.</p>
+
+  <hr>
+
+  <p>Each <code>Window</code> object has a <dfn>PDF viewer plugin objects</dfn> list. If the user
+  agent's <span>PDF viewer supported</span> is false, then it is the empty list. Otherwise, it is a
+  list containing five <code data-x="dom-Plugin">Plugin</code> objects, whose <span
+  data-x="concept-Plugin-name">names</span> are, respectively:</p>
+
+  <ol class="brief" start="0">
+   <li>"<code data-x="">PDF Viewer</code>"</li>
+   <li>"<code data-x="">Chrome PDF Viewer</code>"</li>
+   <li>"<code data-x="">Chromium PDF Viewer</code>"</li>
+   <li>"<code data-x="">Microsoft Edge PDF Viewer</code>"</li>
+   <li>"<code data-x="">WebKit built-in PDF</code>"</li>
+  </ol>
+
+  <p>The values of the above list form the <dfn>PDF viewer plugin names</dfn> list.</p>
+
+  <p class="note">These names were chosen based on evidence of what websites historically search
+  for, and thus what is necessary for user agents to expose in order to maintain compatibility with
+  existing content. They are ordered alphabetically. The "<code data-x="">PDF Viewer</code>" name
+  was then inserted in the 0th position so that the <code
+  data-x="dom-MimeType-enabledPlugin">enabledPlugin</code> getter could point to a generic plugin
+  name.</p>
+
+  <p>Each <code>Window</code> object has a <dfn>PDF viewer mime type objects</dfn> list. If the user
+  agent's <span>PDF viewer supported</span> is false, then it is the empty list. Otherwise, it is a
+  list containing two <code>MimeType</code> objects, whose <span
+  data-x="concept-MimeType-type">types</span> are, respectively:</p>
+
+  <ol class="brief" start="0">
+   <li>"<code data-x="">application/pdf</code>"</li>
+   <li>"<code data-x="">text/pdf</code>"</li>
+  </ol>
+
+  <p>The values of the above list form the <dfn>PDF viewer mime types</dfn> list.</p>
+
+  <hr>
+
+  <p>Each <code>NavigatorPlugins</code> object has a <dfn>plugins array</dfn>, which is a new
+  <code>PluginArray</code>, and a <dfn>mime types array</dfn>, which is a new
+  <code>MimeTypeArray</code>.</p>
+
+  <div algorithm>
+  <p>The <code>NavigatorPlugins</code> mixin's <dfn attribute for="NavigatorPlugins"><code
+  data-x="dom-navigator-plugins">plugins</code></dfn> getter steps are to return <span>this</span>'s
+  <span>plugins array</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <code>NavigatorPlugins</code> mixin's <dfn attribute for="NavigatorPlugins"><code
+  data-x="dom-navigator-mimeTypes">mimeTypes</code></dfn> getter steps are to return
+  <span>this</span>'s <span>mime types array</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <code>NavigatorPlugins</code> mixin's <dfn method for="NavigatorPlugins"><code
+  data-x="dom-navigator-javaEnabled">javaEnabled()</code></dfn> method steps are to return false.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <code>NavigatorPlugins</code> mixin's <dfn attribute for="NavigatorPlugins"><code
+  data-x="dom-navigator-pdfViewerEnabled">pdfViewerEnabled</code></dfn> getter steps are to return
+  the user agent's <span>PDF viewer supported</span>.</p>
+  </div>
+
+  <hr>
+
+  <div algorithm>
+  <p>The <code>PluginArray</code> interface <span data-x="support named properties">supports named
+  properties</span>. If the user agent's <span>PDF viewer supported</span> is true, then they are
+  the <span>PDF viewer plugin names</span>. Otherwise, they are the empty list.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <code>PluginArray</code> interface's <dfn method for="PluginArray"><code
+  data-x="dom-PluginArray-namedItem">namedItem(<var>name</var>)</code></dfn> method steps are:</p>
+
+  <ol>
+   <li><p><span data-x="list iterate">For each</span> <code data-x="dom-Plugin">Plugin</code>
+   <var>plugin</var> of <span>this</span>'s <span>relevant global object</span>'s <span>PDF viewer
+   plugin objects</span>: if <var>plugin</var>'s <span data-x="concept-Plugin-name">name</span> is
+   <var>name</var>, then return <var>plugin</var>.</p></li>
+
+   <li><p>Return null.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <code>PluginArray</code> interface <span>supports indexed properties</span>. The
+  <span>supported property indices</span> are the <span>indices</span> of <span>this</span>'s
+  <span>relevant global object</span>'s <span>PDF viewer plugin objects</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <code>PluginArray</code> interface's <dfn method for="PluginArray"><code
+  data-x="dom-PluginArray-item">item(<var>index</var>)</code></dfn> method steps are:</p>
+
+  <ol>
+   <li><p>Let <var>plugins</var> be <span>this</span>'s <span>relevant global object</span>'s
+   <span>PDF viewer plugin objects</span>.</p></li>
+
+   <li><p>If <var>index</var> &lt; <var>plugins</var>'s <span data-x="list size">size</span>, then
+   return <var>plugins</var>[<var>index</var>].</p></li>
+
+   <li><p>Return null.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <code>PluginArray</code> interface's <dfn attribute for="PluginArray"><code
+  data-x="dom-PluginArray-length">length</code></dfn> getter steps are to return <span>this</span>'s
+  <span>relevant global object</span>'s <span>PDF viewer plugin objects</span>'s <span
+  data-x="list size">size</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <code>PluginArray</code> interface's <dfn method for="PluginArray"><code
+  data-x="dom-PluginArray-refresh">refresh()</code></dfn> method steps are to do nothing.</p>
+  </div>
+
+  <hr>
+
+  <div algorithm>
+  <p>The <code>MimeTypeArray</code> interface <span data-x="support named properties">supports named
+  properties</span>. If the user agent's <span>PDF viewer supported</span> is true, then they are
+  the <span>PDF viewer mime types</span>. Otherwise, they are the empty list.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <code>MimeTypeArray</code> interface's <dfn method for="MimeTypeArray"><code
+  data-x="dom-MimeTypeArray-namedItem">namedItem(<var>name</var>)</code></dfn> method steps are:</p>
+
+  <ol>
+   <li><p><span data-x="list iterate">For each</span> <code>MimeType</code> <var>mimeType</var> of
+   <span>this</span>'s <span>relevant global object</span>'s <span>PDF viewer mime type
+   objects</span>: if <var>mimeType</var>'s <span data-x="concept-MimeType-type">type</span> is
+   <var>name</var>, then return <var>mimeType</var>.</p></li>
+
+   <li><p>Return null.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <code>MimeTypeArray</code> interface <span>supports indexed properties</span>. The
+  <span>supported property indices</span> are the <span>indices</span> of <span>this</span>'s
+  <span>relevant global object</span>'s <span>PDF viewer mime type objects</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <code>MimeTypeArray</code> interface's <dfn method for="MimeTypeArray"><code
+  data-x="dom-MimeTypeArray-item">item(<var>index</var>)</code></dfn> method steps are:</p>
+
+  <ol>
+   <li><p>Let <var>mimeTypes</var> be <span>this</span>'s <span>relevant global object</span>'s
+   <span>PDF viewer mime type objects</span>.</p></li>
+
+   <li><p>If <var>index</var> &lt; <var>mimeTypes</var>'s <span data-x="list size">size</span>, then
+   return <var>mimeTypes</var>[<var>index</var>].</p></li>
+
+   <li><p>Return null.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <code>MimeTypeArray</code> interface's <dfn attribute for="MimeTypeArray"><code
+  data-x="dom-MimeTypeArray-length">length</code></dfn> getter steps are to return
+  <span>this</span>'s <span>relevant global object</span>'s <span>PDF viewer mime type
+  objects</span>'s <span data-x="list size">size</span>.</p>
+  </div>
+
+  <hr>
+
+  <p>Each <code data-x="dom-Plugin">Plugin</code> object has a <dfn
+  data-x="concept-Plugin-name">name</dfn>, which is set when the object is created.</p>
+
+  <div algorithm>
+  <p>The <code data-x="dom-Plugin">Plugin</code> interface's <dfn attribute for="Plugin"><code
+  data-x="dom-Plugin-name">name</code></dfn> getter steps are to return <span>this</span>'s <span
+  data-x="concept-Plugin-name">name</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <code data-x="dom-Plugin">Plugin</code> interface's <dfn attribute for="Plugin"><code
+  data-x="dom-Plugin-description">description</code></dfn> getter steps are to return "<code
+  data-x="">Portable Document Format</code>".</p>
+  </div>
+
+  <div algorithm>
+  <p>The <code data-x="dom-Plugin">Plugin</code> interface's <dfn attribute for="Plugin"><code
+  data-x="dom-Plugin-filename">filename</code></dfn> getter steps are to return "<code
+  data-x="">internal-pdf-viewer</code>".</p>
+  </div>
+
+  <div algorithm>
+  <p>The <code data-x="dom-Plugin">Plugin</code> interface <span data-x="support named
+  properties">supports named properties</span>. If the user agent's <span>PDF viewer
+  supported</span> is true, then they are the <span>PDF viewer mime types</span>. Otherwise, they
+  are the empty list.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <code data-x="dom-Plugin">Plugin</code> interface's <dfn method for="Plugin"><code
+  data-x="dom-Plugin-namedItem">namedItem(<var>name</var>)</code></dfn> method steps are:</p>
+
+  <ol>
+   <li><p><span data-x="list iterate">For each</span> <code>MimeType</code> <var>mimeType</var> of
+   <span>this</span>'s <span>relevant global object</span>'s <span>PDF viewer mime type
+   objects</span>: if <var>mimeType</var>'s <span data-x="concept-MimeType-type">type</span> is
+   <var>name</var>, then return <var>mimeType</var>.</p></li>
+
+   <li><p>Return null.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <code data-x="dom-Plugin">Plugin</code> interface <span>supports indexed properties</span>.
+  The <span>supported property indices</span> are the <span>indices</span> of <span>this</span>'s
+  <span>relevant global object</span>'s <span>PDF viewer mime type objects</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <code data-x="dom-Plugin">Plugin</code> interface's <dfn method for="Plugin"><code
+  data-x="dom-Plugin-item">item(<var>index</var>)</code></dfn> method steps are:</p>
+
+  <ol>
+   <li><p>Let <var>mimeTypes</var> be <span>this</span>'s <span>relevant global object</span>'s
+   <span>PDF viewer mime type objects</span>.</p></li>
+
+   <li><p>If <var>index</var> &lt; <var>mimeTypes</var>'s <span data-x="list size">size</span>, then
+   return <var>mimeTypes</var>[<var>index</var>].</p></li>
+
+   <li><p>Return null.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <code data-x="dom-Plugin">Plugin</code> interface's <dfn attribute for="Plugin"><code
+  data-x="dom-Plugin-length">length</code></dfn> getter steps are to return
+  <span>this</span>'s <span>relevant global object</span>'s <span>PDF viewer mime type
+  objects</span>'s <span data-x="list size">size</span>.</p>
+  </div>
+
+  <hr>
+
+  <p>Each <code>MimeType</code> object has a <dfn data-x="concept-MimeType-type">type</dfn>, which
+  is set when the object is created.</p>
+
+  <div algorithm>
+  <p>The <code>MimeType</code> interface's <dfn attribute for="MimeType"><code
+  data-x="dom-MimeType-type">type</code></dfn> getter steps are to return <span>this</span>'s <span
+  data-x="concept-MimeType-type">type</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <code>MimeType</code> interface's <dfn attribute for="MimeType"><code
+  data-x="dom-MimeType-description">description</code></dfn> getter steps are to return "<code
+  data-x="">Portable Document Format</code>".</p>
+  </div>
+
+  <div algorithm>
+  <p>The <code>MimeType</code> interface's <dfn attribute for="MimeType"><code
+  data-x="dom-MimeType-suffixes">suffixes</code></dfn> getter steps are to return "<code
+  data-x="">pdf</code>".</p>
+  </div>
+
+  <div algorithm>
+  <p>The <code>MimeType</code> interface's <dfn attribute for="MimeType"><code
+  data-x="dom-MimeType-enabledPlugin">enabledPlugin</code></dfn> getter steps are to return
+  <span>this</span>'s <span>relevant global object</span>'s <span>PDF viewer plugin
+  objects</span>[0] (i.e., the generic "<code data-x="">PDF Viewer</code>" one).</p>
+  </div>
+
+  </div>
+
+
+  <h3 split-filename="imagebitmap-and-animations">Images</h3>
+

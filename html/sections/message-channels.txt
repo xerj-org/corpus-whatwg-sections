@@ -1,0 +1,68 @@
+WHATWG HTML — section message-channels — Message channels (+the-messageeventtarget-mixin)
+
+  <h4>Message channels</h4>
+
+  <pre><code class="idl">[Exposed=(Window,Worker)]
+interface <dfn interface>MessageChannel</dfn> {
+  <span data-x="dom-MessageChannel">constructor</span>();
+
+  readonly attribute <span>MessagePort</span> <span data-x="dom-MessageChannel-port1">port1</span>;
+  readonly attribute <span>MessagePort</span> <span data-x="dom-MessageChannel-port2">port2</span>;
+};</code></pre>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>channel</var> = new <span subdfn data-x="dom-MessageChannel">MessageChannel</span>()</code></dt>
+
+   <dd>
+    <p>Returns a new <code>MessageChannel</code> object with two new <code>MessagePort</code>
+    objects.</p>
+   </dd>
+
+   <dt><code data-x=""><var>channel</var>.<span subdfn data-x="dom-MessageChannel-port1">port1</span></code></dt>
+
+   <dd><p>Returns the first <code>MessagePort</code> object.</p></dd>
+
+   <dt><code data-x=""><var>channel</var>.<span subdfn data-x="dom-MessageChannel-port2">port2</span></code></dt>
+
+   <dd><p>Returns the second <code>MessagePort</code> object.</p></dd>
+  </dl>
+
+  <div w-nodev>
+
+  <p>A <code>MessageChannel</code> object has an associated <dfn>port 1</dfn> and an associated
+  <dfn>port 2</dfn>, both <code>MessagePort</code> objects.</p>
+
+  <div algorithm>
+  <p>The <dfn><code data-x="dom-MessageChannel">new MessageChannel()</code></dfn> constructor steps
+  are:</p>
+
+  <ol>
+   <li><p>Set <span>this</span>'s <span>port 1</span> to a <span>new</span>
+   <code>MessagePort</code> in <span>this</span>'s <span data-x="concept-relevant-realm">relevant
+   realm</span>.</p></li>
+
+   <li><p>Set <span>this</span>'s <span>port 2</span> to a <span>new</span>
+   <code>MessagePort</code> in <span>this</span>'s <span data-x="concept-relevant-realm">relevant
+   realm</span>.</p></li>
+
+   <li><p><span>Entangle</span> <span>this</span>'s <span>port 1</span> and <span>this</span>'s
+   <span>port 2</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="MessageChannel"><code
+  data-x="dom-MessageChannel-port1">port1</code></dfn> getter steps are to return
+  <span>this</span>'s <span>port 1</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="MessageChannel"><code
+  data-x="dom-MessageChannel-port2">port2</code></dfn> getter steps are to return
+  <span>this</span>'s <span>port 2</span>.</p>
+  </div>
+
+  </div>
+
+  <h4 w-nodev><span id="the-messageeventtarget-abstract-interface"></span>The
+  <code>MessageEventTarget</code> mixin</h4>

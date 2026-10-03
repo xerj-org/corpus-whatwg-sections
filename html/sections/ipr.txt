@@ -1,0 +1,132 @@
+WHATWG HTML — section ipr — Intellectual property rights
+
+  <h2 id="ipr" class="no-num">Intellectual property rights</h2>
+
+  <div w-nodev itemscope itemtype="http://n.whatwg.org/work">
+   <p>The image in the introduction is based on <a itemprop="work" href="https://www.flickr.com/photos/wonderlane/2986252088/">a photo</a>
+   by <a itemprop="https://creativecommons.org/ns#attributionURL" href="https://www.flickr.com/photos/wonderlane/">Wonderlane</a>.
+   (<a itemprop="license" href="https://creativecommons.org/licenses/by/2.0/">CC BY 2.0</a>)
+  </div>
+
+  <div itemscope itemtype="http://n.whatwg.org/work">
+   <p>The image of the wolf in the embedded content introduction is based on <a itemprop="work" href="https://commons.wikimedia.org/wiki/File:WolfRunningInSnow.jpg">a photo</a>
+   by <a itemprop="http://creativecommons.org/ns#attributionURL" href="https://commons.wikimedia.org/wiki/File:WolfRunningInSnow.jpg">Barry O'Neill</a>.
+   (<a itemprop="license" href="https://en.wikipedia.org/wiki/Public_domain">Public domain</a>)
+  </div>
+
+  <div itemscope itemtype="http://n.whatwg.org/work">
+   <p>The image of the kettlebell swing in the embedded content introduction is based on <a itemprop="work" href="https://pixabay.com/en/functional-mobility-articular-606568/">a photo</a>
+   by <a itemprop="http://creativecommons.org/ns#attributionURL" href="https://pixabay.com/en/users/506563-506563/">kokkarina</a>.
+   (<a itemprop="license" href="https://creativecommons.org/publicdomain/zero/1.0/">CC0 1.0</a>)
+  </div>
+
+  <div itemscope itemtype="http://n.whatwg.org/work">
+   <p>The Blue Robot Player sprite used in the canvas demo is based on
+   <a itemprop="work" href="https://johncolburn.deviantart.com/art/Blue-Robot-Player-Sprite-323813997">a work</a> by
+   <a itemprop="https://creativecommons.org/ns#attributionURL" href="https://johncolburn.deviantart.com/">JohnColburn</a>.
+   (<a itemprop="license" href="https://creativecommons.org/licenses/by-sa/3.0/">CC BY-SA 3.0</a>)</p>
+  </div>
+
+  <div itemscope itemtype="http://n.whatwg.org/work">
+   <p>The photograph of robot 148 climbing the tower at the FIRST Robotics Competition 2013 Silicon Valley Regional is based on
+   <a itemprop="work" href="https://www.flickr.com/photos/lenore-m/8631391979/">a work</a> by
+   <a itemprop="https://creativecommons.org/ns#attributionURL" href="https://www.flickr.com/photos/lenore-m/">Lenore Edman</a>.
+   (<a itemprop="license" href="https://creativecommons.org/licenses/by/2.0/">CC BY 2.0</a>)</p>
+  </div>
+
+  <div itemscope itemtype="http://n.whatwg.org/work">
+   <p>The diagram showing how <code data-x="attr-script-async">async</code> and <code
+   data-x="attr-script-defer">defer</code> impact <code>script</code> loading is based on a
+   similar diagram from <a itemprop="work"
+   href="https://peter.sh/experiments/asynchronous-and-deferred-javascript-execution-explained/">a
+   blog post</a> by <a itemprop="https://creativecommons.org/ns#attributionURL"
+   href="https://peter.sh/about/">Peter Beverloo</a>.
+   (<a itemprop="license" href="https://creativecommons.org/publicdomain/zero/1.0/">CC0 1.0</a>)</p>
+  </div>
+
+  <div itemscope itemtype="http://n.whatwg.org/work">
+   <p>The image decoding demo used to demonstrate module-based workers draws on some example code
+   from <a itemprop="work" href="https://www.html5rocks.com/en/tutorials/canvas/imagefilters/">a
+   tutorial</a> by <a itemprop="https://creativecommons.org/ns#attributionURL"
+   href="https://www.fhtr.net/">Ilmari Heikkinen</a>.
+   (<a itemprop="license" href="https://creativecommons.org/licenses/by/3.0/">CC BY 3.0</a>)</p>
+  </div>
+
+  <div itemscope itemtype="http://n.whatwg.org/work">
+   <p>The <code data-x="">&lt;flag-icon></code> example was inspired by <a itemprop="work"
+   href="https://github.com/stevenrskelton/flag-icon">a custom element</a> by <a
+   itemprop="https://creativecommons.org/ns#attributionURL" href="http://stevenskelton.ca/">Steven
+   Skelton</a>. (<a itemprop="license" href="https://opensource.org/licenses/MIT">MIT</a>)</p>
+  </div>
+
+  <p itemscope itemtype="http://n.whatwg.org/work">Part of the revision history of the
+  <code>picture</code> element and related features can be found in the <a
+  href="https://github.com/ResponsiveImagesCG/picture-element"><code>ResponsiveImagesCG/picture-element</code>
+  repository</a>, which is available under the <a itemprop="license"
+  href="https://www.w3.org/Consortium/Legal/2015/copyright-software-and-document">W3C Software and
+  Document License</a>.</p>
+
+  <p itemscope itemtype="http://n.whatwg.org/work">Part of the revision history of the <code
+  data-x="meta-theme-color">theme-color</code> metadata name can be found in the <a
+  href="https://github.com/whatwg/meta-theme-color"><code>whatwg/meta-theme-color</code>
+  repository</a>, which is available under <a itemprop="license"
+  href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a>.</p>
+
+  <p itemscope itemtype="http://n.whatwg.org/work">Part of the revision history of the <a
+  href="#custom-elements">custom elements</a> feature can be found in the <a
+  href="https://github.com/w3c/webcomponents"><code>w3c/webcomponents</code> repository</a>, which
+  is available under the <a itemprop="license"
+  href="https://www.w3.org/Consortium/Legal/2015/copyright-software-and-document">W3C Software and
+  Document License</a>.</p>
+
+  <p itemscope itemtype="http://n.whatwg.org/work">Part of the revision history of the <code
+  data-x="dom-innerText">innerText</code> getter and setter can be found in the <a
+  href="https://github.com/rocallahan/innerText-spec"><code>rocallahan/innerText-spec</code>
+  repository</a>, which is available under <a itemprop="license"
+  href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a>.</p>
+
+  <p itemscope itemtype="http://n.whatwg.org/work">Part of the revision history of the <a
+  href="#worklets">worklets</a> feature can be found in the <a
+  href="https://github.com/w3c/css-houdini-drafts"><code>w3c/css-houdini-drafts</code>
+  repository</a>, which is available under the <a itemprop="license"
+  href="https://www.w3.org/Consortium/Legal/2015/copyright-software-and-document">W3C Software and
+  Document License</a>.</p>
+
+  <p itemscope itemtype="http://n.whatwg.org/work">Part of the revision history of the <a
+  href="#import-maps">import maps</a> feature can be found in the <a
+  href="https://github.com/WICG/import-maps"><code>WICG/import-maps</code>
+  repository</a>, which is available under the <a itemprop="license"
+  href="https://www.w3.org/Consortium/Legal/2015/copyright-software-and-document">W3C Software and
+  Document License</a>.</p>
+
+  <p itemscope itemtype="http://n.whatwg.org/work">Part of the revision history of the <a
+  href="#navigation-api">navigation API</a> feature can be found in the <a
+  href="https://github.com/WICG/navigation-api"><code>WICG/navigation-api</code>
+  repository</a>, which is available under the <a itemprop="license"
+  href="https://www.w3.org/Consortium/Legal/2015/copyright-software-and-document">W3C Software and
+  Document License</a>.</p>
+
+  <p itemscope itemtype="http://n.whatwg.org/work">Part of the revision history of the <a
+  href="#close-requests-and-close-watchers">Close requests and close watchers</a> section can be
+  found in the <a href="https://github.com/WICG/close-watcher"><code>WICG/close-watcher</code>
+  repository</a>, which is available under the <a itemprop="license"
+  href="https://www.w3.org/Consortium/Legal/2015/copyright-software-and-document">W3C Software and
+  Document License</a>.</p>
+
+  <p itemscope itemtype="http://n.whatwg.org/work">Part of the revision history of the <a
+  href="#speculative-loading">Speculative loading</a> section can be
+  found in the <a href="https://github.com/WICG/nav-speculation"><code>WICG/nav-speculation</code>
+  repository</a>, which is available under the <a itemprop="license"
+  href="https://www.w3.org/Consortium/Legal/2015/copyright-software-and-document">W3C Software and
+  Document License</a>.</p>
+
+  <p>Copyright © WHATWG (Apple, Google, Mozilla, Microsoft). This work is licensed under a <a
+  rel="license" href="https://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0
+  International License</a>. To the extent portions of it are incorporated into source code, such
+  portions in the source code are licensed under the <a rel="license"
+  href="https://opensource.org/licenses/BSD-3-Clause">BSD 3-Clause License</a> instead.</p>
+
+  <p w-nodev w-noreview>This is the Living Standard. Those interested in the patent-review version
+  should view the <a href="/review-drafts/2026-07/">Living Standard Review Draft</a>.</p>
+ </body>
+</html>

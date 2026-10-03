@@ -1,0 +1,131 @@
+WHATWG HTML — section dependencies/web-idl — Web IDL
+
+   <dt>Web IDL</dt>
+
+   <dd>
+    <p>The IDL fragments in this specification must be interpreted as required for conforming IDL
+    fragments, as described in <cite>Web IDL</cite>. <ref>WEBIDL</ref></p>
+
+    <p>The following terms are defined in <cite>Web IDL</cite>:</p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#this">this</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#dfn-extended-attribute">extended attribute</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#dfn-named-constructor">named constructor</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#idl-constructors">constructor operation</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#overridden-constructor-steps">overridden constructor steps</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#internally-create-a-new-object-implementing-the-interface">internally create a new object implementing the interface</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#dfn-array-index-property-name">array index property name</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#buffersource-byte-length">buffer source byte length</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#dfn-support-indexed-properties">supports indexed properties</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#dfn-supported-property-indices">supported property indices</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#dfn-determine-the-value-of-an-indexed-property">determine the value of an indexed property</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#dfn-set-the-value-of-an-existing-indexed-property">set the value of an existing indexed property</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#dfn-set-the-value-of-a-new-indexed-property">set the value of a new indexed property</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#dfn-support-named-properties">support named properties</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#dfn-supported-property-names">supported property names</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#dfn-determine-the-value-of-a-named-property">determine the value of a named property</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#dfn-set-the-value-of-an-existing-named-property">set the value of an existing named property</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#dfn-set-the-value-of-a-new-named-property">set the value of a new named property</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#dfn-delete-an-existing-named-property">delete an existing named property</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#dfn-perform-a-security-check">perform a security check</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#dfn-platform-object">platform object</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#dfn-legacy-platform-object">legacy platform object</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#dfn-primary-interface">primary interface</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#dfn-interface-object">interface object</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#dfn-named-properties-object">named properties object</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#include">include</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#dfn-inherit">inherit</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#dfn-interface-prototype-object">interface prototype object</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#implements">implements</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#dfn-associated-realm">associated realm</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#es-platform-objects">[[Realm]] field of a platform object</dfn></li>
+     <li><dfn data-x="named-properties-object-getownproperty" data-x-href="https://webidl.spec.whatwg.org/#named-properties-object-getownproperty">[[GetOwnProperty]] internal method of a named properties object</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#dfn-callback-context">callback context</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#dfn-frozen-array-type">frozen array</dfn> and
+         <dfn data-x-href="https://webidl.spec.whatwg.org/#dfn-create-frozen-array">creating a frozen array</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#new" data-x="new">create a new object implementing the interface</dfn></li>
+     <li><dfn data-x="dfn-callback-this-value" data-x-href="https://webidl.spec.whatwg.org/#dfn-callback-this-value">callback this value</dfn></li>
+     <li><dfn data-x="concept-idl-convert" data-x-href="https://webidl.spec.whatwg.org/#es-type-mapping">converting</dfn> between Web IDL types and JS types</li>
+     <li><dfn data-x="es-invoking-callback-functions" data-x-href="https://webidl.spec.whatwg.org/#invoke-a-callback-function">invoking</dfn> and
+         <dfn data-x="es-constructing-callback-functions" data-x-href="https://webidl.spec.whatwg.org/#construct-a-callback-function">constructing</dfn> callback functions</li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#dfn-overload-resolution-algorithm">overload resolution algorithm</dfn></li>
+     <li><dfn data-x="idl-exposed" data-x-href="https://webidl.spec.whatwg.org/#dfn-exposed">exposed</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#a-promise-resolved-with">a promise resolved with</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#a-promise-rejected-with">a promise rejected with</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#wait-for-all">wait for all</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#upon-rejection">upon rejection</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#upon-fulfillment">upon fulfillment</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#mark-a-promise-as-handled">mark as handled</dfn></li>
+     <li><dfn data-x="Global" data-x-href="https://webidl.spec.whatwg.org/#Global"><code>[Global]</code></dfn></li>
+     <li><dfn data-x="LegacyFactoryFunction" data-x-href="https://webidl.spec.whatwg.org/#LegacyFactoryFunction"><code>[LegacyFactoryFunction]</code></dfn></li>
+     <li><dfn data-x="LegacyLenientThis" data-x-href="https://webidl.spec.whatwg.org/#LegacyLenientThis"><code>[LegacyLenientThis]</code></dfn></li>
+     <li><dfn data-x="LegacyNullToEmptyString" data-x-href="https://webidl.spec.whatwg.org/#LegacyNullToEmptyString"><code>[LegacyNullToEmptyString]</code></dfn></li>
+     <li><dfn data-x="LegacyOverrideBuiltIns" data-x-href="https://webidl.spec.whatwg.org/#LegacyOverrideBuiltIns"><code>[LegacyOverrideBuiltIns]</code></dfn></li>
+     <li><dfn data-x="LegacyPlatformObjectGetOwnProperty" data-x-href="https://webidl.spec.whatwg.org/#LegacyPlatformObjectGetOwnProperty">LegacyPlatformObjectGetOwnProperty</dfn></li>
+     <li><dfn data-x="LegacyTreatNonObjectAsNull" data-x-href="https://webidl.spec.whatwg.org/#LegacyTreatNonObjectAsNull"><code>[LegacyTreatNonObjectAsNull]</code></dfn></li>
+     <li><dfn data-x="LegacyUnenumerableNamedProperties" data-x-href="https://webidl.spec.whatwg.org/#LegacyUnenumerableNamedProperties"><code>[LegacyUnenumerableNamedProperties]</code></dfn></li>
+     <li><dfn data-x="LegacyUnforgeable" data-x-href="https://webidl.spec.whatwg.org/#LegacyUnforgeable"><code>[LegacyUnforgeable]</code></dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#dfn-set-entries">set entries</dfn></li>
+    </ul>
+
+    <p><cite>Web IDL</cite> also defines the following types that are used in this specification:</p>
+
+    <ul class="brief">
+     <li><dfn data-x="idl-ArrayBuffer" data-x-href="https://webidl.spec.whatwg.org/#idl-ArrayBuffer"><code>ArrayBuffer</code></dfn></li>
+     <li><dfn data-x="idl-ArrayBufferView" data-x-href="https://webidl.spec.whatwg.org/#common-ArrayBufferView"><code>ArrayBufferView</code></dfn></li>
+     <li><dfn data-x="idl-boolean" data-x-href="https://webidl.spec.whatwg.org/#idl-boolean"><code>boolean</code></dfn></li>
+     <li><dfn data-x="idl-DOMString" data-x-href="https://webidl.spec.whatwg.org/#idl-DOMString"><code>DOMString</code></dfn></li>
+     <li><dfn data-x="idl-double" data-x-href="https://webidl.spec.whatwg.org/#idl-double"><code>double</code></dfn></li>
+     <li><dfn data-x="IDL enumeration" data-x-href="https://webidl.spec.whatwg.org/#idl-enums">enumeration</dfn></li>
+     <li><dfn data-x="idl-Float16Array" data-x-href="https://webidl.spec.whatwg.org/#idl-Float16Array"><code>Float16Array</code></dfn></li>
+     <li><dfn data-x="idl-Function" data-x-href="https://webidl.spec.whatwg.org/#common-Function"><code>Function</code></dfn></li>
+     <li><dfn data-x="idl-long" data-x-href="https://webidl.spec.whatwg.org/#idl-long"><code>long</code></dfn></li>
+     <li><dfn data-x="idl-object" data-x-href="https://webidl.spec.whatwg.org/#idl-object"><code>object</code></dfn></li>
+     <li><dfn data-x="idl-Promise" data-x-href="https://webidl.spec.whatwg.org/#idl-promise"><code>Promise</code></dfn></li>
+     <li><dfn data-x="idl-Uint8ClampedArray" data-x-href="https://webidl.spec.whatwg.org/#idl-Uint8ClampedArray"><code>Uint8ClampedArray</code></dfn></li>
+     <li><dfn data-x="idl-unrestricted-double" data-x-href="https://webidl.spec.whatwg.org/#idl-unrestricted-double"><code>unrestricted double</code></dfn></li>
+     <li><dfn data-x="idl-unsigned-long" data-x-href="https://webidl.spec.whatwg.org/#idl-unsigned-long"><code>unsigned long</code></dfn></li>
+     <li><dfn data-x="idl-USVString" data-x-href="https://webidl.spec.whatwg.org/#idl-USVString"><code>USVString</code></dfn></li>
+     <li><dfn data-x="idl-VoidFunction" data-x-href="https://webidl.spec.whatwg.org/#VoidFunction"><code>VoidFunction</code></dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#quotaexceedederror"><code>QuotaExceededError</code></dfn></li>
+    </ul>
+
+    <p>The term <dfn data-x-href="https://webidl.spec.whatwg.org/#dfn-throw">throw</dfn> in this
+    specification is used as defined in <cite>Web IDL</cite>. The <dfn
+    data-x-href="https://webidl.spec.whatwg.org/#dfn-DOMException"><code>DOMException</code></dfn>
+    type and the following exception names are defined by Web IDL and used by this
+    specification:</p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#indexsizeerror">"<code>IndexSizeError</code>"</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#hierarchyrequesterror">"<code>HierarchyRequestError</code>"</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#invalidcharactererror">"<code>InvalidCharacterError</code>"</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#nomodificationallowederror">"<code>NoModificationAllowedError</code>"</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#notfounderror">"<code>NotFoundError</code>"</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#notsupportederror">"<code>NotSupportedError</code>"</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#invalidstateerror">"<code>InvalidStateError</code>"</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#syntaxerror">"<code>SyntaxError</code>"</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#invalidaccesserror">"<code>InvalidAccessError</code>"</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#securityerror">"<code>SecurityError</code>"</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#networkerror">"<code>NetworkError</code>"</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#aborterror">"<code>AbortError</code>"</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#datacloneerror">"<code>DataCloneError</code>"</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#encodingerror">"<code>EncodingError</code>"</dfn></li>
+     <li><dfn data-x-href="https://webidl.spec.whatwg.org/#notallowederror">"<code>NotAllowedError</code>"</dfn></li>
+    </ul>
+
+    <p>When this specification requires a user agent to <dfn>create a <code>Date</code> object</dfn>
+    representing a particular time (which could be the special value Not-a-Number), the milliseconds
+    component of that time, if any, must be truncated to an integer, and the time value of the newly
+    created <code>Date</code> object must represent the resulting truncated time.</p>
+
+    <p class="example">For instance, given the time 23045 millionths of a second after 01:00 UTC on
+    January 1st 2000, i.e. the time 2000-01-01T00:00:00.023045Z, then the <code>Date</code> object
+    created representing that time would represent the same time as that created representing the
+    time 2000-01-01T00:00:00.023Z, 45 millionths earlier. If the given time is NaN, then the result
+    is a <code>Date</code> object that represents a time value NaN (indicating that the object does
+    not represent a specific instant of time).</p>
+   </dd>
+
+

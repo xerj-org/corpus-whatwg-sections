@@ -1,0 +1,18 @@
+WHATWG HTML — section dependencies/navigation-timing — Navigation Timing
+
+   <dt>Navigation Timing</dt>
+
+   <dd>
+    <p>The following terms are defined in <cite>Navigation Timing</cite>:
+    <ref>NAVIGATIONTIMING</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://w3c.github.io/navigation-timing/#dfn-create-the-navigation-timing-entry">create the navigation timing entry</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/navigation-timing/#dfn-queue-the-navigation-timing-entry">queue the navigation timing entry</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/navigation-timing/#dom-navigationtimingtype"><code>NavigationTimingType</code></dfn> and its
+         "<dfn data-x="dom-navigationtimingtype-navigate" data-x-href="https://w3c.github.io/navigation-timing/#dom-navigationtimingtype-navigate"><code>navigate</code></dfn>",
+         "<dfn data-x="dom-navigationtimingtype-reload" data-x-href="https://w3c.github.io/navigation-timing/#dom-navigationtimingtype-reload"><code>reload</code></dfn>", and
+         "<dfn data-x="dom-navigationtimingtype-back_forward" data-x-href="https://w3c.github.io/navigation-timing/#dom-navigationtimingtype-back_forward"><code>back_forward</code></dfn>" values.</li>
+    </ul>
+   </dd>
+

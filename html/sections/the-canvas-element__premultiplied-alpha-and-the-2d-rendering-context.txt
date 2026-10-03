@@ -1,0 +1,94 @@
+WHATWG HTML — section the-canvas-element/premultiplied-alpha-and-the-2d-rendering-context — Premultiplied alpha and the 2D rendering context
+
+  <h5>Premultiplied alpha and the 2D rendering context</h5>
+
+  <p><dfn data-x="concept-premultiplied-alpha">Premultiplied alpha</dfn> refers to one way of
+  representing transparency in an image, the other being non-premultiplied alpha.</p>
+
+  <p>Under non-premultiplied alpha, the red, green, and blue components of a pixel represent that
+  pixel's color, and its alpha component represents that pixel's opacity.</p>
+
+  <p>Under premultiplied alpha, however, the red, green, and blue components of a pixel represent
+  the amounts of color that the pixel adds to the image, and its alpha component represents the
+  amount that the pixel obscures whatever is behind it.</p>
+
+  <div class="example">
+   <p>For instance, assuming the color components range from 0 (off) to 255 (full intensity), these
+   example colors are represented in the following ways:</p>
+
+   <table>
+    <thead>
+     <tr>
+      <th>CSS color representation
+      <th>Premultiplied representation
+      <th>Non-premultiplied representation
+      <th>Description of color
+      <th>Image of color blended above other content
+    <tbody>
+     <tr>
+      <td>rgba(255, 127, 0, 1)
+      <td>255, 127, 0, 255
+      <td>255, 127, 0, 255
+      <td>Completely-opaque orange
+      <td><img loading="lazy" src="/images/premultiplied-example-1.png" width="96" height="96" alt="An opaque orange circle sits atop a background">
+     <tr>
+      <td>rgba(255, 255, 0, 0.5)
+      <td>127, 127, 0, 127
+      <td>255, 255, 0, 127
+      <td>Halfway-opaque yellow
+      <td><img loading="lazy" src="/images/premultiplied-example-2.png" width="96" height="96" alt="A yellow circle, halfway transparent, sits atop a background">
+     <tr>
+      <td>Unrepresentable
+      <td>255, 127, 0, 127
+      <td>Unrepresentable
+      <td>Additive halfway-opaque orange
+      <td><img loading="lazy" src="/images/premultiplied-example-3.png" width="96" height="96" alt="An orange circle somewhat brightens the background that it sits atop">
+     <tr>
+      <td>Unrepresentable
+      <td>255, 127, 0, 0
+      <td>Unrepresentable
+      <td>Additive fully-transparent orange
+      <td><img loading="lazy" src="/images/premultiplied-example-4.png" width="96" height="96" alt="An orange circle completely brightens the background that it sits atop">
+     <tr>
+      <td>rgba(255, 127, 0, 0)
+      <td>0, 0, 0, 0
+      <td>255, 127, 0, 0
+      <td>Fully-transparent ("invisible") orange
+      <td><img loading="lazy" src="/images/premultiplied-example-5.png" width="96" height="96" alt="An empty background with nothing atop it">
+     <tr>
+      <td>rgba(0, 127, 255, 0)
+      <td>0, 0, 0, 0
+      <td>255, 127, 0, 0
+      <td>Fully-transparent ("invisible") turquoise
+      <td><img loading="lazy" src="/images/premultiplied-example-5.png" width="96" height="96" alt="An empty background with nothing atop it">
+   </table>
+  </div>
+
+  <p><dfn data-x="convert-to-premultiplied">Converting a color value from a non-premultiplied
+  representation to a premultiplied one</dfn> involves multiplying the color's red, green, and
+  blue components by its alpha component (remapping the range of the alpha component such that
+  "fully transparent" is 0, and "fully opaque" is 1).</p>
+
+  <p><dfn data-x="convert-from-premultiplied">Converting a color value from a premultiplied
+  representation to a non-premultiplied one</dfn> involves the inverse: dividing the color's red,
+  green, and blue components by its alpha component.</p>
+
+  <p>As certain colors can only be represented under premultiplied alpha (for instance, additive
+  colors), and others can only be represented under non-premultiplied alpha (for instance,
+  "invisible" colors which hold certain red, green, and blue values even with no opacity); and
+  division and multiplication using finite precision entails a loss of accuracy, converting between
+  premultiplied and non-premultiplied alpha is a lossy operation on colors that are not fully
+  opaque.</p>
+
+  <p>A <code>CanvasRenderingContext2D</code>'s <span>output bitmap</span> and an
+  <code>OffscreenCanvasRenderingContext2D</code>'s <span>output bitmap</span> must use premultiplied
+  alpha to represent transparent colors.</p>
+
+  <p class="note">It is important for canvas bitmaps to represent colors using premultiplied alpha
+  because it affects the range of representable colors. While additive colors cannot currently be
+  drawn onto canvases directly because CSS colors are non-premultiplied and cannot represent them,
+  it is still possible to, for instance, draw additive colors onto a WebGL canvas and then draw that
+  WebGL canvas onto a 2D canvas via <code data-x="dom-context-2d-drawImage">drawImage()</code>.</p>
+
+  <h3 split-filename="custom-elements" id="custom-elements">Custom elements</h3>
+

@@ -1,0 +1,11 @@
+WHATWG HTML — section runtime-script-errors — Runtime script errors
+
+  <h4>Runtime script errors</h4>
+
+  <div algorithm>
+  <p>Whenever an uncaught runtime script error occurs in one of the worker's scripts, if the error
+  did not occur while handling a previous script error, the user agent will <span data-x="report an
+  exception">report</span> it for the worker's <code>WorkerGlobalScope</code> object.</p>
+  </div>
+
+

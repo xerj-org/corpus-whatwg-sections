@@ -1,0 +1,100 @@
+WHATWG HTML — section licensing-works — Licensing works (+converting-html-to-other-formats)
+
+  <h4>Licensing works</h4>
+
+  <p>An item with the <span data-x="item types">item type</span> <dfn><code data-x="md-work">http://n.whatwg.org/work</code></dfn> represents a work (e.g. an article, an
+  image, a video, a song, etc.). This type is primarily intended to allow authors to include
+  licensing information for works.</p>
+
+  <p>The following are the type's <span data-x="defined property name">defined property
+  names</span>.</p>
+
+  <dl>
+
+   <dt><dfn><code data-x="md-work-work">work</code></dfn></dt>
+
+   <dd>
+    <p>Identifies the work being described.</p>
+
+    <p>The <span data-x="concept-property-value">value</span> must be an <span>absolute
+    URL</span>.</p>
+
+    <p>Exactly one property with the name <code data-x="md-work-work">work</code> must be present
+    within each <span data-x="concept-item">item</span> with the type <code
+    data-x="md-work">http://n.whatwg.org/work</code>.</p>
+   </dd>
+
+
+   <dt><dfn><code data-x="md-work-title">title</code></dfn></dt>
+
+   <dd>
+    <p>Gives the name of the work.</p>
+
+    <p>A single property with the name <code data-x="md-work-title">title</code> may be present
+    within each <span data-x="concept-item">item</span> with the type <code
+    data-x="md-work">http://n.whatwg.org/work</code>.</p>
+   </dd>
+
+
+   <dt><dfn><code data-x="md-work-author">author</code></dfn></dt>
+
+   <dd>
+    <p>Gives the name or contact information of one of the authors or creators of the work.</p>
+
+    <p>The <span data-x="concept-property-value">value</span> must be either an <span
+    data-x="concept-item">item</span> with the type <code
+    data-x="md-vcard">http://microformats.org/profile/hcard</code>, or text.</p>
+
+    <p>Any number of properties with the name <code data-x="md-work-author">author</code> may be
+    present within each <span data-x="concept-item">item</span> with the type <code
+    data-x="md-work">http://n.whatwg.org/work</code>.</p>
+   </dd>
+
+
+   <dt><dfn><code data-x="md-work-license">license</code></dfn></dt>
+
+   <dd>
+    <p>Identifies one of the licenses under which the work is available.</p>
+
+    <p>The <span data-x="concept-property-value">value</span> must be an <span>absolute
+    URL</span>.</p>
+
+    <p>Any number of properties with the name <code data-x="md-work-license">license</code> may be
+    present within each <span data-x="concept-item">item</span> with the type <code
+    data-x="md-work">http://n.whatwg.org/work</code>.</p>
+   </dd>
+  </dl>
+
+
+
+
+  <h5>Examples</h5>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <div class="example">
+
+   <p>This example shows an embedded image entitled <cite>My Pond</cite>, licensed under the
+   Creative Commons Attribution-Share Alike 4.0 International License and the MIT license
+   simultaneously.</p>
+
+   <pre><code class="html">&lt;figure <strong>itemscope itemtype="http://n.whatwg.org/work"</strong>>
+ &lt;img <strong>itemprop="work"</strong> src="mypond.jpeg">
+ &lt;figcaption>
+  &lt;p>&lt;cite <strong>itemprop="title"</strong>>My Pond&lt;/cite>&lt;/p>
+  &lt;p>&lt;small>Licensed under the &lt;a <strong>itemprop="license"</strong>
+  href="https://creativecommons.org/licenses/by-sa/4.0/">Creative
+  Commons Attribution-Share Alike 4.0 International License&lt;/a>
+  and the &lt;a <strong>itemprop="license"</strong>
+  href="http://www.opensource.org/licenses/mit-license.php">MIT
+  license&lt;/a>.&lt;/small>
+ &lt;/figcaption>
+&lt;/figure></code></pre>
+
+  </div>
+
+
+  <div w-nodev>
+
+  <h3>Converting HTML to other formats</h3>
+

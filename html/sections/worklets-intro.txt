@@ -1,0 +1,14 @@
+WHATWG HTML — section worklets-intro — Introduction
+
+  <h3 id="worklets-intro">Introduction</h3>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>Worklets are a piece of specification infrastructure which can be used for running scripts
+  independent of the main JavaScript execution environment, while not requiring any particular
+  implementation model.</p>
+
+  <p>The worklet infrastructure specified here cannot be used directly by web developers. Instead,
+  other specifications build upon it to create directly-usable worklet types, specialized for
+  running in particular parts of the browser implementation pipeline.</p>
+

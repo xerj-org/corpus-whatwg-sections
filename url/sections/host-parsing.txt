@@ -1,0 +1,409 @@
+WHATWG URL — section host-parsing — Host parsing
+
+<h3 id=host-parsing>Host parsing</h3>
+
+<div algorithm>
+<p>The <dfn export id=concept-host-parser lt="host parser|host parsing">host parser</dfn> takes a
+<a>scalar value string</a> <var>input</var> with an optional boolean <var>isOpaque</var> (default
+false), and then runs these steps. They return failure or a <a for=/>host</a>.
+
+<ol>
+ <li>
+  <p>If <var>input</var> starts with U+005B ([), then:
+
+  <ol>
+   <li><p>If <var>input</var> does not end with U+005D (]), <a>IPv6-unclosed</a>
+   <a>validation error</a>, return failure.
+
+   <li><p>Return the result of <a lt="IPv6 parser">IPv6 parsing</a> <var>input</var> with its
+   leading U+005B ([) and trailing U+005D (]) removed.
+  </ol>
+
+ <li><p>If <var>isOpaque</var> is true, then return the result of
+ <a lt="opaque-host parser">opaque-host parsing</a> <var>input</var>.
+
+ <li><p>Assert: <var>input</var> is not the empty string.
+
+ <li><p>If <var>input</var> contains a <a>percent-encoded byte</a>,
+ <a>domain-percent-encoded</a> <a>validation error</a>.
+
+ <li>
+  <p>Let <var>domain</var> be the result of running <a>UTF-8 decode without BOM</a> on the
+  <a for=string>percent-decoding</a> of <var>input</var>.
+
+  <p class=note>Alternatively <a>UTF-8 decode without BOM or fail</a> can be used, coupled with an
+  early return for failure, as the <a>domain parser</a> fails on U+FFFD (�).
+
+ <li><p>Let <var>asciiDomain</var> be the result of running <a>domain parser</a> with
+ <var>domain</var> and false.
+
+ <li><p>If <var>asciiDomain</var> is failure, then return failure.
+
+ <li>
+  <p>If <var>asciiDomain</var> <a lt="ends in a number checker">ends in a number</a>:
+
+  <ol>
+   <li><p>If <var>domain</var> is not an <a>ASCII string</a>, <a>IPv4-non-ASCII-input</a>
+   <a>validation error</a>.
+
+   <li><p>Return the result of <a lt="IPv4 parser">IPv4 parsing</a> <var>asciiDomain</var>.
+  </ol>
+
+ <li><p>Return <var>asciiDomain</var>.
+</ol>
+</div>
+
+<hr>
+
+<div algorithm>
+<p>The <dfn>ends in a number checker</dfn> takes an <a>ASCII string</a> <var>input</var> and then
+runs these steps. They return a boolean.
+
+<ol>
+ <li><p>Assert: <var>input</var> is not the empty string.
+
+ <li><p>Let <var>parts</var> be the result of <a>strictly splitting</a> <var>input</var> on
+ U+002E (.).
+
+ <li><p>If the last <a for=list>item</a> in <var>parts</var> is the empty string, then
+ <a for=list>remove</a> the last <a for=list>item</a> from <var>parts</var>.
+
+ <li><p>Let <var>last</var> be the last <a for=list>item</a> in <var>parts</var>.
+
+ <li>
+  <p>If <var>last</var> is not the empty string and contains only <a>ASCII digits</a>, then return
+  true.
+
+  <p class=note>The erroneous input "<code>09</code>" will be caught by the <a>IPv4 parser</a> at a
+  later stage.
+
+ <li>
+  <p>If parsing <var>last</var> as an <a lt="IPv4 number parser">IPv4 number</a> does not return
+  failure, then return true.
+
+  <p class=note>This is equivalent to checking that <var>last</var> is "<code>0X</code>" or
+  "<code>0x</code>", followed by zero or more <a>ASCII hex digits</a>.
+
+ <li><p>Return false.
+</ol>
+</div>
+
+<div algorithm>
+<p>The <dfn id=concept-ipv4-parser>IPv4 parser</dfn> takes an <a>ASCII string</a> <var>input</var>
+and then runs these steps. They return failure or an <a for=/>IPv4 address</a>.
+
+<p class=note>The <a for=/>IPv4 parser</a> is not to be invoked directly. Instead check that the
+return value of the <a for=/>host parser</a> is an <a for=/>IPv4 address</a>.
+
+<ol>
+ <li><p>Let <var>parts</var> be the result of <a>strictly splitting</a> <var>input</var> on
+ U+002E (.).
+
+ <li>
+  <p>If the last <a for=list>item</a> in <var>parts</var> is the empty string, then:
+
+  <ol>
+   <li><p><a>IPv4-empty-part</a> <a>validation error</a>.
+
+   <li><p>If <var>parts</var>'s <a for=list>size</a> is greater than 1, then <a for=list>remove</a>
+   the last <a for=list>item</a> from <var>parts</var>.
+   <!-- Since the IPv4 parser is not to be invoked directly the input cannot be the empty string,
+        but if it somehow is this conditional makes sure we can keep going. -->
+  </ol>
+
+ <li><p>If <var>parts</var>'s <a for=list>size</a> is less than 4, <a>IPv4-too-few-parts</a>
+ <a>validation error</a>.
+
+ <li><p>If <var>parts</var>'s <a for=list>size</a> is greater than 4, <a>IPv4-too-many-parts</a>
+ <a>validation error</a>, return failure.
+
+ <li><p>Let <var>numbers</var> be an empty <a for=/>list</a>.
+
+ <li>
+  <p><a for=list>For each</a> <var>part</var> of <var>parts</var>:
+
+  <ol>
+   <li><p>Let <var>result</var> be the result of <a lt="IPv4 number parser">parsing</a>
+   <var>part</var>.
+
+   <li><p>If <var>result</var> is failure, <a>IPv4-non-numeric-part</a> <a>validation error</a>,
+   return failure.
+
+   <li><p>If <var>result</var>[1] is true, <a>IPv4-non-decimal-part</a> <a>validation error</a>.
+
+   <li><p><a for=list>Append</a> <var>result</var>[0] to <var>numbers</var>.
+  </ol>
+
+ <li><p>If any item in <var>numbers</var> is greater than 255, <a>IPv4-out-of-range-part</a>
+ <a>validation error</a>.
+
+ <li><p>If any but the last <a for=list>item</a> in <var>numbers</var> is greater than 255, then
+ return failure.
+
+ <li><p>If the last <a for=list>item</a> in <var>numbers</var> is greater than or equal to
+ 256<sup>(5 &minus; <var>numbers</var>'s <a for=list>size</a>)</sup>, then return failure.
+
+ <li><p>Let <var>ipv4</var> be the last <a for=list>item</a> in <var>numbers</var>.
+
+ <li><p><a for=list>Remove</a> the last <a for=list>item</a> from <var>numbers</var>.
+
+ <li><p>Let <var>counter</var> be 0.
+
+ <li>
+  <p><a for=list>For each</a> <var>n</var> of <var>numbers</var>:
+
+  <ol>
+   <li><p>Increment <var>ipv4</var> by <var>n</var> &times;
+   256<sup>(3 &minus; <var>counter</var>)</sup>.
+
+   <li><p>Increment <var>counter</var> by 1.
+  </ol>
+
+ <li><p>Return <var>ipv4</var>.
+</ol>
+</div>
+
+<div algorithm>
+<p>The <dfn>IPv4 number parser</dfn> takes an <a>ASCII string</a> <var>input</var> and then runs
+these steps. They return failure or a <a for=/>tuple</a> of a number and a boolean.
+
+<ol>
+ <li><p>If <var>input</var> is the empty string, then return failure.
+
+ <li><p>Let <var>validationError</var> be false.
+
+ <li><p>Let <var>R</var> be 10.
+
+ <li>
+  <p>If <var>input</var> contains at least two code points and the first two code points are either
+  "<code>0X</code>" or "<code>0x</code>", then:
+
+  <ol>
+   <li><p>Set <var>validationError</var> to true.
+
+   <li><p>Remove the first two code points from <var>input</var>.
+
+   <li><p>Set <var>R</var> to 16.
+  </ol>
+
+ <li>
+  <p>Otherwise, if <var>input</var> contains at least two code points and the first code point is
+  U+0030 (0), then:
+  <!-- Needs to be at least two code points. Otherwise "0" as input fails to parse. -->
+
+  <ol>
+   <li><p>Set <var>validationError</var> to true.
+
+   <li><p>Remove the first code point from <var>input</var>.
+
+   <li><p>Set <var>R</var> to 8.
+  </ol>
+
+ <li><p>If <var>input</var> is the empty string, then return (0, true).
+ <!-- 0x/0X is an IPv4 number apparently -->
+
+ <li><p>If <var>input</var> contains a code point that is not a radix-<var>R</var> digit, then
+ return failure.
+ <!-- There is no need to set validationError here.
+      XXX radix-R digit, hahaha, that's not a thing -->
+
+ <li><p>Let <var>output</var> be the mathematical integer value that is represented by
+ <var>input</var> in radix-<var>R</var> notation, using <a>ASCII hex digits</a> for digits with
+ values 0 through 15.
+ <!-- XXX well, you know, it works for ECMAScript, kinda -->
+
+ <li><p>Return (<var>output</var>, <var>validationError</var>).
+</ol>
+</div>
+
+<hr>
+
+<div algorithm>
+<p>The <dfn id=concept-ipv6-parser>IPv6 parser</dfn> takes a <a>scalar value string</a>
+<var>input</var> and then runs these steps. They return failure or an <a for=/>IPv6 address</a>.
+
+<p class=note>The <a for=/>IPv6 parser</a> could in theory be invoked directly, but please discuss
+actually doing that with the editors of this document first.
+
+<ol>
+ <li><p>Let <var>address</var> be a new <a>IPv6 address</a> whose <a for="IPv6 address">pieces</a>
+ are all 0.
+
+ <li><p>Let <var>pieceIndex</var> be 0.
+
+ <li><p>Let <var>compress</var> be null.
+
+ <li><p>Let <var>pointer</var> be a <a>pointer</a> for <var>input</var>.
+
+ <li>
+  <p>If <a>c</a> is U+003A (:), then:
+
+  <ol>
+   <li><p>If <a>remaining</a> does not start with U+003A (:), <a>IPv6-invalid-compression</a>
+   <a>validation error</a>, return failure.
+
+   <li><p>Increase <var>pointer</var> by 2.
+
+   <li><p>Increase <var>pieceIndex</var> by 1 and then set <var>compress</var> to
+   <var>pieceIndex</var>.
+  </ol>
+
+ <li>
+  <p>While <a>c</a> is not the <a>EOF code point</a>:
+
+  <ol>
+   <li><p>If <var>pieceIndex</var> is 8, <a>IPv6-too-many-pieces</a> <a>validation error</a>, return
+   failure.
+
+   <li>
+    <p>If <a>c</a> is U+003A (:), then:
+
+    <ol>
+     <li><p>If <var>compress</var> is non-null, <a>IPv6-multiple-compression</a>
+     <a>validation error</a>, return failure.
+
+     <li>Increase <var>pointer</var> and <var>pieceIndex</var> by 1, set <var>compress</var> to
+     <var>pieceIndex</var>, and then <a for=iteration>continue</a>.
+    </ol>
+
+   <li><p>Let <var>value</var> and <var>length</var> be 0.
+
+   <li><p>While <var>length</var> is less than 4 and <a>c</a> is an <a>ASCII hex digit</a>, set
+   <var>value</var> to <var>value</var> &times; 0x10 + <a>c</a> interpreted as a hexadecimal number,
+   and increase <var>pointer</var> and <var>length</var> by 1.
+
+   <li>
+    <p>If <a>c</a> is U+002E (.), then:
+
+    <ol>
+     <li><p>If <var>length</var> is 0, <a>IPv4-in-IPv6-invalid-code-point</a>
+     <a>validation error</a>, return failure.
+
+     <li><p>Decrease <var>pointer</var> by <var>length</var>.
+
+     <li><p>If <var>pieceIndex</var> is greater than 6, <a>IPv4-in-IPv6-too-many-pieces</a>
+     <a>validation error</a>, return failure.
+
+     <li><p>Let <var>numbersSeen</var> be 0.
+
+     <li>
+      <p>While <a>c</a> is not the <a>EOF code point</a>:
+
+      <ol>
+       <li><p>Let <var>ipv4Piece</var> be null.
+
+       <li>
+        <p>If <var>numbersSeen</var> is greater than 0, then:
+
+        <ol>
+         <li><p>If <a>c</a> is a U+002E (.) and <var>numbersSeen</var> is less than 4, then increase
+         <var>pointer</var> by 1.
+
+         <li>Otherwise, <a>IPv4-in-IPv6-invalid-code-point</a> <a>validation error</a>, return
+         failure.
+        </ol>
+
+       <li><p>If <a>c</a> is not an <a>ASCII digit</a>, <a>IPv4-in-IPv6-invalid-code-point</a>
+       <a>validation error</a>, return failure.
+       <!-- prevent the empty string -->
+
+       <li>
+        <p>While <a>c</a> is an <a>ASCII digit</a>:
+
+        <ol>
+         <li><p>Let <var>number</var> be <a>c</a> interpreted as decimal number.
+
+         <li><p>If <var>ipv4Piece</var> is null, then set <var>ipv4Piece</var> to <var>number</var>.
+
+         <li><p>Otherwise, if <var>ipv4Piece</var> is 0, <a>IPv4-in-IPv6-invalid-code-point</a>
+         <a>validation error</a>, return failure.
+
+         <li><p>Otherwise, set <var>ipv4Piece</var> to <var>ipv4Piece</var> &times; 10 +
+         <var>number</var>.
+
+         <li><p>If <var>ipv4Piece</var> is greater than 255, <a>IPv4-in-IPv6-out-of-range-part</a>
+         <a>validation error</a>, return failure.
+
+         <li><p>Increase <var>pointer</var> by 1.
+        </ol>
+
+       <li><p>Set <var>address</var>[<var>pieceIndex</var>] to
+       <var>address</var>[<var>pieceIndex</var>] &times; 0x100 + <var>ipv4Piece</var>.
+
+       <li><p>Increase <var>numbersSeen</var> by 1.
+
+       <li><p>If <var>numbersSeen</var> is 2 or 4, then increase <var>pieceIndex</var> by 1.
+      </ol>
+
+     <li><p>If <var>numbersSeen</var> is not 4, <a>IPv4-in-IPv6-too-few-parts</a>
+     <a>validation error</a>, return failure.
+
+     <li><p><a for=iteration>Break</a>.
+    </ol>
+
+   <li>
+    <p>Otherwise, if <a>c</a> is U+003A (:):
+
+    <ol>
+     <li><p>Increase <var>pointer</var> by 1.
+
+     <li><p>If <a>c</a> is the <a>EOF code point</a>, <a>IPv6-invalid-code-point</a>
+     <a>validation error</a>, return failure.
+    </ol>
+
+   <li><p>Otherwise, if <a>c</a> is not the <a>EOF code point</a>, <a>IPv6-invalid-code-point</a>
+   <a>validation error</a>, return failure.
+
+   <li><p>If <var>length</var> is greater than 1 and <var>value</var> is less than
+   0x10<sup><var>length</var> &minus; 1</sup>, <a>IPv6-piece-leading-zero</a> <a>validation
+   error</a>.
+
+   <li><p>Set <var>address</var>[<var>pieceIndex</var>] to <var>value</var>.
+
+   <li><p>Increase <var>pieceIndex</var> by 1.
+  </ol>
+
+ <li>
+  <p>If <var>compress</var> is non-null, then:
+
+  <ol>
+   <li><p>Let <var>swaps</var> be <var>pieceIndex</var> &minus; <var>compress</var>.
+
+   <li><p>Set <var>pieceIndex</var> to 7.
+
+   <li><p>While <var>pieceIndex</var> is not 0 and <var>swaps</var> is greater than 0, swap
+   <var>address</var>[<var>pieceIndex</var>] with
+   <var>address</var>[<var>compress</var> + <var>swaps</var> &minus; 1], and then decrease both
+   <var>pieceIndex</var> and <var>swaps</var> by 1.
+  </ol>
+
+ <li><p>Otherwise, if <var>compress</var> is null and <var>pieceIndex</var> is not 8,
+ <a>IPv6-too-few-pieces</a> <a>validation error</a>, return failure.
+
+ <li><p>Return <var>address</var>.
+</ol>
+</div>
+
+<hr>
+
+<div algorithm>
+<p>The <dfn export id=concept-opaque-host-parser>opaque-host parser</dfn> takes a
+<a>scalar value string</a> <var>input</var>, and then runs these steps. They return failure or an
+<a for=/>opaque host</a>.
+
+<ol>
+ <li><p>If <var>input</var> contains a <a>forbidden host code point</a>,
+ <a>host-invalid-code-point</a> <a>validation error</a>, return failure.
+
+ <li><p>If <var>input</var> contains a <a>code point</a> that is not a <a>URL code point</a> and not
+ U+0025 (%), <a>invalid-URL-unit</a> <a>validation error</a>.
+
+ <li><p>If <var>input</var> contains a U+0025 (%) and the two <a>code points</a> following it are
+ not <a>ASCII hex digits</a>, <a>invalid-URL-unit</a> <a>validation error</a>.
+
+ <li><p>Return the result of running <a for=string>UTF-8 percent-encode</a> on <var>input</var>
+ using the <a>C0 control percent-encode set</a>.
+</ol>
+</div>
+
+

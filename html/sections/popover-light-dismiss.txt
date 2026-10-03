@@ -1,0 +1,174 @@
+WHATWG HTML — section popover-light-dismiss — <dfn>Popover light dismiss</dfn>
+
+  <h4><dfn>Popover light dismiss</dfn></h4>
+
+  <p class="note">"Light dismiss" means that clicking outside of a popover whose <code
+  data-x="attr-popover">popover</code> attribute is in the <span
+  data-x="attr-popover-auto-state">Auto</span> or <span data-x="attr-popover-hint-state">Hint</span>
+  state will close the popover. This is in addition to how such popovers respond to <span
+  data-x="close request">close requests</span>.</p>
+
+  <div algorithm>
+  <p>To <dfn>light dismiss open popovers</dfn>, given a <code>PointerEvent</code>
+  <var>event</var>:</p>
+
+  <ol>
+   <li><p><span>Assert</span>: <var>event</var>'s <code
+   data-x="dom-Event-isTrusted">isTrusted</code> attribute is true.</p></li>
+
+   <li><p>Let <var>target</var> be <var>event</var>'s <span
+   data-x="concept-event-target">target</span>.</p></li>
+
+   <li><p>Let <var>document</var> be <var>target</var>'s <span>node document</span>.</p></li>
+
+   <li><p>If the result of running <span>topmost auto or hint popover</span> given
+   <var>document</var> is null, then return.</p></li>
+
+   <li><p>If <var>event</var>'s <code data-x="dom-Event-type">type</code> is "<code
+   data-x="event-pointerdown">pointerdown</code>": set <var>document</var>'s <span>popover
+   pointerdown target</span> to the result of running <span>topmost clicked popover</span> given
+   <var>target</var>.</p></li>
+
+   <li>
+    <p>If <var>event</var>'s <code data-x="dom-Event-type">type</code> is "<code
+    data-x="event-pointerup">pointerup</code>":</p>
+
+    <ol>
+     <li><p>Let <var>ancestor</var> be the result of running <span>topmost clicked popover</span>
+     given <var>target</var>.</p></li>
+
+     <li><p>Let <var>sameTarget</var> be true if <var>ancestor</var> is <var>document</var>'s
+     <span>popover pointerdown target</span>.</p></li>
+
+     <li><p>Set <var>document</var>'s <span>popover pointerdown target</span> to null.</p></li>
+
+     <li><p>If <var>sameTarget</var> is false, then return.</p></li>
+
+     <li><p>Run <span>hide popovers until</span> given <var>document</var>, <var>ancestor</var>,
+     false, and true.</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To find the <dfn>topmost clicked popover</dfn>, given a <code>Node</code> <var>node</var>:</p>
+
+  <ol>
+   <li><p>Let <var>clickedPopover</var> be the result of running <span>nearest inclusive open
+   popover</span> given <var>node</var>.</p></li>
+
+   <li><p>Let <var>targetPopover</var> be the result of running <span>nearest inclusive target
+   popover</span> given <var>node</var>.</p></li>
+
+   <li><p>If the result of <span data-x="get the popover stack position">getting the popover stack
+   position</span> given <var>clickedPopover</var> is greater than the result of <span data-x="get
+   the popover stack position">getting the popover stack position</span> given
+   <var>targetPopover</var>, then return <var>clickedPopover</var>.</p></li>
+
+   <li><p>Return <var>targetPopover</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>get the popover stack position</dfn>, given an <span data-x="html elements">HTML
+  element</span> <var>popover</var>:</p>
+
+  <ol>
+   <li><p>Let <var>hintList</var> be <var>popover</var>'s <span>node document</span>'s <span>showing
+   hint popover list</span>.</p></li>
+
+   <li><p>Let <var>autoList</var> be <var>popover</var>'s <span>node document</span>'s <span>showing
+   auto popover list</span>.</p></li>
+
+   <li><p>If <var>popover</var> is in <var>hintList</var>, then return the index of
+   <var>popover</var> in <var>hintList</var> + the size of <var>autoList</var> + 1.</p></li>
+
+   <li><p>If <var>popover</var> is in <var>autoList</var>, then return the index of
+   <var>popover</var> in <var>autoList</var> + 1.</p></li>
+
+   <li><p>Return 0.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To find the <dfn>nearest inclusive target popover</dfn> given a <code>Node</code>
+  <var>node</var>:</p>
+
+  <ol>
+   <li><p>Let <var>currentNode</var> be <var>node</var>.</p></li>
+
+   <li>
+    <p>While <var>currentNode</var> is not null:</p>
+
+    <ol>
+     <li><p>Let <var>targetPopover</var> be <var>currentNode</var>'s <span>target
+     popover</span>.</p></li>
+
+     <li><p>If <var>targetPopover</var> is not null and <var>targetPopover</var>'s <code
+     data-x="attr-popover">popover</code> attribute is in the <span
+     data-x="attr-popover-auto-state">Auto</span> state or the <span
+     data-x="attr-popover-hint-state">Hint</span> state, and <var>targetPopover</var>'s
+     <span>popover visibility state</span> is <span data-x="popover-showing-state">showing</span>,
+     then return <var>targetPopover</var>.</p></li>
+
+     <li><p>Set <var>currentNode</var> to <var>currentNode</var>'s ancestor in the <span>flat
+     tree</span>.</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To get the <dfn>target popover</dfn> given a <code>Node</code> <var>node</var>, perform the
+  following steps. They return an <span data-x="HTML elements">HTML element</span> or null.</p>
+
+  <ol>
+   <li><p>If <var>node</var> is not a <code>button</code> element, then return <var>node</var>'s
+   <span>popover target element</span>.</p></li>
+
+   <li><p>If <var>node</var> is <span data-x="concept-fe-disabled">disabled</span>, then return
+   null.</p></li>
+
+   <li><p>Let <var>target</var> be the result of running <var>node</var>'s <span data-x="get the
+   attr-associated element">get the <code data-x="">commandfor</code>-associated
+   element</span>.</p></li>
+
+   <li><p>If <var>target</var> is null, then return <var>node</var>'s <span>popover target
+   element</span>.</p></li>
+
+   <li>
+    <p>If <var>node</var> has a <span>form owner</span>:</p>
+
+    <ol>
+     <li><p>If <var>element</var> is a <span data-x="concept-submit-button">submit button</span>,
+     then return null.</p></li>
+
+     <li><p>If <var>element</var>'s <code data-x="attr-button-type">type</code> attribute is in the
+     <span data-x="attr-button-type-reset-state">Reset Button</span> state, then return
+     null.</p></li>
+
+     <li><p>If <var>element</var>'s <code data-x="attr-button-type">type</code> attribute is in the
+     <span data-x="attr-button-type-auto-state">Auto</span> state, then return null.</p></li>
+     <!-- We do this for compatability and plan to remove this restriction in future, see
+          https://github.com/whatwg/html/issues/10832 -->
+    </ol>
+   </li>
+
+   <li><p>Let <var>command</var> be <var>node</var>'s <code
+   data-x="attr-button-command">command</code> attribute.</p></li>
+
+   <li><p>If <var>command</var> is not in the <span
+   data-x="attr-button-command-toggle-popover-state">Toggle Popover</span>, <span
+   data-x="attr-button-command-hide-popover-state">Hide Popover</span>, or <span
+   data-x="attr-button-command-show-popover-state">Show Popover</span> states, then return
+   null.</p></li>
+
+   <li><p>If <var>target</var>'s <code data-x="attr-popover">popover</code> attribute is in the
+   <span data-x="attr-popover-none-state">No Popover</span> state, then return null.</p></li>
+
+   <li><p>Return <var>target</var>.</p></li>
+  </ol>
+  </div>
+
+

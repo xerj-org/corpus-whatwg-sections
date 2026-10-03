@@ -1,0 +1,977 @@
+WHATWG HTML — section sanitization-algorithms — Sanitization algorithms
+
+  <h4>Sanitization algorithms</h4>
+
+  <div algorithm>
+  <p>To <dfn>set and filter HTML</dfn>, given an <code>Element</code> or
+  <code>DocumentFragment</code> <var>target</var>, a <span>string</span> <var>html</var>, a
+  dictionary <var>options</var>, and a boolean <var>safe</var>:</p>
+
+  <ol>
+   <li><p>Let <var>context</var> be <var>target</var> if <var>target</var> is an
+   <code>Element</code>; otherwise <var>target</var>'s <span
+   data-x="concept-DocumentFragment-host">host</span>.</p></li>
+
+   <li><p><span>Assert</span>: <var>context</var> is non-null.</p></li>
+
+   <li>
+    <p>If all of the following are true:</p>
+
+    <ul class="brief">
+     <li><p><var>safe</var>;</p></li>
+
+     <li><p><var>context</var>'s <span data-x="concept-element-local-name">local name</span> is
+     "<code>script</code>"; and</p></li>
+
+     <li><p><var>context</var>'s <span data-x="concept-element-namespace">namespace</span> is the
+     <span>HTML namespace</span> or the <span>SVG namespace</span>,</p></li>
+    </ul>
+
+    <p>then return.</p>
+   </li>
+
+   <li><p>Let <var>sanitizer</var> be the result of calling <span data-x="get a sanitizer instance
+   from options">getting a sanitizer</span> from <var>options</var> given <var>safe</var>.</p></li>
+
+   <li><p>Let <var>scriptingMode</var> be <span data-x="scripting-mode-inert">Inert</span>.</p></li>
+
+   <li>
+    <p>If <var>options</var>["<code data-x="dom-SetHTMLUnsafeOptions-runScripts">runScripts</code>"]
+    is true:</p>
+
+    <ol>
+     <li><p><span>Assert</span>: <var>safe</var> is false.</p></li>
+
+     <li><p>Set <var>scriptingMode</var> to <span
+     data-x="scripting-mode-fragment">Fragment</span>.</p>
+    </ol>
+   </li>
+
+   <li>
+    <p>Let <var>fragment</var> be the result of invoking the <span>HTML fragment parsing
+    algorithm</span> given <var>target</var>, <var>html</var>, true, and
+    <var>scriptingMode</var>.</p>
+
+    <p class="note">Scripts in <var>fragment</var> will only execute once inserted into
+    <var>target</var>.</p>
+   </li>
+
+   <li><p><span data-x="sanitize">Sanitize</span> <var>fragment</var> given <var>sanitizer</var> and
+   <var>safe</var>.</p></li>
+
+   <li><p><span data-x="concept-node-replace-all">Replace all</span> with <var>fragment</var> within
+   <var>target</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>get a sanitizer instance from options</dfn> from a dictionary <var>options</var> with a
+  boolean <var>safe</var>:</p>
+
+  <ol>
+   <li><p>Let <var>sanitizerSpec</var> be "<code
+   data-x="dom-SanitizerPresets-default">default</code>".</p></li>
+
+   <li><p>If <var>options</var>["<code data-x="dom-SetHTMLOptions-sanitizer">sanitizer</code>"]
+   <span data-x="map exists">exists</span>, then set <var>sanitizerSpec</var> to
+   <var>options</var>["<code data-x="dom-SetHTMLOptions-sanitizer">sanitizer</code>"].</p></li>
+
+   <li><p><span>Assert</span>: <var>sanitizerSpec</var> is either a <code>Sanitizer</code> instance,
+   a <span>SanitizerPresets</span> member, or a <span>SanitizerConfig</span> dictionary.</p></li>
+
+   <li>
+    <p>If <var>sanitizerSpec</var> is a string:</p>
+
+    <ol>
+     <li><p><span>Assert</span>: <var>sanitizerSpec</var> is "<code
+     data-x="dom-SanitizerPresets-default">default</code>".</p></li>
+
+     <li><p>Set <var>sanitizerSpec</var> to the <span>built-in safe default
+     configuration</span>.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p>If <var>sanitizerSpec</var> is a dictionary:</p>
+
+    <ol>
+     <li><p>Let <var>sanitizer</var> be a new <code>Sanitizer</code> object.</p></li>
+
+     <li><p>Let <var>permissiveDefaults</var> be true if <var>safe</var> is false; false
+     otherwise.</p></li>
+
+     <li><p><span data-x="configure a sanitizer">Configure</span> <var>sanitizer</var> given
+     <var>sanitizerSpec</var> and <var>permissiveDefaults</var>.</p></li>
+
+     <li><p>Set <var>sanitizerSpec</var> to <var>sanitizer</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Return <var>sanitizerSpec</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>sanitize</dfn> a <code>Node</code> <var>node</var> with a <code>Sanitizer</code>
+  <var>sanitizer</var> and a boolean <var>safe</var>:</p>
+
+  <ol>
+   <li><p>Let <var>configuration</var> be <var>sanitizer</var>'s
+   <span>configuration</span>.</p></li>
+
+   <li><p><span>Assert</span>: <var>configuration</var> is <span
+   data-x="dom-SanitizerConfig-valid">valid</span>.</p></li>
+
+   <li><p>If <var>safe</var> is true, then <span>remove unsafe</span> from
+   <var>configuration</var>.</p></li>
+
+   <li><p>Run the <span>inner sanitize steps</span> given <var>node</var> and
+   <var>configuration</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To perform the <dfn>inner sanitize steps</dfn> given a <code>Node</code> <var>node</var> and a
+  <span>SanitizerConfig</span> <var>configuration</var>:</p>
+
+  <ol>
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>child</var> of <var>node</var>'s <span
+    data-x="concept-tree-child">children</span>:</p>
+
+    <ol>
+     <li><p><span>Assert</span>: <var>child</var> is a <code>Text</code>, <code>Comment</code>,
+     <code>Element</code>, <code>ProcessingInstruction</code>, or <code>DocumentType</code>
+     node.</p></li>
+
+     <li><p>If <var>child</var> is a <code>DocumentType</code> or <code>Text</code> node, then
+     <span>continue</span>.</p></li>
+
+     <li>
+      <p>If <var>child</var> is a <code>Comment</code> node:</p>
+
+      <ol>
+       <li><p>If <var>configuration</var>["<code
+       data-x="dom-SanitizerConfig-comments">comments</code>"] is not true, then <span
+       data-x="concept-node-remove">remove</span> <var>child</var>.</p></li>
+
+       <li><p><span>Continue</span>.</p></li>
+      </ol>
+     </li>
+
+     <li>
+      <p>If <var>child</var> is a <code>ProcessingInstruction</code> node:</p>
+
+      <ol>
+       <li><p>Let <var>piTarget</var> be <var>child</var>'s <span
+       data-x="concept-pi-target">target</span>.</p></li>
+
+       <li>
+        <p>If <var>configuration</var>["<code
+        data-x="dom-SanitizerConfig-processingInstructions">processingInstructions</code>"] <span
+        data-x="map exists">exists</span>:</p>
+
+        <ol>
+         <li><p>If <var>configuration</var>["<code
+         data-x="dom-SanitizerConfig-processingInstructions">processingInstructions</code>"] does
+         not <span data-x="list contains">contain</span> <var>piTarget</var>, then <span
+         data-x="concept-node-remove">remove</span> <var>child</var>.</p></li>
+        </ol>
+       </li>
+
+       <li>
+        <p>Otherwise:</p>
+
+        <ol>
+         <li><p>If <var>configuration</var>["<code
+         data-x="dom-SanitizerConfig-removeProcessingInstructions">removeProcessingInstructions</code>"]
+         <span data-x="list contains">contains</span> <var>piTarget</var>, then <span
+         data-x="concept-node-remove">remove</span> <var>child</var>.</p></li>
+        </ol>
+       </li>
+      </ol>
+     </li>
+
+     <li>
+      <p>Otherwise:</p>
+
+      <ol>
+       <li><p>Let <var>elementName</var> be a <span>SanitizerElementNamespace</span> with
+       <var>child</var>'s <span data-x="concept-element-local-name">local name</span> and <span
+       data-x="concept-element-namespace">namespace</span>.</p></li>
+
+       <li><p>If <var>configuration</var>["<code
+       data-x="dom-SanitizerConfig-replaceWithChildrenElements">replaceWithChildrenElements</code>"]
+       <span data-x="map exists">exists</span> and <var>configuration</var>["<code
+       data-x="dom-SanitizerConfig-replaceWithChildrenElements">replaceWithChildrenElements</code>"]
+       <span data-x="list contains">contains</span> <var>elementName</var>:</p>
+
+        <ol>
+         <li><p><span>Assert</span>: <var>node</var> is not a <code>Document</code>.</p></li>
+
+         <li><p>Run the <span>inner sanitize steps</span> given <var>child</var> and
+         <var>configuration</var>.</p></li>
+
+         <li><p>Let <var>fragment</var> be the result of <span data-x="create a document
+         fragment">creating a document fragment</span> given <var>node</var>'s
+         <span>node document</span>.</p></li>
+
+         <li><p><span data-x="list iterate">For each</span> <var>innerChild</var> of
+         <var>child</var>'s <span data-x="concept-tree-child">children</span>, <span
+         data-x="concept-node-append">append</span> <var>innerChild</var> to
+         <var>fragment</var>.</p></li>
+
+         <li><p><span data-x="concept-node-replace">Replace</span> <var>child</var> with
+         <var>fragment</var> within <var>node</var>. <span>Assert</span> that this did not
+         throw.</p></li>
+
+         <li><p><span>Continue</span>.</p></li>
+        </ol>
+       </li>
+
+       <li>
+        <p>If <var>configuration</var>["<code
+        data-x="dom-SanitizerConfig-elements">elements</code>"] <span data-x="map
+        exists">exists</span>:</p>
+
+        <ol>
+         <li><p>If <var>configuration</var>["<code
+         data-x="dom-SanitizerConfig-elements">elements</code>"] does not <span data-x="list
+         contains">contain</span> <var>elementName</var>, then <span
+         data-x="concept-node-remove">remove</span> <var>child</var> and
+         <span>continue</span>.</p></li>
+        </ol>
+       </li>
+
+       <li>
+        <p>Otherwise:</p>
+
+        <ol>
+         <li><p>If <var>configuration</var>["<code
+         data-x="dom-SanitizerConfig-removeElements">removeElements</code>"] <span data-x="list
+         contains">contains</span> <var>elementName</var>, then <span
+         data-x="concept-node-remove">remove</span> <var>child</var> and
+         <span>continue</span>.</p></li>
+        </ol>
+       </li>
+
+       <li><p>If <var>elementName</var>["<code
+       data-x="dom-SanitizerElementNamespace-name">name</code>"] is "<code>template</code>" and
+       <var>elementName</var>["<code
+       data-x="dom-SanitizerElementNamespace-namespace">namespace</code>"] is the <span>HTML
+       namespace</span>, then run the <span>inner sanitize steps</span> given <var>child</var>'s
+       <span>template contents</span> and <var>configuration</var>.</p></li>
+
+       <li><p>If <var>child</var> is a <span>shadow host</span>, then run the <span>inner sanitize
+       steps</span> given <var>child</var>'s <span>shadow root</span> and
+       <var>configuration</var>.</p></li>
+
+       <li><p>Let <var>elementWithLocalAttributes</var> be «[ ]».</p></li>
+
+       <li><p>If <var>configuration</var>["<code
+       data-x="dom-SanitizerConfig-elements">elements</code>"] <span data-x="map
+       exists">exists</span> and <var>configuration</var>["<code
+       data-x="dom-SanitizerConfig-elements">elements</code>"] <span data-x="list
+       contains">contains</span> <var>elementName</var>, then set
+       <var>elementWithLocalAttributes</var> to <var>configuration</var>["<code
+       data-x="dom-SanitizerConfig-elements">elements</code>"][<var>elementName</var>].</p></li>
+
+       <li>
+        <p><span data-x="list iterate">For each</span> <var>attribute</var> in <var>child</var>'s
+        <span>attribute list</span>:</p>
+
+        <ol>
+         <li><p>Let <var>attrName</var> be a <span>SanitizerAttributeNamespace</span> with
+         <var>attribute</var>'s <span data-x="concept-attribute-local-name">local name</span> and
+         <span data-x="concept-attribute-namespace">namespace</span>.</p></li>
+
+         <li><p>If <var>elementWithLocalAttributes</var>["<code
+         data-x="dom-SanitizerElementNamespaceWithAttributes-removeAttributes">removeAttributes</code>"]
+         <span data-x="map exists">exists</span> and <var>elementWithLocalAttributes</var>["<code
+         data-x="dom-SanitizerElementNamespaceWithAttributes-removeAttributes">removeAttributes</code>"]
+         <span data-x="list contains">contains</span> <var>attrName</var>, then <span
+         data-x="concept-element-attributes-remove">remove</span> <var>attribute</var>.</p></li>
+
+         <li>
+          <p>Otherwise, if <var>configuration</var>["<code
+          data-x="dom-SanitizerConfig-attributes">attributes</code>"] <span data-x="map
+          exists">exists</span>:</p>
+
+          <ol>
+           <li><p>If <var>configuration</var>["<code
+           data-x="dom-SanitizerConfig-attributes">attributes</code>"] does not <span data-x="list
+           contains">contain</span> <var>attrName</var> and
+           <var>elementWithLocalAttributes</var>["<code
+           data-x="dom-SanitizerElementNamespaceWithAttributes-attributes">attributes</code>"] <span
+           data-x="map with default">with default</span> « » does not <span data-x="list
+           contains">contain</span> <var>attrName</var>, and if "<code data-x="">data-</code>" is
+           not a <span>code unit prefix</span> of <var>attribute</var>'s <span
+           data-x="concept-attribute-local-name">local name</span> or <var>attribute</var>'s <span
+           data-x="concept-attribute-namespace">namespace</span> is not null or
+           <var>configuration</var>["<code
+           data-x="dom-SanitizerConfig-dataAttributes">dataAttributes</code>"] is not true, then
+           <span data-x="concept-element-attributes-remove">remove</span>
+           <var>attribute</var>.</p></li>
+          </ol>
+         </li>
+
+         <li>
+          <p>Otherwise:</p>
+
+          <ol>
+           <li><p>If <var>elementWithLocalAttributes</var>["<code
+           data-x="dom-SanitizerElementNamespaceWithAttributes-attributes">attributes</code>"] <span
+           data-x="map exists">exists</span> and <var>elementWithLocalAttributes</var>["<code
+           data-x="dom-SanitizerElementNamespaceWithAttributes-attributes">attributes</code>"] does
+           not <span data-x="list contains">contain</span> <var>attrName</var>, then <span
+           data-x="concept-element-attributes-remove">remove</span> <var>attribute</var>.</p></li>
+
+           <li><p>Otherwise, if <var>configuration</var>["<code
+           data-x="dom-SanitizerConfig-removeAttributes">removeAttributes</code>"] <span
+           data-x="list contains">contains</span> <var>attrName</var>, then <span
+           data-x="concept-element-attributes-remove">remove</span> <var>attribute</var>.</p></li>
+          </ol>
+         </li>
+
+         <li>
+          <p>If <var>configuration</var>["<code
+          data-x="dom-SanitizerConfig-javascriptURLs">javascriptURLs</code>"] is not true:</p>
+
+          <ol>
+           <li><p>If the pair (<var>elementName</var>, <var>attrName</var>) matches an entry in the
+           <span>built-in navigating URL attributes list</span>, and if <var>attribute</var>
+           <span>contains a <code>javascript:</code> URL</span>, then <span
+           data-x="concept-element-attributes-remove">remove</span> <var>attribute</var>.</p></li>
+
+           <li><p>If <var>child</var>'s <span data-x="concept-element-namespace">namespace</span> is
+           the <span>MathML namespace</span>, <var>attribute</var>'s <span
+           data-x="concept-attribute-local-name">local name</span> is "<code data-x="">href</code>",
+           <var>attribute</var>'s <span data-x="concept-attribute-namespace">namespace</span> is
+           null or the <span>XLink namespace</span>, and <var>attribute</var> <span>contains a
+           <code>javascript:</code> URL</span>, then <span
+           data-x="concept-element-attributes-remove">remove</span> <var>attribute</var>.</p></li>
+
+           <li><p>If the <span>built-in animating URL attributes list</span> <span data-x="list
+           contains">contains</span> the pair (<var>elementName</var>, <var>attrName</var>), and
+           <var>attribute</var>'s <span data-x="concept-attribute-value">value</span> is "<code
+           data-x="">href</code>" or "<code data-x="">xlink:href</code>", then <span
+           data-x="concept-element-attributes-remove">remove</span> <var>attribute</var>.</p></li>
+          </ol>
+         </li>
+        </ol>
+       </li>
+
+       <li><p>Run the <span>inner sanitize steps</span> given <var>child</var> and
+       <var>configuration</var>.</p></li>
+      </ol>
+     </li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To determine whether an attribute <var>attribute</var> <dfn>contains a <code>javascript:</code>
+  URL</dfn>:</p>
+
+  <ol>
+   <li><p>Let <var>url</var> be the result of running the <span>basic URL parser</span> on
+   <var>attribute</var>'s <span data-x="concept-attribute-value">value</span>.</p></li>
+
+   <li><p>If <var>url</var> is failure, then return false.</p></li>
+
+   <li><p>Return true if <var>url</var>'s <span data-x="concept-url-scheme">scheme</span> is "<code
+   data-x="">javascript</code>", and false otherwise.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="remove an element from sanitizer config">remove an element</dfn>
+  <var>element</var> from a <span>SanitizerConfig</span> <var>configuration</var>:</p>
+
+  <ol>
+   <li><p><span>Assert</span>: <var>configuration</var> is <span
+   data-x="dom-SanitizerConfig-valid">valid</span>.</p></li>
+
+   <li><p>Set <var>element</var> to the result of <span data-x="canonicalize a sanitizer
+   element">canonicalizing</span> <var>element</var>.</p></li>
+
+   <li><p>Let <var>modified</var> be the result of <span data-x="list remove">removing</span>
+   <var>element</var> from <var>configuration</var>["<code
+   data-x="dom-SanitizerConfig-replaceWithChildrenElements">replaceWithChildrenElements</code>"].</p></li>
+
+   <li>
+    <p>If <var>configuration</var>["<code data-x="dom-SanitizerConfig-elements">elements</code>"]
+    <span data-x="map exists">exists</span>:</p>
+
+    <ol>
+     <li>
+      <p>If <var>configuration</var>["<code data-x="dom-SanitizerConfig-elements">elements</code>"]
+      <span data-x="list contains">contains</span> <var>element</var>:</p>
+
+      <ol>
+       <li><p><span data-x="list remove">Remove</span> <var>element</var> from
+       <var>configuration</var>["<code
+       data-x="dom-SanitizerConfig-elements">elements</code>"].</p></li>
+
+       <li><p>Return true.</p></li>
+      </ol>
+     </li>
+
+     <li><p>Return <var>modified</var>.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p>Otherwise:</p>
+
+    <ol>
+     <li><p>If <var>configuration</var>["<code
+     data-x="dom-SanitizerConfig-removeElements">removeElements</code>"] <span data-x="list
+     contains">contains</span> <var>element</var>, then return <var>modified</var>.</p></li>
+
+     <li><p><span data-x="set append">Append</span> <var>element</var> to
+     <var>configuration</var>["<code
+     data-x="dom-SanitizerConfig-removeElements">removeElements</code>"].</p></li>
+
+     <li><p>Return true.</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="remove an attribute from sanitizer config">remove an attribute</dfn>
+  <var>attribute</var> from a <span>SanitizerConfig</span> <var>configuration</var>:</p>
+
+  <ol>
+   <li><p><span>Assert</span>: <var>configuration</var> is <span
+   data-x="dom-SanitizerConfig-valid">valid</span>.</p></li>
+
+   <li><p>Set <var>attribute</var> to the result of <span data-x="canonicalize a sanitizer
+   name">canonicalizing</span> <var>attribute</var>.</p></li>
+
+   <li>
+    <p>If <var>configuration</var>["<code
+    data-x="dom-SanitizerConfig-attributes">attributes</code>"] <span data-x="map
+    exists">exists</span>:</p>
+
+    <ol>
+     <li><p>Let <var>modified</var> be the result of <span data-x="list remove">removing</span>
+     <var>attribute</var> from <var>configuration</var>["<code
+     data-x="dom-SanitizerConfig-attributes">attributes</code>"].</p></li>
+
+     <li>
+      <p>If <var>configuration</var>["<code data-x="dom-SanitizerConfig-elements">elements</code>"]
+      <span data-x="map exists">exists</span>:</p>
+
+      <ol>
+       <li>
+        <p><span data-x="list iterate">For each</span> <var>element</var> of
+        <var>configuration</var>["<code data-x="dom-SanitizerConfig-elements">elements</code>"]:</p>
+
+        <ol>
+         <li>
+          <p>If <var>element</var>["<code
+          data-x="dom-SanitizerElementNamespaceWithAttributes-attributes">attributes</code>"] <span
+          data-x="map with default">with default</span> « » <span data-x="list
+          contains">contains</span> <var>attribute</var>:</p>
+
+          <ol>
+           <li><p>Set <var>modified</var> to true.</p></li>
+
+           <li><p><span data-x="list remove">Remove</span> <var>attribute</var> from
+           <var>element</var>["<code
+           data-x="dom-SanitizerElementNamespaceWithAttributes-attributes">attributes</code>"].</p></li>
+          </ol>
+         </li>
+
+         <li>
+          <p>If <var>element</var>["<code
+          data-x="dom-SanitizerElementNamespaceWithAttributes-removeAttributes">removeAttributes</code>"]
+          <span data-x="map with default">with default</span> « » <span data-x="list
+          contains">contains</span> <var>attribute</var>:</p>
+
+          <ol>
+           <li><p><span>Assert</span>: <var>modified</var> is true.</p></li>
+
+           <li><p><span data-x="list remove">Remove</span> <var>attribute</var> from
+           <var>element</var>["<code
+           data-x="dom-SanitizerElementNamespaceWithAttributes-removeAttributes">removeAttributes</code>"].</p></li>
+          </ol>
+         </li>
+        </ol>
+       </li>
+      </ol>
+     </li>
+
+     <li><p>Return <var>modified</var>.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p>Otherwise:</p>
+
+    <ol>
+     <li><p>If <var>configuration</var>["<code
+     data-x="dom-SanitizerConfig-removeAttributes">removeAttributes</code>"] <span data-x="list
+     contains">contains</span> <var>attribute</var>, then return false.</p></li>
+
+     <li>
+      <p>If <var>configuration</var>["<code data-x="dom-SanitizerConfig-elements">elements</code>"]
+      <span data-x="map exists">exists</span>:</p>
+
+      <ol>
+       <li>
+        <p><span data-x="list iterate">For each</span> <var>element</var> in
+        <var>configuration</var>["<code data-x="dom-SanitizerConfig-elements">elements</code>"]:</p>
+
+        <ol>
+         <li><p>If <var>element</var>["<code
+         data-x="dom-SanitizerElementNamespaceWithAttributes-attributes">attributes</code>"] <span
+         data-x="map with default">with default</span> « » <span data-x="list
+         contains">contains</span> <var>attribute</var>, then <span data-x="list
+         remove">remove</span> <var>attribute</var> from <var>element</var>["<code
+         data-x="dom-SanitizerElementNamespaceWithAttributes-attributes">attributes</code>"].</p></li>
+
+         <li><p>If <var>element</var>["<code
+         data-x="dom-SanitizerElementNamespaceWithAttributes-removeAttributes">removeAttributes</code>"]
+         <span data-x="map with default">with default</span> « » <span data-x="list
+         contains">contains</span> <var>attribute</var>, then <span data-x="list
+         remove">remove</span> <var>attribute</var> from <var>element</var>["<code
+         data-x="dom-SanitizerElementNamespaceWithAttributes-removeAttributes">removeAttributes</code>"].</p></li>
+        </ol>
+       </li>
+      </ol>
+     </li>
+
+     <li><p><span data-x="set append">Append</span> <var>attribute</var> to
+     <var>configuration</var>["<code
+     data-x="dom-SanitizerConfig-removeAttributes">removeAttributes</code>"].</p></li>
+
+     <li><p>Return true.</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>remove unsafe</dfn> from a <span>SanitizerConfig</span> <var>configuration</var>:</p>
+
+  <ol>
+   <li><p><span>Assert</span>: <var>configuration</var> is <span
+   data-x="dom-SanitizerConfig-valid">valid</span>.</p></li>
+
+   <li><p>Let <var>result</var> be false.</p></li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>element</var> in <span>built-in safe
+    baseline configuration</span>["<code
+    data-x="dom-SanitizerConfig-removeElements">removeElements</code>"]:</p>
+
+    <ol>
+     <li><p>If <span data-x="remove an element from sanitizer config">removing</span>
+     <var>element</var> from <var>configuration</var> is true, then set <var>result</var> to
+     true.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>attribute</var> in <span>built-in safe
+    baseline configuration</span>["<code
+    data-x="dom-SanitizerConfig-removeAttributes">removeAttributes</code>"]:</p>
+
+    <ol>
+     <li><p>If <span data-x="remove an attribute from sanitizer config">removing</span>
+     <var>attribute</var> from <var>configuration</var> is true, then set <var>result</var> to
+     true.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>attribute</var> that is an <span
+    data-x="event handler content attributes">event handler content attribute</span>:</p>
+
+    <ol>
+     <li><p>If <span data-x="remove an attribute from sanitizer config">removing</span>
+     <var>attribute</var> from <var>configuration</var> is true, then set <var>result</var> to
+     true.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p>If <var>configuration</var>["<code
+    data-x="dom-SanitizerConfig-javascriptURLs">javascriptURLs</code>"] is true:</p>
+
+    <ol>
+     <li><p>Set <var>result</var> to true.</p></li>
+
+     <li><p>Set <var>configuration</var>["<code
+     data-x="dom-SanitizerConfig-javascriptURLs">javascriptURLs</code>"] to false.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Return <var>result</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>compare sanitizer items</dfn> <var>itemA</var> and <var>itemB</var>:</p>
+
+  <ol>
+   <li><p>Let <var>namespaceA</var> be <var>itemA</var>["<code
+   data-x="dom-SanitizerElementNamespace-namespace">namespace</code>"].</p></li>
+
+   <li><p>Let <var>namespaceB</var> be <var>itemB</var>["<code
+   data-x="dom-SanitizerElementNamespace-namespace">namespace</code>"].</p></li>
+
+   <li>
+    <p>If <var>namespaceA</var> is null:</p>
+
+    <ol>
+     <li><p>If <var>namespaceB</var> is not null, then return true.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p>Otherwise:</p>
+
+    <ol>
+     <li><p>If <var>namespaceB</var> is null, then return false.</p></li>
+
+     <li><p>If <var>namespaceA</var> is <span>code unit less than</span> <var>namespaceB</var>, then
+     return true.</p></li>
+
+     <li><p>If <var>namespaceA</var> is not <var>namespaceB</var>, then return false.</p></li>
+    </ol>
+   </li>
+
+   <li><p>If <var>itemA</var>["<code data-x="dom-SanitizerElementNamespace-name">name</code>"] is
+   <span>code unit less than</span> <var>itemB</var>["<code
+   data-x="dom-SanitizerElementNamespace-name">name</code>"], then return true.</p></li>
+
+   <li><p>Return false.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn data-x="canonicalize a sanitizer element with attributes">canonicalize</dfn> a
+  <span>SanitizerElementWithAttributes</span> <var>element</var>:</p>
+
+  <ol>
+   <li><p>Let <var>result</var> be the result of <span data-x="canonicalize a sanitizer
+   element">canonicalizing</span> <var>element</var>.</p></li>
+
+   <li>
+    <p>If <var>element</var> is a dictionary:</p>
+
+    <ol>
+     <li><p>If <var>element</var>["<code
+     data-x="dom-SanitizerElementNamespaceWithAttributes-attributes">attributes</code>"] <span
+     data-x="map exists">exists</span>, then set <var>result</var>["<code
+     data-x="dom-SanitizerElementNamespaceWithAttributes-attributes">attributes</code>"] to the
+     result of <span data-x="canonicalize a sanitizer list">canonicalizing</span>
+     <var>element</var>["<code
+     data-x="dom-SanitizerElementNamespaceWithAttributes-attributes">attributes</code>"].</p></li>
+
+     <li><p>If <var>element</var>["<code
+     data-x="dom-SanitizerElementNamespaceWithAttributes-removeAttributes">removeAttributes</code>"]
+     <span data-x="map exists">exists</span>, then set <var>result</var>["<code
+     data-x="dom-SanitizerElementNamespaceWithAttributes-removeAttributes">removeAttributes</code>"]
+     to the result of <span data-x="canonicalize a sanitizer list">canonicalizing</span>
+     <var>element</var>["<code
+     data-x="dom-SanitizerElementNamespaceWithAttributes-removeAttributes">removeAttributes</code>"].</p></li>
+    </ol>
+   </li>
+
+   <li><p>If neither <var>result</var>["<code
+   data-x="dom-SanitizerElementNamespaceWithAttributes-attributes">attributes</code>"] nor
+   <var>result</var>["<code
+   data-x="dom-SanitizerElementNamespaceWithAttributes-removeAttributes">removeAttributes</code>"]
+   <span data-x="map exists">exists</span>, then set <var>result</var>["<code
+   data-x="dom-SanitizerElementNamespaceWithAttributes-removeAttributes">removeAttributes</code>"]
+   to an empty list.</p></li>
+
+   <li><p>Return <var>result</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To determine whether a canonical <span>SanitizerConfig</span> <var>config</var> is <dfn
+  data-x="dom-SanitizerConfig-valid">valid</dfn>:</p>
+
+  <p class="note">It's expected that the configuration being passed in has previously been run
+  through the <span>canonicalize the configuration</span> steps. We will simply assert conditions
+  that that algorithm is guaranteed to hold.</p>
+
+  <ol>
+   <li><p><span>Assert</span>: <var>config</var>["<code
+   data-x="dom-SanitizerConfig-elements">elements</code>"] <span data-x="map exists">exists</span>
+   or <var>config</var>["<code data-x="dom-SanitizerConfig-removeElements">removeElements</code>"]
+   <span data-x="map exists">exists</span>.</p></li>
+
+   <li><p>If <var>config</var>["<code data-x="dom-SanitizerConfig-elements">elements</code>"] <span
+   data-x="map exists">exists</span> and <var>config</var>["<code
+   data-x="dom-SanitizerConfig-removeElements">removeElements</code>"] <span data-x="map
+   exists">exists</span>, then return false.</p></li>
+
+   <li><p><span>Assert</span>: Either <var>config</var>["<code
+   data-x="dom-SanitizerConfig-processingInstructions">processingInstructions</code>"] <span
+   data-x="map exists">exists</span> or <var>config</var>["<code
+   data-x="dom-SanitizerConfig-removeProcessingInstructions">removeProcessingInstructions</code>"]
+   <span data-x="map exists">exists</span>.</p></li>
+
+   <li><p>If <var>config</var>["<code
+   data-x="dom-SanitizerConfig-processingInstructions">processingInstructions</code>"] <span
+   data-x="map exists">exists</span> and <var>config</var>["<code
+   data-x="dom-SanitizerConfig-removeProcessingInstructions">removeProcessingInstructions</code>"]
+   <span data-x="map exists">exists</span>, then return false.</p></li>
+
+   <li><p><span>Assert</span>: Either <var>config</var>["<code
+   data-x="dom-SanitizerConfig-attributes">attributes</code>"] <span data-x="map
+   exists">exists</span> or <var>config</var>["<code
+   data-x="dom-SanitizerConfig-removeAttributes">removeAttributes</code>"] <span data-x="map
+   exists">exists</span>.</p></li>
+
+   <li><p>If <var>config</var>["<code data-x="dom-SanitizerConfig-attributes">attributes</code>"]
+   <span data-x="map exists">exists</span> and <var>config</var>["<code
+   data-x="dom-SanitizerConfig-removeAttributes">removeAttributes</code>"] <span data-x="map
+   exists">exists</span>, then return false.</p></li>
+
+   <li><p><span>Assert</span>: All <span>SanitizerElementNamespaceWithAttributes</span>,
+   <span>SanitizerElementNamespace</span>, <span>SanitizerProcessingInstruction</span>, and
+   <span>SanitizerAttributeNamespace</span> items in <var>config</var> are canonical, meaning they
+   have been run through <span data-x="canonicalize a sanitizer name">canonicalizing</span>, as
+   appropriate.</p></li>
+
+   <li>
+    <p>If <var>config</var>["<code data-x="dom-SanitizerConfig-elements">elements</code>"] <span
+    data-x="map exists">exists</span>:</p>
+
+    <ol>
+     <li><p>If <var>config</var>["<code data-x="dom-SanitizerConfig-elements">elements</code>"]
+     <span data-x="list has duplicates">has duplicates</span>, then return false.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p>Otherwise:</p>
+
+    <ol>
+     <li><p>If <var>config</var>["<code
+     data-x="dom-SanitizerConfig-removeElements">removeElements</code>"] <span data-x="list has
+     duplicates">has duplicates</span>, then return false.</p></li>
+    </ol>
+   </li>
+
+   <li><p>If <var>config</var>["<code
+   data-x="dom-SanitizerConfig-replaceWithChildrenElements">replaceWithChildrenElements</code>"]
+   <span data-x="map exists">exists</span> and <span data-x="list has duplicates">has
+   duplicates</span>, then return false.</p></li>
+
+   <li>
+    <p>If <var>config</var>["<code
+    data-x="dom-SanitizerConfig-processingInstructions">processingInstructions</code>"] <span
+    data-x="map exists">exists</span>:</p>
+
+    <ol>
+     <li><p>If <var>config</var>["<code
+     data-x="dom-SanitizerConfig-processingInstructions">processingInstructions</code>"] <span
+     data-x="list has duplicates">has duplicates</span>, then return false.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p>Otherwise:</p>
+
+    <ol>
+     <li><p>If <var>config</var>["<code
+     data-x="dom-SanitizerConfig-removeProcessingInstructions">removeProcessingInstructions</code>"]
+     <span data-x="list has duplicates">has duplicates</span>, then return false.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p>If <var>config</var>["<code data-x="dom-SanitizerConfig-attributes">attributes</code>"] <span
+    data-x="map exists">exists</span>:</p>
+
+    <ol>
+     <li><p>If <var>config</var>["<code data-x="dom-SanitizerConfig-attributes">attributes</code>"]
+     <span data-x="list has duplicates">has duplicates</span>, then return false.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p>Otherwise:</p>
+
+    <ol>
+     <li><p>If <var>config</var>["<code
+     data-x="dom-SanitizerConfig-removeAttributes">removeAttributes</code>"] <span data-x="list has
+     duplicates">has duplicates</span>, then return false.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p>If <var>config</var>["<code
+    data-x="dom-SanitizerConfig-replaceWithChildrenElements">replaceWithChildrenElements</code>"]
+    <span data-x="map exists">exists</span>:</p>
+
+    <ol>
+     <li>
+      <p><span data-x="list iterate">For each</span> <var>element</var> of <var>config</var>["<code
+      data-x="dom-SanitizerConfig-replaceWithChildrenElements">replaceWithChildrenElements</code>"]:</p>
+
+      <ol>
+       <li><p>If the <span>built-in non-replaceable elements list</span> <span data-x="list
+       contains">contains</span> <var>element</var>, then return false.</p></li>
+      </ol>
+     </li>
+
+     <li>
+      <p>If <var>config</var>["<code data-x="dom-SanitizerConfig-elements">elements</code>"] <span
+      data-x="map exists">exists</span>:</p>
+
+      <ol>
+       <li><p>If the <span data-x="sanitizer canonicalized intersection">intersection</span> of
+       <var>config</var>["<code data-x="dom-SanitizerConfig-elements">elements</code>"] and
+       <var>config</var>["<code
+       data-x="dom-SanitizerConfig-replaceWithChildrenElements">replaceWithChildrenElements</code>"]
+       is not empty, then return false.</p></li>
+      </ol>
+     </li>
+
+     <li>
+      <p>Otherwise:</p>
+
+      <ol>
+       <li><p>If the <span data-x="sanitizer canonicalized intersection">intersection</span> of
+       <var>config</var>["<code data-x="dom-SanitizerConfig-removeElements">removeElements</code>"]
+       and <var>config</var>["<code
+       data-x="dom-SanitizerConfig-replaceWithChildrenElements">replaceWithChildrenElements</code>"]
+       is not empty, then return false.</p></li>
+      </ol>
+     </li>
+    </ol>
+   </li>
+
+   <li>
+    <p>If <var>config</var>["<code data-x="dom-SanitizerConfig-attributes">attributes</code>"] <span
+    data-x="map exists">exists</span>:</p>
+
+    <ol>
+     <li><p><span>Assert</span>: <var>config</var>["<code
+     data-x="dom-SanitizerConfig-dataAttributes">dataAttributes</code>"] <span data-x="map
+     exists">exists</span>.</p></li>
+
+     <li>
+      <p>If <var>config</var>["<code data-x="dom-SanitizerConfig-elements">elements</code>"] <span
+      data-x="map exists">exists</span>:</p>
+
+      <ol>
+       <li>
+        <p><span data-x="list iterate">For each</span> <var>element</var> of
+        <var>config</var>["<code data-x="dom-SanitizerConfig-elements">elements</code>"]:</p>
+
+        <ol>
+         <li><p>If <var>element</var>["<code
+         data-x="dom-SanitizerElementNamespaceWithAttributes-attributes">attributes</code>"] <span
+         data-x="map exists">exists</span> and <var>element</var>["<code
+         data-x="dom-SanitizerElementNamespaceWithAttributes-attributes">attributes</code>"] <span
+         data-x="list has duplicates">has duplicates</span>, then return false.</p></li>
+
+         <li><p>If <var>element</var>["<code
+         data-x="dom-SanitizerElementNamespaceWithAttributes-removeAttributes">removeAttributes</code>"]
+         <span data-x="map exists">exists</span> and <var>element</var>["<code
+         data-x="dom-SanitizerElementNamespaceWithAttributes-removeAttributes">removeAttributes</code>"]
+         <span data-x="list has duplicates">has duplicates</span>, then return false.</p></li>
+
+         <li><p>If the <span data-x="sanitizer canonicalized intersection">intersection</span> of
+         <var>config</var>["<code data-x="dom-SanitizerConfig-attributes">attributes</code>"] and
+         <var>element</var>["<code
+         data-x="dom-SanitizerElementNamespaceWithAttributes-attributes">attributes</code>"] <span
+         data-x="map with default">with default</span> « » is not empty, then return false.</p></li>
+
+         <li><p>If <var>element</var>["<code
+         data-x="dom-SanitizerElementNamespaceWithAttributes-removeAttributes">removeAttributes</code>"]
+         <span data-x="map with default">with default</span> « » is not a <span data-x="set
+         subset">subset</span> of <var>config</var>["<code
+         data-x="dom-SanitizerConfig-attributes">attributes</code>"], then return false.</p></li>
+
+         <li><p>If <var>config</var>["<code
+         data-x="dom-SanitizerConfig-dataAttributes">dataAttributes</code>"] is true and
+         <var>element</var>["<code
+         data-x="dom-SanitizerElementNamespaceWithAttributes-attributes">attributes</code>"]
+         contains a <span>custom data attribute</span>, then return false.</p></li>
+        </ol>
+       </li>
+      </ol>
+     </li>
+
+     <li><p>If <var>config</var>["<code
+     data-x="dom-SanitizerConfig-dataAttributes">dataAttributes</code>"] is true and
+     <var>config</var>["<code data-x="dom-SanitizerConfig-attributes">attributes</code>"] contains a
+     <span>custom data attribute</span>, then return false.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p>Otherwise:</p>
+
+    <ol>
+     <li>
+      <p>If <var>config</var>["<code data-x="dom-SanitizerConfig-elements">elements</code>"] <span
+      data-x="map exists">exists</span>:</p>
+
+      <ol>
+       <li>
+        <p><span data-x="list iterate">For each</span> <var>element</var> of
+        <var>config</var>["<code data-x="dom-SanitizerConfig-elements">elements</code>"]:</p>
+
+        <ol>
+         <li><p>If <var>element</var>["<code
+         data-x="dom-SanitizerElementNamespaceWithAttributes-attributes">attributes</code>"] <span
+         data-x="map exists">exists</span> and <var>element</var>["<code
+         data-x="dom-SanitizerElementNamespaceWithAttributes-removeAttributes">removeAttributes</code>"]
+         <span data-x="map exists">exists</span>, then return false.</p></li>
+
+         <li><p>If <var>element</var>["<code
+         data-x="dom-SanitizerElementNamespaceWithAttributes-attributes">attributes</code>"] <span
+         data-x="map exists">exists</span> and <var>element</var>["<code
+         data-x="dom-SanitizerElementNamespaceWithAttributes-attributes">attributes</code>"] <span
+         data-x="list has duplicates">has duplicates</span>, then return false.</p></li>
+
+         <li><p>If <var>element</var>["<code
+         data-x="dom-SanitizerElementNamespaceWithAttributes-removeAttributes">removeAttributes</code>"]
+         <span data-x="map exists">exists</span> and <var>element</var>["<code
+         data-x="dom-SanitizerElementNamespaceWithAttributes-removeAttributes">removeAttributes</code>"]
+         <span data-x="list has duplicates">has duplicates</span>, then return false.</p></li>
+
+         <li><p>If the <span data-x="sanitizer canonicalized intersection">intersection</span> of
+         <var>config</var>["<code
+         data-x="dom-SanitizerConfig-removeAttributes">removeAttributes</code>"] and
+         <var>element</var>["<code
+         data-x="dom-SanitizerElementNamespaceWithAttributes-attributes">attributes</code>"] <span
+         data-x="map with default">with default</span> « » is not empty, then return false.</p></li>
+
+         <li><p>If the <span data-x="sanitizer canonicalized intersection">intersection</span> of
+         <var>config</var>["<code
+         data-x="dom-SanitizerConfig-removeAttributes">removeAttributes</code>"] and
+         <var>element</var>["<code
+         data-x="dom-SanitizerElementNamespaceWithAttributes-removeAttributes">removeAttributes</code>"]
+         <span data-x="map with default">with default</span> « » is not empty, then return
+         false.</p></li>
+        </ol>
+       </li>
+      </ol>
+     </li>
+
+     <li><p>If <var>config</var>["<code
+     data-x="dom-SanitizerConfig-dataAttributes">dataAttributes</code>"] <span data-x="map
+     exists">exists</span>, then return false.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Return true.</p></li>
+  </ol>
+  </div>
+

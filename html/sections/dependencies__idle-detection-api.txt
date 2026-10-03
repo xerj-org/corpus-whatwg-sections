@@ -1,0 +1,12 @@
+WHATWG HTML — section dependencies/idle-detection-api — Idle Detection API
+
+   <dt>Idle Detection API</dt>
+
+   <dd>
+    <p>The following terms are defined in <cite>Idle Detection API</cite>:</p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://wicg.github.io/idle-detection/#idledetector"><code>IdleDetector</code></dfn></li>
+    </ul>
+   </dd>
+

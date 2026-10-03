@@ -1,0 +1,14 @@
+WHATWG HTML — section dependencies/webgpu — WebGPU
+
+   <dt>WebGPU</dt>
+
+   <dd>
+    <p>The following interfaces are defined in <cite>WebGPU</cite>: <ref>WEBGPU</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://gpuweb.github.io/gpuweb/#canvas-context"><code>GPUCanvasContext</code></dfn> interface</li>
+    </ul>
+   </dd>
+
+
+

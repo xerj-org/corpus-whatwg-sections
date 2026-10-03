@@ -1,0 +1,114 @@
+WHATWG HTML — section the-search-element — The <dfn element><code>search</code></dfn> element
+
+  <h4>The <dfn element><code>search</code></dfn> element</h4>
+
+  <dl class="element">
+   <dt><span data-x="concept-element-categories">Categories</span>:</dt>
+   <dd><span>Flow content</span>.</dd>
+   <dd><span>Palpable content</span>.</dd>
+   <dt><span data-x="concept-element-contexts">Contexts in which this element can be used</span>:</dt>
+   <dd>Where <span>flow content</span> is expected.</dd>
+   <dt><span data-x="concept-element-content-model">Content model</span>:</dt>
+   <dd><span>Flow content</span>.</dd>
+   <dt><span data-x="concept-element-attributes">Content attributes</span>:</dt>
+   <dd><span>Global attributes</span></dd>
+   <dt><span data-x="concept-element-accessibility-considerations">Accessibility considerations</span>:</dt>
+   <dd><a href="https://w3c.github.io/html-aria/#el-search">For authors</a>.</dd>
+   <dd><a href="https://w3c.github.io/html-aam/#el-search">For implementers</a>.</dd>
+   <dt><span data-x="concept-element-sanitization">Sanitization</span>:</dt>
+   <dd><span data-x="sanitizer-category-default">Default</span>.</dd>
+   <dt><span data-x="concept-element-dom">DOM interface</span>:</dt>
+   <dd>Uses <code>HTMLElement</code>.</dd>
+  </dl>
+
+  <p>The <code>search</code> element <span>represents</span> a part of a document or application
+  that contains a set of form controls or other content related to performing a search or filtering
+  operation. This could be a search of the web site or application; a way of searching or filtering
+  search results on the current web page; or a global or Internet-wide search function.</p>
+
+  <p class="note">It's not appropriate to use the <code>search</code> element just for presenting
+  search results, though suggestions and links as part of "quick search" results can be
+  included as part of a search feature. Rather, a returned web page of search results would instead
+  be expected to be presented as part of the main content of that web page.</p>
+
+  <div class="example">
+   <p>In the following example, the author is including a search form within the
+   <code>header</code> of the web page:</p>
+
+   <pre><code class="html">&lt;header>
+  &lt;h1>&lt;a href="/">My fancy blog&lt;/a>&lt;/h1>
+  ...
+  &lt;search>
+    &lt;form action="search.php">
+      &lt;label for="query">Find an article&lt;/label>
+      &lt;input id="query" name="q" type="search">
+      &lt;button type="submit">Go!&lt;/button>
+    &lt;/form>
+  &lt;/search>
+&lt;/header></code></pre>
+  </div>
+
+  <div class="example">
+   <p>In this example, the author has implemented their web application's search functionality
+   entirely with JavaScript. There is no use of the <code>form</code> element to perform
+   server-side submission, but the containing <code>search</code> element semantically identifies
+   the purpose of the descendant content as representing search capabilities.</p>
+
+   <pre><code class="html">&lt;search>
+  &lt;label>
+    Find and filter your query
+    &lt;input type="search" id="query">
+  &lt;/label>
+  &lt;label>
+    &lt;input type="checkbox" id="exact-only">
+    Exact matches only
+  &lt;/label>
+
+  &lt;section>
+    &lt;h3>Results found:&lt;/h3>
+    &lt;ul id="results">
+      &lt;li>
+        &lt;p>&lt;a href="services/consulting">Consulting services&lt;/a>&lt;/p>
+        &lt;p>
+          Find out how can we help you improve your business with our integrated consultants, Bob and Bob.
+        &lt;/p>
+      &lt;/li>
+      ...
+    &lt;/ul>
+    &lt;!--
+      when a query returns or filters out all results
+      render the no results message here
+    -->
+    &lt;output id="no-results">&lt;/output>
+  &lt;/section>
+&lt;/search></code></pre>
+  </div>
+
+  <div class="example">
+    <p>In the following example, the page has two search features. The first is located in the web page's
+    <code>header</code> and serves as a global mechanism to search the web site's content. Its purpose is
+    indicated by its specified <code>title</code> attribute. The second is included as part of the main content
+    of the page, as it represents a mechanism to search and filter the content of the current page. It contains
+    a heading to indicate its purpose.</p>
+
+    <pre><code class="html">&lt;body>
+  &lt;header>
+    ...
+    &lt;search title="Website">
+      ...
+    &lt;/search>
+  &lt;/header>
+  &lt;main>
+    &lt;h1>Hotels near your location&lt;/h1>
+     &lt;search>
+       &lt;h2>Filter results&lt;/h2>
+       ...
+     &lt;/search>
+     &lt;article>
+      &lt;!-- search result content -->
+    &lt;/article>
+  &lt;/main>
+&lt;/body></code></pre>
+  </div>
+
+

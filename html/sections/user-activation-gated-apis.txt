@@ -1,0 +1,31 @@
+WHATWG HTML — section user-activation-gated-apis — APIs gated by user activation
+
+  <h4 id="user-activation-gated-apis">APIs gated by user activation</h4>
+
+  </div>
+
+  <p>APIs that are dependent on user activation are classified into different levels:</p>
+
+  <dl>
+   <dt><dfn export data-x="sticky activation gated api" data-lt="sticky activation-gated API">Sticky activation-gated APIs</dfn></dt>
+   <dd><p>These APIs require the <span>sticky activation</span> state to be true, so they are
+   blocked until the very first user activation.</p></dd>
+
+   <dt><dfn export data-x="transient activation gated api" data-lt="transient activation-gated
+   API">Transient activation-gated APIs</dfn></dt>
+   <dd><p>These APIs require the <span>transient activation</span> state to be true, but they don't
+   <span data-x="consume user activation">consume</span> it, so multiple calls are allowed per user
+   activation until the transient state <span data-x="activation-expiry">expires</span>.</p></dd>
+
+   <dt><dfn export data-x="activation consuming api" data-lt="transient activation-consuming API">Transient activation-consuming APIs</dfn></dt>
+   <dd><p>These APIs require the <span>transient activation</span> state to be true, and they
+   <span>consume user activation</span> in each call to prevent multiple calls per user
+   activation.</p></dd>
+
+   <dt><dfn export data-x="history-action activation-consuming API" data-lt="history-action activation-consuming API">History-action activation-consuming APIs</dfn></dt>
+   <dd><p>These APIs require the <span>history-action activation</span> state to be true, and they
+   <span>consume history-action user activation</span> in each call to prevent multiple calls per
+   user activation.</p></dd>
+  </dl>
+
+

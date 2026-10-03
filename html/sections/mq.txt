@@ -1,0 +1,17 @@
+WHATWG HTML — section mq — Media queries
+
+  <h4 id="mq">Media queries</h4>
+
+  <div algorithm>
+  <p>A string is a <dfn>valid media query list</dfn> if it matches the <code
+  data-x="">&lt;media-query-list&gt;</code> production of <cite>Media Queries</cite>.
+  <ref>MQ</ref></p>
+  </div>
+
+  <div algorithm>
+  <p>A string <dfn>matches the environment</dfn> of the user if it is the empty string, a string
+  consisting of only <span>ASCII whitespace</span>, or is a media query list that matches the user's
+  environment according to the definitions given in <cite>Media Queries</cite>. <ref>MQ</ref></p>
+  </div>
+
+

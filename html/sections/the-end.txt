@@ -1,0 +1,171 @@
+WHATWG HTML — section the-end — The end
+
+  <h4>The end</h4>
+
+  <div algorithm>
+  <p>Once the user agent <dfn data-x="stop parsing">stops parsing</dfn> the document, the user agent
+  must run the following steps:</p>
+
+  <ol>
+   <!-- this happens as part of one of the tasks that runs the parser -->
+
+   <li><p>If the <span>active speculative HTML parser</span> is not null, then <span>stop the
+   speculative HTML parser</span> and return.</p></li>
+
+   <li><p>Set the <span>insertion point</span> to undefined.</p></li>
+
+   <li><p><span>Update the current document readiness</span> to "<code
+   data-x="">interactive</code>".</p></li>
+
+   <li><p>Pop <em>all</em> the nodes off the <span>stack of open elements</span>.</p></li>
+
+   <li><p>While the <span>list of scripts that will execute when the document has finished
+   parsing</span> is not empty:</p>
+
+    <ol>
+     <li><p><span>Spin the event loop</span> until the first <code>script</code> in the <span>list
+     of scripts that will execute when the document has finished parsing</span> has its <span>ready
+     to be parser-executed</span> set to true <em>and</em> the parser's <code>Document</code>
+     <span>has no style sheet that is blocking scripts</span>.</p></li>
+
+     <li><p><span>Execute the script element</span> given by the first <code>script</code> in
+     the <span>list of scripts that will execute when the document has finished
+     parsing</span>.</p></li>
+
+     <li><p>Remove the first <code>script</code> element from the <span>list of scripts that will
+     execute when the document has finished parsing</span> (i.e. shift out the first entry in the
+     list).</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p><span>Queue a global task</span> on the <span>DOM manipulation task source</span> given the
+    <code>Document</code>'s <span>relevant global object</span> to run the following substeps:</p>
+
+    <ol>
+     <li><p>Set the <code>Document</code>'s <span>load timing info</span>'s <span>DOM content loaded
+     event start time</span> to the <span>current high resolution time</span> given the
+     <code>Document</code>'s <span>relevant global object</span>.</p></li>
+
+     <li><p><span data-x="concept-event-fire">Fire an event</span> named <code
+     data-x="event-DOMContentLoaded">DOMContentLoaded</code> at the <code>Document</code>
+     object, with its <code data-x="dom-Event-bubbles">bubbles</code> attribute initialized to
+     true.</p></li>
+
+     <li><p>Set the <code>Document</code>'s <span>load timing info</span>'s <span>DOM content loaded
+     event end time</span> to the <span>current high resolution time</span> given the
+     <code>Document</code>'s <span>relevant global object</span>.</p></li>
+
+     <li><p>Enable the <span data-x="dfn-client-message-queue">client message queue</span> of the
+     <code>ServiceWorkerContainer</code> object whose associated <span
+     data-x="serviceworkercontainer-service-worker-client">service worker client</span> is the
+     <code>Document</code> object's <span>relevant settings object</span>.</p></li>
+
+     <li><p>Invoke <span>WebDriver BiDi DOM content loaded</span> with the <code>Document</code>'s
+     <span data-x="concept-document-bc">browsing context</span>, and a new <span>WebDriver BiDi
+     navigation status</span> whose <span data-x="navigation-status-id">id</span> is the
+     <code>Document</code> object's <span data-x="concept-document-navigation-id">during-loading
+     navigation ID for WebDriver BiDi</span>, <span data-x="navigation-status-status">status</span>
+     is "<code data-x="navigation-status-pending" >pending</code>", and <span
+     data-x="navigation-status-url">url</span> is the <code>Document</code> object's <span
+     data-x="concept-document-url">URL</span>.</p></li>
+    </ol>
+   </li>
+
+   <li><p><span>Spin the event loop</span> until the <span>set of scripts that will execute as soon
+   as possible</span> and the <span>list of scripts that will execute in order as soon as
+   possible</span> are empty.</p></li> <!-- this step is not redundant with the next one, since
+   <script> nodes delay the load event of the document they are in, but they might change document
+   between being added to one document's set/list and executing those scripts, so they might be
+   delaying another document but still be in this document's set/list. -->
+
+   <li><p><span>Spin the event loop</span> until there is nothing that <dfn data-x="delay the load
+   event">delays the load event</dfn> in the <code>Document</code>.</p></li>
+
+   <li>
+    <p><span>Queue a global task</span> on the <span>DOM manipulation task source</span> given the
+    <code>Document</code>'s <span>relevant global object</span> to run the following steps:</p>
+
+    <ol>
+     <li><p><span>Update the current document readiness</span> to "<code
+     data-x="">complete</code>".</p></li>
+
+     <li><p>If the <code>Document</code> object's <span data-x="concept-document-bc">browsing
+     context</span> is null, then abort these steps.</p></li>
+
+     <li><p>Let <var>window</var> be the <code>Document</code>'s <span>relevant global
+     object</span>.</p></li>
+
+     <li><p>Set the <code>Document</code>'s <span>load timing info</span>'s <span>load event start
+     time</span> to the <span>current high resolution time</span> given <var>window</var>.</p></li>
+
+     <li><p><span data-x="concept-event-fire">Fire an event</span> named <code
+     data-x="event-load">load</code> at <var>window</var>, with <i>legacy target override
+     flag</i> set.</p></li>
+
+     <li><p>Invoke <span>WebDriver BiDi load complete</span> with the <code>Document</code>'s <span
+     data-x="concept-document-bc">browsing context</span>, and a new <span>WebDriver BiDi
+     navigation status</span> whose <span data-x="navigation-status-id">id</span> is the
+     <code>Document</code> object's <span data-x="concept-document-navigation-id">during-loading
+     navigation ID for WebDriver BiDi</span>, <span data-x="navigation-status-status">status</span>
+     is "<code data-x="navigation-status-complete">complete</code>", and <span
+     data-x="navigation-status-url">url</span> is the <code>Document</code> object's <span
+     data-x="concept-document-url">URL</span>.</p></li>
+
+     <li><p>Set the <code>Document</code> object's <span
+     data-x="concept-document-navigation-id">during-loading navigation ID for WebDriver BiDi</span>
+     to null.</p></li>
+
+     <li><p>Set the <code>Document</code>'s <span>load timing info</span>'s <span>load event end
+     time</span> to the <span>current high resolution time</span> given <var>window</var>.</p></li>
+
+     <li><p><span>Assert</span>: <code>Document</code>'s <span>page showing</span> is
+     false.</p></li>
+
+     <li><p>Set the <code>Document</code>'s <span>page showing</span> to true.</p></li>
+
+     <li><p><span>Fire a page transition event</span> named <code
+     data-x="event-pageshow">pageshow</code> at <var>window</var> with false.</p></li>
+
+     <li><p><span>Completely finish loading</span> the <code>Document</code>.</p></li>
+
+     <li><p><span>Queue the navigation timing entry</span> for the <code>Document</code>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>If the <code>Document</code>'s <span>print when loaded</span> flag is set, then run the
+   <span>printing steps</span>.</p></li>
+
+   <li><p>The <code>Document</code> is now <dfn>ready for post-load tasks</dfn>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>When the user agent is to <dfn>abort a parser</dfn>, it must run the following steps:</p>
+
+  <ol>
+   <li><p>Throw away any pending content in the <span>input stream</span>, and discard any future
+   content that would have been added to it.</p></li>
+
+   <li><p><span>Stop the speculative HTML parser</span> for this HTML parser.</p></li>
+
+   <li><p><span>Update the current document readiness</span> to "<code
+   data-x="">interactive</code>".</p></li>
+
+   <li><p>Pop <em>all</em> the nodes off the <span>stack of open elements</span>.</p></li>
+
+   <li><p><span>Update the current document readiness</span> to "<code
+   data-x="">complete</code>".</p></li>
+
+   <!-- anything else? this is things that happen when you call document.open() on a document that's
+   still being parsed, or when you navigate a document that's still parsing, or navigate the parent
+   of a frame with a document that's still parsing, or the user hits "stop". Should the pending
+   scripts be blown away or anything? -->
+  </ol>
+  </div>
+
+  </div>
+
+
+  <div w-nodev>
+

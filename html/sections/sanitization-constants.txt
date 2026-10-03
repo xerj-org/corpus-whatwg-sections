@@ -1,0 +1,466 @@
+WHATWG HTML — section sanitization-constants — Sanitization constants
+
+  <h4>Sanitization constants</h4>
+
+  <p>An element's <dfn>sanitization category</dfn> can be one of the following:</p>
+
+  <dl>
+   <dt><dfn data-x="sanitizer-category-default">Default</dfn></dt>
+   <dd>The element is included in the default <code>SanitizerConfig</code>.</dd>
+
+   <dt><dfn data-x="sanitizer-category-unsafe">Unsafe</dfn></dt>
+   <dd>The element can result in XSS. (Such elements are preserved by <code
+   data-x="dom-Element-setHTMLUnsafe">setHTMLUnsafe()</code> or <code
+   data-x="dom-parseHTMLUnsafe">parseHTMLUnsafe()</code>, and removed by <code
+   data-x="dom-Element-setHTML">setHTML()</code>, <code data-x="dom-parseHTML">parseHTML()</code>,
+   and <code data-x="dom-Sanitizer-removeUnsafe">removeUnsafe()</code>.)</dd>
+
+   <dt><dfn data-x="sanitizer-uncategorized">Uncategorized</dfn></dt>
+   <dd>The element is neither removed nor included by default, but can still be added to a
+   <code>SanitizerConfig</code>.</dd>
+  </dl>
+
+  <p>The <dfn>built-in safe baseline configuration</dfn> is a <span>SanitizerConfig</span>. Its
+  <code data-x="dom-SanitizerConfig-removeElements">removeElements</code> list consists of all HTML
+  elements normatively marked as <span data-x="sanitizer-category-unsafe">Unsafe</span> within their
+  individual definitions, along with the obsolete <code>frame</code> element, and the <span>SVG
+  <code>script</code></span> and <span>SVG <code>use</code></span> elements, and its <code
+  data-x="dom-SanitizerConfig-removeAttributes">removeAttributes</code> list is empty.</p>
+
+  <p class="note">Event handler content attributes are automatically removed by the <span>remove
+  unsafe</span> algorithm during safe sanitization, so the effective baseline behaves as if they
+  were included in the <code data-x="dom-SanitizerConfig-removeAttributes">removeAttributes</code>
+  list.</p>
+
+  <p>The <dfn>built-in safe default configuration</dfn> is a <span>SanitizerConfig</span> whose
+  members are initialized as follows:</p>
+
+  <dl>
+   <dt><code data-x="dom-SanitizerConfig-processingInstructions">processingInstructions</code></dt>
+   <dd>« »</dd>
+
+   <dt><code data-x="dom-SanitizerConfig-attributes">attributes</code></dt>
+   <dd>
+    A <span data-x="list">list</span> consisting of:
+    <ul class="brief">
+     <li><code data-x="attr-dir">dir</code></li>
+     <li><code data-x="attr-lang">lang</code></li>
+     <li><code data-x="attr-title">title</code></li>
+     <li><code data-x="SVG alignment-baseline">alignment-baseline</code></li>
+     <li><code data-x="SVG baseline-shift">baseline-shift</code></li>
+     <li><code data-x="SVG clip-path">clip-path</code></li>
+     <li><code data-x="SVG clip-rule">clip-rule</code></li>
+     <li><code data-x="SVG color">color</code></li>
+     <li><code data-x="SVG color-interpolation">color-interpolation</code></li>
+     <li><code data-x="SVG cursor">cursor</code></li>
+     <li><code data-x="SVG direction">direction</code></li>
+     <li><code data-x="SVG display">display</code></li>
+     <li><code data-x="MathML displaystyle">displaystyle</code></li>
+     <li><code data-x="SVG dominant-baseline">dominant-baseline</code></li>
+     <li><code data-x="SVG fill">fill</code></li>
+     <li><code data-x="SVG fill-opacity">fill-opacity</code></li>
+     <li><code data-x="SVG fill-rule">fill-rule</code></li>
+     <li><code data-x="SVG font-family">font-family</code></li>
+     <li><code data-x="SVG font-size">font-size</code></li>
+     <li><code data-x="SVG font-size-adjust">font-size-adjust</code></li>
+     <li><code data-x="SVG font-stretch">font-stretch</code></li>
+     <li><code data-x="SVG font-style">font-style</code></li>
+     <li><code data-x="SVG font-variant">font-variant</code></li>
+     <li><code data-x="SVG font-weight">font-weight</code></li>
+     <li><code data-x="SVG letter-spacing">letter-spacing</code></li>
+     <li><code data-x="SVG marker-end">marker-end</code></li>
+     <li><code data-x="SVG marker-mid">marker-mid</code></li>
+     <li><code data-x="SVG marker-start">marker-start</code></li>
+     <li><code data-x="MathML mathbackground">mathbackground</code></li>
+     <li><code data-x="MathML mathcolor">mathcolor</code></li>
+     <li><code data-x="MathML mathsize">mathsize</code></li>
+     <li><code data-x="SVG opacity">opacity</code></li>
+     <li><code data-x="SVG paint-order">paint-order</code></li>
+     <li><code data-x="SVG pointer-events">pointer-events</code></li>
+     <li><code data-x="MathML scriptlevel">scriptlevel</code></li>
+     <li><code data-x="SVG shape-rendering">shape-rendering</code></li>
+     <li><code data-x="SVG stop-color">stop-color</code></li>
+     <li><code data-x="SVG stop-opacity">stop-opacity</code></li>
+     <li><code data-x="SVG stroke">stroke</code></li>
+     <li><code data-x="SVG stroke-dasharray">stroke-dasharray</code></li>
+     <li><code data-x="SVG stroke-dashoffset">stroke-dashoffset</code></li>
+     <li><code data-x="SVG stroke-linecap">stroke-linecap</code></li>
+     <li><code data-x="SVG stroke-linejoin">stroke-linejoin</code></li>
+     <li><code data-x="SVG stroke-miterlimit">stroke-miterlimit</code></li>
+     <li><code data-x="SVG stroke-opacity">stroke-opacity</code></li>
+     <li><code data-x="SVG stroke-width">stroke-width</code></li>
+     <li><code data-x="SVG text-anchor">text-anchor</code></li>
+     <li><code data-x="SVG text-decoration">text-decoration</code></li>
+     <li><code data-x="SVG text-overflow">text-overflow</code></li>
+     <li><code data-x="SVG text-rendering">text-rendering</code></li>
+     <li><code data-x="SVG transform">transform</code></li>
+     <li><code data-x="SVG transform-origin">transform-origin</code></li>
+     <li><code data-x="SVG unicode-bidi">unicode-bidi</code></li>
+     <li><code data-x="SVG vector-effect">vector-effect</code></li>
+     <li><code data-x="SVG visibility">visibility</code></li>
+     <li><code data-x="SVG white-space">white-space</code></li>
+     <li><code data-x="SVG word-spacing">word-spacing</code></li>
+     <li><code data-x="SVG writing-mode">writing-mode</code></li>
+    </ul>
+   </dd>
+
+   <dt><code data-x="dom-SanitizerConfig-comments">comments</code></dt>
+   <dd>false</dd>
+
+   <dt><code data-x="dom-SanitizerConfig-dataAttributes">dataAttributes</code></dt>
+   <dd>false</dd>
+
+   <dt><code data-x="dom-SanitizerConfig-javascriptURLs">javascriptURLs</code></dt>
+   <dd>false</dd>
+
+   <dt><code data-x="dom-SanitizerConfig-elements">elements</code></dt>
+   <dd>All HTML elements normatively categorized as <span
+   data-x="sanitizer-category-default">Default</span> within their individual definitions, alongside
+   the MathML and SVG elements listed in the table below. Attributes included in those definitions
+   are included in each element's respective <code
+   data-x="dom-SanitizerElementNamespaceWithAttributes-attributes">attributes</code> list.</dd>
+  </dl>
+
+  <p>The following table lists the MathML and SVG elements that are categorized as <span
+  data-x="sanitizer-category-default">Default</span> in the <span>built-in safe default
+  configuration</span>, represented as a list of
+  <span>SanitizerElementNamespaceWithAttributes</span> dictionaries. For each row in the table, the
+  "Element" column corresponds to the <code data-x="dom-SanitizerElementNamespace-name">name</code>
+  member, the "Namespace" column corresponds to the <code
+  data-x="dom-SanitizerElementNamespace-namespace">namespace</code> member, and the "Allowed
+  attributes" column corresponds to the <code
+  data-x="dom-SanitizerElementNamespaceWithAttributes-attributes">attributes</code> member (where
+  each listed attribute is represented as a <span>SanitizerAttribute</span> in the sequence):</p>
+
+  <table>
+   <thead>
+    <tr>
+     <th>Element</th>
+     <th>Namespace</th>
+     <th>Allowed attributes</th>
+    </tr>
+   </thead>
+   <tbody>
+    <tr>
+      <td><code data-x="MathML math">math</code></td>
+      <td><span data-x="MathML namespace">MathML</span></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><code data-x="MathML merror">merror</code></td>
+      <td><span data-x="MathML namespace">MathML</span></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><code data-x="MathML mfrac">mfrac</code></td>
+      <td><span data-x="MathML namespace">MathML</span></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><code data-x="MathML mi">mi</code></td>
+      <td><span data-x="MathML namespace">MathML</span></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><code data-x="MathML mmultiscripts">mmultiscripts</code></td>
+      <td><span data-x="MathML namespace">MathML</span></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><code data-x="MathML mn">mn</code></td>
+      <td><span data-x="MathML namespace">MathML</span></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><code data-x="MathML mo">mo</code></td>
+      <td><span data-x="MathML namespace">MathML</span></td>
+      <td><code data-x="MathML fence">fence</code>, <code data-x="MathML form">form</code>, <code data-x="MathML largeop">largeop</code>, <code data-x="MathML lspace">lspace</code>, <code data-x="MathML maxsize">maxsize</code>, <code data-x="MathML minsize">minsize</code>, <code data-x="MathML movablelimits">movablelimits</code>, <code data-x="MathML rspace">rspace</code>, <code data-x="MathML separator">separator</code>, <code data-x="MathML stretchy">stretchy</code>, <code data-x="MathML symmetric">symmetric</code></td>
+    </tr>
+    <tr>
+      <td><code data-x="MathML mover">mover</code></td>
+      <td><span data-x="MathML namespace">MathML</span></td>
+      <td><code data-x="MathML accent">accent</code></td>
+    </tr>
+    <tr>
+      <td><code data-x="MathML mpadded">mpadded</code></td>
+      <td><span data-x="MathML namespace">MathML</span></td>
+      <td><code data-x="MathML depth">depth</code>, <code data-x="MathML height">height</code>, <code data-x="MathML lspace">lspace</code>, <code data-x="MathML voffset">voffset</code>, <code data-x="MathML width">width</code></td>
+    </tr>
+    <tr>
+      <td><code data-x="MathML mphantom">mphantom</code></td>
+      <td><span data-x="MathML namespace">MathML</span></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><code data-x="MathML mprescripts">mprescripts</code></td>
+      <td><span data-x="MathML namespace">MathML</span></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><code data-x="MathML mroot">mroot</code></td>
+      <td><span data-x="MathML namespace">MathML</span></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><code data-x="MathML mrow">mrow</code></td>
+      <td><span data-x="MathML namespace">MathML</span></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><code data-x="MathML ms">ms</code></td>
+      <td><span data-x="MathML namespace">MathML</span></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><code data-x="MathML mspace">mspace</code></td>
+      <td><span data-x="MathML namespace">MathML</span></td>
+      <td><code data-x="MathML depth">depth</code>, <code data-x="MathML height">height</code>, <code data-x="MathML width">width</code></td>
+    </tr>
+    <tr>
+      <td><code data-x="MathML msqrt">msqrt</code></td>
+      <td><span data-x="MathML namespace">MathML</span></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><code data-x="MathML mstyle">mstyle</code></td>
+      <td><span data-x="MathML namespace">MathML</span></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><code data-x="MathML msub">msub</code></td>
+      <td><span data-x="MathML namespace">MathML</span></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><code data-x="MathML msubsup">msubsup</code></td>
+      <td><span data-x="MathML namespace">MathML</span></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><code data-x="MathML msup">msup</code></td>
+      <td><span data-x="MathML namespace">MathML</span></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><code data-x="MathML mtable">mtable</code></td>
+      <td><span data-x="MathML namespace">MathML</span></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><code data-x="MathML mtd">mtd</code></td>
+      <td><span data-x="MathML namespace">MathML</span></td>
+      <td><code data-x="MathML columnspan">columnspan</code>, <code data-x="MathML rowspan">rowspan</code></td>
+    </tr>
+    <tr>
+      <td><code data-x="MathML mtext">mtext</code></td>
+      <td><span data-x="MathML namespace">MathML</span></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><code data-x="MathML mtr">mtr</code></td>
+      <td><span data-x="MathML namespace">MathML</span></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><code data-x="MathML munder">munder</code></td>
+      <td><span data-x="MathML namespace">MathML</span></td>
+      <td><code data-x="MathML accentunder">accentunder</code></td>
+    </tr>
+    <tr>
+      <td><code data-x="MathML munderover">munderover</code></td>
+      <td><span data-x="MathML namespace">MathML</span></td>
+      <td><code data-x="MathML accent">accent</code>, <code data-x="MathML accentunder">accentunder</code></td>
+    </tr>
+    <tr>
+      <td><code data-x="MathML semantics">semantics</code></td>
+      <td><span data-x="MathML namespace">MathML</span></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><code data-x="SVG a">a</code></td>
+      <td><span data-x="SVG namespace">SVG</span></td>
+      <td><code data-x="SVG href">href</code>, <code data-x="SVG hreflang">hreflang</code>, <code data-x="SVG type">type</code></td>
+    </tr>
+    <tr>
+      <td><code data-x="SVG circle">circle</code></td>
+      <td><span data-x="SVG namespace">SVG</span></td>
+      <td><code data-x="SVG cx">cx</code>, <code data-x="SVG cy">cy</code>, <code data-x="SVG pathLength">pathLength</code>, <code data-x="SVG r">r</code></td>
+    </tr>
+    <tr>
+      <td><code data-x="SVG defs">defs</code></td>
+      <td><span data-x="SVG namespace">SVG</span></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><code data-x="SVG desc">desc</code></td>
+      <td><span data-x="SVG namespace">SVG</span></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><code data-x="SVG ellipse">ellipse</code></td>
+      <td><span data-x="SVG namespace">SVG</span></td>
+      <td><code data-x="SVG cx">cx</code>, <code data-x="SVG cy">cy</code>, <code data-x="SVG pathLength">pathLength</code>, <code data-x="SVG rx">rx</code>, <code data-x="SVG ry">ry</code></td>
+    </tr>
+    <tr>
+      <td><code data-x="SVG foreignObject">foreignObject</code></td>
+      <td><span data-x="SVG namespace">SVG</span></td>
+      <td><code data-x="SVG height">height</code>, <code data-x="SVG width">width</code>, <code data-x="SVG x">x</code>, <code data-x="SVG y">y</code></td>
+    </tr>
+    <tr>
+      <td><code data-x="SVG g">g</code></td>
+      <td><span data-x="SVG namespace">SVG</span></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><code data-x="SVG line">line</code></td>
+      <td><span data-x="SVG namespace">SVG</span></td>
+      <td><code data-x="SVG pathLength">pathLength</code>, <code data-x="SVG x1">x1</code>, <code data-x="SVG x2">x2</code>, <code data-x="SVG y1">y1</code>, <code data-x="SVG y2">y2</code></td>
+    </tr>
+    <tr>
+      <td><code data-x="SVG marker">marker</code></td>
+      <td><span data-x="SVG namespace">SVG</span></td>
+      <td><code data-x="SVG markerHeight">markerHeight</code>, <code data-x="SVG markerUnits">markerUnits</code>, <code data-x="SVG markerWidth">markerWidth</code>, <code data-x="SVG orient">orient</code>, <code data-x="SVG preserveAspectRatio">preserveAspectRatio</code>, <code data-x="SVG refX">refX</code>, <code data-x="SVG refY">refY</code>, <code data-x="SVG viewBox">viewBox</code></td>
+    </tr>
+    <tr>
+      <td><code data-x="SVG metadata">metadata</code></td>
+      <td><span data-x="SVG namespace">SVG</span></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><code data-x="SVG path">path</code></td>
+      <td><span data-x="SVG namespace">SVG</span></td>
+      <td><code data-x="SVG d">d</code>, <code data-x="SVG pathLength">pathLength</code></td>
+    </tr>
+    <tr>
+      <td><code data-x="SVG polygon">polygon</code></td>
+      <td><span data-x="SVG namespace">SVG</span></td>
+      <td><code data-x="SVG pathLength">pathLength</code>, <code data-x="SVG points">points</code></td>
+    </tr>
+    <tr>
+      <td><code data-x="SVG polyline">polyline</code></td>
+      <td><span data-x="SVG namespace">SVG</span></td>
+      <td><code data-x="SVG pathLength">pathLength</code>, <code data-x="SVG points">points</code></td>
+    </tr>
+    <tr>
+      <td><code data-x="SVG rect">rect</code></td>
+      <td><span data-x="SVG namespace">SVG</span></td>
+      <td><code data-x="SVG height">height</code>, <code data-x="SVG pathLength">pathLength</code>, <code data-x="SVG rx">rx</code>, <code data-x="SVG ry">ry</code>, <code data-x="SVG width">width</code>, <code data-x="SVG x">x</code>, <code data-x="SVG y">y</code></td>
+    </tr>
+    <tr>
+      <td><code data-x="SVG svg">svg</code></td>
+      <td><span data-x="SVG namespace">SVG</span></td>
+      <td><code data-x="SVG height">height</code>, <code data-x="SVG preserveAspectRatio">preserveAspectRatio</code>, <code data-x="SVG viewBox">viewBox</code>, <code data-x="SVG width">width</code>, <code data-x="SVG x">x</code>, <code data-x="SVG y">y</code></td>
+    </tr>
+    <tr>
+      <td><code data-x="SVG text">text</code></td>
+      <td><span data-x="SVG namespace">SVG</span></td>
+      <td><code data-x="SVG dx">dx</code>, <code data-x="SVG dy">dy</code>, <code data-x="SVG lengthAdjust">lengthAdjust</code>, <code data-x="SVG rotate">rotate</code>, <code data-x="SVG textLength">textLength</code>, <code data-x="SVG x">x</code>, <code data-x="SVG y">y</code></td>
+    </tr>
+    <tr>
+      <td><code data-x="SVG textPath">textPath</code></td>
+      <td><span data-x="SVG namespace">SVG</span></td>
+      <td><code data-x="SVG lengthAdjust">lengthAdjust</code>, <code data-x="SVG method">method</code>, <code data-x="SVG path attribute">path</code>, <code data-x="SVG side">side</code>, <code data-x="SVG spacing">spacing</code>, <code data-x="SVG startOffset">startOffset</code>, <code data-x="SVG textLength">textLength</code></td>
+    </tr>
+    <tr>
+      <td><code data-x="SVG title">title</code></td>
+      <td><span data-x="SVG namespace">SVG</span></td>
+      <td></td>
+    </tr>
+    <tr>
+      <td><code data-x="SVG tspan">tspan</code></td>
+      <td><span data-x="SVG namespace">SVG</span></td>
+      <td><code data-x="SVG dx">dx</code>, <code data-x="SVG dy">dy</code>, <code data-x="SVG lengthAdjust">lengthAdjust</code>, <code data-x="SVG rotate">rotate</code>, <code data-x="SVG textLength">textLength</code>, <code data-x="SVG x">x</code>, <code data-x="SVG y">y</code></td>
+    </tr>
+   </tbody>
+  </table>
+
+  <p>The <dfn>built-in navigating URL attributes list</dfn> corresponds to all HTML elements marked
+  with <dfn>navigating URL attributes</dfn> in their normative definitions, as well as the
+  element-attribute pairs represented in the following table. For each row in the table, the element
+  corresponds to a <span>SanitizerElementNamespace</span> whose <code
+  data-x="dom-SanitizerElementNamespace-name">name</code> member is given by the "Element" column
+  and whose <code data-x="dom-SanitizerElementNamespace-namespace">namespace</code> member is given
+  by the "Element namespace" column; and the attribute corresponds to a
+  <span>SanitizerAttributeNamespace</span> whose <code
+  data-x="dom-SanitizerAttributeNamespace-name">name</code> member is given by the "Attribute"
+  column and whose <code data-x="dom-SanitizerAttributeNamespace-namespace">namespace</code> member
+  is given by the "Attribute namespace" column:</p>
+
+  <table>
+   <thead>
+    <tr>
+     <th>Element
+     <th>Element namespace
+     <th>Attribute
+     <th>Attribute namespace
+   <tbody>
+    <tr>
+     <td><code data-x="SVG a">a</code>
+     <td><span data-x="SVG namespace">SVG</span>
+     <td><code data-x="SVG href">href</code>
+     <td>no namespace
+    <tr>
+     <td><code data-x="SVG a">a</code>
+     <td><span data-x="SVG namespace">SVG</span>
+     <td><code data-x="SVG href">href</code>
+     <td><span data-x="XLink namespace">XLink</span>
+  </table>
+
+  <p>The <dfn>built-in animating URL attributes list</dfn> is the list of element-attribute pairs
+  represented by the following table. For each row in the table, the element corresponds to a
+  <span>SanitizerElementNamespace</span> whose <code
+  data-x="dom-SanitizerElementNamespace-name">name</code> member is given by the "Element" column
+  and whose <code data-x="dom-SanitizerElementNamespace-namespace">namespace</code> member is given
+  by the "Element namespace" column; and the attribute corresponds to a
+  <span>SanitizerAttributeNamespace</span> whose <code
+  data-x="dom-SanitizerAttributeNamespace-name">name</code> member is given by the "Attribute"
+  column and whose <code data-x="dom-SanitizerAttributeNamespace-namespace">namespace</code> member
+  is null:</p>
+
+  <table>
+   <thead>
+    <tr>
+     <th>Element
+     <th>Element namespace
+     <th>Attribute
+   <tbody>
+    <tr>
+     <td><code data-x="SVG animate">animate</code>
+     <td><span data-x="SVG namespace">SVG</span>
+     <td><code data-x="SVG attributeName">attributeName</code>
+    <tr>
+     <td><code data-x="SVG animateTransform">animateTransform</code>
+     <td><span data-x="SVG namespace">SVG</span>
+     <td><code data-x="SVG attributeName">attributeName</code>
+    <tr>
+     <td><code data-x="SVG set">set</code>
+     <td><span data-x="SVG namespace">SVG</span>
+     <td><code data-x="SVG attributeName">attributeName</code>
+  </table>
+
+  <p>The <dfn>built-in non-replaceable elements list</dfn> contains elements that must not be
+  replaced with their children, as doing so can lead to re-parsing issues or an invalid node tree.
+  It is the following list of <span>SanitizerElementNamespace</span> dictionaries, represented by
+  the table below. For each row in the table, the "Element" column corresponds to the <code
+  data-x="dom-SanitizerElementNamespace-name">name</code> member, and the "Element namespace" column
+  corresponds to the <code data-x="dom-SanitizerElementNamespace-namespace">namespace</code>
+  member:</p>
+
+  <table>
+   <thead>
+    <tr>
+     <th>Element
+     <th>Element namespace
+   <tbody>
+    <tr>
+     <td><code data-x="">html</code>
+     <td><span data-x="HTML namespace">HTML</span>
+    <tr>
+     <td><code data-x="">svg</code>
+     <td><span data-x="SVG namespace">SVG</span>
+    <tr>
+     <td><code data-x="">math</code>
+     <td><span data-x="MathML namespace">MathML</span>
+  </table>
+  </div>
+

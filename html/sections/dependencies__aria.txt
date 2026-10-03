@@ -1,0 +1,38 @@
+WHATWG HTML — section dependencies/aria — ARIA
+
+   <dt>ARIA</dt>
+
+   <dd>
+    <p>The <dfn element-attr><code data-x="attr-aria-role">role</code></dfn> attribute is defined in
+    <cite>Accessible Rich Internet Applications</cite> (<cite>ARIA</cite>), as are the following
+    roles: <ref>ARIA</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://w3c.github.io/aria/#button"><code data-x="attr-aria-role-button">button</code></dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/aria/#presentation"><code data-x="attr-aria-role-presentation">presentation</code></dfn></li>
+    </ul>
+
+    <p>In addition, the following <dfn><code data-x="attr-aria-*">aria-*</code></dfn> content
+    attributes are defined in <cite>ARIA</cite>: <ref>ARIA</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://w3c.github.io/aria/#aria-checked"><code data-x="attr-aria-checked">aria-checked</code></dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/aria/#aria-describedby"><code data-x="attr-aria-describedby">aria-describedby</code></dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/aria/#aria-disabled"><code data-x="attr-aria-disabled">aria-disabled</code></dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/aria/#aria-label"><code data-x="attr-aria-label">aria-label</code></dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/aria/#aria-level"><code data-x="attr-aria-level">aria-level</code></dfn></li>
+    </ul>
+
+    <p>Finally, the following terms are defined in <cite>ARIA</cite>: <ref>ARIA</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://w3c.github.io/aria/#dfn-role">role</dfn></li>
+     <li>The <dfn data-x-href="https://w3c.github.io/aria/#ARIAMixin"><code>ARIAMixin</code></dfn> interface, with its associated
+             <dfn data-x-href="https://w3c.github.io/aria/#dfn-ariamixin-getter-steps"><code>ARIAMixin</code> getter steps</dfn> and
+             <dfn data-x-href="https://w3c.github.io/aria/#dfn-ariamixin-setter-steps"><code>ARIAMixin</code> setter steps</dfn> hooks, and its
+             <dfn data-x="dom-ARIAMixin-role" data-x-href="https://w3c.github.io/aria/#idl-def-ariamixin-role"><code>role</code></dfn> and
+             <dfn data-x="dom-ARIAMixin-aria*" data-x-href="https://w3c.github.io/aria/#idl-def-ariamixin-ariaactivedescendantelement"><code>aria*</code></dfn> attributes</li>
+    </ul>
+   </dd>
+
+

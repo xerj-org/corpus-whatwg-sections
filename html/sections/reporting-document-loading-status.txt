@@ -1,0 +1,124 @@
+WHATWG HTML — section reporting-document-loading-status — Reporting document loading status
+
+  <h4>Reporting document loading status</h4>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>document</var>.<span subdfn data-x="dom-document-readyState">readyState</span></code></dt>
+   <dd>
+    <p>Returns "<code data-x="">loading</code>" while the <code>Document</code> is loading, "<code
+    data-x="">interactive</code>" once it is finished parsing but still loading subresources, and
+    "<code data-x="">complete</code>" once it has loaded.</p>
+
+    <p>The <code data-x="event-readystatechange">readystatechange</code> event fires on the
+    <code>Document</code> object when this value changes.</p>
+
+    <p><span w-dev subdfn data-x="stop parsing"></span>The <code
+    data-x="event-DOMContentLoaded">DOMContentLoaded</code> event fires after the transition to
+    "<code data-x="">interactive</code>" but before the transition to "<code
+    data-x="">complete</code>", at the point where all subresources apart from <code
+    data-x="attr-script-async">async</code> <code>script</code> elements have loaded.</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <p>Each <code>Document</code> has a <dfn>current document readiness</dfn>, a string, initially
+  "<code data-x="">complete</code>".</p>
+
+  <p class="note">For <code>Document</code> objects created via the <span
+  data-x="create-the-document-object">create and initialize a <code>Document</code> object</span>
+  algorithm, this will be immediately reset to "<code data-x="">loading</code>" before any script
+  can observe the value of <code data-x="dom-document-readyState">document.readyState</code>. This
+  default applies to other cases such as <span data-x="is initial about:blank">initial
+  <code>about:blank</code></span> <code>Document</code>s or <code>Document</code>s without a
+  <span data-x="concept-document-bc">browsing context</span>.</p>
+
+  <div algorithm>
+  <p>The <dfn attribute for="Document"><code
+  data-x="dom-document-readyState">readyState</code></dfn> getter steps are to return
+  <span>this</span>'s <span>current document readiness</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>update the current document readiness</dfn> for <code>Document</code>
+  <var>document</var> to <var>readinessValue</var>:</p>
+
+  <ol>
+   <li><p>If <var>document</var>'s <span>current document readiness</span> equals
+   <var>readinessValue</var>, then return.</p></li>
+
+   <li><p>Set <var>document</var>'s <span>current document readiness</span> to
+   <var>readinessValue</var>.</p></li>
+
+   <li>
+    <p>If <var>document</var> is associated with an <span>HTML parser</span>:</p>
+
+    <ol>
+     <li><p>Let <var>now</var> be the <span>current high resolution time</span> given
+     <var>document</var>'s <span>relevant global object</span>.</p></li>
+
+     <li><p>If <var>readinessValue</var> is "<code data-x="">complete</code>", and
+     <var>document</var>'s <span>load timing info</span>'s <span>DOM complete time</span> is 0, then
+     set <var>document</var>'s <span>load timing info</span>'s <span>DOM complete time</span> to
+     <var>now</var>.</p></li>
+
+     <li><p>Otherwise, if <var>readinessValue</var> is "<code data-x="">interactive</code>", and
+     <var>document</var>'s <span>load timing info</span>'s <span>DOM interactive time</span> is 0,
+     then set <var>document</var>'s <span>load timing info</span>'s <span>DOM interactive
+     time</span> to <var>now</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p><span data-x="concept-event-fire">Fire an event</span> named <code
+   data-x="event-readystatechange">readystatechange</code> at <var>document</var>.</p></li>
+  </ol>
+  </div>
+
+  <hr>
+
+  <div algorithm>
+  <p>A <code>Document</code> is said to have an <dfn>active parser</dfn> if it is associated with an
+  <span>HTML parser</span> or an <span>XML parser</span> that has not yet been <span data-x="stop
+  parsing">stopped</span> or <span data-x="abort a parser">aborted</span>.</p>
+  </div>
+
+  <hr>
+
+  <p>A <code>Document</code> has a <span>document load timing info</span> <dfn export
+  for="Document">load timing info</dfn>.</p>
+
+  <p>A <code>Document</code> has a <span>document unload timing info</span> <dfn export
+  for="Document">previous document unload timing</dfn>.</p>
+
+  <p>A <code>Document</code> has a boolean <dfn export>was created via cross-origin redirects</dfn>,
+  initially false.</p>
+
+  <p>The <dfn export>document load timing info</dfn> <span>struct</span> has the following <span
+  data-x="struct item">items</span>:</p>
+
+  <dl>
+   <dt><dfn export for="document load timing info">navigation start time</dfn> (default 0)</dt>
+   <dd>A number</dd>
+
+   <dt><dfn export for="document load timing info">DOM interactive time</dfn> (default 0)</dt>
+   <dt><dfn export for="document load timing info">DOM content loaded event start time</dfn>
+   (default 0)</dt>
+   <dt><dfn export for="document load timing info">DOM content loaded event end time</dfn> (default
+   0)</dt>
+   <dt><dfn export for="document load timing info">DOM complete time</dfn> (default 0)</dt>
+   <dt><dfn export for="document load timing info">load event start time</dfn> (default 0)</dt>
+   <dt><dfn export for="document load timing info">load event end time</dfn> (default 0)</dt>
+   <dd><code>DOMHighResTimeStamp</code> values</dd>
+  </dl>
+
+  <p>The <dfn export>document unload timing info</dfn> <span>struct</span> has the following <span
+  data-x="struct item">items</span>:</p>
+
+  <dl>
+   <dt><dfn export for="document unload timing info">unload event start time</dfn> (default 0)</dt>
+   <dt><dfn export for="document unload timing info">unload event end time</dfn> (default 0)</dt>
+   <dd><code>DOMHighResTimeStamp</code> values</dd>
+  </dl>
+
+  </div>
+

@@ -1,0 +1,121 @@
+WHATWG HTML — section windoworworkerglobalscope-mixin — The <code>WindowOrWorkerGlobalScope</code> mixin
+
+  <h3 id="windoworworkerglobalscope-mixin">The <code>WindowOrWorkerGlobalScope</code> mixin</h3>
+
+  <p>The <code>WindowOrWorkerGlobalScope</code> mixin is for use of APIs that are to be exposed on
+  <code>Window</code> and <code>WorkerGlobalScope</code> objects.</p>
+
+  <p class="note">Other standards are encouraged to further extend it using <code data-x="">partial
+  interface mixin <span>WindowOrWorkerGlobalScope</span> { &hellip; };</code> along with an
+  appropriate reference.</p>
+
+  <pre><code class="idl">typedef (DOMString or <span data-x="idl-Function">Function</span> or <span data-x="tt-trustedscript">TrustedScript</span>) <dfn typedef>TimerHandler</dfn>;
+
+interface mixin <dfn interface>WindowOrWorkerGlobalScope</dfn> {
+  [Replaceable] readonly attribute USVString <span data-x="dom-origin">origin</span>;
+  readonly attribute boolean <span data-x="dom-isSecureContext">isSecureContext</span>;
+  readonly attribute boolean <span data-x="dom-crossOriginIsolated">crossOriginIsolated</span>;
+
+  undefined <span data-x="dom-reportError">reportError</span>(any e);
+
+  // base64 utility methods
+  DOMString <span data-x="dom-btoa">btoa</span>(DOMString data);
+  ByteString <span data-x="dom-atob">atob</span>(DOMString data);
+
+  // timers
+  long <span data-x="dom-setTimeout">setTimeout</span>(<span>TimerHandler</span> handler, optional long timeout = 0, any... arguments);
+  undefined <span data-x="dom-clearTimeout">clearTimeout</span>(optional long id = 0);
+  long <span data-x="dom-setInterval">setInterval</span>(<span>TimerHandler</span> handler, optional long timeout = 0, any... arguments);
+  undefined <span data-x="dom-clearInterval">clearInterval</span>(optional long id = 0);
+
+  // microtask queuing
+  undefined <span data-x="dom-queueMicrotask">queueMicrotask</span>(<span data-x="idl-VoidFunction">VoidFunction</span> callback);
+
+  // ImageBitmap
+  <span data-x="idl-Promise">Promise</span>&lt;<span>ImageBitmap</span>&gt; <span data-x="dom-createImageBitmap">createImageBitmap</span>(<span>ImageBitmapSource</span> image, optional <span>ImageBitmapOptions</span> options = {});
+  <span data-x="idl-Promise">Promise</span>&lt;<span>ImageBitmap</span>&gt; <span data-x="dom-createImageBitmap">createImageBitmap</span>(<span>ImageBitmapSource</span> image, long sx, long sy, long sw, long sh, optional <span>ImageBitmapOptions</span> options = {});
+
+  // structured cloning
+  any <span data-x="dom-structuredClone">structuredClone</span>(any value, optional <span>StructuredSerializeOptions</span> options = {});
+};
+<span>Window</span> includes <span>WindowOrWorkerGlobalScope</span>;
+<span>WorkerGlobalScope</span> includes <span>WindowOrWorkerGlobalScope</span>;</code></pre>
+
+  <dl class="domintro">
+   <dt><code data-x="">self.<span subdfn data-x="dom-isSecureContext">isSecureContext</span></code></dt>
+   <dd><p>Returns whether or not this global object represents a <span>secure context</span>.
+   <ref>SECURE-CONTEXTS</ref></p></dd>
+
+   <dt><code data-x="">self.<span subdfn data-x="dom-origin">origin</span></code></dt>
+   <dd><p>Returns the global object's <span>origin</span>, serialized as string.</p></dd>
+
+   <dt><code data-x="">self.<span subdfn data-x="dom-crossOriginIsolated">crossOriginIsolated</span></code></dt>
+   <dd><p>Returns whether scripts running in this global are allowed to use APIs that require
+   cross-origin isolation. This depends on the `<code>Cross-Origin-Opener-Policy</code>` and
+   `<code>Cross-Origin-Embedder-Policy</code>` HTTP response headers and the "<code
+   data-x="cross-origin-isolated-feature">cross-origin-isolated</code>" feature.</p></dd>
+  </dl>
+
+  <div class="example">
+   <p>Developers are strongly encouraged to use <code data-x="">self.origin</code> over <code
+   data-x="">location.origin</code>. The former returns the <span>origin</span> of the environment,
+   the latter of the URL of the environment. Imagine the following script executing in a document on
+   <code data-x="">https://stargate.example/</code>:</p>
+
+   <pre><code class="js">var frame = document.createElement("iframe")
+frame.onload = function() {
+  var frameWin = frame.contentWindow
+  console.log(frameWin.location.origin) // "null"
+  console.log(frameWin.origin) // "https://stargate.example"
+}
+document.body.appendChild(frame)</code></pre>
+
+   <p><code data-x="">self.origin</code> is a more reliable security indicator.</p>
+  </div>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn attribute for="WindowOrWorkerGlobalScope"
+  data-x="dom-isSecureContext"><code>isSecureContext</code></dfn> getter steps are to return true if
+  <span>this</span>'s <span>relevant settings object</span> is a <span>secure context</span>, or
+  false otherwise.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="WindowOrWorkerGlobalScope"
+  data-x="dom-origin"><code>origin</code></dfn> getter steps are to return <span>this</span>'s
+  <span>relevant settings object</span>'s <span
+  data-x="concept-settings-object-origin">origin</span>, <span data-x="serialization of an
+  origin">serialized</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="WindowOrWorkerGlobalScope"
+  data-x="dom-crossOriginIsolated"><code>crossOriginIsolated</code></dfn> getter steps are to return
+  <span>this</span>'s <span>relevant settings object</span>'s <span
+  data-x="concept-settings-object-cross-origin-isolated-capability">cross-origin isolated
+  capability</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>An element implementing the <code>WindowOrWorkerGlobalScope</code> mixin has the following
+  <span>extract an origin</span> steps:</p>
+
+  <ol>
+   <li><p>If <span>this</span>'s <span>relevant settings object</span>'s <span
+   data-x="concept-settings-object-origin">origin</span> is not <span>same origin-domain</span>
+   with the <span>entry settings object</span>'s <span
+   data-x="concept-settings-object-origin">origin</span>, then return null.</p></li>
+
+   <li><p>Return <span>this</span>'s <span>relevant settings object</span>'s
+   <span data-x="concept-settings-object-origin">origin</span>.</p></li>
+  </ol>
+
+  <p class="note">Since these objects are potentially accessible cross-origin (e.g., through
+  <code>WindowProxy</code>), we need a security check here before granting access to the origin.</p>
+  </div>
+
+  </div>
+
+

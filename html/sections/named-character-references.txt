@@ -1,0 +1,40 @@
+WHATWG HTML — section named-character-references — <dfn>Named character references</dfn>
+
+  <h3 split-filename="named-characters"><dfn>Named character references</dfn></h3>
+
+  <p>This table lists the <span data-x="syntax-charref">character reference</span> names that are
+  supported by HTML, and the code points to which they refer. It is referenced by the previous
+  sections.</p>
+
+  <p class="note">It is intentional, for legacy compatibility, that many code points have multiple
+  character reference names. For example, some appear both with and without the trailing semicolon,
+  or with different capitalizations.</p>
+
+  <div id="named-character-references-table">
+   <table>
+    <thead>
+     <tr> <th> Name </th> <th> Character(s) </th> <th> Glyph </th> </tr>
+    </thead>
+<!--BOILERPLATE entities.inc-->
+   </table>
+  <!--
+   If we want to add character references, Almorca suggests:
+   > I would add &sub1; (character U+2081), &sub2; (character U+2082) and &sub3; (character U+2083).
+   > They would are the equivalent to &sup1;, &sup2;, and &sup3;.
+   See also: https://www.w3.org/2003/entities/
+  -->
+  </div>
+
+  <p>This data is also available <a href="/entities.json">as a JSON file</a>.</p>
+
+  <p><i>The glyphs displayed above are non-normative. Refer to Unicode for formal definitions of the
+  characters listed above.</i></p>
+
+  <p class="note">The character reference names originate from <cite>XML Entity Definitions for
+  Characters</cite>, though only the above is considered normative. <ref>XMLENTITY</ref></p>
+
+  <p class="note">This list is static and <a
+  href="https://github.com/whatwg/html/blob/main/FAQ.md#html-should-add-more-named-character-references">will
+  not be expanded or changed in the future</a>.</p>
+
+

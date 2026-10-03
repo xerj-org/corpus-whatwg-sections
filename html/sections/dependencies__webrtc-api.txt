@@ -1,0 +1,13 @@
+WHATWG HTML — section dependencies/webrtc-api — WebRTC API
+
+   <dt>WebRTC API</dt>
+
+   <dd>
+    <p>The following terms are defined in <cite>WebRTC API</cite>: <ref>WEBRTC</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://w3c.github.io/webrtc-pc/#dom-rtcdatachannel"><code>RTCDataChannel</code></dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/webrtc-pc/#dom-rtcpeerconnection"><code>RTCPeerConnection</code></dfn></li>
+    </ul>
+   </dd>
+

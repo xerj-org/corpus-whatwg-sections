@@ -1,0 +1,101 @@
+WHATWG HTML — section navigation-api/navigation-activation-interface — The <code>NavigationActivation</code> interface
+
+  <h5 id="navigation-activation-interface">The <code>NavigationActivation</code> interface</h5>
+
+  <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>NavigationActivation</dfn> {
+  readonly attribute <span>NavigationHistoryEntry</span>? <span data-x="dom-NavigationActivation-from">from</span>;
+  readonly attribute <span>NavigationHistoryEntry</span> <span data-x="dom-NavigationActivation-entry">entry</span>;
+  readonly attribute <span>NavigationType</span> <span data-x="dom-NavigationActivation-navigationType">navigationType</span>;
+};</code></pre>
+
+  <dl class="domintro">
+   <dt><code data-x=""><span data-x="dom-navigation">navigation</span>.<span subdfn data-x="dom-Navigation-activation">activation</span></code></dt>
+   <dd>
+    <p>A <code>NavigationActivation</code> containing information about the most recent
+    cross-document navigation, the navigation that "activated" this <code>Document</code>.</p>
+
+    <p>While <code data-x="dom-Navigation-currentEntry">navigation.currentEntry</code> and the
+    <code>Document</code>'s <span data-x="concept-document-url">URL</span> can be updated regularly
+    due to same-document navigations, <code
+    data-x="dom-Navigation-activation">navigation.activation</code> stays constant, and its properties
+    are only updated if the <code>Document</code> is <span
+    data-x="reactivate a document">reactivated</span> from history.</p>
+   </dd>
+
+   <dt><code data-x=""><span data-x="dom-navigation">navigation</span>.<span data-x="dom-Navigation-activation">activation</span>.<span subdfn data-x="dom-NavigationActivation-entry">entry</span></code></dt>
+   <dd><p>A <code>NavigationHistoryEntry</code>, equivalent to the value of the <code
+   data-x="dom-Navigation-currentEntry">navigation.currentEntry</code> property at the moment the
+   <code>Document</code> was activated.</p></dd>
+
+   <dt><code data-x=""><span data-x="dom-navigation">navigation</span>.<span data-x="dom-Navigation-activation">activation</span>.<span subdfn data-x="dom-NavigationActivation-from">from</span></code></dt>
+   <dd>
+    <p>A <code>NavigationHistoryEntry</code>, representing the <code>Document</code> that was active
+    right before the current <code>Document</code>. This will have a value null in case the
+    previous <code>Document</code> was not <span>same origin</span> with this one or if it was the
+    <span data-x="is initial about:blank">initial <code>about:blank</code></span>
+    <code>Document</code>.</p>
+
+    <p>There are some cases in which either the <code
+    data-x="dom-NavigationActivation-from">from</code> or <code
+    data-x="dom-NavigationActivation-entry">entry</code> <code>NavigationHistoryEntry</code> objects
+    would not be viable targets for the <code data-x="dom-Navigation-traverseTo">traverseTo()</code>
+    method, as they might not be retained in history. For example, the <code>Document</code> can be
+    activated using <code data-x="dom-location-replace">location.replace()</code> or its initial
+    entry could be replaced by <code
+    data-x="dom-history-replaceState">history.replaceState()</code>. However, those entries' <code
+    data-x="dom-NavigationHistoryEntry-url">url</code> property and <code
+    data-x="dom-NavigationHistoryEntry-getState">getState()</code> method are still accessible.</p>
+   </dd>
+
+   <dt><code data-x=""><span data-x="dom-navigation">navigation</span>.<span data-x="dom-Navigation-activation">activation</span>.<span subdfn data-x="dom-NavigationActivation-navigationType">navigationType</span></code></dt>
+   <dd><p>One of "<code data-x="dom-NavigationType-push">push</code>", "<code
+   data-x="dom-NavigationType-replace">replace</code>", "<code
+   data-x="dom-NavigationType-reload">reload</code>", or "<code
+   data-x="dom-NavigationType-traverse">traverse</code>", indicating what type of navigation
+   activated this <code>Document</code>.</p></dd>
+  </dl>
+
+  <p>Each <code>Navigation</code> has an associated <dfn
+  data-x="navigation-activation">activation</dfn>, which is null or a
+  <code>NavigationActivation</code> object, initially null.</p>
+
+  <p>Each <code>NavigationActivation</code> has:</p>
+
+  <ul>
+   <li><p><dfn data-x="nav-activation-old-entry">old entry</dfn>, null or a
+   <code>NavigationHistoryEntry</code>.</p></li>
+
+   <li><p><dfn data-x="nav-activation-new-entry">new entry</dfn>, null or a
+   <code>NavigationHistoryEntry</code>.</p></li>
+
+   <li><p><dfn data-x="nav-activation-navigation-type">navigation type</dfn>, a
+   <code>NavigationType</code>.</p></li>
+  </ul>
+
+  <div algorithm>
+  <p>The <dfn attribute for="Navigation"><code
+  data-x="dom-Navigation-activation">activation</code></dfn> getter steps are to return
+  <span>this</span>'s <span data-x="navigation-activation">activation</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="NavigationActivation"><code
+  data-x="dom-NavigationActivation-from">from</code></dfn> getter steps are to return
+  <span>this</span>'s <span data-x="nav-activation-old-entry">old entry</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="NavigationActivation"><code
+  data-x="dom-NavigationActivation-entry">entry</code></dfn> getter steps are to return
+  <span>this</span>'s <span data-x="nav-activation-new-entry">new entry</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="NavigationActivation"><code
+  data-x="dom-NavigationActivation-navigationType">navigationType</code></dfn> getter steps are to
+  return <span>this</span>'s <span
+  data-x="nav-activation-navigation-type">navigation type</span>.</p>
+  </div>
+
+

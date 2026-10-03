@@ -1,0 +1,53 @@
+WHATWG HTML — section activation — Activation behavior of elements
+
+  <h3 id="activation">Activation behavior of elements</h3>
+
+  <p>Certain elements in HTML have an <span>activation behavior</span>, which means that the user
+  can activate them. This is always caused by a <code data-x="event-click">click</code> event.</p>
+
+  <div w-nodev>
+
+  <p>The user agent should allow the user to manually trigger elements that have an <span>activation
+  behavior</span>, for instance using keyboard or voice input, or through mouse clicks. When the
+  user triggers an element with a defined <span>activation behavior</span> in a manner other than
+  clicking it, the default action of the interaction event must be to <span>fire a <code
+  data-x="event-click">click</code> event</span> at the element.</p>
+
+  </div>
+
+  <!-- v2 idea: HTMLImageElement.click(x, y); or clickPoint(), if click() can't be done in IE; can
+       this be emulated in IE by posting a synthetic pointer click event with those X and Y coords?
+       (ack Csaba Gabor)
+  -->
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>element</var>.<span subdfn data-x="dom-click">click</span>()</code></dt>
+
+   <dd><p>Acts as if the element was clicked.</p></dd>
+  </dl>
+
+  <div w-nodev>
+
+  <p>Each element has an associated <dfn>click in progress flag</dfn>, which is initially unset.</p>
+
+  <div algorithm>
+  <p>The <dfn method for="HTMLElement"><code data-x="dom-click">click()</code></dfn> method must run
+  the following steps:</p>
+
+  <ol>
+   <li><p>If this element is a form control that is <span
+   data-x="concept-fe-disabled">disabled</span>, then return.</p></li>
+
+   <li><p>If this element's <span>click in progress flag</span> is set, then return.</p></li>
+
+   <li><p>Set this element's <span>click in progress flag</span>.</p></li>
+
+   <li><p><span>Fire a synthetic pointer event</span> named <code data-x="event-click">click</code>
+   at this element, with the <i>not trusted flag</i> set.</p></li>
+
+   <li><p>Unset this element's <span>click in progress flag</span>.</p></li>
+  </ol>
+  </div>
+
+  </div>
+

@@ -1,0 +1,62 @@
+WHATWG HTML — section read-html — Loading HTML documents
+
+  <h4 id="read-html">Loading HTML documents</h4>
+
+  <div algorithm>
+  <p>To <dfn data-x="navigate-html">load an HTML document</dfn>, given <span>navigation
+  params</span> <var>navigationParams</var>:</p>
+
+  <ol>
+   <li><p>Let <var>document</var> be the result of <span
+   data-x="create-the-document-object">creating and initializing a <code>Document</code>
+   object</span> given "<code data-x="">html</code>", "<code data-x="">text/html</code>", and
+   <var>navigationParams</var>.</p></li>
+
+   <li>
+    <p>If <var>document</var>'s <span data-x="concept-document-url">URL</span> is
+    <code>about:blank</code>, then <span>populate with
+    <code>html</code>/<code>head</code>/<code>body</code></span> given <var>document</var>.</p>
+
+    <p class="note">This special case, where even non-<span data-x="is initial about:blank">initial
+    <code>about:blank</code></span> <code>Document</code>s are synchronously given their element
+    nodes, is necessary for compatibility with deployed content. In other words, it is not
+    compatible to instead go down the "otherwise" branch and feed the empty <span>byte
+    sequence</span> into an <span>HTML parser</span> to asynchronously populate
+    <var>document</var>.</p>
+   </li>
+
+   <!-- See https://github.com/whatwg/html/issues/8095 for improving this step. -->
+   <li>
+    <p>Otherwise, create an <span>HTML parser</span> whose <span>allow declarative shadow
+    roots</span> is true and associate it with <var>document</var>.</p>
+
+    <p>Each <span data-x="concept-task">task</span> that the <span>networking task source</span>
+    places on the <span>task queue</span> while fetching runs must then fill the parser's
+    <span>input byte stream</span> with the fetched bytes and cause the <span>HTML parser</span> to
+    perform the appropriate processing of the input stream.</p>
+
+    <p>The first <span data-x="concept-task">task</span> that the <span>networking task
+    source</span> places on the <span>task queue</span> while fetching runs must <span>process link
+    headers</span> given <var>document</var>, <var>navigationParams</var>'s <span
+    data-x="navigation-params-response">response</span>, and "<code data-x="">media</code>", after
+    the task has been processed by the <span>HTML parser</span>.</p>
+
+    <p>Before any script execution occurs, the user agent must wait for <span>scripts may run for
+    the newly-created document</span> to be true for <var>document</var>.</p>
+
+    <p class="note">The <span>input byte stream</span> converts bytes into characters for use in the
+    <span data-x="tokenization">tokenizer</span>. This process relies, in part, on character encoding
+    information found in the real <span data-x="Content-Type">Content-Type metadata</span> of the
+    resource; the computed type is not used for this purpose.</p>
+
+    <p>When no more bytes are available, the user agent must <span>queue a global task</span> on
+    the <span>networking task source</span> given <var>document</var>'s <span>relevant global
+    object</span> to have the parser process the implied EOF character, which eventually causes
+    a <code data-x="event-load">load</code> event to be fired.</p>
+   </li>
+
+   <li><p>Return <var>document</var>.</p></li>
+  </ol>
+  </div>
+
+

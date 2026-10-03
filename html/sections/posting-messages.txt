@@ -1,0 +1,168 @@
+WHATWG HTML — section posting-messages — Posting messages (+channel-messaging)
+
+  <h4>Posting messages</h4>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>window</var>.<span subdfn data-x="dom-window-postMessage-options">postMessage</span>(<var>message</var> [, <var>options</var> ])</code></dt>
+
+   <dd>
+    <p>Posts a message to the given window. Messages can be structured objects, e.g. nested objects
+    and arrays, can contain JavaScript values (strings, numbers, <code>Date</code> objects, etc.),
+    and can contain certain data objects such as <code>File</code> <code>Blob</code>,
+    <code>FileList</code>, and <code data-x="idl-ArrayBuffer">ArrayBuffer</code> objects.</p>
+
+    <p>Objects listed in the <code data-x="dom-StructuredSerializeOptions-transfer">transfer</code> member
+    of <var>options</var> are transferred, not just cloned, meaning that they are no longer usable
+    on the sending side.</p>
+
+    <p>A target origin can be specified using the <code
+    data-x="dom-WindowPostMessageOptions-targetOrigin">targetOrigin</code> member of
+    <var>options</var>. If not provided, it defaults to "<code data-x="">/</code>". This default
+    restricts the message to same-origin targets only.</p>
+
+    <p>If the origin of the target window doesn't match the given target origin, the message is
+    discarded, to avoid information leakage. To send the message to the target regardless of origin,
+    set the target origin to "<code data-x="">*</code>".</p>
+
+    <p>Throws a <span>"<code>DataCloneError</code>"</span> <code>DOMException</code> if
+    <var>transfer</var> array contains duplicate objects or if <var>message</var> could not be
+    cloned.</p>
+   </dd>
+
+   <dt><code data-x=""><var>window</var>.<span data-x="dom-window-postMessage">postMessage</span>(<var>message</var>, <var>targetOrigin</var> [, <var>transfer</var> ])</code></dt>
+
+   <dd><p>This is an alternate version of <code
+   data-x="dom-window-postMessage-options">postMessage()</code> where the target origin is specified
+   as a parameter. Calling <code data-x="">window.postMessage(message, target, transfer)</code> is
+   equivalent to <code data-x="">window.postMessage(message, {targetOrigin,
+   transfer})</code>.</p></dd>
+  </dl>
+
+  <p class="note">When posting a message to a <code>Window</code> of a <span>browsing context</span>
+  that has just been navigated to a new <code>Document</code> is likely to result in the message not
+  receiving its intended recipient: the scripts in the target <span>browsing context</span> have to
+  have had time to set up listeners for the messages. Thus, for instance, in situations where a
+  message is to be sent to the <code>Window</code> of newly created child <code>iframe</code>,
+  authors are advised to have the child <code>Document</code> post a message to their parent
+  announcing their readiness to receive messages, and for the parent to wait for this message before
+  beginning posting messages.</p>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn>window post message steps</dfn>, given a <var>targetWindow</var>, <var>message</var>,
+  and <var>options</var>, are as follows:</p>
+
+  <ol> <!-- a lot of this is similar or identical to port.postMessage -->
+
+   <li><p>Let <var>targetRealm</var> be <var>targetWindow</var>'s <span
+   data-x="concept-global-object-realm">realm</span>.</p></li>
+
+   <li><p>Let <var>incumbentSettings</var> be the <span>incumbent settings object</span>.</p></li>
+   <!-- This is one of the few cases where incumbent is probably the right choice. Current or
+   relevant would mean that the MessageEvent's source property always points to the "calling"
+   window, in same-origin cases. See discussion at
+   https://github.com/whatwg/html/issues/1542#issuecomment-233502636 -->
+
+   <li><p>Let <var>targetOrigin</var> be <var>options</var>["<code
+   data-x="dom-WindowPostMessageOptions-targetOrigin">targetOrigin</code>"].</p></li>
+
+   <li><p>If <var>targetOrigin</var> is a single U+002F SOLIDUS character (/), then set
+   <var>targetOrigin</var> to <var>incumbentSettings</var>'s <span
+   data-x="concept-settings-object-origin">origin</span>.</p>
+
+   <li>
+    <p>Otherwise, if <var>targetOrigin</var> is not a single U+002A ASTERISK character (*):</p>
+
+    <ol>
+     <li><p>Let <var>parsedURL</var> be the result of running the <span>URL parser</span> on
+     <var>targetOrigin</var>.</p></li>
+
+     <li><p>If <var>parsedURL</var> is failure, then throw a <span>"<code>SyntaxError</code>"</span>
+     <code>DOMException</code>.</p></li>
+
+     <li><p>Set <var>targetOrigin</var> to <var>parsedURL</var>'s <span
+     data-x="concept-url-origin">origin</span>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Let <var>transfer</var> be <var>options</var>["<code
+   data-x="dom-StructuredSerializeOptions-transfer">transfer</code>"].</p></li>
+
+   <li><p>Let <var>serializeWithTransferResult</var> be
+   <span>StructuredSerializeWithTransfer</span>(<var>message</var>, <var>transfer</var>). Rethrow
+   any exceptions.</p></li>
+
+   <li>
+    <p><span>Queue a global task</span> on the <dfn>posted message task source</dfn> given
+    <var>targetWindow</var> to run the following steps:</p>
+
+    <ol>
+     <li><p>If the <var>targetOrigin</var> argument is not a single literal U+002A ASTERISK character
+     (*) and <var>targetWindow</var>'s <span data-x="concept-document-window">associated
+     <code>Document</code></span>'s <span data-x="concept-document-origin">origin</span> is not
+     <span>same origin</span> with <var>targetOrigin</var>, then return.</p></li>
+
+     <li><p>Let <var>origin</var> be <var>incumbentSettings</var>'s <span
+     data-x="concept-settings-object-origin">origin</span>.</p></li>
+
+     <li><p>Let <var>source</var> be the <code>WindowProxy</code> object corresponding to
+     <var>incumbentSettings</var>'s <span data-x="concept-settings-object-global">global
+     object</span> (a <code>Window</code> object).</p></li>
+
+     <li>
+      <p>Let <var>deserializeRecord</var> be
+      <span>StructuredDeserializeWithTransfer</span>(<var>serializeWithTransferResult</var>,
+      <var>targetRealm</var>).</p>
+
+      <p>If this throws an exception, catch it, <span data-x="concept-event-fire">fire an
+      event</span> named <code data-x="event-messageerror">messageerror</code> at
+      <var>targetWindow</var>, using <code>MessageEvent</code>, with its <span
+      data-x="concept-MessageEvent-origin">origin</span> initialized to <var>origin</var> and
+      the <code data-x="dom-MessageEvent-source">source</code> attribute initialized to
+      <var>source</var>, and then return.</p>
+     </li>
+
+     <li><p>Let <var>messageClone</var> be <var>deserializeRecord</var>.[[Deserialized]].</p></li>
+
+     <li><p>Let <var>newPorts</var> be a new <span>frozen array</span> consisting of all
+     <code>MessagePort</code> objects in <var>deserializeRecord</var>.[[TransferredValues]], if any,
+     maintaining their relative order.</p></li>
+
+     <li><p><span data-x="concept-event-fire">Fire an event</span> named <code
+     data-x="event-message">message</code> at <var>targetWindow</var>, using
+     <code>MessageEvent</code>, with its <span
+     data-x="concept-MessageEvent-origin">origin</span> initialized to <var>origin</var>, the <code
+     data-x="dom-MessageEvent-source">source</code> attribute initialized to <var>source</var>, the
+     <code data-x="dom-MessageEvent-data">data</code> attribute initialized to
+     <var>messageClone</var>, and the <code data-x="dom-MessageEvent-ports">ports</code> attribute
+     initialized to <var>newPorts</var>.</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <code>Window</code> interface's <dfn method for="Window"><code
+  data-x="dom-window-postMessage-options">postMessage(<var>message</var>,
+  <var>options</var>)</code></dfn> method steps are to run the <span>window post message
+  steps</span> given <span>this</span>, <var>message</var>, and <var>options</var>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <code>Window</code> interface's <dfn method for="Window"><code
+  data-x="dom-window-postMessage">postMessage(<var>message</var>, <var>targetOrigin</var>,
+  <var>transfer</var>)</code></dfn> method steps are to run the <span>window post message
+  steps</span> given <span>this</span>, <var>message</var>, and «[ "<code
+  data-x="dom-WindowPostMessageOptions-targetOrigin">targetOrigin</code>" →
+  <var>targetOrigin</var>, "<code data-x="dom-StructuredSerializeOptions-transfer">transfer</code>"
+  → <var>transfer</var> ]».</p>
+  </div>
+
+  </div>
+
+
+
+
+  <h3><dfn>Channel messaging</dfn></h3>
+

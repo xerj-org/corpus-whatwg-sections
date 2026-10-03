@@ -1,0 +1,43 @@
+WHATWG HTML — section disabled-elements — Disabled elements (+selectors)
+
+  <h3>Disabled elements</h3>
+
+  <div algorithm>
+  <p>An element is said to be <dfn data-x="concept-element-disabled">actually disabled</dfn> if it
+  is one of the following:</p>
+
+  <ul>
+   <li>a <code>button</code> element that is <span data-x="concept-fe-disabled">disabled</span></li>
+
+   <li>an <code>input</code> element that is <span data-x="concept-fe-disabled">disabled</span></li>
+
+   <li>a <code>select</code> element that is <span data-x="concept-fe-disabled">disabled</span></li>
+
+   <li>a <code>textarea</code> element that is <span data-x="concept-fe-disabled">disabled</span></li>
+
+   <li>an <code>optgroup</code> element that has a <code
+   data-x="attr-optgroup-disabled">disabled</code> attribute or whose <span data-x="option element
+   nearest ancestor select">nearest ancestor <code>select</code></span> is <span
+   data-x="concept-fe-disabled">disabled</span></li>
+
+   <li>an <code>option</code> element that is <span data-x="concept-option-disabled">disabled</span>
+   or whose <span data-x="option element nearest ancestor select">nearest ancestor
+   <code>select</code></span> is <span data-x="concept-fe-disabled">disabled</span></li>
+
+   <li>a <code>fieldset</code> element that is a <span data-x="concept-fieldset-disabled">disabled fieldset</span></li>
+
+   <li>a <span>form-associated custom element</span> that is
+   <span data-x="concept-fe-disabled">disabled</span></li>
+  </ul>
+  </div>
+
+  <p class="note">This definition is used to determine what elements are <span>focusable</span> and
+  which elements match the <code data-x="selector-enabled">:enabled</code> and
+  <code data-x="selector-disabled">:disabled</code> <span data-x="pseudo-class">pseudo
+  classes</span>.</p>
+
+
+  <div w-nodev>
+
+  <h3 id="selectors">Matching HTML elements using selectors and CSS</h3>
+

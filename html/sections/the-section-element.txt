@@ -1,0 +1,166 @@
+WHATWG HTML — section the-section-element — The <dfn element><code>section</code></dfn> element
+
+  <h4>The <dfn element><code>section</code></dfn> element</h4>
+
+  <dl class="element">
+   <dt><span data-x="concept-element-categories">Categories</span>:</dt>
+   <dd><span>Flow content</span>.</dd>
+   <dd><span>Sectioning content</span>.</dd>
+   <dd><span>Palpable content</span>.</dd>
+   <dt><span data-x="concept-element-contexts">Contexts in which this element can be used</span>:</dt>
+   <dd>Where <span>sectioning content</span> is expected.</dd>
+   <dt><span data-x="concept-element-content-model">Content model</span>:</dt>
+   <dd><span>Flow content</span>.</dd>
+   <dt><span data-x="concept-element-attributes">Content attributes</span>:</dt>
+   <dd><span>Global attributes</span></dd>
+   <dt><span
+   data-x="concept-element-accessibility-considerations">Accessibility considerations</span>:</dt>
+   <dd><a href="https://w3c.github.io/html-aria/#el-section">For authors</a>.</dd>
+   <dd><a href="https://w3c.github.io/html-aam/#el-section">For implementers</a>.</dd>
+   <dt><span data-x="concept-element-sanitization">Sanitization</span>:</dt>
+   <dd><span data-x="sanitizer-category-default">Default</span>.</dd>
+   <dt><span data-x="concept-element-dom">DOM interface</span>:</dt>
+   <dd>Uses <code>HTMLElement</code>.</dd>
+  </dl>
+
+  <p>The <code>section</code> element <span>represents</span> a generic section of a document or
+  application. A section, in this context, is a thematic grouping of content, typically with a
+  heading.</p>
+
+  <p class="example">Examples of sections would be chapters, the various tabbed pages in a tabbed
+  dialog box, or the numbered sections of a thesis. A web site's home page could be split into
+  sections for an introduction, news items, and contact information.</p>
+
+  <p class="note">Authors are encouraged to use the <code>article</code> element instead of the
+  <code>section</code> element when it would make sense to syndicate the contents of the
+  element.</p>
+
+  <p class="note" id="use-div-for-wrappers">The <code>section</code> element is not a generic
+  container element. When an element is needed only for styling purposes or as a convenience for
+  scripting, authors are encouraged to use the <code>div</code> element instead. A general rule is
+  that the <code>section</code> element is appropriate only if the element's contents would be
+  listed explicitly in the document's <span>outline</span>.</p>
+
+  <div class="example">
+
+   <p>In the following example, we see an article (part of a larger web page) about apples,
+   containing two short sections.</p>
+
+   <pre><code class="html">&lt;article>
+ &lt;hgroup>
+  &lt;h2>Apples&lt;/h2>
+  &lt;p>Tasty, delicious fruit!&lt;/p>
+ &lt;/hgroup>
+ &lt;p>The apple is the pomaceous fruit of the apple tree.&lt;/p>
+ &lt;section>
+  &lt;h3>Red Delicious&lt;/h3>
+  &lt;p>These bright red apples are the most common found in many
+  supermarkets.&lt;/p>
+ &lt;/section>
+ &lt;section>
+  &lt;h3>Granny Smith&lt;/h3>
+  &lt;p>These juicy, green apples make a great filling for
+  apple pies.&lt;/p>
+ &lt;/section>
+&lt;/article></code></pre>
+
+  </div>
+
+  <div class="example">
+
+   <p>Here is a graduation programme with two sections, one for the list of people graduating, and
+   one for the description of the ceremony. (The markup in this example features an uncommon style
+   sometimes used to minimize the amount of <span>inter-element whitespace</span>.)</p>
+
+   <pre><code class="html">&lt;!DOCTYPE Html>
+&lt;Html Lang=En
+ >&lt;Head
+   >&lt;Title
+     >Graduation Ceremony Summer 2022&lt;/Title
+   >&lt;/Head
+ >&lt;Body
+   >&lt;H1
+     >Graduation&lt;/H1
+   >&lt;Section
+     >&lt;H2
+       >Ceremony&lt;/H2
+     >&lt;P
+       >Opening Procession&lt;/P
+     >&lt;P
+       >Speech by Valedictorian&lt;/P
+     >&lt;P
+       >Speech by Class President&lt;/P
+     >&lt;P
+       >Presentation of Diplomas&lt;/P
+     >&lt;P
+       >Closing Speech by Headmaster&lt;/P
+   >&lt;/Section
+   >&lt;Section
+     >&lt;H2
+       >Graduates&lt;/H2
+     >&lt;Ul
+       >&lt;Li
+         >Molly Carpenter&lt;/Li
+       >&lt;Li
+         >Anastasia Luccio&lt;/Li
+       >&lt;Li
+         >Ebenezar McCoy&lt;/Li
+       >&lt;Li
+         >Karrin Murphy&lt;/Li
+       >&lt;Li
+         >Thomas Raith&lt;/Li
+       >&lt;Li
+         >Susan Rodriguez&lt;/Li
+     >&lt;/Ul
+   >&lt;/Section
+ >&lt;/Body
+>&lt;/Html></code></pre>
+
+  </div>
+
+  <div class="example">
+
+   <p>In this example, a book author has marked up some sections as chapters and some as appendices,
+   and uses CSS to style the headers in these two classes of section differently.</p>
+
+   <pre><code class="html">&lt;style>
+ section { border: double medium; margin: 2em; }
+ section.chapter h2 { font: 2em Roboto, Helvetica Neue, sans-serif; }
+ section.appendix h2 { font: small-caps 2em Roboto, Helvetica Neue, sans-serif; }
+&lt;/style>
+&lt;header>
+ &lt;hgroup>
+  &lt;h1>My Book&lt;/h1>
+  &lt;p>A sample with not much content&lt;/p>
+ &lt;/hgroup>
+ &lt;p>&lt;small>Published by Dummy Publicorp Ltd.&lt;/small>&lt;/p>
+&lt;/header>
+&lt;section class="chapter">
+ &lt;h2>My First Chapter&lt;/h2>
+ &lt;p>This is the first of my chapters. It doesn't say much.&lt;/p>
+ &lt;p>But it has two paragraphs!&lt;/p>
+&lt;/section>
+&lt;section class="chapter">
+ &lt;h2>It Continues: The Second Chapter&lt;/h2>
+ &lt;p>Bla dee bla, dee bla dee bla. Boom.&lt;/p>
+&lt;/section>
+&lt;section class="chapter">
+ &lt;h2>Chapter Three: A Further Example&lt;/h2>
+ &lt;p>It's not like a battle between brightness and earthtones would go
+ unnoticed.&lt;/p>
+ &lt;p>But it might ruin my story.&lt;/p>
+&lt;/section>
+&lt;section class="appendix">
+ &lt;h2>Appendix A: Overview of Examples&lt;/h2>
+ &lt;p>These are demonstrations.&lt;/p>
+&lt;/section>
+&lt;section class="appendix">
+ &lt;h2>Appendix B: Some Closing Remarks&lt;/h2>
+ &lt;p>Hopefully this long example shows that you &lt;em>can&lt;/em> style
+ sections, so long as they are used to indicate actual sections.&lt;/p>
+&lt;/section></code></pre>
+
+  </div>
+
+
+

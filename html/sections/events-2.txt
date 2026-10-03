@@ -1,0 +1,328 @@
+WHATWG HTML — section events — Events
+
+  <h3 class="no-num">Events</h3>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>The following table lists events fired by this document, excluding those
+  already defined in <a href="#mediaevents">media element events</a> and
+  <a href="#dndevents">drag-and-drop events</a>.</p>
+
+  <table>
+   <caption>List of events</caption>
+   <thead>
+    <tr>
+     <th> Event
+     <th> Interface
+     <th> Interesting targets
+     <th> Description
+   <tbody>
+
+    <tr> <!-- DOMContentLoaded -->
+     <td> <dfn event for="Document"><code data-x="event-DOMContentLoaded">DOMContentLoaded</code></dfn>
+     <td> <code>Event</code>
+     <td> <code>Document</code>
+     <td> Fired at the <code>Document</code> once the parser has finished
+
+    <tr> <!-- afterprint -->
+     <td> <dfn event for="Window"><code data-x="event-afterprint">afterprint</code></dfn>
+     <td> <code>Event</code>
+     <td> <code>Window</code>
+     <td> Fired at the <code>Window</code> after printing
+
+    <tr> <!-- beforeprint -->
+     <td> <dfn event for="Window"><code data-x="event-beforeprint">beforeprint</code></dfn>
+     <td> <code>Event</code>
+     <td> <code>Window</code>
+     <td> Fired at the <code>Window</code> before printing
+
+    <tr> <!-- beforematch -->
+     <td> <dfn event for="HTMLElement"><code data-x="event-beforematch">beforematch</code></dfn>
+     <td> <code>Event</code>
+     <td> Elements
+     <td> Fired on elements with the <code
+     data-x="attr-hidden-until-found-state">hidden=until-found</code> attribute before they are
+     revealed.
+
+    <tr> <!-- beforetoggle -->
+     <td> <dfn event for="HTMLElement"><code data-x="event-beforetoggle">beforetoggle</code></dfn>
+     <td> <code>ToggleEvent</code>
+     <td> Elements
+     <td> Fired on elements with the <code data-x="attr-popover">popover</code> attribute when they
+     are transitioning between showing and hidden
+
+    <tr> <!-- beforeunload -->
+     <td> <dfn event for="Window"><code data-x="event-beforeunload">beforeunload</code></dfn>
+     <td> <code>BeforeUnloadEvent</code>
+     <td> <code>Window</code>
+     <td> Fired at the <code>Window</code> when the page is about to be unloaded, in case the page would like to show a warning prompt
+
+    <tr> <!-- blur -->
+     <td> <dfn event for="Window,HTMLElement"><code data-x="event-blur">blur</code></dfn>
+     <td> <code>Event</code>
+     <td> <code>Window</code>, elements
+     <td> Fired at nodes when they stop being <span>focused</span>
+
+    <tr> <!-- cancel -->
+     <td> <dfn event for="CloseWatcher,HTMLElement"><code data-x="event-cancel">cancel</code></dfn>
+     <td> <code>Event</code>
+     <td> <code>CloseWatcher</code>, <code>dialog</code> elements, <code>input</code> elements
+     <td> Fired at <code>CloseWatcher</code> objects or <code>dialog</code> elements when they receive a <span>close request</span>, or at <code>input</code> elements whose <code data-x="attr-input-type">type</code> attribute is in the <span data-x="attr-input-type-file">File</span> state when the user does not change their selection
+
+    <tr> <!-- change -->
+     <td> <dfn event for="HTMLElement"><code data-x="event-change" id="event-input-change">change</code></dfn>
+     <td> <code>Event</code>
+     <td> Form controls
+     <td> Fired at controls when the user commits a value change (see also the <code data-x="event-input">input</code> event)
+
+    <tr> <!-- click -->
+     <td> <code data-x="event-click">click</code>
+     <td> <code>PointerEvent</code>
+     <td> Elements
+     <td> Normally a mouse event; also synthetically fired at an element before its <span>activation behavior</span> is run, when an element is activated from a non-pointer input device (e.g. a keyboard)
+
+    <tr> <!-- close -->
+     <td> <dfn event for="CloseWatcher,HTMLElement,MessagePort"><code data-x="event-close">close</code></dfn>
+     <td> <code>Event</code>
+     <td> <code>CloseWatcher</code>, <code>dialog</code> elements, <code>MessagePort</code>
+     <td> Fired at <code>CloseWatcher</code> objects or <code>dialog</code> elements when they are closed via a <span>close request</span> or via web developer code, or at <code>MessagePort</code> objects when <span data-x="disentangle">disentangled</span>
+
+    <tr> <!-- command -->
+     <td> <dfn event for="HTMLElement"><code data-x="event-command">command</code></dfn>
+     <td> <code>CommandEvent</code>
+     <td> Elements
+     <td> Fired at elements when they handle a user invocation, via a <code
+     data-x="attr-button-commandfor">commandfor</code> attribute.
+
+    <tr> <!-- connect -->
+     <td> <dfn event for="SharedWorkerGlobalScope"><code data-x="event-WorkerGlobalScope-connect">connect</code></dfn>
+     <td> <code>MessageEvent</code>
+     <td> <code>SharedWorkerGlobalScope</code>
+     <td> Fired at a shared worker's global scope when a new client connects
+
+    <tr> <!-- contextlost -->
+     <td> <dfn event for="HTMLElement,OffscreenCanvas"><code data-x="event-contextlost">contextlost</code></dfn>
+     <td> <code>Event</code>
+     <td> <code>canvas</code> elements, <code>OffscreenCanvas</code> objects
+     <td> Fired when the corresponding <code>CanvasRenderingContext2D</code> or <code>OffscreenCanvasRenderingContext2D</code> is lost
+
+    <tr> <!-- contextrestore -->
+     <td> <dfn event for="HTMLElement,OffscreenCanvas"><code data-x="event-contextrestored">contextrestored</code></dfn>
+     <td> <code>Event</code>
+     <td> <code>canvas</code> elements, <code>OffscreenCanvas</code> objects
+     <td> Fired when the corresponding <code>CanvasRenderingContext2D</code> or <code>OffscreenCanvasRenderingContext2D</code> is restored after being lost
+
+    <tr> <!-- currententrychange -->
+     <td> <dfn event for="Navigation"><code data-x="event-currententrychange">currententrychange</code></dfn>
+     <td> <code>NavigationCurrentEntryChangeEvent</code>
+     <td> <code>Navigation</code>
+     <td> Fired when <code data-x="dom-Navigation-currentEntry">navigation.currentEntry</code> changes
+
+    <tr> <!-- dispose -->
+     <td> <dfn event for="NavigationHistoryEntry"><code data-x="event-dispose">dispose</code></dfn>
+     <td> <code>Event</code>
+     <td> <code>NavigationHistoryEntry</code>
+     <td> Fired when the <span>session history entry</span> corresponding to the <code>NavigationHistoryEntry</code> has been permanently evicted from session history and can no longer be traversed to
+
+    <tr> <!-- error -->
+     <td> <dfn event for="Window,WorkerGlobalScope,HTMLElement,EventSource,Worker,SharedWorker,AbstractWorker"><code data-x="event-error">error</code></dfn>
+     <td> <code>Event</code> or <code>ErrorEvent</code>
+     <td> Global scope objects, <code>Worker</code> objects, elements, networking-related objects
+     <td> Fired when unexpected errors occur (e.g. networking errors, script errors, decoding errors)
+
+    <tr> <!-- focus -->
+     <td> <dfn event for="Window,HTMLElement"><code data-x="event-focus">focus</code></dfn>
+     <td> <code>Event</code>
+     <td> <code>Window</code>, elements
+     <td> Fired at nodes <span data-x="gains focus">gaining focus</span>
+
+    <tr> <!-- formdata -->
+     <td> <dfn event for="HTMLElement"><code data-x="event-formdata">formdata</code></dfn>
+     <td> <code>FormDataEvent</code>
+     <td> <code>form</code> elements
+     <td> Fired at a <code>form</code> element when it is <span>constructing the entry list</span>
+
+    <tr> <!-- hashchange -->
+     <td> <dfn event for="Window"><code data-x="event-hashchange">hashchange</code></dfn>
+     <td> <code>HashChangeEvent</code>
+     <td> <code>Window</code>
+     <td> Fired at the <code>Window</code> when the <span data-x="concept-url-fragment">fragment</span> part of the document's <span data-x="concept-document-url">URL</span> changes
+
+    <tr> <!-- input -->
+     <td> <span><code data-x="event-input">input</code></span>
+     <td> <code>Event</code>
+     <td> Elements
+     <td> Fired when the user changes the <code data-x="attr-contenteditable">contenteditable</code> element's content, or the form control's value. See also the <code data-x="event-change">change</code> event for form controls.
+
+    <tr> <!-- invalid -->
+     <td> <dfn event for="HTMLElement"><code data-x="event-invalid">invalid</code></dfn>
+     <td> <code>Event</code>
+     <td> Form controls
+     <td> Fired at controls during form validation if they do not satisfy their constraints
+
+    <tr> <!-- languagechange -->
+     <td> <dfn event for="Window,WorkerGlobalScope"><code data-x="event-languagechange">languagechange</code></dfn>
+     <td> <code>Event</code>
+     <td> Global scope objects
+     <td> Fired at the global scope object when the user's preferred languages change
+
+    <tr> <!-- load -->
+     <td> <dfn event for="Window,HTMLElement"><code data-x="event-load">load</code></dfn>
+     <td> <code>Event</code>
+     <td> <code>Window</code>, elements
+     <td> Fired at the <code>Window</code> when the document has finished loading; fired at an element containing a resource (e.g. <code>img</code>, <code>embed</code>) when its resource has finished loading
+
+    <tr> <!-- message -->
+     <td> <dfn event for="Window,EventSource,MessagePort,BroadcastChannel,DedicatedWorkerGlobalScope,Worker,ServiceWorkerContainer"><code data-x="event-message">message</code></dfn>
+     <td> <code>MessageEvent</code>
+     <td> <code>Window</code>, <code>EventSource</code>, <code>MessagePort</code>, <code>BroadcastChannel</code>, <code>DedicatedWorkerGlobalScope</code>, <code>Worker</code>, <code>ServiceWorkerContainer</code>
+     <td> Fired at an object when it receives a message
+
+    <tr> <!-- messageerror -->
+     <td> <dfn event for="Window,MessagePort,BroadcastChannel,DedicatedWorkerGlobalScope,Worker,ServiceWorkerContainer"><code data-x="event-messageerror">messageerror</code></dfn>
+     <td> <code>MessageEvent</code>
+     <td> <code>Window</code>, <code>MessagePort</code>, <code>BroadcastChannel</code>, <code>DedicatedWorkerGlobalScope</code>, <code>Worker</code>, <code>ServiceWorkerContainer</code>
+     <td> Fired at an object when it receives a message that cannot be deserialized
+
+    <tr> <!-- navigate -->
+     <td> <dfn event for="Navigation"><code data-x="event-navigate">navigate</code></dfn>
+     <td> <code>NavigateEvent</code>
+     <td> <code>Navigation</code>
+     <td> Fired before the <span>navigable</span> <span data-x="navigate">navigates</span>, <span data-x="reload">reloads</span>, <span data-x="traverse the history by a delta">traverses</span>, or <span data-x="shared history push/replace state steps">otherwise</span> changes its URL
+
+    <tr> <!-- navigateerror -->
+     <td> <dfn event for="Navigation"><code data-x="event-navigateerror">navigateerror</code></dfn>
+     <td> <code>ErrorEvent</code>
+     <td> <code>Navigation</code>
+     <td> Fired when a navigation does not complete successfully
+
+    <tr> <!-- navigatesuccess -->
+     <td> <dfn event for="Navigation"><code data-x="event-navigatesuccess">navigatesuccess</code></dfn>
+     <td> <code>Event</code>
+     <td> <code>Navigation</code>
+     <td> Fired when a navigation completes successfully
+
+    <tr> <!-- offline -->
+     <td> <dfn event for="Window,WorkerGlobalScope"><code data-x="event-offline">offline</code></dfn>
+     <td> <code>Event</code>
+     <td> Global scope objects
+     <td> Fired at the global scope object when the network connections fails
+
+    <tr> <!-- online -->
+     <td> <dfn event for="Window,WorkerGlobalScope"><code data-x="event-online">online</code></dfn>
+     <td> <code>Event</code>
+     <td> Global scope objects
+     <td> Fired at the global scope object when the network connections returns
+
+    <tr> <!-- open -->
+     <td> <dfn event for="EventSource"><code data-x="event-open">open</code></dfn>
+     <td> <code>Event</code>
+     <td> <code>EventSource</code>
+     <td> Fired at <code>EventSource</code> objects when a connection is established
+
+    <tr> <!-- pageswap -->
+     <td> <dfn event for="Window"><code data-x="event-pageswap">pageswap</code></dfn>
+     <td> <code>PageSwapEvent</code>
+     <td> <code>Window</code>
+     <td>Fired at the <code>Window</code> right before a document is <span
+     data-x="unload a document">unloaded</span> as a result of a navigation.
+
+    <tr> <!-- pagehide -->
+     <td> <dfn event for="Window"><code data-x="event-pagehide">pagehide</code></dfn>
+     <td> <code>PageTransitionEvent</code>
+     <td> <code>Window</code>
+     <td> Fired at the <code>Window</code> when the page's <span>session history entry</span> stops
+     being the <span data-x="nav-active-history-entry">active entry</span>
+
+    <tr> <!-- pagereveal -->
+     <td> <dfn event for="Window"><code data-x="event-pagereveal">pagereveal</code></dfn>
+     <td> <code>PageRevealEvent</code>
+     <td> <code>Window</code>
+     <td> Fired at the <code>Window</code> when the page begins to render for the first time after
+     it has been initialized or <span data-x="reactivate a document">reactivated</span>
+
+    <tr> <!-- pageshow -->
+     <td> <dfn event for="Window"><code data-x="event-pageshow">pageshow</code></dfn>
+     <td> <code>PageTransitionEvent</code>
+     <td> <code>Window</code>
+     <td> Fired at the <code>Window</code> when the page's <span>session history entry</span>
+     becomes the <span data-x="nav-active-history-entry">active entry</span>
+
+    <tr> <!-- pointercancel -->
+     <td> <span><code data-x="event-pointercancel">pointercancel</code></span>
+     <td> <code>PointerEvent</code>
+     <td> Elements and <code>Text</code> nodes
+     <td> Fired at the <span>source node</span> when the user attempts to initiate a drag-and-drop operation
+
+    <tr> <!-- popstate -->
+     <td> <dfn event for="Window"><code data-x="event-popstate">popstate</code></dfn>
+     <td> <code>PopStateEvent</code>
+     <td> <code>Window</code>
+     <td> Fired at the <code>Window</code> when in some cases of <span data-x="traverse the history by a delta">session history traversal</span>
+
+    <tr> <!-- readystatechange -->
+     <td> <dfn event for="Document"><code data-x="event-readystatechange">readystatechange</code></dfn>
+     <td> <code>Event</code>
+     <td> <code>Document</code>
+     <td> Fired at the <code>Document</code> when it finishes parsing and again when all its subresources have finished loading
+
+    <tr> <!-- rejectionhandled -->
+     <td> <dfn event for="Window,WorkerGlobalScope"><code data-x="event-rejectionhandled">rejectionhandled</code></dfn>
+     <td> <code>PromiseRejectionEvent</code>
+     <td> Global scope objects
+     <td> Fired at global scope objects when a previously-unhandled promise rejection becomes handled
+
+    <tr> <!-- reset -->
+     <td> <dfn event for="HTMLElement"><code data-x="event-reset">reset</code></dfn>
+     <td> <code>Event</code>
+     <td> <code>form</code> elements
+     <td> Fired at a <code>form</code> element when it is <span data-x="concept-form-reset">reset</span>
+
+    <tr> <!-- select -->
+     <td> <dfn event for="HTMLElement"><code data-x="event-select">select</code></dfn>
+     <td> <code>Event</code>
+     <td> Form controls
+     <td> Fired at form controls when their text selection is adjusted (whether by an API or by the user)
+
+    <tr> <!-- storage -->
+     <td> <dfn event for="Window"><code data-x="event-storage">storage</code></dfn>
+     <td> <code>StorageEvent</code>
+     <td> <code>Window</code>
+     <td> Fired at <code>Window</code> event when the corresponding <code data-x="dom-localStorage">localStorage</code> or <code data-x="dom-sessionStorage">sessionStorage</code> storage areas change
+
+    <tr> <!-- submit -->
+     <td> <dfn event for="HTMLElement"><code data-x="event-submit">submit</code></dfn>
+     <td> <code>SubmitEvent</code>
+     <td> <code>form</code> elements
+     <td> Fired at a <code>form</code> element when it is <span data-x="concept-form-submit">submitted</span>
+
+    <tr> <!-- toggle -->
+     <td> <dfn event for="HTMLElement"><code data-x="event-toggle">toggle</code></dfn>
+     <td> <code>ToggleEvent</code>
+     <td> <code>details</code> and <span data-x="attr-popover">popover</span> elements
+     <td> Fired at <code>details</code> elements when they open or close; fired on elements with the
+     <code data-x="attr-popover">popover</code> attribute when they are transitioning between
+     showing and hidden
+
+    <tr> <!-- unhandledrejection -->
+     <td> <dfn event for="Window,WorkerGlobalScope"><code data-x="event-unhandledrejection">unhandledrejection</code></dfn>
+     <td> <code>PromiseRejectionEvent</code>
+     <td> Global scope objects
+     <td> Fired at global scope objects when a promise rejection goes unhandled
+
+    <tr> <!-- unload -->
+     <td> <dfn event for="Window"><code data-x="event-unload">unload</code></dfn>
+     <td> <code>Event</code>
+     <td> <code>Window</code>
+     <td> Fired at the <code>Window</code> object when the page is going away
+
+    <tr> <!-- visibilitychange -->
+     <td> <dfn event for="Document"><code data-x="event-visibilitychange">visibilitychange</code></dfn>
+     <td> <code>Event</code>
+     <td> <code>Document</code>
+     <td> Fired at the <code>Document</code> object when the page becomes visible or hidden to the
+     user
+
+  </table>
+
+

@@ -1,0 +1,95 @@
+WHATWG HTML — section importing-scripts-and-libraries — Importing scripts and libraries
+
+  <h4>Importing scripts and libraries</h4>
+
+  <div algorithm>
+  <p>The <dfn method for="WorkerGlobalScope"><code
+  data-x="dom-WorkerGlobalScope-importScripts">importScripts(...<var>urls</var>)</code></dfn>
+  method steps are:</p>
+
+  <ol>
+   <li><p>Let <var>urlStrings</var> be « ».</p></li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>url</var> of <var>urls</var>:</p>
+
+    <ol>
+     <li><p><span data-x="list append">Append</span> the result of invoking the <span
+     data-x="tt-getcompliantstring">get trusted type compliant string</span> algorithm with <code
+     data-x="tt-trustedscripturl">TrustedScriptURL</code>, <span>this</span>'s <span>relevant global
+     object</span>, <var>url</var>, "<code data-x="">WorkerGlobalScope importScripts</code>", and
+     "<code data-x="">script</code>" to <var>urlStrings</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p><span>Import scripts into worker global scope</span> given <span>this</span> and
+   <var>urlStrings</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn export>import scripts into worker global scope</dfn>, given a
+  <code>WorkerGlobalScope</code> object <var>worker global scope</var>, a <span>list</span> of
+  <span data-x="scalar value string">scalar value strings</span> <var>urls</var>, and an optional
+  <span data-x="fetching-scripts-perform-fetch">perform the fetch hook</span>
+  <var>performFetch</var>:</p>
+
+  <ol>
+   <li><p>If <var>worker global scope</var>'s <span
+   data-x="concept-WorkerGlobalScope-type">type</span> is "<code data-x="">module</code>", throw a
+   <code>TypeError</code> exception.</p></li>
+
+   <li><p>Let <var>settings object</var> be the <span>current settings object</span>.</p></li>
+
+   <li><p>If <var>urls</var> is empty, return.</p></li>
+
+   <li><p>Let <var>urlRecords</var> be « ».</p></li>
+
+   <li>
+    <p>For each <var>url</var> of <var>urls</var>:</p>
+
+    <ol>
+     <li><p>Let <var>urlRecord</var> be the result of <span>encoding-parsing a URL</span> given
+     <var>url</var>, relative to <var>settings object</var>.</p></li>
+
+     <li><p>If <var>urlRecord</var> is failure, then throw a <span>"<code>SyntaxError</code>"</span>
+     <code>DOMException</code>.</p></li>
+
+     <li><p><span data-x="list append">Append</span> <var>urlRecord</var> to
+     <var>urlRecords</var>.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p>For each <var>urlRecord</var> of <var>urlRecords</var>:</p>
+
+    <ol>
+     <li><p><span>Fetch a classic worker-imported script</span> given <var>urlRecord</var> and
+     <var>settings object</var>, passing along <var>performFetch</var> if provided. If this
+     succeeds, let <var>script</var> be the result. Otherwise, rethrow the exception.</p></li>
+
+     <li>
+      <p><span data-x="run a classic script">Run the classic script</span> <var>script</var>, with
+      <i>rethrow errors</i> set to true.</p>
+
+      <p class="note"><var>script</var> will run until it either returns, fails to parse, fails to
+      catch an exception, or gets <span data-x="abort a running script">prematurely aborted</span>
+      by the <span>terminate a worker</span> algorithm defined above.</p>
+
+      <p>If an exception was thrown or if the script was <span data-x="abort a running
+      script">prematurely aborted</span>, then abort all these steps, letting the exception or
+      aborting continue to be processed by the calling <span
+      data-x="concept-script">script</span>.</p>
+     </li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+
+  <p class="note"><cite>Service Workers</cite> is an example of a specification that runs this
+  algorithm with its own <span data-x="fetching-scripts-perform-fetch">perform the fetch
+  hook</span>. <ref>SW</ref></p>
+
+  </div>
+
+

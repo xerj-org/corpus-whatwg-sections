@@ -1,0 +1,17 @@
+WHATWG HTML — section dependencies/media-capture-and-streams — Media Capture and Streams
+
+   <dt>Media Capture and Streams</dt>
+
+   <dd>
+    <p>The following terms are defined in <cite>Media Capture and Streams</cite>:
+    <ref>MEDIASTREAM</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://w3c.github.io/mediacapture-main/getusermedia.html#idl-def-mediastream"><code>MediaStream</code></dfn> interface</li>
+     <li><dfn data-x-href="https://w3c.github.io/mediacapture-main/getusermedia.html#mediastreamtrack"><code>MediaStreamTrack</code></dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/mediacapture-main/getusermedia.html#idl-def-MediaStreamTrackState.live">live state</dfn></li>
+     <li><dfn data-x-href="https://w3c.github.io/mediacapture-main/getusermedia.html#dom-mediadevices-getusermedia"><code>getUserMedia()</code></dfn></li>
+    </ul>
+   </dd>
+
+

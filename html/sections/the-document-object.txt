@@ -1,0 +1,110 @@
+WHATWG HTML — section the-document-object — The <code>Document</code> object
+
+  <h4>The <code>Document</code> object</h4>
+
+  <p><cite>DOM</cite> defines a <code data-x="DOM Document">Document</code> interface, which
+  this specification extends significantly.</p>
+
+  <pre><code class="idl">enum <dfn enum>DocumentReadyState</dfn> { "loading", "interactive", "complete" };
+enum <dfn enum>DocumentVisibilityState</dfn> { "visible", "hidden" };
+typedef (<span>HTMLScriptElement</span> or <span>SVGScriptElement</span>) <dfn typedef>HTMLOrSVGScriptElement</dfn>;
+
+[<span>LegacyOverrideBuiltIns</span>]
+partial interface <dfn id="document" data-lt="">Document</dfn> {
+  static <span>Document</span> <span data-x="dom-parseHTMLUnsafe">parseHTMLUnsafe</span>((<code data-x="tt-trustedhtml">TrustedHTML</code> or DOMString) html, optional <span>ParseHTMLUnsafeOptions</span> options = {});
+  static <span>Document</span> <span data-x="dom-parseHTML">parseHTML</span>(DOMString html, optional <span>SetHTMLOptions</span> options = {});
+
+  // <span>resource metadata management</span>
+  [PutForwards=<span data-x="dom-location-href">href</span>, <span>LegacyUnforgeable</span>] readonly attribute <span>Location</span>? <span data-x="dom-document-location">location</span>;
+  attribute USVString <span data-x="dom-document-domain">domain</span>;
+  readonly attribute USVString <span data-x="dom-document-referrer">referrer</span>;
+  attribute USVString <span data-x="dom-document-cookie">cookie</span>;
+  readonly attribute DOMString <span data-x="dom-document-lastModified">lastModified</span>;
+  readonly attribute <span>DocumentReadyState</span> <span data-x="dom-document-readyState">readyState</span>;
+
+  // <span>DOM tree accessors</span>
+  <a href="#dom-document-nameditem">getter</a> object (DOMString name);
+  [<span>CEReactions</span>] attribute DOMString <span data-x="dom-document-title">title</span>;
+  [<span>CEReactions</span>] attribute DOMString <span data-x="dom-document-dir">dir</span>;
+  [<span>CEReactions</span>] attribute <span>HTMLElement</span>? <span data-x="dom-document-body">body</span>;
+  readonly attribute <span>HTMLHeadElement</span>? <span data-x="dom-document-head">head</span>;
+  [SameObject] readonly attribute <span>HTMLCollection</span> <span data-x="dom-document-images">images</span>;
+  [SameObject] readonly attribute <span>HTMLCollection</span> <span data-x="dom-document-embeds">embeds</span>;
+  [SameObject] readonly attribute <span>HTMLCollection</span> <span data-x="dom-document-plugins">plugins</span>;
+  [SameObject] readonly attribute <span>HTMLCollection</span> <span data-x="dom-document-links">links</span>;
+  [SameObject] readonly attribute <span>HTMLCollection</span> <span data-x="dom-document-forms">forms</span>;
+  [SameObject] readonly attribute <span>HTMLCollection</span> <span data-x="dom-document-scripts">scripts</span>;
+  NodeList <span data-x="dom-document-getElementsByName">getElementsByName</span>(DOMString elementName);
+  readonly attribute <span>HTMLOrSVGScriptElement</span>? <span data-x="dom-document-currentScript">currentScript</span>; // classic scripts in a document tree only
+
+  // <span>dynamic markup insertion</span>
+  [<span>CEReactions</span>] <span>Document</span> <span data-x="dom-document-open">open</span>(optional DOMString unused1, optional DOMString unused2); // both arguments are <a href="#dom-document-open-unused-arguments">ignored</a>
+  <span>WindowProxy</span>? <span data-x="dom-document-open-window">open</span>(USVString url, DOMString name, DOMString features);
+  [<span>CEReactions</span>] undefined <span data-x="dom-document-close">close</span>();
+  [<span>CEReactions</span>] undefined <span data-x="dom-document-write">write</span>((<code data-x="tt-trustedhtml">TrustedHTML</code> or DOMString)... text);
+  [<span>CEReactions</span>] undefined <span data-x="dom-document-writeln">writeln</span>((<code data-x="tt-trustedhtml">TrustedHTML</code> or DOMString)... text);
+
+  // <span>user interaction</span>
+  readonly attribute <span>WindowProxy</span>? <span data-x="dom-document-defaultView">defaultView</span>;
+  boolean <span data-x="dom-document-hasFocus">hasFocus</span>();
+  [<span>CEReactions</span>] attribute DOMString <span data-x="dom-document-designMode">designMode</span>;
+  [<span>CEReactions</span>] boolean <span data-x="dom-document-execCommand">execCommand</span>(DOMString commandId, optional boolean showUI = false, optional DOMString value = "");
+  boolean <span data-x="dom-document-queryCommandEnabled">queryCommandEnabled</span>(DOMString commandId);
+  boolean <span data-x="dom-document-queryCommandIndeterm">queryCommandIndeterm</span>(DOMString commandId);
+  boolean <span data-x="dom-document-queryCommandState">queryCommandState</span>(DOMString commandId);
+  boolean <span data-x="dom-document-queryCommandSupported">queryCommandSupported</span>(DOMString commandId);
+  DOMString <span data-x="dom-document-queryCommandValue">queryCommandValue</span>(DOMString commandId);
+  readonly attribute boolean <span data-x="dom-document-hidden">hidden</span>;
+  readonly attribute <span>DocumentVisibilityState</span> <span data-x="dom-document-visibilityState">visibilityState</span>;
+
+  // special <span>event handler IDL attributes</span> that only apply to Document objects
+  [<span>LegacyLenientThis</span>] attribute <span>EventHandler</span> <span data-x="handler-onreadystatechange">onreadystatechange</span>;
+  attribute <span>EventHandler</span> <span data-x="handler-onvisibilitychange">onvisibilitychange</span>;
+
+  // <a href="#Document-partial">also has obsolete members</a>
+};
+<span>Document</span> includes <span>GlobalEventHandlers</span>;</code></pre>
+
+  <p>Each <code>Document</code> has a <dfn data-x="concept-document-policy-container" export
+  for="Document">policy container</dfn> (a <span>policy container</span>), initially a new policy
+  container, which contains policies which apply to the <code>Document</code>.</p>
+
+  <p id="concept-document-feature-policy">Each <code>Document</code> has a <dfn
+  data-x="concept-document-permissions-policy" export for="Document">permissions policy</dfn>, which
+  is a <span data-x="concept-permissions-policy">permissions policy</span>, which is initially
+  empty.</p>
+
+  <p>Each <code>Document</code> has a <dfn data-x="concept-document-module-map">module map</dfn>,
+  which is a <span>module map</span>, initially empty.</p>
+
+  <p>Each <code>Document</code> has an <dfn data-x="concept-document-coop">opener policy</dfn>,
+  which is an <span>opener policy</span>, initially a new opener policy.</p>
+
+  <p>Each <code>Document</code> has an <dfn>is initial <code>about:blank</code></dfn>, which is a
+  boolean, initially false.</p>
+
+  <p>Each <code>Document</code> has a <dfn data-x="concept-document-navigation-id">during-loading
+  navigation ID for WebDriver BiDi</dfn>, which is a <span>navigation ID</span> or null, initially
+  null.</p>
+
+  <p class="note">As the name indicates, this is used for interfacing with the <cite>WebDriver
+  BiDi</cite> specification, which needs to be informed about certain occurrences during the early
+  parts of the <code>Document</code>'s lifecycle, in a way that ties them to the original
+  <span>navigation ID</span> used when the navigation that created this <code>Document</code> was
+  the <span>ongoing navigation</span>. This eventually gets set back to null, after <cite>WebDriver
+  BiDi</cite> considers the loading process to be finished. <ref>BIDI</ref></p>
+
+  <p>Each <code>Document</code> has an <dfn data-x="concept-document-about-base-url">about base
+  URL</dfn>, which is a <span>URL</span> or null, initially null.</p>
+
+  <p class="note">This is only populated for "<code data-x="">about:</code>"-schemed
+  <code>Document</code>s.</p>
+
+  <p>Each <code>Document</code> has a <dfn
+  data-x="concept-document-bfcache-blocking-details">bfcache blocking details</dfn>, which is a
+  <span>set</span> of <span data-x="nrr-details-struct">not restored reason details</span>,
+  initially empty.</p>
+
+  <p>Each <code>Document</code> has an <dfn>open dialogs list</dfn>, which is a <span>list</span> of
+  <code>dialog</code> elements, initially empty.</p>
+

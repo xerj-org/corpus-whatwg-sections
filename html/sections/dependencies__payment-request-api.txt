@@ -1,0 +1,14 @@
+WHATWG HTML — section dependencies/payment-request-api — Payment Request API
+
+   <dt>Payment Request API</dt>
+
+   <dd>
+    <p>The following feature is defined in <cite>Payment Request API</cite>:
+    <ref>PAYMENTREQUEST</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://w3c.github.io/payment-request/#dom-paymentrequest"><code>PaymentRequest</code></dfn> interface</li>
+    </ul>
+   </dd>
+
+

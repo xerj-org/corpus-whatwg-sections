@@ -1,0 +1,102 @@
+WHATWG HTML — section dependencies/urls — URLs
+
+   <dt>URLs</dt>
+
+   <dd>
+    <p>The following terms are defined in <cite>URL</cite>: <ref>URL</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x="concept-host" data-x-href="https://url.spec.whatwg.org/#concept-host">host</dfn></li>
+     <li><dfn data-x-href="https://url.spec.whatwg.org/#host-public-suffix">public suffix</dfn></li>
+     <li><dfn data-x="concept-domain" data-x-href="https://url.spec.whatwg.org/#concept-domain">domain</dfn></li>
+     <li><dfn data-x-href="https://url.spec.whatwg.org/#ip-address">IP address</dfn></li>
+     <li><dfn data-x-href="https://url.spec.whatwg.org/#concept-url">URL</dfn></li>
+     <li><dfn data-x="concept-url-origin" data-x-href="https://url.spec.whatwg.org/#concept-url-origin">Origin</dfn> of URLs</li>
+     <li><dfn data-x-href="https://url.spec.whatwg.org/#syntax-url-absolute">Absolute URL</dfn></li>
+     <li><dfn data-x-href="https://url.spec.whatwg.org/#syntax-url-relative">Relative URL</dfn></li>
+     <li><dfn data-x-href="https://url.spec.whatwg.org/#host-registrable-domain">registrable domain</dfn></li>
+     <li>The <dfn data-x-href="https://url.spec.whatwg.org/#concept-url-parser">URL parser</dfn>
+     <li var-scope>The <dfn data-x-href="https://url.spec.whatwg.org/#concept-basic-url-parser">basic URL parser</dfn> and its
+      <dfn data-x="basic url parser url" data-x-href="https://url.spec.whatwg.org/#basic-url-parser-url"><var>url</var></dfn> and
+      <dfn data-x="basic url parser state override" data-x-href="https://url.spec.whatwg.org/#basic-url-parser-state-override"><var>state override</var></dfn>
+      arguments, as well as these parser states:
+      <ul class="brief">
+       <li><dfn data-x-href="https://url.spec.whatwg.org/#scheme-start-state">scheme start state</dfn></li>
+       <li><dfn data-x-href="https://url.spec.whatwg.org/#host-state">host state</dfn></li>
+       <li><dfn data-x-href="https://url.spec.whatwg.org/#hostname-state">hostname state</dfn></li>
+       <li><dfn data-x-href="https://url.spec.whatwg.org/#port-state">port state</dfn></li>
+       <li><dfn data-x-href="https://url.spec.whatwg.org/#path-start-state">path start state</dfn></li>
+       <li><dfn data-x-href="https://url.spec.whatwg.org/#query-state">query state</dfn></li>
+       <li><dfn data-x-href="https://url.spec.whatwg.org/#fragment-state">fragment state</dfn></li>
+      </ul>
+     <li>
+      <dfn data-x-href="https://url.spec.whatwg.org/#concept-url">URL record</dfn>, as well as its
+      individual components:
+      <ul class="brief">
+       <li><dfn data-x="concept-url-scheme" data-x-href="https://url.spec.whatwg.org/#concept-url-scheme">scheme</dfn></li>
+       <li><dfn data-x="concept-url-username" data-x-href="https://url.spec.whatwg.org/#concept-url-username">username</dfn></li>
+       <li><dfn data-x="concept-url-password" data-x-href="https://url.spec.whatwg.org/#concept-url-password">password</dfn></li>
+       <li><dfn data-x="concept-url-host" data-x-href="https://url.spec.whatwg.org/#concept-url-host">host</dfn></li>
+       <li><dfn data-x="concept-url-port" data-x-href="https://url.spec.whatwg.org/#concept-url-port">port</dfn></li>
+       <li><dfn data-x="concept-url-path" data-x-href="https://url.spec.whatwg.org/#concept-url-path">path</dfn></li>
+       <li><dfn data-x="concept-url-query" data-x-href="https://url.spec.whatwg.org/#concept-url-query">query</dfn></li>
+       <li><dfn data-x="concept-url-fragment" data-x-href="https://url.spec.whatwg.org/#concept-url-fragment">fragment</dfn></li>
+       <li><dfn data-x="concept-url-blob-entry" data-x-href="https://url.spec.whatwg.org/#concept-url-blob-entry">blob URL entry</dfn></li>
+      </ul>
+     </li>
+     <li><dfn data-x-href="https://url.spec.whatwg.org/#valid-url-string">valid URL string</dfn></li>
+     <li>The <dfn data-x-href="https://url.spec.whatwg.org/#cannot-have-a-username-password-port">cannot have a username/password/port</dfn> concept</li>
+     <li>The <dfn data-x-href="https://url.spec.whatwg.org/#url-opaque-path">opaque path</dfn> concept</li>
+     <li><dfn data-x="concept-url-serializer" data-x-href="https://url.spec.whatwg.org/#concept-url-serializer">URL serializer</dfn> and its
+         <dfn data-x="url serializer exclude fragment" data-x-href="https://url.spec.whatwg.org/#url-serializer-exclude-fragment">exclude fragment</dfn> argument</li>
+     <li><dfn data-x-href="https://url.spec.whatwg.org/#url-path-serializer">URL path serializer</dfn></li>
+     <li>The <dfn data-x-href="https://url.spec.whatwg.org/#concept-host-parser">host parser</dfn></li>
+     <li>The <dfn data-x="host serializer" data-x-href="https://url.spec.whatwg.org/#concept-host-serializer">host serializer</dfn></li>
+     <li><dfn data-x-href="https://url.spec.whatwg.org/#concept-host-equals">Host equals</dfn></li>
+     <li><dfn data-x="concept-url-equals" data-x-href="https://url.spec.whatwg.org/#concept-url-equals">URL equals</dfn> and its
+         <dfn data-x="url equals exclude fragments" data-x-href="https://url.spec.whatwg.org/#url-equals-exclude-fragments">exclude fragments</dfn> argument</li>
+     <li><dfn data-x="serialize an integer" data-x-href="https://url.spec.whatwg.org/#serialize-an-integer">serialize an integer</dfn></li>
+     <li><dfn data-x-href="https://url.spec.whatwg.org/#default-encode-set">Default encode set</dfn></li>
+     <li><dfn data-x-href="https://url.spec.whatwg.org/#component-percent-encode-set">component percent-encode set</dfn></li>
+     <li><dfn data-x-href="https://url.spec.whatwg.org/#string-utf-8-percent-encode">UTF-8 percent-encode</dfn></li>
+     <li><dfn data-x-href="https://url.spec.whatwg.org/#string-percent-decode">percent-decode</dfn></li>
+     <li><dfn data-x-href="https://url.spec.whatwg.org/#set-the-username">set the username</dfn></li>
+     <li><dfn data-x-href="https://url.spec.whatwg.org/#set-the-password">set the password</dfn></li>
+     <li>The <dfn data-x-href="https://url.spec.whatwg.org/#concept-urlencoded"><code>application/x-www-form-urlencoded</code></dfn> format</li>
+     <li>The <dfn data-x-href="https://url.spec.whatwg.org/#concept-urlencoded-serializer"><code>application/x-www-form-urlencoded</code> serializer</dfn></li>
+     <li><dfn data-x-href="https://url.spec.whatwg.org/#is-special">is special</dfn></li>
+    </ul>
+
+    <p>A number of schemes and protocols are referenced by this specification also:</p>
+
+    <ul class="brief">
+     <li>The <dfn data-x="about protocol"
+     data-x-href="https://www.rfc-editor.org/rfc/rfc6694#section-2"><code>about:</code></dfn> scheme
+     <ref>ABOUT</ref></li>
+     <li>The <dfn data-x="blob protocol"
+     data-x-href="https://w3c.github.io/FileAPI/#blob-url"><code>blob:</code></dfn> scheme
+     <ref>FILEAPI</ref></li>
+     <li>The <dfn data-x="data protocol"
+     data-x-href="https://www.rfc-editor.org/rfc/rfc2397#section-2"><code>data:</code></dfn> scheme
+     <ref>RFC2397</ref></li>
+     <li>The <dfn data-x="http protocol"
+     data-x-href="https://httpwg.org/specs/rfc7230.html#http.uri"><code>http:</code></dfn> scheme
+     <ref>HTTP</ref></li>
+     <li>The <dfn data-x="https protocol"
+     data-x-href="https://httpwg.org/specs/rfc7230.html#https.uri"><code>https:</code></dfn> scheme
+     <ref>HTTP</ref></li>
+     <li>The <dfn data-x="mailto protocol"
+     data-x-href="https://www.rfc-editor.org/rfc/rfc6068#section-2"><code>mailto:</code></dfn>
+     scheme <ref>MAILTO</ref></li>
+     <li>The <dfn data-x="sms protocol"
+     data-x-href="https://www.rfc-editor.org/rfc/rfc5724#section-2"><code>sms:</code></dfn> scheme
+     <ref>SMS</ref></li>
+     <li>The <dfn data-x="urn protocol"
+     data-x-href="https://www.rfc-editor.org/rfc/rfc2141#section-2"><code>urn:</code></dfn> scheme
+     <ref>URN</ref></li>
+    </ul>
+
+    <p><dfn data-x-href="https://www.w3.org/TR/media-frags/#media-fragment-syntax">Media fragment
+    syntax</dfn> is defined in <cite>Media Fragments URI</cite>. <ref>MEDIAFRAG</ref></p>
+   </dd>
+

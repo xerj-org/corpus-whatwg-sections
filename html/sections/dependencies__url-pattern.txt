@@ -1,0 +1,16 @@
+WHATWG HTML — section dependencies/url-pattern — URL Pattern
+
+   <dt>URL Pattern</dt>
+
+   <dd>
+    <p>The following terms are defined in <cite>URL Pattern</cite>: <ref>URLPATTERN</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://urlpattern.spec.whatwg.org/#url-pattern">URL pattern</dfn></li>
+     <li><dfn data-x="url-pattern-match" data-x-href="https://urlpattern.spec.whatwg.org/#url-pattern-match">match</dfn></li>
+     <li><dfn data-x-href="https://urlpattern.spec.whatwg.org/#build-a-url-pattern-from-an-infra-value">build a URL pattern from an Infra value</dfn></li>
+     <li><dfn data-x-href="https://urlpattern.spec.whatwg.org/#parse-a-constructor-string">parse a URL pattern constructor string</dfn></li>
+     <li><dfn data-x-href="https://urlpattern.spec.whatwg.org/#dictdef-urlpatterninit"><code>URLPatternInit</code></dfn></li>
+    </ul>
+   </dd>
+

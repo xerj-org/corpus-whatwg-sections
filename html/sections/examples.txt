@@ -1,0 +1,267 @@
+WHATWG HTML — section examples — Examples
+
+  <h4>Examples</h4>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>There are a variety of uses that workers can be put to. The following subsections show various
+  examples of this use.</p>
+
+
+  <h5>A background number-crunching worker</h5>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>The simplest use of workers is for performing a computationally
+  expensive task without interrupting the user interface.</p>
+
+  <p>In this example, the main document spawns a worker to (na&iuml;vely) compute prime numbers, and
+  progressively displays the most recently found prime number.</p>
+
+  <p>The main page is as follows:</p>
+
+  <pre><code class="html">EXAMPLE workers/primes/page.html</code></pre>
+
+  <p>The <code data-x="dom-Worker">Worker()</code> constructor call creates a worker and returns a
+  <code>Worker</code> object representing that worker, which is used to communicate with the worker.
+  That object's <code data-x="handler-MessageEventTarget-onmessage">onmessage</code> event handler
+  allows the code to receive messages from the worker.</p>
+
+  <p>The worker itself is as follows:</p>
+
+  <pre><code class="js">EXAMPLE workers/primes/worker.js</code></pre>
+
+  <p>The bulk of this code is simply an unoptimized search for a prime number. The <code
+  data-x="dom-DedicatedWorkerGlobalScope-postMessage">postMessage()</code> method is used to send a
+  message back to the page when a prime is found.</p>
+
+  <p><a href="/demos/workers/primes/page.html">View this example online</a>.</p>
+
+
+  <h5 id="module-worker-example">Using a JavaScript module as a worker</h5>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>All of our examples so far show workers that run <span data-x="classic script">classic
+  scripts</span>. Workers can instead be instantiated using <span data-x="module script">module
+  scripts</span>, which have the usual benefits: the ability to use the JavaScript
+  <code data-x="">import</code> statement to import other modules; strict mode by default; and
+  top-level declarations not polluting the worker's global scope.</p>
+
+  <p>As the <code data-x="">import</code> statement is available, the <code
+  data-x="dom-WorkerGlobalScope-importScripts">importScripts()</code> method will automatically fail
+  inside module workers.</p>
+
+  <p>In this example, the main document uses a worker to do off-main-thread image manipulation.
+  It imports the filters used from another module.</p>
+
+  <p>The main page is as follows:</p>
+
+  <pre><code class="html">EXAMPLE workers/modules/page.html</code></pre>
+
+  <p>The worker file is then:</p>
+
+  <pre><code class="js">EXAMPLE workers/modules/worker.js</code></pre>
+
+  <p>Which imports the file <code data-x="">filters.js</code>:</p>
+
+  <pre><code class="js">EXAMPLE workers/modules/filters.js</code></pre>
+
+  <p><a href="/demos/workers/modules/page.html">View this example online</a>.</p>
+
+
+  <h5>Shared workers introduction</h5>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>This section introduces shared workers using a Hello World example. Shared workers use slightly
+  different APIs, since each worker can have multiple connections.</p>
+
+  <p>This first example shows how you connect to a worker and how a worker can send a message back
+  to the page when it connects to it. Received messages are displayed in a log.</p>
+
+  <p>Here is the HTML page:</p>
+
+  <pre><code class="html">EXAMPLE workers/shared/001/test.html</code></pre>
+
+  <p>Here is the JavaScript worker:</p>
+
+  <pre><code class="js">EXAMPLE workers/shared/001/test.js</code></pre>
+
+  <p><a href="/demos/workers/shared/001/test.html">View this example online</a>.</p>
+
+  <hr>
+
+  <p>This second example extends the first one by changing two things: first, messages are received
+  using <code data-x="">addEventListener()</code> instead of an <span data-x="event handler IDL
+  attributes">event handler IDL attribute</span>, and second, a message is sent <em>to</em> the
+  worker, causing the worker to send another message in return. Received messages are again
+  displayed in a log.</p>
+
+  <p>Here is the HTML page:</p>
+
+  <pre><code class="html">EXAMPLE workers/shared/002/test.html</code></pre>
+
+  <p>Here is the JavaScript worker:</p>
+
+  <pre><code class="js">EXAMPLE workers/shared/002/test.js</code></pre>
+
+  <p><a href="/demos/workers/shared/002/test.html">View this example online</a>.</p>
+
+  <hr>
+
+  <p>Finally, the example is extended to show how two pages can connect to the same worker; in this
+  case, the second page is merely in an <code>iframe</code> on the first page, but the same
+  principle would apply to an entirely separate page in a separate <span>top-level
+  traversable</span>.</p>
+
+  <p>Here is the outer HTML page:</p>
+
+  <pre><code class="html">EXAMPLE workers/shared/003/test.html</code></pre>
+
+  <p>Here is the inner HTML page:</p>
+
+  <pre><code class="html">EXAMPLE workers/shared/003/inner.html</code></pre>
+
+  <p>Here is the JavaScript worker:</p>
+
+  <pre><code class="js">EXAMPLE workers/shared/003/test.js</code></pre>
+
+  <p><a href="/demos/workers/shared/003/test.html">View this example online</a>.</p>
+
+
+  <h5>Shared state using a shared worker</h5>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>In this example, multiple windows (viewers) can be opened that are all viewing the same map.
+  All the windows share the same map information, with a single worker coordinating all the viewers.
+  Each viewer can move around independently, but if they set any data on the map, all the viewers
+  are updated.</p>
+
+  <p>The main page isn't interesting, it merely provides a way to open the viewers:</p>
+
+  <pre><code class="html">EXAMPLE workers/multiviewer/page.html</code></pre>
+
+  <p>The viewer is more involved:</p>
+
+  <pre><code class="html">EXAMPLE workers/multiviewer/viewer.html</code></pre>
+
+  <p>There are several key things worth noting about the way the viewer is written.</p>
+
+  <p><strong>Multiple listeners</strong>. Instead of a single message processing function, the code
+  here attaches multiple event listeners, each one performing a quick check to see if it is relevant
+  for the message. In this example it doesn't make much difference, but if multiple authors wanted
+  to collaborate using a single port to communicate with a worker, it would allow for independent
+  code instead of changes having to all be made to a single event handling function.</p>
+
+  <p>Registering event listeners in this way also allows you to unregister specific listeners when
+  you are done with them, as is done with the <code data-x="">configure()</code> method in this
+  example.</p>
+
+  <p>Finally, the worker:</p>
+
+  <pre><code class="js">EXAMPLE workers/multiviewer/worker.js</code></pre>
+
+  <p><strong>Connecting to multiple pages</strong>. The script uses the <code
+  data-x="handler-SharedWorkerGlobalScope-onconnect">onconnect</code> event listener to listen for
+  multiple connections.</p>
+
+  <p><strong>Direct channels</strong>. When the worker receives a "msg" message from one viewer
+  naming another viewer, it sets up a direct connection between the two, so that the two viewers can
+  communicate directly without the worker having to proxy all the messages.</p>
+
+  <p><a href="/demos/workers/multiviewer/page.html">View this example online</a>.</p>
+
+
+  <h5>Delegation</h5>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>With multicore CPUs becoming prevalent, one way to obtain better performance is to split
+  computationally expensive tasks amongst multiple workers. In this example, a computationally
+  expensive task that is to be performed for every number from 1 to 10,000,000 is farmed out to ten
+  subworkers.</p>
+
+  <p>The main page is as follows, it just reports the result:</p>
+
+  <pre><code class="html">EXAMPLE workers/multicore/page.html</code></pre>
+
+  <p>The worker itself is as follows:</p>
+
+  <pre><code class="js">EXAMPLE workers/multicore/worker.js</code></pre>
+
+  <p>It consists of a loop to start the subworkers, and then a handler
+  that waits for all the subworkers to respond.</p>
+
+  <p>The subworkers are implemented as follows:</p>
+
+  <pre><code class="js">EXAMPLE workers/multicore/core.js</code></pre>
+
+  <p>They receive two numbers in two events, perform the computation for the range of numbers thus
+  specified, and then report the result back to the parent.</p>
+
+  <p><a href="/demos/workers/multicore/page.html">View this example online</a>.</p>
+
+
+  <h5>Providing libraries</h5>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>Suppose that a cryptography library is made available that provides three tasks:</p>
+
+  <dl>
+   <dt>Generate a public/private key pair</dt>
+
+   <dd>Takes a port, on which it will send two messages, first the public key and then the private
+   key.</dd>
+
+   <dt>Given a plaintext and a public key, return the corresponding ciphertext</dt>
+
+   <dd>Takes a port, to which any number of messages can be sent, the first giving the public key,
+   and the remainder giving the plaintext, each of which is encrypted and then sent on that same
+   channel as the ciphertext. The user can close the port when it is done encrypting content.</dd>
+
+   <dt>Given a ciphertext and a private key, return the corresponding plaintext</dt>
+
+   <dd>Takes a port, to which any number of messages can be sent, the first giving the private key,
+   and the remainder giving the ciphertext, each of which is decrypted and then sent on that same
+   channel as the plaintext. The user can close the port when it is done decrypting content.</dd>
+  </dl>
+
+  <p>The library itself is as follows:</p>
+
+  <pre><code class="js">EXAMPLE workers/crypto/libcrypto-v1.js</code></pre>
+
+  <p>Note that the crypto functions here are just stubs and don't do real cryptography.</p>
+
+  <p>This library could be used as follows:</p>
+
+  <pre><code class="html">EXAMPLE workers/crypto/page.html</code></pre>
+
+  <p>A later version of the API, though, might want to offload all the crypto work onto subworkers.
+  This could be done as follows:</p>
+
+  <pre><code class="js">EXAMPLE workers/crypto/libcrypto-v2.js</code></pre>
+
+  <p>The little subworkers would then be as follows.</p>
+
+  <p>For generating key pairs:</p>
+
+  <pre><code class="js">EXAMPLE workers/crypto/libcrypto-v2-generator.js</code></pre>
+
+  <p>For encrypting:</p>
+
+  <pre><code class="js">EXAMPLE workers/crypto/libcrypto-v2-encryptor.js</code></pre>
+
+  <p>For decrypting:</p>
+
+  <pre><code class="js">EXAMPLE workers/crypto/libcrypto-v2-decryptor.js</code></pre>
+
+  <p>Notice how the users of the API don't have to even know that this is happening &mdash; the API
+  hasn't changed; the library can delegate to subworkers without changing its API, even though it is
+  accepting data using message channels.</p>
+
+  <p><a href="/demos/workers/crypto/page.html">View this example online</a>.</p>
+
+

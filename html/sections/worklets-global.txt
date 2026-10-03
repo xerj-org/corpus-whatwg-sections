@@ -1,0 +1,271 @@
+WHATWG HTML — section worklets-global — The global scope
+
+  <h4 id="worklets-global">The global scope</h4>
+
+  <p>Subclasses of <code subdfn>WorkletGlobalScope</code> are used to create <span data-x="global
+  object">global objects</span> wherein code loaded into a particular <code>Worklet</code> can
+  execute.</p>
+
+  <pre><code class="idl">[Exposed=Worklet, SecureContext]
+interface <dfn interface>WorkletGlobalScope</dfn> {};</code></pre>
+
+  <p class="note">Other specifications are intended to subclass <code>WorkletGlobalScope</code>,
+  adding APIs to register a class, as well as other APIs specific for their worklet type.</p>
+
+  <div w-nodev>
+
+  <p>Each <code>WorkletGlobalScope</code> has an associated <dfn
+  data-x="concept-WorkletGlobalScope-module-map">module map</dfn>. It is a <span>module map</span>,
+  initially empty.</p>
+
+  </div>
+
+  <h5 id="worklet-agents-and-event-loops">Agents and event loops</h5>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>Each <code>WorkletGlobalScope</code> is contained in its own <span>worklet agent</span>, which
+  has its corresponding <span data-x="concept-agent-event-loop">event loop</span>. However, in
+  practice, implementation of these agents and event loops is expected to be different from most
+  others.</p>
+
+  <p>A <span>worklet agent</span> exists for each <code>WorkletGlobalScope</code> since, in theory,
+  an implementation could use a separate thread for each <code>WorkletGlobalScope</code> instance,
+  and allowing this level of parallelism is best done using agents. However, because their
+  [[CanBlock]] value is false, there is no requirement that agents and threads are one-to-one. This
+  allows implementations the freedom to execute scripts loaded into a worklet on any thread,
+  including one running code from other agents with [[CanBlock]] of false, such as the thread of a
+  <span>similar-origin window agent</span> ("the main thread"). Contrast this with <span
+  data-x="dedicated worker agent">dedicated worker agents</span>, whose true value for [[CanBlock]]
+  effectively requires them to get a dedicated operating system thread.</p>
+
+  <p>Worklet <span data-x="event loop">event loops</span> are also somewhat special. They are only
+  used for <span data-x="concept-task">tasks</span> associated with <code
+  data-x="dom-Worklet-addModule">addModule()</code>, tasks wherein the user agent invokes
+  author-defined methods, and <span data-x="microtask">microtasks</span>. Thus, even though the <a
+  href="#event-loop-processing-model">event loop processing model</a> specifies that all event loops
+  run continuously, implementations can achieve observably-equivalent results using a simpler
+  strategy, which just <span data-x="es-invoking-callback-functions">invokes</span> author-provided
+  methods and then relies on that process to <span>perform a microtask checkpoint</span>.</p>
+
+  <div w-nodev>
+
+  <h5 id="worklets-creation-termination">Creation and termination</h5>
+
+  <div algorithm>
+  <p>To <dfn export>create a worklet global scope</dfn> for a <code>Worklet</code>
+  <var>worklet</var>:</p>
+
+  <ol>
+   <li><p>Let <var>outsideSettings</var> be <var>worklet</var>'s <span>relevant settings
+   object</span>.</p></li>
+
+   <li><p>Let <var>agent</var> be the result of <span data-x="obtain a worklet agent">obtaining a
+   worklet agent</span> given <var>outsideSettings</var>. Run the rest of these steps in that
+   agent.</p></li>
+
+   <li>
+    <p>Let <var>realmExecutionContext</var> be the result of <span>creating a new realm</span> given
+    <var>agent</var> and the following customizations:</p>
+
+    <ul>
+     <li><p>For the global object, create a new object of the type given by <var>worklet</var>'s
+     <span>worklet global scope type</span>.</p></li>
+    </ul>
+   </li>
+
+   <li><p>Let <var>workletGlobalScope</var> be the <span data-x="concept-realm-global">global
+   object</span> of <var>realmExecutionContext</var>'s Realm component.</p></li>
+
+   <li><p>Let <var>insideSettings</var> be the result of <span data-x="set up a worklet environment
+   settings object">setting up a worklet environment settings object</span> given
+   <var>realmExecutionContext</var> and <var>outsideSettings</var>.</p></li>
+
+   <li><p>Let <var>pendingAddedModules</var> be a <span data-x="list clone">clone</span> of
+   <var>worklet</var>'s <span data-x="concept-Worklet-added-modules-list">added modules
+   list</span>.</p></li>
+
+   <li>
+    <p>Let <var>runNextAddedModule</var> be the following steps:</p>
+
+    <ol>
+     <li>
+      <p>If <var>pendingAddedModules</var> <span data-x="list is empty">is not empty</span>:</p>
+
+      <ol>
+       <li><p>Let <var>moduleURL</var> be the result of <span data-x="dequeue">dequeuing</span>
+       from <var>pendingAddedModules</var>.</p></li>
+
+       <li>
+        <p><span>Fetch a worklet script graph</span> given <var>moduleURL</var>,
+        <var>insideSettings</var>, <var>worklet</var>'s <span>worklet destination type</span>, <span
+        class="XXX">what credentials mode?</span>, <var>insideSettings</var>, <var>worklet</var>'s
+        <span data-x="concept-Worklet-module-responses-map">module responses map</span>, and with
+        the following steps given <var>script</var>:</p>
+
+        <p class="note">This will not actually perform a network request, as it will just reuse
+        <span data-x="concept-response">responses</span> from <var>worklet</var>'s <span
+        data-x="concept-Worklet-module-responses-map">module responses map</span>. The main
+        purpose of this step is to create a new <var>workletGlobalScope</var>-specific <span>module
+        script</span> from the <span data-x="concept-response">response</span>.</p>
+
+        <ol>
+         <li><p><span>Assert</span>: <var>script</var> is not null, since the fetch succeeded and
+         the source text was successfully parsed when <var>worklet</var>'s <span
+         data-x="concept-Worklet-module-responses-map">module responses map</span> was initially
+         populated with <var>moduleURL</var>.</p></li>
+
+         <li><p><span>Run a module script</span> given <var>script</var>.</p></li>
+
+         <li><p>Run <var>runNextAddedModule</var>.</p></li>
+        </ol>
+       </li>
+
+       <li>Abort these steps.</li>
+      </ol>
+     </li>
+
+     <li><p><span data-x="list append">Append</span> <var>workletGlobalScope</var> to
+     <var>outsideSettings</var>'s <span data-x="concept-settings-object-global">global
+     object</span>'s <span data-x="concept-document-window">associated
+     <code>Document</code></span>'s <span data-x="concept-Document-worklet-global-scopes">worklet
+     global scopes</span>.</p></li>
+
+     <li><p><span data-x="list append">Append</span> <var>workletGlobalScope</var> to
+     <var>worklet</var>'s <span data-x="concept-Worklet-global-scopes">global
+     scopes</span>.</p></li>
+
+     <li><p>Run the <span>responsible event loop</span> specified by
+     <var>insideSettings</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Run <var>runNextAddedModule</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn export>terminate a worklet global scope</dfn> given a <code>WorkletGlobalScope</code>
+  <var>workletGlobalScope</var>:</p>
+
+  <ol>
+   <li><p>Let <var>eventLoop</var> be <var>workletGlobalScope</var>'s <span>relevant agent</span>'s
+   <span data-x="concept-agent-event-loop">event loop</span>.</p></li>
+
+   <li><p>If there are any <span data-x="concept-task">tasks</span> queued in <var>eventLoop</var>'s
+   <span data-x="task queue">task queues</span>, discard them without processing them.</p></li>
+
+   <li><p>Wait for <var>eventLoop</var> to complete the <span>currently running
+   task</span>.</p></li>
+
+   <li><p>If the previous step doesn't complete within an <span>implementation-defined</span> period
+   of time, then <span data-x="abort a running script">abort the script</span> currently running in
+   the worklet.</p></li>
+
+   <li><p>Destroy <var>eventLoop</var>.</p></li>
+
+   <li><p><span data-x="list remove">Remove</span> <var>workletGlobalScope</var> from the <span
+   data-x="concept-Worklet-global-scopes">global scopes</span> of the <code>Worklet</code> whose
+   <span data-x="concept-Worklet-global-scopes">global scopes</span> contains
+   <var>workletGlobalScope</var>.</p></li>
+
+   <li><p><span data-x="list remove">Remove</span> <var>workletGlobalScope</var> from the <span
+   data-x="concept-Document-worklet-global-scopes">worklet global scopes</span> of the
+   <code>Document</code> whose <span data-x="concept-Document-worklet-global-scopes">worklet global
+   scopes</span> contains <var>workletGlobalScope</var>.</p></li>
+  </ol>
+  </div>
+
+  <h5>Script settings for worklets</h5>
+
+  <div algorithm>
+  <p>To <dfn>set up a worklet environment settings object</dfn>, given a <span>JavaScript
+  execution context</span> <var>executionContext</var> and an <span>environment settings
+  object</span> <var>outsideSettings</var>:</p>
+
+  <ol>
+   <li><p>Let <var>origin</var> be a unique <span data-x="concept-origin-opaque">opaque
+   origin</span>.</p></li>
+
+   <li><p>Let <var>inheritedAPIBaseURL</var> be <var>outsideSettings</var>'s <span>API base
+   URL</span>.</p></li>
+
+   <li><p>Let <var>inheritedPolicyContainer</var> be a <span data-x="clone a policy
+   container">clone</span> of <var>outsideSettings</var>'s <span
+   data-x="concept-settings-object-policy-container">policy container</span>.</p></li>
+
+   <li><p>Let <var>realm</var> be the value of <var>executionContext</var>'s Realm
+   component.</p></li>
+
+   <li><p>Let <var>workletGlobalScope</var> be <var>realm</var>'s <span
+   data-x="concept-realm-global">global object</span>.</p></li>
+
+   <li>
+    <p>Let <var>settingsObject</var> be a new <span>environment settings object</span> whose
+    algorithms are defined as follows:</p>
+
+    <dl>
+     <dt>The <span>realm execution context</span></dt>
+     <dd>
+      <p>Return <var>executionContext</var>.</p>
+     </dd>
+
+     <dt>The <span data-x="concept-settings-object-module-map">module map</span></dt>
+     <dd>
+      <p>Return <var>workletGlobalScope</var>'s <span
+      data-x="concept-WorkletGlobalScope-module-map">module map</span>.</p>
+     </dd>
+
+     <dt>The <span>API base URL</span></dt>
+     <dd>
+      <p>Return <var>inheritedAPIBaseURL</var>.</p>
+
+      <p class="note">Unlike workers or other globals derived from a single resource, worklets have
+      no primary resource; instead, multiple scripts, each with their own URL, are loaded into the
+      global scope via <code
+      data-x="dom-Worklet-addModule">worklet.addModule()</code>. So this <span>API base URL</span>
+      is rather unlike that of other globals. However, so far this doesn't matter, as no APIs
+      available to worklet code make use of the <span>API base URL</span>.</p>
+     </dd>
+
+     <dt>The <span data-x="concept-settings-object-origin">origin</span></dt>
+     <dd>
+      <p>Return <var>origin</var>.</p>
+     </dd>
+
+     <dt>The <span data-x="concept-settings-object-has-cross-site-ancestor">has cross-site
+     ancestor</span></dt>
+     <dd><p>Return true.</p></dd>
+
+     <dt>The <span data-x="concept-settings-object-policy-container">policy container</span></dt>
+     <dd>
+      <p>Return <var>inheritedPolicyContainer</var>.</p>
+     </dd>
+
+     <dt>The <span data-x="concept-settings-object-cross-origin-isolated-capability">cross-origin
+     isolated capability</span></dt>
+     <dd><p>Return <span class="XXX">TODO</span>.</p></dd>
+
+     <dt>The <span data-x="concept-settings-object-time-origin">time origin</span></dt>
+     <dd><p><span>Assert</span>: this algorithm is never called, because the <span
+     data-x="concept-settings-object-time-origin">time origin</span> is not available in a worklet
+     context.</p></dd>
+    </dl>
+   </li>
+
+   <li><p>Set <var>settingsObject</var>'s <span data-x="concept-environment-id">id</span> to a new
+   unique opaque string, <span data-x="concept-environment-creation-url">creation URL</span> to
+   <var>inheritedAPIBaseURL</var>, <span>top-level creation URL</span> to null, <span>top-level
+   origin</span> to <var>outsideSettings</var>'s <span>top-level origin</span>, <span
+   data-x="concept-environment-target-browsing-context">target browsing context</span> to null, and
+   <span data-x="concept-environment-active-service-worker">active service worker</span> to
+   null.</p></li>
+
+   <li><p>Set <var>realm</var>'s [[HostDefined]] field to <var>settingsObject</var>.</p></li>
+
+   <li><p>Return <var>settingsObject</var>.</p></li>
+  </ol>
+  </div>
+
+  </div>
+

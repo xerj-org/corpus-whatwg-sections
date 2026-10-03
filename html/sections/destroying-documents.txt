@@ -1,0 +1,117 @@
+WHATWG HTML — section destroying-documents — Destroying documents
+
+  <h4>Destroying documents</h4>
+
+  <div algorithm>
+  <p id="discard-a-document">To <dfn data-x="destroy a document">destroy</dfn> a
+  <code>Document</code> <var>document</var>:</p>
+
+  <ol>
+   <li><p><span>Assert</span>: this is running as part of a <span data-x="concept-task">task</span>
+   queued on <var>document</var>'s <span>relevant agent</span>'s <span
+   data-x="concept-agent-event-loop">event loop</span>.</p></li>
+
+   <li><p><span data-x="abort a document">Abort</span> <var>document</var>.</p></li>
+
+   <li><p>Set <var>document</var>'s <i data-x="concept-document-salvageable">salvageable</i> state
+   to false.</p></li>
+
+   <li><p>Let <var>ports</var> be the list of <code>MessagePort</code>s whose <span>relevant global
+   object</span>'s <span data-x="concept-document-window">associated <code>Document</code></span> is
+   <var>document</var>.</p></li>
+
+   <li><p>For each <var>port</var> in <var>ports</var>, <span>disentangle</span>
+   <var>port</var>.</p></li>
+
+   <li><p>Run any <span>unloading document cleanup steps</span> for <var>document</var> that
+   are defined by this specification and <span>other applicable specifications</span>.</p></li>
+
+   <li><p>Remove any <span data-x="concept-task">tasks</span> whose <span
+   data-x="concept-task-document">document</span> is <var>document</var> from any <span>task
+   queue</span> (without running those tasks).</p></li>
+
+   <li><p>Set <var>document</var>'s <span data-x="concept-document-bc">browsing context</span> to
+   null.</p></li>
+
+   <li><p>Set <var>document</var>'s <span>node navigable</span>'s <span
+   data-x="nav-active-history-entry">active session history entry</span>'s <span
+   data-x="she-document-state">document state</span>'s <span
+   data-x="document-state-document">document</span> to null.</p></li>
+
+   <li><p><span data-x="list remove">Remove</span> <var>document</var> from the
+   <span>owner set</span> of each <code>WorkerGlobalScope</code> object whose set <span
+   data-x="list contains">contains</span> <var>document</var>.</p></li>
+
+   <li><p><span data-x="list iterate">For each</span> <var>workletGlobalScope</var> in
+   <var>document</var>'s <span data-x="concept-Document-worklet-global-scopes">worklet global
+   scopes</span>, <span data-x="terminate a worklet global scope">terminate</span>
+   <var>workletGlobalScope</var>.</p></li>
+  </ol>
+  </div>
+
+  <p class="note">Even after destruction, the <code>Document</code> object itself might still be
+  accessible to script, in the case where we are <span data-x="destroy a child
+  navigable">destroying a child navigable</span>.</p>
+
+  <div algorithm>
+  <p>To <dfn>destroy a document and its descendants</dfn> given a <code>Document</code>
+  <var>document</var> and an optional set of steps <var>afterAllDestruction</var>, perform the
+  following steps <span>in parallel</span>:</p>
+
+  <ol>
+   <li>
+    <p>If <var>document</var> is not <span>fully active</span>:</p>
+
+    <ol>
+     <li><p>Let <var>reason</var> be a string from <span
+     data-x="ua-specific-blocking-reasons">user-agent specific blocking reasons</span>. If none
+     apply, then let <var>reason</var> be "<code data-x="blocking-masked">masked</code>".</p></li>
+
+     <li><p><span>Make document unsalvageable</span> given <var>document</var> and
+     <var>reason</var>.</p></li>
+
+     <li><p>If <var>document</var>'s <span>node navigable</span> is a
+     <span>top-level traversable</span>,
+     <span>build not restored reasons for a top-level traversable and its descendants</span>
+     given <var>document</var>'s <span>node navigable</span>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Let <var>childNavigables</var> be <var>document</var>'s <span data-x="child
+   navigable">child navigables</span>.</p></li>
+
+   <li><p>Let <var>numberDestroyed</var> be 0.</p></li>
+
+   <li>
+    <p><span data-x="list iterate">For each</span> <var>childNavigable</var> of
+    <var>childNavigables</var> <span class="XXX" data-x="">in what order?</span>, <span>queue a
+    global task</span> on the <span>navigation and traversal task source</span> given
+    <var>childNavigable</var>'s <span data-x="nav-window">active window</span> to perform the
+    following steps:</p>
+
+    <ol>
+     <li><p>Let <var>incrementDestroyed</var> be an algorithm step which increments
+     <var>numberDestroyed</var>.</p></li>
+
+     <li><p><span>Destroy a document and its descendants</span> given <var>childNavigable</var>'s
+     <span data-x="nav-document">active document</span> and <var>incrementDestroyed</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Wait until <var>numberDestroyed</var> equals <var>childNavigable</var>'s <span
+   data-x="list size">size</span>.</p></li>
+
+   <li>
+    <p><span>Queue a global task</span> on the <span>navigation and traversal task source</span>
+    given <var>document</var>'s <span>relevant global object</span> to perform the following
+    steps:</p>
+
+    <ol>
+     <li><p><span data-x="destroy a document">Destroy</span> <var>document</var>.</p></li>
+
+     <li><p>If <var>afterAllDestruction</var> was given, then run it.</p></li>
+    </ol>
+   </li>
+  </ol>
+  </div>
+

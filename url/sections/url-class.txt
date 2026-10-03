@@ -1,0 +1,421 @@
+WHATWG URL — section url-class — URL class
+
+<h3 id=url-class>URL class</h3>
+
+<pre class=idl>
+[Exposed=*,
+ LegacyWindowAlias=webkitURL]
+interface URL {
+  constructor(USVString url, optional USVString base);
+
+  static URL? parse(USVString url, optional USVString base);
+  static boolean canParse(USVString url, optional USVString base);
+
+  stringifier attribute USVString href;
+  readonly attribute USVString origin;
+           attribute USVString protocol;
+           attribute USVString username;
+           attribute USVString password;
+           attribute USVString host;
+           attribute USVString hostname;
+           attribute USVString port;
+           attribute USVString pathname;
+           attribute USVString search;
+  [SameObject] readonly attribute URLSearchParams searchParams;
+           attribute USVString hash;
+
+  USVString toJSON();
+};
+</pre>
+
+<p>A {{URL}} object has an associated:
+
+<ul class=brief>
+ <li><dfn id=concept-url-url noexport for=URL>URL</dfn>: a <a for=/>URL</a>.
+ <li><dfn id=concept-url-query-object noexport for=URL>query object</dfn>: a {{URLSearchParams}}
+ object.
+</ul>
+
+<div algorithm>
+<p>The <dfn>API URL parser</dfn> takes a <a>scalar value string</a> <var>url</var> and an optional
+null-or-<a>scalar value string</a> <var>base</var> (default null), and then runs these steps:
+
+<ol>
+ <li><p>Let <var>parsedBase</var> be null.
+
+ <li>
+  <p>If <var>base</var> is non-null:
+
+  <ol>
+   <li><p>Set <var>parsedBase</var> to the result of running the <a>basic URL parser</a> on
+   <var>base</var>.
+
+   <li><p>If <var>parsedBase</var> is failure, then return failure.
+  </ol>
+
+ <li><p>Return the result of running the <a>basic URL parser</a> on <var>url</var> with
+ <var>parsedBase</var>.
+</ol>
+</div>
+
+<div algorithm>
+<p>To <dfn for=URL>initialize</dfn> a {{URL}} object <var>url</var> with a <a for=/>URL</a>
+<var>urlRecord</var>:
+
+<ol>
+ <li><p>Let <var>query</var> be <var>urlRecord</var>'s <a for=url>query</a>, if that is non-null;
+ otherwise the empty string.
+
+ <li><p>Set <var>url</var>'s <a for=URL>URL</a> to <var>urlRecord</var>.
+
+ <li><p>Set <var>url</var>'s <a for=URL>query object</a> to a new {{URLSearchParams}} object.
+
+ <li><p><a for=URLSearchParams>Initialize</a> <var>url</var>'s <a for=URL>query object</a> with
+ <var>query</var>.
+
+ <li><p>Set <var>url</var>'s <a for=URL>query object</a>'s <a for=URLSearchParams>URL object</a> to
+ <var>url</var>.
+</ol>
+</div>
+
+<div algorithm="URL/extract an origin">
+<p>Objects implementing the {{URL}} interface's <a for="platform object">extract an origin</a> steps are
+to return <a>this</a>'s <a for=URL>URL</a>'s <a for=url>origin</a>. [[!HTML]]
+</div>
+
+<hr>
+
+<div algorithm>
+<p id=constructors>The
+<dfn constructor for=URL lt="URL(url, base)"><code>new URL(<var>url</var>, <var>base</var>)</code></dfn>
+constructor steps are:
+
+<ol>
+ <li><p>Let <var>parsedURL</var> be the result of running the <a>API URL parser</a> on
+ <var>url</var> with <var>base</var>, if given.
+
+ <li><p>If <var>parsedURL</var> is failure, then <a>throw</a> a {{TypeError}}.
+
+ <li><p><a for=URL>Initialize</a> <a>this</a> with <var>parsedURL</var>.
+</ol>
+</div>
+
+<div class=example id=example-5434421b>
+ <p>To <a lt="basic URL parser">parse</a> a string into a <a for=/>URL</a> without using a
+ <a>base URL</a>, invoke the {{URL}} constructor with a single argument:
+
+ <pre><code class="lang-javascript">
+var input = "https://example.org/💩",
+    url = new URL(input)
+url.pathname // "/%F0%9F%92%A9"</code></pre>
+
+ <p>This throws an exception if the input is a <a>relative-URL string</a>:
+
+ <pre><code class="lang-javascript">
+try {
+  var url = new URL("/🍣🍺")
+} catch(e) {
+  // that happened
+}</code></pre>
+
+ <p>For those cases a <a>base URL</a> is necessary:
+
+ <pre><code class="lang-javascript">
+var input = "/🍣🍺",
+    url = new URL(input, document.baseURI)
+url.href // "https://url.spec.whatwg.org/%F0%9F%8D%A3%F0%9F%8D%BA"</code></pre>
+
+ <p>A {{URL}} object can be used as a <a>base URL</a> (as the IDL requires a string as argument, a
+ {{URL}} object stringifies to its {{URL/href}} getter return value):</p>
+
+ <pre><code class="lang-javascript">
+var url = new URL("🏳️‍🌈", new URL("https://pride.example/hello-world"))
+url.pathname // "/%F0%9F%8F%B3%EF%B8%8F%E2%80%8D%F0%9F%8C%88"</code></pre>
+</div>
+
+<hr>
+
+<div algorithm>
+<p>The static <dfn method for=URL><code>parse(<var>url</var>, <var>base</var>)</code></dfn> method
+steps are:
+
+<ol>
+ <li><p>Let <var>parsedURL</var> be the result of running the <a>API URL parser</a> on
+ <var>url</var> with <var>base</var>, if given.
+
+ <li><p>If <var>parsedURL</var> is failure, then return null.
+
+ <li><p>Let <var>url</var> be a new {{URL}} object.
+
+ <li><p><a for=URL>Initialize</a> <var>url</var> with <var>parsedURL</var>.
+
+ <li><p>Return <var>url</var>.
+</ol>
+</div>
+
+<div algorithm>
+<p>The static <dfn method for=URL><code>canParse(<var>url</var>, <var>base</var>)</code></dfn>
+method steps are:
+
+<ol>
+ <li><p>Let <var>parsedURL</var> be the result of running the <a>API URL parser</a> on
+ <var>url</var> with <var>base</var>, if given.
+
+ <li><p>If <var>parsedURL</var> is failure, then return false.
+
+ <li><p>Return true.
+</ol>
+</div>
+
+<hr id=urlutils-members>
+
+<div algorithm="href getter">
+<p>The <dfn attribute for=URL><code>href</code></dfn> getter steps and the
+<dfn method for=URL><code>toJSON()</code></dfn> method steps are to return the
+<a lt="URL serializer">serialization</a> of <a>this</a>'s <a for=URL>URL</a>.
+</div>
+
+<div algorithm="href setter">
+<p>The <code><a attribute for=URL>href</a></code> setter steps are:
+
+<ol>
+ <li><p>Let <var>parsedURL</var> be the result of running the <a>basic URL parser</a> on the given
+ value.
+
+ <li><p>If <var>parsedURL</var> is failure, then <a>throw</a> a {{TypeError}}.
+
+ <li><p>Set <a>this</a>'s <a for=URL>URL</a> to <var>parsedURL</var>.
+
+ <li><p>Empty <a>this</a>'s <a for=URL>query object</a>'s <a for=URLSearchParams>list</a>.
+
+ <li><p>Let <var>query</var> be <a>this</a>'s <a for=URL>URL</a>'s <a for=url>query</a>.
+
+ <li><p>If <var>query</var> is non-null, then set <a>this</a>'s
+ <a for=URL>query object</a>'s <a for=URLSearchParams>list</a> to the result of
+ <a lt="urlencoded string parser">parsing</a> <var>query</var>.
+</ol>
+</div>
+
+<div algorithm>
+<p>The <dfn attribute for=URL><code>origin</code></dfn> getter steps are to return the
+<a lt="serialization of an origin">serialization</a> of <a>this</a>'s <a for=URL>URL</a>'s
+<a for=url>origin</a>. [[!HTML]]
+</div>
+
+<div algorithm>
+<p>The <dfn attribute for=URL><code>protocol</code></dfn> getter steps are to return <a>this</a>'s
+<a for=URL>URL</a>'s <a for=url>scheme</a>, followed by U+003A (:).
+</div>
+
+<div algorithm="protocol setter">
+<p>The <code><a attribute for=URL>protocol</a></code> setter steps are to
+<a lt="basic URL parser">basic URL parse</a> the given value, followed by U+003A (:), with
+<a>this</a>'s <a for=URL>URL</a> as <a for="basic URL parser"><i>url</i></a> and
+<a>scheme start state</a> as <a for="basic URL parser"><i>state override</i></a>.
+</div>
+
+<div algorithm>
+<p>The <dfn attribute for=URL><code>username</code></dfn> getter steps are to return <a>this</a>'s
+<a for=URL>URL</a>'s <a for=url>username</a>.
+</div>
+
+<div algorithm="username setter">
+<p>The <code><a attribute for=URL>username</a></code> setter steps are:
+
+<ol>
+ <li><p>If <a>this</a>'s <a for=URL>URL</a> <a>cannot have a username/password/port</a>, then
+ return.
+
+ <li><p><a for=url>Set the username</a> given <a>this</a>'s <a for=URL>URL</a> and the given value.
+</ol>
+</div>
+
+<div algorithm>
+<p>The <dfn attribute for=URL><code>password</code></dfn> getter steps are to return <a>this</a>'s
+<a for=URL>URL</a>'s <a for=url>password</a>.
+</div>
+
+<div algorithm="password setter">
+<p>The <code><a attribute for=URL>password</a></code> setter steps are:
+
+<ol>
+ <li><p>If <a>this</a>'s <a for=URL>URL</a> <a>cannot have a username/password/port</a>, then
+ return.
+
+ <li><p><a for=url>Set the password</a> given <a>this</a>'s <a for=URL>URL</a> and the given value.
+</ol>
+</div>
+
+<div algorithm>
+<p>The <dfn attribute for=URL><code>host</code></dfn> getter steps are:
+
+<ol>
+ <li><p>Let <var>url</var> be <a>this</a>'s <a for=URL>URL</a>.
+
+ <li><p>If <var>url</var>'s <a for=url>host</a> is null, then return the empty string.
+
+ <li><p>If <var>url</var>'s <a for=url>port</a> is null, return <var>url</var>'s
+ <a for=url>host</a>, <a lt="host serializer">serialized</a>.
+
+ <li><p>Return <var>url</var>'s <a for=url>host</a>, <a lt="host serializer">serialized</a>,
+ followed by U+003A (:) and <var>url</var>'s <a for=url>port</a>,
+ <a lt="serialize an integer">serialized</a>.
+</ol>
+</div>
+
+<div algorithm="host setter">
+<p>The <code><a attribute for=URL>host</a></code> setter steps are:
+
+<ol>
+ <li><p>If <a>this</a>'s <a for=URL>URL</a> has an <a for=url>opaque path</a>, then return.
+
+ <li><p><a lt="basic URL parser">Basic URL parse</a> the given value with <a>this</a>'s
+ <a for=URL>URL</a> as <a for="basic URL parser"><i>url</i></a> and <a>host state</a> as
+ <a for="basic URL parser"><i>state override</i></a>.
+</ol>
+
+<p class=note>If the given value for the <code><a attribute for=URL>host</a></code> setter lacks a
+<a lt="URL-port string">port</a>, <a>this</a>'s <a for=URL>URL</a>'s <a for=url>port</a> will not
+change. This can be unexpected as <code>host</code> getter does return a <a>URL-port string</a> so
+one might have assumed the setter to always "reset" both.
+</div>
+
+<div algorithm>
+<p>The <dfn attribute for=URL><code>hostname</code></dfn> getter steps are:
+
+<ol>
+ <li><p>If <a>this</a>'s <a for=URL>URL</a>'s <a for=url>host</a> is null, then return the empty
+ string.
+
+ <li><p>Return <a>this</a>'s <a for=URL>URL</a>'s <a for=url>host</a>,
+ <a lt="host serializer">serialized</a>.
+</ol>
+</div>
+
+<div algorithm="hostname setter">
+<p>The <code><a attribute for=URL>hostname</a></code> setter steps are:
+
+<ol>
+ <li><p>If <a>this</a>'s <a for=URL>URL</a> has an <a for=url>opaque path</a>, then return.
+
+ <li><p><a lt="basic URL parser">Basic URL parse</a> the given value with <a>this</a>'s
+ <a for=URL>URL</a> as <a for="basic URL parser"><i>url</i></a> and <a>hostname state</a> as
+ <a for="basic URL parser"><i>state override</i></a>.
+</ol>
+</div>
+
+<div algorithm>
+<p>The <dfn attribute for=URL><code>port</code></dfn> getter steps are:
+
+<ol>
+ <li><p>If <a>this</a>'s <a for=URL>URL</a>'s <a for=url>port</a> is null, then return the empty
+ string.
+
+ <li><p>Return <a>this</a>'s <a for=URL>URL</a>'s <a for=url>port</a>,
+ <a lt="serialize an integer">serialized</a>.
+</ol>
+</div>
+
+<div algorithm="port setter">
+<p>The <code><a attribute for=URL>port</a></code> setter steps are:
+
+<ol>
+ <li><p>If <a>this</a>'s <a for=URL>URL</a> <a>cannot have a username/password/port</a>, then
+ return.
+
+ <li><p>If the given value is the empty string, then set <a>this</a>'s <a for=URL>URL</a>'s
+ <a for=url>port</a> to null.
+
+ <li><p>Otherwise, <a lt="basic URL parser">basic URL parse</a> the given value with
+ <a>this</a>'s <a for=URL>URL</a> as <a for="basic URL parser"><i>url</i></a> and
+ <a>port state</a> as <a for="basic URL parser"><i>state override</i></a>.
+</ol>
+</div>
+
+<div algorithm>
+<p>The <dfn attribute for=URL><code>pathname</code></dfn> getter steps are to return the result of
+<a>URL path serializing</a> <a>this</a>'s <a for=URL>URL</a>.
+</div>
+
+<div algorithm="pathname setter">
+<p>The <code><a attribute for=URL>pathname</a></code> setter steps are:
+
+<ol>
+ <li><p>If <a>this</a>'s <a for=URL>URL</a> has an <a for=url>opaque path</a>, then return.
+
+ <li><p><a for=list>Empty</a> <a>this</a>'s <a for=URL>URL</a>'s <a for=url>path</a>.
+
+ <li><p><a lt="basic URL parser">Basic URL parse</a> the given value with <a>this</a>'s
+ <a for=URL>URL</a> as <a for="basic URL parser"><i>url</i></a> and <a>path start state</a> as
+ <a for="basic URL parser"><i>state override</i></a>.
+</ol>
+</div>
+
+<div algorithm>
+<p>The <dfn attribute for=URL><code>search</code></dfn> getter steps are:
+
+<ol>
+ <li><p>If <a>this</a>'s <a for=URL>URL</a>'s <a for=url>query</a> is either null or the empty
+ string, then return the empty string.
+
+ <li><p>Return U+003F (?), followed by <a>this</a>'s <a for=URL>URL</a>'s <a for=url>query</a>.
+</ol>
+</div>
+
+<div algorithm="search setter">
+<p>The <code><a attribute for=URL>search</a></code> setter steps are:
+
+<ol>
+ <li><p>Let <var>url</var> be <a>this</a>'s <a for=URL>URL</a>.
+
+ <li><p>If the given value is the empty string, then set <var>url</var>'s <a for=url>query</a> to
+ null, <a for=list>empty</a> <a>this</a>'s <a for=URL>query object</a>'s
+ <a for=URLSearchParams>list</a>, and return.
+
+ <li><p>Let <var>input</var> be the given value with a single leading U+003F (?) removed, if any.
+
+ <li><p>Set <var>url</var>'s <a for=url>query</a> to the empty string.
+
+ <li><p><a lt="basic URL parser">Basic URL parse</a> <var>input</var> with <var>url</var> as
+ <a for="basic URL parser"><i>url</i></a> and <a>query state</a> as
+ <a for="basic URL parser"><i>state override</i></a>.
+
+ <li><p>Set <a>this</a>'s <a for=URL>query object</a>'s <a for=URLSearchParams>list</a> to the
+ result of <a lt="urlencoded string parser">parsing</a> <var>input</var>.
+</ol>
+</div>
+
+<div algorithm>
+<p>The <dfn attribute for=URL><code>searchParams</code></dfn> getter steps are to return
+<a>this</a>'s <a for=URL>query object</a>.
+</div>
+
+<div algorithm>
+<p>The <dfn attribute for=URL><code>hash</code></dfn> getter steps are:
+
+<ol>
+ <li><p>If <a>this</a>'s <a for=URL>URL</a>'s <a for=url>fragment</a> is either null or the empty
+ string, then return the empty string.
+
+ <li><p>Return U+0023 (#), followed by <a>this</a>'s <a for=URL>URL</a>'s <a for=url>fragment</a>.
+</ol>
+</div>
+
+<div algorithm="hash setter">
+<p>The <code><a attribute for=URL>hash</a></code> setter steps are:
+
+<ol>
+ <li><p>If the given value is the empty string, then set <a>this</a>'s <a for=URL>URL</a>'s
+ <a for=url>fragment</a> to null and return.
+
+ <li><p>Let <var>input</var> be the given value with a single leading U+0023 (#) removed, if any.
+
+ <li><p>Set <a>this</a>'s <a for=URL>URL</a>'s <a for=url>fragment</a> to the empty string.
+
+ <li><p><a lt="basic URL parser">Basic URL parse</a> <var>input</var> with <a>this</a>'s
+ <a for=URL>URL</a> as <a for="basic URL parser"><i>url</i></a> and <a>fragment state</a> as
+ <a for="basic URL parser"><i>state override</i></a>.
+</ol>
+</div>
+
+

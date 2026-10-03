@@ -1,0 +1,70 @@
+WHATWG HTML — section the-storageevent-interface — The <code>StorageEvent</code> interface (+privacy)
+
+  <h4>The <code>StorageEvent</code> interface</h4>
+
+  <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>StorageEvent</dfn> : <span>Event</span> {
+  constructor(DOMString type, optional <span>StorageEventInit</span> eventInitDict = {});
+
+  readonly attribute DOMString? <span data-x="dom-StorageEvent-key">key</span>;
+  readonly attribute DOMString? <span data-x="dom-StorageEvent-oldValue">oldValue</span>;
+  readonly attribute DOMString? <span data-x="dom-StorageEvent-newValue">newValue</span>;
+  readonly attribute USVString <span data-x="dom-StorageEvent-url">url</span>;
+  readonly attribute <span>Storage</span>? <span data-x="dom-StorageEvent-storageArea">storageArea</span>;
+
+  undefined <span data-x="dom-StorageEvent-initStorageEvent">initStorageEvent</span>(DOMString type, optional boolean bubbles = false, optional boolean cancelable = false, optional DOMString? key = null, optional DOMString? oldValue = null, optional DOMString? newValue = null, optional USVString url = "", optional Storage? storageArea = null);
+};
+
+dictionary <dfn dictionary>StorageEventInit</dfn> : <span>EventInit</span> {
+  DOMString? key = null;
+  DOMString? oldValue = null;
+  DOMString? newValue = null;
+  USVString url = "";
+  <span>Storage</span>? storageArea = null;
+};</code></pre>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>event</var>.<span subdfn data-x="dom-StorageEvent-key">key</span></code></dt>
+   <dd><p>Returns the key of the storage item being changed.</p></dd>
+
+   <dt><code data-x=""><var>event</var>.<span subdfn data-x="dom-StorageEvent-oldValue">oldValue</span></code></dt>
+   <dd><p>Returns the old value of the key of the storage item whose value is being
+   changed.</p></dd>
+
+   <dt><code data-x=""><var>event</var>.<span subdfn data-x="dom-StorageEvent-newValue">newValue</span></code></dt>
+   <dd><p>Returns the new value of the key of the storage item whose value is being
+   changed.</p></dd>
+
+   <dt><code data-x=""><var>event</var>.<span subdfn data-x="dom-StorageEvent-url">url</span></code></dt>
+   <dd><p>Returns the <span data-x="concept-document-url">URL</span> of the document whose storage
+   item changed.</p></dd>
+
+   <dt><code data-x=""><var>event</var>.<span subdfn data-x="dom-StorageEvent-storageArea">storageArea</span></code></dt>
+   <dd><p>Returns the <code>Storage</code> object that was affected.</p></dd>
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn attribute for="StorageEvent"><code data-x="dom-StorageEvent-key">key</code></dfn>,
+  <dfn attribute for="StorageEvent"><code data-x="dom-StorageEvent-oldValue">oldValue</code></dfn>,
+  <dfn attribute for="StorageEvent"><code data-x="dom-StorageEvent-newValue">newValue</code></dfn>,
+  <dfn attribute for="StorageEvent"><code data-x="dom-StorageEvent-url">url</code></dfn>, and <dfn
+  attribute for="StorageEvent"><code data-x="dom-StorageEvent-storageArea">storageArea</code></dfn>
+  attributes must return the values they were initialized to.</p>
+  </div>
+
+  <!-- handwavy, file bugs if there are interop issues -->
+  <div algorithm>
+  <p>The <dfn method for="StorageEvent"><code
+  data-x="dom-StorageEvent-initStorageEvent">initStorageEvent(<var>type</var>, <var>bubbles</var>,
+  <var>cancelable</var>, <var>key</var>, <var>oldValue</var>, <var>newValue</var>, <var>url</var>,
+  <var>storageArea</var>)</code></dfn> method must initialize the event in a manner analogous to the
+  similarly-named <code data-x="dom-Event-initEvent">initEvent()</code> method. <ref>DOM</ref></p>
+  </div>
+
+  </div>
+
+
+  <h3>Privacy</h3>
+

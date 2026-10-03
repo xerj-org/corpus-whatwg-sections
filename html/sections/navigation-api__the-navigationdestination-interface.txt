@@ -1,0 +1,152 @@
+WHATWG HTML — section navigation-api/the-navigationdestination-interface — The <code>NavigationDestination</code> interface
+
+  <h6>The <code>NavigationDestination</code> interface</h6>
+
+  <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>NavigationDestination</dfn> {
+  readonly attribute USVString <span data-x="dom-NavigationDestination-url">url</span>;
+  readonly attribute DOMString <span data-x="dom-NavigationDestination-key">key</span>;
+  readonly attribute DOMString <span data-x="dom-NavigationDestination-id">id</span>;
+  readonly attribute long long <span data-x="dom-NavigationDestination-index">index</span>;
+  readonly attribute boolean <span data-x="dom-NavigationDestination-sameDocument">sameDocument</span>;
+
+  any <span data-x="dom-NavigationDestination-getState">getState</span>();
+};</code></pre>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>event</var>.<span data-x="dom-NavigateEvent-destination">destination</span>.<span data-x="dom-NavigationDestination-url">url</span></code></dt>
+   <dd><p>The URL being navigated to.</p></dd>
+
+   <dt><code data-x=""><var>event</var>.<span data-x="dom-NavigateEvent-destination">destination</span>.<span data-x="dom-NavigationDestination-key">key</span></code></dt>
+   <dd><p>The value of the <code data-x="dom-NavigationHistoryEntry-key">key</code> property of the
+   destination <code>NavigationHistoryEntry</code>, if this is a "<code
+   data-x="dom-NavigationType-traverse">traverse</code>" navigation, or the empty string otherwise. </p></dd>
+
+   <dt><code data-x=""><var>event</var>.<span data-x="dom-NavigateEvent-destination">destination</span>.<span data-x="dom-NavigationDestination-id">id</span></code></dt>
+   <dd><p>The value of the <code data-x="dom-NavigationHistoryEntry-id">id</code> property of the
+   destination <code>NavigationHistoryEntry</code>, if this is a "<code
+   data-x="dom-NavigationType-traverse">traverse</code>" navigation, or the empty string otherwise. </p></dd>
+
+   <dt><code data-x=""><var>event</var>.<span data-x="dom-NavigateEvent-destination">destination</span>.<span data-x="dom-NavigationDestination-index">index</span></code></dt>
+   <dd><p>The value of the <code data-x="dom-NavigationHistoryEntry-index">index</code> property of
+   the destination <code>NavigationHistoryEntry</code>, if this is a "<code
+   data-x="dom-NavigationType-traverse">traverse</code>" navigation, or &minus;1 otherwise.
+   </p></dd>
+
+   <dt><code data-x=""><var>event</var>.<span data-x="dom-NavigateEvent-destination">destination</span>.<span data-x="dom-NavigationDestination-sameDocument">sameDocument</span></code></dt>
+   <dd>
+    <p>Indicates whether or not this navigation is to the same <code>Document</code> as the current
+    one, or not. This will be true, for example, in the case of fragment navigations or <code
+    data-x="dom-history-pushState">history.pushState()</code> navigations.</p>
+
+    <p>Note that this property indicates the original nature of the navigation. If a cross-document
+    navigation is converted into a same-document navigation using <code
+    data-x="dom-NavigateEvent-intercept">navigateEvent.intercept()</code>, that will not change the
+    value of this property.</p>
+   </dd>
+
+   <dt><code data-x=""><var>event</var>.<span data-x="dom-NavigateEvent-destination">destination</span>.<span data-x="dom-NavigationDestination-getState">getState</span>()</code></dt>
+   <dd>
+    <p>For "<code data-x="dom-NavigationType-traverse">traverse</code>" navigations, returns the
+    <span data-x="StructuredDeserialize">deserialization</span> of the state stored in the
+    destination <span>session history entry</span>.</p>
+
+    <p>For "<code data-x="dom-NavigationType-push">push</code>" or "<code
+    data-x="dom-NavigationType-replace">replace</code>" navigations, returns the <span
+    data-x="StructuredDeserialize">deserialization</span> of the state passed to <code
+    data-x="dom-Navigation-navigate">navigation.navigate()</code>, if the navigation was initiated
+    by that method, or undefined it if it wasn't.</p>
+
+    <p>For "<code data-x="dom-NavigationType-reload">reload</code>" navigations, returns the <span
+    data-x="StructuredDeserialize">deserialization</span> of the state passed to <code
+    data-x="dom-Navigation-reload">navigation.reload()</code>, if the reload was initiated by that
+    method, or undefined it if it wasn't.</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <p>Each <code>NavigationDestination</code> has a <dfn
+  data-x="concept-NavigationDestination-url">URL</dfn>, which is a <span>URL</span>.</p>
+
+  <p>Each <code>NavigationDestination</code> has an <dfn
+  data-x="concept-NavigationDestination-entry">entry</dfn>, which is a
+  <code>NavigationHistoryEntry</code> or null.</p>
+
+  <p class="note">It will be non-null if and only if the <code>NavigationDestination</code>
+  corresponds to a "<code data-x="dom-NavigationType-traverse">traverse</code>" navigation.</p>
+
+  <p>Each <code>NavigationDestination</code> has a <dfn
+  data-x="concept-NavigationDestination-state">state</dfn>, which is a <span>serialized
+  state</span>.</p>
+
+  <p>Each <code>NavigationDestination</code> has an <dfn
+  data-x="concept-NavigationDestination-sameDocument">is same document</dfn>, which is a
+  boolean.</p>
+
+  <hr>
+
+  <div algorithm>
+  <p>The <dfn attribute for="NavigationDestination"><code
+  data-x="dom-NavigationDestination-url">url</code></dfn> getter steps are to return
+  <span>this</span>'s <span data-x="concept-NavigationDestination-url">URL</span>, <span
+  data-x="concept-url-serializer">serialized</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="NavigationDestination"><code
+  data-x="dom-NavigationDestination-key">key</code></dfn> getter steps are:</p>
+
+  <ol>
+   <li><p>If <span>this</span>'s <span data-x="concept-NavigationDestination-entry">entry</span> is
+   null, then return the empty string.</p></li>
+
+   <li><p>Return <span>this</span>'s <span
+   data-x="concept-NavigationDestination-entry">entry</span>'s <span
+   data-x="concept-NavigationHistoryEntry-key">key</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="NavigationDestination"><code
+  data-x="dom-NavigationDestination-id">id</code></dfn> getter steps are:</p>
+
+  <ol>
+   <li><p>If <span>this</span>'s <span data-x="concept-NavigationDestination-entry">entry</span> is
+   null, then return the empty string.</p></li>
+
+   <li><p>Return <span>this</span>'s <span
+   data-x="concept-NavigationDestination-entry">entry</span>'s <span
+   data-x="concept-NavigationHistoryEntry-id">ID</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="NavigationDestination"><code
+  data-x="dom-NavigationDestination-index">index</code></dfn> getter steps are:</p>
+
+  <ol>
+   <li><p>If <span>this</span>'s <span data-x="concept-NavigationDestination-entry">entry</span> is
+   null, then return &minus;1.</p></li>
+
+   <li><p>Return <span>this</span>'s <span
+   data-x="concept-NavigationDestination-entry">entry</span>'s <span
+   data-x="concept-NavigationHistoryEntry-index">index</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="NavigationDestination"><code
+  data-x="dom-NavigationDestination-sameDocument">sameDocument</code></dfn> getter steps are to
+  return <span>this</span>'s <span data-x="concept-NavigationDestination-sameDocument">is same
+  document</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn method for="NavigationDestination"><code
+  data-x="dom-NavigationDestination-getState">getState()</code></dfn> method steps are to return
+  <span>StructuredDeserialize</span>(<span>this</span>'s <span
+  data-x="concept-NavigationDestination-state">state</span>).</p>
+  </div>
+
+

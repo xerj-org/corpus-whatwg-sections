@@ -1,0 +1,44 @@
+WHATWG HTML — section dependencies/unicode-and-encoding — Unicode and Encoding
+
+   <dt>Unicode and Encoding</dt>
+
+   <dd>
+    <p>The Unicode character set is used to represent textual data, and <cite>Encoding</cite>
+    defines requirements around <span data-x="encoding">character encodings</span>.
+    <ref>UNICODE</ref></p>
+
+    <p class="note">This specification <a href="#encoding-terminology">introduces terminology</a>
+    based on the terms defined in those specifications, as described earlier.</p>
+
+    <p>The following terms are used as defined in <cite>Encoding</cite>: <ref>ENCODING</ref></p>
+
+    <ul class="brief">
+     <li><dfn data-x-href="https://encoding.spec.whatwg.org/#concept-encoding-get">Getting an
+     encoding</dfn></li>
+
+     <li><dfn data-x-href="https://encoding.spec.whatwg.org/#get-an-output-encoding">Get an output
+     encoding</dfn></li>
+
+     <li>The generic <dfn data-x-href="https://encoding.spec.whatwg.org/#decode">decode</dfn>
+     algorithm which takes a byte stream and an encoding and returns a character stream</li>
+
+     <li>The <dfn data-x-href="https://encoding.spec.whatwg.org/#utf-8-decode">UTF-8 decode</dfn>
+     algorithm which takes a byte stream and returns a character stream, additionally stripping one
+     leading UTF-8 Byte Order Mark (BOM), if any</li>
+
+     <li>The <dfn data-x-href="https://encoding.spec.whatwg.org/#utf-8-decode-without-bom">UTF-8
+     decode without BOM</dfn> algorithm which is identical to <span>UTF-8 decode</span> except that
+     it does not strip one leading UTF-8 Byte Order Mark (BOM)</li>
+
+     <li>The <dfn data-x-href="https://encoding.spec.whatwg.org/#encode">encode</dfn> algorithm
+     which takes a character stream and an encoding and returns a byte stream</li>
+
+     <li>The <dfn data-x-href="https://encoding.spec.whatwg.org/#utf-8-encode">UTF-8 encode</dfn>
+     algorithm which takes a character stream and returns a byte stream</li>
+
+     <li>The <dfn data-x-href="https://encoding.spec.whatwg.org/#bom-sniff">BOM sniff</dfn>
+     algorithm which takes a byte stream and returns an encoding or null.</li>
+    </ul>
+   </dd>
+
+

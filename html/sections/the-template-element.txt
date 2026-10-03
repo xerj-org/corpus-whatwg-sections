@@ -1,0 +1,637 @@
+WHATWG HTML — section the-template-element — The <dfn element><code>template</code></dfn> element
+
+  <h4 id="the-template-element">The <dfn element><code>template</code></dfn> element</h4>
+
+  <dl class="element">
+   <dt><span data-x="concept-element-categories">Categories</span>:</dt>
+   <dd><span>Metadata content</span>.</dd>
+   <dd><span>Flow content</span>.</dd>
+   <dd><span>Phrasing content</span>.</dd>
+   <dd><span data-x="script-supporting elements">Script-supporting element</span>.</dd>
+   <dt><span data-x="concept-element-contexts">Contexts in which this element can be used</span>:</dt>
+   <dd>Where <span>metadata content</span> is expected.</dd>
+   <dd>Where <span>phrasing content</span> is expected.</dd>
+   <dd>Where <span>script-supporting elements</span> are expected.</dd>
+   <dd>As a child of a <code>colgroup</code> element that doesn't have a <code data-x="attr-colgroup-span">span</code> attribute.</dd>
+   <dt><span data-x="concept-element-content-model">Content model</span>:</dt>
+   <dd><span data-x="concept-content-nothing">Nothing</span> (for clarification, <a href="#template-example">see example</a>).</dd>
+   <dt><span data-x="concept-element-attributes">Content attributes</span>:</dt>
+   <dd><span>Global attributes</span></dd>
+   <dd><code data-x="attr-template-for">for</code></dd>
+   <dd><code data-x="attr-template-shadowrootmode">shadowrootmode</code></dd>
+   <dd><code data-x="attr-template-shadowrootdelegatesfocus">shadowrootdelegatesfocus</code></dd>
+   <dd><code data-x="attr-template-shadowrootserializable">shadowrootserializable</code></dd>
+   <dd><code data-x="attr-template-shadowrootslotassignment">shadowrootslotassignment</code></dd>
+   <dd><code data-x="attr-template-shadowrootclonable">shadowrootclonable</code></dd>
+   <dd><code data-x="attr-template-shadowrootcustomelementregistry">shadowrootcustomelementregistry</code></dd>
+   <dt><span
+   data-x="concept-element-accessibility-considerations">Accessibility considerations</span>:</dt>
+   <dd><a href="https://w3c.github.io/html-aria/#el-template">For authors</a>.</dd>
+   <dd><a href="https://w3c.github.io/html-aam/#el-template">For implementers</a>.</dd>
+   <dt><span data-x="concept-element-sanitization">Sanitization</span>:</dt>
+   <dd><span data-x="sanitizer-uncategorized">Uncategorized</span>.</dd>
+   <dt><span data-x="concept-element-dom">DOM interface</span>:</dt>
+   <dd w-nodev>
+    <pre><code class="idl">[Exposed=Window]
+interface <dfn interface>HTMLTemplateElement</dfn> : <span>HTMLElement</span> {
+  [<span>HTMLConstructor</span>] constructor();
+
+  readonly attribute <span>DocumentFragment</span> <span data-x="dom-template-content">content</span>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>="<span data-x="attr-template-for">for</span>"] attribute DOMString <dfn attribute for="HTMLTemplateElement" data-x="dom-template-htmlFor">htmlFor</dfn>;
+  [<span>CEReactions</span>] attribute DOMString <span data-x="dom-template-shadowRootMode">shadowRootMode</span>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute boolean <dfn attribute for="HTMLTemplateElement" data-x="dom-template-shadowRootDelegatesFocus">shadowRootDelegatesFocus</dfn>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute boolean <dfn attribute for="HTMLTemplateElement" data-x="dom-template-shadowRootSerializable">shadowRootSerializable</dfn>;
+  [<span>CEReactions</span>] attribute DOMString <span data-x="dom-template-shadowRootSlotAssignment">shadowRootSlotAssignment</span>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute boolean <dfn attribute for="HTMLTemplateElement" data-x="dom-template-shadowRootClonable">shadowRootClonable</dfn>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute DOMString <dfn attribute for="HTMLTemplateElement" data-x="dom-template-shadowRootCustomElementRegistry">shadowRootCustomElementRegistry</dfn>;
+};</code></pre>
+</dd>
+   <dd w-dev>Uses <code>HTMLTemplateElement</code>.</dd>
+  </dl>
+
+  <p>The <code>template</code> element is used to declare fragments of HTML that can be cloned and
+  inserted in the document by script.</p>
+
+  <p>In a rendering, the <code>template</code> element <span>represents</span> nothing.</p>
+
+  <p>The <dfn element-attr for="template"><code data-x="attr-template-for">for</code></dfn> content
+  attribute identifies the <code>ProcessingInstruction</code> that marks the location at which to
+  insert content (<code data-x="">&lt;?marker></code>) or the start of the range to replace
+  (<code data-x="">&lt;?start></code>). If the attribute is specified, the attribute's value must
+  equal the value of the <code data-x="">name</code> attribute of a <code
+  data-x="">&lt;?marker></code> or <code data-x="">&lt;?start></code>
+  <code>ProcessingInstruction</code> in the same <span>tree</span> as the <code>template</code>
+  element.</p>
+
+  <p>The <dfn element-attr for="template"><code
+  data-x="attr-template-shadowrootmode">shadowrootmode</code></dfn> content attribute is an
+  <span>enumerated attribute</span> with the following keywords and states:</p>
+
+  <table>
+   <thead>
+    <tr>
+     <th>Keyword
+     <th>State
+     <th>Brief description
+   <tbody>
+    <tr>
+     <td><dfn attr-value for="template/shadowrootmode"><code data-x="attr-shadowrootmode-open">open</code></dfn>
+     <td><dfn data-x="attr-shadowrootmode-open-state">Open</dfn>
+     <td>The template element represents an open declarative shadow root.
+    <tr>
+     <td><dfn attr-value for="template/shadowrootmode"><code data-x="attr-shadowrootmode-closed">closed</code></dfn>
+     <td><dfn data-x="attr-shadowrootmode-closed-state">Closed</dfn>
+     <td>The template element represents a closed declarative shadow root.
+  </table>
+
+  <p>The <code data-x="attr-template-shadowrootmode">shadowrootmode</code> attribute's <i
+  data-x="invalid value default">invalid value default</i> and <i data-x="missing value
+  default">missing value default</i> are both the <dfn
+  data-x="attr-shadowrootmode-none-state">None</dfn> state.</p>
+
+  <p>The <dfn element-attr for="template"><code
+  data-x="attr-template-shadowrootdelegatesfocus">shadowrootdelegatesfocus</code></dfn> content
+  attribute is a <span>boolean attribute</span>.</p>
+
+  <p>The <dfn element-attr for="template"><code
+  data-x="attr-template-shadowrootserializable">shadowrootserializable</code></dfn> content
+  attribute is a <span>boolean attribute</span>.</p>
+
+  <p>The <dfn element-attr for="template"><code
+  data-x="attr-template-shadowrootslotassignment">shadowrootslotassignment</code></dfn> content
+  attribute is an <span>enumerated attribute</span> with the following keywords and states:</p>
+
+  <table>
+   <thead>
+    <tr>
+     <th>Keyword
+     <th>State
+     <th>Brief description
+   <tbody>
+    <tr>
+     <td><dfn attr-value for="template/shadowrootslotassignment"><code data-x="attr-shadowrootslotassignment-named">named</code></dfn>
+     <td><dfn data-x="attr-shadowrootslotassignment-named-state">Named</dfn>
+     <td>The declarative shadow root uses named slot assignment.
+    <tr>
+     <td><dfn attr-value for="template/shadowrootslotassignment"><code data-x="attr-shadowrootslotassignment-manual">manual</code></dfn>
+     <td><dfn data-x="attr-shadowrootslotassignment-manual-state">Manual</dfn>
+     <td>The declarative shadow root uses manual slot assignment.
+  </table>
+
+  <p>The <code data-x="attr-template-shadowrootslotassignment">shadowrootslotassignment</code>
+  attribute's <i data-x="invalid value default">invalid value default</i> and <i data-x="missing
+  value default">missing value default</i> are both the <span
+  data-x="attr-shadowrootslotassignment-named-state">Named</span> state.</p>
+
+  <p>The <dfn element-attr for="template"><code
+  data-x="attr-template-shadowrootclonable">shadowrootclonable</code></dfn> content attribute is a
+  <span>boolean attribute</span>.</p>
+
+  <p>The <dfn element-attr for="template"><code
+  data-x="attr-template-shadowrootcustomelementregistry">shadowrootcustomelementregistry</code></dfn>
+  content attribute is a <span>boolean attribute</span>.</p>
+
+  <p>The <span>template contents</span> of a <code>template</code> element <a
+  href="#template-syntax">are not children of the element itself</a>.</p>
+
+  <p class="note">It is also possible, as a result of DOM manipulation, for a <code>template</code>
+  element to contain <code>Text</code> nodes and element nodes; however, having any is a violation
+  of the <code>template</code> element's content model, since its content model is defined as <span
+  data-x="concept-content-nothing">nothing</span>.</p>
+
+  <div class="example" id="template-example">
+
+   <p>For example, consider the following document:</p>
+
+   <!-- https://www.quora.com/Homework-Question-How-do-I-write-a-program-that-produces-the-following-output-1 -->
+
+   <pre><code class="html">&lt;!doctype html>
+&lt;html lang="en">
+ &lt;head>
+  &lt;title>Homework&lt;/title>
+ &lt;body>
+  &lt;template id="template">&lt;p>Smile!&lt;/p>&lt;/template>
+  &lt;script>
+   let num = 3;
+   const fragment = document.getElementById('template').content.cloneNode(true);
+   while (num-- > 1) {
+     fragment.firstChild.before(fragment.firstChild.cloneNode(true));
+     fragment.firstChild.textContent += fragment.lastChild.textContent;
+   }
+   document.body.appendChild(fragment);
+  &lt;/script>
+&lt;/html></code></pre>
+
+   <p>The <code>p</code> element in the <code>template</code> is <em>not</em> a child of the
+   <code>template</code> in the DOM; it is a child of the <code>DocumentFragment</code> returned by
+   the <code>template</code> element's <code data-x="dom-template-content">content</code> IDL
+   attribute.</p>
+
+   <p>If the script were to call <code data-x="dom-node-appendchild">appendChild()</code> on the
+   <code>template</code> element, that would add a child to the <code>template</code> element (as
+   for any other element); however, doing so is a violation of the <code>template</code> element's
+   content model.</p>
+
+  </div>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>template</var>.<span subdfn data-x="dom-template-content">content</span></code></dt>
+
+   <dd><p>Returns the <span>template contents</span> (a <code>DocumentFragment</code>).</p></dd>
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>Each <code>template</code> element has an associated <code>DocumentFragment</code> object that
+  is its <dfn>template contents</dfn>. The <span>template contents</span> have <a
+  href="#no-browsing-context">no conformance requirements</a>. When a <code>template</code> element
+  is created, the user agent must run the following steps to establish the <span>template
+  contents</span>:</p>
+
+  <ol>
+   <li><p>Let <var>document</var> be the <code>template</code> element's <span>node
+   document</span>'s <span>appropriate template contents owner document</span>.</p></li>
+
+   <li><p>Create a <code>DocumentFragment</code> object whose <span>node document</span> is
+   <var>document</var> and <span data-x="concept-DocumentFragment-host">host</span> is the
+   <code>template</code> element.</p></li>
+
+   <li><p>Set the <code>template</code> element's <span>template contents</span> to the newly
+   created <code>DocumentFragment</code> object.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>A <code>Document</code> <var>document</var>'s <dfn>appropriate template contents owner
+  document</dfn> is the <code>Document</code> returned by the following algorithm:</p>
+
+  <ol>
+   <li>
+    <p>If <var>document</var> is not a <code>Document</code> created by this algorithm:</p>
+
+    <ol>
+     <li>
+      <p>If <var>document</var> does not yet have an <dfn>associated inert template
+      document</dfn>:</p>
+
+      <ol>
+       <li><p>Let <var>newDocument</var> be the result of <span data-x="create a document">creating
+       a document</span> that implements <code>Document</code>, given <var>document</var>'s <span
+       data-x="concept-relevant-realm">relevant realm</span>; its <span
+       data-x="concept-document-bc">browsing context</span> is null. This is "a <code>Document</code>
+       created by this algorithm" for the purposes of the step above.</p></li>
+
+       <li><p>If <var>document</var> is an <span data-x="HTML documents">HTML document</span>, then
+       mark <var>newDocument</var> as an <span data-x="HTML documents">HTML document</span>
+       also.</p></li>
+
+       <li><p>Set <var>document</var>'s <span>associated inert template document</span> to
+       <var>newDocument</var>.</p></li>
+      </ol>
+     </li>
+
+     <li><p>Set <var>document</var> to <var>document</var>'s <span>associated inert template
+     document</span>.</p></li>
+    </ol>
+
+    <p class="note">Each <code>Document</code> not created by this algorithm thus gets a single
+    <code>Document</code> to act as its proxy for owning the <span>template contents</span> of all
+    its <code>template</code> elements, so that they aren't in a <span>browsing context</span> and
+    thus remain inert (e.g. scripts do not run). Meanwhile, <code>template</code> elements inside
+    <code>Document</code> objects that <em>are</em> created by this algorithm just reuse the same
+    <code>Document</code> owner for their contents.</p>
+   </li>
+
+   <li><p>Return <var>document</var>.</p></li>
+  </ol>
+  </div>
+
+  <p>Each <code>template</code> element has an associated
+  <code>Element</code>-or-<code>DocumentFragment</code>-or-null <dfn>insertion target</dfn>, which
+  is initially null.</p>
+
+  <p>Each <code>template</code> element has an associated <code>ProcessingInstruction</code>-or-null
+  <dfn>insertion start marker</dfn> and <dfn>insertion end marker</dfn>, which are initially
+  null.</p>
+
+  <div algorithm>
+  <p id="template-adopting-steps">The <span data-x="concept-node-adopt-ext">adopting steps</span>
+  (with <var>node</var> and <var>oldDocument</var> as parameters) for <code>template</code> elements
+  are the following:</p>
+
+  <ol>
+   <li>
+    <p>Let <var>document</var> be <var>node</var>'s <span>node document</span>'s
+    <span>appropriate template contents owner document</span>.</p>
+
+    <p class="note"><var>node</var>'s <span>node document</span> is the <code>Document</code> object
+    that <var>node</var> was just adopted <em>into</em>.</p>
+   </li>
+
+   <li><p><span data-x="concept-node-adopt">Adopt</span> <var>node</var>'s
+   <span>template contents</span> (a <code>DocumentFragment</code> object) into
+   <var>document</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLTemplateElement"><code
+  data-x="dom-template-content">content</code></dfn> getter steps are:
+
+  <ol>
+   <li><p><span>Assert</span>: <span>this</span>'s <span>template contents</span> is not a
+   <code>ShadowRoot</code> node.</p></li>
+
+   <li><p>Return <span>this</span>'s <span>template contents</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLTemplateElement"><code
+  data-x="dom-template-shadowRootMode">shadowRootMode</code></dfn> IDL attribute must
+  <span>reflect</span> the <code data-x="attr-template-shadowrootmode">shadowrootmode</code> content
+  attribute, <span>limited to only known values</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLTemplateElement"><code
+  data-x="dom-template-shadowRootSlotAssignment">shadowRootSlotAssignment</code></dfn> IDL attribute
+  must <span>reflect</span> the <code
+  data-x="attr-template-shadowrootslotassignment">shadowrootslotassignment</code> content attribute,
+  <span>limited to only known values</span>.</p>
+  </div>
+
+  <p class="note">The <span
+  data-x="dom-template-shadowRootCustomElementRegistry">shadowRootCustomElementRegistry</span> IDL
+  attribute intentionally does not have a boolean type so it can be extended.</p>
+
+  <hr>
+
+  <div algorithm>
+  <p>The <span data-x="concept-node-clone-ext">cloning steps</span> for <code>template</code>
+  elements given <var>node</var>, <var>copy</var>, and <var>subtree</var> are:</p>
+
+  <ol>
+   <li><p>If <var>subtree</var> is false, then return.</p></li>
+
+   <li><p>For each <var>child</var> of <var>node</var>'s <span>template contents</span>'s <span
+   data-x="concept-tree-child">children</span>, in <span>tree order</span>: <span
+   data-x="concept-node-clone">clone a node</span> given <var>child</var> with <span
+   data-x="concept-node-clone-document"><i>document</i></span> set to <var>copy</var>'s
+   <span>template contents</span>'s <span>node document</span>, <span
+   data-x="concept-node-clone-subtree"><i>subtree</i></span> set to true, and <span
+   data-x="concept-node-clone-parent"><i>parent</i></span> set to <var>copy</var>'s <span>template
+   contents</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>prepare content patching</dfn> given an <code>Element</code> or
+  <code>DocumentFragment</code> <var>scope</var> and a <code>template</code> element
+  <var>template</var>:</p>
+
+  <ol>
+   <li><p><span>Assert</span>: <var>template</var>'s <code data-x="attr-template-for">for</code>
+   attribute is specified.</p></li>
+
+   <li><p>Let <var>markerName</var> be <var>template</var>'s <code
+   data-x="attr-template-for">for</code> attribute's value.</p></li>
+
+   <li><p>If <var>markerName</var> is the empty string, then return false.</p></li>
+
+   <li><p>Let (<var>start</var>, <var>end</var>) be the result of <span>find markers</span>
+   given <var>scope</var> and <var>markerName</var>.</p></li>
+
+   <li><p>If <var>start</var> is null, then return false.</p></li>
+
+   <li><p>Set <var>template</var>'s <span>insertion target</span> to
+   <var>start</var>'s <span>parent</span>.</p></li>
+
+   <li><p>Set <var>template</var>'s <span>insertion start marker</span> to
+   <var>start</var>.</p></li>
+
+   <li><p>Set <var>template</var>'s <span>insertion end marker</span> to <var>end</var>.</p></li>
+
+   <li><p>If <var>start</var> is <var>end</var>, then return true.</p></li>
+
+   <li><p>Let <var>removedNodes</var> be an empty <span>list</span>.</p></li>
+
+   <li><p>Let <var>currentNode</var> be <var>start</var>'s <span>next sibling</span>.</p></li>
+
+   <li>
+    <p>While <var>currentNode</var> is not null:</p>
+
+    <ol>
+     <li><p>If <var>currentNode</var> is <var>end</var>, then <span>break</span>.</p></li>
+
+     <li><p>Append <var>currentNode</var> to <var>removedNodes</var>.</p></li>
+
+     <li><p>Set <var>currentNode</var> to <var>currentNode</var>'s <span>next
+     sibling</span>.</p></li>
+    </ol>
+   </li>
+
+   <li>
+    <p>For each <var>node</var> of <var>removedNodes</var>:</p>
+
+    <ol>
+     <li>
+      <p>If <var>node</var>'s <span>parent</span> is not null, then <span
+      data-x="concept-node-remove">remove</span> <var>node</var>.</p>
+
+      <p class="note">The parent might have changed because removing a node can fire events like
+      the <code data-x="event-pagehide">pagehide</code> event, and an event handler can mutate the
+      DOM. The parent identity is not checked; as long as the node still has a parent, it is
+      removed.</p>
+     </li>
+    </ol>
+   </li>
+
+   <li><p>Return true.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>find markers</dfn> given a node <var>scope</var> and a string <var>name</var>:</p>
+
+  <ol>
+   <li>
+    <p>For each <var>descendant</var> of <var>scope</var>'s <span
+    data-x="descendant">descendants</span>, in <span>tree order</span>:</p>
+
+    <ol>
+     <li><p>If <var>descendant</var> is not a <code>ProcessingInstruction</code> node, then
+     <span>continue</span>.</p></li>
+
+     <li><p>If the result of <span data-x="get-a-processing-instruction-attribute">getting a
+     processing instruction attribute</span> given <var>descendant</var> and "<code
+     data-x="">name</code>" is not <var>name</var>, then <span>continue</span>.</p></li>
+
+     <li><p>If <var>descendant</var>'s <span data-x="concept-pi-target">target</span> is "<code
+     data-x="">marker</code>", then return (<var>descendant</var>, <var>descendant</var>).</p></li>
+
+     <li>
+      <p>If <var>descendant</var>'s <span data-x="concept-pi-target">target</span> is "<code
+      data-x="">start</code>":</p>
+
+      <ol>
+       <li><p>Let <var>start</var> be <var>descendant</var>.</p></li>
+
+       <li><p>Let <var>nestingLevel</var> be 0.</p></li>
+
+       <li><p>Let <var>sibling</var> be <var>start</var>'s <span>next sibling</span>.</p></li>
+
+       <li>
+        <p>While <var>sibling</var> is not null:</p>
+
+        <ol>
+         <li>
+          <p>If <var>sibling</var> is a <code>ProcessingInstruction</code> node:</p>
+
+          <ol>
+           <li><p>If <var>sibling</var>'s <span data-x="concept-pi-target">target</span> is "<code
+           data-x="">start</code>", then increment <var>nestingLevel</var> by one.</p></li>
+
+           <li>
+            <p>If <var>sibling</var>'s <span data-x="concept-pi-target">target</span> is "<code
+            data-x="">end</code>":</p>
+
+            <ol>
+             <li><p>If <var>nestingLevel</var> is 0, then return (<var>start</var>,
+             <var>sibling</var>).</p></li>
+
+             <li><p>Decrement <var>nestingLevel</var> by one.</p></li>
+            </ol>
+           </li>
+          </ol>
+         </li>
+
+         <li><p>Set <var>sibling</var> to <var>sibling</var>'s <span>next sibling</span>.</p></li>
+        </ol>
+       </li>
+
+       <li>
+        <p>Return (<var>start</var>, null).</p>
+
+        <p class="note">No matching <code data-x="">&lt;?end></code> was found, which is interpreted
+        as a range from <var>start</var> to the end of its parent.</p>
+       </li>
+      </ol>
+     </li>
+    </ol>
+   </li>
+
+   <li><p>Return (null, null).</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+  <div class="example">
+
+   <p>In this example, a script populates a table four-column with data from a data structure, using
+   a <code>template</code> to provide the element structure instead of manually generating the
+   structure from markup.</p>
+
+   <pre><code class="html">&lt;!DOCTYPE html>
+&lt;html lang='en'>
+&lt;title>Cat data&lt;/title>
+&lt;script>
+ // Data is hard-coded here, but could come from the server
+ var data = [
+   { name: 'Pillar', color: 'Ticked Tabby', sex: 'Female (neutered)', legs: 3 },
+   { name: 'Hedral', color: 'Tuxedo', sex: 'Male (neutered)', legs: 4 },
+ ];
+&lt;/script>
+&lt;table>
+ &lt;thead>
+  &lt;tr>
+   &lt;th>Name &lt;th>Color &lt;th>Sex &lt;th>Legs
+ &lt;tbody>
+  &lt;template id="row">
+   &lt;tr>&lt;td>&lt;td>&lt;td>&lt;td>
+  &lt;/template>
+&lt;/table>
+&lt;script>
+ var template = document.querySelector('#row');
+ for (var i = 0; i &lt; data.length; i += 1) {
+   var cat = data[i];
+   var clone = template.content.cloneNode(true);
+   var cells = clone.querySelectorAll('td');
+   cells[0].textContent = cat.name;
+   cells[1].textContent = cat.color;
+   cells[2].textContent = cat.sex;
+   cells[3].textContent = cat.legs;
+   template.parentNode.appendChild(clone);
+ }
+&lt;/script></code></pre>
+
+   <p>This example uses <code data-x="dom-node-cloneNode">cloneNode()</code> on the
+   <code>template</code>'s contents; it could equivalently have used <code
+   data-x="dom-Document-importNode">document.importNode()</code>, which does the same thing. The
+   only difference between these two APIs is when the <span>node document</span> is updated: with
+   <code data-x="dom-node-cloneNode">cloneNode()</code> it is updated when the nodes are appended
+   with <code data-x="dom-node-appendChild">appendChild()</code>, with <code
+   data-x="dom-Document-importNode">document.importNode()</code> it is updated when the nodes are
+   cloned.</p>
+
+  </div>
+
+  <div class="example">
+   <p>In this example, a <code>template</code> element with a <code
+   data-x="attr-template-for">for</code> attribute is used to populate a list of countries in a
+   <code>select</code> element, after the main content of the page has been delivered.</p>
+
+   <pre><code class="html">&lt;!DOCTYPE html>
+&lt;html lang="en">
+ &lt;head>
+  &lt;title>Out-of-order countries&lt;/title>
+  &lt;style>
+   #countries:empty {
+    opacity: 0;
+   }
+  &lt;/style>
+ &lt;/head>
+ &lt;body>
+  &lt;select id=countries>&lt;?marker name="country-options"?>&lt;/select>
+  ...
+  &lt;template for="country-options">&lt;option>Antigua&lt;/option>...&lt;/template>
+ &lt;/body>
+&lt;/html></code></pre>
+
+   <p>The <code data-x="">&lt;?marker?></code> processing instruction is replaced with the
+   <code>option</code> elements from the later <code>template</code> element. The
+   <code>select</code> element is transparent until it is populated.</p>
+  </div>
+
+  <div class="example">
+   <p>In this example, a <code>template</code> element with a <code
+   data-x="attr-template-for">for</code> attribute is used to stream a document out-of-order,
+   sending fast static content first and recommendations computed asynchronously as they become
+   available on the server.</p>
+
+   <pre><code class="html">&lt;!DOCTYPE html>
+&lt;html lang="en">
+ &lt;head>
+  &lt;title>Async recommendation engine&lt;/title>
+  &lt;style>
+   aside {
+    /* position the aside where it can grow without causing layout shift or obscuring other content */
+   }
+   aside:has(.placeholder) {
+    /* style the placeholder content */
+   }
+  &lt;/style>
+ &lt;/head>
+ &lt;body>
+  &lt;h1>How to train your cat&lt;/h1>
+  &lt;p>Set realistic goals and don't expect your cat to make a perfect cup of tea
+  on the first try.&lt;/p>
+  &lt;aside>
+    &lt;p>Recommended reading:&lt;/p>
+    &lt;?start name="recommended">
+    &lt;ul class="placeholder">
+      &lt;li>...&lt;/li>
+      &lt;li>...&lt;/li>
+      &lt;li>...&lt;/li>
+    &lt;/ul>
+    &lt;?end>
+  &lt;/aside>
+  &lt;p>...&lt;/p>
+  &lt;p>Now sit back and enjoy your tea with your cat.&lt;/p>
+
+  &lt;!-- The server has a potentially long delay at this point. --&gt;
+
+  &lt;template for="recommended">
+    &lt;ul>
+      &lt;li>Cat or butler, which is right for you?&lt;/li>
+      &lt;li>Rewarding good cat behavior&lt;/li>
+      &lt;li>Kettles considered harmful&lt;/li>
+    &lt;/ul>
+  &lt;/template>
+ &lt;/body>
+&lt;/html></code></pre>
+
+   <p>The content between <code data-x="">&lt;?start name="recommended"></code> and <code
+   data-x="">&lt;?end></code> is replaced with the <code>template</code> contents. Since the new
+   content does not use <code data-x="">class="placeholder"</code>, the placeholder styling no
+   longer applies.</p>
+  </div>
+
+
+
+  <div w-nodev>
+
+  <h5 id="template-XSLT-XPath">Interaction of <code>template</code> elements with XSLT and XPath</h5>
+
+  <p class="critical">Avoid using client-side XSLT in browsers. The browser implementations of XSLT
+  are highly susceptible to memory safety vulnerabilities, and the web platform has evolved toward
+  JavaScript as the safe replacement. For these reasons, this feature is in the process of being
+  removed from the web platform. (This is a long process that takes many years.)</p>
+
+  <!-- NON-NORMATIVE SECTION -->
+
+  <p>This specification does not define how XSLT and XPath interact with the <code>template</code>
+  element. However, in the absence of another specification actually defining this, here are some
+  guidelines for implementers, which are intended to be consistent with other processing described
+  in this specification:</p>
+
+  <ul>
+   <li><p>An XSLT processor based on an XML parser that acts <span data-x="xml parser">as described
+   in this specification</span> needs to act as if <code>template</code> elements contain as
+   descendants their <span>template contents</span> for the purposes of the transform.</p></li>
+
+   <li><p>An XSLT processor that outputs a DOM needs to ensure that nodes that would go into a
+   <code>template</code> element are instead placed into the element's <span>template
+   contents</span>.</p></li>
+
+   <li><p>XPath evaluation using the XPath DOM API when applied to a <code>Document</code> parsed
+   using the <span>HTML parser</span> or the <span>XML parser</span> described in this specification
+   needs to ignore <span>template contents</span>.</p>
+  </ul>
+
+  </div>
+
+
+

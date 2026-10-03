@@ -1,0 +1,129 @@
+WHATWG HTML — section the-cite-element — The <dfn element><code>cite</code></dfn> element
+
+  <h4>The <dfn element><code>cite</code></dfn> element</h4>
+
+  <dl class="element">
+   <dt><span data-x="concept-element-categories">Categories</span>:</dt>
+   <dd><span>Flow content</span>.</dd>
+   <dd><span>Phrasing content</span>.</dd>
+   <dd><span>Palpable content</span>.</dd>
+   <dt><span data-x="concept-element-contexts">Contexts in which this element can be used</span>:</dt>
+   <dd>Where <span>phrasing content</span> is expected.</dd>
+   <dt><span data-x="concept-element-content-model">Content model</span>:</dt>
+   <dd><span>Phrasing content</span>.</dd>
+   <dt><span data-x="concept-element-attributes">Content attributes</span>:</dt>
+   <dd><span>Global attributes</span></dd>
+   <dt><span
+   data-x="concept-element-accessibility-considerations">Accessibility considerations</span>:</dt>
+   <dd><a href="https://w3c.github.io/html-aria/#el-cite">For authors</a>.</dd>
+   <dd><a href="https://w3c.github.io/html-aam/#el-cite">For implementers</a>.</dd>
+   <dt><span data-x="concept-element-sanitization">Sanitization</span>:</dt>
+   <dd><span data-x="sanitizer-category-default">Default</span>.</dd>
+   <dt><span data-x="concept-element-dom">DOM interface</span>:</dt>
+   <dd>Uses <code>HTMLElement</code>.</dd>
+  </dl>
+
+  <p>The <code>cite</code> element <span>represents</span> the title of a work (e.g.
+    a book,
+    a paper,
+    an essay,
+    a poem,
+    a score,
+    a song,
+    a script,
+    a film,
+    a TV show,
+    a game,
+    a sculpture,
+    a painting,
+    a theatre production,
+    a play,
+    an opera,
+    a musical,
+    an exhibition,
+    a legal case report,
+    a computer program, <!-- "a software package" ? -->
+  etc.). This can be a work that is being quoted or <span>referenced</span> in detail (i.e., a
+  citation), or it can just be a work that is mentioned in passing.</p>
+
+  <p>A person's name is not the title of a work &mdash; even if people call that person a piece of
+  work &mdash; and the element must therefore not be used to mark up people's names. (In some cases,
+  the <code>b</code> element might be appropriate for names; e.g. in a gossip article where the
+  names of famous people are keywords rendered with a different style to draw attention to them. In
+  other cases, if an element is <em>really</em> needed, the <code>span</code> element can be
+  used.)</p>
+
+<!--(some people argue a ship is a work)
+  <p>A ship is similarly not a work, and the element must not be used to mark up ship names (the
+  <code>i</code> element can be used for that purpose).</p>
+-->
+
+  <div class="example" id="example-cite-usage">
+   <p>This next example shows a typical use of the <code>cite</code> element:</p>
+
+   <pre><code class="html">&lt;p>My favorite book is &lt;cite>The Reality Dysfunction&lt;/cite> by
+Peter F. Hamilton. My favorite comic is &lt;cite>Pearls Before
+Swine&lt;/cite> by Stephan Pastis. My favorite track is &lt;cite>Jive
+Samba&lt;/cite> by the Cannonball Adderley Sextet.&lt;/p></code></pre>
+  </div>
+
+  <div class="example" id="example-cite-usage-correct-vs-incorrect">
+   <p>This is correct usage:</p>
+
+   <pre><code class="html">&lt;p>According to the Wikipedia article &lt;cite>HTML&lt;/cite>, as it
+stood in mid-February 2008, leaving attribute values unquoted is
+unsafe. This is obviously an over-simplification.&lt;/p></code></pre>
+
+   <p>The following, however, is incorrect usage, as the <code>cite</code> element here is
+   containing far more than the title of the work:</p>
+
+   <pre class="bad"><code class="html">&lt;!-- do not copy this example, it is an example of bad usage! -->
+&lt;p>According to &lt;cite>the Wikipedia article on HTML&lt;/cite>, as it
+stood in mid-February 2008, leaving attribute values unquoted is
+unsafe. This is obviously an over-simplification.&lt;/p></code></pre>
+  </div>
+
+  <div class="example" id="example-cite-usage-bibliography">
+   <p>The <code>cite</code> element is a key part of any citation in a bibliography, but it is only
+   used to mark the title:</p>
+
+   <pre><code class="html">&lt;p>&lt;cite>Universal Declaration of Human Rights&lt;/cite>, United Nations,
+December 1948. Adopted by General Assembly resolution 217 A (III).&lt;/p></code></pre>
+  </div>
+
+  <p class="note" id="note-cite-is-not-q">A <em>citation</em> is not a <em>quote</em> (for which the <code>q</code> element
+  is appropriate).</p>
+
+  <div class="example" id="example-cite-usage-incorrect">
+   <p>This is incorrect usage, because <code>cite</code> is not for quotes:</p>
+
+   <pre class="bad"><code class="html">&lt;p>&lt;cite>This is wrong!&lt;/cite>, said Ian.&lt;/p></code></pre>
+
+   <p>This is also incorrect usage, because a person is not a work:</p>
+
+   <pre class="bad"><code class="html">&lt;p>&lt;q>This is still wrong!&lt;/q>, said &lt;cite>Ian&lt;/cite>.&lt;/p></code></pre>
+
+   <p>The correct usage does not use a <code>cite</code> element:</p>
+
+   <pre><code class="html">&lt;p>&lt;q>This is correct&lt;/q>, said Ian.&lt;/p></code></pre>
+
+   <p>As mentioned above, the <code>b</code> element might be relevant for marking names as being
+   keywords in certain kinds of documents:</p>
+
+   <pre><code class="html">&lt;p>And then &lt;b>Ian&lt;/b> said &lt;q>this might be right, in a
+gossip column, maybe!&lt;/q>.&lt;/p></code></pre>
+  </div>
+
+  <p class="note" id="note-cite-surrounding-punctuation">Where the title of a work is conventionally set off with
+  punctuation — for example, the quotation marks used around article titles in English, or the corner brackets (『』)
+  used around book titles in Japanese — that punctuation is not part of the title, and belongs outside the
+  <code>cite</code> element.</p>
+
+  <div class="example" id="example-cite-surrounding-punctuation">
+   <p>This is correct usage:</p>
+
+   <pre><code class="html">&lt;p>My review of 『&lt;cite lang="ja">阪急電車&lt;/cite>』 was titled “&lt;cite>A cute series of short stories&lt;/cite>”.&lt;/p></code></pre>
+  </div>
+
+
+

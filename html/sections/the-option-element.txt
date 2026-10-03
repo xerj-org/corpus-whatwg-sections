@@ -1,0 +1,598 @@
+WHATWG HTML — section the-option-element — The <dfn element><code>option</code></dfn> element
+
+  <h4>The <dfn element><code>option</code></dfn> element</h4>
+
+  <dl class="element">
+   <dt><span data-x="concept-element-categories">Categories</span>:</dt>
+   <dd>None.</dd>
+   <dt><span data-x="concept-element-contexts">Contexts in which this element can be used</span>:</dt>
+   <dd>As a descendant of a <code>select</code> element.</dd>
+   <dd>As a descendant of a <code>datalist</code> element.</dd>
+   <dd>As a descendant of an <code>optgroup</code> element.</dd>
+   <dt><span data-x="concept-element-content-model">Content model</span>:</dt>
+   <dd>If the element has a <code data-x="attr-option-label">label</code> attribute and a <code data-x="attr-option-value">value</code> attribute: <span data-x="concept-content-nothing">Nothing</span>.</dd>
+   <dd>If the element has a <code data-x="attr-option-label">label</code> attribute but no <code data-x="attr-option-value">value</code> attribute: <span data-x="text content">Text</span>.</dd>
+  <!-- Explicitly listing datalist and object here is required because they are not listed in
+       interactive content: https://github.com/whatwg/html/issues/10755 -->
+   <dd>If the element has no <code data-x="attr-option-label">label</code> attribute and is not a
+   descendant of a <code>datalist</code> element: Zero or more <code>div</code> elements or
+   <span>phrasing content</span>, but there must be no <span>interactive content</span> descendant,
+   <code>datalist</code> element descendant, <code>object</code> element descendant, or descendant
+   with the <code data-x="attr-tabindex">tabindex</code> attribute specified</dd>
+   <dd>If the element has no <code data-x="attr-option-label">label</code> attribute and is a
+   descendant of a <code>datalist</code> element: <span data-x="text content">Text</span>.</dd>
+   <dt><span data-x="concept-element-attributes">Content attributes</span>:</dt>
+   <dd><span>Global attributes</span></dd>
+   <dd><code data-x="attr-option-disabled">disabled</code></dd>
+   <dd><code data-x="attr-option-label">label</code></dd>
+   <dd><code data-x="attr-option-selected">selected</code></dd>
+   <dd><code data-x="attr-option-value">value</code></dd>
+   <dt><span
+   data-x="concept-element-accessibility-considerations">Accessibility considerations</span>:</dt>
+   <dd><a href="https://w3c.github.io/html-aria/#el-option">For authors</a>.</dd>
+   <dd><a href="https://w3c.github.io/html-aam/#el-option">For implementers</a>.</dd>
+   <dt><span data-x="concept-element-sanitization">Sanitization</span>:</dt>
+   <dd><span data-x="sanitizer-uncategorized">Uncategorized</span>.</dd>
+   <dt><span data-x="concept-element-dom">DOM interface</span>:</dt>
+   <dd w-nodev>
+    <pre><code class="idl">[Exposed=Window,
+ <span>LegacyFactoryFunction</span>=<span data-x="dom-option">Option</span>(optional DOMString text = "", optional DOMString value, optional boolean defaultSelected = false, optional boolean selected = false)]
+interface <dfn interface>HTMLOptionElement</dfn> : <span>HTMLElement</span> {
+  [<span>HTMLConstructor</span>] constructor();
+
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>] attribute boolean <dfn attribute for="HTMLOptionElement" data-x="dom-option-disabled">disabled</dfn>;
+  readonly attribute <span>HTMLFormElement</span>? <span data-x="dom-option-form">form</span>;
+  [<span>CEReactions</span>, <span data-x="xattr-ReflectSetter">ReflectSetter</span>] attribute DOMString <span data-x="dom-option-label">label</span>;
+  [<span>CEReactions</span>, <span data-x="xattr-Reflect">Reflect</span>="<span data-x="attr-option-selected">selected</span>"] attribute boolean <dfn attribute for="HTMLOptionElement" data-x="dom-option-defaultSelected">defaultSelected</dfn>;
+  [<span>CEReactions</span>] attribute boolean <span data-x="dom-option-selected">selected</span>;
+  [<span>CEReactions</span>, <span data-x="xattr-ReflectSetter">ReflectSetter</span>] attribute DOMString <span data-x="dom-option-value">value</span>;
+
+  [<span>CEReactions</span>] attribute DOMString <span data-x="dom-option-text">text</span>;
+  readonly attribute long <span data-x="dom-option-index">index</span>;
+};</code></pre>
+   </dd>
+   <dd w-dev>Uses <code>HTMLOptionElement</code>.</dd>
+  </dl>
+
+  <p>The <code>option</code> element <span>represents</span> an option in a <code>select</code>
+  element or as part of a list of suggestions in a <code>datalist</code> element.</p>
+
+  <p>In certain circumstances described in the definition of the <code>select</code> element, an
+  <code>option</code> element can be a <code>select</code> element's <span>placeholder label
+  option</span>. A <span>placeholder label option</span> does not represent an actual option, but
+  instead represents a label for the <code>select</code> control.</p>
+
+  <div algorithm>
+  <p>The <dfn element-attr for="option"><code data-x="attr-option-disabled">disabled</code></dfn>
+  attribute is a <span>boolean attribute</span>. An <code>option</code> element <var>option</var> is
+  <dfn data-x="concept-option-disabled">disabled</dfn> if the following steps return true:</p>
+
+  <ol>
+   <li><p>If <var>option</var>'s <code data-x="attr-option-disabled">disabled</code> attribute is
+   present, then return true.</p></li>
+
+   <li>
+    <p>For each <var>ancestor</var> of <var>option</var>'s <span data-x="ancestor">ancestors</span>
+    in reverse <span>tree order</span>:</p>
+
+    <ol>
+     <li><p>If <var>ancestor</var> is a <code>select</code>, <code>hr</code>, <code>datalist</code>,
+     or <code>option</code> element, then return false.</p></li>
+
+     <li><p>If <var>ancestor</var> is an <code>optgroup</code> element, then return true if
+     <var>ancestor</var>'s <code data-x="attr-optgroup-disabled">disabled</code> attribute is
+     present; otherwise false.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Return false.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>Whenever an <code>option</code> element's <code data-x="attr-option-disabled">disabled</code>
+  attribute is added or removed, then:</p>
+
+  <ol>
+   <li><p>Let <var>select</var> be the <code>option</code> element's <span>cached nearest ancestor
+   <code>select</code> element</span>.</p></li>
+
+   <li><p>If <var>select</var> is null, then return.</p></li>
+
+   <li><p><span>Reset a <code>select</code>'s selectedness</span> given <var>select</var> and
+   false.</p></li>
+  </ol>
+  </div>
+
+  <div w-nodev>
+
+  <p>An <code>option</code> element that is <span data-x="attr-option-disabled">disabled</span> must
+  prevent any <code data-x="event-click">click</code> events that are <span data-x="queue a
+  task">queued</span> on the <span>user interaction task source</span> from being dispatched on the
+  element.</p>
+
+  </div>
+
+  <p class="note">Being <span data-x="concept-option-disabled">disabled</span> does not prevent all
+  modifications to the <code>option</code> element. For example, its <span
+  data-x="concept-option-selectedness">selectedness</span> could be modified programmatically from
+  JavaScript. Or, it could be indirectly modified by user action, e.g., if other non-disabled
+  <code>option</code> elements in the <code>select</code> element were modified.</p>
+
+  <p>The <dfn element-attr for="option"><code data-x="attr-option-label">label</code></dfn>
+  attribute provides a label for the element.</p>
+
+  <div algorithm>
+  <p>To <dfn data-x="concept-option-label">get an <code>option</code> element's label</dfn>, given
+  an <code>option</code> element <var>option</var> and a boolean <var>includeAltText</var>:</p>
+
+  <ol>
+   <li><p>If <var>option</var> has a <code data-x="attr-option-label">label</code> attribute whose
+   value is not the empty string, then return that value.</p></li>
+
+   <li><p>Return the result of <span>get HTML-aware text content</span> given <var>option</var> and
+   <var>includeAltText</var>.</p></li>
+  </ol>
+  </div>
+
+  <p>The <code data-x="attr-option-label">label</code> content attribute, if specified, must not be
+  empty.</p>
+
+  <div algorithm>
+  <p>The <dfn element-attr for="option"><code data-x="attr-option-value">value</code></dfn>
+  attribute provides a value for the element. The <dfn data-x="concept-option-value">value</dfn> of
+  an <code>option</code> element is the value of the <code data-x="attr-option-value">value</code>
+  content attribute, if there is one, or, if there is not, the result of <span>get HTML-aware text
+  content</span> given <span>this</span> and false.</p>
+  </div>
+
+  <p>The <dfn element-attr for="option"><code data-x="attr-option-selected">selected</code></dfn>
+  attribute is a <span>boolean attribute</span>. It represents the default <span
+  data-x="concept-option-selectedness">selectedness</span> of the element.</p>
+
+  <div w-nodev>
+
+  <p>The <dfn data-x="concept-option-dirtiness">dirtiness</dfn> of an <code>option</code> element is
+  a boolean state, initially false. It controls whether adding or removing the <code
+  data-x="attr-option-selected">selected</code> content attribute has any effect.</p>
+
+  <div algorithm>
+  <p>The <dfn data-x="concept-option-selectedness">selectedness</dfn> of an <code>option</code>
+  element is a boolean state, initially false. Except where otherwise specified, when the element is
+  created, its <span data-x="concept-option-selectedness">selectedness</span> must be set to true if
+  the element has a <code data-x="attr-option-selected">selected</code> attribute.</p>
+  </div>
+
+  <div algorithm>
+  <p>Whenever an <code>option</code> element <var>option</var>'s <code
+  data-x="attr-option-selected">selected</code> attribute is added or removed:</p>
+
+  <ol>
+   <li><p>Let <var>hasChanged</var> be false.</p></li>
+
+   <li>
+    <p>If <var>option</var>'s <span data-x="concept-option-dirtiness">dirtiness</span> is false:</p>
+
+    <ol>
+     <li><p>If the <code data-x="attr-option-selected">selected</code> attribute was added and
+     <var>option</var>'s <span data-x="concept-option-selectedness">selectedness</span> is false,
+     then set <var>option</var>'s <span data-x="concept-option-selectedness">selectedness</span> to
+     true and set <var>hasChanged</var> to true.</p></li>
+
+     <li><p>If the <code data-x="attr-option-selected">selected</code> attribute was removed and
+     <var>option</var>'s <span data-x="concept-option-selectedness">selectedness</span> is true,
+     then set <var>option</var>'s <span data-x="concept-option-selectedness">selectedness</span> to
+     false and set <var>hasChanged</var> to true.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Let <var>select</var> be <var>option</var>'s <span>cached nearest ancestor
+   <code>select</code> element</span>.</p></li>
+
+   <li><p>If <var>select</var> is null, then return.</p></li>
+
+   <li><p><span>Reset a <code>select</code>'s selectedness</span> given <var>select</var> and
+   <var>hasChanged</var>.</p></li>
+  </ol>
+
+  <p class="note">For example, in a <code>select</code> element without a <code
+  data-x="attr-select-multiple">multiple</code> attribute, adding the <code
+  data-x="attr-option-selected">selected</code> attribute to an <code>option</code> that is not
+  selected deselects the <code>option</code> that was. The <span>selectedness setting
+  algorithm</span> then has nothing left to change, so without <var>hasChanged</var> the
+  <code>selectedcontent</code> elements would not be updated.</p>
+  </div>
+
+  <p class="note">The <code data-x="dom-option">Option()</code> constructor, when called with three
+  or fewer arguments, overrides the initial state of the <span
+  data-x="concept-option-selectedness">selectedness</span> state to always be false even if the third
+  argument is true (implying that a <code data-x="attr-option-selected">selected</code> attribute is
+  to be set). The fourth argument can be used to explicitly set the initial <span
+  data-x="concept-option-selectedness">selectedness</span> state when using the constructor.</p>
+
+  <!-- https://software.hixie.ch/utilities/js/live-dom-viewer/?saved=604 -->
+
+  </div>
+
+  <p>A <code>select</code> element whose <code data-x="attr-select-multiple">multiple</code>
+  attribute is not specified must not have more than one descendant <code>option</code> element with
+  its <code data-x="attr-option-selected">selected</code> attribute set.</p>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>An <code>option</code> element's <dfn data-x="concept-option-index">index</dfn> is the number of
+  <code>option</code> elements that are in the same <span data-x="concept-select-option-list">list of
+  options</span> but that come before it in <span>tree order</span>. If the <code>option</code>
+  element is not in a <span data-x="concept-select-option-list">list of options</span>, then the
+  <code>option</code> element's <span data-x="concept-option-index">index</span> is zero.</p>
+  </div>
+
+  </div>
+
+  <p>Each <code>option</code> element has a <dfn>cached nearest ancestor <code>select</code>
+  element</dfn>, which is a <code>select</code> element or null, initially set to null.</p>
+
+  <div algorithm>
+  <p>To <dfn>update an <code>option</code>'s nearest ancestor <code>select</code></dfn>, given an
+  <code>option</code> <var>option</var>, run these steps. They return a <span>list</span> of
+  <code>select</code> elements whose <span>descendant</span> <code>selectedcontent</code> elements
+  need updating.</p>
+
+  <ol>
+   <li><p>Let <var>oldSelect</var> be <var>option</var>'s <span>cached nearest ancestor
+   <code>select</code> element</span>.</p></li>
+
+   <li><p>Let <var>newSelect</var> be <var>option</var>'s <span data-x="option element nearest
+   ancestor select">nearest ancestor <code>select</code></span>.</p></li>
+
+   <li><p>Set <var>option</var>'s <span>cached nearest ancestor <code>select</code>
+   element</span> to <var>newSelect</var>.</p></li>
+
+   <li><p>If <var>oldSelect</var> is <var>newSelect</var>, then return « ».</p></li>
+
+   <li><p>Let <var>result</var> be « ».</p></li>
+
+   <li>
+    <p>For each <var>select</var> of « <var>oldSelect</var>, <var>newSelect</var> »:</p>
+
+    <ol>
+     <li><p>If <var>select</var> is null, then <span>continue</span>.</p></li>
+
+     <li><p>Let <var>hasChanged</var> be the result of running the <span>selectedness setting
+     algorithm</span> given <var>select</var>.</p></li>
+
+     <li><p>If <var>option</var>'s <span data-x="concept-option-selectedness">selectedness</span> is
+     true or <var>hasChanged</var> is true, then <span data-x="list append">append</span>
+     <var>select</var> to <var>result</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Return <var>result</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <code>option</code> <span>HTML element insertion steps</span>, given
+  <var>insertedOption</var>, are to <span>update an <code>option</code>'s nearest ancestor
+  <code>select</code></span> given <var>insertedOption</var>.</p>
+
+  <p class="note">The returned <code>select</code> elements are intentionally ignored here. Any
+  <code>selectedcontent</code> update is instead performed by the <code>option</code>
+  <span>HTML element post-connection steps</span>, which run once the tree is in a consistent
+  state.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <code>option</code> <span>HTML element post-connection steps</span>, given
+  <var>insertedOption</var>, are to <span>update descendant <code>selectedcontent</code> elements
+  for an <code>option</code></span> given <var>insertedOption</var>.</p>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>update descendant <code>selectedcontent</code> elements for an
+  <code>option</code></dfn>, given an <code>option</code> element <var>option</var>:</p>
+
+  <ol>
+   <li><p>Let <var>select</var> be <var>option</var>'s <span>cached nearest ancestor
+   <code>select</code> element</span>.</p></li>
+
+   <li><p>If <var>select</var> is null or <var>option</var>'s <span
+   data-x="concept-option-selectedness">selectedness</span> is false, then return.</p></li>
+
+   <li><p><span>Update a <code>select</code>'s descendant <code>selectedcontent</code>
+   elements</span> given <var>select</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <code>option</code> <span>HTML element removing steps</span>, given
+  <var>removedNode</var>, <var>isSubtreeRoot</var>, and <var>oldAncestor</var>, are:</p>
+
+  <ol>
+   <li><p>Let <var>selects</var> be the result of <span>update an <code>option</code>'s nearest
+   ancestor <code>select</code></span> given <var>removedNode</var>.</p></li>
+
+   <li><p>For each <var>select</var> of <var>selects</var>: <span>queue a microtask</span> to
+   <span>update a <code>select</code>'s descendant <code>selectedcontent</code> elements</span>
+   given <var>select</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <code>option</code> <span>HTML element moving steps</span>, given <var>movedNode</var>,
+  <var>isSubtreeRoot</var>, and <var>oldAncestor</var>, are:</p>
+
+  <ol>
+   <li><p>Let <var>selects</var> be the result of <span>update an <code>option</code>'s nearest
+   ancestor <code>select</code></span> given <var>movedNode</var>.</p></li>
+
+   <li><p>For each <var>select</var> of <var>selects</var>: <span>queue a microtask</span> to
+   <span>update a <code>select</code>'s descendant <code>selectedcontent</code> elements</span>
+   given <var>select</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To get the <dfn data-x="option element nearest ancestor select">nearest ancestor
+  <code>select</code></dfn> given an <code>Element</code> <var>element</var>, run these steps. They
+  return a <code>select</code> element or null.</p>
+
+  <ol>
+   <li><p>Let <var>ancestorOptgroup</var> be null.</p></li>
+
+   <li>
+    <p>For each <var>ancestor</var> of <var>element</var>'s <span data-x="ancestor">ancestors</span>,
+    in reverse <span>tree order</span>:</p>
+
+    <ol>
+     <li><p>If <var>ancestor</var> is a <code>datalist</code>, <code>hr</code>, or
+     <code>option</code> element, then return null.</p></li>
+
+     <li>
+      <p>If <var>ancestor</var> is an <code>optgroup</code> element:</p>
+
+      <ol>
+       <li><p>If <var>ancestorOptgroup</var> is not null, then return null.</p></li>
+
+       <li><p>Set <var>ancestorOptgroup</var> to <var>ancestor</var>.</p></li>
+      </ol>
+     </li>
+
+     <li><p>If <var>ancestor</var> is a <code>select</code>, then return
+     <var>ancestor</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Return null.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>clone selected <code>option</code> into <code>select</code> button</dfn>, given a
+  <code>select</code> element <var>select</var>:</p>
+
+  <ol>
+   <li><p>Let <var>option</var> be the first element of <var>select</var>'s <span
+   data-x="concept-select-option-list">option list</span> whose <span
+   data-x="concept-option-selectedness">selectedness</span> is set to true, if such an element
+   exists; otherwise null.</p></li>
+
+   <li><p>Let <var>text</var> be the empty string.</p></li>
+
+   <li><p>If <var>option</var> is not null, then set <var>text</var> to <var>option</var>'s <span
+   data-x="dom-option-label">label</span>.</p></li>
+
+   <li><p>Set <var>select</var>'s <span>select fallback button text</span> to
+   <var>text</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>When an <code>option</code> element <var>option</var> is popped off the <span>stack of open
+  elements</span> of an <span>HTML parser</span> or <span>XML parser</span>, <span>update descendant
+  <code>selectedcontent</code> elements for an <code>option</code></span> given
+  <var>option</var>.</p>
+  </div>
+
+  <dl class="domintro">
+   <dt><code data-x=""><var>option</var>.<span subdfn data-x="dom-option-selected">selected</span></code></dt>
+
+   <dd>
+    <p>Returns true if the element is selected, and false otherwise.</p>
+
+    <p>Can be set, to override the current state of the element.</p>
+   </dd>
+
+   <dt><code data-x=""><var>option</var>.<span subdfn data-x="dom-option-index">index</span></code></dt>
+
+   <dd><p>Returns the index of the element in its <code>select</code> element's <code
+   data-x="dom-select-options">options</code> list.</p></dd>
+
+   <dt><code data-x=""><var>option</var>.<span subdfn data-x="dom-option-form">form</span></code></dt>
+
+   <dd><p>Returns the element's <code>form</code> element, if any, or null otherwise.</p></dd>
+
+   <dt><code data-x=""><var>option</var>.<span subdfn data-x="dom-option-text">text</span></code></dt>
+
+   <dd>
+    <p>Same as <code>textContent</code>, except that spaces are collapsed and <code>script</code>
+    elements are skipped.</p>
+   </dd>
+
+   <dt><code data-x=""><var>option</var> = new <span subdfn data-x="dom-option">Option</span>([ <var>text</var> [, <var>value</var> [, <var>defaultSelected</var> [, <var>selected</var> ] ] ] ])</code></dt>
+
+   <dd>
+    <p>Returns a new <code>option</code> element.</p>
+
+    <p>The <var>text</var> argument sets the contents of the element.</p>
+
+    <p>The <var>value</var> argument sets the <code data-x="attr-option-value">value</code>
+    attribute.</p>
+
+    <p>The <var>defaultSelected</var> argument sets the <code
+    data-x="attr-option-selected">selected</code> attribute.</p>
+
+    <p>The <var>selected</var> argument sets whether or not the element is selected. If it is
+    omitted, even if the <var>defaultSelected</var> argument is true, the element is not
+    selected.</p>
+   </dd>
+  </dl>
+
+  <div w-nodev>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLOptionElement"><code data-x="dom-option-label">label</code></dfn>
+  getter steps are:</p>
+
+  <ol>
+   <li><p>Let <var>attribute</var> be <span>this</span>'s <code
+   data-x="attr-option-label">label</code> attribute.</p></li>
+
+   <li><p>If <var>attribute</var> is null, then return the result of <span
+   data-x="concept-option-label">getting an <code>option</code> element's label</span> given
+   <span>this</span> and false.</p></li>
+
+   <li><p>Return <var>attribute</var>'s <span
+   data-x="concept-attribute-value">value</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLOptionElement"><code data-x="dom-option-value">value</code></dfn>
+  getter steps are to return <span>this</span>'s <span
+  data-x="concept-option-value">value</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLOptionElement"><code
+  data-x="dom-option-selected">selected</code></dfn> getter steps are to return true if
+  <span>this</span>'s <span data-x="concept-option-selectedness">selectedness</span> is true, and
+  false otherwise.</p>
+
+  <p>The <code data-x="dom-option-selected">selected</code> setter steps are:</p>
+
+  <ol>
+   <li><p>Set <span>this</span>'s <span data-x="concept-option-selectedness">selectedness</span> to
+   the given value.</p></li>
+
+   <li><p>Set <span>this</span>'s <span data-x="concept-option-dirtiness">dirtiness</span> to
+   true.</p></li>
+
+   <li><p><span>Ask for a reset</span> given <span>this</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLOptionElement"><code data-x="dom-option-index">index</code></dfn>
+  IDL attribute must return the element's <span data-x="concept-option-index">index</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLOptionElement"><code data-x="dom-option-text">text</code></dfn>
+  getter steps are to return the result of <span>get HTML-aware text content</span> given
+  <span>this</span> and false.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <code data-x="dom-option-text">text</code> setter steps are to <span>string replace
+  all</span> with the given value within <span>this</span>.</p>
+  </div>
+
+  <div algorithm>
+  <p>The <dfn attribute for="HTMLOptionElement"><code data-x="dom-option-form">form</code></dfn>
+  getter steps are:</p>
+
+  <ol>
+   <li><p>Let <var>select</var> be <span>this</span>'s <span data-x="option element nearest ancestor
+   select">nearest ancestor <code>select</code></span>.</p></li>
+
+   <li><p>If <var>select</var> is null, then return null.</p></li>
+
+   <li><p>Return <var>select</var>'s <span>form owner</span>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>A legacy factory function is provided for creating <code>HTMLOptionElement</code> objects (in
+  addition to the factory methods from DOM such as <code
+  data-x="dom-Document-createElement">createElement()</code>): <dfn constructor
+  for="HTMLOptionElement"><code data-x="dom-option">Option(<var>text</var>, <var>value</var>,
+  <var>defaultSelected</var>, <var>selected</var>)</code></dfn>. When invoked, the legacy factory
+  function must perform the following steps:</p>
+
+  <ol>
+   <li><p>Let <var>document</var> be the <span>current global object</span>'s <span
+   data-x="concept-document-window">associated <code>Document</code></span>.</p></li>
+
+   <li><p>Let <var>option</var> be the result of <span data-x="create an element">creating an
+   element</span> given <var>document</var>, "<code data-x="">option</code>", and the <span>HTML
+   namespace</span>.</p></li>
+
+   <li><p>If <var>text</var> is not the empty string, then append to <var>option</var> a new
+   <code>Text</code> node whose data is <var>text</var>.</p></li>
+
+   <li><p>If <var>value</var> is given, then <span data-x="concept-element-attributes-set-value">set
+   an attribute value</span> for <var>option</var> using "<code
+   data-x="attr-option-value">value</code>" and <var>value</var>.</p></li>
+
+   <li><p>If <var>defaultSelected</var> is true, then <span
+   data-x="concept-element-attributes-set-value">set an attribute value</span> for <var>option</var>
+   using "<code data-x="attr-option-selected">selected</code>" and the empty string.</p></li>
+
+   <li><p>If <var>selected</var> is true, then set <var>option</var>'s <span
+   data-x="concept-option-selectedness">selectedness</span> to true; otherwise set its <span
+   data-x="concept-option-selectedness">selectedness</span> to false (even if
+   <var>defaultSelected</var> is true).</p></li>
+
+   <li><p>Return <var>option</var>.</p></li>
+  </ol>
+  </div>
+
+  <div algorithm>
+  <p>To <dfn>get HTML-aware text content</dfn>, given an element <var>element</var> and a
+  boolean <var>includeAltText</var>:</p>
+
+  <ol>
+   <li><p>Let <var>text</var> be the empty string.</p></li>
+
+   <li>
+    <p>For each <span>descendant</span> <var>descendant</var> of <var>element</var> in <span>tree
+    order</span>:</p>
+
+    <ol>
+     <li><p>If <var>descendant</var> is a <code>script</code> or <span>SVG
+     <code>script</code></span> element, then <span>continue</span> skipping all <span
+     data-x="descendant">descendants</span> of <var>descendant</var>.</p></li>
+
+     <li><p>If <var>descendant</var> is a <code>Text</code> node, then set <var>text</var> to the
+     concatenation of <var>text</var> and <var>descendant</var>'s <span
+     data-x="concept-cd-data">data</span>.</p></li>
+
+     <li><p>If <var>descendant</var> is an <code>img</code> element with an <code
+     data-x="attr-img-alt">alt</code> attribute and <var>includeAltText</var> is true, then set
+     <var>text</var> to the concatenation of <var>text</var> and the value of
+     <var>descendant</var>'s <code data-x="attr-img-alt">alt</code> attribute.</p></li>
+
+     <li><p>If <var>descendant</var> is an <code>img</code> element, then <span>continue</span>
+     skipping all <span data-x="descendant">descendants</span> of <var>descendant</var>.</p></li>
+    </ol>
+   </li>
+
+   <li><p>Return the result of <span>strip and collapse ASCII whitespace</span> given
+   <var>text</var>.</p></li>
+  </ol>
+  </div>
+
+  </div>
+
+  <p class="note" id="note-option-no-value">When no <code data-x="attr-option-value">value</code>
+  attribute is set on the <code>option</code> element, its text contents are used to generate a
+  submittable value. In the case that the <code>option</code> element has child elements, this can
+  lead to unexpected results such as <code>option</code> elements which render differently but have
+  the same value. In order to address this, setting the <code
+  data-x="attr-option-value">value</code> attribute on <code>option</code> elements is
+  recommended.</p>
+
+
+

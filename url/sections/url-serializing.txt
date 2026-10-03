@@ -1,0 +1,86 @@
+WHATWG URL — section url-serializing — URL serializing
+
+<h3 id=url-serializing>URL serializing</h3>
+
+<div algorithm="URL serializer">
+<p>The <dfn export id=concept-url-serializer lt="URL serializer">URL serializer</dfn> takes a
+<a for=/>URL</a> <var>url</var>, with an optional boolean
+<dfn export for="URL serializer"><var>exclude fragment</var></dfn> (default false), and then runs
+these steps. They return an <a>ASCII string</a>.
+
+<ol>
+ <li><p>Let <var>output</var> be <var>url</var>'s <a for=url>scheme</a> and U+003A (:) concatenated.
+
+ <li>
+  <p>If <var>url</var>'s <a for=url>host</a> is non-null:
+
+  <ol>
+   <li><p>Append "<code>//</code>" to <var>output</var>.
+
+   <li>
+    <p>If <var>url</var> <a>includes credentials</a>, then:
+
+    <ol>
+     <li><p>Append <var>url</var>'s <a for=url>username</a> to
+     <var>output</var>.
+
+     <li><p>If <var>url</var>'s <a for=url>password</a> is not the empty string, then append
+     U+003A (:), followed by <var>url</var>'s <a for=url>password</a>, to <var>output</var>.
+
+     <li><p>Append U+0040 (@) to <var>output</var>.
+    </ol>
+
+   <li><p>Append <var>url</var>'s <a for=url>host</a>,
+   <a lt="host serializer">serialized</a>, to <var>output</var>.
+
+   <li><p>If <var>url</var>'s <a for=url>port</a> is non-null, append U+003A (:) followed by
+   <var>url</var>'s <a for=url>port</a>, <a lt="serialize an integer">serialized</a>, to
+   <var>output</var>.
+  </ol>
+
+ <li>
+  <p>If <var>url</var>'s <a for=url>host</a> is null, <var>url</var> does not have an
+  <a for=url>opaque path</a>, <var>url</var>'s <a for=url>path</a>'s <a for=list>size</a> is greater
+  than 1, and <var>url</var>'s <a for=url>path</a>[0] is the empty string, then append U+002F (/)
+  followed by U+002E (.) to <var>output</var>.
+
+  <p class=note>This prevents <code>web+demo:/.//not-a-host/</code> or
+  <code>web+demo:/path/..//not-a-host/</code>, when <a lt="URL parser">parsed</a> and then
+  <a lt="URL serializer">serialized</a>, from ending up as <code>web+demo://not-a-host/</code> (they
+  end up as <code>web+demo:/.//not-a-host/</code>).
+
+ <li><p>Append the result of <a>URL path serializing</a> <var>url</var> to <var>output</var>.
+
+ <li><p>If <var>url</var>'s <a for=url>query</a> is non-null, append
+ U+003F (?), followed by <var>url</var>'s <a for=url>query</a>, to
+ <var>output</var>.
+
+ <li><p>If <var>exclude fragment</var> is false and <var>url</var>'s <a for=url>fragment</a> is
+ non-null, then append U+0023 (#), followed by <var>url</var>'s <a for=url>fragment</a>, to
+ <var>output</var>.
+
+ <li><p>Return <var>output</var>.
+</ol>
+</div>
+
+<div algorithm>
+<p>The <dfn export lt="URL path serializer|URL path serializing">URL path serializer</dfn> takes a
+<a for=/>URL</a> or <a for=/>URL path</a> <var>urlOrPath</var> and then runs these steps. They
+return an <a>ASCII string</a>.
+
+<ol>
+ <li><p>Let <var>path</var> be <var>urlOrPath</var>'s <a for=url>path</a> if <var>urlOrPath</var> is
+ a <a for=/>URL</a>; otherwise <var>urlOrPath</var>.
+
+ <li><p>If <var>path</var> is a <a for=/>URL path segment</a>, then return <var>path</var>.
+
+ <li><p>Let <var>output</var> be the empty string.
+
+ <li><p><a for=list>For each</a> <var>segment</var> of <var>path</var>: append U+002F (/) followed
+ by <var>segment</var> to <var>output</var>.
+
+ <li><p>Return <var>output</var>.
+</ol>
+</div>
+
+
